@@ -3,3 +3,4 @@
 file.watchr
 *.swp
 *.tmp
+.DS_store
