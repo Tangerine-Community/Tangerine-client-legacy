@@ -141,12 +141,6 @@ Router = (function(_super) {
     return this.verify_logged_in({
       success: function(session) {
         var assessmentCollection;
-        if (!_.include(session.userCtx.roles, "_admin")) {
-          if (!_.include(session.userCtx.roles, "admin")) {
-            Tangerine.router.navigate("assessments", true);
-          }
-          return;
-        }
         assessmentCollection = new AssessmentCollection();
         return assessmentCollection.fetch({
           success: function() {

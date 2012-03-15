@@ -1,0 +1,23 @@
+{
+  "name": "The Gambia EGRA May 2011",
+  "_id": "The Gambia EGRA May 2011.Assessment",
+  "urlPathsForPages": [
+    "The Gambia EGRA May 2011.DateTime",
+    "The Gambia EGRA May 2011.School",
+    "The Gambia EGRA May 2011.StudentConsent",
+    "The Gambia EGRA May 2011.StudentInformation",
+    "The Gambia EGRA May 2011.Letters",
+    "The Gambia EGRA May 2011.Phonemes",
+    "The Gambia EGRA May 2011.FamiliarWords",
+    "The Gambia EGRA May 2011.InventedWords",
+    "The Gambia EGRA May 2011.OralPassageReading",
+    "The Gambia EGRA May 2011.ReadingComprehension",
+    "The Gambia EGRA May 2011.ListeningComprehension",
+    "The Gambia EGRA May 2011.Dictation",
+    "The Gambia EGRA May 2011.PupilContextInterview",
+    "The Gambia EGRA May 2011.Results"
+  ],
+  "collection" : "assessment",
+  "couchapp": {
+  }
+}
