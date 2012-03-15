@@ -1,4 +1,4 @@
-#Tangerine
+Tangerine
 ---------
 A tablet/phone application for assessing students
 
