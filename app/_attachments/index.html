@@ -40,11 +40,11 @@
     </div>
     <script>
       // Loads from the version file
-      $("#version").load('./version');
+      $("#version").load('version');
 
-      _.each($('button'), function(button){
-        new MBP.fastButton(button, function(ev){
-          Tangerine.router.navigate($(ev.target).attr("href"), true)
+      $('button').each( function(button) {
+        new MBP.fastButton(button, function(ev) {
+          Tangerine.router.navigate($(ev.target).attr("href"), true);
         });
       });
 
@@ -94,13 +94,9 @@
     <script type="text/javascript" src="tangerine.js"></script>
     <script>
       // iPhone Scale Bug Fix, read this when using http://www.blog.highub.com/mobile-2/a-fix-for-iphone-viewport-scale-bug/
-      MBP.scaleFix();
+        MBP.scaleFix();
     </script>
-    <!-- Can replace above js refs with: -->
-    <!--
-    <script type="text/javascript" src="combined-javascript/egra.min.js"></script>
-    -->
-    <!-- ** -->
+
   </body>
 </html>
 
