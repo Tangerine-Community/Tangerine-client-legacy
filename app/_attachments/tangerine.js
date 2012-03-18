@@ -1,7 +1,6 @@
-var Router, assessmentCollection, config, startApp,
+var Router,
   __hasProp = Object.prototype.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
-  _this = this;
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
 Router = (function(_super) {
 
@@ -157,7 +156,6 @@ Router = (function(_super) {
   Router.prototype.assessments = function() {
     return this.verify_logged_in({
       success: function() {
-        console.log("SUCCESS! logged in and setting up assessments");
         $('#current-student-id').html("");
         if (Tangerine.assessmentListView == null) {
           Tangerine.assessmentListView = new AssessmentListView();
@@ -200,12 +198,15 @@ Router = (function(_super) {
   };
 
   Router.prototype.verify_logged_in = function(options) {
-    console.log("verifying logged in");
     return $.couch.session({
       success: function(session) {
+        $.enumerator = session.userCtx.name;
         Tangerine.router.targetroute = document.location.hash;
+        if (!session.userCtx.name) {
+          Tangerine.router.navigate("login", true);
+          return;
+        }
         if (!$.enumerator) {
-          console.log("sending back to login");
           Tangerine.router.navigate("login", true);
           return;
         }
@@ -248,36 +249,57 @@ Router = (function(_super) {
 
 })(Backbone.Router);
 
-startApp = function() {
-  Tangerine.router = new Router();
-  Tangerine.loginView;
-  Tangerine.manageView;
-  Tangerine.assessmentListView;
-  Tangerine.resultView;
-  Tangerine.resultsView;
-  Tangerine.assessment;
-  return Backbone.history.start();
-};
-
-config = new Backbone.Model({
-  _id: "Config"
-});
-
-config.fetch({
-  success: function() {
-    return Tangerine.config = config.toJSON();
-  }
-}, assessmentCollection = new AssessmentCollection(), assessmentCollection.fetch({
-  success: function() {
-    assessmentCollection.each(function(assessment) {
-      return $.couch.db(assessment.targetDatabase()).info({
-        error: function(a, b, errorType) {
-          if (errorType === "no_db_file") {
-            return Utils.createResultsDatabase(assessment.targetDatabase());
-          }
-        }
-      });
+$(function() {
+  var assessmentCollection, assessmentCollectionErrors, config, databaseErrorCount, databaseFixAttempts, startApp,
+    _this = this;
+  startApp = function() {
+    Tangerine.router = new Router();
+    return Backbone.history.start();
+  };
+  config = new Backbone.Model({
+    _id: "Config"
+  });
+  config.fetch({
+    success: function() {
+      return Tangerine.config = config.toJSON();
+    }
+  });
+  assessmentCollection = new AssessmentCollection();
+  databaseErrorCount = 0;
+  databaseFixAttempts = 0;
+  assessmentCollectionErrors = 0;
+  while (true) {
+    assessmentCollection.fetch({
+      success: function() {
+        return assessmentCollection.each(function(assessment) {
+          $.couch.db(assessment.targetDatabase()).info({
+            error: function(responseCode, b, errorType) {
+              databaseErrorCount++;
+              if (errorType === "no_db_file") {
+                return Utils.createResultsDatabase(assessment.targetDatabase());
+              }
+            }
+          });
+          return $.couch.db(assessment.targetDatabase()).openDoc("_design/results", {
+            error: function(responseCode, b, errorType) {
+              databaseErrorCount++;
+              if (responseCode === 404) {
+                return Utils.createResultViews(assessment.targetDatabase());
+              }
+            }
+          });
+        });
+      },
+      error: function() {
+        return assessmentCollectionErrors++;
+      }
     });
-    return _this.startApp();
+    if (databaseErrorCount === 0 || databaseFixAttempts === 3) break;
+    databaseFixAttempts++;
   }
-}));
+  if (assessmentCollectionErrors === 0) {
+    return startApp();
+  } else {
+    return console.log("Database error, cannot start");
+  }
+});

@@ -98,7 +98,6 @@ class Router extends Backbone.Router
   assessments: ->
     @verify_logged_in
       success: ->
-        console.log "SUCCESS! logged in and setting up assessments"
         $('#current-student-id').html ""
 
         Tangerine.assessmentListView ?= new AssessmentListView()
@@ -131,22 +130,14 @@ class Router extends Backbone.Router
             Tangerine.assessment.render()
 
   verify_logged_in: (options) ->
-    console.log "verifying logged in"
     $.couch.session
       success: (session) ->
-#        $.enumerator = session.userCtx.name
-#        console.log document.location
-#        console.log document.location.hash
+        $.enumerator = session.userCtx.name
         Tangerine.router.targetroute = document.location.hash
-#        console.log window.document.cookie
-#        console.log "session.userCtx.name"
-#        console.log session.userCtx.name
-#        unless session.userCtx.name
-#          console.log "sending back to login"
-#          Tangerine.router.navigate("login", true)
-#          return
+        unless session.userCtx.name
+          Tangerine.router.navigate("login", true)
+          return
         unless $.enumerator
-          console.log "sending back to login"
           Tangerine.router.navigate("login", true)
           return
         $('#enumerator').html $.enumerator
@@ -211,60 +202,74 @@ class Router extends Backbone.Router
         $('.grid').each (index) ->
           $(this).nextAll().andSelf().slice(0,10).wrapAll('<div class="grid-row"></div>') if( index % 10 == 0 )
 
+
+
 # Initialization/Detection
+$ -> # run after DOM loads
+  startApp = ->
+    # Reuse the view objects to stop events from being duplicated (and to save memory)
+    Tangerine.router = new Router()
+    Backbone.history.start()
 
-startApp = ->
-  Tangerine.router = new Router()
-  # Reuse the view objects to stop events from being duplicated (and to save memory)
-# I don't think I need to declare these here anymore TODO
-  Tangerine.loginView
-  Tangerine.manageView
-  Tangerine.assessmentListView
-  Tangerine.resultView
-  Tangerine.resultsView
-# This one is a hack. ugh
-  Tangerine.assessment
-  Backbone.history.start()
 
-config = new Backbone.Model
-  _id: "Config"
-config.fetch
-  success: ->
-    Tangerine.config = config.toJSON()
+  config = new Backbone.Model
+    _id: "Config"
 
-#    $.couch.config(
-#      {
-#        success: (result) ->
-#          if _.keys(result).length == 0 # admin party mode
-#            $.couch.config({},"admins",Tangerine.config.user_with_database_create_permission, Tangerine.config.password_with_database_create_permission)
-#        error: ->
-#          # Do nothing - we can't access this because we are not admins
-#      }
-#      "admins"
-#    )
+  config.fetch
+    success: ->
+      Tangerine.config = config.toJSON()
 
-# Should remove later - always make sure the timeout is 28800 (8 hrs)
-#    $.ajax "/_config/couch_httpd_auth/timeout",
-#    username: Tangerine.config.user_with_database_create_permission
-#    password: Tangerine.config.password_with_database_create_permission
-#    type: "put"
-#    data: '"28800"'
+  #    $.couch.config(
+  #      {
+  #        success: (result) ->
+  #          if _.keys(result).length == 0 # admin party mode
+  #            $.couch.config({},"admins",Tangerine.config.user_with_database_create_permission, Tangerine.config.password_with_database_create_permission)
+  #        error: ->
+  #          # Do nothing - we can't access this because we are not admins
+  #      }
+  #      "admins"
+  #    )
 
-# Check that all result databases exist
+  # Should remove later - always make sure the timeout is 28800 (8 hrs)
+  #    $.ajax "/_config/couch_httpd_auth/timeout",
+  #    username: Tangerine.config.user_with_database_create_permission
+  #    password: Tangerine.config.password_with_database_create_permission
+  #    type: "put"
+  #    data: '"28800"'
+
+  #
+  # Verify database structure
+  #
+  
   assessmentCollection = new AssessmentCollection()
-  assessmentCollection.fetch
-    success: =>
-      assessmentCollection.each (assessment) =>
-        $.couch.db(assessment.targetDatabase()).info
-          error: (a,b,errorType) =>
-            if errorType == "no_db_file"
-              Utils.createResultsDatabase assessment.targetDatabase()
-# Wait 1.5 seconds for everything to get created, then logout and reload
-#              setTimeout ->
-#                $.couch.logout
-#                  success: ->
-#                    location.reload(true)
-#              , 1500
-      @startApp()
+  
+  databaseErrorCount = 0
+  databaseFixAttempts = 0
+  assessmentCollectionErrors = 0
+  
+  loop
+    assessmentCollection.fetch
+      success: =>
+        assessmentCollection.each ( assessment ) =>
 
+          # assert database
+          $.couch.db( assessment.targetDatabase() ).info
+            error: ( responseCode, b, errorType ) =>
+              databaseErrorCount++
+              if errorType == "no_db_file"
+                Utils.createResultsDatabase assessment.targetDatabase()
+
+          # assert result design docs @TODO maybe assert report docs too
+          $.couch.db( assessment.targetDatabase() ).openDoc "_design/results"
+            error: ( responseCode, b, errorType ) =>
+              databaseErrorCount++
+              if responseCode == 404 then Utils.createResultViews assessment.targetDatabase()
+      error: =>
+        assessmentCollectionErrors++
+
+
+    break if databaseErrorCount == 0 or databaseFixAttempts == 3
+    databaseFixAttempts++
+
+  if assessmentCollectionErrors == 0 then startApp() else console.log "Database error, cannot start"
 
