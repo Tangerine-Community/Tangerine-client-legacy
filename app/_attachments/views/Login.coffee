@@ -12,8 +12,8 @@ class LoginView extends Backbone.View
           <input id='name' name='name'></input>
           <label for='password'>Password</label>
           <input id='password' type='password' name='password'></input>
-          <div id='message'></div>
           <input type='submit' value='Login'></input>
+          <div id='message'></div>
         </form>
       </div>
     "
@@ -33,6 +33,7 @@ class LoginView extends Backbone.View
           Tangerine.router.navigate(Tangerine.router.targetroute, true)
         error: (status, error, reason) ->
           $("#message").html "Creating new user" + window.document.cookie
+          console.log "cookie: " + window.document.cookie
           $.couch.signup( {name: name}, password,
             success: ->
               $.couch.login

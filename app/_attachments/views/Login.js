@@ -17,7 +17,7 @@ LoginView = (function(_super) {
   LoginView.prototype.el = $('#content');
 
   LoginView.prototype.render = function() {
-    return this.el.html("      <div style='margin:0px auto; width:300px'>        <img src='images/tangerinelogo300w.png'/>        <form id='login-form'>          <label for='name'>Enumerator Name</label>          <input id='name' name='name'></input>          <label for='password'>Password</label>          <input id='password' type='password' name='password'></input>          <div id='message'></div>          <input type='submit' value='Login'></input>        </form>      </div>    ");
+    return this.el.html("      <div style='margin:0px auto; width:300px'>        <img src='images/tangerinelogo300w.png'/>        <form id='login-form'>          <label for='name'>Enumerator Name</label>          <input id='name' name='name'></input>          <label for='password'>Password</label>          <input id='password' type='password' name='password'></input>          <input type='submit' value='Login'></input>          <div id='message'></div>        </form>      </div>    ");
   };
 
   LoginView.prototype.events = {
@@ -38,6 +38,7 @@ LoginView = (function(_super) {
       },
       error: function(status, error, reason) {
         $("#message").html("Creating new user" + window.document.cookie);
+        console.log("cookie: " + window.document.cookie);
         return $.couch.signup({
           name: name
         }, password, {
