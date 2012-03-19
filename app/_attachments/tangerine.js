@@ -171,8 +171,10 @@ Router = (function(_super) {
   };
 
   Router.prototype.logout = function() {
+    var _this = this;
     return $.couch.logout({
       success: function() {
+        _this.handle_menu();
         $.enumerator = null;
         $('#enumerator').html("Not logged in");
         return Tangerine.router.navigate("login", true);
@@ -198,6 +200,7 @@ Router = (function(_super) {
   };
 
   Router.prototype.verify_logged_in = function(options) {
+    var _this = this;
     return $.couch.session({
       success: function(session) {
         $.enumerator = session.userCtx.name;
@@ -211,8 +214,38 @@ Router = (function(_super) {
           return;
         }
         $('#enumerator').html($.enumerator);
+        _this.handle_menu(session);
         return options.success(session);
       }
+    });
+  };
+
+  Router.prototype.handle_menu = function(session) {
+    var admin_menu, normal_menu, user_roles;
+    if (session == null) {
+      session = {
+        userCtx: {
+          roles: ["not_logged_in"]
+        }
+      };
+    }
+    admin_menu = '\
+    <button href="#assessments">Collect</button>\
+    <button href="#manage">Manage</button>\
+    <button href="#logout">Logout</button>';
+    normal_menu = '\
+    <button href="#assessments">Collect</button>\
+    <button href="#logout">Logout</button>';
+    user_roles = _.values(session.userCtx.roles);
+    if (_.indexOf(user_roles, "_admin") !== -1) {
+      $("#main_nav").html(admin_menu);
+    } else if (_.indexOf(user_roles, "not_logged_in") !== -1) {
+      $("#main_nav").empty();
+    } else {
+      $("#main_nav").html(normal_menu);
+    }
+    return $('button').click(function(event) {
+      return Tangerine.router.navigate($(event.target).attr("href"), true);
     });
   };
 
@@ -250,20 +283,8 @@ Router = (function(_super) {
 })(Backbone.Router);
 
 $(function() {
-  var assessmentCollection, assessmentCollectionErrors, config, databaseErrorCount, databaseFixAttempts, startApp,
+  var assessmentCollection, assessmentCollectionErrors, config, databaseErrorCount, databaseFixAttempts,
     _this = this;
-  startApp = function() {
-    Tangerine.router = new Router();
-    return Backbone.history.start();
-  };
-  config = new Backbone.Model({
-    _id: "Config"
-  });
-  config.fetch({
-    success: function() {
-      return Tangerine.config = config.toJSON();
-    }
-  });
   assessmentCollection = new AssessmentCollection();
   databaseErrorCount = 0;
   databaseFixAttempts = 0;
@@ -297,9 +318,20 @@ $(function() {
     if (databaseErrorCount === 0 || databaseFixAttempts === 3) break;
     databaseFixAttempts++;
   }
-  if (assessmentCollectionErrors === 0) {
-    return startApp();
-  } else {
-    return console.log("Database error, cannot start");
-  }
+  if (assessmentCollectionErrors > 0) console.log("Database error");
+  config = new Backbone.Model({
+    _id: "Config"
+  });
+  config.fetch({
+    success: function() {
+      return Tangerine.config = config.toJSON();
+    },
+    error: function() {
+      return console.log("Error loading config.");
+    }
+  });
+  Tangerine.router = new Router();
+  Backbone.history.start();
+  $("#version").load('version');
+  return $('#test_button').click(function() {});
 });
