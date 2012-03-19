@@ -33,14 +33,13 @@ class LoginView extends Backbone.View
           Tangerine.router.navigate(Tangerine.router.targetroute, true)
         error: (status, error, reason) ->
           $("#message").html "Creating new user" + window.document.cookie
-          console.log "cookie: " + window.document.cookie
           $.couch.signup( {name: name}, password,
             success: ->
               $.couch.login
                 name: name
                 password: password
                 success: ->
-                  $('#current-name').html(name)
+                  $('#enumerator').html(name)
                   Tangerine.router.navigate(Tangerine.router.targetroute, true)
             error: (status, error, reason) ->
               if error == "conflict"

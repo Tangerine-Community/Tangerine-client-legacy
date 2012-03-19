@@ -38,7 +38,6 @@ LoginView = (function(_super) {
       },
       error: function(status, error, reason) {
         $("#message").html("Creating new user" + window.document.cookie);
-        console.log("cookie: " + window.document.cookie);
         return $.couch.signup({
           name: name
         }, password, {
@@ -47,7 +46,7 @@ LoginView = (function(_super) {
               name: name,
               password: password,
               success: function() {
-                $('#current-name').html(name);
+                $('#enumerator').html(name);
                 return Tangerine.router.navigate(Tangerine.router.targetroute, true);
               }
             });
