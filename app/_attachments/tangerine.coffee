@@ -124,8 +124,8 @@ class Router extends Backbone.Router
         # This is terrible but it fixes my problem
         # Currently live click handlers get duplicated over and over again
         # Need to convert everything to backbone style views
-        if Tangerine.assessment?
-          location.reload()
+        # if Tangerine.assessment?
+        #  location.reload()
         Tangerine.assessment = new Assessment {_id:id}
         Tangerine.assessment.fetch
           success: ->
@@ -149,7 +149,8 @@ class Router extends Backbone.Router
   # Admins get a manage button 
   # @TODO this might not be the right place for this
   # @TODO UI: reevaluate menu structure
-  handle_menu: (session = {userCtx : {roles:["not_logged_in"]}}) ->
+  # @TODO default value is fragile, might want to make that more reliable
+  handle_menu: ( session = { userCtx: { roles : ["not_logged_in"] } } ) ->
     admin_menu = '
     <button href="#assessments">Collect</button>
     <button href="#manage">Manage</button>
@@ -158,6 +159,7 @@ class Router extends Backbone.Router
     normal_menu = '
     <button href="#assessments">Collect</button>
     <button href="#logout">Logout</button>'
+    
     user_roles = _.values session.userCtx.roles 
     if _.indexOf(user_roles, "_admin") != -1
       $( "#main_nav" ).html admin_menu
