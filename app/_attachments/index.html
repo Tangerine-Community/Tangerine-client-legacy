@@ -32,23 +32,12 @@
     <div id='navigation'>	
       <img src='images/TangerineNoBackground.png'>
       <span id='version'></span>
-      <button type='button' href='#assessments'>Collect</button>
-      <button type='button' href='#manage'>Manage</button>
-      <button type='button' href='#logout'>Logout</button>
+      <nav id="main_nav">
+      </nav>
+
       Enumerator: <span id='enumerator'></span> |
       Student ID: <span id='current-student-id'></span>
     </div>
-    <script>
-      // Loads from the version file
-      $("#version").load('version');
-
-      $('button').each( function(button) {
-        new MBP.fastButton(button, function(ev) {
-          Tangerine.router.navigate($(ev.target).attr("href"), true);
-        });
-      });
-
-    </script>
 
     <div id='content'>	
       <h2>
