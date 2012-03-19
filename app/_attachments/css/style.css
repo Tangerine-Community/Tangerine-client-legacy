@@ -218,7 +218,11 @@ td { vertical-align: top; }
 
 
 
-
+nav#main_nav
+{
+	display: inline-block;
+	clear: none;
+}
 
 
 
