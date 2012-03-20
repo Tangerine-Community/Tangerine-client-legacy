@@ -186,7 +186,6 @@ Router = (function(_super) {
     return this.verify_logged_in({
       success: function() {
         $('#enumerator').html($.enumerator);
-        if (Tangerine.assessment != null) location.reload();
         Tangerine.assessment = new Assessment({
           _id: id
         });
@@ -221,7 +220,7 @@ Router = (function(_super) {
   };
 
   Router.prototype.handle_menu = function(session) {
-    var admin_menu, normal_menu, user_roles;
+    var user_roles;
     if (session == null) {
       session = {
         userCtx: {
@@ -229,24 +228,16 @@ Router = (function(_super) {
         }
       };
     }
-    admin_menu = '\
-    <button href="#assessments">Collect</button>\
-    <button href="#manage">Manage</button>\
-    <button href="#logout">Logout</button>';
-    normal_menu = '\
-    <button href="#assessments">Collect</button>\
-    <button href="#logout">Logout</button>';
     user_roles = _.values(session.userCtx.roles);
     if (_.indexOf(user_roles, "_admin") !== -1) {
-      $("#main_nav").html(admin_menu);
+      $("#main_nav button").hide();
+      return $("#collect_button, #manage_button, #logout_button").show();
     } else if (_.indexOf(user_roles, "not_logged_in") !== -1) {
-      $("#main_nav").empty();
+      return $("#main_nav button").hide();
     } else {
-      $("#main_nav").html(normal_menu);
+      $("#main_nav button").hide();
+      return $("#collect_button, #logout_button").show();
     }
-    return $('button').click(function(event) {
-      return Tangerine.router.navigate($(event.target).attr("href"), true);
-    });
   };
 
   Router.prototype.print = function(id) {
@@ -319,19 +310,27 @@ $(function() {
     databaseFixAttempts++;
   }
   if (assessmentCollectionErrors > 0) console.log("Database error");
+  console.log("loading confic");
   config = new Backbone.Model({
     _id: "Config"
   });
+  console.log("fetching config");
   config.fetch({
     success: function() {
+      console.log("I supposedly got the config object. This is it: ");
+      console.log(config.toJSON());
       return Tangerine.config = config.toJSON();
     },
     error: function() {
       return console.log("Error loading config.");
     }
   });
+  console.log("config:");
+  console.log(Tangerine.config);
   Tangerine.router = new Router();
   Backbone.history.start();
   $("#version").load('version');
-  return $('#test_button').click(function() {});
+  return $('#main_nav button').click(function(event) {
+    return Tangerine.router.navigate($(event.target).attr("href"), true);
+  });
 });

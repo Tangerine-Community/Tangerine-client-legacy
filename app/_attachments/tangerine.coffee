@@ -151,27 +151,19 @@ class Router extends Backbone.Router
   # @TODO UI: reevaluate menu structure
   # @TODO default value is fragile, might want to make that more reliable
   handle_menu: ( session = { userCtx: { roles : ["not_logged_in"] } } ) ->
-    admin_menu = '
-    <button href="#assessments">Collect</button>
-    <button href="#manage">Manage</button>
-    <button href="#logout">Logout</button>'
-
-    normal_menu = '
-    <button href="#assessments">Collect</button>
-    <button href="#logout">Logout</button>'
-    
     user_roles = _.values session.userCtx.roles 
+    # admin user
     if _.indexOf(user_roles, "_admin") != -1
-      $( "#main_nav" ).html admin_menu
+      $( "#main_nav button" ).hide()
+      $( "#collect_button, #manage_button, #logout_button" ).show()
+    #not logged in
     else if _.indexOf(user_roles, "not_logged_in") != -1
-      $( "#main_nav" ).empty()
+      $( "#main_nav button" ).hide()
+    #regular user
     else
-      $( "#main_nav" ).html normal_menu
-
-
-    $( 'button' ).click (event) ->
-      Tangerine.router.navigate( $( event.target ).attr( "href" ), true );
-
+      $( "#main_nav button" ).hide()
+      $( "#collect_button, #logout_button" ).show()
+      
   print: (id) ->
     Assessment.load id, (assessment) ->
       assessment.toPaper (result) ->
@@ -296,14 +288,21 @@ $ -> # run after DOM loads
   #
   
   # load config
+  console.log "loading confic"
   config = new Backbone.Model
     _id: "Config"
+  console.log "fetching config"
   config.fetch
     success: =>
+      console.log "I supposedly got the config object. This is it: "
+      console.log config.toJSON()
       Tangerine.config = config.toJSON()
+      
     error: =>
       console.log "Error loading config."
-
+  console.log "config:"
+  console.log Tangerine.config
+  
   # Reuse the view objects to stop events from being duplicated (and to save memory)
   Tangerine.router = new Router()
   Backbone.history.start()
@@ -314,5 +313,6 @@ $ -> # run after DOM loads
   #
   $("#version").load 'version'
 
-  $('#test_button').click ->
+  $( '#main_nav button' ).click (event) ->
+    Tangerine.router.navigate( $( event.target ).attr( "href" ), true );
 
