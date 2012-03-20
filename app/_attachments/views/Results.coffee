@@ -81,7 +81,7 @@ class ResultsView extends Backbone.View
 
   detectSubnet: ->
     for subnetIP in [Tangerine.subnet.start..Tangerine.subnet.finish]
-      url = Tangerine.subnet.replace(/x/,subnetIP) + ":" + Tangerine.port
+      url = Tangerine.subnet.base + subnetIP + ":" + Tangerine.port
       buttonText = "Local save <span style='font-size:50%'>#{url.substring(7,url.lastIndexOf(":"))}</span>"
       @detectIP
         url: url

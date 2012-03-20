@@ -97,7 +97,7 @@ ResultsView = (function(_super) {
     var buttonText, subnetIP, url, _ref, _ref2, _results;
     _results = [];
     for (subnetIP = _ref = Tangerine.subnet.start, _ref2 = Tangerine.subnet.finish; _ref <= _ref2 ? subnetIP <= _ref2 : subnetIP >= _ref2; _ref <= _ref2 ? subnetIP++ : subnetIP--) {
-      url = Tangerine.subnet.replace(/x/, subnetIP) + ":" + Tangerine.port;
+      url = Tangerine.subnet.base + subnetIP + ":" + Tangerine.port;
       buttonText = "Local save <span style='font-size:50%'>" + (url.substring(7, url.lastIndexOf(":"))) + "</span>";
       _results.push(this.detectIP({
         url: url,

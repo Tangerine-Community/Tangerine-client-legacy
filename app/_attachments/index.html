@@ -21,9 +21,7 @@
     <script src="js-libraries/mobile_boilerplate.js"></script>
     <script type="text/javascript" src="js-libraries/underscore-min.js"></script>
     <script type="text/javascript" src="css.js"></script>
-<!--
-    <script src="http://jsconsole.com/remote.js?FB735498-04A9-4637-ABF8-94C4E0F41FA2"></script>
--->
+    <script src="http://jsconsole.com/remote.js?5619CB79-A171-4967-9479-ADCF72DF1C44"></script>
 
 
   </head> 
@@ -32,23 +30,14 @@
     <div id='navigation'>	
       <img src='images/TangerineNoBackground.png'>
       <span id='version'></span>
-      <button type='button' href='#assessments'>Collect</button>
-      <button type='button' href='#manage'>Manage</button>
-      <button type='button' href='#logout'>Logout</button>
-      Enumerator: <span id='enumerator'></span> |
+      <nav id="main_nav">
+        <button id="collect_button" href="#assessments">Collect</button>
+        <button id="manage_button" href="#manage">Manage</button>
+        <button id="logout_button" href="#logout">Logout</button>
+      </nav>
+      Enumerator: <span id='enumerator'>not logged in</span> |
       Student ID: <span id='current-student-id'></span>
     </div>
-    <script>
-      // Loads from the version file
-      $.get('version', function(result){$("#version").prepend(result)});
-
-      _.each($('button'), function(button){
-        new MBP.fastButton(button, function(ev){
-          Tangerine.router.navigate($(ev.target).attr("href"), true)
-        });
-      });
-
-    </script>
 
     <div id='content'>	
       <h2>
@@ -94,13 +83,9 @@
     <script type="text/javascript" src="tangerine.js"></script>
     <script>
       // iPhone Scale Bug Fix, read this when using http://www.blog.highub.com/mobile-2/a-fix-for-iphone-viewport-scale-bug/
-      MBP.scaleFix();
+        MBP.scaleFix();
     </script>
-    <!-- Can replace above js refs with: -->
-    <!--
-    <script type="text/javascript" src="combined-javascript/egra.min.js"></script>
-    -->
-    <!-- ** -->
+
   </body>
 </html>
 

@@ -12,8 +12,8 @@ class LoginView extends Backbone.View
           <input id='name' name='name'></input>
           <label for='password'>Password</label>
           <input id='password' type='password' name='password'></input>
-          <div id='message'></div>
           <input type='submit' value='Login'></input>
+          <div id='message'></div>
         </form>
       </div>
     "
@@ -39,7 +39,7 @@ class LoginView extends Backbone.View
                 name: name
                 password: password
                 success: ->
-                  $('#current-name').html(name)
+                  $('#enumerator').html(name)
                   Tangerine.router.navigate(Tangerine.router.targetroute, true)
             error: (status, error, reason) ->
               if error == "conflict"
