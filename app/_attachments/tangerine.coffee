@@ -124,8 +124,8 @@ class Router extends Backbone.Router
         # This is terrible but it fixes my problem
         # Currently live click handlers get duplicated over and over again
         # Need to convert everything to backbone style views
-        # if Tangerine.assessment?
-        #  location.reload()
+        if Tangerine.assessment?
+          location.reload()
         Tangerine.assessment = new Assessment {_id:id}
         Tangerine.assessment.fetch
           success: ->
@@ -288,7 +288,7 @@ $ -> # run after DOM loads
   #
   
   # load config
-  console.log "loading confic"
+  console.log "loading config"
   config = new Backbone.Model
     _id: "Config"
   console.log "fetching config"

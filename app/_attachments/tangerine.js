@@ -186,6 +186,7 @@ Router = (function(_super) {
     return this.verify_logged_in({
       success: function() {
         $('#enumerator').html($.enumerator);
+        if (Tangerine.assessment != null) location.reload();
         Tangerine.assessment = new Assessment({
           _id: id
         });
@@ -310,7 +311,7 @@ $(function() {
     databaseFixAttempts++;
   }
   if (assessmentCollectionErrors > 0) console.log("Database error");
-  console.log("loading confic");
+  console.log("loading config");
   config = new Backbone.Model({
     _id: "Config"
   });
