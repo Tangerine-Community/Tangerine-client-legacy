@@ -32,7 +32,7 @@ MapReduce = (function() {
             if (typeofobject === "string" || typeofobject === "number") {
               emitDoc.result = object;
             }
-            return emit(parent, emitDoc);
+            return emit(doc.assessment, emitDoc);
           } else {
             _results2 = [];
             for (key in object) {
@@ -51,7 +51,15 @@ MapReduce = (function() {
   };
 
   MapReduce.reduceFields = function(keys, values, rereduce) {
-    return true;
+    var fieldAndResult, key, rv, value;
+    rv = [];
+    for (key in values) {
+      value = values[key];
+      fieldAndResult = {};
+      fieldAndResult[value.fieldname] = value.result;
+      rv.push(fieldAndResult);
+    }
+    return rv;
   };
 
   MapReduce.mapByEnumerator = function(doc, req) {

@@ -79,13 +79,14 @@ class Assessment extends Backbone.Model
       results[page.pageId]["subtestType"] = page.pageType
     results.timestamp = new Date().valueOf()
     results.enumerator = $('#enumerator').html()
+    results.assessment = @get("_id")
     return results
 
   saveResults: (callback) ->
     results = @results()
     $.couch.db(@targetDatabase()).saveDoc results,
       success: ->
-        callback(results) if callback?
+        callback?(results)
       error: =>
         alert "Results NOT saved - do you have permission to save?"
         throw "Could not create document in #{@targetDatabase()}"

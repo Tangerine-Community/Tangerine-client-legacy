@@ -12,9 +12,8 @@ Router = (function(_super) {
 
   Router.prototype.routes = {
     "assessment/:id": "assessment",
-    "result/:database_name/:id": "result",
-    "results/tabular/:database_name": "tabular_results",
-    "results/tabular/:database_name/*options": "tabular_results",
+    "results/tabular/:assessment_id": "tabular_results",
+    "results/tabular/:assessment_id/*options": "tabular_results",
     "results/:database_name": "results",
     "print/:id": "print",
     "student_printout/:id": "student_printout",
@@ -86,14 +85,14 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.tabular_results = function(database_name) {
+  Router.prototype.tabular_results = function(assessment_id) {
     return this.verify_logged_in({
       success: function() {
         var limit, view;
         view = "reports/fields";
         limit = 10000000;
-        $("#content").html("Loading maximum of " + limit + " items from view: " + view + " from " + database_name);
-        return $.couch.db(database_name).view(view, {
+        $("#content").html("Loading maximum of " + limit + " items from view: " + view + " from " + assessment_id);
+        return $.couch.db(Backbone.couch_connector.config.db_name).view(view, {
           reduce: true,
           group: true,
           success: function(result) {
@@ -119,16 +118,13 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.result = function(database_name, id) {
+  Router.prototype.result = function(id) {
     return this.verify_logged_in({
       success: function() {
-        var _this = this;
-        return $.couch.db(database_name).openDoc(id, {
-          success: function(doc) {
-            if (Tangerine.resultView == null) {
-              Tangerine.resultView = new ResultView();
-            }
-            Tangerine.resultView.model = new Result(doc);
+        if (Tangerine.resultView == null) Tangerine.resultView = new ResultView();
+        Tangerine.resultView.model = new Result(id);
+        return Tangerine.resultView.model.fetch({
+          success: function() {
             return $("#content").html(Tangerine.resultView.render());
           }
         });

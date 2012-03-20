@@ -20,7 +20,7 @@ class MapReduce
             emitDoc.result = if object then "true" else "false"
           if typeofobject == "string" or typeofobject == "number"
             emitDoc.result = object
-          emit parent, emitDoc
+          emit doc.assessment, emitDoc
         else
           for key,value of object
             prefix  = (if parent == "" then key else parent + "." + key)
@@ -29,7 +29,12 @@ class MapReduce
     concatNodes("",doc) unless (doc.type? and doc.type is "replicationLog")
 
   @reduceFields: (keys, values, rereduce) ->
-    return true
+    rv = []
+    for key,value of values
+      fieldAndResult = {}
+      fieldAndResult[value.fieldname] = value.result
+      rv.push fieldAndResult
+    return rv
 
 
   @mapByEnumerator: (doc,req) ->
