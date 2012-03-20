@@ -59,27 +59,13 @@ class Utils
         "replicationLog":
           "map": MapReduce.mapReplicationLog.toString()
 
-  @reportViewsDesignDocument =
-      "_id":"_design/reports"
-      "language":"javascript"
-      "views":
-        # Calling toString on a function gets the function definition as a string
-        "fields":
-          "map": MapReduce.mapFields.toString()
-          "reduce": MapReduce.reduceFields.toString()
-
-
   @createResultsDatabase: (databaseName) ->
     console.log "trying to create a database"
     $('#message').append "<br/>Logging in as administrator"
     @sudo
       success: ->
         $('#message').append "<br/>Creating database [#{databaseName}]"
-        $.couch.db(databaseName).create
-          success: =>
-            createResultViews(databaseName)
-            createDesignDocumentViews(databaseName, @resultViewsDesignDocument)
-
+        $.couch.db(databaseName).create()
 
   @createResultViews: (databaseName) ->
     console.log "trying to create result views"
@@ -90,14 +76,6 @@ class Utils
       error: (a,b,c) =>
         console.log ["error",a, b, c]
     @createDesignDocumentViews(databaseName, @resultViewsDesignDocument)
-
-
-  @createReportViews: (databaseName) ->
-    @sudo
-      success: =>
-        $('#message').append "<br/>Creating report views in [#{databaseName}]"
-        @createDesignDocumentViews(databaseName, @reportsViewsDesignDocument)
-
 
   @createDesignDocumentViews: (databaseName,designDocument) ->
     $.couch.db(databaseName).openDoc designDocument["_id"],
@@ -111,13 +89,13 @@ class Utils
           success: ->
             $('#message').append "<br/>Views created for [#{databaseName}]"
 
-
   @sudo: (options) ->
     console.log "Logging in..."
     credentials = 
       name: Tangerine.config.user_with_database_create_permission,
       password: Tangerine.config.password_with_database_create_permission
     options = _.extend(options, credentials);
+    console.log "login options:"
+    console.log options
     $.couch.login options
-
 

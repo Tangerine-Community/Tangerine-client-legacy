@@ -94,7 +94,8 @@ ManageView = (function(_super) {
         messages.fadeOut(2000., function() {
           return messages.remove();
         });
-        return Utils.createResultsDatabase(assessment.targetDatabase());
+        Utils.createResultsDatabase(assessment.targetDatabase());
+        return Utils.createResultViews(assessment.targetDatabase());
       },
       error: function() {
         messages = $("<span class='error'>Invalid new assessment</span>");

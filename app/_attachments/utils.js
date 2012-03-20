@@ -90,30 +90,13 @@ Utils = (function() {
     }
   };
 
-  Utils.reportViewsDesignDocument = {
-    "_id": "_design/reports",
-    "language": "javascript",
-    "views": {
-      "fields": {
-        "map": MapReduce.mapFields.toString(),
-        "reduce": MapReduce.reduceFields.toString()
-      }
-    }
-  };
-
   Utils.createResultsDatabase = function(databaseName) {
     console.log("trying to create a database");
     $('#message').append("<br/>Logging in as administrator");
     return this.sudo({
       success: function() {
-        var _this = this;
         $('#message').append("<br/>Creating database [" + databaseName + "]");
-        return $.couch.db(databaseName).create({
-          success: function() {
-            createResultViews(databaseName);
-            return createDesignDocumentViews(databaseName, _this.resultViewsDesignDocument);
-          }
-        });
+        return $.couch.db(databaseName).create();
       }
     });
   };
@@ -131,16 +114,6 @@ Utils = (function() {
       }
     });
     return this.createDesignDocumentViews(databaseName, this.resultViewsDesignDocument);
-  };
-
-  Utils.createReportViews = function(databaseName) {
-    var _this = this;
-    return this.sudo({
-      success: function() {
-        $('#message').append("<br/>Creating report views in [" + databaseName + "]");
-        return _this.createDesignDocumentViews(databaseName, _this.reportsViewsDesignDocument);
-      }
-    });
   };
 
   Utils.createDesignDocumentViews = function(databaseName, designDocument) {
@@ -171,6 +144,8 @@ Utils = (function() {
       password: Tangerine.config.password_with_database_create_permission
     };
     options = _.extend(options, credentials);
+    console.log("login options:");
+    console.log(options);
     return $.couch.login(options);
   };
 
