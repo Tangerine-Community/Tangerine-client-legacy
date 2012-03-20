@@ -1,9 +1,9 @@
 class Router extends Backbone.Router
   routes:
     "assessment/:id": "assessment"
-    "result/:database_name/:id": "result"
-    "results/tabular/:database_name": "tabular_results"
-    "results/tabular/:database_name/*options": "tabular_results"
+#    "result/:id": "result"
+    "results/tabular/:assessment_id": "tabular_results"
+    "results/tabular/:assessment_id/*options": "tabular_results"
     "results/:database_name": "results"
     "print/:id": "print"
     "student_printout/:id": "student_printout"
@@ -49,15 +49,19 @@ class Router extends Backbone.Router
         Tangerine.resultsView.databaseName = database_name
         Tangerine.resultsView.render()
 
-
-  tabular_results: (database_name) ->
+  
+  # Have rewritten map/reduce views for this, need to refactor to use
+  # Note that views are currently not created for any current system
+  # Need to enable for cloud/laptop only situations
+  tabular_results: (assessment_id) ->
     @verify_logged_in
       success: ->
         view = "reports/fields"
 # TODO - figure out what to do about this limit
         limit= 10000000
-        $("#content").html("Loading maximum of #{limit} items from view: #{view} from #{database_name}")
-        $.couch.db(database_name).view view,
+        $("#content").html("Loading maximum of #{limit} items from view: #{view} from #{assessment_id}")
+
+        $.couch.db(Backbone.couch_connector.config.db_name).view view,
           reduce: true
           group: true
           success: (result) ->
@@ -74,13 +78,13 @@ class Router extends Backbone.Router
                 Tangerine.resultsView.renderTable(options)
               
 
-  result: (database_name,id) ->
+  result: (id) ->
     @verify_logged_in
       success: ->
-        $.couch.db(database_name).openDoc id,
-          success: (doc) =>
-            Tangerine.resultView ?= new ResultView()
-            Tangerine.resultView.model = new Result(doc)
+        Tangerine.resultView ?= new ResultView()
+        Tangerine.resultView.model = new Result(id)
+        Tangerine.resultView.model.fetch
+          success:->
             $("#content").html Tangerine.resultView.render()
 
   manage: ->
