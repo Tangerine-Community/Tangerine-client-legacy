@@ -5,7 +5,7 @@ class ResultsView extends Backbone.View
 
     @el.html "
       <div id='message'></div>
-      <h2>#{@databaseName}</h2>
+      <h2>#{@assessment.name}</h2>
       <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>
       <button>Detect save options</button>
       <div id='saveOptions'>
@@ -17,29 +17,15 @@ class ResultsView extends Backbone.View
     "
 
     @detectCloud()
-
-    $.couch.db(@databaseName).view "results/byEnumerator",
-      key: $.enumerator
-      reduce: false
-      success: (result) =>
-        console.log result
-        $.couch.db(@databaseName).allDocs
-          keys: _.pluck result.rows, "id"
-          include_docs: true
-          success: (docs) =>
-            @results = new ResultCollection _.pluck docs.rows, "doc"
-            @results.databaseName = @databaseName
-
-            @results.each (result) =>
-              Tangerine.resultView ?= new ResultView()
-              Tangerine.resultView.model = result
-              finishTime = new moment(result.get("timestamp"))
-              $("#results").append "
-                <div><button>#{finishTime.format("D-MMM-YY")} (#{finishTime.fromNow()})</button></div>
-                <div class='result'>#{Tangerine.resultView.render()}</div>
-              "
-            @updateLastCloudReplication()
-
+    @updateLastCloudReplication()
+    @results.each (result) =>
+      Tangerine.resultView ?= new ResultView()
+      Tangerine.resultView.model = result
+      finishTime = new moment(result.get("timestamp"))
+      $("#results").append "
+        <div><button>#{finishTime.format("D-MMM-YY")} (#{finishTime.fromNow()})</button></div>
+        <div class='result'>#{Tangerine.resultView.render()}</div>
+      "
 
     $("#results").accordion
       collapsible: true
@@ -107,7 +93,7 @@ class ResultsView extends Backbone.View
         @updateLastCloudReplication()
 
   csv: ->
-    Tangerine.router.navigate("results/tabular/#{@databaseName}",true)
+    Tangerine.router.navigate("results/tabular/#{@assessment.get "_id"}",true)
 
   updateTable: ->
     tableConfigQueryString = $('form').serialize()

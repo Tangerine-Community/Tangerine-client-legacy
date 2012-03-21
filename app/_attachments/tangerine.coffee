@@ -4,7 +4,7 @@ class Router extends Backbone.Router
 #    "result/:id": "result"
     "results/tabular/:assessment_id": "tabular_results"
     "results/tabular/:assessment_id/*options": "tabular_results"
-    "results/:database_name": "results"
+    "results/:assessmentId/:enumerator": "results"
     "print/:id": "print"
     "student_printout/:id": "student_printout"
     "login": "login"
@@ -42,12 +42,19 @@ class Router extends Backbone.Router
             Tangerine.assessmentEdit.render()
                 
 
-  results: (database_name) ->
+  results: (assessmentId,enumerator) ->
     @verify_logged_in
       success: ->
-        Tangerine.resultsView ?= new ResultsView()
-        Tangerine.resultsView.databaseName = database_name
-        Tangerine.resultsView.render()
+        resultCollection = new ResultCollection()
+        resultCollection.fetch
+          Tangerine.resultsView ?= new ResultsView()
+          Tangerine.resultsView.assessment = new Assessment
+            _id: assessmentId
+          Tangerine.resultsView.assessment.fetch
+            success:
+              Tangerine.resultsView.results = resultCollection.filter (result) ->
+                result.get "assessmentId" is assessmentId and result.get "enumerator" is enumerator
+              Tangerine.resultsView.render()
 
   
   # Have rewritten map/reduce views for this, need to refactor to use

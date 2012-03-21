@@ -79,7 +79,7 @@ class Assessment extends Backbone.Model
       results[page.pageId]["subtestType"] = page.pageType
     results.timestamp = new Date().valueOf()
     results.enumerator = $('#enumerator').html()
-    results.assessment = @get("_id")
+    results.assessmentId = @get("_id")
     return results
 
   saveResults: (callback) ->
