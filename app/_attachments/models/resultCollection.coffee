@@ -2,6 +2,8 @@ class ResultCollection extends Backbone.Collection
 
   model: Result
 
+  url: '/result'
+
   replicate: (target,options) ->
     target = target + "/" + @databaseName
     $("#message").html "Syncing to #{target}"

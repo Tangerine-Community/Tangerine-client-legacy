@@ -39,9 +39,12 @@ AssessmentListView = (function(_super) {
         resultCollection = new ResultCollection();
         return resultCollection.fetch({
           success: function() {
-            var _this = this;
             resultCollection.each(function(result) {
-              if (!result.get("enumerator" === $.enumerator)) return;
+              console.log(result);
+              console.log(result.get("enumerator"));
+              console.log($.enumerator);
+              if (result.get("enumerator") !== $.enumerator) return;
+              console.log("ADDING");
               return assessmentDetails[result.get("assessmentId")]["number_completed"] += 1;
             });
             _.each(assessmentDetails, function(value, key) {

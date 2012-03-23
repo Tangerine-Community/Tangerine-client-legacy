@@ -12,6 +12,8 @@ ResultCollection = (function(_super) {
 
   ResultCollection.prototype.model = Result;
 
+  ResultCollection.prototype.url = '/result';
+
   ResultCollection.prototype.replicate = function(target, options) {
     var replicationLogEntry;
     target = target + "/" + this.databaseName;

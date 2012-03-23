@@ -42,9 +42,9 @@ class AssessmentListView extends Backbone.View
 
         resultCollection = new ResultCollection()
         resultCollection.fetch
-          success: ->
-            resultCollection.each (result) ->
-              return unless result.get "enumerator" is $.enumerator
+          success: =>
+            resultCollection.each (result) =>
+              return unless result.get("enumerator") is $.enumerator
               assessmentDetails[result.get "assessmentId" ]["number_completed"]+=1
 
             _.each assessmentDetails, (value,key) =>
