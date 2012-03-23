@@ -1,9 +1,5 @@
 class Result extends Backbone.Model
-  fetch: (options = {}) =>
-    $.couch.db(@get("database_name")).openDoc @get("id"),
-      success: (doc) =>
-        @set(doc)
-        options?.success()
+  url: "/result"
 
   subtestResults: ->
     subtestTypesToSkip = [

@@ -83,13 +83,13 @@ class Assessment extends Backbone.Model
     return results
 
   saveResults: (callback) ->
-    results = @results()
-    $.couch.db(@targetDatabase()).saveDoc results,
+    result = new Result(@results())
+    result.save
       success: ->
         callback?(results)
       error: =>
         alert "Results NOT saved - do you have permission to save?"
-        throw "Could not create document in #{@targetDatabase()}"
+        throw "Could not save result #{@results()}"
 
   resetURL: ->
     #document.location.origin + document.location.pathname + document.location.search

@@ -62,20 +62,6 @@ MapReduce = (function() {
     return rv;
   };
 
-  MapReduce.mapByEnumerator = function(doc, req) {
-    if ((doc.enumerator != null) && (doc.timestamp != null)) {
-      return emit(doc.enumerator, null);
-    }
-  };
-
-  MapReduce.countByEnumerator = function(keys, values, rereduce) {
-    return keys.length;
-  };
-
-  MapReduce.mapReplicationLog = function(doc, req) {
-    if (doc.type === "replicationLog") return emit(doc.timestamp, doc);
-  };
-
   return MapReduce;
 
 })();
@@ -83,66 +69,6 @@ MapReduce = (function() {
 Utils = (function() {
 
   function Utils() {}
-
-  Utils.resultViewsDesignDocument = {
-    "_id": "_design/results",
-    "language": "javascript",
-    "views": {
-      "byEnumerator": {
-        "map": MapReduce.mapByEnumerator.toString(),
-        "reduce": MapReduce.countByEnumerator.toString()
-      },
-      "replicationLog": {
-        "map": MapReduce.mapReplicationLog.toString()
-      }
-    }
-  };
-
-  Utils.createResultsDatabase = function(databaseName) {
-    console.log("trying to create a database");
-    $('#message').append("<br/>Logging in as administrator");
-    return this.sudo({
-      success: function() {
-        $('#message').append("<br/>Creating database [" + databaseName + "]");
-        return $.couch.db(databaseName).create();
-      }
-    });
-  };
-
-  Utils.createResultViews = function(databaseName) {
-    var _this = this;
-    console.log("trying to create result views");
-    this.sudo({
-      success: function() {
-        $('#message').append("<br/>Creating result views in [" + databaseName + "]");
-        return console.log("Good, created design views");
-      },
-      error: function(a, b, c) {
-        return console.log(["error", a, b, c]);
-      }
-    });
-    return this.createDesignDocumentViews(databaseName, this.resultViewsDesignDocument);
-  };
-
-  Utils.createDesignDocumentViews = function(databaseName, designDocument) {
-    return $.couch.db(databaseName).openDoc(designDocument["_id"], {
-      success: function(doc) {
-        designDocument._rev = doc._rev;
-        return $.couch.db(databaseName).saveDoc(designDocument, {
-          success: function() {
-            return $('#message').append("<br/>Views updated for [" + databaseName + "]");
-          }
-        });
-      },
-      error: function() {
-        return $.couch.db(databaseName).saveDoc(designDocument, {
-          success: function() {
-            return $('#message').append("<br/>Views created for [" + databaseName + "]");
-          }
-        });
-      }
-    });
-  };
 
   Utils.sudo = function(options) {
     var credentials;

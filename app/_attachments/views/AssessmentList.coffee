@@ -6,10 +6,10 @@ class AssessmentListView extends Backbone.View
   templateTableRow: Handlebars.compile "
     <tr>
       <td class='assessment-name'>
-        <button class='assessment-name' data-target='{{id}}'>{{name}}</button>
+        <a href='#assessment/{{id}}'>{{name}}</a>
       </td>
       <td class='number-completed-by-current-enumerator'>
-        <button class='number-completed' data-database-name='{{database_name}}'>{{number_completed}}</button>
+        <a href='#results/{{id}}/{{enumerator}}'>{{number_completed}}</a>
       </td>
     </tr>
   "
@@ -27,36 +27,27 @@ class AssessmentListView extends Backbone.View
         <tbody></tbody>
       </table>
     "
-    $("#assessments").tablesorter()
 
     assessmentCollection = new AssessmentCollection()
     assessmentCollection.fetch
       success: =>
-        itemsToProcess = assessmentCollection.length
+        assessmentDetails = {}
         assessmentCollection.each (assessment) =>
-          if assessment.get("archived") is true
-            itemsToProcess--
-            return
-          $.couch.db(assessment.targetDatabase()).view "results/byEnumerator",
-            group: true
-            key: $.enumerator
-            success: (result) =>
-              @el.find("#assessments tbody").append @templateTableRow
-                name: assessment.get("name")
-                number_completed: result.rows[0]?.value || "0"
-                id: assessment.get("_id")
-                database_name: assessment.targetDatabase()
+          return if assessment.get("archived") is true
+          assessmentDetails[assessment.get "_id"] =
+            id : assessment.get "_id"
+            name : assessment.get "name"
+            enumerator : enumerator
+            number_completed : 0
 
-              # Wait until all items have been added before adding the sorting/filtering
-              if --itemsToProcess is 0
-                $('table').tablesorter()
+        resultCollection = new ResultCollection()
+        resultCollection.fetch
+          success: ->
+            resultCollection.each (result) ->
+              return unless result.get "enumerator" is $.enumerator
+              assessmentDetails[result.get "assessmentId" ]["number_completed"]+=1
 
-  events:
-    "click button.assessment-name": "loadAssessment"
-    "click button.number-completed": "loadResults"
+            _.each assessmentDetails, (value,key) =>
+              @el.find("#assessments tbody").append @templateTableRow value
 
-  loadAssessment: (event) ->
-    Tangerine.router.navigate("assessment/#{$(event.target).attr("data-target")}", true)
-
-  loadResults: (event) ->
-    Tangerine.router.navigate("results/#{$(event.target).attr("data-database-name")}", true)
+            $('table').tablesorter()

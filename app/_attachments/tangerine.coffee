@@ -47,14 +47,15 @@ class Router extends Backbone.Router
       success: ->
         resultCollection = new ResultCollection()
         resultCollection.fetch
-          Tangerine.resultsView ?= new ResultsView()
-          Tangerine.resultsView.assessment = new Assessment
-            _id: assessmentId
-          Tangerine.resultsView.assessment.fetch
-            success:
-              Tangerine.resultsView.results = resultCollection.filter (result) ->
-                result.get "assessmentId" is assessmentId and result.get "enumerator" is enumerator
-              Tangerine.resultsView.render()
+          success: ->
+            Tangerine.resultsView ?= new ResultsView()
+            Tangerine.resultsView.assessment = new Assessment
+              _id: assessmentId
+            Tangerine.resultsView.assessment.fetch
+              success: ->
+                Tangerine.resultsView.results = resultCollection.filter (result) ->
+                  result.get "assessmentId" is assessmentId and result.get "enumerator" is enumerator
+                Tangerine.resultsView.render()
 
   
   # Have rewritten map/reduce views for this, need to refactor to use
@@ -68,13 +69,13 @@ class Router extends Backbone.Router
         limit= 10000000
         $("#content").html("Loading maximum of #{limit} items from view: #{view} from #{assessment_id}")
 
-        $.couch.db(Backbone.couch_connector.config.db_name).view view,
+        $.couch.db(Tangerine.database_name).view view,
           reduce: true
           group: true
           success: (result) ->
             uniqueFields = _.pluck result.rows, "key"
 
-            $.couch.db(database_name).view view,
+            $.couch.db(Tangerine.database_name).view view,
               reduce: false
               limit: limit
               success: (tableResults) ->
@@ -258,61 +259,15 @@ $ -> # run after DOM loads
   #    data: '"28800"'
 
   #
-  # Verify database structure
-  #
-  
-  assessmentCollection = new AssessmentCollection()
-  
-  databaseErrorCount = 0
-  databaseFixAttempts = 0
-  assessmentCollectionErrors = 0
-  
-  loop
-    assessmentCollection.fetch
-      success: =>
-        assessmentCollection.each ( assessment ) =>
-
-          # assert database
-          $.couch.db( assessment.targetDatabase() ).info
-            error: ( responseCode, b, errorType ) =>
-              databaseErrorCount++
-              if errorType == "no_db_file"
-                Utils.createResultsDatabase assessment.targetDatabase()
-
-          # assert result design docs
-          # @TODO maybe assert report docs too
-          $.couch.db( assessment.targetDatabase() ).openDoc "_design/results"
-            error: ( responseCode, b, errorType ) =>
-              databaseErrorCount++
-              if responseCode == 404 then Utils.createResultViews assessment.targetDatabase()
-
-      error: =>
-        assessmentCollectionErrors++
-    break if databaseErrorCount == 0 or databaseFixAttempts == 3
-
-    databaseFixAttempts++
-
-  if assessmentCollectionErrors > 0 then console.log "Database error"
-
-  #
   # Start the application
   #
   
   # load config
-  console.log "loading config"
   config = new Backbone.Model
     _id: "Config"
-  console.log "fetching config"
   config.fetch
     success: =>
-      console.log "I supposedly got the config object. This is it: "
-      console.log config.toJSON()
       Tangerine.config = config.toJSON()
-      
-    error: =>
-      console.log "Error loading config."
-  console.log "config:"
-  console.log Tangerine.config
   
   # Reuse the view objects to stop events from being duplicated (and to save memory)
   Tangerine.router = new Router()
@@ -326,4 +281,3 @@ $ -> # run after DOM loads
 
   $( '#main_nav button' ).click (event) ->
     Tangerine.router.navigate( $( event.target ).attr( "href" ), true );
-

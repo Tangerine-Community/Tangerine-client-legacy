@@ -138,20 +138,21 @@ Assessment = (function(_super) {
     }
     results.timestamp = new Date().valueOf();
     results.enumerator = $('#enumerator').html();
+    results.assessmentId = this.get("_id");
     return results;
   };
 
   Assessment.prototype.saveResults = function(callback) {
-    var results,
+    var result,
       _this = this;
-    results = this.results();
-    return $.couch.db(this.targetDatabase()).saveDoc(results, {
+    result = new Result(this.results());
+    return result.save({
       success: function() {
-        if (callback != null) return callback(results);
+        return typeof callback === "function" ? callback(results) : void 0;
       },
       error: function() {
         alert("Results NOT saved - do you have permission to save?");
-        throw "Could not create document in " + (_this.targetDatabase());
+        throw "Could not save result " + (_this.results());
       }
     });
   };

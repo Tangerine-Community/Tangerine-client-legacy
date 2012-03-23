@@ -13,15 +13,18 @@ ResultCollection = (function(_super) {
   ResultCollection.prototype.model = Result;
 
   ResultCollection.prototype.replicate = function(target, options) {
+    var replicationLogEntry;
     target = target + "/" + this.databaseName;
     $("#message").html("Syncing to " + target);
-    $.couch.db(this.databaseName).saveDoc({
-      type: "replicationLog",
+    replicationLogEntry = new ReplicationLogEntry({
       timestamp: new Date().getTime(),
-      source: this.databaseName,
+      source: this.assessmentId,
       target: target
     });
-    return $.couch.replicate(this.databaseName, target, {
+    replicationLogEntry.save();
+    return $.couch.replicate(Tangerine.databaseName, target, {
+      filter: Tangerine.design_doc_name + "/resultFilter",
+      assessment: this.assessmentId,
       success: function() {
         return options.success();
       },
@@ -32,17 +35,19 @@ ResultCollection = (function(_super) {
   };
 
   ResultCollection.prototype.lastCloudReplication = function(options) {
-    return $.couch.db(this.databaseName).view("results/replicationLog", {
-      success: function(result) {
-        var latestTimestamp;
-        latestTimestamp = _.max(_.pluck(result.rows, "key"));
-        if (latestTimestamp != null) {
-          return _.each(result.rows, function(row) {
-            if (row.key === latestTimestamp) return options.success(row.value);
-          });
-        } else {
-          return options.error();
-        }
+    var replicationLogEntryCollection;
+    replicationLogEntryCollection = new ReplicationLogEntryCollection();
+    return replicationLogEntryCollection.fetch({
+      success: function() {
+        var mostRecentReplicationLogEntry;
+        mostRecentReplicationLogEntry = this.first();
+        replicationLogEntryCollection.each(function(replicationLogEntry) {
+          if (replicationLogEntry.source !== this.assessmentId) return;
+          if (replicationLogEntry.timestamp > mostRecentReplicationLogEntry.timestamp) {
+            return mostRecentReplicationLogEntry = replicationLogEntry;
+          }
+        });
+        return options.success(mostRecentReplicationLogEntry);
       }
     });
   };

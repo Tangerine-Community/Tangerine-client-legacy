@@ -5,25 +5,27 @@ class ResultCollection extends Backbone.Collection
   replicate: (target,options) ->
     target = target + "/" + @databaseName
     $("#message").html "Syncing to #{target}"
-    $.couch.db(@databaseName).saveDoc
-      type: "replicationLog"
+    replicationLogEntry = new ReplicationLogEntry
       timestamp: new Date().getTime()
-      source: @databaseName
+      source: @assessmentId
       target: target
+    replicationLogEntry.save()
 
-    $.couch.replicate @databaseName, target,
+    # TODO TEST that this actually works! (filtered replication!)
+    $.couch.replicate Tangerine.databaseName, target,
+      filter: Tangerine.design_doc_name + "/resultFilter"
+      assessment: @assessmentId
       success: ->
         options.success()
       error: (res) ->
         $("#message").html "Error: #{res}"
 
   lastCloudReplication: (options) ->
-    $.couch.db(@databaseName).view "results/replicationLog",
-      success: (result) ->
-        latestTimestamp = _.max(_.pluck(result.rows, "key"))
-        if latestTimestamp?
-          _.each result.rows, (row) ->
-            if row.key == latestTimestamp
-              options.success(row.value)
-        else
-          options.error()
+    replicationLogEntryCollection  = new ReplicationLogEntryCollection()
+    replicationLogEntryCollection.fetch
+      success: ->
+        mostRecentReplicationLogEntry = @first() # just for initialization
+        replicationLogEntryCollection.each (replicationLogEntry) ->
+          return unless replicationLogEntry.source is @assessmentId
+          mostRecentReplicationLogEntry = replicationLogEntry if replicationLogEntry.timestamp > mostRecentReplicationLogEntry.timestamp
+        options.success(mostRecentReplicationLogEntry)

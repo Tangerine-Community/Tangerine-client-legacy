@@ -14,7 +14,7 @@ Router = (function(_super) {
     "assessment/:id": "assessment",
     "results/tabular/:assessment_id": "tabular_results",
     "results/tabular/:assessment_id/*options": "tabular_results",
-    "results/:database_name": "results",
+    "results/:assessmentId/:enumerator": "results",
     "print/:id": "print",
     "student_printout/:id": "student_printout",
     "login": "login",
@@ -73,14 +73,29 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.results = function(database_name) {
+  Router.prototype.results = function(assessmentId, enumerator) {
     return this.verify_logged_in({
       success: function() {
-        if (Tangerine.resultsView == null) {
-          Tangerine.resultsView = new ResultsView();
-        }
-        Tangerine.resultsView.databaseName = database_name;
-        return Tangerine.resultsView.render();
+        var resultCollection;
+        resultCollection = new ResultCollection();
+        return resultCollection.fetch({
+          success: function() {
+            if (Tangerine.resultsView == null) {
+              Tangerine.resultsView = new ResultsView();
+            }
+            Tangerine.resultsView.assessment = new Assessment({
+              _id: assessmentId
+            });
+            return Tangerine.resultsView.assessment.fetch({
+              success: function() {
+                Tangerine.resultsView.results = resultCollection.filter(function(result) {
+                  return result.get("assessmentId" === assessmentId && result.get("enumerator" === enumerator));
+                });
+                return Tangerine.resultsView.render();
+              }
+            });
+          }
+        });
       }
     });
   };
@@ -92,13 +107,13 @@ Router = (function(_super) {
         view = "reports/fields";
         limit = 10000000;
         $("#content").html("Loading maximum of " + limit + " items from view: " + view + " from " + assessment_id);
-        return $.couch.db(Backbone.couch_connector.config.db_name).view(view, {
+        return $.couch.db(Tangerine.database_name).view(view, {
           reduce: true,
           group: true,
           success: function(result) {
             var uniqueFields;
             uniqueFields = _.pluck(result.rows, "key");
-            return $.couch.db(database_name).view(view, {
+            return $.couch.db(Tangerine.database_name).view(view, {
               reduce: false,
               limit: limit,
               success: function(tableResults) {
@@ -271,59 +286,16 @@ Router = (function(_super) {
 })(Backbone.Router);
 
 $(function() {
-  var assessmentCollection, assessmentCollectionErrors, config, databaseErrorCount, databaseFixAttempts,
+  var config,
     _this = this;
-  assessmentCollection = new AssessmentCollection();
-  databaseErrorCount = 0;
-  databaseFixAttempts = 0;
-  assessmentCollectionErrors = 0;
-  while (true) {
-    assessmentCollection.fetch({
-      success: function() {
-        return assessmentCollection.each(function(assessment) {
-          $.couch.db(assessment.targetDatabase()).info({
-            error: function(responseCode, b, errorType) {
-              databaseErrorCount++;
-              if (errorType === "no_db_file") {
-                return Utils.createResultsDatabase(assessment.targetDatabase());
-              }
-            }
-          });
-          return $.couch.db(assessment.targetDatabase()).openDoc("_design/results", {
-            error: function(responseCode, b, errorType) {
-              databaseErrorCount++;
-              if (responseCode === 404) {
-                return Utils.createResultViews(assessment.targetDatabase());
-              }
-            }
-          });
-        });
-      },
-      error: function() {
-        return assessmentCollectionErrors++;
-      }
-    });
-    if (databaseErrorCount === 0 || databaseFixAttempts === 3) break;
-    databaseFixAttempts++;
-  }
-  if (assessmentCollectionErrors > 0) console.log("Database error");
-  console.log("loading config");
   config = new Backbone.Model({
     _id: "Config"
   });
-  console.log("fetching config");
   config.fetch({
     success: function() {
-      console.log("I supposedly got the config object. This is it: ");
-      console.log(config.toJSON());
       return Tangerine.config = config.toJSON();
-    },
-    error: function() {
-      return console.log("Error loading config.");
     }
   });
-  console.log("config:");
-  console.log(Tangerine.config);
   Tangerine.router = new Router();
   Backbone.history.start();
   $("#version").load('version');
