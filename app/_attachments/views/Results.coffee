@@ -5,7 +5,7 @@ class ResultsView extends Backbone.View
 
     @el.html "
       <div id='message'></div>
-      <h2>#{@assessment.name}</h2>
+      <h2>#{@assessment.get "name"}</h2>
       <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>
       <button>Detect save options</button>
       <div id='saveOptions'>
@@ -18,7 +18,7 @@ class ResultsView extends Backbone.View
 
     @detectCloud()
     @updateLastCloudReplication()
-    @results.each (result) =>
+    _.each @results, (result) =>
       Tangerine.resultView ?= new ResultView()
       Tangerine.resultView.model = result
       finishTime = new moment(result.get("timestamp"))
@@ -46,7 +46,7 @@ class ResultsView extends Backbone.View
     "click button:contains(Download as CSV)" : "downloadCSV"
 
   updateLastCloudReplication: ->
-    @results.lastCloudReplication
+    @assessment.lastCloudReplication
       success: (result) ->
         $("#lastCloudReplicationTime").html new moment(result.timestamp).fromNow()
       error: ->
@@ -73,6 +73,7 @@ class ResultsView extends Backbone.View
         url: url
         successButton: "<button type='button' class='save' saveTarget='#{url}'>#{buttonText}"
 
+  # Use jsonp to allow for cross domain queries to see if there are any other instances of tangerine running on the subnet
   detectIP: (options) ->
     $.ajax
       dataType: "jsonp"
@@ -87,8 +88,8 @@ class ResultsView extends Backbone.View
           $("#saveOptions").append options.successButton
 
   replicate: (target) ->
-    @results.replicate target,
-      success: ->
+    @assessment.replicate target,
+      success: =>
         $("#message").html "Save successful"
         @updateLastCloudReplication()
 

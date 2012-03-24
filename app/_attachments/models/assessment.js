@@ -16,6 +16,55 @@ Assessment = (function(_super) {
 
   Assessment.prototype.url = '/assessment';
 
+  Assessment.prototype.replicate = function(target, options) {
+    var ajaxOptions, replicationLogEntry, replicationOptions;
+    $("#message").html("Syncing to " + target);
+    replicationLogEntry = new ReplicationLogEntry({
+      timestamp: new Date().getTime(),
+      source: this.get("_id"),
+      target: target
+    });
+    replicationLogEntry.save();
+    ajaxOptions = {
+      success: function() {
+        return options.success();
+      },
+      error: function(res) {
+        return $("#message").html("Error: " + res);
+      }
+    };
+    replicationOptions = {
+      filter: Tangerine.design_doc_name + "/resultFilter",
+      query_params: {
+        assessmentId: this.get("_id")
+      }
+    };
+    return $.couch.replicate(Tangerine.database_name, target, ajaxOptions, replicationOptions);
+  };
+
+  Assessment.prototype.lastCloudReplication = function(options) {
+    var assessmentId, replicationLogEntryCollection;
+    assessmentId = this.get("id");
+    replicationLogEntryCollection = new ReplicationLogEntryCollection();
+    return replicationLogEntryCollection.fetch({
+      success: function() {
+        var mostRecentReplicationLogEntry;
+        mostRecentReplicationLogEntry = replicationLogEntryCollection.first();
+        replicationLogEntryCollection.each(function(replicationLogEntry) {
+          if (replicationLogEntry.source !== assessmentId) return;
+          if (replicationLogEntry.timestamp > mostRecentReplicationLogEntry.timestamp) {
+            return mostRecentReplicationLogEntry = replicationLogEntry;
+          }
+        });
+        if (mostRecentReplicationLogEntry) {
+          return options != null ? typeof options.success === "function" ? options.success(mostRecentReplicationLogEntry) : void 0 : void 0;
+        } else {
+          return options != null ? typeof options.error === "function" ? options.error() : void 0 : void 0;
+        }
+      }
+    });
+  };
+
   Assessment.prototype.fetch = function(options) {
     var superOptions,
       _this = this;

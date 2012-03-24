@@ -37,7 +37,7 @@ class AssessmentListView extends Backbone.View
           assessmentDetails[assessment.get "_id"] =
             id : assessment.get "_id"
             name : assessment.get "name"
-            enumerator : enumerator
+            enumerator : $.enumerator
             number_completed : 0
 
         resultCollection = new ResultCollection()

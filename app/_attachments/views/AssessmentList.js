@@ -32,7 +32,7 @@ AssessmentListView = (function(_super) {
           return assessmentDetails[assessment.get("_id")] = {
             id: assessment.get("_id"),
             name: assessment.get("name"),
-            enumerator: enumerator,
+            enumerator: $.enumerator,
             number_completed: 0
           };
         });
@@ -40,11 +40,7 @@ AssessmentListView = (function(_super) {
         return resultCollection.fetch({
           success: function() {
             resultCollection.each(function(result) {
-              console.log(result);
-              console.log(result.get("enumerator"));
-              console.log($.enumerator);
               if (result.get("enumerator") !== $.enumerator) return;
-              console.log("ADDING");
               return assessmentDetails[result.get("assessmentId")]["number_completed"] += 1;
             });
             _.each(assessmentDetails, function(value, key) {

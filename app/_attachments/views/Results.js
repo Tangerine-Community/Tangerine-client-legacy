@@ -16,32 +16,15 @@ ResultsView = (function(_super) {
 
   ResultsView.prototype.render = function() {
     var _this = this;
-    this.el.html("      <div id='message'></div>      <h2>" + this.databaseName + "</h2>      <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>      <button>Detect save options</button>      <div id='saveOptions'>      </div>      <button>CSV/Excel</button>      <hr/>      Results saved by " + $.enumerator + ":      <div id='results'></div>    ");
+    this.el.html("      <div id='message'></div>      <h2>" + (this.assessment.get("name")) + "</h2>      <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>      <button>Detect save options</button>      <div id='saveOptions'>      </div>      <button>CSV/Excel</button>      <hr/>      Results saved by " + $.enumerator + ":      <div id='results'></div>    ");
     this.detectCloud();
-    $.couch.db(this.databaseName).view("results/byEnumerator", {
-      key: $.enumerator,
-      reduce: false,
-      success: function(result) {
-        console.log(result);
-        return $.couch.db(_this.databaseName).allDocs({
-          keys: _.pluck(result.rows, "id"),
-          include_docs: true,
-          success: function(docs) {
-            _this.results = new ResultCollection(_.pluck(docs.rows, "doc"));
-            _this.results.databaseName = _this.databaseName;
-            _this.results.each(function(result) {
-              var finishTime;
-              if (Tangerine.resultView == null) {
-                Tangerine.resultView = new ResultView();
-              }
-              Tangerine.resultView.model = result;
-              finishTime = new moment(result.get("timestamp"));
-              return $("#results").append("                <div><button>" + (finishTime.format("D-MMM-YY")) + " (" + (finishTime.fromNow()) + ")</button></div>                <div class='result'>" + (Tangerine.resultView.render()) + "</div>              ");
-            });
-            return _this.updateLastCloudReplication();
-          }
-        });
-      }
+    this.updateLastCloudReplication();
+    _.each(this.results, function(result) {
+      var finishTime;
+      if (Tangerine.resultView == null) Tangerine.resultView = new ResultView();
+      Tangerine.resultView.model = result;
+      finishTime = new moment(result.get("timestamp"));
+      return $("#results").append("        <div><button>" + (finishTime.format("D-MMM-YY")) + " (" + (finishTime.fromNow()) + ")</button></div>        <div class='result'>" + (Tangerine.resultView.render()) + "</div>      ");
     });
     $("#results").accordion({
       collapsible: true,
@@ -66,7 +49,7 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.updateLastCloudReplication = function() {
-    return this.results.lastCloudReplication({
+    return this.assessment.lastCloudReplication({
       success: function(result) {
         return $("#lastCloudReplicationTime").html(new moment(result.timestamp).fromNow());
       },
@@ -125,16 +108,17 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.replicate = function(target) {
-    return this.results.replicate(target, {
+    var _this = this;
+    return this.assessment.replicate(target, {
       success: function() {
         $("#message").html("Save successful");
-        return this.updateLastCloudReplication();
+        return _this.updateLastCloudReplication();
       }
     });
   };
 
   ResultsView.prototype.csv = function() {
-    return Tangerine.router.navigate("results/tabular/" + this.databaseName, true);
+    return Tangerine.router.navigate("results/tabular/" + (this.assessment.get("_id")), true);
   };
 
   ResultsView.prototype.updateTable = function() {

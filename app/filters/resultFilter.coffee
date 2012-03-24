@@ -1,4 +1,4 @@
 (doc, req) ->
-  if doc.assessment is req.query.assessment
+  if doc.assessmentId is req.query.assessmentId
     return true
   return false

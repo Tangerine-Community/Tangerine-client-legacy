@@ -34,7 +34,8 @@ class Result extends Backbone.Model
       when "SchoolPage"
         School: result.name
       when "StudentInformationPage"
-        Gender: result.gender ? result["m--gender"]
+        gender = result.gender ? result["m--gender"]
+        Gender: gender if gender
       when "ToggleGridWithTimer"
         returnValue = {}
         returnValue[subtestName] = Result.GridTemplate(result)

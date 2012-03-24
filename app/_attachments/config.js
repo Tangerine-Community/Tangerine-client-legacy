@@ -16,7 +16,7 @@ Tangerine = {
   design_doc_name: "tangerine"
 };
 
-Tangerine.url = "http://" + Tangerine.cloud.username + ":" + Tangerine.cloud.password + "@" + Tangerine.cloud.target;
+Tangerine.cloud.url = "http://" + Tangerine.cloud.username + ":" + Tangerine.cloud.password + "@" + Tangerine.cloud.target + "/" + Tangerine.database_name;
 
 Backbone.couch_connector.config.db_name = Tangerine.database_name;
 
