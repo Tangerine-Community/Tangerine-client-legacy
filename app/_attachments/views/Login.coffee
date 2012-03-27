@@ -47,8 +47,8 @@ class LoginView extends Backbone.View
           )
       return false
 
-    setEnumerator: (name) ->
-      $('#enumerator').html name
-      $.enumerator = name
-      Tangerine.router.navigate(Tangerine.router.targetroute, true)
-      
+  setEnumerator: (name) ->
+    $('#enumerator').html name
+    $.enumerator = name
+    Tangerine.router.navigate(Tangerine.router.targetroute, true)
+    
