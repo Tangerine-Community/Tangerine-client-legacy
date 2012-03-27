@@ -32,9 +32,7 @@ LoginView = (function(_super) {
       name: name,
       password: password,
       success: function() {
-        $('#enumerator').html(name);
-        $.enumerator = name;
-        return Tangerine.router.navigate(Tangerine.router.targetroute, true);
+        return this.setEnumerator(name);
       },
       error: function(status, error, reason) {
         $("#message").html("Creating new user" + window.document.cookie);
@@ -46,8 +44,7 @@ LoginView = (function(_super) {
               name: name,
               password: password,
               success: function() {
-                $('#enumerator').html(name);
-                return Tangerine.router.navigate(Tangerine.router.targetroute, true);
+                return this.setEnumerator(name);
               }
             });
           },
@@ -62,6 +59,12 @@ LoginView = (function(_super) {
       }
     });
     return false;
+  };
+
+  LoginView.prototype.setEnumerator = function(name) {
+    $('#enumerator').html(name);
+    $.enumerator = name;
+    return Tangerine.router.navigate(Tangerine.router.targetroute, true);
   };
 
   return LoginView;

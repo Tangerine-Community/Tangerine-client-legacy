@@ -1,4 +1,5 @@
 class LoginView extends Backbone.View
+
   initialize: ->
 
   el: $('#content')
@@ -28,9 +29,7 @@ class LoginView extends Backbone.View
         name: name
         password: password
         success: ->
-          $('#enumerator').html(name)
-          $.enumerator = name
-          Tangerine.router.navigate(Tangerine.router.targetroute, true)
+          @setEnumerator name
         error: (status, error, reason) ->
           $("#message").html "Creating new user" + window.document.cookie
           $.couch.signup( {name: name}, password,
@@ -39,8 +38,7 @@ class LoginView extends Backbone.View
                 name: name
                 password: password
                 success: ->
-                  $('#enumerator').html(name)
-                  Tangerine.router.navigate(Tangerine.router.targetroute, true)
+                  @setEnumerator name
             error: (status, error, reason) ->
               if error == "conflict"
                 $("#message").html "Either you have the wrong password or '#{$('#name').val()}' has already been used as a valid name. Please try again."
@@ -48,3 +46,9 @@ class LoginView extends Backbone.View
                 $("#message").html "#{error}: #{reason}"
           )
       return false
+
+    setEnumerator: (name) ->
+      $('#enumerator').html name
+      $.enumerator = name
+      Tangerine.router.navigate(Tangerine.router.targetroute, true)
+      

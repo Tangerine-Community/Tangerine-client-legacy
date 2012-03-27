@@ -144,16 +144,16 @@ class Router extends Backbone.Router
             Tangerine.assessment.render()
 
   verify_logged_in: (options) ->
-#    $.couch.session
-#      success: (session) =>
-#        $.enumerator = session.userCtx.name
-#        Tangerine.router.targetroute = document.location.hash
-#        unless session.userCtx.name
-#          Tangerine.router.navigate("login", true)
-#          return
-        unless $.enumerator
+    $.couch.session
+      success: (session) =>
+        $.enumerator = session.userCtx.name
+        Tangerine.router.targetroute = document.location.hash
+        unless session.userCtx.name
           Tangerine.router.navigate("login", true)
           return
+        #unless $.enumerator
+        #  Tangerine.router.navigate("login", true)
+        #  return
         $('#enumerator').html $.enumerator
         @handle_menu
         options.success()

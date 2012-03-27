@@ -211,13 +211,20 @@ Router = (function(_super) {
   };
 
   Router.prototype.verify_logged_in = function(options) {
-    if (!$.enumerator) {
-      Tangerine.router.navigate("login", true);
-      return;
-    }
-    $('#enumerator').html($.enumerator);
-    this.handle_menu;
-    return options.success();
+    var _this = this;
+    return $.couch.session({
+      success: function(session) {
+        $.enumerator = session.userCtx.name;
+        Tangerine.router.targetroute = document.location.hash;
+        if (!session.userCtx.name) {
+          Tangerine.router.navigate("login", true);
+          return;
+        }
+        $('#enumerator').html($.enumerator);
+        _this.handle_menu;
+        return options.success();
+      }
+    });
   };
 
   Router.prototype.handle_menu = function(session) {
