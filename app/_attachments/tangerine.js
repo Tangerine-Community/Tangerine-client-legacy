@@ -216,8 +216,8 @@ Router = (function(_super) {
       return;
     }
     $('#enumerator').html($.enumerator);
-    this.handle_menu(session);
-    return options.success(session);
+    this.handle_menu;
+    return options.success();
   };
 
   Router.prototype.handle_menu = function(session) {
@@ -225,7 +225,7 @@ Router = (function(_super) {
     if (session == null) {
       session = {
         userCtx: {
-          roles: ["not_logged_in"]
+          roles: ["CHANGEME"]
         }
       };
     }

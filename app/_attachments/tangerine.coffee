@@ -155,14 +155,16 @@ class Router extends Backbone.Router
           Tangerine.router.navigate("login", true)
           return
         $('#enumerator').html $.enumerator
-        @handle_menu session
-        options.success session
+        @handle_menu
+        options.success()
+        #@handle_menu session
+        #options.success session
 
   # Admins get a manage button 
   # @TODO this might not be the right place for this
   # @TODO UI: reevaluate menu structure
   # @TODO default value is fragile, might want to make that more reliable
-  handle_menu: ( session = { userCtx: { roles : ["not_logged_in"] } } ) ->
+  handle_menu: ( session = { userCtx: { roles : ["CHANGEME"] } } ) ->
     user_roles = _.values session.userCtx.roles 
     # admin user
     if _.indexOf(user_roles, "_admin") != -1
