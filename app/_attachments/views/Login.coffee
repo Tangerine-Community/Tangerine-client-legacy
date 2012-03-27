@@ -1,6 +1,7 @@
 class LoginView extends Backbone.View
 
   initialize: ->
+    _
 
   el: $('#content')
 
@@ -28,16 +29,16 @@ class LoginView extends Backbone.View
       $.couch.login
         name: name
         password: password
-        success: ->
+        success: =>
           @setEnumerator name
         error: (status, error, reason) ->
           $("#message").html "Creating new user" + window.document.cookie
           $.couch.signup( {name: name}, password,
-            success: ->
+            success: =>
               $.couch.login
                 name: name
                 password: password
-                success: ->
+                success: =>
                   @setEnumerator name
             error: (status, error, reason) ->
               if error == "conflict"

@@ -12,7 +12,9 @@ LoginView = (function(_super) {
     LoginView.__super__.constructor.apply(this, arguments);
   }
 
-  LoginView.prototype.initialize = function() {};
+  LoginView.prototype.initialize = function() {
+    return _;
+  };
 
   LoginView.prototype.el = $('#content');
 
@@ -25,16 +27,18 @@ LoginView = (function(_super) {
   };
 
   LoginView.prototype.login = function(event) {
-    var name, password;
+    var name, password,
+      _this = this;
     name = $('#name').val();
     password = $('#password').val();
     $.couch.login({
       name: name,
       password: password,
       success: function() {
-        return this.setEnumerator(name);
+        return _this.setEnumerator(name);
       },
       error: function(status, error, reason) {
+        var _this = this;
         $("#message").html("Creating new user" + window.document.cookie);
         return $.couch.signup({
           name: name
@@ -44,7 +48,7 @@ LoginView = (function(_super) {
               name: name,
               password: password,
               success: function() {
-                return this.setEnumerator(name);
+                return _this.setEnumerator(name);
               }
             });
           },
