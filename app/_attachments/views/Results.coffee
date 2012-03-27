@@ -5,7 +5,7 @@ class ResultsView extends Backbone.View
 
     @el.html "
       <div id='message'></div>
-      <h2>#{@databaseName}</h2>
+      <h2>#{@assessment.get "name"}</h2>
       <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>
       <button>Detect save options</button>
       <div id='saveOptions'>
@@ -17,29 +17,15 @@ class ResultsView extends Backbone.View
     "
 
     @detectCloud()
-
-    $.couch.db(@databaseName).view "results/byEnumerator",
-      key: $.enumerator
-      reduce: false
-      success: (result) =>
-        console.log result
-        $.couch.db(@databaseName).allDocs
-          keys: _.pluck result.rows, "id"
-          include_docs: true
-          success: (docs) =>
-            @results = new ResultCollection _.pluck docs.rows, "doc"
-            @results.databaseName = @databaseName
-
-            @results.each (result) =>
-              Tangerine.resultView ?= new ResultView()
-              Tangerine.resultView.model = result
-              finishTime = new moment(result.get("timestamp"))
-              $("#results").append "
-                <div><button>#{finishTime.format("D-MMM-YY")} (#{finishTime.fromNow()})</button></div>
-                <div class='result'>#{Tangerine.resultView.render()}</div>
-              "
-            @updateLastCloudReplication()
-
+    @updateLastCloudReplication()
+    _.each @results, (result) =>
+      Tangerine.resultView ?= new ResultView()
+      Tangerine.resultView.model = result
+      finishTime = new moment(result.get("timestamp"))
+      $("#results").append "
+        <div><button>#{finishTime.format("D-MMM-YY")} (#{finishTime.fromNow()})</button></div>
+        <div class='result'>#{Tangerine.resultView.render()}</div>
+      "
 
     $("#results").accordion
       collapsible: true
@@ -60,7 +46,7 @@ class ResultsView extends Backbone.View
     "click button:contains(Download as CSV)" : "downloadCSV"
 
   updateLastCloudReplication: ->
-    @results.lastCloudReplication
+    @assessment.lastCloudReplication
       success: (result) ->
         $("#lastCloudReplicationTime").html new moment(result.timestamp).fromNow()
       error: ->
@@ -87,6 +73,7 @@ class ResultsView extends Backbone.View
         url: url
         successButton: "<button type='button' class='save' saveTarget='#{url}'>#{buttonText}"
 
+  # Use jsonp to allow for cross domain queries to see if there are any other instances of tangerine running on the subnet
   detectIP: (options) ->
     $.ajax
       dataType: "jsonp"
@@ -101,13 +88,13 @@ class ResultsView extends Backbone.View
           $("#saveOptions").append options.successButton
 
   replicate: (target) ->
-    @results.replicate target,
-      success: ->
+    @assessment.replicate target,
+      success: =>
         $("#message").html "Save successful"
         @updateLastCloudReplication()
 
   csv: ->
-    Tangerine.router.navigate("results/tabular/#{@databaseName}",true)
+    Tangerine.router.navigate("results/tabular/#{@assessment.get "_id"}",true)
 
   updateTable: ->
     tableConfigQueryString = $('form').serialize()

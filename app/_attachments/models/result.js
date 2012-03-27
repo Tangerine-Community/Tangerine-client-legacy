@@ -1,5 +1,4 @@
 var Result,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -8,20 +7,10 @@ Result = (function(_super) {
   __extends(Result, _super);
 
   function Result() {
-    this.fetch = __bind(this.fetch, this);
     Result.__super__.constructor.apply(this, arguments);
   }
 
-  Result.prototype.fetch = function(options) {
-    var _this = this;
-    if (options == null) options = {};
-    return $.couch.db(this.get("database_name")).openDoc(this.get("id"), {
-      success: function(doc) {
-        _this.set(doc);
-        return options != null ? options.success() : void 0;
-      }
-    });
-  };
+  Result.prototype.url = "/result";
 
   Result.prototype.subtestResults = function() {
     var resultCollection, subtestTypesToSkip,
@@ -36,7 +25,7 @@ Result = (function(_super) {
   };
 
   Result.prototype.summaryData = function(subtestName, result) {
-    var returnValue, _ref;
+    var gender, returnValue, _ref;
     if (result.subtestType == null) {
       switch (subtestName) {
         case "timestamp":
@@ -73,9 +62,13 @@ Result = (function(_super) {
           School: result.name
         };
       case "StudentInformationPage":
-        return {
-          Gender: (_ref = result.gender) != null ? _ref : result["m--gender"]
-        };
+        gender = (_ref = result.gender) != null ? _ref : result["m--gender"];
+        if (gender) {
+          return {
+            Gender: gender
+          };
+        }
+        break;
       case "ToggleGridWithTimer":
         returnValue = {};
         returnValue[subtestName] = Result.GridTemplate(result);

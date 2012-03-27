@@ -5,8 +5,44 @@ class Assessment extends Backbone.Model
 
   url: '/assessment'
 
+  replicate: (target,options) ->
+    $("#message").html "Syncing to #{target}"
+    replicationLogEntry = new ReplicationLogEntry
+      timestamp: new Date().getTime()
+      source: @get "_id"
+      target: target
+    replicationLogEntry.save()
+
+    # TODO TEST that this actually works! (filtered replication!)
+    ajaxOptions =
+      success: ->
+        options.success()
+      error: (res) ->
+        $("#message").html "Error: #{res}"
+    replicationOptions =
+      filter: Tangerine.design_doc_name + "/resultFilter"
+      query_params:
+        assessmentId: @get "_id"
+    $.couch.replicate(Tangerine.database_name, target, ajaxOptions, replicationOptions)
+
+  lastCloudReplication: (options) ->
+    assessmentId = @get "id"
+    replicationLogEntryCollection  = new ReplicationLogEntryCollection()
+    replicationLogEntryCollection.fetch
+      success: ->
+        mostRecentReplicationLogEntry = replicationLogEntryCollection.first() # just for initialization
+        replicationLogEntryCollection.each (replicationLogEntry) ->
+          return unless replicationLogEntry.source is assessmentId
+          mostRecentReplicationLogEntry = replicationLogEntry if replicationLogEntry.timestamp > mostRecentReplicationLogEntry.timestamp
+        if mostRecentReplicationLogEntry
+          options?.success?(mostRecentReplicationLogEntry)
+        else
+          options?.error?()
+
+
   fetch: (options) =>
     # Whenever we fetch data we need to take the result and setup the assessment object before doing the callback
+    # this probably belongs in the constructor/initialization code
     superOptions = options
     superOptions = 
       success: =>
@@ -79,16 +115,17 @@ class Assessment extends Backbone.Model
       results[page.pageId]["subtestType"] = page.pageType
     results.timestamp = new Date().valueOf()
     results.enumerator = $('#enumerator').html()
+    results.assessmentId = @get("_id")
     return results
 
   saveResults: (callback) ->
-    results = @results()
-    $.couch.db(@targetDatabase()).saveDoc results,
+    result = new Result(@results())
+    result.save
       success: ->
-        callback(results) if callback?
+        callback?(results)
       error: =>
         alert "Results NOT saved - do you have permission to save?"
-        throw "Could not create document in #{@targetDatabase()}"
+        throw "Could not save result #{@results()}"
 
   resetURL: ->
     #document.location.origin + document.location.pathname + document.location.search

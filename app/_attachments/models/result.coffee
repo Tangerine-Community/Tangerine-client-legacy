@@ -1,9 +1,5 @@
 class Result extends Backbone.Model
-  fetch: (options = {}) =>
-    $.couch.db(@get("database_name")).openDoc @get("id"),
-      success: (doc) =>
-        @set(doc)
-        options?.success()
+  url: "/result"
 
   subtestResults: ->
     subtestTypesToSkip = [
@@ -38,7 +34,8 @@ class Result extends Backbone.Model
       when "SchoolPage"
         School: result.name
       when "StudentInformationPage"
-        Gender: result.gender ? result["m--gender"]
+        gender = result.gender ? result["m--gender"]
+        Gender: gender if gender
       when "ToggleGridWithTimer"
         returnValue = {}
         returnValue[subtestName] = Result.GridTemplate(result)

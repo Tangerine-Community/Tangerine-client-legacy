@@ -1,10 +1,10 @@
 class Router extends Backbone.Router
   routes:
     "assessment/:id": "assessment"
-    "result/:database_name/:id": "result"
-    "results/tabular/:database_name": "tabular_results"
-    "results/tabular/:database_name/*options": "tabular_results"
-    "results/:database_name": "results"
+#    "result/:id": "result"
+    "results/tabular/:assessment_id": "tabular_results"
+    "results/tabular/:assessment_id/*options": "tabular_results"
+    "results/:assessmentId/:enumerator": "results"
     "print/:id": "print"
     "student_printout/:id": "student_printout"
     "login": "login"
@@ -42,28 +42,40 @@ class Router extends Backbone.Router
             Tangerine.assessmentEdit.render()
                 
 
-  results: (database_name) ->
+  results: (assessmentId,enumerator) ->
     @verify_logged_in
       success: ->
-        Tangerine.resultsView ?= new ResultsView()
-        Tangerine.resultsView.databaseName = database_name
-        Tangerine.resultsView.render()
+        resultCollection = new ResultCollection()
+        resultCollection.fetch
+          success: ->
+            Tangerine.resultsView ?= new ResultsView()
+            Tangerine.resultsView.assessment = new Assessment
+              _id: assessmentId
+            Tangerine.resultsView.assessment.fetch
+              success: ->
+                Tangerine.resultsView.results = resultCollection.filter (result) ->
+                  result.get("assessmentId") is assessmentId and result.get("enumerator") is enumerator
+                Tangerine.resultsView.render()
 
-
-  tabular_results: (database_name) ->
+  
+  # Have rewritten map/reduce views for this, need to refactor to use
+  # Note that views are currently not created for any current system
+  # Need to enable for cloud/laptop only situations
+  tabular_results: (assessment_id) ->
     @verify_logged_in
       success: ->
         view = "reports/fields"
 # TODO - figure out what to do about this limit
         limit= 10000000
-        $("#content").html("Loading maximum of #{limit} items from view: #{view} from #{database_name}")
-        $.couch.db(database_name).view view,
+        $("#content").html("Loading maximum of #{limit} items from view: #{view} from #{assessment_id}")
+
+        $.couch.db(Tangerine.database_name).view view,
           reduce: true
           group: true
           success: (result) ->
             uniqueFields = _.pluck result.rows, "key"
 
-            $.couch.db(database_name).view view,
+            $.couch.db(Tangerine.database_name).view view,
               reduce: false
               limit: limit
               success: (tableResults) ->
@@ -74,13 +86,13 @@ class Router extends Backbone.Router
                 Tangerine.resultsView.renderTable(options)
               
 
-  result: (database_name,id) ->
+  result: (id) ->
     @verify_logged_in
       success: ->
-        $.couch.db(database_name).openDoc id,
-          success: (doc) =>
-            Tangerine.resultView ?= new ResultView()
-            Tangerine.resultView.model = new Result(doc)
+        Tangerine.resultView ?= new ResultView()
+        Tangerine.resultView.model = new Result(id)
+        Tangerine.resultView.model.fetch
+          success:->
             $("#content").html Tangerine.resultView.render()
 
   manage: ->
@@ -132,13 +144,13 @@ class Router extends Backbone.Router
             Tangerine.assessment.render()
 
   verify_logged_in: (options) ->
-    $.couch.session
-      success: (session) =>
-        $.enumerator = session.userCtx.name
-        Tangerine.router.targetroute = document.location.hash
-        unless session.userCtx.name
-          Tangerine.router.navigate("login", true)
-          return
+#    $.couch.session
+#      success: (session) =>
+#        $.enumerator = session.userCtx.name
+#        Tangerine.router.targetroute = document.location.hash
+#        unless session.userCtx.name
+#          Tangerine.router.navigate("login", true)
+#          return
         unless $.enumerator
           Tangerine.router.navigate("login", true)
           return
@@ -247,61 +259,15 @@ $ -> # run after DOM loads
   #    data: '"28800"'
 
   #
-  # Verify database structure
-  #
-  
-  assessmentCollection = new AssessmentCollection()
-  
-  databaseErrorCount = 0
-  databaseFixAttempts = 0
-  assessmentCollectionErrors = 0
-  
-  loop
-    assessmentCollection.fetch
-      success: =>
-        assessmentCollection.each ( assessment ) =>
-
-          # assert database
-          $.couch.db( assessment.targetDatabase() ).info
-            error: ( responseCode, b, errorType ) =>
-              databaseErrorCount++
-              if errorType == "no_db_file"
-                Utils.createResultsDatabase assessment.targetDatabase()
-
-          # assert result design docs
-          # @TODO maybe assert report docs too
-          $.couch.db( assessment.targetDatabase() ).openDoc "_design/results"
-            error: ( responseCode, b, errorType ) =>
-              databaseErrorCount++
-              if responseCode == 404 then Utils.createResultViews assessment.targetDatabase()
-
-      error: =>
-        assessmentCollectionErrors++
-    break if databaseErrorCount == 0 or databaseFixAttempts == 3
-
-    databaseFixAttempts++
-
-  if assessmentCollectionErrors > 0 then console.log "Database error"
-
-  #
   # Start the application
   #
   
   # load config
-  console.log "loading config"
   config = new Backbone.Model
     _id: "Config"
-  console.log "fetching config"
   config.fetch
     success: =>
-      console.log "I supposedly got the config object. This is it: "
-      console.log config.toJSON()
       Tangerine.config = config.toJSON()
-      
-    error: =>
-      console.log "Error loading config."
-  console.log "config:"
-  console.log Tangerine.config
   
   # Reuse the view objects to stop events from being duplicated (and to save memory)
   Tangerine.router = new Router()
@@ -315,4 +281,3 @@ $ -> # run after DOM loads
 
   $( '#main_nav button' ).click (event) ->
     Tangerine.router.navigate( $( event.target ).attr( "href" ), true );
-

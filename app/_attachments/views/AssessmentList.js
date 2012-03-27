@@ -16,53 +16,41 @@ AssessmentListView = (function(_super) {
 
   AssessmentListView.prototype.el = $('#content');
 
-  AssessmentListView.prototype.templateTableRow = Handlebars.compile("    <tr>      <td class='assessment-name'>        <button class='assessment-name' data-target='{{id}}'>{{name}}</button>      </td>      <td class='number-completed-by-current-enumerator'>        <button class='number-completed' data-database-name='{{database_name}}'>{{number_completed}}</button>      </td>    </tr>  ");
+  AssessmentListView.prototype.templateTableRow = Handlebars.compile("    <tr>      <td class='assessment-name'>        <a href='#assessment/{{id}}'>{{name}}</a>      </td>      <td class='number-completed-by-current-enumerator'>        <a href='#results/{{id}}/{{enumerator}}'>{{number_completed}}</a>      </td>    </tr>  ");
 
   AssessmentListView.prototype.render = function() {
     var assessmentCollection,
       _this = this;
     this.el.html("      <h1>Collect</h1>      <div id='message'></div>      <table id='assessments' class='tablesorter'>        <thead>          <tr>            <th>Assessment Name</th><th>Number Collected</th>          </tr>        </thead>        <tbody></tbody>      </table>    ");
-    $("#assessments").tablesorter();
     assessmentCollection = new AssessmentCollection();
     return assessmentCollection.fetch({
       success: function() {
-        var itemsToProcess;
-        itemsToProcess = assessmentCollection.length;
-        return assessmentCollection.each(function(assessment) {
-          if (assessment.get("archived") === true) {
-            itemsToProcess--;
-            return;
+        var assessmentDetails, resultCollection;
+        assessmentDetails = {};
+        assessmentCollection.each(function(assessment) {
+          if (assessment.get("archived") === true) return;
+          return assessmentDetails[assessment.get("_id")] = {
+            id: assessment.get("_id"),
+            name: assessment.get("name"),
+            enumerator: $.enumerator,
+            number_completed: 0
+          };
+        });
+        resultCollection = new ResultCollection();
+        return resultCollection.fetch({
+          success: function() {
+            resultCollection.each(function(result) {
+              if (result.get("enumerator") !== $.enumerator) return;
+              return assessmentDetails[result.get("assessmentId")]["number_completed"] += 1;
+            });
+            _.each(assessmentDetails, function(value, key) {
+              return _this.el.find("#assessments tbody").append(_this.templateTableRow(value));
+            });
+            return $('table').tablesorter();
           }
-          return $.couch.db(assessment.targetDatabase()).view("results/byEnumerator", {
-            group: true,
-            key: $.enumerator,
-            success: function(result) {
-              var _ref;
-              _this.el.find("#assessments tbody").append(_this.templateTableRow({
-                name: assessment.get("name"),
-                number_completed: ((_ref = result.rows[0]) != null ? _ref.value : void 0) || "0",
-                id: assessment.get("_id"),
-                database_name: assessment.targetDatabase()
-              }));
-              if (--itemsToProcess === 0) return $('table').tablesorter();
-            }
-          });
         });
       }
     });
-  };
-
-  AssessmentListView.prototype.events = {
-    "click button.assessment-name": "loadAssessment",
-    "click button.number-completed": "loadResults"
-  };
-
-  AssessmentListView.prototype.loadAssessment = function(event) {
-    return Tangerine.router.navigate("assessment/" + ($(event.target).attr("data-target")), true);
-  };
-
-  AssessmentListView.prototype.loadResults = function(event) {
-    return Tangerine.router.navigate("results/" + ($(event.target).attr("data-database-name")), true);
   };
 
   return AssessmentListView;
