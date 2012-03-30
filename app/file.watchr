@@ -8,8 +8,21 @@ watch ( '.*\.coffee$' ) { |match|
   end
 }
 
+watch ( '.*\.less$' ) { |match| 
+  puts "\nCompiling:\t#{match}"
+  result = `lessc #{match} > #{match}.css`
+  if result.index "error"
+    puts "\n\nCoffeescript error\n******************\n#{result}"
+  else
+    `couchapp push`
+  end
+}
+
 watch ( '.*\.js$|.*\.html$|.*\.json$' ) { |match| 
   puts "\nUpdating:\t#{match}\nPushing to couchapp\n\n"
   `couchapp push`
 }
+
+
+
 
