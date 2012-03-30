@@ -89,8 +89,32 @@
     // Returns the session information for the currently logged in user.
     session: function(options) {
       options = options || {};
+      // Ugly hack to use  Lets session authentication work on kindle and nook
+      // Note: $.ajax handles objects and strings, this only handles objects.
+      // Dependencies jQuery, jQuery.cookie
+      var data = "";
+      isNookOrKindle = /nook|kindle/.test(navigator.userAgent.toLowerCase()); // see jQuery.browser.mobile
+      if ( isNookOrKindle ) 
+      { 
+        AuthSession = { 'AuthSession' : $.cookie( "AuthSession" ) };
+        if ( options && options.data ) // we like objective data
+        {
+          if (typeof(options.data) == "object") 
+          {
+            data = $.extend( options.data, AuthSession );
+          } else
+          {
+            console.log("fet broke your code. Make your get request data an object.")
+          } 
+        } else 
+        {
+          data = AuthSession;
+        }
+      } 
       return $.ajax({
-        type: "GET", url: this.urlPrefix + "/_session",
+        type: "GET", 
+        url: this.urlPrefix + "/_session",
+        data: data,
         beforeSend: function(xhr) {
             xhr.setRequestHeader('Accept', 'application/json');
         },
