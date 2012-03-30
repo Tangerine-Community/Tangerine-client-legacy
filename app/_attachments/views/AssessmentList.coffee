@@ -1,7 +1,7 @@
 class AssessmentListView extends Backbone.View
   initialize: ->
 
-  el: $('#content')
+  el: '#content'
 
   templateTableRow: Handlebars.compile "
     <tr>
@@ -15,7 +15,7 @@ class AssessmentListView extends Backbone.View
   "
 
   render: =>
-    @el.html "
+    @$el.html "
       <h1>Collect</h1>
       <div id='message'></div>
       <table id='assessments' class='tablesorter'>
@@ -37,17 +37,17 @@ class AssessmentListView extends Backbone.View
           assessmentDetails[assessment.get "_id"] =
             id : assessment.get "_id"
             name : assessment.get "name"
-            enumerator : $.enumerator
+            enumerator : Tangerine.enumerator
             number_completed : 0
 
         resultCollection = new ResultCollection()
         resultCollection.fetch
           success: =>
             resultCollection.each (result) =>
-              return unless result.get("enumerator") is $.enumerator
+              return unless result.get("enumerator") is Tangerine.enumerator
               assessmentDetails[result.get "assessmentId" ]["number_completed"]+=1
 
             _.each assessmentDetails, (value,key) =>
-              @el.find("#assessments tbody").append @templateTableRow value
+              @$el.find("#assessments tbody").append @templateTableRow value
 
             $('table').tablesorter()
