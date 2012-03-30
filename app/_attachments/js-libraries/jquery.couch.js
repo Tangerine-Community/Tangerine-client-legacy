@@ -114,6 +114,7 @@
       return $.ajax({
         type: "GET", 
         url: this.urlPrefix + "/_session",
+        async: false,
         data: data,
         beforeSend: function(xhr) {
             xhr.setRequestHeader('Accept', 'application/json');
