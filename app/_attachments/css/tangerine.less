@@ -1,13 +1,36 @@
+@grey:        #666;
+
 @blue:        #5E87B0;
 @yellow:      #F7C942;
 @orange:      #f2672c;
 @orangerind:  #f6e97f;
 @flash_color: red;
 
+@orange-1: #F26F10;
+@orange-2: #F49B00;
+@orange-3: #F6C637;
+@orange-4: #F6EF9A;
+
+
 // These are not used
 @first_click_color: yellow;
 @second_click_color: blue;
 
+
+/*
+ * Parametric mixins
+ */
+
+.border-radius (@radius) 
+{
+  border-radius: @radius;
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+}
+
+/*
+ * Main
+ */
 
 body{
   font-size: 150%;
@@ -24,6 +47,12 @@ body.flash{
 
 #navigation{
   font-size:50%;
+}
+
+.ajax_loading
+{
+	margin: 200px auto;
+	display:none;
 }
 
 button{
@@ -285,9 +314,72 @@ label[for='edit-archive']{
 /*
  * Login form
  */
+
 #login_wrapper
 {
  width: 300px;
  margin: 0 auto;
 }
+
+#login_wrapper label
+{
+	margin-top: 10px;
+	color: #888;
+}
+
+#login_wrapper input
+{
+	border: 1px solid #888;
+	width: 290px;
+	padding: 5px;
+	clear: both;
+	display: block;
+}
+
+
+
+#login_button
+{
+	color: white;
+	background-color: @orange-2;
+	border: 0 !important;
+	width: 280px;
+	margin-top: 20px;
+	padding: 5px !important;
+	.border-radius(10px);
+	font-weight: normal;
+	&:active
+	{
+		background-color: @orange-3;
+	}
+}
+
+#login_message 
+{
+  div
+  {
+    display: block;
+    clear: both;
+  }
+
+  h4
+  {
+    font-weight: bold;
+    font-size: 16px;
+    color: @grey;
+    display: block;
+    clear: both;
+	margin: 10px 0;
+  }
+
+  p
+  {
+    font-size: 20px;
+    font-weight: normal;
+    color: @grey;
+	margin: 10px 0;
+  }
+
+}
+
 
