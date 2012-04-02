@@ -148,104 +148,67 @@ Router = (function(_super) {
   };
 
   Router.prototype.manage = function() {
-    return this.verify_logged_in({
-      success: function(session) {
-        var assessmentCollection;
-        assessmentCollection = new AssessmentCollection();
-        return assessmentCollection.fetch({
-          success: function() {
-            if (Tangerine.manageView == null) {
-              Tangerine.manageView = new ManageView();
-            }
-            return Tangerine.manageView.render(assessmentCollection);
+    var assessmentCollection;
+    if (Tangerine.user.isAdmin()) {
+      assessmentCollection = new AssessmentCollection();
+      return assessmentCollection.fetch({
+        success: function() {
+          if (Tangerine.manageView == null) {
+            Tangerine.manageView = new ManageView();
           }
-        });
-      }
-    });
+          return Tangerine.manageView.render(assessmentCollection);
+        }
+      });
+    }
   };
 
   Router.prototype.assessments = function() {
-    return this.verify_logged_in({
-      success: function() {
-        $('#current-student-id').html("");
-        if (Tangerine.assessmentListView == null) {
-          Tangerine.assessmentListView = new AssessmentListView();
-        }
-        return Tangerine.assessmentListView.render();
+    if (Tangerine.user.isVerified()) {
+      if (Tangerine.assessmentListView == null) {
+        Tangerine.assessmentListView = new AssessmentListView();
       }
-    });
+      return Tangerine.assessmentListView.render();
+    } else {
+      return Tangerine.router.navigate("login", true);
+    }
   };
 
   Router.prototype.login = function() {
-    if (Tangerine.loginView == null) Tangerine.loginView = new LoginView();
     return Tangerine.loginView.render();
   };
 
   Router.prototype.logout = function() {
-    var _this = this;
-    return $.couch.logout({
-      success: function() {
-        _this.handle_menu();
-        $.enumerator = null;
-        $('#enumerator').html("Not logged in");
-        return Tangerine.router.navigate("login", true);
-      }
-    });
+    return Tangerine.user.logout();
   };
 
   Router.prototype.assessment = function(id) {
-    return this.verify_logged_in({
-      success: function() {
-        $('#enumerator').html($.enumerator);
-        if (Tangerine.assessment != null) location.reload();
-        Tangerine.assessment = new Assessment({
-          _id: id
-        });
-        return Tangerine.assessment.fetch({
-          success: function() {
-            return Tangerine.assessment.render();
-          }
-        });
-      }
-    });
+    if (Tangerine.user.isVerified()) {
+      if (Tangerine.assessment != null) location.reload();
+      Tangerine.assessment = new Assessment({
+        _id: id
+      });
+      return Tangerine.assessment.fetch({
+        success: function() {
+          return Tangerine.assessment.render();
+        }
+      });
+    }
   };
 
   Router.prototype.verify_logged_in = function(options) {
     var _this = this;
     return $.couch.session({
       success: function(session) {
-        $.enumerator = session.userCtx.name;
+        Tangerine.enumerator = session.userCtx.name;
+        Tangerine.userRoles = _.values(session.userCtx.roles);
         Tangerine.router.targetroute = document.location.hash;
         if (!session.userCtx.name) {
           Tangerine.router.navigate("login", true);
           return;
         }
-        $('#enumerator').html($.enumerator);
-        _this.handle_menu;
-        return options.success();
+        return options.success(session);
       }
     });
-  };
-
-  Router.prototype.handle_menu = function(session) {
-    var user_roles;
-    if (session == null) {
-      session = {
-        userCtx: {
-          roles: ["CHANGEME"]
-        }
-      };
-    }
-    user_roles = _.values(session.userCtx.roles);
-    if (_.indexOf(user_roles, "_admin") !== -1) {
-      $("#main_nav button").hide();
-      return $("#collect_button, #manage_button, #logout_button").show();
-    } else if (_.indexOf(user_roles, "not_logged_in") !== -1) {
-      return $("#main_nav button").hide();
-    } else {
-      $("#main_nav button").hide();
-      return $("#collect_button, #logout_button").show();
-    }
   };
 
   Router.prototype.print = function(id) {
@@ -292,8 +255,19 @@ $(function() {
       return Tangerine.config = config.toJSON();
     }
   });
+  Tangerine.user = new User();
+  Tangerine.user.on('change', Utils.handleMenu);
+  Tangerine.user.trigger('change');
+  Tangerine.loginView = new LoginView(Tangerine.user);
   Tangerine.router = new Router();
+  Tangerine.router.on('all', Utils.handleNavigation);
   Backbone.history.start();
+  $(".ajax_loading").ajaxStart(function() {
+    return $("#corner_logo").attr("src", "images/spin_orange.gif");
+  });
+  $(".ajax_loading").ajaxStop(function() {
+    return $("#corner_logo").attr("src", "images/corner_logo.png");
+  });
   $("#version").load('version');
   return $('#main_nav button').click(function(event) {
     return Tangerine.router.navigate($(event.target).attr("href"), true);

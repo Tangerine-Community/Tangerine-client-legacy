@@ -15,7 +15,7 @@ class Router extends Backbone.Router
     "assessments": "assessments"
     "": "assessments"
 
-  editSubtest: (assessment_id,subtest_id) ->
+  editSubtest: ( assessment_id, subtest_id ) ->
     @verify_logged_in
       success: ->
         assessment = new Assessment
@@ -65,8 +65,8 @@ class Router extends Backbone.Router
     @verify_logged_in
       success: ->
         view = "reports/fields"
-# TODO - figure out what to do about this limit
-        limit= 10000000
+        # TODO - figure out what to do about this limit
+        limit = 10000000
         $("#content").html("Loading maximum of #{limit} items from view: #{view} from #{assessment_id}")
 
         $.couch.db(Tangerine.database_name).view view,
@@ -96,88 +96,54 @@ class Router extends Backbone.Router
             $("#content").html Tangerine.resultView.render()
 
   manage: ->
-    @verify_logged_in
-      success: (session) ->
-#        unless _.include(session.userCtx.roles, "_admin")
-#          Tangerine.router.navigate("assessments", true) unless _.include(session.userCtx.roles, "admin")
-#          return
-        assessmentCollection = new AssessmentCollection()
-        assessmentCollection.fetch
-          success: ->
-            Tangerine.manageView ?= new ManageView()
-            Tangerine.manageView.render(assessmentCollection)
+    if Tangerine.user.isAdmin()
+      assessmentCollection = new AssessmentCollection()
+      assessmentCollection.fetch
+        success: ->
+          Tangerine.manageView ?= new ManageView()
+          Tangerine.manageView.render(assessmentCollection)
 
   assessments: ->
-    @verify_logged_in
-      success: ->
-        $('#current-student-id').html ""
-
-        Tangerine.assessmentListView ?= new AssessmentListView()
-        Tangerine.assessmentListView.render()
+    if Tangerine.user.isVerified()
+      Tangerine.assessmentListView ?= new AssessmentListView()
+      Tangerine.assessmentListView.render()
+    else
+      Tangerine.router.navigate "login", true
 
   login: ->
-    Tangerine.loginView ?= new LoginView()
     Tangerine.loginView.render()
 
   logout: ->
-    $.couch.logout
-      success: =>
-        
-        @handle_menu()
-        $.enumerator = null
-        $('#enumerator').html("Not logged in")
-        Tangerine.router.navigate("login", true)
+    Tangerine.user.logout()
 
   assessment: (id) ->
-    @verify_logged_in
-      success: ->
-        $('#enumerator').html($.enumerator)
-
-        # This is terrible but it fixes my problem
-        # Currently live click handlers get duplicated over and over again
-        # Need to convert everything to backbone style views
-        if Tangerine.assessment?
-          location.reload()
-        Tangerine.assessment = new Assessment {_id:id}
-        Tangerine.assessment.fetch
-          success: ->
-            Tangerine.assessment.render()
+    if Tangerine.user.isVerified()
+      # This is terrible but it fixes my problem
+      # Currently live click handlers get duplicated over and over again
+      # Need to convert everything to backbone style views
+      if Tangerine.assessment?
+        location.reload()
+      
+      Tangerine.assessment = new Assessment { _id : id }
+      Tangerine.assessment.fetch
+        success: ->
+          Tangerine.assessment.render()
 
   verify_logged_in: (options) ->
     $.couch.session
       success: (session) =>
-        $.enumerator = session.userCtx.name
+        
+        Tangerine.enumerator = session.userCtx.name
+        Tangerine.userRoles = _.values session.userCtx.roles 
+        
         Tangerine.router.targetroute = document.location.hash
+        
         unless session.userCtx.name
           Tangerine.router.navigate("login", true)
           return
-        #unless $.enumerator
-        #  Tangerine.router.navigate("login", true)
-        #  return
-        $('#enumerator').html $.enumerator
-        @handle_menu
-        options.success()
         #@handle_menu session
-        #options.success session
+        options.success session
 
-  # Admins get a manage button 
-  # @TODO this might not be the right place for this
-  # @TODO UI: reevaluate menu structure
-  # @TODO default value is fragile, might want to make that more reliable
-  handle_menu: ( session = { userCtx: { roles : ["CHANGEME"] } } ) ->
-    user_roles = _.values session.userCtx.roles 
-    # admin user
-    if _.indexOf(user_roles, "_admin") != -1
-      $( "#main_nav button" ).hide()
-      $( "#collect_button, #manage_button, #logout_button" ).show()
-    #not logged in
-    else if _.indexOf(user_roles, "not_logged_in") != -1
-      $( "#main_nav button" ).hide()
-    #regular user
-    else
-      $( "#main_nav button" ).hide()
-      $( "#collect_button, #logout_button" ).show()
-      
   print: (id) ->
     Assessment.load id, (assessment) ->
       assessment.toPaper (result) ->
@@ -270,15 +236,34 @@ $ -> # run after DOM loads
   config.fetch
     success: =>
       Tangerine.config = config.toJSON()
-  
+
   # Reuse the view objects to stop events from being duplicated (and to save memory)
-  Tangerine.router = new Router()
-  Backbone.history.start()
   
+
+  Tangerine.user   = new User()
+  Tangerine.user.on 'change', Utils.handleMenu
+  Tangerine.user.trigger 'change'
+  Tangerine.loginView = new LoginView( Tangerine.user )
+
+
+  Tangerine.router = new Router()
+  Tangerine.router.on 'all', Utils.handleNavigation
+
+  
+  #Tangerine.dispatch = _.clone Backbone.Events
+  
+  
+  Backbone.history.start()
 
   #
   # Set up some interface stuff
   #
+  $(".ajax_loading").ajaxStart ->
+    $("#corner_logo").attr "src", "images/spin_orange.gif"
+
+  $(".ajax_loading").ajaxStop ->
+    $("#corner_logo").attr "src", "images/corner_logo.png"
+    
   $("#version").load 'version'
 
   $( '#main_nav button' ).click (event) ->

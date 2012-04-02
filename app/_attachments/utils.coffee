@@ -41,12 +41,56 @@ class MapReduce
 class Utils
 
   @sudo: (options) ->
-    console.log "Logging in..."
     credentials = 
       name: Tangerine.config.user_with_database_create_permission,
       password: Tangerine.config.password_with_database_create_permission
     options = _.extend(options, credentials);
-    console.log "login options:"
-    console.log options
     $.couch.login options
+
+  # this function is a lot like jQuery.serializeArray, except that it returns useful output
+  @getValues: ( selector ) ->
+    values = {}
+    $(selector + " input").each ( index, element ) -> 
+      values[element.id] = element.value
+    return values
+
+  @okBox: ( title, message ) ->
+    console.log [title, message]
+  
+  # Admins get a manage button 
+  # triggered on user changes
+  # @TODO this might not be the right place for this. Another View?
+  @handleMenu: ->
+
+    Tangerine.user.verify()
+
+    $('#enumerator').html Tangerine.user.get("name")
+    # The order of the if statements is important. Maybe it shouldn't be.
+    # admin user
+    if Tangerine.user.isAdmin()
+      $( "#main_nav a" ).hide()
+      $( "#navigation" ).show()
+      $( "#collect_link, #manage_link, #logout_link" ).show()
+
+    #not logged in
+    else if not Tangerine.user.isVerified()
+      $( "#navigation" ).hide()
+
+    #regular user
+    else
+      $( "#main_nav a" ).hide()
+      $( "#navigation" ).show()
+      $( "#collect_link, #logout_link" ).show()
+
+  # Hide and show navigation pane
+  # Triggered on page changes
+  # @TODO this might not be the right place for this. Another View?
+  @handleNavigation: ->
+    if window.location.href.toLowerCase().indexOf("assessment") != -1
+      $("nav#main_nav a").removeClass("border_on")
+      $("#collect_link").addClass("border_on")    
+    if window.location.href.toLowerCase().indexOf("manage") != -1
+      $("nav#main_nav a").removeClass("border_on")
+      $("#manage_link").addClass("border_on")
+
 
