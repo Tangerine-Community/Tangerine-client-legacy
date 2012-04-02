@@ -6,10 +6,15 @@
 @orangerind:  #f6e97f;
 @flash_color: red;
 
+@menu_big:   20px;
+@menu_small: 20px;
+
+
 @orange-1: #F26F10;
 @orange-2: #F49B00;
 @orange-3: #F6C637;
 @orange-4: #F6EF9A;
+@grey: #888;
 
 
 // These are not used
@@ -32,26 +37,101 @@
  * Main
  */
 
-body{
-  font-size: 150%;
+body
+{
+  font-size:30px;
 }
 
 body.flash{
   background-color: @yellow;
 }
 
-#navigation{
+/*
+ * Navigation
+ */
+
+#navigation
+{
+  min-height: 50px;
   margin-bottom: 20px;
-  background-color: @yellow;
+  background-color: @orange-3;
+  background-image: url("../images/corner_logo.png");
+  background-repeat: no-repeat;
+  background-position: 5px 6px;
+  display: none;
+  padding: 5px;
+  font-size: @menu_big;
+
+  a 
+  {
+    vertical-align: middle;
+    color: black;
+    text-decoration: none;
+    
+    &:visited, 
+    &:active,
+    &:hover
+    {
+      color: black
+    }
+  }
 }
 
-#navigation{
-  font-size:50%;
+nav#main_nav
+{
+  display: inline;
+  
+  a
+  {
+    text-decoration: none;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 6px 6px 2px;
+    margin: 20px 14px 28px;
+    border: 0;
+  }
+  
+  
+}
+
+.border_on
+{
+  margin: 16px 10px 14px !important;
+  border: 4px solid white !important;
+}
+
+
+#session_info
+{
+  float: right;
+}
+
+div#student_id_box, 
+div#enumerator_box
+{
+  vertical-align: middle;
+  display: inline-block;
+  color: @orange-1;
+  margin-left: 20px;
+  background-color: none;
+  font-size: 15px !important;
+  font-weight: bold;
+ 
+  div
+  {
+    display: block;
+    clear: both;
+    color: white;
+    background-color: @orange-2;
+    padding:2px 5px;
+    font-size: 20px !important;
+    font-weight: normal;
+  }
 }
 
 .ajax_loading
 {
-	margin: 200px auto;
+	margin: auto;
 	display:none;
 }
 
@@ -233,53 +313,56 @@ div.ui-footer .ui-btn{
   background: url(images/spindown-open.gif) no-repeat left;
 }
 
-a{
-  -webkit-appearance: button;
-  -webkit-box-align: center;
-  background-color: #DDD;
-  border-bottom-color: #DDD;
-  border-bottom-style: outset;
-  border-bottom-width: 2px;
-  border-left-color: #DDD;
-  border-left-style: outset;
-  border-left-width: 2px;
-  border-right-color: #DDD;
-  border-right-style: outset;
-  border-right-width: 2px;
-  border-top-color: #DDD;
-  border-top-style: outset;
-  border-top-width: 2px;
-  box-sizing: border-box;
-  color: #222;
-  cursor: pointer;
-  display: inline-block;
-  font-family: sans-serif;
-  font-size: 24px;
-  height: 34px;
-  letter-spacing: normal;
-  line-height: normal;
-  margin-bottom: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-top: 10px;
-  overflow-y: visible;
-  padding-bottom: 1px;
-  padding-left: 6px;
-  padding-right: 6px;
-  padding-top: 1px;
-  vertical-align: baseline;
-  text-decoration:none;
-}
-  a:visited { 
-    text-decoration:none;
-    color: #222;
-  }
+#content
+{
+  a {
+   -webkit-appearance: button;
+   -webkit-box-align: center;
+   background-color: #DDD;
+   border-bottom-color: #DDD;
+   border-bottom-style: outset;
+   border-bottom-width: 2px;
+   border-left-color: #DDD;
+   border-left-style: outset;
+   border-left-width: 2px;
+   border-right-color: #DDD;
+   border-right-style: outset;
+   border-right-width: 2px;
+   border-top-color: #DDD;
+   border-top-style: outset;
+   border-top-width: 2px;
+   box-sizing: border-box;
+   color: #222;
+   cursor: pointer;
+   display: inline-block;
+   font-family: sans-serif;
+   font-size: 24px;
+   height: 34px;
+   letter-spacing: normal;
+   line-height: normal;
+   margin-bottom: 10px;
+   margin-left: 10px;
+   margin-right: 10px;
+   margin-top: 10px;
+   overflow-y: visible;
+   padding-bottom: 1px;
+   padding-left: 6px;
+   padding-right: 6px;
+   padding-top: 1px;
+   vertical-align: baseline;
+   text-decoration:none;
+ }
+   a:visited { 
+     text-decoration:none;
+     color: #222;
+   }
 
 
-  a:hover { 
-    border-color: #ccc; 
-    color: #222;
-  }
+   a:hover { 
+     border-color: #ccc; 
+     color: #222;
+   }
+
 
   .message{
     color: @orangerind;
@@ -292,7 +375,7 @@ a{
     color: @orangerind;
     background-color: @orange;
   }
-
+}
 form#subtestEdit textarea{
   width: 500px;
   height:200px;
@@ -362,22 +445,21 @@ label[for='edit-archive']{
     clear: both;
   }
 
-  h4
+  ul
   {
+    padding: 0;
+  }
+
+  li
+  {
+    
+    list-style: none;
     font-weight: bold;
     font-size: 16px;
     color: @grey;
     display: block;
     clear: both;
-	margin: 10px 0;
-  }
-
-  p
-  {
-    font-size: 20px;
-    font-weight: normal;
-    color: @grey;
-	margin: 10px 0;
+    margin: 10px 0;
   }
 
 }

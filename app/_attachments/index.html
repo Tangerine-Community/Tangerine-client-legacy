@@ -22,16 +22,22 @@
   </head> 
   <body>
 
-    <div id='navigation'>	
-      <img src='images/TangerineNoBackground.png'>
+    <div id='navigation' class="clearfix">
+      <img id="corner_logo" src='images/corner_logo.png'>
       <span id='version'></span>
       <nav id="main_nav">
-        <button id="collect_button" href="#assessments">Collect</button>
-        <button id="manage_button" href="#manage">Manage</button>
-        <button id="logout_button" href="#logout">Logout</button>
+        <a id="collect_link" href="#assessments">COLLECT</a>
+        <a id="manage_link" href="#manage">MANAGE</a>
       </nav>
-      Enumerator: <span id='enumerator'>not logged in</span> |
-      Student ID: <span id='current-student-id'></span>
+      <div id="session_info">
+        <div id="student_id_box">
+          Student ID <div id='current-student-id'>none</div>
+        </div>
+        <div id="enumerator_box">
+          Enumerator <a id="logout_link" href="#logout">LOGOUT</a>
+          <div id='enumerator'></div>
+        </div>
+      </div>
     </div>
 
     <div class="ajax_loading"><img src='images/tangerine-spin.gif'>Loading...</div>
