@@ -416,7 +416,6 @@ SchoolPage = (function(_super) {
       }
       return _results;
     });
-    console.log("div#" + this.pageId + " li");
     $("div#" + this.pageId + " li").live("click", function(eventData) {
       var dataAttribute, school, selectedElement, _l, _len4, _len5, _m, _ref, _ref2, _results;
       _ref = $("div#" + _this.pageId + " li");
@@ -507,6 +506,9 @@ DateTimePage = (function(_super) {
     var isValid;
     isValid = Checkdigit.isValidIdentifier($('input#student-id').val());
     if (isValid !== true) return isValid;
+    console.log("is itvalid");
+    console.log(isValid);
+    if (isValid) $("#current-student-id").html($('input#student-id').val());
     return DateTimePage.__super__.validate.call(this);
   };
 
@@ -520,14 +522,14 @@ ResultsPage = (function(_super) {
 
   function ResultsPage(options) {
     ResultsPage.__super__.constructor.call(this, options);
-    this.content = Handlebars.compile("      <div class='message'>        You have finished assessment <span class='randomIdForSubject'></span>. Thank the child with a small gift. Please write <span class='randomIdForSubject'></span> on the writing sample.      </div>      <div data-role='collapsible' data-collapsed='true' class='results'>        You have finished:        <h3>Results</h3>        <div>        </div>        <form>          <label for='comment'>Comments (if any):</label>          <textarea style='width:80%' id='comment' name='resultComment'></textarea>        </form>      </div>      <div class='resultsMessage'>      </div>      <button type='button'>Save Results</button>    ");
+    this.content = Handlebars.compile("      <div class='message'>        You have finished assessment <span class='randomIdForSubject'></span>. Thank the child with a small gift. Please write <span class='randomIdForSubject'></span> on the writing sample.      </div>      <div data-role='collapsible' data-collapsed='true' class='results'>        You have finished:        <h3>Results</h3>        <div>        </div>        <form>          <label for='comment'>Comments (if any):</label>          <textarea style='width:80%' id='comment' name='resultComment'></textarea>        </form>      </div>      <div id='result_message'>      </div>      <div id='result_controls'>        <button type='button' id='save_results_button'>Save Results</button>      </div>    ");
   }
 
   ResultsPage.prototype.load = function(data) {
     var _this = this;
     ResultsPage.__super__.load.call(this, data);
     return $("div#" + this.pageId).live("pageshow", function() {
-      $("div#" + _this.pageId + " div span[class='randomIdForSubject']").html($("#current-student-id"));
+      $("div#" + _this.pageId + " div span[class='randomIdForSubject']").html($("#current-student-id").text());
       $("button:contains(Next)").hide();
       if (Tangerine.resultView == null) Tangerine.resultView = new ResultView();
       Tangerine.resultView.model = new Result($.assessment.results());
@@ -536,14 +538,16 @@ ResultsPage = (function(_super) {
         type: 'pie',
         sliceColors: ['black', '#F7C942', 'orangered']
       });
-      $('button:contains(Save Results)').live("click", function() {
+      $("#save_results_button").live("click", function() {
         var _this = this;
-        return $.assessment.saveResults(function(results) {
-          $("div.resultsMessage").html("Results Saved<br/><button>Start another assessment</button>");
-          return $("button:contains(Save Results)").hide();
+        return $.assessment.saveResults(function(model, results) {
+          console.log("I'm trying to tell you what a great job you did");
+          $("#results_message").html("Results Saved");
+          $("#save_results_button").hide();
+          return $("#result_controls").html("<button id='another_assessment'>Start another assessment</button>");
         });
       });
-      return $('button:contains(Start another assessment)').live("click", function() {
+      return $('#another_assessment').live("click", function() {
         return location.reload(true);
       });
     });

@@ -120,9 +120,9 @@ class Assessment extends Backbone.Model
 
   saveResults: (callback) ->
     result = new Result(@results())
-    result.save
-      success: ->
-        callback?(results)
+    result.save {},
+      success: (model, results) ->
+        callback?(model, results)
       error: =>
         alert "Results NOT saved - do you have permission to save?"
         throw "Could not save result #{@results()}"

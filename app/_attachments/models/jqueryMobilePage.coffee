@@ -326,6 +326,7 @@ class SchoolPage extends AssessmentPage
         <input type='text' name='#{dataAttribute}' id='#{dataAttribute}'></input>
       </div>
       "
+
     template = "
       <div>
         <h4>
@@ -354,9 +355,8 @@ class SchoolPage extends AssessmentPage
         school.hide()
         school.show() if school.html().match(new RegExp(currentName, "i"))
 
-    console.log "div##{@pageId} li"
     $("div##{@pageId} li").live "click", (eventData) =>
-      $(school).hide() for school in $("div##{@pageId} li")
+      $(school).hide() for school in $ "div##{@pageId} li"
       selectedElement = $(eventData.currentTarget)
       for dataAttribute in ["name","province","district","schoolId"]
         $("div##{@pageId} form input##{dataAttribute}").val(selectedElement.attr("data-#{dataAttribute}"))
@@ -434,6 +434,9 @@ class DateTimePage extends AssessmentPage
   validate: ->
     isValid = Checkdigit.isValidIdentifier($('input#student-id').val())
     return isValid unless isValid == true
+    console.log "is itvalid"
+    console.log isValid
+    if isValid then $("#current-student-id").html($('input#student-id').val())
     super()
 
 
@@ -454,9 +457,11 @@ class ResultsPage extends AssessmentPage
           <textarea style='width:80%' id='comment' name='resultComment'></textarea>
         </form>
       </div>
-      <div class='resultsMessage'>
+      <div id='result_message'>
       </div>
-      <button type='button'>Save Results</button>
+      <div id='result_controls'>
+        <button type='button' id='save_results_button'>Save Results</button>
+      </div>
     "
 
   load: (data) ->
@@ -464,8 +469,7 @@ class ResultsPage extends AssessmentPage
 
     $("div##{@pageId}").live "pageshow", =>
 
-
-      $("div##{@pageId} div span[class='randomIdForSubject']").html $("#current-student-id")
+      $("div##{@pageId} div span[class='randomIdForSubject']").html $("#current-student-id").text()
 
       $("button:contains(Next)").hide()
 
@@ -476,12 +480,14 @@ class ResultsPage extends AssessmentPage
         type:'pie'
         sliceColors:['black','#F7C942','orangered']
 
-      $('button:contains(Save Results)').live "click", ->
-        $.assessment.saveResults (results) =>
-          $("div.resultsMessage").html("Results Saved<br/><button>Start another assessment</button>")
-          $("button:contains(Save Results)").hide()
+      $("#save_results_button").live "click", ->
+        $.assessment.saveResults (model, results) =>
+          console.log "I'm trying to tell you what a great job you did"
+          $("#results_message").html "Results Saved"
+          $("#save_results_button").hide()
+          $("#result_controls").html "<button id='another_assessment'>Start another assessment</button>"
 
-      $('button:contains(Start another assessment)').live "click", ->
+      $('#another_assessment').live "click", ->
         location.reload(true)
 
 class TextPage extends AssessmentPage

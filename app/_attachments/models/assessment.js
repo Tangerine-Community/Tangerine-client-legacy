@@ -195,9 +195,9 @@ Assessment = (function(_super) {
     var result,
       _this = this;
     result = new Result(this.results());
-    return result.save({
-      success: function() {
-        return typeof callback === "function" ? callback(results) : void 0;
+    return result.save({}, {
+      success: function(model, results) {
+        return typeof callback === "function" ? callback(model, results) : void 0;
       },
       error: function() {
         alert("Results NOT saved - do you have permission to save?");
