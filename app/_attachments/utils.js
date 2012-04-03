@@ -93,33 +93,6 @@ Utils = (function() {
     return console.log([title, message]);
   };
 
-  Utils.handleMenu = function() {
-    Tangerine.user.verify();
-    $('#enumerator').html(Tangerine.user.get("name"));
-    if (Tangerine.user.isAdmin()) {
-      $("#main_nav a").hide();
-      $("#navigation").show();
-      return $("#collect_link, #manage_link, #logout_link").show();
-    } else if (!Tangerine.user.isVerified()) {
-      return $("#navigation").hide();
-    } else {
-      $("#main_nav a").hide();
-      $("#navigation").show();
-      return $("#collect_link, #logout_link").show();
-    }
-  };
-
-  Utils.handleNavigation = function() {
-    if (window.location.href.toLowerCase().indexOf("assessment") !== -1) {
-      $("nav#main_nav a").removeClass("border_on");
-      $("#collect_link").addClass("border_on");
-    }
-    if (window.location.href.toLowerCase().indexOf("manage") !== -1) {
-      $("nav#main_nav a").removeClass("border_on");
-      return $("#manage_link").addClass("border_on");
-    }
-  };
-
   return Utils;
 
 })();
