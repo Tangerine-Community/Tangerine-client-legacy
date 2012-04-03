@@ -121,6 +121,7 @@ class Router extends Backbone.Router
       # This is terrible but it fixes my problem
       # Currently live click handlers get duplicated over and over again
       # Need to convert everything to backbone style views
+      # Not only backbone style views, but reuse views or destroy them
       if Tangerine.assessment?
         location.reload()
       
@@ -240,19 +241,17 @@ $ -> # run after DOM loads
   # Reuse the view objects to stop events from being duplicated (and to save memory)
   
 
+  # Durables
+  # Things here should be reused
   Tangerine.user   = new User()
-  Tangerine.user.on 'change', Utils.handleMenu
-  Tangerine.user.trigger 'change'
   Tangerine.loginView = new LoginView( Tangerine.user )
-
-
   Tangerine.router = new Router()
-  Tangerine.router.on 'all', Utils.handleNavigation
-
-  
   #Tangerine.dispatch = _.clone Backbone.Events
   
-  
+  Tangerine.navi = new Navigation
+    user   : Tangerine.user
+    router : Tangerine.router
+
   Backbone.history.start()
 
   #

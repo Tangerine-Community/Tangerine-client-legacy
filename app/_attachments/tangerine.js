@@ -256,11 +256,12 @@ $(function() {
     }
   });
   Tangerine.user = new User();
-  Tangerine.user.on('change', Utils.handleMenu);
-  Tangerine.user.trigger('change');
   Tangerine.loginView = new LoginView(Tangerine.user);
   Tangerine.router = new Router();
-  Tangerine.router.on('all', Utils.handleNavigation);
+  Tangerine.navi = new Navigation({
+    user: Tangerine.user,
+    router: Tangerine.router
+  });
   Backbone.history.start();
   $(".ajax_loading").ajaxStart(function() {
     return $("#corner_logo").attr("src", "images/spin_orange.gif");
