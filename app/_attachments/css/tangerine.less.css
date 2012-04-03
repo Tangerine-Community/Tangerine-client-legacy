@@ -34,6 +34,10 @@ body.flash {
 #navigation a:hover {
   color: #000000;
 }
+#corner_logo {
+  width: 45px;
+  height: 45px;
+}
 nav#main_nav {
   display: inline;
 }
