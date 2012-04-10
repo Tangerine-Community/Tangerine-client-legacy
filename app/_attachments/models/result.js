@@ -61,6 +61,10 @@ Result = (function(_super) {
         return {
           School: result.name
         };
+      case "StudentIdPage":
+        return {
+          Student: result.student_id
+        };
       case "StudentInformationPage":
         gender = (_ref = result.gender) != null ? _ref : result["m--gender"];
         if (gender) {

@@ -7,16 +7,18 @@
 class User extends Backbone.Model
 
   defaults:
-    name       : null
-    roles      : null
-    temp       : {}
-    messages   : []
+    name        : null
+    roles       : null
+    temp        : {}
+    messages    : []
+    landingPage : "assessments" # goes to this route if logged in
 
   initialize: ->
     @set 
-      name     : @defaults.name
-      roles    : @defaults.roles
-      messages : @defaults.messages
+      name        : @defaults.name
+      roles       : @defaults.roles
+      messages    : @defaults.messages
+      landingPage : @defaults.landingPage
 
     @temp = @defaults.temp
     # if the page was reloaded check to see that 
@@ -50,7 +52,8 @@ class User extends Backbone.Model
         @set 
           name  : user.name
           roles : user.roles
-        Tangerine.router.navigate "assessments", true
+        Tangerine.router.navigate @get("landingPage"), true
+        
       error: ( status, error, message ) =>
         if @temp.intent? && @temp.intent == "retry_login"
           @addMessage message
@@ -58,22 +61,25 @@ class User extends Backbone.Model
           @temp.intent = "login"
           @signup @temp.name, @temp.pass
 
-  isVerified: ( options ) ->
-    @get('name')?
-
-  # Hacky note. This method requires that $.couch.session be set to async: false
+  # Hacky note. This method requires that $.couch.session be set to async: false.
   # Apparently my favorite thing to do is mess with $.couch
-  verify: ->
+  # @callbacks Supports isAdmin, isUser, unregistered
+  # @upgrade-pof
+  verify: ( callbacks )->
     $.couch.session
       success: ( resp ) =>
         if resp.userCtx.name == null
-          result = false
+          Tangerine.router.navigate "login", true
+          callbacks?.unregistered? resp 
         else
           @set
             name   : resp.userCtx.name
             roles  : resp.userCtx.roles
-          result = true
-        options?.success resp
+          if _.indexOf( @get('roles'), '_admin' ) != -1 then callbacks?.isAdmin? resp
+          callbacks?.isUser? resp
+          # there has to be a better way to tell what page we're on 
+          if location.hash.indexOf("login") != -1 then Tangerine.router.navigate @get("landingPage"), true
+
         
       error: ( status, error, reason ) ->
         # this is an odd situation to write code for. Don't think it's possible to get here
@@ -81,15 +87,16 @@ class User extends Backbone.Model
         # Send them to the login page
         Tangerine.router.navigate "login", true
 
-  isAdmin: ->
-    _.indexOf( @get('roles'), '_admin' ) != -1
-
   logout: ->
     $.couch.logout
       success: =>
+        $.cookie "AuthSession", ""
         @clear()
         Tangerine.router.navigate "login", true
       error: =>
+        $.cookie "AuthSession", ""
+        @clear()
+        Tangerine.router.navigate "login", true
         
   clearAttempt: ->
     @temp = @defaults.temp

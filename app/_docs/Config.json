@@ -36,6 +36,7 @@
           "Interview",
           "ResultsPage",
           "SchoolPage",
+          "StudentIdPage",
           "StudentInformationPage",
           "ToggleGridWithTimer",
           "UntimedSubtest",
@@ -47,6 +48,9 @@
           ],
           "DateTimePage": [
               
+          ],
+          "StudentIdPage":[
+          
           ],
           "Interview": [
               "questions"

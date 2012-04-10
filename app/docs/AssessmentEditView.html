@@ -1,0 +1,169 @@
+<!DOCTYPE html>  <html> <head>   <title>AssessmentEditView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               AssessmentEditView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">AssessmentEditView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">el: </span><span class="s">&#39;#content&#39;</span>
+
+  <span class="nv">initialize: </span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="o">=&gt;</span>
+    <span class="nx">options</span> <span class="o">?=</span> <span class="p">{}</span>
+    <span class="vi">@model = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
+    <span class="vi">@config = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">Subtest</span>
+
+  <span class="nv">events:</span>
+    <span class="s">&quot;click button.back_to_assessments&quot;</span>        <span class="o">:</span> <span class="s">&quot;gotoAssessments&quot;</span>
+    <span class="s">&quot;click img.show_delete_subtest_confirm&quot;</span>   <span class="o">:</span> <span class="s">&quot;showConfirmDeleteSubtest&quot;</span>
+    <span class="s">&quot;click button.delete_subtest_affirmative&quot;</span> <span class="o">:</span> <span class="s">&quot;deleteSubtestAffirmative&quot;</span>
+    <span class="s">&quot;click button.delete_subtest_negative&quot;</span>    <span class="o">:</span> <span class="s">&quot;deleteSubtestNegative&quot;</span>
+    <span class="s">&quot;click img</span><span class="err">#</span><span class="s">add_subtest_form&quot;</span>              <span class="o">:</span> <span class="s">&quot;addSubtestForm&quot;</span>
+    <span class="s">&quot;click img.save_this_subtest&quot;</span>             <span class="o">:</span> <span class="s">&quot;saveThisSubtest&quot;</span>
+    <span class="s">&quot;click li</span><span class="err">#</span><span class="s">save_all_new_subtests&quot;</span>          <span class="o">:</span> <span class="s">&quot;saveAllNewSubtests&quot;</span>
+    <span class="s">&quot;change form.newSubtest select&quot;</span><span class="o">:</span> <span class="s">&quot;subtestTypeSelected&quot;</span>
+    <span class="s">&quot;change </span><span class="err">#</span><span class="s">edit-archive&quot;</span><span class="o">:</span> <span class="s">&quot;updateArchive&quot;</span>
+
+  
+  
+  <span class="nv">render: </span><span class="o">=&gt;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">    &lt;button id=&#39;back_to_asssessments&#39;&gt;Back to Assessments&lt;/button&gt;</span>
+<span class="s">    &lt;div id=&#39;edit_assessment&#39;&gt;</span>
+<span class="s">      &lt;h1&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/h1&gt;</span>
+<span class="s">      &lt;div&gt;</span>
+<span class="s">        &lt;label for=&#39;edit-archive&#39;&gt;Archived&lt;/label&gt;&lt;br&gt;</span>
+<span class="s">        &lt;input type=&#39;checkbox&#39; id=&#39;edit-archive&#39; name=&#39;archived&#39; value=&#39;</span><span class="si">#{</span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;archived&quot;</span> <span class="o">is</span> <span class="kc">true</span> <span class="k">then</span> <span class="s">&quot;checked&quot;</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/input&gt;&lt;br/&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;h2&gt;Subtests&lt;/h2&gt;</span>
+<span class="s">      &lt;ul id=&#39;subtest_list&#39;&gt;</span>
+<span class="s">        </span><span class="si">#{</span>
+        <span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;urlPathsForPages&quot;</span><span class="p">),</span> <span class="p">(</span><span class="nx">subtestId</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">@renderSubtestItem</span><span class="p">(</span><span class="nx">subtestId</span><span class="p">)</span> <span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span> 
+        <span class="si">}</span><span class="s"></span>
+<span class="s">      &lt;/ul&gt;</span>
+<span class="s">      &lt;ul id=&#39;new_subtest_list&#39;&gt;</span>
+<span class="s">        &lt;li&gt;&lt;img src=&#39;images/icon_add.png&#39; class=&#39;icon_add&#39; id=&#39;add_subtest_form&#39;&gt;&lt;/li&gt;</span>
+<span class="s">        &lt;li id=&#39;save_all_new_subtests&#39;&gt;&lt;button&gt;Save All Subtests&lt;/button&gt;&lt;/li&gt;</span>
+<span class="s">      &lt;/ul&gt;</span>
+<span class="s">    &lt;/div&gt;</span>
+<span class="s">    &quot;</span>
+    <span class="nx">@makeSortable</span><span class="p">()</span>
+
+  <span class="nv">renderSubtestItem: </span><span class="nf">(subtestId) -&gt;</span>
+    <span class="s">&quot;</span>
+<span class="s">    &lt;li data-subtest=&#39;</span><span class="si">#{</span><span class="nx">subtestId</span><span class="si">}</span><span class="s">&#39; id=&#39;</span><span class="si">#{</span><span class="nx">subtestId</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">      &lt;img src=&#39;images/icon_draggable.png&#39;&gt;</span>
+<span class="s">      </span><span class="si">#{</span><span class="nx">subtestId</span><span class="si">}</span><span class="s"></span>
+<span class="s">      &lt;a href=&#39;</span><span class="err">#</span><span class="s">edit/assessment/</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">/subtest/</span><span class="si">#{</span><span class="nx">subtestId</span><span class="si">}</span><span class="s">&#39;&gt;&lt;img class=&#39;icon_edit&#39; src=&#39;images/icon_edit.png&#39;&gt;&lt;/a&gt;</span>
+<span class="s">      &lt;img class=&#39;icon_delete show_delete_subtest_confirm&#39; src=&#39;images/icon_delete.png&#39;&gt;</span>
+<span class="s">      &lt;span class=&#39;delete_confirm&#39;&gt;Are you sure? &lt;button data-subtest=&#39;</span><span class="si">#{</span><span class="nx">subtestId</span><span class="si">}</span><span class="s">&#39; class=&#39;delete_subtest_affirmative&#39;&gt;Yes&lt;/button&gt;&lt;button class=&#39;delete_subtest_negative&#39;&gt;No&lt;/button&gt;&lt;/span&gt;</span>
+<span class="s">    &lt;/li&gt;</span>
+<span class="s">    &quot;</span>
+
+  <span class="nv">addSubtestForm: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>That random number is so event.target has a firm unique id 
+1-1,000,000 shot of getting the same two, those are odds I can live with</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">$</span><span class="p">(</span><span class="s">&#39;ul#new_subtest_list&#39;</span><span class="p">).</span><span class="nx">prepend</span> <span class="s">&quot;</span>
+<span class="s">      &lt;li class=&#39;new_subtest&#39; id=&#39;new_subtest_</span><span class="si">#{</span><span class="nb">parseInt</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;input name=&#39;_id&#39; class=&#39;_id&#39; type=&#39;text&#39; placeholder=&#39;Subtest Name&#39;&gt;</span>
+<span class="s">        &lt;select name=&#39;pageType&#39; class=&#39;pageType&#39;&gt;</span>
+<span class="s">          &lt;option&gt;Select a type&lt;/option&gt;</span>
+<span class="s">          </span><span class="si">#{</span> <span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">@config</span><span class="p">.</span><span class="nx">pageTypes</span><span class="p">,</span> <span class="nf">(pageType) -&gt;</span> <span class="s">&quot;&lt;option&gt;</span><span class="si">#{</span><span class="nx">pageType</span><span class="si">}</span><span class="s">&lt;/option&gt;&quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="si">}</span><span class="s"></span>
+<span class="s">        &lt;/select&gt;</span>
+<span class="s">        &lt;img src=&#39;images/icon_add.png&#39; class=&#39;icon_add save_this_subtest&#39;&gt;</span>
+<span class="s">        &lt;img src=&#39;images/icon_delete.png&#39; class=&#39;parent_remove&#39;&gt;</span>
+<span class="s">      &lt;/li&gt;&quot;</span>
+
+  <span class="nv">updateSaveAllButton: </span><span class="o">-&gt;</span> <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="s">&#39;li.new_subtest&#39;</span><span class="p">).</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">then</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;li</span><span class="err">#</span><span class="s">save_all_subtests&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">()</span> <span class="k">else</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;li</span><span class="err">#</span><span class="s">save_all_subtests&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+
+  <span class="nv">saveAllNewSubtests: </span><span class="o">-&gt;</span>
+    <span class="nv">subtests = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;li.new_subtest&quot;</span><span class="p">).</span><span class="nx">each</span> <span class="nf">( index, element ) -&gt;</span>
+      <span class="nx">@saveNewSubtest</span>
+        <span class="nv">_id      : </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;input._id&quot;</span><span class="p">,</span> <span class="nx">element</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+        <span class="nv">pageType : </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;select.pageType option:selected&quot;</span><span class="p">,</span> <span class="nx">element</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+        <span class="nv">toRemove : </span><span class="nx">element</span>
+    
+  
+  <span class="nv">saveThisSubtest: </span><span class="nf">(event) -&gt;</span>
+    <span class="nv">targetParent = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">parent</span><span class="p">()</span>
+    <span class="nx">@saveNewSubtest</span>
+        <span class="nv">_id      : </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;input._id&quot;</span><span class="p">,</span> <span class="nx">targetParent</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+        <span class="nv">pageType : </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;select.pageType option:selected&quot;</span><span class="p">,</span> <span class="nx">targetParent</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+        <span class="nv">toRemove : </span><span class="nx">targetParent</span>
+
+  <span class="nv">saveNewSubtest: </span><span class="nf">( options ) -&gt;</span>
+    <span class="nv">_id      = </span><span class="nx">options</span><span class="p">.</span><span class="nx">_id</span>
+    <span class="nv">pageType = </span><span class="nx">options</span><span class="p">.</span><span class="nx">pageType</span>
+    <span class="nv">toRemove = </span><span class="nx">options</span><span class="p">.</span><span class="nx">toRemove</span>
+
+    <span class="nv">subtest = </span><span class="k">new</span> <span class="nx">Subtest</span>
+      <span class="nv">_id: </span><span class="nx">_id</span>
+      <span class="nv">pageType: </span><span class="nx">pageType</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Use the id to start with a nice default for the pageId</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nv">pageId: </span><span class="nx">_id</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">_id</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">subtest</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>apply blank subtest template</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">subtest</span><span class="p">.</span><span class="nx">set</span> <span class="nx">_</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span>
+      <span class="nx">@config</span><span class="p">.</span><span class="nx">pageTypeProperties</span><span class="p">[</span><span class="nx">pageType</span><span class="p">],</span> 
+      <span class="p">(</span><span class="nx">result</span><span class="p">,</span><span class="nx">property</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">result</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span> <span class="k">return</span> <span class="nx">result</span><span class="p">,</span> 
+      <span class="p">{}</span>
+    <span class="p">)</span>
+    
+    <span class="nx">subtest</span><span class="p">.</span><span class="nx">save</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nv">success: </span><span class="o">=&gt;</span>
+        <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
+          <span class="nv">urlPathsForPages: </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;urlPathsForPages&quot;</span><span class="p">).</span><span class="nx">concat</span><span class="p">([</span><span class="nx">subtest</span><span class="p">.</span><span class="nx">id</span><span class="p">])</span>
+        <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span> <span class="kc">null</span><span class="p">,</span>
+          <span class="nv">success: </span><span class="o">=&gt;</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s">&quot;ul</span><span class="err">#</span><span class="s">subtest_list&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">@renderSubtestItem</span><span class="p">(</span><span class="nx">_id</span><span class="p">)).</span><span class="nx">sortable</span><span class="p">(</span><span class="s">&#39;refresh&#39;</span><span class="p">)</span>
+            <span class="nx">$</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">toRemove</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+          <span class="nv">error: </span><span class="o">-&gt;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;assessment save error&quot;</span>
+            <span class="nx">$</span><span class="p">(</span><span class="nx">toRemove</span><span class="p">).</span><span class="nx">append</span> <span class="s">&quot;&lt;span class=&#39;error&#39;&gt;Error while updating </span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span><span class="si">}</span><span class="s"> &lt;img src=&#39;images/icon_close.png&#39; class=&#39;parent_remove&#39;&gt;&lt;/span&gt;&quot;</span>
+      <span class="nv">error: </span><span class="o">=&gt;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;subtest save error&quot;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="nx">toRemove</span><span class="p">).</span><span class="nx">append</span> <span class="s">&quot;&lt;span class=&#39;error&#39;&gt;Invalid new subtest &lt;img src=&#39;images/icon_close.png&#39; class=&#39;parent_remove&#39;&gt;&lt;/span&gt;&quot;</span>
+
+    <span class="nx">@updateSaveAllButton</span><span class="p">()</span>
+
+    
+
+  <span class="nv">showConfirmDeleteSubtest: </span><span class="nf">( event ) -&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">parent</span><span class="p">().</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.delete_confirm&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+
+  <span class="nv">deleteSubtestNegative: </span><span class="nf">( event ) -&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">parent</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+
+  <span class="nv">deleteSubtestAffirmative: </span><span class="nf">(event) -&gt;</span>
+    <span class="nv">subtest_id = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-subtest&quot;</span><span class="p">)</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="p">[</span><span class="nx">subtest_id</span><span class="p">,</span> <span class="nx">event</span><span class="p">]</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
+      <span class="nv">urlPathsForPages: </span><span class="nx">_</span><span class="p">.</span><span class="nx">without</span><span class="p">(</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;urlPathsForPages&quot;</span><span class="p">),</span> <span class="nx">subtest_id</span> <span class="p">)</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nv">success: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">parent</span><span class="p">().</span><span class="nx">parent</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+      <span class="nv">error: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div.message&quot;</span><span class="p">).</span><span class="nx">append</span> <span class="s">&quot;&lt;span class=&#39;error&#39;&gt;Error saving changes &lt;img src=&#39;images/icon_close.png&#39; class=&#39;clear_message&#39;&gt;&lt;/span&gt;&quot;</span>
+
+  <span class="nv">updateArchive: </span><span class="o">-&gt;</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span> <span class="p">{</span> <span class="nv">archived: </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">edit-archive&quot;</span><span class="p">).</span><span class="o">is</span><span class="p">(</span><span class="s">&quot;:checked&quot;</span><span class="p">)</span> <span class="p">},</span>
+      <span class="nv">success: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">edit-archive&quot;</span><span class="p">).</span><span class="nx">effect</span> <span class="s">&quot;highlight&quot;</span><span class="p">,</span> <span class="p">{</span> <span class="nv">color: </span><span class="s">&quot;</span><span class="err">#</span><span class="s">F7C942&quot;</span> <span class="p">},</span> <span class="mi">2000</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div.message&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;Saved&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">3000</span><span class="p">)</span>
+      <span class="nv">error: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div.message&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;Error saving changes&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">3000</span><span class="p">)</span>
+
+  <span class="nv">subtestTypeSelected: </span><span class="o">-&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;form.newSubtest input[name=&#39;_id&#39;]&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;form.newSubtest option:selected&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">())</span>
+
+  <span class="nv">makeSortable: </span><span class="o">=&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;ul</span><span class="err">#</span><span class="s">subtest_list&quot;</span><span class="p">,</span> <span class="nx">@el</span><span class="p">).</span><span class="nx">sortable</span>
+      <span class="nv">update: </span><span class="o">=&gt;</span>
+        <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
+          <span class="nv">urlPathsForPages: </span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">map</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;li a&quot;</span><span class="p">),</span> <span class="nf">(subtest) -&gt;</span>
+            <span class="nx">$</span><span class="p">(</span><span class="nx">subtest</span><span class="p">).</span><span class="nx">text</span><span class="p">()</span>
+          <span class="p">)</span>
+        <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span> <span class="kc">null</span><span class="p">,</span>
+          <span class="nv">success: </span><span class="o">-&gt;</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s">&quot;ul&quot;</span><span class="p">).</span><span class="nx">effect</span> <span class="s">&quot;highlight&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nv">color: </span><span class="s">&quot;</span><span class="err">#</span><span class="s">F7C942&quot;</span><span class="p">},</span> <span class="mi">2000</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div.message&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;Saved&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">3000</span><span class="p">)</span>
+          <span class="nv">error: </span><span class="o">-&gt;</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div.message&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;Error saving changes&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">3000</span><span class="p">)</span>
+
+  <span class="nv">gotoAssessments: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;manage&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
+  <span class="nv">clearNewSubtest: </span><span class="o">-&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;form.newSubtest input[name=&#39;_id&#39;]&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;form.newSubtest select&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

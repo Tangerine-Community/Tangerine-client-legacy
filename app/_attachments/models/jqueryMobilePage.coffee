@@ -434,11 +434,49 @@ class DateTimePage extends AssessmentPage
   validate: ->
     isValid = Checkdigit.isValidIdentifier($('input#student-id').val())
     return isValid unless isValid == true
-    console.log "is itvalid"
-    console.log isValid
     if isValid then $("#current-student-id").html($('input#student-id').val())
     super()
 
+#TODO Internationalize
+class StudentIdPage extends AssessmentPage
+
+  load: (data) ->
+    dateTime = new Date()
+    year = dateTime.getFullYear()
+    month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][dateTime.getMonth()]
+    day = dateTime.getDate()
+    minutes = dateTime.getMinutes()
+    minutes = "0" + minutes if minutes < 10
+    time = dateTime.getHours() + ":" + minutes
+
+    @content = "
+      <form class='student_id_page'>
+        <div>
+          <label for='student_id'>Student Identifier</label>
+          <input type='text' name='student_id' id='student_id'>
+        </div>
+        <div>
+          <label for='year'>Year</label>
+          <input type='number' name='year' id='year' value='#{year}'>
+        </div>
+        <div>
+          <label for='month'>Month</label>
+          <input type='text' name='month' id='month' value='#{month}'>
+        </div>
+        <div>
+          <label for='day'>Day</label>
+          <input type='number' name='day' id='day' value='#{day}'>
+        </div>
+        <div>
+          <label for='time'>Time</label>
+          <input type='text' name='time' id='time' value='#{time}'>
+        </div>
+      </form>
+      "
+
+  validate: ->
+    $("#current-student-id").html($('input#student_id').val())
+    super()
 
 class ResultsPage extends AssessmentPage
   constructor: (options) ->
@@ -482,7 +520,6 @@ class ResultsPage extends AssessmentPage
 
       $("#save_results_button").live "click", ->
         $.assessment.saveResults (model, results) =>
-          console.log "I'm trying to tell you what a great job you did"
           $("#results_message").html "Results Saved"
           $("#save_results_button").hide()
           $("#result_controls").html "<button id='another_assessment'>Start another assessment</button>"

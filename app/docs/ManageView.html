@@ -1,0 +1,131 @@
+<!DOCTYPE html>  <html> <head>   <title>ManageView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               ManageView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">ManageView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">el: </span><span class="s">&#39;#content&#39;</span>
+
+  <span class="nv">events:</span>
+    <span class="s">&quot;click button</span><span class="err">#</span><span class="s">show_import_from_cloud&quot;</span>    <span class="o">:</span> <span class="s">&quot;showImportFromCloud&quot;</span>
+    <span class="s">&quot;click button</span><span class="err">#</span><span class="s">import_from_cloud_confirm&quot;</span> <span class="o">:</span> <span class="s">&quot;importFromCloud&quot;</span>
+    <span class="s">&quot;click button</span><span class="err">#</span><span class="s">import_from_cloud_cancel&quot;</span>  <span class="o">:</span> <span class="s">&quot;hideImportFromCloud&quot;</span>
+
+    <span class="s">&quot;click img</span><span class="err">#</span><span class="s">show_new_assessment_form&quot;</span>  <span class="o">:</span> <span class="s">&quot;showNewAssessmentForm&quot;</span>
+    <span class="s">&quot;click button</span><span class="err">#</span><span class="s">add_new_assessment&quot;</span>     <span class="o">:</span> <span class="s">&quot;addNewAssessment&quot;</span>
+    <span class="s">&quot;click button</span><span class="err">#</span><span class="s">hide_new_assessment_form&quot;</span>  <span class="o">:</span> <span class="s">&quot;hideNewAssessmentForm&quot;</span>
+    <span class="s">&quot;click img.delete_assessment_confirm&quot;</span> <span class="o">:</span> <span class="s">&quot;showConfirmDelete&quot;</span>
+    <span class="s">&quot;click button.delete_assessment_yes&quot;</span>  <span class="o">:</span> <span class="s">&quot;deleteAfirmative&quot;</span>
+    <span class="s">&quot;click button.delete_assessment_no&quot;</span>   <span class="o">:</span> <span class="s">&quot;deleteNegative&quot;</span>
+
+  <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
+    <span class="vi">@temp = </span><span class="p">{}</span>
+    <span class="vi">@collection = </span><span class="nx">options</span><span class="p">.</span><span class="nx">collection</span>
+    <span class="nx">@collection</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;add remove&quot;</span><span class="p">,</span> <span class="nx">@updateAssessmentList</span>
+
+  <span class="nv">showImportFromCloud: </span><span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;form</span><span class="err">#</span><span class="s">import_from_cloud&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">()</span>
+  <span class="nv">hideImportFromCloud: </span><span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;form</span><span class="err">#</span><span class="s">import_from_cloud&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+  <span class="nv">importFromCloud: </span><span class="o">-&gt;</span> <span class="nx">Utils</span><span class="p">.</span><span class="nx">importAssessmentFromIris</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">import_from_cloud_dkey&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+
+  <span class="nv">render: </span><span class="p">()</span> <span class="o">=&gt;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">    &lt;div id=&#39;manage&#39;&gt;</span>
+<span class="s">      &lt;button id=&#39;show_import_from_cloud&#39;&gt;Import assessment&lt;/button&gt;</span>
+<span class="s">      &lt;form id=&#39;import_from_cloud&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;import_from_cloud_dkey&#39;&gt;Download key &lt;input type=&#39;text&#39; id=&#39;import_from_cloud_dkey&#39;&gt;&lt;/label&gt;</span>
+<span class="s">        &lt;button id=&#39;import_from_cloud_confirm&#39;&gt;Import&lt;/button&gt;&lt;button id=&#39;import_from_cloud_cancel&#39;&gt;Cancel&lt;/button&gt;</span>
+<span class="s">      &lt;/form&gt;</span>
+<span class="s">      &lt;div id=&#39;message&#39;&gt;&lt;/div&gt;</span>
+<span class="s">      &lt;h1&gt;Assessments&lt;/h1&gt;</span>
+<span class="s">      &lt;ul id=&#39;assessment_list&#39;&gt;&lt;/ul&gt;</span>
+<span class="s">      &lt;form id=&#39;new_assessment&#39;&gt;</span>
+<span class="s">        &lt;input type=&#39;text&#39; id=&#39;new_assessment_name&#39; placeholder=&#39;Assessment name&#39;&gt;&lt;button id=&#39;add_new_assessment&#39;&gt;Add&lt;/button&gt;&lt;button id=&#39;hide_new_assessment_form&#39;&gt;Cancel&lt;/button&gt;</span>
+<span class="s">        &lt;span id=&#39;assessment_name_error&#39;&gt;&lt;/span&gt;</span>
+<span class="s">      &lt;/form&gt;</span>
+<span class="s">      &lt;img id=&#39;show_new_assessment_form&#39; class=&#39;icon&#39; src=&#39;images/icon_add.png&#39;&gt;&lt;br&gt;</span>
+<span class="s">    &lt;/div&gt;</span>
+<span class="s">    &quot;</span>
+    <span class="nx">@updateAssessmentList</span><span class="p">()</span>
+
+  <span class="nv">updateAssessmentList: </span><span class="o">=&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">new_assessment_name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+    <span class="vi">@temp.html = </span><span class="s">&quot;&quot;</span>
+    <span class="nx">@collection</span><span class="p">.</span><span class="nx">each</span> <span class="p">(</span> <span class="nx">assessment</span> <span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="nv">docName       = </span><span class="nx">assessment</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;is archived&quot;</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">assessment</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;archived&quot;</span><span class="p">)</span>
+      <span class="nv">archiveStatus = </span><span class="k">if</span>  <span class="nx">assessment</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;archived&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="s">&quot; class=&#39;archived_assessment&#39; &quot;</span> <span class="k">else</span> <span class="s">&quot;&quot;</span>
+      <span class="nv">safeDocName   = </span><span class="nx">docName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">dasherize</span><span class="p">()</span>
+
+      <span class="nx">@temp</span><span class="p">.</span><span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
+<span class="s">      &lt;li id=&#39;</span><span class="si">#{</span><span class="nx">safeDocName</span><span class="si">}</span><span class="s">&#39;&gt;&lt;span</span><span class="si">#{</span><span class="nx">archiveStatus</span><span class="si">}</span><span class="s">&gt;</span><span class="si">#{</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/span&gt; </span>
+<span class="s">        &lt;a href=&#39;</span><span class="err">#</span><span class="s">results/</span><span class="si">#{</span><span class="nx">docName</span><span class="si">}</span><span class="s">&#39;&gt;&lt;img class=&#39;icon&#39; src=&#39;images/icon_result.png&#39;&gt;&lt;/a&gt;</span>
+<span class="s">        &lt;a href=&#39;</span><span class="err">#</span><span class="s">edit/assessment/</span><span class="si">#{</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">&#39;&gt;&lt;img class=&#39;icon&#39; src=&#39;images/icon_edit.png&#39;&gt;&lt;/a&gt; </span>
+<span class="s">        &lt;img class=&#39;icon_delete delete_assessment_confirm&#39; src=&#39;images/icon_delete.png&#39;&gt;</span>
+<span class="s">        &lt;span class=&#39;delete_confirm&#39;&gt;Are you sure? &lt;button data-docName=&#39;</span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">.</span><span class="si">#{</span><span class="nx">docName</span><span class="si">}</span><span class="s">&#39;class=&#39;delete_assessment_yes&#39;&gt;Yes&lt;/button&gt;&lt;button class=&#39;delete_assessment_no&#39;&gt;No&lt;/button&gt;&lt;/span&gt;</span>
+<span class="s">      &lt;/li&gt;&quot;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;ul</span><span class="err">#</span><span class="s">assessment_list&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">@temp</span><span class="p">.</span><span class="nx">html</span>
+
+  <span class="nv">showNewAssessmentForm: </span><span class="o">-&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;form</span><span class="err">#</span><span class="s">new_assessment&quot;</span><span class="p">,</span> <span class="nx">@el</span><span class="p">).</span><span class="nx">show</span><span class="p">()</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;input</span><span class="err">#</span><span class="s">new_assessment_name&quot;</span><span class="p">,</span> <span class="nx">@el</span><span class="p">).</span><span class="nx">focus</span><span class="p">()</span>
+
+  <span class="nv">hideNewAssessmentForm: </span><span class="o">-&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;form</span><span class="err">#</span><span class="s">new_assessment&quot;</span><span class="p">,</span> <span class="nx">@el</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+
+  <span class="nv">addNewAssessment: </span><span class="p">()</span> <span class="o">=&gt;</span>
+    <span class="nv">name = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;input#new_assessment_name&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nx">name</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/[^A-Za-z ]/</span><span class="p">)</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#assessment_name_error&#39;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&#39;Invalid character for assessment.&#39;</span>
+      <span class="k">return</span>
+    <span class="k">else</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#assessment_name_error&#39;</span><span class="p">).</span><span class="nx">empty</span><span class="p">()</span>
+
+    <span class="nv">assessment = </span><span class="k">new</span> <span class="nx">Assessment</span>
+      <span class="nv">name: </span><span class="nx">name</span>
+      <span class="nv">_id: </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="nx">name</span>
+      <span class="nv">urlPathsForPages: </span><span class="p">[]</span>
+      <span class="nv">subtests: </span><span class="p">[]</span>
+
+    <span class="nx">assessment</span><span class="p">.</span><span class="nx">save</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nv">success: </span><span class="o">=&gt;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;saved assessment, adding to collection&quot;</span>
+        <span class="nx">@collection</span><span class="p">.</span><span class="nx">add</span> <span class="nx">assessment</span>
+        <span class="nx">@hideNewAssessmentForm</span><span class="p">()</span>
+      <span class="nv">error: </span><span class="o">-&gt;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;error saving assessment&quot;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#assessment_name_error&#39;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&#39;error&#39;</span>
+        <span class="nv">messages = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;&lt;span class=&#39;error&#39;&gt;Invalid new assessment&lt;/span&gt;&quot;</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&#39;button:contains(Add)&#39;</span><span class="p">).</span><span class="nx">after</span><span class="p">(</span><span class="nx">messages</span><span class="p">)</span>
+        <span class="nx">messages</span><span class="p">.</span><span class="nx">fadeOut</span> <span class="p">(</span><span class="mi">2000</span><span class="p">),</span> <span class="o">-&gt;</span>
+          <span class="nx">messages</span><span class="p">.</span><span class="nx">remove</span><span class="p">()</span>
+
+  <span class="nv">showConfirmDelete: </span><span class="nf">(event) -&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">parent</span><span class="p">().</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.delete_confirm&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">);</span>
+
+  <span class="nv">deleteAfirmative: </span><span class="nf">(event) -&gt;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;trying to get &quot;</span> <span class="o">+</span> <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-docName&quot;</span><span class="p">)</span>
+    <span class="nv">assessment = </span><span class="nx">@collection</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-docName&quot;</span><span class="p">))</span>
+    <span class="nx">assessment</span><span class="p">.</span><span class="nx">destroy</span>
+      <span class="nv">success: </span><span class="o">=&gt;</span>
+        <span class="nx">@collection</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">assessment</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">parent</span><span class="p">().</span><span class="nx">parent</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">);</span>
+      <span class="nv">error: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">parent</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">);</span>
+
+  <span class="nv">deleteNegative: </span><span class="nf">(event) -&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">parent</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">);</span>
+
+  <span class="nv">updateTangerine: </span><span class="nf">(event) -&gt;</span>
+    <span class="nv">source = </span><span class="s">&quot;http://</span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">cloud</span><span class="p">.</span><span class="nx">target</span><span class="si">}</span><span class="s">/</span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">db_name</span><span class="si">}</span><span class="s">&quot;</span>
+    <span class="nv">target = </span><span class="s">&quot;http://</span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">user_with_database_create_permission</span><span class="si">}</span><span class="s">:</span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">password_with_database_create_permission</span><span class="si">}</span><span class="s">@localhost:</span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">port</span><span class="si">}</span><span class="s">/</span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">db_name</span><span class="si">}</span><span class="s">&quot;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">content&quot;</span><span class="p">).</span><span class="nx">prepend</span> <span class="s">&quot;&lt;span id=&#39;message&#39;&gt;Updating from: </span><span class="si">#{</span><span class="nx">source</span><span class="si">}</span><span class="s">&lt;/span&gt;&quot;</span>
+
+    <span class="nx">$</span><span class="p">.</span><span class="nx">couch</span><span class="p">.</span><span class="nx">replicate</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">target</span><span class="p">,</span>
+      <span class="nv">success: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">message&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;Finished&quot;</span>
+        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;logout&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
+  <span class="nv">initializeDatabase: </span><span class="nf">(event) -&gt;</span>
+    <span class="nv">databaseName = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;href&quot;</span><span class="p">)</span>
+    <span class="nx">Utils</span><span class="p">.</span><span class="nx">createResultsDatabase</span> <span class="nx">databaseName</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">message&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;Database &#39;</span><span class="si">#{</span><span class="nx">databaseName</span><span class="si">}</span><span class="s">&#39; Initialized&quot;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

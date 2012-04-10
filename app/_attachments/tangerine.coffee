@@ -1,50 +1,51 @@
 class Router extends Backbone.Router
   routes:
-    "assessment/:id": "assessment"
-#    "result/:id": "result"
-    "results/tabular/:assessment_id": "tabular_results"
-    "results/tabular/:assessment_id/*options": "tabular_results"
-    "results/:assessmentId/:enumerator": "results"
-    "print/:id": "print"
-    "student_printout/:id": "student_printout"
     "login": "login"
     "logout": "logout"
-    "manage": "manage"
-    "edit/assessment/:assessment_id/subtest/:subtest_id": "editSubtest"
-    "edit/assessment/:assessment_id": "editAssessment"
-    "assessments": "assessments"
     "": "assessments"
+    "assessments": "assessments"
+    "assessment/:id": "assessment"
+    "manage": "manage"
+    "edit/assessment/:assessment_id": "editAssessment"
+    "edit/assessment/:assessment_id/subtest/:subtest_id": "editSubtest"
+    "results/tabular/:assessment_id": "tabular_results"
+    "results/tabular/:assessment_id/*options": "tabular_results"
+    "results/:assessmentId/*enumerator": "results"
+    "print/:id": "print"
+    "student_printout/:id": "student_printout"
+#    "result/:id": "result"
 
   editSubtest: ( assessment_id, subtest_id ) ->
-    @verify_logged_in
-      success: ->
-        assessment = new Assessment
-          _id: assessment_id
-        assessment.fetch
+    assessment_id = Utils.cleanURL assessment_id
+    subtest_id    = Utils.cleanURL subtest_id
+    Tangerine.user.verify
+      isAdmin: ->
+        Tangerine.subtestEdit.assessment_id = assessment_id
+        Tangerine.subtestEdit.model = new Subtest
+          _id: subtest_id
+        Tangerine.subtestEdit.model.fetch
           success: ->
-            Tangerine.subtestEdit ?= new SubtestEdit()
-            Tangerine.subtestEdit.assessment = assessment
-            Tangerine.subtestEdit.model = new Subtest
-              _id: subtest_id
-            Tangerine.subtestEdit.model.fetch
-              success: ->
-                Tangerine.subtestEdit.render()
+            Tangerine.subtestEdit.render()
 
-  editAssessment: (assessment_id) ->
-    @verify_logged_in
-      success: ->
-        assessment = new Assessment
-          _id: assessment_id
+        #assessment = new Assessment
+        #  _id: assessment_id
+        #assessment.fetch
+        #  success: ->
+            
+
+  editAssessment: ( assessment_id ) ->
+    assessment_id = Utils.cleanURL assessment_id
+    Tangerine.user.verify
+      isAdmin: ->
+        assessment = new Assessment { _id : assessment_id }
         assessment.fetch
-          success: ->
-            Tangerine.assessmentEdit ?= new AssessmentEdit()
-            Tangerine.assessmentEdit.model = new Assessment(assessment.attributes)
-            Tangerine.assessmentEdit.render()
-                
+          success: () ->
+            Tangerine.assessmentEditView.model = assessment
+            Tangerine.assessmentEditView.render()
 
   results: (assessmentId,enumerator) ->
-    @verify_logged_in
-      success: ->
+    Tangerine.user.verify
+      isUser: ->
         resultCollection = new ResultCollection()
         resultCollection.fetch
           success: ->
@@ -53,8 +54,9 @@ class Router extends Backbone.Router
               _id: assessmentId
             Tangerine.resultsView.assessment.fetch
               success: ->
-                Tangerine.resultsView.results = resultCollection.filter (result) ->
-                  result.get("assessmentId") is assessmentId and result.get("enumerator") is enumerator
+                if enumerator
+                  Tangerine.resultsView.results = resultCollection.filter (result) ->
+                    result.get("assessmentId") is assessmentId and result.get("enumerator") is enumerator
                 Tangerine.resultsView.render()
 
   
@@ -96,19 +98,19 @@ class Router extends Backbone.Router
             $("#content").html Tangerine.resultView.render()
 
   manage: ->
-    if Tangerine.user.isAdmin()
-      assessmentCollection = new AssessmentCollection()
-      assessmentCollection.fetch
-        success: ->
-          Tangerine.manageView ?= new ManageView()
-          Tangerine.manageView.render(assessmentCollection)
+    Tangerine.user.verify
+      isAdmin: ->
+        Tangerine.assessmentCollection.fetch
+          success: ->
+            Tangerine.manageView.render Tangerine.assessmentCollection
 
-  assessments: ->
-    if Tangerine.user.isVerified()
-      Tangerine.assessmentListView ?= new AssessmentListView()
-      Tangerine.assessmentListView.render()
-    else
-      Tangerine.router.navigate "login", true
+  assessments : ->
+    Tangerine.user.verify
+      isUser: ->
+        Tangerine.assessmentListView ?= new AssessmentListView()
+        Tangerine.assessmentListView.render()
+      unregistered: ->
+        Tangerine.router.navigate "login", true
 
   login: ->
     Tangerine.loginView.render()
@@ -117,18 +119,20 @@ class Router extends Backbone.Router
     Tangerine.user.logout()
 
   assessment: (id) ->
-    if Tangerine.user.isVerified()
-      # This is terrible but it fixes my problem
-      # Currently live click handlers get duplicated over and over again
-      # Need to convert everything to backbone style views
-      # Not only backbone style views, but reuse views or destroy them
-      if Tangerine.assessment?
-        location.reload()
-      
-      Tangerine.assessment = new Assessment { _id : id }
-      Tangerine.assessment.fetch
-        success: ->
-          Tangerine.assessment.render()
+    Tangerine.user.verify
+      isUser: ->
+        # This is terrible but it fixes my problem
+        # Currently live click handlers get duplicated over and over again
+        # Need to convert everything to backbone style views
+        # Not only backbone style views, but reuse views and destroy them
+        # 
+        if Tangerine.assessment? || $.assessment?
+          location.reload()
+
+        Tangerine.assessment = new Assessment { _id : decodeURIComponent(id) }
+        Tangerine.assessment.fetch
+          success: ->
+            Tangerine.assessment.render()
 
   verify_logged_in: (options) ->
     $.couch.session
@@ -231,39 +235,48 @@ $ -> # run after DOM loads
   # Start the application
   #
   
-  # load config
-  config = new Backbone.Model
-    _id: "Config"
-  config.fetch
-    success: =>
-      Tangerine.config = config.toJSON()
-
   # Reuse the view objects to stop events from being duplicated (and to save memory)
   
 
   # Durables
   # Things here should be reused
+  Tangerine.router = new Router()
+
+  Tangerine.assessmentCollection = new AssessmentCollection()
+  Tangerine.manageView = new ManageView( { collection : Tangerine.assessmentCollection} )
+  Tangerine.assessmentEditView = new AssessmentEditView()
+  Tangerine.subtestEdit = new SubtestEdit()
+
+
   Tangerine.user   = new User()
   Tangerine.loginView = new LoginView( Tangerine.user )
-  Tangerine.router = new Router()
   #Tangerine.dispatch = _.clone Backbone.Events
   
-  Tangerine.navi = new Navigation
+  Tangerine.nav = new Navigation
     user   : Tangerine.user
     router : Tangerine.router
 
   Backbone.history.start()
 
+
+
+
   #
   # Set up some interface stuff
   #
+  
+  # ###.clear_message
+  # This little guy will fade out and clear him and his parents. Wrap him wisely.
+  # `<span> my message <button class="clear_message">X</button>`
+  $("#content").on("click", ".clear_message",  null, (a) -> $(a.target).parent().fadeOut(250, -> $(this).empty().show() ) )
+  $("#content").on("click", ".parent_remove", null, (a) -> $(a.target).parent().fadeOut(250, -> $(this).remove() ) )
+
+  
   $(".ajax_loading").ajaxStart ->
     $("#corner_logo").attr "src", "images/spin_orange.gif"
 
   $(".ajax_loading").ajaxStop ->
     $("#corner_logo").attr "src", "images/corner_logo.png"
     
-  $("#version").load 'version'
-
   $( '#main_nav button' ).click (event) ->
     Tangerine.router.navigate( $( event.target ).attr( "href" ), true );

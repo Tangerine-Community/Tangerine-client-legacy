@@ -93,6 +93,30 @@ Utils = (function() {
     return console.log([title, message]);
   };
 
+  Utils.cleanURL = function(url) {
+    if ((typeof url.indexOf === "function" ? url.indexOf("%") : void 0) !== -1) {
+      return url = decodeURIComponent(url);
+    } else {
+      return url;
+    }
+  };
+
+  Utils.importAssessmentFromIris = function(dKey) {
+    var repOps;
+    repOps = {
+      'filter': 'tangerine/downloadFilter',
+      'create_target': true,
+      'query_params': {
+        'dKey': dKey
+      }
+    };
+    return $.couch.replicate(Tangerine.iris.host + "/tangerine", "tangerine", {
+      success: function(a, b) {
+        return console.log([" success", a, b]);
+      }
+    }, repOps);
+  };
+
   return Utils;
 
 })();

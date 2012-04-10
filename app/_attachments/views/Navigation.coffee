@@ -1,73 +1,79 @@
 class Navigation extends Backbone.View
-  
-  el : "#navigation"
-  
+
+  el : '#navigation'
+
+  events :
+    'click span#collect_link' : 'collect'
+    'click span#manage_link'  : 'manage'
+    'click span#logout_link'  : 'logout'
+
   initialize: (options) =>
     @render()
 
     @user   = options.user
     @router = options.router
-    
+
     @user.on 'change', @handleMenu
     @user.trigger 'change'
     @router.on 'all', @handleNavigation
-    
-  
+
+
   render: ->
     @$el.html "
     <img id='corner_logo' src='images/corner_logo.png'>
     <span id='version'></span>
     <nav id='main_nav'>
-      <a id='collect_link' href='#assessments'>COLLECT</a>
-      <a id='manage_link' href='#manage'>MANAGE</a>
+      <span id='collect_link' class='nav_link'>COLLECT</span>
+      <span id='manage_link' class='nav_link'>MANAGE</span>
     </nav>
     <div id='session_info'>
       <div id='student_id_box'>
         Student ID <div id='current-student-id'>none</div>
       </div>
       <div id='enumerator_box'>
-        Enumerator <a id='logout_link' href='#logout'>LOGOUT</a>
+        Enumerator <span id='logout_link' class='nav_link'>LOGOUT</span>
         <div id='enumerator'></div>
       </div>
     </div>
     ";
-  
-  
+
+  collect: -> @router.navigate 'assessments', true
+  manage: -> @router.navigate 'manage', true
+  logout: -> @router.navigate 'logout', true
   
   # Admins get a manage button 
   # triggered on user changes
   # @TODO this might not be the right place for this. Another View?
   handleMenu: =>
-    @user.verify()
     
-    $("#enumerator").html @user.get "name"
+    $('#enumerator').html @user.get 'name'
     
-    # The order of the if statements is important. Maybe it shouldn't be.
-    # admin user
-    if @user.isAdmin()
-      $( "#main_nav a" ).hide()
-      $( "#navigation" ).show()
-      $( "#collect_link, #manage_link, #logout_link" ).show()
+    # @todo put version number someplace
+    #$.ajax {method: 'GET', dataType: 'text', url: 'version', success: (a, b, c) -> $("#corner_logo").attr("title", c.responseText)
 
-    #not logged in
-    else if not @user.isVerified()
-      $( "#navigation" ).hide()
+    $( '#collect_link, #manage_link' ).hide()
+    
+    @user.verify
+      isAdmin: ->
+        $( '#manage_link' ).show()
+      isUser: ->
+        $( '#navigation' ).show()
+        $( '#collect_link' ).show()
+      unregistered: ->
+        $( '#navigation' ).hide()
 
-    #regular user
-    else
-      $( "#main_nav a" ).hide()
-      $( "#navigation" ).show()
-      $( "#collect_link, #logout_link" ).show()
 
   # Hide and show navigation pane
   # Triggered on page changes
   # @TODO this method breaks easily. Need new way to check.
   handleNavigation: ->
     if window.location.href.toLowerCase().indexOf("assessment") != -1
-      $("nav#main_nav a").removeClass("border_on")
+      $("nav#main_nav span").removeClass("border_on")
       $("#collect_link").addClass("border_on")    
     if window.location.href.toLowerCase().indexOf("manage") != -1
-      $("nav#main_nav a").removeClass("border_on")
+      $("nav#main_nav span").removeClass("border_on")
       $("#manage_link").addClass("border_on")
 
+
+  
   

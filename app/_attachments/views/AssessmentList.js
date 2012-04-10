@@ -21,7 +21,7 @@ AssessmentListView = (function(_super) {
   AssessmentListView.prototype.render = function() {
     var assessmentCollection,
       _this = this;
-    this.$el.html("      <h1>Collect</h1>      <div id='message'></div>      <table id='assessments' class='tablesorter'>        <thead>          <tr>            <th>Assessment Name</th><th>Number Collected</th>          </tr>        </thead>        <tbody></tbody>      </table>    ");
+    this.$el.html("      <div id='message'></div>      <table id='assessments' class='tablesorter'>        <thead>          <tr>            <th>Assessment Name</th><th>Number Collected</th>          </tr>        </thead>        <tbody></tbody>      </table>    ");
     assessmentCollection = new AssessmentCollection();
     return assessmentCollection.fetch({
       success: function() {
@@ -32,7 +32,7 @@ AssessmentListView = (function(_super) {
           return assessmentDetails[assessment.get("_id")] = {
             id: assessment.get("_id"),
             name: assessment.get("name"),
-            enumerator: Tangerine.enumerator,
+            enumerator: Tangerine.user.get("name"),
             number_completed: 0
           };
         });
@@ -40,10 +40,12 @@ AssessmentListView = (function(_super) {
         return resultCollection.fetch({
           success: function() {
             resultCollection.each(function(result) {
-              if (result.get("enumerator") !== Tangerine.enumerator) return;
+              if (result.get("enumerator") !== Tangerine.user.get("name")) return;
               return assessmentDetails[result.get("assessmentId")]["number_completed"] += 1;
             });
             _.each(assessmentDetails, function(value, key) {
+              console.log("value");
+              console.log(value);
               return _this.$el.find("#assessments tbody").append(_this.templateTableRow(value));
             });
             return $('table').tablesorter();

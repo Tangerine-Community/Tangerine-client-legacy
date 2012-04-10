@@ -53,28 +53,14 @@ body.flash{
 #navigation
 {
   min-height: 50px;
-  margin-bottom: 20px;
   background-color: @orange-3;
   background-image: url("../images/corner_logo.png");
   background-repeat: no-repeat;
   background-position: 5px 6px;
   display: none;
-  padding: 5px;
+  padding: 5px 0 5px 5px;
   font-size: @menu_big;
 
-  a 
-  {
-    vertical-align: middle;
-    color: black;
-    text-decoration: none;
-    
-    &:visited, 
-    &:active,
-    &:hover
-    {
-      color: black
-    }
-  }
 }
 
 #corner_logo
@@ -87,22 +73,42 @@ nav#main_nav
 {
   display: inline;
   
-  a
+  .nav_link
   {
+    color: black;
     text-decoration: none;
     font-size: 25px;
     font-weight: bold;
     padding: 6px 6px 2px;
-    margin: 20px 14px 28px;
+    margin: 20px 10px 14px 14px;
     border: 0;
+    vertical-align: middle;
+    cursor: pointer;
   }
   
   
 }
 
+#session_info .nav_link
+{
+  color: black;
+}
+
+.icon_delete,
+.icon_add,
+.icon_edit
+{
+  cursor: pointer !important;
+}
+
+#save_all_new_subtests
+{
+  display: none;
+}
+
 .border_on
 {
-  margin: 16px 10px 14px !important;
+  margin: 16px 6px 10px 10px !important;
   border: 4px solid white !important;
 }
 
@@ -153,6 +159,159 @@ button{
 #content{
   padding: 5px;
 }
+
+/*
+ * Manage
+ */
+
+#new_assessment
+{
+  display: none;
+}
+
+div#manage
+{
+  
+  #import_from_cloud
+  {
+    display: none;
+  }
+  
+  ul
+  {
+    list-style: none;
+    text-indent: 0;
+    margin: 0;
+    padding: 0;
+  }
+  
+  li
+  {
+    border-bottom: 1px solid @grey;
+    padding: 5px 0;
+    vertical-align: middle;
+  }
+  
+  a
+  {
+    border: 0;
+    background: none;
+    margin: 5px;
+    padding: 0;
+  }
+  
+
+  img
+  {
+    border: 0;
+    vertical-align: middle;
+  }
+  
+  .archived_assessment
+  {
+    color: #aaa !important;
+  }
+  
+}
+
+
+span.delete_confirm
+{
+  display: none;
+}
+
+/*
+ * edit assessment
+ */
+ 
+div#edit_assessment
+{
+  ul
+  {
+    list-style: none;
+    text-indent: 0px;
+    margin: 0px;
+    padding: 0px;
+
+    li
+    {
+      line-height: 40px;
+      border-bottom: 1px solid @grey;
+      padding: 5px 0;
+      vertical-align: middle;
+    }
+    
+  }
+
+  a
+  {
+    border: 0 !important;
+    background: none !important;
+    margin: 5px !important;
+    padding: 0 !important;
+    -webkit-appearance: none !important;
+  }
+
+}
+
+/*
+ * Edit Subtest
+ */
+
+div#subtest_edit
+{
+  
+  ul
+  {
+    list-style: none;
+    text-indent: 0;
+    margin: 0;
+    padding: 0;
+
+    li
+    {
+      border-bottom: 1px solid @grey;
+      padding: 5px 0;
+      vertical-align: middle;
+    }
+
+  }
+
+  label
+  {
+    margin: 0;
+  }
+
+}
+
+
+/*
+ * Typography
+ */
+
+h1
+{
+  margin: 10px 0 15px;
+  font-size: 50px;
+}
+
+h2
+{
+ margin: 10px 0 15px;
+ font-size: 40px
+}
+
+
+/*
+ * Subtests
+ */
+
+
+/*
+ * 
+ */
+
+
 #assessments td{
   list-style: none;
   text-decoration:none;
@@ -169,7 +328,7 @@ legend{
   font-weight: bold;
 }
 
-fieldset fieldset legend{
+fieldset fieldset legend {
   font-weight: normal;
 }
 
@@ -180,7 +339,7 @@ label{
 fieldset{
   border-width: 1px;
   border-style: solid;
-  margin: 5px;
+  margin: 15px 5px;
   padding: 5px;
 }
 
@@ -321,6 +480,9 @@ div.ui-footer .ui-btn{
 
 #content
 {
+  
+  margin: 0;
+  
   a {
    -webkit-appearance: button;
    -webkit-box-align: center;

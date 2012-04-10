@@ -203,11 +203,14 @@
       options = options || {};
       return $.ajax({
         type: "DELETE", url: this.urlPrefix + "/_session", dataType: "json",
+        async: false,
         username : "_", password : "_",
         beforeSend: function(xhr) {
             xhr.setRequestHeader('Accept', 'application/json');
         },
         complete: function(req) {
+          console.log("delete response");
+          console.log(req);
           var resp = $.parseJSON(req.responseText);
           if (req.status == 200) {
             if (options.success) options.success(resp);

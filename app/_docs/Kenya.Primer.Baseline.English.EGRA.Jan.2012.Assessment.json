@@ -1,11 +1,6 @@
 {
-  "name": "Kenya Primer Baseline English EGRA Jan 2012",
-  "archived": true,
+  "name": "Short Kenya Primer Baseline English EGRA Jan 2012",
   "urlPathsForPages": [
-    "Kenya.Primer.Baseline.English.EGRA.Jan.2012.StudentConsent",
-    "Kenya.Primer.Baseline.English.EGRA.Jan.2012.StudentInformation",
-    "Kenya.Primer.Baseline.English.EGRA.Jan.2012.DateTime",
-    "Kenya.Primer.Baseline.English.EGRA.Jan.2012.School",
     "Kenya.Primer.Baseline.English.EGRA.Jan.2012.LetterSoundKnowledge",
     "Kenya.Primer.Baseline.English.EGRA.Jan.2012.InventedWordDecoding",
     "Kenya.Primer.Baseline.English.EGRA.Jan.2012.OralPassageReadingTimed",

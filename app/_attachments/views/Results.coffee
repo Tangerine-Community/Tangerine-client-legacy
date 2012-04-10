@@ -1,9 +1,17 @@
 class ResultsView extends Backbone.View
-  el: $('#content')
+
+  el: '#content'
+
+  events:
+    "click button:contains(Cloud save)" : "save"
+    "click button:contains(Local save)" : "save"
+    "click button:contains(CSV/Excel)" : "csv"
+    "click button:contains(Detect save options)" : "detect"
+    "click button:contains(update table)" : "updateTable"
+    "click button:contains(Download as CSV)" : "downloadCSV"
 
   render: =>
-
-    @el.html "
+    @$el.html "
       <div id='message'></div>
       <h2>#{@assessment.get "name"}</h2>
       <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>
@@ -12,7 +20,7 @@ class ResultsView extends Backbone.View
       </div>
       <button>CSV/Excel</button>
       <hr/>
-      Results saved by #{$.enumerator}:
+      Results saved by #{Tangerine.user.get("name")}:
       <div id='results'></div>
     "
 
@@ -37,14 +45,6 @@ class ResultsView extends Backbone.View
         type:'pie'
         sliceColors:['black','#F7C942','orangered']
 
-  events:
-    "click button:contains(Cloud save)" : "save"
-    "click button:contains(Local save)" : "save"
-    "click button:contains(CSV/Excel)" : "csv"
-    "click button:contains(Detect save options)" : "detect"
-    "click button:contains(update table)" : "updateTable"
-    "click button:contains(Download as CSV)" : "downloadCSV"
-
   updateLastCloudReplication: ->
     @assessment.lastCloudReplication
       success: (result) ->
@@ -63,7 +63,7 @@ class ResultsView extends Backbone.View
   detectCloud: ->
     @detectIP
       url: Tangerine.cloud.url
-      successButton: "<button type='button' class='save' saveTarget='#{Tangerine.cloud.url}'>Cloud save</button>"
+      successButton: "<button type='button' class='save' saveTarget='#{Tangerine.iris.host}/#{Tangerine.iris.db_name}'>Cloud save</button>"
 
   detectSubnet: ->
     for subnetIP in [Tangerine.subnet.start..Tangerine.subnet.finish]
@@ -123,7 +123,6 @@ class ResultsView extends Backbone.View
         }
     else
       combines = ""
-
 
     uniqueFields = _.difference(@uniqueFields, options.ignoreColumn?.split(/, */))
     uniqueFields = _.map uniqueFields, (field)->

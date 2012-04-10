@@ -12,11 +12,20 @@ ResultsView = (function(_super) {
     ResultsView.__super__.constructor.apply(this, arguments);
   }
 
-  ResultsView.prototype.el = $('#content');
+  ResultsView.prototype.el = '#content';
+
+  ResultsView.prototype.events = {
+    "click button:contains(Cloud save)": "save",
+    "click button:contains(Local save)": "save",
+    "click button:contains(CSV/Excel)": "csv",
+    "click button:contains(Detect save options)": "detect",
+    "click button:contains(update table)": "updateTable",
+    "click button:contains(Download as CSV)": "downloadCSV"
+  };
 
   ResultsView.prototype.render = function() {
     var _this = this;
-    this.el.html("      <div id='message'></div>      <h2>" + (this.assessment.get("name")) + "</h2>      <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>      <button>Detect save options</button>      <div id='saveOptions'>      </div>      <button>CSV/Excel</button>      <hr/>      Results saved by " + $.enumerator + ":      <div id='results'></div>    ");
+    this.$el.html("      <div id='message'></div>      <h2>" + (this.assessment.get("name")) + "</h2>      <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>      <button>Detect save options</button>      <div id='saveOptions'>      </div>      <button>CSV/Excel</button>      <hr/>      Results saved by " + (Tangerine.user.get("name")) + ":      <div id='results'></div>    ");
     this.detectCloud();
     this.updateLastCloudReplication();
     _.each(this.results, function(result) {
@@ -37,15 +46,6 @@ ResultsView = (function(_super) {
         sliceColors: ['black', '#F7C942', 'orangered']
       });
     });
-  };
-
-  ResultsView.prototype.events = {
-    "click button:contains(Cloud save)": "save",
-    "click button:contains(Local save)": "save",
-    "click button:contains(CSV/Excel)": "csv",
-    "click button:contains(Detect save options)": "detect",
-    "click button:contains(update table)": "updateTable",
-    "click button:contains(Download as CSV)": "downloadCSV"
   };
 
   ResultsView.prototype.updateLastCloudReplication = function() {
@@ -72,7 +72,7 @@ ResultsView = (function(_super) {
   ResultsView.prototype.detectCloud = function() {
     return this.detectIP({
       url: Tangerine.cloud.url,
-      successButton: "<button type='button' class='save' saveTarget='" + Tangerine.cloud.url + "'>Cloud save</button>"
+      successButton: "<button type='button' class='save' saveTarget='" + Tangerine.iris.host + "/" + Tangerine.iris.db_name + "'>Cloud save</button>"
     });
   };
 

@@ -1,5 +1,5 @@
 {
-"collection": "subtest",
+  "collection": "subtest",
   "pageType": "DateTimePage",
   "pageId": "DateTime",
   "couchapp": {

@@ -16,6 +16,8 @@ Assessment = (function(_super) {
 
   Assessment.prototype.url = '/assessment';
 
+  Assessment.prototype.initialize = function() {};
+
   Assessment.prototype.replicate = function(target, options) {
     var ajaxOptions, replicationLogEntry, replicationOptions;
     $("#message").html("Syncing to " + target);
@@ -25,6 +27,9 @@ Assessment = (function(_super) {
       target: target
     });
     replicationLogEntry.save();
+    console.log("trying to replicate to server");
+    console.log(target);
+    console.log(options);
     ajaxOptions = {
       success: function() {
         return options.success();

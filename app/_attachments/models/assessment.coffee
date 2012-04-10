@@ -4,6 +4,9 @@ $.assessment = null
 class Assessment extends Backbone.Model
 
   url: '/assessment'
+  
+  initialize: ->
+
 
   replicate: (target,options) ->
     $("#message").html "Syncing to #{target}"
@@ -12,7 +15,6 @@ class Assessment extends Backbone.Model
       source: @get "_id"
       target: target
     replicationLogEntry.save()
-
     # TODO TEST that this actually works! (filtered replication!)
     ajaxOptions =
       success: ->

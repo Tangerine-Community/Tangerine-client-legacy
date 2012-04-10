@@ -14,14 +14,16 @@ User = (function(_super) {
     name: null,
     roles: null,
     temp: {},
-    messages: []
+    messages: [],
+    landingPage: "assessments"
   };
 
   User.prototype.initialize = function() {
     this.set({
       name: this.defaults.name,
       roles: this.defaults.roles,
-      messages: this.defaults.messages
+      messages: this.defaults.messages,
+      landingPage: this.defaults.landingPage
     });
     this.temp = this.defaults.temp;
     return this.verify();
@@ -65,7 +67,7 @@ User = (function(_super) {
           name: user.name,
           roles: user.roles
         });
-        return Tangerine.router.navigate("assessments", true);
+        return Tangerine.router.navigate(_this.get("landingPage"), true);
       },
       error: function(status, error, message) {
         if ((_this.temp.intent != null) && _this.temp.intent === "retry_login") {
@@ -78,25 +80,30 @@ User = (function(_super) {
     });
   };
 
-  User.prototype.isVerified = function(options) {
-    return this.get('name') != null;
-  };
-
-  User.prototype.verify = function() {
+  User.prototype.verify = function(callbacks) {
     var _this = this;
     return $.couch.session({
       success: function(resp) {
-        var result;
         if (resp.userCtx.name === null) {
-          result = false;
+          Tangerine.router.navigate("login", true);
+          return callbacks != null ? typeof callbacks.unregistered === "function" ? callbacks.unregistered(resp) : void 0 : void 0;
         } else {
           _this.set({
             name: resp.userCtx.name,
             roles: resp.userCtx.roles
           });
-          result = true;
+          if (_.indexOf(_this.get('roles'), '_admin') !== -1) {
+            if (callbacks != null) {
+              if (typeof callbacks.isAdmin === "function") callbacks.isAdmin(resp);
+            }
+          }
+          if (callbacks != null) {
+            if (typeof callbacks.isUser === "function") callbacks.isUser(resp);
+          }
+          if (location.hash.indexOf("login") !== -1) {
+            return Tangerine.router.navigate(_this.get("landingPage"), true);
+          }
         }
-        return typeof options !== "undefined" && options !== null ? options.success(resp) : void 0;
       },
       error: function(status, error, reason) {
         console.log(["Session Error", "User does not appear to be logged in. " + error + ":<br>" + reason]);
@@ -105,18 +112,19 @@ User = (function(_super) {
     });
   };
 
-  User.prototype.isAdmin = function() {
-    return _.indexOf(this.get('roles'), '_admin') !== -1;
-  };
-
   User.prototype.logout = function() {
     var _this = this;
     return $.couch.logout({
       success: function() {
+        $.cookie("AuthSession", "");
         _this.clear();
         return Tangerine.router.navigate("login", true);
       },
-      error: function() {}
+      error: function() {
+        $.cookie("AuthSession", "");
+        _this.clear();
+        return Tangerine.router.navigate("login", true);
+      }
     });
   };
 

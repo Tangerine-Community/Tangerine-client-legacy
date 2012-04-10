@@ -16,21 +16,28 @@ SubtestEdit = (function(_super) {
     return this.config = Tangerine.config.Subtest;
   };
 
-  SubtestEdit.prototype.el = $('#content');
+  SubtestEdit.prototype.el = '#content';
 
   SubtestEdit.prototype.events = {
+    "click img.append_subtest_element": 'appendSubtestElement',
+    'click button#return_to_assessment': 'returnToAssessment',
     "click form#subtestEdit button:contains(Save)": "save",
-    "click button:contains(Paste a subtest)": "showPaste",
-    "click form#paste-from button:contains(paste)": "pasteSubtest"
+    "click button:contains(Import a subtest)": "showImportSubtestForm",
+    "click button#subtest_import_confirm": "importSubtest",
+    "click button#subtest_import_cancel": "hideImportSubtestForm"
   };
 
-  SubtestEdit.prototype.showPaste = function() {
+  SubtestEdit.prototype.returnToAssessment = function() {
+    return Tangerine.router.navigate("edit/assessment/" + this.assessment_id, true);
+  };
+
+  SubtestEdit.prototype.showImportSubtestForm = function() {
     var _this = this;
-    $("#paste-from").show();
+    $("#import-from").show();
     this.existingSubtests = new SubtestCollection();
     return this.existingSubtests.fetch({
       success: function() {
-        return $("form#paste-from select").append(_this.existingSubtests.filter(function(subtest) {
+        return $("form#import-from select").append(_this.existingSubtests.filter(function(subtest) {
           return subtest.get("pageType") === _this.model.get("pageType");
         }).map(function(subtest) {
           return "<option>" + (subtest.get("_id")) + "</option>";
@@ -39,47 +46,82 @@ SubtestEdit = (function(_super) {
     });
   };
 
-  SubtestEdit.prototype.pasteSubtest = function() {
+  SubtestEdit.prototype.hideImportSubtestForm = function() {
+    return $("#import-from").hide();
+  };
+
+  SubtestEdit.prototype.importSubtest = function() {
     var sourceSubtest;
-    sourceSubtest = this.existingSubtests.get($("form#paste-from select option:selected").val());
+    sourceSubtest = this.existingSubtests.get($("form#import-from select option:selected").val());
     return this.populateForm(sourceSubtest.toJSON());
   };
 
   SubtestEdit.prototype.render = function() {
-    var _this = this;
-    this.el.html(("       <a href='#edit/assessment/" + this.assessment.id + "'>Return to: <b>" + (this.assessment.get("name")) + "</b></a>      <div style='display:none' class='message'></div>      <h2>" + (this.model.get("pageType")) + "</h2>      <button>Paste a subtest</button>      <form style='display:none' id='paste-from'>        Select an existing subtest and it will fill in all blank elements below with that subtest's contents        <div>          <select id='existing-subtests'></select>        </div>        <button>paste</button>      </form>      <form id='subtestEdit'>") + _.chain(this.model.attributes).map(function(value, key) {
-      var formElement, label;
-      if (_.include(_this.config.ignore, key)) return null;
-      console.log(key + typeof value);
-      label = "<label for='" + key + "'>" + (key.underscore().humanize()) + "</label>";
-      formElement = _.include(_this.config.htmlTextarea, key) ? "<textarea class='html' id='" + key + "' name='" + key + "'></textarea>" : _.include(_this.config.boolean, key) ? "<input id='" + key + "' name='" + key + "' type='checkbox'></input>" : _.include(_this.config.number, key) ? "<input id='" + key + "' name='" + key + "' type='number'></input>" : key === "pageType" ? "<select id='" + key + "' name='" + key + "'>                  " + (_.map(_this.config.pageTypes, function(type) {
-        return "<option value=" + type + ">                        " + (type.underscore().humanize()) + "                      </option>";
-      }).join("")) + "                </select>" : _.include(_this.config.textarea, key) || typeof value === "object" ? "<textarea id='" + key + "' name='" + key + "'></textarea>" : "<input id='" + key + "' name='" + key + "' type='text'></input>";
-      return label + formElement;
-    }).compact().value().join("") + "        <button type='button'>Save</button>        </form>");
+    this.$el.html("      <div id='subtest_edit'>        <button id='return_to_assessment'>Return to assessment</button>        <button>Import a subtest</button>        <div style='display:none' class='message'></div>        <h1>" + (this.model.get("pageType")) + "</h1>              <form style='display:none' id='import-from'>          Select an existing subtest and it will fill in all blank elements below with that subtest's contents          <div>            <select id='existing-subtests'></select>          </div>          <button id='subtest_import_confirm'>Import</button><button id='subtest_import_cancel'>Cancel</button>        </form>              " + (this.subtestEditForm()) + "      </div>      ");
     $("textarea.html").cleditor();
     return this.populateForm(this.model.toJSON());
   };
 
+  SubtestEdit.prototype.subtestEditForm = function() {
+    var _this = this;
+    return "<form id='subtestEdit'>      <ul id='subtest_edit_list'>    " + _.chain(this.model.attributes).map(function(value, key) {
+      var formElement, label, object;
+      if (_.include(_this.config.ignore, key)) return null;
+      label = "<label for='" + key + "'>" + (key.underscore().humanize()) + "</label>";
+      formElement = _.include(_this.config.htmlTextarea, key) ? "<textarea class='html' id='" + key + "' name='" + key + "'></textarea>" : _.include(_this.config.boolean, key) ? "<input id='" + key + "' name='" + key + "' type='checkbox'></input>" : _.include(_this.config.number, key) ? "<input id='" + key + "' name='" + key + "' type='number'></input>" : key === "pageType" ? "<select id='" + key + "' name='" + key + "'>                  " + (_.map(_this.config.pageTypes, function(type) {
+        return "<option value=" + type + ">                        " + (type.underscore().humanize()) + "                      </option>";
+      }).join("")) + "                </select>" : _.include(_this.config.textarea, key) || typeof value === "object" ? (console.log(value), object = {}, object[key] = value, "<div id='" + key + "'>" + (Utils.json2Form(object)) + "</div>                <img src='images/icon_add.png' class='icon_add append_subtest_element' data-element='" + key + "'>") : "<input id='" + key + "' name='" + key + "' type='text'></input>";
+      return "<li>" + label + formElement + "</li>";
+    }).compact().value().join("") + "      </ul>      <button type='button'>Save</button>    </form>";
+  };
+
+  SubtestEdit.prototype.appendSubtestElement = function(event) {
+    var key, last, object;
+    console.log("model");
+    console.log(this.model);
+    key = $(event.target).attr("data-element");
+    object = this.model.attributes[key];
+    if (_.isArray(object)) {
+      last = this.zeroOut(_.last(this.model.attributes[key]));
+      return this.model.set(object.push(last));
+    } else {
+      return this.model.set(key)([object, object]);
+    }
+  };
+
+  SubtestEdit.prototype.zeroOut = function() {
+    var key, last, value;
+    if (_.isObject(last)) {
+      last = _.clone(last);
+      for (key in last) {
+        value = last[key];
+        last[key] = "";
+      }
+    } else {
+      last = "";
+    }
+    return last;
+  };
+
   SubtestEdit.prototype.populateForm = function(subtestAttributes) {
-    _.each(subtestAttributes, function(value, property) {
+    _.each(subtestAttributes, function(value, key) {
       var currentValue;
-      currentValue = $("[name='" + property + "']").val();
-      if (!currentValue || currentValue === "<br>") {
-        if (property === "items") {
-          return $('#items').val(value.join(" "));
-        } else if (property === "includeAutostop" && value === "on") {
-          return $('#includeAutostop').prop("checked", true);
-        } else if (typeof value === "object") {
-          return $("[name='" + property + "']").val(JSON.stringify(value, void 0, 2));
+      currentValue = $('#' + key, this.el).val();
+      if (!currentValue || currentValue === '<br>') {
+        if (key === 'items') {
+          return $('#items', this.el).val(value.join(' '));
+        } else if (key === 'includeAutostop' && value === 'on') {
+          return $('#includeAutostop', this.el).prop("checked", true);
+        } else if (typeof value === 'object') {
+          return $('#' + key, this.el).val(JSON.stringify(value, void 0, 2));
         } else {
-          console.log(property);
+          console.log(key);
           console.log(value);
-          return $("[name='" + property + "']").val(value);
+          return $('#' + key, this.el).val(value);
         }
       }
     });
-    return _.each($("textarea.html").cleditor(), function(cleditor) {
+    return _.each($("textarea.html", this.el).cleditor(), function(cleditor) {
       return cleditor.updateFrame();
     });
   };
@@ -93,7 +135,6 @@ SubtestEdit = (function(_super) {
     if ($('#includeAutostop').length) {
       result.includeAutostop = $('#includeAutostop').prop("checked");
     }
-    console.log(result);
     this.model.set(result);
     return this.model.save(null, {
       success: function() {

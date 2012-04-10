@@ -1,0 +1,8 @@
+{
+  "collection" : "subtest",
+  "_id":"Quick Class EGRA.Results",
+  "pageType": "ResultsPage",
+  "pageId": "Results",
+  "couchapp": {
+  }
+}

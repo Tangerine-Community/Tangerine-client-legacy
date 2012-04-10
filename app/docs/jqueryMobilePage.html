@@ -1,0 +1,926 @@
+<!DOCTYPE html>  <html> <head>   <title>jqueryMobilePage.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               jqueryMobilePage.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nv">footerMessage = </span><span class="s">&quot;Good effort, let&#39;s go onto the next page&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>This disables the "Go" button from submitting the form on Android keyboards</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">$</span><span class="p">(</span><span class="s">&#39;form&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s">&#39;submit&#39;</span><span class="p">,</span> <span class="nf">(event,ui) -&gt;</span>
+  <span class="k">return</span> <span class="kc">false</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="s">&#39;button:contains(Skip assessment)&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s">&#39;click&#39;</span><span class="p">,</span> <span class="nf">(event,ui) -&gt;</span>
+  <span class="nv">page = </span><span class="nx">$</span><span class="p">.</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">currentPage</span>
+  <span class="nx">page</span><span class="p">.</span><span class="nx">nextPage</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
+  <span class="nv">page.lastResult = </span><span class="p">{</span><span class="nv">skipped: </span><span class="kc">true</span><span class="p">}</span>
+
+<span class="k">class</span> <span class="nx">JQueryMobilePage</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>TODO convert all subclassed classes to use the options constructor, get rid of deserialize, load, etc.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">constructor: </span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@pageId = </span><span class="nx">options</span><span class="o">?</span><span class="p">.</span><span class="nx">pageId</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
+    <span class="vi">@pageType = </span><span class="nx">options</span><span class="o">?</span><span class="p">.</span><span class="nx">pageType</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">toString</span><span class="p">().</span><span class="nx">match</span><span class="p">(</span><span class="sr">/function +(.*?)\(/</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="vi">@allowSkip = </span><span class="nx">options</span><span class="o">?</span><span class="p">.</span><span class="nx">allowSkip</span><span class="o">?</span> <span class="o">&amp;&amp;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">allowSkip</span>
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="vi">@assessment.currentPage = </span><span class="k">this</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&#39;div#content&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">JQueryMobilePage</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="k">this</span><span class="p">))</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">trigger</span><span class="p">(</span><span class="s">&quot;pageshow&quot;</span><span class="p">)</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">scrollTo</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">$</span><span class="p">(</span><span class="s">&#39;button:contains(Next)&#39;</span><span class="p">),</span> <span class="p">(</span><span class="nx">button</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="k">new</span> <span class="nx">MBP</span><span class="p">.</span><span class="nx">fastButton</span> <span class="nx">button</span><span class="p">,</span> <span class="o">=&gt;</span>
+        <span class="nx">@renderNextPage</span><span class="p">()</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;.enumerator-help&quot;</span><span class="p">).</span><span class="nx">wrapInner</span><span class="p">(</span><span class="s">&quot;&lt;div/&gt;&quot;</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;.enumerator-help&quot;</span><span class="p">).</span><span class="nx">prepend</span><span class="p">(</span><span class="s">&quot;&lt;div class=&#39;enumerator-help-header&#39;&gt;Help&lt;/div&gt;&quot;</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;.enumerator-help&quot;</span><span class="p">).</span><span class="nx">accordion</span>
+      <span class="nv">collapsible: </span><span class="kc">true</span>
+      <span class="nv">active: </span><span class="kc">false</span>
+
+  <span class="nv">renderNextPage: </span><span class="o">-&gt;</span>
+    <span class="nv">validationResult = </span><span class="nx">@validate</span><span class="p">()</span>
+    <span class="nx">unless</span> <span class="nx">validationResult</span> <span class="o">is</span> <span class="kc">true</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> div.validation-message&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">).</span><span class="nx">stop</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span><span class="kc">true</span><span class="p">).</span><span class="nx">show</span><span class="p">().</span><span class="nx">html</span><span class="p">(</span><span class="nx">validationResult</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">5000</span><span class="p">)</span>
+      <span class="k">return</span>
+    <span class="nx">@results</span><span class="p">()</span> <span class="c1"># Saves the current result to @lastResult</span>
+    <span class="nx">@nextPage</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>url: ->
+ return "#{@urlScheme}://#{@urlPath}"</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">propertiesForSerialization: </span><span class="o">-&gt;</span> <span class="p">[</span>
+    <span class="s">&quot;pageId&quot;</span>
+    <span class="s">&quot;pageType&quot;</span>
+    <span class="s">&quot;urlPath&quot;</span>
+    <span class="s">&quot;urlScheme&quot;</span>
+  <span class="p">]</span>
+
+  <span class="nv">name: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Insert spaces and do proper casing</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@pageId</span><span class="p">.</span><span class="nx">underscore</span><span class="p">().</span><span class="nx">titleize</span><span class="p">()</span>
+
+  <span class="nv">toJSON: </span><span class="o">-&gt;</span>
+    <span class="nv">object = </span><span class="p">{}</span>
+    <span class="k">for</span> <span class="nx">property</span> <span class="k">in</span> <span class="nx">@propertiesForSerialization</span><span class="p">()</span>
+      <span class="nx">object</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nx">object</span>
+
+  <span class="nv">load: </span><span class="nf">(data) -&gt;</span>
+    <span class="k">for</span> <span class="nx">property</span> <span class="k">in</span> <span class="nx">@propertiesForSerialization</span><span class="p">()</span>
+      <span class="k">this</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span>
+
+  <span class="nv">save: </span><span class="o">-&gt;</span>
+    <span class="k">switch</span> <span class="nx">@urlScheme</span>
+      <span class="k">when</span> <span class="s">&quot;localstorage&quot;</span>
+        <span class="k">return</span> <span class="nx">@saveToLocalStorage</span><span class="p">()</span>
+      <span class="k">else</span>
+        <span class="k">throw</span> <span class="s">&quot;URL type not yet implemented: </span><span class="si">#{</span><span class="nx">@urlScheme</span><span class="si">}</span><span class="s">&quot;</span>
+
+  <span class="nv">saveToLocalStorage: </span><span class="o">-&gt;</span>
+    <span class="k">throw</span> <span class="s">&quot;Can&#39;t save page &#39;</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s">&#39; to localStorage: No urlPath!&quot;</span> <span class="nx">unless</span> <span class="nx">@urlPath</span><span class="o">?</span>
+    <span class="nx">localStorage</span><span class="p">[</span><span class="nx">@urlPath</span><span class="p">]</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+
+  <span class="nv">saveToCouchDB: </span><span class="nf">(callback) -&gt;</span>
+    <span class="vi">@loading = </span><span class="kc">true</span>
+    <span class="vi">@urlScheme = </span><span class="s">&quot;http&quot;</span>
+    <span class="vi">@urlPath = </span><span class="nx">@urlPath</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">@urlPath</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nv">url = </span><span class="nx">$</span><span class="p">.</span><span class="nx">couchDBDatabasePath</span> <span class="o">+</span> <span class="nx">@urlPath</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span>
+      <span class="nv">url: </span><span class="nx">url</span><span class="p">,</span>
+      <span class="nv">async: </span><span class="kc">true</span><span class="p">,</span>
+      <span class="nv">type: </span><span class="s">&#39;PUT&#39;</span><span class="p">,</span>
+      <span class="nv">dataType: </span><span class="s">&#39;json&#39;</span><span class="p">,</span>
+      <span class="nv">data: </span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="k">this</span><span class="p">),</span>
+      <span class="nv">success: </span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="vi">@revision = </span><span class="nx">result</span><span class="p">.</span><span class="nx">rev</span>
+      <span class="nv">error: </span><span class="o">-&gt;</span>
+        <span class="k">throw</span> <span class="s">&quot;Could not PUT to </span><span class="si">#{</span><span class="nx">url</span><span class="si">}</span><span class="s">&quot;</span>
+      <span class="nv">complete: </span><span class="o">=&gt;</span>
+        <span class="vi">@loading = </span><span class="kc">false</span>
+        <span class="nx">callback</span><span class="p">()</span> <span class="k">if</span> <span class="nx">callback</span><span class="o">?</span>
+
+  <span class="nv">deleteFromLocalStorage: </span><span class="o">-&gt;</span>
+    <span class="nx">localStorage</span><span class="p">.</span><span class="nx">removeItem</span><span class="p">(</span><span class="nx">@urlPath</span><span class="p">)</span>
+
+  <span class="nv">deleteFromCouchDB: </span><span class="o">-&gt;</span>
+    <span class="nv">url = </span> <span class="nx">@urlPath</span> <span class="o">+</span> <span class="s">&quot;?rev=</span><span class="si">#{</span><span class="nx">@revision</span><span class="si">}</span><span class="s">&quot;</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span>
+      <span class="nv">url: </span><span class="nx">url</span>
+      <span class="nv">type: </span><span class="s">&#39;DELETE&#39;</span><span class="p">,</span>
+      <span class="nv">complete: </span><span class="o">-&gt;</span>
+        <span class="nx">callback</span><span class="p">()</span> <span class="k">if</span> <span class="nx">callback</span><span class="o">?</span>
+      <span class="nv">error: </span><span class="o">-&gt;</span>
+        <span class="k">throw</span> <span class="s">&quot;Error deleting </span><span class="si">#{</span><span class="nx">url</span><span class="si">}</span><span class="s">&quot;</span>
+
+  <span class="nv">toPaper: </span><span class="o">-&gt;</span>
+    <span class="nx">@content</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>TODO Fix this
+Should not need these separate deserialize just use the last generic one and the constructor</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">JQueryMobilePage.deserialize = </span><span class="nf">(pageObject) -&gt;</span>
+  <span class="k">switch</span> <span class="nx">pageObject</span><span class="p">.</span><span class="nx">pageType</span>
+    <span class="k">when</span> <span class="s">&quot;UntimedSubtest&quot;</span>
+      <span class="k">return</span> <span class="nx">UntimedSubtest</span><span class="p">.</span><span class="nx">deserialize</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">)</span>
+    <span class="k">when</span> <span class="s">&quot;UntimedSubtestLinked&quot;</span>
+      <span class="k">return</span> <span class="nx">UntimedSubtestLinked</span><span class="p">.</span><span class="nx">deserialize</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">)</span>
+    <span class="k">when</span> <span class="s">&quot;PhonemePage&quot;</span>
+      <span class="k">return</span> <span class="nx">PhonemePage</span><span class="p">.</span><span class="nx">deserialize</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="nv">result = </span><span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="nx">pageObject</span><span class="p">.</span><span class="nx">pageType</span><span class="p">](</span><span class="nx">pageObject</span><span class="p">)</span>
+      <span class="nx">result</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">)</span>
+      <span class="k">return</span> <span class="nx">result</span>
+
+<span class="nv">JQueryMobilePage.loadFromLocalStorage = </span><span class="nf">(urlPath) -&gt;</span>
+  <span class="nv">jqueryMobilePage = </span><span class="nx">JQueryMobilePage</span><span class="p">.</span><span class="nx">deserialize</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">localStorage</span><span class="p">[</span><span class="nx">urlPath</span><span class="p">]))</span>
+  <span class="nv">jqueryMobilePage.urlScheme = </span><span class="s">&quot;localstorage&quot;</span>
+  <span class="k">return</span> <span class="nx">jqueryMobilePage</span>
+
+<span class="nv">JQueryMobilePage.loadFromHTTP = </span><span class="nf">(options, callback) -&gt;</span>
+  <span class="k">throw</span> <span class="s">&quot;Must pass &#39;url&#39; option to loadFromHTTP, received: </span><span class="si">#{</span><span class="nx">options</span><span class="si">}</span><span class="s">&quot;</span> <span class="nx">unless</span> <span class="nx">options</span><span class="p">.</span><span class="nx">url</span><span class="o">?</span>
+  <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/http/</span><span class="p">)</span>
+    <span class="nv">urlPath = </span><span class="nx">options</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s">&quot;://&quot;</span><span class="p">)</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span>
+  <span class="k">else</span>
+    <span class="nv">urlPath = </span><span class="nx">options</span><span class="p">.</span><span class="nx">url</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>extend will merge two associative arrays</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">options</span><span class="p">,</span>
+    <span class="nv">type: </span><span class="s">&#39;GET&#39;</span><span class="p">,</span>
+    <span class="nv">dataType: </span><span class="s">&#39;json&#39;</span><span class="p">,</span>
+    <span class="nv">success: </span><span class="nf">(result) -&gt;</span>
+      <span class="k">try</span>
+        <span class="nv">jqueryMobilePage = </span><span class="nx">JQueryMobilePage</span><span class="p">.</span><span class="nx">deserialize</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+        <span class="nv">jqueryMobilePage.urlPath = </span><span class="nx">urlPath</span>
+        <span class="nv">jqueryMobilePage.urlScheme = </span><span class="s">&quot;http&quot;</span>
+        <span class="nv">jqueryMobilePage.revision = </span><span class="nx">result</span><span class="p">.</span><span class="nx">_rev</span>
+        <span class="nx">callback</span><span class="p">(</span><span class="nx">jqueryMobilePage</span><span class="p">)</span> <span class="k">if</span> <span class="nx">callback</span><span class="o">?</span>
+      <span class="k">catch</span> <span class="nx">error</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;Error in JQueryMobilePage.loadFromHTTP: while loading the following object:&quot;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">result</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
+    <span class="nv">error: </span><span class="o">-&gt;</span>
+      <span class="k">throw</span> <span class="s">&quot;Failed to load: </span><span class="si">#{</span><span class="nx">urlPath</span><span class="si">}</span><span class="s">&quot;</span>
+  <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span> <span class="nx">options</span>
+
+
+<span class="nv">JQueryMobilePage.loadFromCouchDB = </span><span class="nf">(urlPath, callback) -&gt;</span>
+  <span class="k">return</span> <span class="nx">JQueryMobilePage</span><span class="p">.</span><span class="nx">loadFromHTTP</span><span class="p">({</span><span class="nx">url</span><span class="o">:</span><span class="nx">$</span><span class="p">.</span><span class="nx">couchDBDatabasePath</span><span class="o">+</span><span class="nx">urlPath</span><span class="p">},</span> <span class="nx">callback</span><span class="p">)</span>
+
+<span class="nv">JQueryMobilePage.template = </span><span class="nx">Handlebars</span><span class="p">.</span><span class="nx">compile</span> <span class="s">&quot;</span>
+<span class="s">&lt;div data-role=&#39;page&#39; id=&#39;{{{pageId}}&#39;&gt;</span>
+<span class="s">  &lt;div data-role=&#39;header&#39;&gt;</span>
+<span class="s">    &lt;h1&gt;{{name}}&lt;/h1&gt;</span>
+<span class="s">  &lt;/div&gt;&lt;!-- /header --&gt;</span>
+<span class="s">  &lt;div data-role=&#39;content&#39;&gt;	</span>
+<span class="s">    {{</span><span class="err">#</span><span class="s">if allowSkip}}</span>
+<span class="s">      &lt;button&gt;Skip assessment&lt;/button&gt;</span>
+<span class="s">    {{/if}}</span>
+<span class="s">    {{{controls}}}</span>
+<span class="s">    {{{content}}}</span>
+<span class="s">  &lt;/div&gt;&lt;!-- /content --&gt;</span>
+<span class="s">  &lt;div data-role=&#39;footer&#39;&gt;</span>
+<span class="s">    &lt;div class=&#39;validation-message&#39;&gt;&lt;/div&gt;</span>
+<span class="s">    {{footerMessage}}</span>
+<span class="s">    &lt;button href=&#39;\#{{nextPage}}&#39;&gt;Next&lt;/button&gt;</span>
+<span class="s">  &lt;/div&gt;&lt;!-- /footer --&gt;</span>
+<span class="s">&lt;/div&gt;&lt;!-- /page --&gt;</span>
+<span class="s">&quot;</span>
+
+<span class="k">class</span> <span class="nx">AssessmentPage</span> <span class="k">extends</span> <span class="nx">JQueryMobilePage</span>
+  <span class="nv">addTimer: </span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@timer = </span><span class="k">new</span> <span class="nx">Timer</span>
+      <span class="nv">page: </span><span class="k">this</span>
+      <span class="nv">startTime: </span><span class="nx">options</span><span class="p">.</span><span class="nx">seconds</span>
+      <span class="nv">onStop: </span><span class="nx">options</span><span class="p">.</span><span class="nx">onStop</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>#
+By default we expect all input fields to be filled
+#</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">validate: </span><span class="o">-&gt;</span>
+    <span class="k">for</span> <span class="nx">inputElement</span> <span class="k">in</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> form input&quot;</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">inputElement</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span>
+        <span class="k">return</span> <span class="s">&quot;&#39;</span><span class="si">#{</span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;label[for=&quot;</span><span class="o">+</span><span class="nx">inputElement</span><span class="p">.</span><span class="nx">id</span><span class="o">+</span><span class="s">&quot;]&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">()</span><span class="si">}</span><span class="s">&#39; is empty&quot;</span>
+    <span class="k">return</span> <span class="kc">true</span>
+
+  <span class="nv">results: </span><span class="o">-&gt;</span>
+    <span class="nx">unless</span> <span class="nx">@assessment</span><span class="p">.</span><span class="nx">currentPage</span><span class="p">.</span><span class="nx">pageId</span> <span class="o">==</span> <span class="nx">@pageId</span>
+      <span class="k">return</span> <span class="nx">@lastResult</span>
+   
+    <span class="vi">@lastResult = </span><span class="kc">null</span>
+
+    <span class="nv">objectData = </span><span class="p">{}</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">each</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> form&quot;</span><span class="p">).</span><span class="nx">serializeArray</span><span class="p">(),</span> <span class="nf">() -&gt;</span>
+      <span class="k">if</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="o">?</span>
+        <span class="nv">value = </span><span class="k">this</span><span class="p">.</span><span class="nx">value</span>
+      <span class="k">else</span>
+        <span class="nv">value = </span><span class="s">&#39;&#39;</span>
+
+      <span class="k">if</span> <span class="nx">objectData</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span><span class="o">?</span>
+        <span class="nx">unless</span> <span class="nx">objectData</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">].</span><span class="nx">push</span>
+          <span class="nx">objectData</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">objectData</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">]]</span>
+
+        <span class="nx">objectData</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">].</span><span class="nx">push</span> <span class="nx">value</span>
+      <span class="k">else</span>
+        <span class="nx">objectData</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span>
+
+    <span class="vi">@lastResult = </span><span class="nx">objectData</span>
+    <span class="k">return</span> <span class="nx">@lastResult</span>
+
+<span class="nv">AssessmentPage.validateCurrentPageUpdateNextButton = </span><span class="o">-&gt;</span>
+  <span class="k">return</span> <span class="nx">unless</span> <span class="nx">$</span><span class="p">.</span><span class="nx">assessment</span><span class="o">?</span>
+  <span class="nv">passedValidation = </span><span class="p">(</span><span class="nx">$</span><span class="p">.</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">currentPage</span><span class="p">.</span><span class="nx">validate</span><span class="p">()</span> <span class="o">is</span> <span class="kc">true</span><span class="p">)</span>
+  <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">$</span><span class="p">.</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">currentPage</span><span class="p">.</span><span class="nx">pageId</span><span class="si">}</span><span class="s"> button:contains(Next)&quot;</span><span class="p">).</span><span class="nx">toggleClass</span><span class="p">(</span><span class="s">&quot;passedValidation&quot;</span><span class="p">,</span> <span class="nx">passedValidation</span><span class="p">)</span>
+
+<span class="nx">setInterval</span><span class="p">(</span><span class="nx">AssessmentPage</span><span class="p">.</span><span class="nx">validateCurrentPageUpdateNextButton</span><span class="p">,</span> <span class="mi">800</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Show validation errors in a dialog page</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">$</span><span class="p">(</span><span class="s">&#39;div.ui-footer button&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s">&#39;click&#39;</span><span class="p">,</span> <span class="nf">(event,ui) -&gt;</span>
+  <span class="nv">validationResult = </span><span class="nx">$</span><span class="p">.</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">currentPage</span><span class="p">.</span><span class="nx">validate</span><span class="p">()</span>
+  <span class="k">if</span> <span class="nx">validationResult</span> <span class="o">is</span> <span class="kc">true</span>
+    <span class="nv">button = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span><span class="p">(</span><span class="nx">button</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;href&quot;</span><span class="p">))</span>
+  <span class="k">else</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">_infoPage div[data-role=&#39;content&#39;]&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span>
+      <span class="s">&quot;Please fix the following before proceeding:&lt;br/&gt;&quot;</span> <span class="o">+</span>
+      <span class="nx">validationResult</span>
+    <span class="p">)</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">_infoPage&quot;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nx">StudentInformationPage</span> <span class="k">extends</span> <span class="nx">AssessmentPage</span>
+  <span class="nv">constructor: </span><span class="nf">(options) -&gt;</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span>
+    <span class="vi">@questions = </span><span class="nx">options</span><span class="p">.</span><span class="nx">questions</span> <span class="o">?</span> <span class="nx">options</span><span class="p">.</span><span class="nx">radioButtons</span>
+    <span class="vi">@enumeratorHelp = </span><span class="nx">options</span><span class="p">.</span><span class="nx">enumeratorHelp</span>
+    <span class="vi">@studentDialog = </span><span class="nx">options</span><span class="p">.</span><span class="nx">studentDialog</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Create some id friendly attributes</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">for</span> <span class="nx">question</span> <span class="k">in</span> <span class="nx">@questions</span>
+      <span class="nv">question.name = </span><span class="nx">question</span><span class="p">.</span><span class="nx">label</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^a-zA-Z0-9]/g</span><span class="p">,</span><span class="s">&quot; &quot;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">dasherize</span><span class="p">()</span>
+      <span class="k">if</span> <span class="nx">question</span><span class="p">.</span><span class="nx">options</span><span class="o">?</span>
+        <span class="nv">question.options = </span><span class="k">for</span> <span class="nx">option</span> <span class="k">in</span> <span class="nx">question</span><span class="p">.</span><span class="nx">options</span>
+          <span class="p">{</span>
+            <span class="nv">id : </span><span class="nx">question</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s">&quot;-&quot;</span><span class="o">+</span> <span class="nx">option</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">dasherize</span><span class="p">()</span>
+            <span class="nv">label: </span><span class="nx">option</span>
+          <span class="p">}</span>
+    <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">timer</span>
+      <span class="vi">@includeTimer = </span><span class="kc">true</span>
+      <span class="nx">@addTimer</span>
+        <span class="nv">seconds: </span><span class="nx">options</span><span class="p">.</span><span class="nx">timer</span>
+        <span class="nv">onStop: </span><span class="o">-&gt;</span>
+          <span class="nx">$</span><span class="p">.</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">flash</span><span class="p">()</span>
+    <span class="vi">@content = </span><span class="nx">StudentInformationPage</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+        
+
+
+  <span class="nv">validate: </span><span class="o">-&gt;</span>
+    <span class="nv">names = </span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">fieldset</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-name&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="nx">fieldset</span> <span class="k">in</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> form fieldset&quot;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">names</span>
+      <span class="nv">question = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;input[name=</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">]&quot;</span><span class="p">)</span>
+      <span class="k">continue</span> <span class="k">if</span> <span class="nx">question</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#39;text&#39;</span> <span class="o">and</span> <span class="nx">question</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span>
+      <span class="nx">unless</span> <span class="nx">question</span><span class="p">.</span><span class="o">is</span><span class="p">(</span><span class="s">&quot;:checked&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;input[name=</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">]&quot;</span><span class="p">).</span><span class="nx">first</span><span class="p">().</span><span class="nx">parent</span><span class="p">().</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;legend&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot; is not complete&quot;</span>
+    <span class="k">return</span> <span class="kc">true</span>
+
+<span class="nv">StudentInformationPage.template = </span><span class="nx">Handlebars</span><span class="p">.</span><span class="nx">compile</span> <span class="s">&quot;</span>
+<span class="s">  &lt;div class=&#39;enumerator-help&#39;&gt;{{enumeratorHelp}}&lt;/div&gt;</span>
+<span class="s">  &lt;div class=&#39;student-dialog&#39;&gt;{{{studentDialog}}}&lt;/div&gt;</span>
+<span class="s">  {{</span><span class="err">#</span><span class="s">if includeTimer}}</span>
+<span class="s">    &lt;div class=&#39;timer&#39;&gt;</span>
+<span class="s">      &lt;button class=&#39;timer-button&#39;&gt;start&lt;/button&gt;</span>
+<span class="s">      &lt;button class=&#39;timer-button&#39;&gt;stop&lt;/button&gt;</span>
+<span class="s">      &lt;span class=&#39;timer-seconds&#39;&gt;&lt;/span&gt;</span>
+<span class="s">    &lt;/div&gt;</span>
+
+<span class="s">  {{/if}}</span>
+<span class="s">  &lt;form&gt;</span>
+<span class="s">    {{</span><span class="err">#</span><span class="s">questions}}</span>
+<span class="s">      &lt;fieldset data-name=&#39;{{name}}&#39; data-type=&#39;{{orientation}}&#39; data-role=&#39;controlgroup&#39;&gt;</span>
+<span class="s">        &lt;legend&gt;{{label}}&lt;/legend&gt;</span>
+<span class="s">        {{</span><span class="err">#</span><span class="s">if options}}</span>
+<span class="s">          {{</span><span class="err">#</span><span class="s">options}}</span>
+<span class="s">            &lt;label for=&#39;{{id}}&#39;&gt;{{label}}&lt;/label&gt;</span>
+<span class="s">            &lt;input type=&#39;radio&#39; name=&#39;{{../name}}&#39; value=&#39;{{label}}&#39; id=&#39;{{id}}&#39;&gt;&lt;/input&gt;</span>
+<span class="s">          {{/options}}</span>
+<span class="s">        {{else}}</span>
+<span class="s">          &lt;input type=&#39;{{type}}&#39; name=&#39;{{../name}}&#39; id=&#39;{{id}}&#39;&gt;&lt;/input&gt;</span>
+<span class="s">        {{/if}}</span>
+<span class="s">      &lt;/fieldset&gt;</span>
+<span class="s">    {{/questions}}</span>
+<span class="s">  &lt;/form&gt;</span>
+<span class="s">&quot;</span>
+<span class="k">class</span> <span class="nx">SchoolPage</span> <span class="k">extends</span> <span class="nx">AssessmentPage</span>
+  <span class="nv">constructor: </span><span class="nf">(options) -&gt;</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span>
+    <span class="vi">@schools = </span><span class="nx">options</span><span class="p">.</span><span class="nx">schools</span>
+    <span class="vi">@selectNameText = </span><span class="nx">options</span><span class="p">.</span><span class="nx">selectNameText</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>TODO change these to be generic eg level1, level2 or something</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">properties = </span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="s">&quot;district&quot;</span><span class="p">,</span><span class="s">&quot;province&quot;</span><span class="p">,</span><span class="s">&quot;schoolId&quot;</span><span class="p">]</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Load from the object</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">for</span> <span class="nx">property</span> <span class="k">in</span> <span class="nx">properties</span>
+      <span class="k">this</span><span class="p">[</span><span class="nx">property</span> <span class="o">+</span> <span class="s">&quot;Text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">options</span><span class="p">[</span><span class="nx">property</span> <span class="o">+</span> <span class="s">&quot;Text&quot;</span><span class="p">]</span>
+
+    <span class="nv">listAttributes = </span><span class="s">&quot;&quot;</span>
+    <span class="k">for</span> <span class="nx">dataAttribute</span> <span class="k">in</span> <span class="nx">properties</span>
+      <span class="nx">listAttributes</span> <span class="o">+=</span> <span class="s">&quot;data-</span><span class="si">#{</span><span class="nx">dataAttribute</span><span class="si">}</span><span class="s">=&#39;{{</span><span class="si">#{</span><span class="nx">dataAttribute</span><span class="si">}</span><span class="s">}}&#39; &quot;</span>
+
+    <span class="nv">listElement = </span><span class="s">&quot;&lt;li style=&#39;display:none&#39; </span><span class="si">#{</span><span class="nx">listAttributes</span><span class="si">}</span><span class="s">&gt;{{district}} - {{province}} - {{name}}&lt;/li&gt;&quot;</span>
+
+    <span class="nv">inputElements = </span><span class="s">&quot;&quot;</span>
+    <span class="k">for</span> <span class="nx">dataAttribute</span> <span class="k">in</span> <span class="nx">properties</span>
+      <span class="nx">inputElements</span> <span class="o">+=</span> <span class="s">&quot;</span>
+<span class="s">      &lt;div data-role=&#39;fieldcontain&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">dataAttribute</span><span class="si">}</span><span class="s">&#39;&gt;{{</span><span class="si">#{</span><span class="nx">dataAttribute</span><span class="si">}</span><span class="s">Text}}&lt;/label&gt;</span>
+<span class="s">        &lt;input type=&#39;text&#39; name=&#39;</span><span class="si">#{</span><span class="nx">dataAttribute</span><span class="si">}</span><span class="s">&#39; id=&#39;</span><span class="si">#{</span><span class="nx">dataAttribute</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/input&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &quot;</span>
+
+    <span class="nv">template = </span><span class="s">&quot;</span>
+<span class="s">      &lt;div&gt;</span>
+<span class="s">        &lt;h4&gt;</span>
+<span class="s">          {{selectSchoolText}}</span>
+<span class="s">        &lt;/h4&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;form id=&#39;{{pageId}}-form&#39;&gt;</span>
+<span class="s">        </span><span class="si">#{</span><span class="nx">inputElements</span><span class="si">}</span><span class="s"></span>
+<span class="s">      &lt;/form&gt;</span>
+<span class="s">      &lt;ul&gt;</span>
+<span class="s">        {{</span><span class="err">#</span><span class="s">schools}}</span>
+<span class="s">          </span><span class="si">#{</span><span class="nx">listElement</span><span class="si">}</span><span class="s"></span>
+<span class="s">        {{/schools}}</span>
+<span class="s">      &lt;/ul&gt;</span>
+<span class="s">      &lt;br/&gt;</span>
+<span class="s">      &lt;br/&gt;</span>
+<span class="s">    &quot;</span>
+    <span class="vi">@schoolTemplate = </span><span class="nx">Handlebars</span><span class="p">.</span><span class="nx">compile</span> <span class="nx">template</span>
+
+    <span class="vi">@content = </span><span class="nx">@schoolTemplate</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> form</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s">-form input&quot;</span><span class="p">).</span><span class="nx">live</span> <span class="s">&quot;propertychange keyup input paste&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="nv">currentName = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="k">for</span> <span class="nx">school</span> <span class="k">in</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> li&quot;</span><span class="p">)</span>
+        <span class="nv">school = </span><span class="nx">$</span><span class="p">(</span><span class="nx">school</span><span class="p">)</span>
+        <span class="nx">school</span><span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+        <span class="nx">school</span><span class="p">.</span><span class="nx">show</span><span class="p">()</span> <span class="k">if</span> <span class="nx">school</span><span class="p">.</span><span class="nx">html</span><span class="p">().</span><span class="nx">match</span><span class="p">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">currentName</span><span class="p">,</span> <span class="s">&quot;i&quot;</span><span class="p">))</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> li&quot;</span><span class="p">).</span><span class="nx">live</span> <span class="s">&quot;click&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nx">eventData</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="nx">school</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span> <span class="k">for</span> <span class="nx">school</span> <span class="k">in</span> <span class="nx">$</span> <span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> li&quot;</span>
+      <span class="nv">selectedElement = </span><span class="nx">$</span><span class="p">(</span><span class="nx">eventData</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">)</span>
+      <span class="k">for</span> <span class="nx">dataAttribute</span> <span class="k">in</span> <span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="s">&quot;province&quot;</span><span class="p">,</span><span class="s">&quot;district&quot;</span><span class="p">,</span><span class="s">&quot;schoolId&quot;</span><span class="p">]</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> form input</span><span class="err">#</span><span class="si">#{</span><span class="nx">dataAttribute</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nx">selectedElement</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-</span><span class="si">#{</span><span class="nx">dataAttribute</span><span class="si">}</span><span class="s">&quot;</span><span class="p">))</span>
+
+  <span class="nv">propertiesForSerialization: </span><span class="o">-&gt;</span>
+    <span class="nv">properties = </span><span class="k">super</span><span class="p">()</span>
+    <span class="nx">properties</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s">&quot;schools&quot;</span><span class="p">)</span>
+    <span class="nx">properties</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s">&quot;selectNameText&quot;</span><span class="p">)</span>
+    <span class="nx">properties</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">property</span><span class="o">+</span><span class="s">&quot;Text&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="nx">property</span> <span class="k">in</span> <span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="s">&quot;province&quot;</span><span class="p">,</span><span class="s">&quot;district&quot;</span><span class="p">,</span><span class="s">&quot;schoolId&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nx">properties</span>
+
+
+
+  <span class="nv">validate: </span><span class="o">-&gt;</span>
+    <span class="k">for</span> <span class="nx">inputElement</span> <span class="k">in</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> form input&quot;</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">inputElement</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span>
+        <span class="k">return</span> <span class="s">&quot;&#39;</span><span class="si">#{</span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;label[for=&quot;</span><span class="o">+</span><span class="nx">inputElement</span><span class="p">.</span><span class="nx">id</span><span class="o">+</span><span class="s">&quot;]&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">()</span><span class="si">}</span><span class="s">&#39; is empty&quot;</span>
+    <span class="k">return</span> <span class="kc">true</span>
+
+<span class="nv">SchoolPage.deserialize = </span><span class="nf">(pageObject) -&gt;</span>
+  <span class="nv">schoolPage = </span><span class="k">new</span> <span class="nx">SchoolPage</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">)</span>
+  <span class="nx">schoolPage</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">)</span>
+  <span class="nv">schoolPage.content = </span><span class="nx">schoolPage</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="nx">schoolPage</span><span class="p">.</span><span class="nx">_schoolTemplate</span><span class="p">(),</span><span class="nx">schoolPage</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">schoolPage</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>TODO Internationalize</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">DateTimePage</span> <span class="k">extends</span> <span class="nx">AssessmentPage</span>
+
+  <span class="nv">load: </span><span class="nf">(data) -&gt;</span>
+    <span class="nv">dateTime = </span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span>
+    <span class="nv">year = </span><span class="nx">dateTime</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span>
+    <span class="nv">month = </span><span class="p">[</span><span class="s">&quot;Jan&quot;</span><span class="p">,</span><span class="s">&quot;Feb&quot;</span><span class="p">,</span><span class="s">&quot;Mar&quot;</span><span class="p">,</span><span class="s">&quot;Apr&quot;</span><span class="p">,</span><span class="s">&quot;May&quot;</span><span class="p">,</span><span class="s">&quot;Jun&quot;</span><span class="p">,</span><span class="s">&quot;Jul&quot;</span><span class="p">,</span><span class="s">&quot;Aug&quot;</span><span class="p">,</span><span class="s">&quot;Sep&quot;</span><span class="p">,</span><span class="s">&quot;Oct&quot;</span><span class="p">,</span><span class="s">&quot;Nov&quot;</span><span class="p">,</span><span class="s">&quot;Dec&quot;</span><span class="p">][</span><span class="nx">dateTime</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()]</span>
+    <span class="nv">day = </span><span class="nx">dateTime</span><span class="p">.</span><span class="nx">getDate</span><span class="p">()</span>
+    <span class="nv">minutes = </span><span class="nx">dateTime</span><span class="p">.</span><span class="nx">getMinutes</span><span class="p">()</span>
+    <span class="nv">minutes = </span><span class="s">&quot;0&quot;</span> <span class="o">+</span> <span class="nx">minutes</span> <span class="k">if</span> <span class="nx">minutes</span> <span class="o">&lt;</span> <span class="mi">10</span>
+    <span class="nv">time = </span><span class="nx">dateTime</span><span class="p">.</span><span class="nx">getHours</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;:&quot;</span> <span class="o">+</span> <span class="nx">minutes</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&#39;input#student-id&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s">&quot;change&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">student-id-message&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;&quot;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&#39;input#student-id&#39;</span><span class="p">).</span><span class="nx">val</span> <span class="nx">$</span><span class="p">(</span><span class="s">&#39;input#student-id&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">toUpperCase</span><span class="p">()</span>
+
+      <span class="nv">isValid = </span><span class="nx">Checkdigit</span><span class="p">.</span><span class="nx">isValidIdentifier</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;input#student-id&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">())</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">student-id-message&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">isValid</span><span class="p">)</span> <span class="nx">unless</span> <span class="nx">isValid</span> <span class="o">==</span> <span class="kc">true</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&#39;button:contains(Create New ID)&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">student-id-message&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;&quot;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#student-id&#39;</span><span class="p">).</span><span class="nx">val</span> <span class="nx">Checkdigit</span><span class="p">.</span><span class="nx">randomIdentifier</span><span class="p">()</span>
+
+    <span class="vi">@content = </span><span class="s">&quot;</span>
+<span class="s">      &lt;form&gt;</span>
+<span class="s">        &lt;div data-role=&#39;fieldcontain&#39;&gt;</span>
+<span class="s">          &lt;label for=&#39;student-id&#39;&gt;Student Identifier:&lt;/label&gt;</span>
+<span class="s">          &lt;input type=&#39;text&#39; name=&#39;student-id&#39; id=&#39;student-id&#39; /&gt;</span>
+<span class="s">          &lt;div id=&#39;student-id-message&#39;&gt;&lt;/div&gt;</span>
+<span class="s">          &lt;button style=&#39;display:block&#39; type=&#39;button&#39;&gt;Create New ID&lt;/button&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div data-role=&#39;fieldcontain&#39;&gt;</span>
+<span class="s">          &lt;label for=&#39;year&#39;&gt;Year:&lt;/label&gt;</span>
+<span class="s">          &lt;input type=&#39;number&#39; name=&#39;year&#39; id=&#39;year&#39; value=&#39;</span><span class="si">#{</span><span class="nx">year</span><span class="si">}</span><span class="s">&#39; /&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div data-role=&#39;fieldcontain&#39;&gt;</span>
+<span class="s">          &lt;label for=&#39;month&#39;&gt;Month:&lt;/label&gt;</span>
+<span class="s">          &lt;input type=&#39;text&#39; name=&#39;month&#39; id=&#39;month&#39; value=&#39;</span><span class="si">#{</span><span class="nx">month</span><span class="si">}</span><span class="s">&#39;/&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div data-role=&#39;fieldcontain&#39;&gt;</span>
+<span class="s">          &lt;label for=&#39;day&#39;&gt;Day:&lt;/label&gt;</span>
+<span class="s">          &lt;input type=&#39;number&#39; name=&#39;day&#39; id=&#39;day&#39; value=&#39;</span><span class="si">#{</span><span class="nx">day</span><span class="si">}</span><span class="s">&#39; /&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div data-role=&#39;fieldcontain&#39;&gt;</span>
+<span class="s">          &lt;label for=&#39;time&#39;&gt;Time:&lt;/label&gt;</span>
+<span class="s">          &lt;input type=&#39;text&#39; name=&#39;time&#39; id=&#39;time&#39; value=&#39;</span><span class="si">#{</span><span class="nx">time</span><span class="si">}</span><span class="s">&#39; /&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">      &lt;/form&gt;</span>
+<span class="s">      &quot;</span>
+
+  <span class="nv">validate: </span><span class="o">-&gt;</span>
+    <span class="nv">isValid = </span><span class="nx">Checkdigit</span><span class="p">.</span><span class="nx">isValidIdentifier</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;input#student-id&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">())</span>
+    <span class="k">return</span> <span class="nx">isValid</span> <span class="nx">unless</span> <span class="nx">isValid</span> <span class="o">==</span> <span class="kc">true</span>
+    <span class="k">if</span> <span class="nx">isValid</span> <span class="k">then</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current-student-id&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;input#student-id&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">())</span>
+    <span class="k">super</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>TODO Internationalize</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">StudentIdPage</span> <span class="k">extends</span> <span class="nx">AssessmentPage</span>
+
+  <span class="nv">load: </span><span class="nf">(data) -&gt;</span>
+    <span class="nv">dateTime = </span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span>
+    <span class="nv">year = </span><span class="nx">dateTime</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span>
+    <span class="nv">month = </span><span class="p">[</span><span class="s">&quot;Jan&quot;</span><span class="p">,</span><span class="s">&quot;Feb&quot;</span><span class="p">,</span><span class="s">&quot;Mar&quot;</span><span class="p">,</span><span class="s">&quot;Apr&quot;</span><span class="p">,</span><span class="s">&quot;May&quot;</span><span class="p">,</span><span class="s">&quot;Jun&quot;</span><span class="p">,</span><span class="s">&quot;Jul&quot;</span><span class="p">,</span><span class="s">&quot;Aug&quot;</span><span class="p">,</span><span class="s">&quot;Sep&quot;</span><span class="p">,</span><span class="s">&quot;Oct&quot;</span><span class="p">,</span><span class="s">&quot;Nov&quot;</span><span class="p">,</span><span class="s">&quot;Dec&quot;</span><span class="p">][</span><span class="nx">dateTime</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()]</span>
+    <span class="nv">day = </span><span class="nx">dateTime</span><span class="p">.</span><span class="nx">getDate</span><span class="p">()</span>
+    <span class="nv">minutes = </span><span class="nx">dateTime</span><span class="p">.</span><span class="nx">getMinutes</span><span class="p">()</span>
+    <span class="nv">minutes = </span><span class="s">&quot;0&quot;</span> <span class="o">+</span> <span class="nx">minutes</span> <span class="k">if</span> <span class="nx">minutes</span> <span class="o">&lt;</span> <span class="mi">10</span>
+    <span class="nv">time = </span><span class="nx">dateTime</span><span class="p">.</span><span class="nx">getHours</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;:&quot;</span> <span class="o">+</span> <span class="nx">minutes</span>
+
+    <span class="vi">@content = </span><span class="s">&quot;</span>
+<span class="s">      &lt;form class=&#39;student_id_page&#39;&gt;</span>
+<span class="s">        &lt;div&gt;</span>
+<span class="s">          &lt;label for=&#39;student_id&#39;&gt;Student Identifier&lt;/label&gt;</span>
+<span class="s">          &lt;input type=&#39;text&#39; name=&#39;student_id&#39; id=&#39;student_id&#39;&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div&gt;</span>
+<span class="s">          &lt;label for=&#39;year&#39;&gt;Year&lt;/label&gt;</span>
+<span class="s">          &lt;input type=&#39;number&#39; name=&#39;year&#39; id=&#39;year&#39; value=&#39;</span><span class="si">#{</span><span class="nx">year</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div&gt;</span>
+<span class="s">          &lt;label for=&#39;month&#39;&gt;Month&lt;/label&gt;</span>
+<span class="s">          &lt;input type=&#39;text&#39; name=&#39;month&#39; id=&#39;month&#39; value=&#39;</span><span class="si">#{</span><span class="nx">month</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div&gt;</span>
+<span class="s">          &lt;label for=&#39;day&#39;&gt;Day&lt;/label&gt;</span>
+<span class="s">          &lt;input type=&#39;number&#39; name=&#39;day&#39; id=&#39;day&#39; value=&#39;</span><span class="si">#{</span><span class="nx">day</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div&gt;</span>
+<span class="s">          &lt;label for=&#39;time&#39;&gt;Time&lt;/label&gt;</span>
+<span class="s">          &lt;input type=&#39;text&#39; name=&#39;time&#39; id=&#39;time&#39; value=&#39;</span><span class="si">#{</span><span class="nx">time</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">      &lt;/form&gt;</span>
+<span class="s">      &quot;</span>
+
+  <span class="nv">validate: </span><span class="o">-&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current-student-id&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;input#student_id&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">())</span>
+    <span class="k">super</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nx">ResultsPage</span> <span class="k">extends</span> <span class="nx">AssessmentPage</span>
+  <span class="nv">constructor: </span><span class="nf">(options) -&gt;</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span>
+    <span class="vi">@content = </span><span class="nx">Handlebars</span><span class="p">.</span><span class="nx">compile</span> <span class="s">&quot;</span>
+<span class="s">      &lt;div class=&#39;message&#39;&gt;</span>
+<span class="s">        You have finished assessment &lt;span class=&#39;randomIdForSubject&#39;&gt;&lt;/span&gt;. Thank the child with a small gift. Please write &lt;span class=&#39;randomIdForSubject&#39;&gt;&lt;/span&gt; on the writing sample.</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;div data-role=&#39;collapsible&#39; data-collapsed=&#39;true&#39; class=&#39;results&#39;&gt;</span>
+<span class="s">        You have finished:</span>
+<span class="s">        &lt;h3&gt;Results&lt;/h3&gt;</span>
+<span class="s">        &lt;div&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;form&gt;</span>
+<span class="s">          &lt;label for=&#39;comment&#39;&gt;Comments (if any):&lt;/label&gt;</span>
+<span class="s">          &lt;textarea style=&#39;width:80%&#39; id=&#39;comment&#39; name=&#39;resultComment&#39;&gt;&lt;/textarea&gt;</span>
+<span class="s">        &lt;/form&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;div id=&#39;result_message&#39;&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;div id=&#39;result_controls&#39;&gt;</span>
+<span class="s">        &lt;button type=&#39;button&#39; id=&#39;save_results_button&#39;&gt;Save Results&lt;/button&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">    &quot;</span>
+
+  <span class="nv">load: </span><span class="nf">(data) -&gt;</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">live</span> <span class="s">&quot;pageshow&quot;</span><span class="p">,</span> <span class="o">=&gt;</span>
+
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> div span[class=&#39;randomIdForSubject&#39;]&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current-student-id&quot;</span><span class="p">).</span><span class="nx">text</span><span class="p">()</span>
+
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;button:contains(Next)&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+
+      <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">resultView</span> <span class="o">?=</span> <span class="k">new</span> <span class="nx">ResultView</span><span class="p">()</span>
+      <span class="nv">Tangerine.resultView.model = </span><span class="k">new</span> <span class="nx">Result</span><span class="p">(</span><span class="nx">$</span><span class="p">.</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">results</span><span class="p">())</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> div[data-role=&#39;content&#39;] div.results div&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">resultView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&#39;.sparkline&#39;</span><span class="p">).</span><span class="nx">sparkline</span> <span class="s">&#39;html&#39;</span><span class="p">,</span>
+        <span class="nx">type</span><span class="o">:</span><span class="s">&#39;pie&#39;</span>
+        <span class="nx">sliceColors</span><span class="o">:</span><span class="p">[</span><span class="s">&#39;black&#39;</span><span class="p">,</span><span class="s">&#39;#F7C942&#39;</span><span class="p">,</span><span class="s">&#39;orangered&#39;</span><span class="p">]</span>
+
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">save_results_button&quot;</span><span class="p">).</span><span class="nx">live</span> <span class="s">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">saveResults</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span> <span class="o">=&gt;</span>
+          <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">results_message&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;Results Saved&quot;</span>
+          <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">save_results_button&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+          <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">result_controls&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;&lt;button id=&#39;another_assessment&#39;&gt;Start another assessment&lt;/button&gt;&quot;</span>
+
+      <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#another_assessment&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="nx">location</span><span class="p">.</span><span class="nx">reload</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nx">TextPage</span> <span class="k">extends</span> <span class="nx">AssessmentPage</span>
+  <span class="nv">propertiesForSerialization: </span><span class="o">-&gt;</span>
+    <span class="nv">properties = </span><span class="k">super</span><span class="p">()</span>
+    <span class="nx">properties</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s">&quot;content&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">properties</span>
+
+<span class="k">class</span> <span class="nx">ConsentPage</span> <span class="k">extends</span> <span class="nx">TextPage</span>
+  <span class="nv">constructor: </span><span class="nf">(options) -&gt;</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#save-reset&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+      <span class="nx">$</span><span class="p">.</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">saveResults</span><span class="p">()</span>
+      <span class="nx">$</span><span class="p">.</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">reset</span><span class="p">()</span>
+      
+
+  <span class="nv">validate: </span><span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> input</span><span class="err">#</span><span class="s">consent-yes:checked&quot;</span><span class="p">).</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+      <span class="k">return</span> <span class="kc">true</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> input</span><span class="err">#</span><span class="s">consent-no:checked&quot;</span><span class="p">).</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+      <span class="k">return</span> <span class="s">&quot;Click to confirm that the child has not consented &lt;button id=&#39;save-reset&#39;&gt;Confirm&lt;/button&gt;&quot;</span>
+    <span class="k">else</span>
+      <span class="k">return</span> <span class="s">&quot;You must answer the consent question&quot;</span>
+
+
+
+<span class="k">class</span> <span class="nx">UntimedSubtest</span> <span class="k">extends</span> <span class="nx">AssessmentPage</span>
+  <span class="nv">constructor: </span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@questions = </span><span class="nx">options</span><span class="p">.</span><span class="nx">questions</span>
+    <span class="vi">@answerOptions = </span><span class="nx">options</span><span class="p">.</span><span class="nx">answerOptions</span> <span class="o">?</span> <span class="p">[</span><span class="s">&quot;Correct&quot;</span><span class="p">,</span> <span class="s">&quot;Incorrect&quot;</span><span class="p">,</span> <span class="s">&quot;No response&quot;</span><span class="p">]</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span>
+    <span class="vi">@footerMessage = </span><span class="nx">footerMessage</span>
+    <span class="vi">@content = </span><span class="s">&quot;</span>
+<span class="s">      &lt;div class=&#39;enumerator-help&#39;&gt;</span><span class="si">#{</span><span class="nx">options</span><span class="p">.</span><span class="nx">enumeratorHelp</span><span class="si">}</span><span class="s">&lt;/div&gt;</span>
+<span class="s">      &lt;div class=&#39;student-dialog&#39;&gt;</span><span class="si">#{</span><span class="nx">options</span><span class="p">.</span><span class="nx">studentDialog</span><span class="si">}</span><span class="s">&lt;/div&gt;</span>
+<span class="s">      &lt;form&gt;&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="k">for</span> <span class="nx">question</span><span class="p">,</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">@questions</span>
+        <span class="nv">questionSanitized = </span><span class="nx">question</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^a-zA-Z0-9]/g</span><span class="p">,</span><span class="s">&quot; &quot;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">dasherize</span><span class="p">()</span>
+        <span class="s">&quot;</span>
+<span class="s">        &lt;div data-role=&#39;fieldcontain&#39;&gt;</span>
+<span class="s">            &lt;fieldset data-role=&#39;controlgroup&#39; data-type=&#39;horizontal&#39;&gt;</span>
+<span class="s">              &lt;legend&gt;</span><span class="si">#{</span><span class="nx">question</span><span class="si">}</span><span class="s">&lt;/legend&gt;</span>
+<span class="s">        &quot;</span> <span class="o">+</span>
+        <span class="p">(</span><span class="k">for</span> <span class="nx">answer</span> <span class="k">in</span> <span class="nx">@answerOptions</span>
+          <span class="nv">answerSanitized = </span><span class="nx">answer</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^a-zA-Z0-9]/g</span><span class="p">,</span><span class="s">&quot; &quot;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">dasherize</span><span class="p">()</span>
+          <span class="s">&quot;</span>
+<span class="s">          &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">questionSanitized</span><span class="si">}</span><span class="s">-</span><span class="si">#{</span><span class="nx">answerSanitized</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">answer</span><span class="si">}</span><span class="s">&lt;/label&gt;</span>
+<span class="s">          &lt;input type=&#39;radio&#39; data-question-index=&#39;</span><span class="si">#{</span><span class="nx">index</span><span class="si">}</span><span class="s">&#39; name=&#39;</span><span class="si">#{</span><span class="nx">questionSanitized</span><span class="si">}</span><span class="s">&#39; id=&#39;</span><span class="si">#{</span><span class="nx">questionSanitized</span><span class="si">}</span><span class="s">-</span><span class="si">#{</span><span class="nx">answerSanitized</span><span class="si">}</span><span class="s">&#39; value=&#39;</span><span class="si">#{</span><span class="nx">answer</span><span class="si">}</span><span class="s">&#39; /&gt;</span>
+<span class="s">          &quot;</span>
+        <span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span>
+        <span class="s">&quot;</span>
+<span class="s">            &lt;/fieldset&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &quot;</span>
+      <span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;&lt;/form&gt;&quot;</span>
+
+  <span class="nv">propertiesForSerialization: </span><span class="o">-&gt;</span>
+    <span class="nv">properties = </span><span class="k">super</span><span class="p">()</span>
+    <span class="nx">properties</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s">&quot;questions&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">properties</span>
+
+  <span class="nv">validate: </span><span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">@results</span><span class="p">())</span> <span class="o">==</span> <span class="nx">@questions</span><span class="p">.</span><span class="nx">length</span>
+      <span class="k">return</span> <span class="kc">true</span>
+    <span class="k">else</span> <span class="s">&quot;Only </span><span class="si">#{</span><span class="nx">_</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">@results</span><span class="p">())</span><span class="si">}</span><span class="s"> out of the </span><span class="si">#{</span><span class="nx">@questions</span><span class="p">.</span><span class="nx">length</span><span class="si">}</span><span class="s"> questions were answered&quot;</span>
+
+
+<span class="nv">UntimedSubtest.deserialize = </span><span class="nf">(pageObject) -&gt;</span>
+  <span class="nv">untimedSubtest = </span><span class="k">new</span> <span class="nx">UntimedSubtest</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">)</span>
+  <span class="nx">untimedSubtest</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">untimedSubtest</span>
+
+<span class="k">class</span> <span class="nx">UntimedSubtestLinked</span> <span class="k">extends</span> <span class="nx">UntimedSubtest</span>
+  <span class="nv">constructor: </span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@linkedToPageId = </span><span class="nx">options</span><span class="p">.</span><span class="nx">linkedToPageId</span>
+    <span class="vi">@questionIndices = </span><span class="nx">options</span><span class="p">.</span><span class="nx">questionIndices</span>
+    <span class="vi">@footerMessage = </span><span class="nx">footerMessage</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span>
+
+    <span class="nv">linkedPageName = </span><span class="nx">@linkedToPageId</span><span class="p">.</span><span class="nx">underscore</span><span class="p">().</span><span class="nx">titleize</span><span class="p">()</span>
+    <span class="nx">@content</span> <span class="o">+=</span> <span class="s">&quot;&lt;div id=&#39;</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s">-not-enough-progress-message&#39; style=&#39;display:hidden&#39;&gt;Not enough progress was made on </span><span class="si">#{</span><span class="nx">linkedPageName</span><span class="si">}</span><span class="s"> to show questions from </span><span class="si">#{</span><span class="nx">@name</span><span class="p">()</span><span class="si">}</span><span class="s">. Continue by pressing Next.&lt;/div&gt;&quot;</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">live</span> <span class="s">&#39;pageshow&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">eventData</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="nv">attemptedOnLinkedPage = </span><span class="nx">$</span><span class="p">.</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">result</span><span class="p">(</span><span class="nx">@linkedToPageId</span><span class="p">).</span><span class="nx">attempted</span>
+      <span class="vi">@numberInputFieldsShown = </span><span class="mi">0</span>
+      <span class="k">for</span> <span class="nx">inputElement</span><span class="p">,</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> input[type=&#39;radio&#39;]&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">attemptedOnLinkedPage</span> <span class="o">&lt;</span> <span class="nx">@questionIndices</span><span class="p">[</span><span class="nx">$</span><span class="p">(</span><span class="nx">inputElement</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-question-index&quot;</span><span class="p">)]</span>
+          <span class="nx">$</span><span class="p">(</span><span class="nx">inputElement</span><span class="p">).</span><span class="nx">parents</span><span class="p">(</span><span class="s">&quot;div[data-role=&#39;fieldcontain&#39;]&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+        <span class="k">else</span>
+          <span class="nx">$</span><span class="p">(</span><span class="nx">inputElement</span><span class="p">).</span><span class="nx">parents</span><span class="p">(</span><span class="s">&quot;div[data-role=&#39;fieldcontain&#39;]&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">()</span>
+          <span class="nx">@numberInputFieldsShown</span><span class="o">++</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s">-not-enough-progress-message&quot;</span><span class="p">).</span><span class="nx">toggle</span><span class="p">(</span><span class="nx">@numberInputFieldsShown</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+      
+  <span class="nv">propertiesForSerialization: </span><span class="o">-&gt;</span>
+    <span class="nv">properties = </span><span class="k">super</span><span class="p">()</span>
+    <span class="nv">properties = </span><span class="nx">properties</span><span class="p">.</span><span class="nx">concat</span><span class="p">([</span><span class="s">&quot;questions&quot;</span><span class="p">,</span><span class="s">&quot;linkedToPageId&quot;</span><span class="p">,</span><span class="s">&quot;questionIndices&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nx">properties</span>
+
+  <span class="nv">validate: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Each question has three radio buttons, so divide by 3</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">numberOfQuestionsShown = </span><span class="nx">@numberInputFieldsShown</span><span class="o">/</span><span class="mi">3</span>
+    <span class="nv">numberOfQuestionsAnswered = </span><span class="nx">_</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">@results</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nx">numberOfQuestionsAnswered</span> <span class="o">==</span> <span class="nx">numberOfQuestionsShown</span>
+      <span class="k">return</span> <span class="kc">true</span>
+    <span class="k">else</span> <span class="s">&quot;Only </span><span class="si">#{</span><span class="nx">numberOfQuestionsAnswered</span><span class="si">}</span><span class="s"> out of the </span><span class="si">#{</span><span class="nx">numberOfQuestionsShown</span><span class="si">}</span><span class="s"> questions were answered&quot;</span>
+
+
+<span class="nv">UntimedSubtestLinked.deserialize = </span><span class="nf">(pageObject) -&gt;</span>
+  <span class="nv">untimedSubtest = </span><span class="k">new</span> <span class="nx">UntimedSubtestLinked</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">)</span>
+  <span class="nx">untimedSubtest</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">untimedSubtest</span>
+
+
+
+<span class="k">class</span> <span class="nx">PhonemePage</span> <span class="k">extends</span> <span class="nx">AssessmentPage</span>
+  <span class="nv">constructor: </span><span class="nf">(@words) -&gt;</span>
+    <span class="k">super</span><span class="p">()</span>
+    <span class="vi">@subtestId = </span><span class="s">&quot;phonemic-awareness&quot;</span>
+    <span class="vi">@footerMessage = </span><span class="nx">footerMessage</span>
+    <span class="nv">phonemeIndex = </span><span class="mi">1</span>
+    <span class="vi">@content = </span><span class="s">&quot;&lt;form id=&#39;</span><span class="si">#{</span><span class="nx">@subtestId</span><span class="si">}</span><span class="s">&#39;&gt;&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="k">for</span> <span class="nx">item</span><span class="p">,</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">@words</span>
+      <span class="nv">wordName = </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">@subtestId</span><span class="si">}</span><span class="s">.</span><span class="si">#{</span><span class="nx">item</span><span class="p">.</span><span class="nx">word</span><span class="si">}</span><span class="s">.identified-number&quot;</span>
+      <span class="s">&quot;</span>
+<span class="s">      &lt;div data-role=&#39;fieldcontain&#39;&gt;</span>
+<span class="s">          &lt;fieldset data-role=&#39;controlgroup&#39; data-type=&#39;horizontal&#39;&gt;</span>
+<span class="s">            &lt;legend&gt;</span><span class="si">#{</span><span class="nx">item</span><span class="p">[</span><span class="s">&quot;word&quot;</span><span class="p">]</span><span class="si">}</span><span class="s">&lt;/legend&gt;</span>
+<span class="s">            &lt;fieldset data-role=&#39;controlgroup&#39; data-type=&#39;horizontal&#39;&gt;</span>
+<span class="s">              &lt;legend&gt;Number of phonemes: </span><span class="si">#{</span><span class="nx">item</span><span class="p">[</span><span class="s">&quot;number-of-sounds&quot;</span><span class="p">]</span><span class="si">}</span><span class="s">&lt;/legend&gt;</span>
+<span class="s">      &quot;</span> <span class="o">+</span>
+      <span class="p">(</span><span class="k">for</span> <span class="nx">answer</span> <span class="k">in</span> <span class="p">[</span><span class="s">&quot;Correct&quot;</span><span class="p">,</span> <span class="s">&quot;Incorrect&quot;</span><span class="p">]</span>
+        <span class="s">&quot;</span>
+<span class="s">        &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">wordName</span><span class="si">}</span><span class="s">-</span><span class="si">#{</span><span class="nx">answer</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">answer</span><span class="si">}</span><span class="s">&lt;/label&gt;</span>
+<span class="s">        &lt;input type=&#39;radio&#39; name=&#39;</span><span class="si">#{</span><span class="nx">wordName</span><span class="si">}</span><span class="s">&#39; id=&#39;</span><span class="si">#{</span><span class="nx">wordName</span><span class="si">}</span><span class="s">-</span><span class="si">#{</span><span class="nx">answer</span><span class="si">}</span><span class="s">&#39; value=&#39;</span><span class="si">#{</span><span class="nx">answer</span><span class="si">}</span><span class="s">&#39; /&gt;</span>
+<span class="s">        &quot;</span>
+      <span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span>
+      <span class="s">&quot;</span>
+<span class="s">        &lt;/fieldset&gt;</span>
+<span class="s">        &lt;fieldset data-role=&#39;controlgroup&#39; data-type=&#39;horizontal&#39;&gt;</span>
+<span class="s">          &lt;legend&gt;Phonemes identified&lt;/legend&gt;</span>
+<span class="s">      &quot;</span> <span class="o">+</span>
+      <span class="p">(</span><span class="k">for</span> <span class="nx">phoneme</span> <span class="k">in</span> <span class="nx">item</span><span class="p">[</span><span class="s">&quot;phonemes&quot;</span><span class="p">]</span>
+        <span class="nv">phonemeName = </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">@subtestId</span><span class="si">}</span><span class="s">.</span><span class="si">#{</span><span class="nx">item</span><span class="p">.</span><span class="nx">word</span><span class="si">}</span><span class="s">.phoneme-</span><span class="si">#{</span><span class="nx">phoneme</span><span class="si">}</span><span class="s">&quot;</span>
+        <span class="s">&quot;</span>
+<span class="s">            &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">phonemeName</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">phoneme</span><span class="si">}</span><span class="s">&lt;/label&gt;</span>
+<span class="s">            &lt;input type=&#39;checkbox&#39; name=&#39;</span><span class="si">#{</span><span class="nx">phonemeName</span><span class="si">}</span><span class="s">&#39; id=&#39;</span><span class="si">#{</span><span class="nx">phonemeName</span><span class="si">}</span><span class="s">&#39; value=&#39;Correct&#39;/&gt;</span>
+<span class="s">        &quot;</span>
+      <span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span>  <span class="s">&quot;</span>
+<span class="s">            &lt;/fieldset&gt;</span>
+<span class="s">          &lt;/fieldset&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &quot;</span>
+    <span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;&lt;/form&gt;&quot;</span>
+
+  <span class="nv">propertiesForSerialization: </span><span class="o">-&gt;</span>
+    <span class="nv">properties = </span><span class="k">super</span><span class="p">()</span>
+    <span class="nx">properties</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s">&quot;words&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">properties</span>
+
+  <span class="nv">results: </span><span class="o">-&gt;</span>
+    <span class="nx">unless</span> <span class="nx">@assessment</span><span class="p">.</span><span class="nx">currentPage</span><span class="p">.</span><span class="nx">pageId</span> <span class="o">==</span> <span class="nx">@pageId</span>
+      <span class="k">return</span> <span class="nx">@lastResult</span>
+
+    <span class="vi">@lastResult = </span><span class="kc">null</span>
+    <span class="vi">@lastResult = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;form</span><span class="err">#</span><span class="si">#{</span><span class="nx">@subtestId</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">toObject</span><span class="p">({</span><span class="nx">skipEmpty</span><span class="o">:</span><span class="kc">false</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="nx">@lastResult</span>
+
+  <span class="nv">validate: </span><span class="o">-&gt;</span>
+    <span class="k">return</span> <span class="kc">true</span>
+    <span class="nv">results = </span><span class="nx">@results</span><span class="p">()</span>
+    <span class="k">for</span> <span class="nx">item</span><span class="p">,</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">@words</span>
+      <span class="nx">unless</span> <span class="nx">results</span><span class="p">[</span><span class="nx">@subtestId</span> <span class="o">+</span> <span class="s">&quot;-number-phonemes&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">?</span>
+        <span class="k">return</span> <span class="s">&quot;You must select Correct or Incorrect for item </span><span class="err">#</span><span class="si">#{</span><span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s">: &lt;b&gt;</span><span class="si">#{</span><span class="nx">item</span><span class="p">[</span><span class="s">&quot;word&quot;</span><span class="p">]</span><span class="si">}</span><span class="s">&lt;/b&gt;&quot;</span>
+    <span class="k">return</span> <span class="kc">true</span>
+
+
+
+<span class="nv">PhonemePage.deserialize = </span><span class="nf">(pageObject) -&gt;</span>
+  <span class="nv">page = </span><span class="k">new</span> <span class="nx">PhonemePage</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">.</span><span class="nx">words</span><span class="p">)</span>
+  <span class="nx">page</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">page</span>
+
+
+<span class="k">class</span> <span class="nx">ToggleGridWithTimer</span> <span class="k">extends</span> <span class="nx">AssessmentPage</span>
+  <span class="nv">constructor: </span><span class="nf">(options) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>TODO switch to use items instead of letters</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@letters = </span><span class="nx">options</span><span class="p">.</span><span class="nx">items</span> <span class="o">?</span> <span class="nx">options</span><span class="p">.</span><span class="nx">letters</span>
+    <span class="k">if</span> <span class="nx">options</span><span class="o">?</span><span class="p">.</span><span class="nx">numberOfColumns</span>
+      <span class="vi">@numberOfColumns = </span><span class="nx">options</span><span class="p">.</span><span class="nx">numberOfColumns</span>
+    <span class="k">else</span>
+      <span class="k">if</span> <span class="nx">@letters</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">80</span>
+        <span class="vi">@numberOfColumns = </span><span class="mi">10</span>
+      <span class="k">else</span>
+        <span class="vi">@numberOfColumns = </span><span class="mi">5</span>
+
+    <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">includeAutostop</span><span class="o">?</span>
+      <span class="vi">@includeAutostop = </span><span class="nx">options</span><span class="p">.</span><span class="nx">includeAutostop</span>
+    <span class="k">else</span>
+      <span class="vi">@includeAutostop = </span><span class="kc">true</span>
+
+    <span class="vi">@autostopAmount = </span><span class="nx">options</span><span class="p">.</span><span class="nx">autostopAmount</span> <span class="o">||</span> <span class="nx">@letters</span><span class="p">.</span><span class="nx">length</span><span class="o">/</span><span class="mi">10</span>
+
+    <span class="vi">@footerMessage = </span><span class="nx">footerMessage</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span>
+    <span class="nx">@addTimer</span>
+      <span class="nv">seconds: </span><span class="nx">options</span><span class="o">?</span><span class="p">.</span><span class="nx">seconds</span> <span class="o">||</span> <span class="mi">60</span>
+      <span class="nv">onStop: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&#39;input[name=mode][value=last-item]&#39;</span><span class="p">).</span><span class="nx">prop</span><span class="p">(</span><span class="s">&#39;checked&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">flash</span><span class="p">()</span>
+
+    <span class="nv">result = </span><span class="s">&quot;&lt;table&gt;&lt;tr&gt;&quot;</span>
+    <span class="k">for</span> <span class="nx">letter</span><span class="p">,</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">@letters</span>
+      <span class="nx">result</span> <span class="o">+=</span> <span class="s">&quot;&lt;td class=&#39;grid columns-</span><span class="si">#{</span><span class="nx">@numberOfColumns</span><span class="si">}</span><span class="s">&#39;&gt;&lt;span class=&#39;grid-text&#39; &gt;</span><span class="si">#{</span><span class="nx">letter</span><span class="si">}</span><span class="s">&lt;/span&gt;&lt;/td&gt;&quot;</span>
+      <span class="k">if</span> <span class="p">((</span><span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nx">@numberOfColumns</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="nx">result</span> <span class="o">+=</span> <span class="s">&quot;&lt;td class=&#39;toggle-row grid </span><span class="si">#{</span><span class="s">&quot;toggle-row-portrait&quot;</span> <span class="nx">unless</span> <span class="p">((</span><span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nx">@numberOfColumns</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s">&#39;&gt;&lt;span class=&#39;grid-text &#39;&gt;*&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&quot;</span>
+    <span class="nx">result</span> <span class="o">+=</span> <span class="s">&quot;&lt;/tr&gt;&lt;/table&gt;&quot;</span>
+
+    <span class="vi">@content = </span> <span class="s">&quot;</span>
+<span class="s">      &lt;div class=&#39;enumerator-help&#39;&gt;</span><span class="si">#{</span><span class="nx">options</span><span class="p">.</span><span class="nx">enumeratorHelp</span><span class="si">}</span><span class="s">&lt;/div&gt;</span>
+<span class="s">      &lt;div class=&#39;student-dialog&#39;&gt;</span><span class="si">#{</span><span class="nx">options</span><span class="p">.</span><span class="nx">studentDialog</span><span class="si">}</span><span class="s">&lt;/div&gt;</span>
+<span class="s">      &lt;div class=&#39;timer&#39;&gt;</span>
+<span class="s">        &lt;button class=&#39;timer-button&#39;&gt;start&lt;/button&gt;&lt;span class=&#39;timer-seconds&#39;&gt;&lt;/span&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;div class=&#39;toggle-grid-with-timer&#39; data-role=&#39;content&#39;&gt;	</span>
+<span class="s">        &lt;form&gt;</span>
+<span class="s">          &lt;div class=&#39;grid-width&#39;&gt;</span>
+<span class="s">            </span><span class="si">#{</span><span class="nx">result</span><span class="si">}</span><span class="s"></span>
+<span class="s">          &lt;/div&gt;</span>
+<span class="s">        &lt;/form&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;small&gt;</span>
+<span class="s">      &lt;fieldset data-type=&#39;horizontal&#39;&gt;</span>
+<span class="s">        &lt;legend&gt;Mode&lt;/legend&gt;</span>
+<span class="s">        &lt;label for=&#39;correctIncorrectMode&#39;&gt;Correct/Incorrect&lt;/label&gt;&lt;input id=&#39;correctIncorrectMode&#39; name=&#39;mode&#39; type=&#39;radio&#39; value=&#39;correct-incorrect&#39; checked=&#39;true&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;lastItemMode&#39;&gt;Last Item&lt;/label&gt;&lt;input id=&#39;lastItemMode&#39; name=&#39;mode&#39; type=&#39;radio&#39; value=&#39;last-item&#39;&gt;</span>
+<span class="s">      &lt;/fieldset&gt;</span>
+<span class="s">      &lt;/small&gt;</span>
+<span class="s">      &lt;div class=&#39;timer&#39;&gt;</span>
+<span class="s">        &lt;button class=&#39;timer-button&#39;&gt;stop&lt;/button&gt;&lt;span class=&#39;timer-seconds&#39;&gt;&lt;/span&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;button&gt;reset timer&lt;/button&gt;</span>
+<span class="s">      &lt;span id=&#39;confirm-reset&#39; style=&#39;display:none;padding:5px;background-color:red;border:solid 1px&#39;&gt;Are you sure?&lt;button&gt;Yes, reset&lt;/button&gt;&lt;button&gt;No&lt;/button&gt;&lt;/span&gt;</span>
+<span class="s">      &quot;</span>
+    
+    
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">live</span> <span class="s">&quot;pageshow&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nx">eventData</span><span class="p">)</span> <span class="o">=&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Start with first grid, downsize each grid until it fits. Then set all to new size</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nv">gridWidth = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> .grid:first&quot;</span><span class="p">).</span><span class="nx">width</span><span class="p">()</span>
+      <span class="nv">fontSize = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> .grid:first span&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s">&#39;font-size&#39;</span><span class="p">)</span>
+      <span class="nv">fontSize = </span><span class="nx">fontSize</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nx">fontSize</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&quot;px&quot;</span><span class="p">))</span> <span class="c1"># Strip the px</span>
+      <span class="k">for</span> <span class="nx">letterSpan</span> <span class="k">in</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> .grid span&quot;</span><span class="p">)</span>
+        <span class="nv">letterSpan = </span><span class="nx">$</span><span class="p">(</span><span class="nx">letterSpan</span><span class="p">)</span>
+        <span class="nx">letterSpan</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="s">&#39;font-size&#39;</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">fontSize</span><span class="si">}</span><span class="s">px&quot;</span><span class="p">)</span>
+        <span class="nv">safetyCounter = </span><span class="mi">0</span>
+        <span class="k">while</span> <span class="nx">letterSpan</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">&gt;</span> <span class="nx">gridWidth</span> <span class="o">and</span> <span class="nx">safetyCounter</span> <span class="o">&lt;</span> <span class="mi">100</span>
+          <span class="nx">letterSpan</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="s">&#39;font-size&#39;</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">fontSize</span><span class="o">--</span><span class="si">}</span><span class="s">px&quot;</span><span class="p">)</span>
+          <span class="nx">safetyCounter</span><span class="o">++</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> .grid span&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s">&#39;font-size&#39;</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">fontSize</span><span class="si">}</span><span class="s">px&quot;</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Use the right event type for touchscreens vs mouse</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">selectEvent = </span><span class="k">if</span> <span class="p">(</span><span class="s">&#39;ontouchstart&#39;</span> <span class="k">of</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">)</span> <span class="k">then</span> <span class="s">&quot;touchstart&quot;</span> <span class="k">else</span> <span class="s">&quot;click&quot;</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> button:contains(reset timer)&quot;</span><span class="p">).</span><span class="nx">live</span> <span class="nx">selectEvent</span><span class="p">,</span> <span class="p">(</span><span class="nx">eventData</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">confirm-reset&quot;</span><span class="p">).</span><span class="nx">stop</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span><span class="kc">true</span><span class="p">).</span><span class="nx">show</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">5000</span><span class="p">)</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> button:contains(No)&quot;</span><span class="p">).</span><span class="nx">live</span> <span class="nx">selectEvent</span><span class="p">,</span> <span class="p">(</span><span class="nx">eventData</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">confirm-reset&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> button:contains(Yes, reset)&quot;</span><span class="p">).</span><span class="nx">live</span> <span class="nx">selectEvent</span><span class="p">,</span> <span class="p">(</span><span class="nx">eventData</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&#39;input[name=mode][value=correct-incorrect]&#39;</span><span class="p">).</span><span class="nx">prop</span><span class="p">(</span><span class="s">&#39;checked&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+      <span class="vi">@wasReset = </span><span class="kc">true</span>
+      <span class="nx">@timer</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
+      <span class="nx">@timer</span><span class="p">.</span><span class="nx">reset</span><span class="p">()</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">confirm-reset&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> .grid&quot;</span><span class="p">).</span><span class="nx">live</span> <span class="nx">selectEvent</span><span class="p">,</span> <span class="p">(</span><span class="nx">eventData</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="k">return</span> <span class="nx">unless</span> <span class="nx">@timer</span><span class="p">.</span><span class="nx">started</span>
+      <span class="nv">target = </span><span class="nx">$</span><span class="p">(</span><span class="nx">eventData</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="s">&#39;input[name=mode]:checked&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;last-item&quot;</span>
+        <span class="k">return</span> <span class="k">if</span> <span class="nx">target</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="s">&quot;toggle-row&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="nx">gridItem</span><span class="p">,</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> .grid:not(.toggle-row)&quot;</span><span class="p">)</span>
+          <span class="nv">lastSelectedIndex = </span><span class="nx">index</span> <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">gridItem</span><span class="p">).</span><span class="nx">hasClass</span><span class="p">(</span><span class="s">&quot;selected&quot;</span><span class="p">)</span>
+          <span class="nv">lastAttemptedIndex = </span><span class="nx">index</span> <span class="k">if</span> <span class="nx">gridItem</span> <span class="o">==</span> <span class="nx">eventData</span><span class="p">.</span><span class="nx">currentTarget</span>
+        <span class="k">return</span> <span class="k">if</span> <span class="nx">lastAttemptedIndex</span> <span class="o">&lt;</span> <span class="nx">lastSelectedIndex</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> .grid&quot;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&#39;last-attempted&#39;</span><span class="p">)</span>
+        <span class="nx">target</span><span class="p">.</span><span class="nx">toggleClass</span><span class="p">(</span><span class="s">&#39;last-attempted&#39;</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="k">for</span> <span class="nx">gridItem</span><span class="p">,</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> .grid:not(.toggle-row)&quot;</span><span class="p">)</span>
+          <span class="nv">lastAttemptedIndex = </span><span class="nx">index</span> <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">gridItem</span><span class="p">).</span><span class="nx">hasClass</span><span class="p">(</span><span class="s">&quot;last-attempted&quot;</span><span class="p">)</span>
+          <span class="nv">lastSelectedIndex = </span><span class="nx">index</span> <span class="k">if</span> <span class="nx">gridItem</span> <span class="o">==</span> <span class="nx">eventData</span><span class="p">.</span><span class="nx">currentTarget</span>
+        <span class="k">return</span> <span class="k">if</span> <span class="nx">lastAttemptedIndex</span> <span class="o">&lt;</span> <span class="nx">lastSelectedIndex</span>
+        <span class="nx">target</span><span class="p">.</span><span class="nx">toggleClass</span><span class="p">(</span><span class="s">&quot;selected&quot;</span><span class="p">)</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> .grid.toggle-row&quot;</span><span class="p">).</span><span class="nx">live</span> <span class="nx">selectEvent</span><span class="p">,</span> <span class="p">(</span><span class="nx">eventData</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="nv">toggleRow = </span><span class="nx">$</span><span class="p">(</span><span class="nx">eventData</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">)</span>
+      <span class="k">for</span> <span class="nx">gridItem</span> <span class="k">in</span> <span class="nx">toggleRow</span><span class="p">.</span><span class="nx">prevAll</span><span class="p">()</span>
+        <span class="nv">gridItem = </span><span class="nx">$</span><span class="p">(</span><span class="nx">gridItem</span><span class="p">)</span>
+        <span class="k">break</span> <span class="k">if</span> <span class="nx">gridItem</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="s">&quot;toggle-row&quot;</span><span class="p">)</span> <span class="o">and</span> <span class="nx">gridItem</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="s">&quot;display&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;none&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>We want to be able to handle mistaken rowtoggles - so keep track of what was already selected so we can revert</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span> <span class="nx">toggleRow</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="s">&quot;selected&quot;</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Need to turn everthing on</p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="nx">gridItem</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&quot;selected rowtoggled&quot;</span><span class="p">)</span> <span class="nx">unless</span> <span class="nx">gridItem</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="s">&quot;selected&quot;</span><span class="p">)</span>
+        <span class="k">else</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Need to turn off only non toggled</p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="nx">gridItem</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&quot;selected rowtoggled&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nx">gridItem</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="s">&quot;rowtoggled&quot;</span><span class="p">)</span>
+
+  <span class="nv">results: </span><span class="o">-&gt;</span>
+    <span class="nx">unless</span> <span class="nx">@assessment</span><span class="p">.</span><span class="nx">currentPage</span><span class="p">.</span><span class="nx">pageId</span> <span class="o">==</span> <span class="nx">@pageId</span>
+      <span class="k">return</span> <span class="nx">@lastResult</span>
+
+    <span class="vi">@lastResult = </span><span class="p">{}</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Check if the first 10% are all wrong, if so auto_stop</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">items = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> .grid:not(.toggle-row)&quot;</span><span class="p">)</span>
+    <span class="vi">@autoStopItems = </span><span class="nx">items</span><span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">@autostopAmount</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nx">@includeAutostop</span> <span class="o">and</span> <span class="nx">_</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="nx">@autoStopItems</span><span class="p">,</span> <span class="nf">(item) -&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="nx">item</span><span class="p">).</span><span class="nx">hasClass</span><span class="p">(</span><span class="s">&quot;selected&quot;</span><span class="p">)).</span><span class="nx">length</span> <span class="o">==</span> <span class="nx">@autostopAmount</span>
+      <span class="vi">@lastResult.auto_stop = </span><span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>Only set do this stuff the first time</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">unless</span> <span class="nx">@autostop</span>
+        <span class="nx">$</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">last</span><span class="p">(</span><span class="nx">@autoStopItems</span><span class="p">)).</span><span class="nx">toggleClass</span><span class="p">(</span><span class="s">&quot;last-attempted&quot;</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+        <span class="nx">@timer</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">flash</span><span class="p">()</span>
+        <span class="vi">@autostop = </span><span class="kc">true</span>
+    <span class="k">else</span>
+      <span class="vi">@autostop = </span><span class="kc">false</span>
+
+    <span class="vi">@lastResult.was_reset = </span><span class="kc">true</span> <span class="k">if</span> <span class="nx">@wasReset</span><span class="o">?</span>
+    <span class="vi">@lastResult.time_remain = </span><span class="nx">@timer</span><span class="p">.</span><span class="nx">seconds</span>
+    <span class="k">return</span> <span class="nx">@lastResult</span> <span class="nx">unless</span> <span class="nx">@timer</span><span class="p">.</span><span class="nx">hasStartedAndStopped</span><span class="p">()</span> <span class="c1">#optimization</span>
+    <span class="vi">@lastResult.items = </span><span class="k">new</span> <span class="nb">Array</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>Initialize to all wrong</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@lastResult</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">false</span> <span class="k">for</span> <span class="nx">gridItem</span><span class="p">,</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> .grid:not(.toggle-row)&quot;</span><span class="p">)</span>
+    <span class="vi">@lastResult.attempted = </span><span class="kc">null</span>
+    <span class="k">for</span> <span class="nx">gridItem</span><span class="p">,</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> .grid:not(.toggle-row)&quot;</span><span class="p">)</span>
+      <span class="nv">gridItem = </span><span class="nx">$</span><span class="p">(</span><span class="nx">gridItem</span><span class="p">)</span>
+      <span class="nx">@lastResult</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span> <span class="nx">unless</span> <span class="nx">gridItem</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="s">&quot;selected&quot;</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nx">gridItem</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="s">&quot;last-attempted&quot;</span><span class="p">)</span>
+        <span class="vi">@lastResult.attempted = </span><span class="nx">index</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="nx">@autostop</span>
+          <span class="nx">$</span><span class="p">(</span><span class="s">&quot;.validation-message&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;First </span><span class="si">#{</span><span class="nx">@autostopAmount</span><span class="si">}</span><span class="s"> incorrect - autostop.&quot;</span><span class="p">)</span>
+        <span class="k">else</span>
+          <span class="nx">$</span><span class="p">(</span><span class="s">&quot;.validation-message &quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nx">@lastResult</span>
+      <span class="k">else</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;.validation-message &quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;Select last item attempted&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nx">@lastResult</span>
+
+  <span class="nv">validate: </span><span class="o">-&gt;</span>
+    <span class="nv">results = </span><span class="nx">@results</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nx">results</span><span class="p">.</span><span class="nx">time_remain</span> <span class="o">==</span> <span class="mi">60</span> <span class="o">or</span> <span class="nx">results</span><span class="p">.</span><span class="nx">time_remain</span> <span class="o">==</span> <span class="kc">undefined</span>
+      <span class="k">return</span> <span class="s">&quot;The timer must be started&quot;</span>
+    <span class="k">if</span> <span class="nx">@timer</span><span class="p">.</span><span class="nx">running</span>
+      <span class="k">return</span> <span class="s">&quot;The timer is still running&quot;</span>
+    <span class="k">if</span> <span class="nx">results</span><span class="p">.</span><span class="nx">time_remain</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="k">return</span> <span class="kc">true</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="nx">results</span><span class="p">.</span><span class="nx">attempted</span><span class="o">?</span>
+      <span class="k">return</span> <span class="kc">true</span>
+    <span class="k">else</span>
+      <span class="k">return</span> <span class="s">&quot;The last letter attempted has not been selected&quot;</span>
+
+
+<span class="k">class</span> <span class="nx">Dictation</span> <span class="k">extends</span> <span class="nx">AssessmentPage</span>
+  <span class="nv">constructor: </span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@message = </span><span class="nx">options</span><span class="p">.</span><span class="nx">message</span>
+    <span class="vi">@footerMessage = </span><span class="nx">footerMessage</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span>
+
+    <span class="vi">@content = </span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">@message</span><span class="si">}</span><span class="s">&lt;br/&gt;&lt;input name=&#39;result&#39; type=&#39;text&#39;&gt;&lt;/input&gt;&quot;</span>
+
+  <span class="nv">propertiesForSerialization: </span><span class="o">-&gt;</span>
+    <span class="nv">properties = </span><span class="k">super</span><span class="p">()</span>
+    <span class="nx">properties</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s">&quot;message&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">properties</span>
+
+  <span class="nv">results: </span><span class="o">-&gt;</span>
+    <span class="nx">unless</span> <span class="nx">@assessment</span><span class="p">.</span><span class="nx">currentPage</span><span class="p">.</span><span class="nx">pageId</span> <span class="o">==</span> <span class="nx">@pageId</span>
+      <span class="k">return</span> <span class="nx">@lastResult</span>
+
+    <span class="vi">@lastResult = </span><span class="p">{}</span>
+    <span class="nv">enteredData = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> input[type=text]&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nx">enteredData</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/boys/i</span><span class="p">)</span>
+      <span class="nx">@lastResult</span><span class="p">[</span><span class="s">&quot;Wrote boys correctly&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">else</span>
+      <span class="k">if</span> <span class="nx">enteredData</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/bo|oy|by/i</span><span class="p">)</span>
+        <span class="nx">@lastResult</span><span class="p">[</span><span class="s">&quot;Wrote boys correctly&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="nx">enteredData</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/bikes/i</span><span class="p">)</span>
+      <span class="nx">@lastResult</span><span class="p">[</span><span class="s">&quot;Wrote bikes correctly&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">else</span>
+      <span class="k">if</span> <span class="nx">enteredData</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/bi|ik|kes/i</span><span class="p">)</span>
+        <span class="nx">@lastResult</span><span class="p">[</span><span class="s">&quot;Wrote bikes correctly&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="nv">numberOfSpaces = </span><span class="nx">enteredData</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">).</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="nx">numberOfSpaces</span> <span class="o">&gt;=</span> <span class="mi">8</span>
+      <span class="nx">@lastResult</span><span class="p">[</span><span class="s">&quot;Used appropriate spacing between words&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">else</span>
+      <span class="k">if</span> <span class="nx">numberOfSpaces</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="o">and</span> <span class="nx">numberOfSpaces</span> <span class="o">&lt;</span> <span class="mi">8</span>
+        <span class="nx">@lastResult</span><span class="p">[</span><span class="s">&quot;Used appropriate spacing between words&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+      <span class="k">else</span>
+        <span class="nx">@lastResult</span><span class="p">[</span><span class="s">&quot;Used appropriate spacing between words&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>TODO</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@lastResult</span><span class="p">[</span><span class="s">&quot;Used appropriate direction of text (left to right)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">if</span> <span class="nx">enteredData</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/The/</span><span class="p">)</span>
+      <span class="nx">@lastResult</span><span class="p">[</span><span class="s">&quot;Used capital letter for the word &#39;The&#39;&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">else</span>
+      <span class="nx">@lastResult</span><span class="p">[</span><span class="s">&quot;Used capital letter for the word &#39;The&#39;&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="nx">enteredData</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/\. *$/</span><span class="p">)</span>
+      <span class="nx">@lastResult</span><span class="p">[</span><span class="s">&quot;Used full stop (.) at end of sentence.&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">else</span>
+      <span class="nx">@lastResult</span><span class="p">[</span><span class="s">&quot;Used full stop (.) at end of sentence.&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="nx">@lastResult</span>
+
+  <span class="nv">validate: </span><span class="o">-&gt;</span>
+    <span class="k">return</span> <span class="kc">true</span>
+
+<span class="nv">Dictation.deserialize = </span><span class="nf">(pageObject) -&gt;</span>
+  <span class="nv">dictationPage = </span><span class="k">new</span> <span class="nx">Dictation</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">)</span>
+  <span class="nx">dictationPage</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="nx">pageObject</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">dictationPage</span>
+
+<span class="k">class</span> <span class="nx">Interview</span> <span class="k">extends</span> <span class="nx">AssessmentPage</span>
+  <span class="nv">constructor: </span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@questions = </span><span class="nx">options</span><span class="p">.</span><span class="nx">questions</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nx">question</span> <span class="k">in</span> <span class="nx">@questions</span>
+      <span class="nv">question.options = </span><span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">question</span><span class="p">.</span><span class="nx">options</span><span class="p">,</span> <span class="nf">(option) -&gt;</span>
+        <span class="nv">text: </span><span class="nx">option</span>
+        <span class="nv">id: </span><span class="p">(</span><span class="nx">question</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s">&quot;-&quot;</span> <span class="o">+</span> <span class="nx">option</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^a-zA-Z0-9]/g</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)).</span><span class="nx">toLowerCase</span><span class="p">()</span>
+      <span class="p">)</span>
+      <span class="k">if</span> <span class="nx">question</span><span class="p">.</span><span class="nx">onChange</span><span class="o">?</span>
+        <span class="nv">question.onChange = </span><span class="nx">Handlebars</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="nx">question</span><span class="p">.</span><span class="nx">onChange</span><span class="p">)(</span><span class="nx">question</span><span class="p">)</span>
+    <span class="vi">@content = </span><span class="nx">Interview</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+
+  <span class="nv">validate: </span><span class="o">-&gt;</span>
+    <span class="nv">names = </span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">fieldset</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-name&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="nx">fieldset</span> <span class="k">in</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s"> form fieldset&quot;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">names</span>
+      <span class="nv">question = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;input[name=</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">]&quot;</span><span class="p">)</span>
+      <span class="k">continue</span> <span class="k">if</span> <span class="nx">question</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#39;text&#39;</span> <span class="o">and</span> <span class="nx">question</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span>
+      <span class="nx">unless</span> <span class="nx">question</span><span class="p">.</span><span class="o">is</span><span class="p">(</span><span class="s">&quot;:checked&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;input[name=</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">]&quot;</span><span class="p">).</span><span class="nx">first</span><span class="p">().</span><span class="nx">parent</span><span class="p">().</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;legend&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot; is not complete&quot;</span>
+    <span class="k">return</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <p>TODO add support for onchange</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Interview.template = </span><span class="nx">Handlebars</span><span class="p">.</span><span class="nx">compile</span> <span class="s">&quot;</span>
+<span class="s">  &lt;form&gt;</span>
+<span class="s">    {{</span><span class="err">#</span><span class="s">questions}}</span>
+<span class="s">      &lt;fieldset data-name=&#39;{{name}}&#39; {{</span><span class="err">#</span><span class="s">if onChange}}onChange=\&quot;{{{onChange}}}\&quot;{{/if}}   data-type=&#39;{{type}}&#39; data-role=&#39;controlgroup&#39;&gt;</span>
+<span class="s">        &lt;legend&gt;{{label}}&lt;/legend&gt;</span>
+<span class="s">        {{</span><span class="err">#</span><span class="s">options}}</span>
+<span class="s">          &lt;label for=&#39;{{id}}&#39;&gt;{{text}}&lt;/label&gt;</span>
+<span class="s">          &lt;input type=&#39;{{</span><span class="err">#</span><span class="s">if ../multiple}}checkbox{{else}}radio{{/if}}&#39; name=&#39;{{../name}}&#39; value=&#39;{{text}}&#39; id=&#39;{{id}}&#39;&gt;&lt;/input&gt;</span>
+<span class="s">        {{/options}}</span>
+<span class="s">      &lt;/fieldset&gt;</span>
+<span class="s">    {{/questions}}</span>
+<span class="s">  &lt;/form&gt;</span>
+<span class="s">&quot;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

@@ -1,4 +1,5 @@
 class AssessmentListView extends Backbone.View
+
   initialize: ->
 
   el: '#content'
@@ -16,7 +17,6 @@ class AssessmentListView extends Backbone.View
 
   render: =>
     @$el.html "
-      <h1>Collect</h1>
       <div id='message'></div>
       <table id='assessments' class='tablesorter'>
         <thead>
@@ -35,19 +35,21 @@ class AssessmentListView extends Backbone.View
         assessmentCollection.each (assessment) =>
           return if assessment.get("archived") is true
           assessmentDetails[assessment.get "_id"] =
-            id : assessment.get "_id"
+            id : assessment.get "_id" 
             name : assessment.get "name"
-            enumerator : Tangerine.enumerator
+            enumerator : Tangerine.user.get "name"
             number_completed : 0
 
         resultCollection = new ResultCollection()
         resultCollection.fetch
           success: =>
             resultCollection.each (result) =>
-              return unless result.get("enumerator") is Tangerine.enumerator
+              return unless result.get("enumerator") is Tangerine.user.get("name")
               assessmentDetails[result.get "assessmentId" ]["number_completed"]+=1
 
             _.each assessmentDetails, (value,key) =>
+              console.log "value"
+              console.log value
               @$el.find("#assessments tbody").append @templateTableRow value
 
             $('table').tablesorter()

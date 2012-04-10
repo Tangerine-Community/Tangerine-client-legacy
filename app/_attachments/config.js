@@ -6,6 +6,12 @@ Tangerine = {
     username: "tangerine",
     password: "tangytangerine"
   },
+  iris: {
+    host: "http://tangerine.iriscouch.com",
+    name: "tangerine",
+    pass: "tangytangerine",
+    db_name: "tangerine"
+  },
   subnet: {
     base: "http://192.168.1.",
     start: 100,
@@ -23,3 +29,11 @@ Backbone.couch_connector.config.db_name = Tangerine.database_name;
 Backbone.couch_connector.config.ddoc_name = Tangerine.design_doc_name;
 
 Backbone.couch_connector.config.global_changes = false;
+
+$.couch.db(Backbone.couch_connector.config.db_name).openDoc("Config", {
+  success: function(data) {
+    return Tangerine.config = data;
+  }
+}, {
+  async: false
+});

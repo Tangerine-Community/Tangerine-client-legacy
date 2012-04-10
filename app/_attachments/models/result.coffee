@@ -33,6 +33,8 @@ class Result extends Backbone.Model
         DictationScore: _.values(result).reduce((sum,n) -> (sum+=n))
       when "SchoolPage"
         School: result.name
+      when "StudentIdPage"
+        Student: result.student_id
       when "StudentInformationPage"
         gender = result.gender ? result["m--gender"]
         Gender: gender if gender

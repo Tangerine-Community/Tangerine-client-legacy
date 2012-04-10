@@ -6,6 +6,12 @@
   "enumeratorHelp": "REMOVE the passage from in front of the child. Reminders:<li>You will only be able to ask questions corresponding to the parts of the story the child read (according to the word you indicated as the last word read).<li>Give the child at most 15 seconds to answer the question, mark the child’s response, and move to the next question.<li>Touch the button that corresponds to the child's answer: [Correct], if they provide the correct answer; [Incorrect] If they provide a wrong answer or if they say they don't know the answer; [No answer] if the child remains silent for more than 15 seconds.</li>",
   "studentDialog": "<b>Now I am going to ask you a few questions about the story you just read.  Try to answer the questions as well as you can.</b>",
   "questions": [
+    "Kodi ndi sukulu ziti zinkasewera mpira? [Kapeni ndi Chimutu]",
+    "Chifukwa chiyani a Kapeni anakonzekera kwambiri? [kuti apambane]",
+    "Kodi chidachititsa a Chimutu kuti alowe m’bwalo akuvina ndi kuimba ndi chiyani? [amasangalalira chigoli, sukulu yawo idagoletsa chigoli, oyimbira adayimba wezulo]",
+    "Kodi oyimbira mpira adaonetsa khalidwe lanji? [lokondera, losadziwa]",
+    "Ukuganiza kuti ndi chifukwa chiyani mpira udapitilira? [A Kapeni amadzidalira, a Kapeni adakonzekera kwambiri, aphunzitsi adawalimbikitsa]",
+
     "Why did Modou wake up early? [it's the first day of school, school day]",
     "What is Modou's little brother's name? [Samba]",
     "What does Samba do after he wakes up? [puts on his shoes, gets ready]",
@@ -13,12 +19,11 @@
     "How are Modou and Samba feeling today? [happy, they feel good]"
   ],
   "questionIndices": [
-    12,
-    16,
-    23,
-    42,
-    55,
-    60
+    13,
+    22,
+    40,
+    51,
+    61
   ],
   "linkedToPageId": "OralPassageReading",
  

@@ -1,4 +1,4 @@
-var AssessmentPage, ConsentPage, DateTimePage, Dictation, Interview, JQueryMobilePage, PhonemePage, ResultsPage, SchoolPage, StudentInformationPage, TextPage, ToggleGridWithTimer, UntimedSubtest, UntimedSubtestLinked, footerMessage,
+var AssessmentPage, ConsentPage, DateTimePage, Dictation, Interview, JQueryMobilePage, PhonemePage, ResultsPage, SchoolPage, StudentIdPage, StudentInformationPage, TextPage, ToggleGridWithTimer, UntimedSubtest, UntimedSubtestLinked, footerMessage,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -506,13 +506,40 @@ DateTimePage = (function(_super) {
     var isValid;
     isValid = Checkdigit.isValidIdentifier($('input#student-id').val());
     if (isValid !== true) return isValid;
-    console.log("is itvalid");
-    console.log(isValid);
     if (isValid) $("#current-student-id").html($('input#student-id').val());
     return DateTimePage.__super__.validate.call(this);
   };
 
   return DateTimePage;
+
+})(AssessmentPage);
+
+StudentIdPage = (function(_super) {
+
+  __extends(StudentIdPage, _super);
+
+  function StudentIdPage() {
+    StudentIdPage.__super__.constructor.apply(this, arguments);
+  }
+
+  StudentIdPage.prototype.load = function(data) {
+    var dateTime, day, minutes, month, time, year;
+    dateTime = new Date();
+    year = dateTime.getFullYear();
+    month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][dateTime.getMonth()];
+    day = dateTime.getDate();
+    minutes = dateTime.getMinutes();
+    if (minutes < 10) minutes = "0" + minutes;
+    time = dateTime.getHours() + ":" + minutes;
+    return this.content = "      <form class='student_id_page'>        <div>          <label for='student_id'>Student Identifier</label>          <input type='text' name='student_id' id='student_id'>        </div>        <div>          <label for='year'>Year</label>          <input type='number' name='year' id='year' value='" + year + "'>        </div>        <div>          <label for='month'>Month</label>          <input type='text' name='month' id='month' value='" + month + "'>        </div>        <div>          <label for='day'>Day</label>          <input type='number' name='day' id='day' value='" + day + "'>        </div>        <div>          <label for='time'>Time</label>          <input type='text' name='time' id='time' value='" + time + "'>        </div>      </form>      ";
+  };
+
+  StudentIdPage.prototype.validate = function() {
+    $("#current-student-id").html($('input#student_id').val());
+    return StudentIdPage.__super__.validate.call(this);
+  };
+
+  return StudentIdPage;
 
 })(AssessmentPage);
 
@@ -541,7 +568,6 @@ ResultsPage = (function(_super) {
       $("#save_results_button").live("click", function() {
         var _this = this;
         return $.assessment.saveResults(function(model, results) {
-          console.log("I'm trying to tell you what a great job you did");
           $("#results_message").html("Results Saved");
           $("#save_results_button").hide();
           return $("#result_controls").html("<button id='another_assessment'>Start another assessment</button>");

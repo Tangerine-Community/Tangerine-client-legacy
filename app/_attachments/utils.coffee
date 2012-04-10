@@ -57,3 +57,21 @@ class Utils
   @okBox: ( title, message ) ->
     console.log [title, message]
 
+  @cleanURL: (url) ->
+    if url.indexOf?("%") != -1 
+      url = decodeURIComponent url
+    else
+      url
+  # Should this go another place?
+  @importAssessmentFromIris: (dKey) ->
+    repOps = 
+      'filter' : 'tangerine/downloadFilter'
+      'create_target' : true
+      'query_params' :
+        'dKey' : dKey
+    $.couch.replicate Tangerine.iris.host + "/tangerine", "tangerine", { success: (a, b) -> console.log [" success",a, b];}, repOps
+#        console.log # @importSubtestsFromIris() 
+
+
+#curl -H 'Content-Type: application/json' -X POST http://tangerine.iriscouch.com/_replicate -d '{"source":"http://tangerine.iriscouch.com/tangerine","target":"http://localhost:5984/tangerine", "filter":"tangerine/downloadFilter", "query_params": {"dKey":"timer-555"}}'
+

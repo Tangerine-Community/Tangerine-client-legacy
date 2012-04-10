@@ -11,42 +11,33 @@ Router = (function(_super) {
   }
 
   Router.prototype.routes = {
-    "assessment/:id": "assessment",
-    "results/tabular/:assessment_id": "tabular_results",
-    "results/tabular/:assessment_id/*options": "tabular_results",
-    "results/:assessmentId/:enumerator": "results",
-    "print/:id": "print",
-    "student_printout/:id": "student_printout",
     "login": "login",
     "logout": "logout",
-    "manage": "manage",
-    "edit/assessment/:assessment_id/subtest/:subtest_id": "editSubtest",
-    "edit/assessment/:assessment_id": "editAssessment",
+    "": "assessments",
     "assessments": "assessments",
-    "": "assessments"
+    "assessment/:id": "assessment",
+    "manage": "manage",
+    "edit/assessment/:assessment_id": "editAssessment",
+    "edit/assessment/:assessment_id/subtest/:subtest_id": "editSubtest",
+    "results/tabular/:assessment_id": "tabular_results",
+    "results/tabular/:assessment_id/*options": "tabular_results",
+    "results/:assessmentId/*enumerator": "results",
+    "print/:id": "print",
+    "student_printout/:id": "student_printout"
   };
 
   Router.prototype.editSubtest = function(assessment_id, subtest_id) {
-    return this.verify_logged_in({
-      success: function() {
-        var assessment;
-        assessment = new Assessment({
-          _id: assessment_id
+    assessment_id = Utils.cleanURL(assessment_id);
+    subtest_id = Utils.cleanURL(subtest_id);
+    return Tangerine.user.verify({
+      isAdmin: function() {
+        Tangerine.subtestEdit.assessment_id = assessment_id;
+        Tangerine.subtestEdit.model = new Subtest({
+          _id: subtest_id
         });
-        return assessment.fetch({
+        return Tangerine.subtestEdit.model.fetch({
           success: function() {
-            if (Tangerine.subtestEdit == null) {
-              Tangerine.subtestEdit = new SubtestEdit();
-            }
-            Tangerine.subtestEdit.assessment = assessment;
-            Tangerine.subtestEdit.model = new Subtest({
-              _id: subtest_id
-            });
-            return Tangerine.subtestEdit.model.fetch({
-              success: function() {
-                return Tangerine.subtestEdit.render();
-              }
-            });
+            return Tangerine.subtestEdit.render();
           }
         });
       }
@@ -54,19 +45,17 @@ Router = (function(_super) {
   };
 
   Router.prototype.editAssessment = function(assessment_id) {
-    return this.verify_logged_in({
-      success: function() {
+    assessment_id = Utils.cleanURL(assessment_id);
+    return Tangerine.user.verify({
+      isAdmin: function() {
         var assessment;
         assessment = new Assessment({
           _id: assessment_id
         });
         return assessment.fetch({
           success: function() {
-            if (Tangerine.assessmentEdit == null) {
-              Tangerine.assessmentEdit = new AssessmentEdit();
-            }
-            Tangerine.assessmentEdit.model = new Assessment(assessment.attributes);
-            return Tangerine.assessmentEdit.render();
+            Tangerine.assessmentEditView.model = assessment;
+            return Tangerine.assessmentEditView.render();
           }
         });
       }
@@ -74,8 +63,8 @@ Router = (function(_super) {
   };
 
   Router.prototype.results = function(assessmentId, enumerator) {
-    return this.verify_logged_in({
-      success: function() {
+    return Tangerine.user.verify({
+      isUser: function() {
         var resultCollection;
         resultCollection = new ResultCollection();
         return resultCollection.fetch({
@@ -88,9 +77,11 @@ Router = (function(_super) {
             });
             return Tangerine.resultsView.assessment.fetch({
               success: function() {
-                Tangerine.resultsView.results = resultCollection.filter(function(result) {
-                  return result.get("assessmentId") === assessmentId && result.get("enumerator") === enumerator;
-                });
+                if (enumerator) {
+                  Tangerine.resultsView.results = resultCollection.filter(function(result) {
+                    return result.get("assessmentId") === assessmentId && result.get("enumerator") === enumerator;
+                  });
+                }
                 return Tangerine.resultsView.render();
               }
             });
@@ -148,29 +139,29 @@ Router = (function(_super) {
   };
 
   Router.prototype.manage = function() {
-    var assessmentCollection;
-    if (Tangerine.user.isAdmin()) {
-      assessmentCollection = new AssessmentCollection();
-      return assessmentCollection.fetch({
-        success: function() {
-          if (Tangerine.manageView == null) {
-            Tangerine.manageView = new ManageView();
+    return Tangerine.user.verify({
+      isAdmin: function() {
+        return Tangerine.assessmentCollection.fetch({
+          success: function() {
+            return Tangerine.manageView.render(Tangerine.assessmentCollection);
           }
-          return Tangerine.manageView.render(assessmentCollection);
-        }
-      });
-    }
+        });
+      }
+    });
   };
 
   Router.prototype.assessments = function() {
-    if (Tangerine.user.isVerified()) {
-      if (Tangerine.assessmentListView == null) {
-        Tangerine.assessmentListView = new AssessmentListView();
+    return Tangerine.user.verify({
+      isUser: function() {
+        if (Tangerine.assessmentListView == null) {
+          Tangerine.assessmentListView = new AssessmentListView();
+        }
+        return Tangerine.assessmentListView.render();
+      },
+      unregistered: function() {
+        return Tangerine.router.navigate("login", true);
       }
-      return Tangerine.assessmentListView.render();
-    } else {
-      return Tangerine.router.navigate("login", true);
-    }
+    });
   };
 
   Router.prototype.login = function() {
@@ -182,17 +173,21 @@ Router = (function(_super) {
   };
 
   Router.prototype.assessment = function(id) {
-    if (Tangerine.user.isVerified()) {
-      if (Tangerine.assessment != null) location.reload();
-      Tangerine.assessment = new Assessment({
-        _id: id
-      });
-      return Tangerine.assessment.fetch({
-        success: function() {
-          return Tangerine.assessment.render();
+    return Tangerine.user.verify({
+      isUser: function() {
+        if ((Tangerine.assessment != null) || ($.assessment != null)) {
+          location.reload();
         }
-      });
-    }
+        Tangerine.assessment = new Assessment({
+          _id: decodeURIComponent(id)
+        });
+        return Tangerine.assessment.fetch({
+          success: function() {
+            return Tangerine.assessment.render();
+          }
+        });
+      }
+    });
   };
 
   Router.prototype.verify_logged_in = function(options) {
@@ -245,31 +240,36 @@ Router = (function(_super) {
 })(Backbone.Router);
 
 $(function() {
-  var config,
-    _this = this;
-  config = new Backbone.Model({
-    _id: "Config"
+  Tangerine.router = new Router();
+  Tangerine.assessmentCollection = new AssessmentCollection();
+  Tangerine.manageView = new ManageView({
+    collection: Tangerine.assessmentCollection
   });
-  config.fetch({
-    success: function() {
-      return Tangerine.config = config.toJSON();
-    }
-  });
+  Tangerine.assessmentEditView = new AssessmentEditView();
+  Tangerine.subtestEdit = new SubtestEdit();
   Tangerine.user = new User();
   Tangerine.loginView = new LoginView(Tangerine.user);
-  Tangerine.router = new Router();
-  Tangerine.navi = new Navigation({
+  Tangerine.nav = new Navigation({
     user: Tangerine.user,
     router: Tangerine.router
   });
   Backbone.history.start();
+  $("#content").on("click", ".clear_message", null, function(a) {
+    return $(a.target).parent().fadeOut(250, function() {
+      return $(this).empty().show();
+    });
+  });
+  $("#content").on("click", ".parent_remove", null, function(a) {
+    return $(a.target).parent().fadeOut(250, function() {
+      return $(this).remove();
+    });
+  });
   $(".ajax_loading").ajaxStart(function() {
     return $("#corner_logo").attr("src", "images/spin_orange.gif");
   });
   $(".ajax_loading").ajaxStop(function() {
     return $("#corner_logo").attr("src", "images/corner_logo.png");
   });
-  $("#version").load('version');
   return $('#main_nav button').click(function(event) {
     return Tangerine.router.navigate($(event.target).attr("href"), true);
   });

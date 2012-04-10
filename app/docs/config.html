@@ -1,0 +1,28 @@
+<!DOCTYPE html>  <html> <head>   <title>config.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               config.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Tangerine =</span>
+  <span class="nv">cloud :</span>
+    <span class="nv">target   : </span><span class="s">&quot;mikeymckay.iriscouch.com&quot;</span>
+    <span class="nv">username : </span><span class="s">&quot;tangerine&quot;</span>
+    <span class="nv">password : </span><span class="s">&quot;tangytangerine&quot;</span>
+  <span class="nv">iris :</span>
+    <span class="nv">host : </span><span class="s">&quot;http://tangerine.iriscouch.com&quot;</span>
+    <span class="nv">name : </span><span class="s">&quot;tangerine&quot;</span>
+    <span class="nv">pass : </span><span class="s">&quot;tangytangerine&quot;</span>
+    <span class="nv">db_name : </span><span class="s">&quot;tangerine&quot;</span>
+  <span class="nv">subnet :</span>
+    <span class="nv">base   : </span><span class="s">&quot;http://192.168.1.&quot;</span>
+    <span class="nv">start  : </span><span class="mi">100</span>
+    <span class="nv">finish : </span><span class="mi">200</span>
+  <span class="nv">port : </span><span class="s">&quot;5985&quot;</span>
+  <span class="nv">database_name: </span><span class="s">&quot;tangerine&quot;</span>
+  <span class="nv">design_doc_name: </span><span class="s">&quot;tangerine&quot;</span>
+
+<span class="nv">Tangerine.cloud.url = </span><span class="s">&quot;http://</span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">cloud</span><span class="p">.</span><span class="nx">username</span><span class="si">}</span><span class="s">:</span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">cloud</span><span class="p">.</span><span class="nx">password</span><span class="si">}</span><span class="s">@</span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">cloud</span><span class="p">.</span><span class="nx">target</span><span class="si">}</span><span class="s">/</span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">database_name</span><span class="si">}</span><span class="s">&quot;</span>
+
+<span class="nv">Backbone.couch_connector.config.db_name = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">database_name</span>
+<span class="nv">Backbone.couch_connector.config.ddoc_name = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">design_doc_name</span>
+<span class="nv">Backbone.couch_connector.config.global_changes = </span><span class="kc">false</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">couch</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="nx">Backbone</span><span class="p">.</span><span class="nx">couch_connector</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">db_name</span><span class="p">).</span><span class="nx">openDoc</span> <span class="s">&quot;Config&quot;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">success</span><span class="o">:</span><span class="nf">(data) -&gt;</span> <span class="nv">Tangerine.config = </span><span class="nx">data</span> <span class="p">},</span> <span class="p">{</span> <span class="nv">async: </span><span class="kc">false</span> <span class="p">}</span>
+    
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

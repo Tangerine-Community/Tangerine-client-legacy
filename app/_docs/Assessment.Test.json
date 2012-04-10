@@ -1,11 +1,10 @@
 {
   "name": "Test",
   "urlPathsForPages": [
-    "Example English EGRA May 2011.PupilContextInterview",
-    "Kenya.Primer.Baseline.EGMA.Jan.2012.AdditionLevel2",
-    "Kenya.Primer.Baseline.EGMA.Jan.2012.SubtractionLevel1",
-    "Kenya.Primer.Baseline.EGMA.Jan.2012.SubtractionLevel2",
-    "Kenya.Primer.Baseline.EGMA.Jan.2012.Results"
+    "Example English EGRA May 2011.DateTime",
+    "Example English EGRA May 2011.School",
+    "Example English EGRA May 2011.Dictation",
+    "Example English EGRA May 2011.Results"
   ],
   "collection" : "assessment",
   "couchapp": {

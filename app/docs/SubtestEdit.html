@@ -1,0 +1,154 @@
+<!DOCTYPE html>  <html> <head>   <title>SubtestEdit.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               SubtestEdit.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">SubtestEdit</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">initialize: </span><span class="o">-&gt;</span>
+    <span class="vi">@config = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">Subtest</span>
+
+  <span class="nv">el: </span><span class="s">&#39;#content&#39;</span>
+
+  <span class="nv">events:</span>
+    <span class="s">&quot;click img.append_subtest_element&quot;</span>               <span class="o">:</span> <span class="s">&#39;appendSubtestElement&#39;</span>
+    <span class="s">&#39;click button#return_to_assessment&#39;</span>              <span class="o">:</span> <span class="s">&#39;returnToAssessment&#39;</span>
+    <span class="s">&quot;click form</span><span class="err">#</span><span class="s">subtestEdit button:contains(Save)&quot;</span>   <span class="o">:</span> <span class="s">&quot;save&quot;</span>
+    <span class="s">&quot;click button:contains(Import a subtest)&quot;</span>        <span class="o">:</span> <span class="s">&quot;showImportSubtestForm&quot;</span>
+    <span class="s">&quot;click button</span><span class="err">#</span><span class="s">subtest_import_confirm&quot;</span> <span class="o">:</span> <span class="s">&quot;importSubtest&quot;</span>
+    <span class="s">&quot;click button</span><span class="err">#</span><span class="s">subtest_import_cancel&quot;</span>  <span class="o">:</span> <span class="s">&quot;hideImportSubtestForm&quot;</span>
+
+  <span class="nv">returnToAssessment: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;edit/assessment/</span><span class="si">#{</span><span class="nx">@assessment_id</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
+  <span class="nv">showImportSubtestForm: </span><span class="o">-&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">import-from&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">()</span>
+    <span class="vi">@existingSubtests = </span><span class="k">new</span> <span class="nx">SubtestCollection</span><span class="p">()</span>
+    <span class="nx">@existingSubtests</span><span class="p">.</span><span class="nx">fetch</span>
+      <span class="nv">success: </span><span class="o">=&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;form</span><span class="err">#</span><span class="s">import-from select&quot;</span><span class="p">).</span><span class="nx">append</span> <span class="nx">@existingSubtests</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span> <span class="p">(</span><span class="nx">subtest</span><span class="p">)</span> <span class="o">=&gt;</span>
+          <span class="nx">subtest</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;pageType&quot;</span><span class="p">)</span> <span class="o">is</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;pageType&quot;</span><span class="p">)</span>
+        <span class="p">).</span><span class="nx">map</span><span class="p">(</span> <span class="nf">(subtest) -&gt;</span>
+          <span class="s">&quot;&lt;option&gt;</span><span class="si">#{</span><span class="nx">subtest</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;_id&quot;</span><span class="si">}</span><span class="s">&lt;/option&gt;&quot;</span>
+        <span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+      
+  <span class="nv">hideImportSubtestForm: </span><span class="o">-&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">import-from&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+      
+  <span class="nv">importSubtest: </span><span class="o">-&gt;</span>
+    <span class="nv">sourceSubtest = </span><span class="nx">@existingSubtests</span><span class="p">.</span><span class="nx">get</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;form</span><span class="err">#</span><span class="s">import-from select option:selected&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+    <span class="nx">@populateForm</span><span class="p">(</span><span class="nx">sourceSubtest</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">())</span>
+
+  <span class="nv">render: </span><span class="o">=&gt;</span>
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">      &lt;div id=&#39;subtest_edit&#39;&gt;</span>
+<span class="s">        &lt;button id=&#39;return_to_assessment&#39;&gt;Return to assessment&lt;/button&gt;</span>
+<span class="s">        &lt;button&gt;Import a subtest&lt;/button&gt;</span>
+
+<span class="s">        &lt;div style=&#39;display:none&#39; class=&#39;message&#39;&gt;&lt;/div&gt;</span>
+<span class="s">        &lt;h1&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;pageType&quot;</span><span class="si">}</span><span class="s">&lt;/h1&gt;</span>
+<span class="s">      </span>
+<span class="s">        &lt;form style=&#39;display:none&#39; id=&#39;import-from&#39;&gt;</span>
+<span class="s">          Select an existing subtest and it will fill in all blank elements below with that subtest&#39;s contents</span>
+<span class="s">          &lt;div&gt;</span>
+<span class="s">            &lt;select id=&#39;existing-subtests&#39;&gt;&lt;/select&gt;</span>
+<span class="s">          &lt;/div&gt;</span>
+<span class="s">          &lt;button id=&#39;subtest_import_confirm&#39;&gt;Import&lt;/button&gt;&lt;button id=&#39;subtest_import_cancel&#39;&gt;Cancel&lt;/button&gt;</span>
+<span class="s">        &lt;/form&gt;</span>
+<span class="s">      </span>
+<span class="s">        </span><span class="si">#{</span><span class="nx">@subtestEditForm</span><span class="p">()</span><span class="si">}</span><span class="s"></span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &quot;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;textarea.html&quot;</span><span class="p">).</span><span class="nx">cleditor</span><span class="p">()</span>
+    <span class="nx">@populateForm</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()</span>
+
+  <span class="nv">subtestEditForm: </span><span class="o">-&gt;</span>
+    <span class="s">&quot;&lt;form id=&#39;subtestEdit&#39;&gt;</span>
+<span class="s">      &lt;ul id=&#39;subtest_edit_list&#39;&gt;</span>
+<span class="s">    &quot;</span> <span class="o">+</span>
+        <span class="nx">_</span><span class="p">.</span><span class="nx">chain</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">attributes</span><span class="p">)</span>
+          <span class="p">.</span><span class="nx">map</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span><span class="nx">key</span><span class="p">)</span> <span class="o">=&gt;</span>
+            
+            <span class="k">return</span> <span class="kc">null</span> <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">include</span><span class="p">(</span><span class="nx">@config</span><span class="p">.</span><span class="nx">ignore</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+            
+            <span class="nv">label = </span><span class="s">&quot;&lt;label for=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">key</span><span class="p">.</span><span class="nx">underscore</span><span class="p">().</span><span class="nx">humanize</span><span class="p">()</span><span class="si">}</span><span class="s">&lt;/label&gt;&quot;</span>
+            
+            <span class="nv">formElement =</span>
+              <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">include</span><span class="p">(</span><span class="nx">@config</span><span class="p">.</span><span class="nx">htmlTextarea</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+                <span class="s">&quot;&lt;textarea class=&#39;html&#39; id=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39; name=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/textarea&gt;&quot;</span>
+              <span class="k">else</span> <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">include</span><span class="p">(</span><span class="nx">@config</span><span class="p">.</span><span class="nx">boolean</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+                <span class="s">&quot;&lt;input id=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39; name=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39; type=&#39;checkbox&#39;&gt;&lt;/input&gt;&quot;</span>
+              <span class="k">else</span> <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">include</span><span class="p">(</span><span class="nx">@config</span><span class="p">.</span><span class="nx">number</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+                <span class="s">&quot;&lt;input id=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39; name=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39; type=&#39;number&#39;&gt;&lt;/input&gt;&quot;</span>
+              <span class="k">else</span> <span class="k">if</span> <span class="nx">key</span> <span class="o">is</span> <span class="s">&quot;pageType&quot;</span>
+                <span class="s">&quot;&lt;select id=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39; name=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">                  </span><span class="si">#{</span><span class="nx">_</span><span class="p">.</span><span class="nx">map</span> <span class="nx">@config</span><span class="p">.</span><span class="nx">pageTypes</span><span class="p">,</span> <span class="nf">(type) -&gt;</span>
+                      <span class="s">&quot;&lt;option value=</span><span class="si">#{</span><span class="nx">type</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">                        </span><span class="si">#{</span><span class="nx">type</span><span class="p">.</span><span class="nx">underscore</span><span class="p">().</span><span class="nx">humanize</span><span class="p">()</span><span class="si">}</span><span class="s"></span>
+<span class="s">                      &lt;/option&gt;&quot;</span>
+                    <span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+                  <span class="si">}</span><span class="s"></span>
+<span class="s">                &lt;/select&gt;&quot;</span>
+              <span class="k">else</span> <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">include</span><span class="p">(</span><span class="nx">@config</span><span class="p">.</span><span class="nx">textarea</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="o">or</span> <span class="k">typeof</span> <span class="nx">value</span> <span class="o">is</span> <span class="s">&quot;object&quot;</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">value</span>
+                <span class="nv">object = </span><span class="p">{}</span>
+                <span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span>
+                <span class="s">&quot;&lt;div id=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">Utils</span><span class="p">.</span><span class="nx">json2Form</span><span class="p">(</span><span class="nx">object</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/div&gt;</span>
+<span class="s">                &lt;img src=&#39;images/icon_add.png&#39; class=&#39;icon_add append_subtest_element&#39; data-element=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39;&gt;&quot;</span>
+              <span class="k">else</span>
+                <span class="s">&quot;&lt;input id=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39; name=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39; type=&#39;text&#39;&gt;&lt;/input&gt;&quot;</span>
+            
+            <span class="k">return</span> <span class="s">&quot;&lt;li&gt;</span><span class="si">#{</span><span class="nx">label</span><span class="si">}#{</span><span class="nx">formElement</span><span class="si">}</span><span class="s">&lt;/li&gt;&quot;</span>
+
+          <span class="p">.</span><span class="nx">compact</span><span class="p">()</span>
+          <span class="p">.</span><span class="nx">value</span><span class="p">()</span>
+          <span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> 
+        <span class="s">&quot;</span>
+<span class="s">      &lt;/ul&gt;</span>
+<span class="s">      &lt;button type=&#39;button&#39;&gt;Save&lt;/button&gt;</span>
+<span class="s">    &lt;/form&gt;&quot;</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>this is not a deep copy, only one level</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">appendSubtestElement: </span><span class="nf">(event) -&gt;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;model&quot;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@model</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>what are we copying?</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">key = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-element&quot;</span><span class="p">)</span>
+    <span class="nv">object = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>is it already an array?</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span> <span class="nx">object</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>get the last element and zero it out
+@TODO I should be able to grab an empty from the config, no?</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nv">last = </span><span class="nx">@zeroOut</span> <span class="nx">_</span><span class="p">.</span><span class="nx">last</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span>
+      <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span> <span class="nx">object</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">last</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">[</span><span class="nx">object</span><span class="p">,</span> <span class="nx">object</span><span class="p">]</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>used by appendSubtestElement    </p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">zeroOut: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>if it's an object, zero out its properties</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isObject</span> <span class="nx">last</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Just in case
+objects are passed by reference but does that apply here?</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nv">last = </span><span class="nx">_</span><span class="p">.</span><span class="nx">clone</span> <span class="nx">last</span>
+      <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">last</span>
+        <span class="nx">last</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+    <span class="k">else</span>
+      <span class="nv">last = </span><span class="s">&quot;&quot;</span>
+    <span class="nx">last</span> <span class="c1"># lastly...</span>
+
+  <span class="nv">populateForm: </span><span class="nf">( subtestAttributes ) -&gt;</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">subtestAttributes</span><span class="p">,</span> <span class="nf">( value, key ) -&gt;</span>
+      <span class="nv">currentValue = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#&#39;</span><span class="o">+</span><span class="nx">key</span><span class="p">,</span> <span class="nx">@el</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Don't fill in unless it's blank</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="o">not</span> <span class="nx">currentValue</span> <span class="o">or</span> <span class="nx">currentValue</span> <span class="o">is</span> <span class="s">&#39;&lt;br&gt;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">key</span> <span class="o">is</span> <span class="s">&#39;items&#39;</span>
+          <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#items&#39;</span><span class="p">,</span> <span class="nx">@el</span><span class="p">).</span><span class="nx">val</span> <span class="nx">value</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="nx">key</span> <span class="o">is</span> <span class="s">&#39;includeAutostop&#39;</span> <span class="o">and</span> <span class="nx">value</span> <span class="o">is</span> <span class="s">&#39;on&#39;</span>
+          <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#includeAutostop&#39;</span><span class="p">,</span> <span class="nx">@el</span><span class="p">).</span><span class="nx">prop</span><span class="p">(</span><span class="s">&quot;checked&quot;</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="k">typeof</span> <span class="nx">value</span> <span class="o">is</span> <span class="s">&#39;object&#39;</span>
+          <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#&#39;</span><span class="o">+</span><span class="nx">key</span><span class="p">,</span> <span class="nx">@el</span><span class="p">).</span><span class="nx">val</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span> <span class="nx">value</span><span class="p">,</span><span class="kc">undefined</span><span class="p">,</span><span class="mi">2</span>
+        <span class="k">else</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">key</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">value</span>
+          <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#&#39;</span><span class="o">+</span><span class="nx">key</span><span class="p">,</span> <span class="nx">@el</span><span class="p">).</span><span class="nx">val</span> <span class="nx">value</span>
+
+    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;textarea.html&quot;</span><span class="p">,</span> <span class="nx">@el</span><span class="p">).</span><span class="nx">cleditor</span><span class="p">(),</span> <span class="nf">(cleditor) -&gt;</span>
+      <span class="nx">cleditor</span><span class="p">.</span><span class="nx">updateFrame</span><span class="p">()</span>
+
+  <span class="nv">save: </span><span class="o">-&gt;</span>
+    <span class="nv">result = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;form#subtestEdit&#39;</span><span class="p">).</span><span class="nx">toObject</span> <span class="p">{</span><span class="nv">skipEmpty: </span><span class="kc">false</span><span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Clean up stuff form2js missed</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">result.items = </span><span class="nx">result</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">items</span>
+    <span class="nv">result.includeAutostop = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#includeAutostop&#39;</span><span class="p">).</span><span class="nx">prop</span><span class="p">(</span><span class="s">&quot;checked&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#includeAutostop&#39;</span><span class="p">).</span><span class="nx">length</span>
+    
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span> <span class="nx">result</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nv">success: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;form</span><span class="err">#</span><span class="s">subtestEdit&quot;</span><span class="p">).</span><span class="nx">effect</span> <span class="s">&quot;highlight&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nv">color: </span><span class="s">&quot;</span><span class="err">#</span><span class="s">F7C942&quot;</span><span class="p">},</span> <span class="mi">2000</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div.message&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;Saved&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">3000</span><span class="p">)</span>
+      <span class="nv">error: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div.message&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;Error saving changes&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">3000</span><span class="p">)</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

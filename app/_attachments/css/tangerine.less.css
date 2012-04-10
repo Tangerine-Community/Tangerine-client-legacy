@@ -15,24 +15,13 @@ body.flash {
  */
 #navigation {
   min-height: 50px;
-  margin-bottom: 20px;
   background-color: #f6c637;
   background-image: url("../images/corner_logo.png");
   background-repeat: no-repeat;
   background-position: 5px 6px;
   display: none;
-  padding: 5px;
+  padding: 5px 0 5px 5px;
   font-size: 20px;
-}
-#navigation a {
-  vertical-align: middle;
-  color: black;
-  text-decoration: none;
-}
-#navigation a:visited,
-#navigation a:active,
-#navigation a:hover {
-  color: #000000;
 }
 #corner_logo {
   width: 45px;
@@ -41,16 +30,30 @@ body.flash {
 nav#main_nav {
   display: inline;
 }
-nav#main_nav a {
+nav#main_nav .nav_link {
+  color: black;
   text-decoration: none;
   font-size: 25px;
   font-weight: bold;
   padding: 6px 6px 2px;
-  margin: 20px 14px 28px;
+  margin: 20px 10px 14px 14px;
   border: 0;
+  vertical-align: middle;
+  cursor: pointer;
+}
+#session_info .nav_link {
+  color: black;
+}
+.icon_delete,
+.icon_add,
+.icon_edit {
+  cursor: pointer !important;
+}
+#save_all_new_subtests {
+  display: none;
 }
 .border_on {
-  margin: 16px 10px 14px !important;
+  margin: 16px 6px 10px 10px !important;
   border: 4px solid white !important;
 }
 #session_info {
@@ -91,6 +94,98 @@ button {
 #content {
   padding: 5px;
 }
+/*
+ * Manage
+ */
+#new_assessment {
+  display: none;
+}
+div#manage #import_from_cloud {
+  display: none;
+}
+div#manage ul {
+  list-style: none;
+  text-indent: 0;
+  margin: 0;
+  padding: 0;
+}
+div#manage li {
+  border-bottom: 1px solid #888888;
+  padding: 5px 0;
+  vertical-align: middle;
+}
+div#manage a {
+  border: 0;
+  background: none;
+  margin: 5px;
+  padding: 0;
+}
+div#manage img {
+  border: 0;
+  vertical-align: middle;
+}
+div#manage .archived_assessment {
+  color: #aaa !important;
+}
+span.delete_confirm {
+  display: none;
+}
+/*
+ * edit assessment
+ */
+div#edit_assessment ul {
+  list-style: none;
+  text-indent: 0px;
+  margin: 0px;
+  padding: 0px;
+}
+div#edit_assessment ul li {
+  line-height: 40px;
+  border-bottom: 1px solid #888888;
+  padding: 5px 0;
+  vertical-align: middle;
+}
+div#edit_assessment a {
+  border: 0 !important;
+  background: none !important;
+  margin: 5px !important;
+  padding: 0 !important;
+  -webkit-appearance: none !important;
+}
+/*
+ * Edit Subtest
+ */
+div#subtest_edit ul {
+  list-style: none;
+  text-indent: 0;
+  margin: 0;
+  padding: 0;
+}
+div#subtest_edit ul li {
+  border-bottom: 1px solid #888888;
+  padding: 5px 0;
+  vertical-align: middle;
+}
+div#subtest_edit label {
+  margin: 0;
+}
+/*
+ * Typography
+ */
+h1 {
+  margin: 10px 0 15px;
+  font-size: 50px;
+}
+h2 {
+  margin: 10px 0 15px;
+  font-size: 40px;
+}
+/*
+ * Subtests
+ */
+/*
+ * 
+ */
 #assessments td {
   list-style: none;
   text-decoration: none;
@@ -114,7 +209,7 @@ label {
 fieldset {
   border-width: 1px;
   border-style: solid;
-  margin: 5px;
+  margin: 15px 5px;
   padding: 5px;
 }
 fieldset[data-type=horizontal] label {
@@ -226,6 +321,9 @@ div.ui-footer .ui-btn {
   margin-left: 10px;
   padding: 0px 0px 0px 20px;
   background: url(images/spindown-open.gif) no-repeat left;
+}
+#content {
+  margin: 0;
 }
 #content a {
   -webkit-appearance: button;
