@@ -73,7 +73,7 @@ Router = (function(_super) {
               Tangerine.resultsView = new ResultsView();
             }
             Tangerine.resultsView.assessment = new Assessment({
-              _id: assessmentId
+              _id: Utils.cleanURL(assessmentId)
             });
             return Tangerine.resultsView.assessment.fetch({
               success: function() {

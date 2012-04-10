@@ -43,7 +43,7 @@ class Router extends Backbone.Router
             Tangerine.assessmentEditView.model = assessment
             Tangerine.assessmentEditView.render()
 
-  results: (assessmentId,enumerator) ->
+  results: (assessmentId, enumerator) ->
     Tangerine.user.verify
       isUser: ->
         resultCollection = new ResultCollection()
@@ -51,7 +51,7 @@ class Router extends Backbone.Router
           success: ->
             Tangerine.resultsView ?= new ResultsView()
             Tangerine.resultsView.assessment = new Assessment
-              _id: assessmentId
+              _id: Utils.cleanURL assessmentId
             Tangerine.resultsView.assessment.fetch
               success: ->
                 if enumerator
