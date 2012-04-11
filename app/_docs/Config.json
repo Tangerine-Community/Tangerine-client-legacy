@@ -30,6 +30,9 @@
           "timer",
           "numberOfColumns"
       ],
+      "object": [
+          "questions"
+      ],
       "pageTypes": [
           "ConsentPage",
           "DateTimePage",
