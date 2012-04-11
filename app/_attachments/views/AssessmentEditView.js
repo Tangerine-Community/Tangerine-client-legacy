@@ -25,8 +25,8 @@ AssessmentEditView = (function(_super) {
   AssessmentEditView.prototype.events = {
     "click button.back_to_assessments": "gotoAssessments",
     "click img.show_delete_subtest_confirm": "showConfirmDeleteSubtest",
-    "click button.delete_subtest_affirmative": "deleteSubtestAffirmative",
-    "click button.delete_subtest_negative": "deleteSubtestNegative",
+    "click button.delete_subtest_yes": "deleteSubtestAffirmative",
+    "click button.delete_subtest_cancel": "deleteSubtestNegative",
     "click img#add_subtest_form": "addSubtestForm",
     "click img.save_this_subtest": "saveThisSubtest",
     "click li#save_all_new_subtests": "saveAllNewSubtests",
@@ -43,11 +43,11 @@ AssessmentEditView = (function(_super) {
   };
 
   AssessmentEditView.prototype.renderSubtestItem = function(subtestId) {
-    return "    <li data-subtest='" + subtestId + "' id='" + subtestId + "'>      <img src='images/icon_draggable.png'>      " + subtestId + "      <a href='#edit/assessment/" + this.model.id + "/subtest/" + subtestId + "'><img class='icon_edit' src='images/icon_edit.png'></a>      <img class='icon_delete show_delete_subtest_confirm' src='images/icon_delete.png'>      <span class='delete_confirm'>Are you sure? <button data-subtest='" + subtestId + "' class='delete_subtest_affirmative'>Yes</button><button class='delete_subtest_negative'>No</button></span>    </li>    ";
+    return "    <li data-subtest='" + subtestId + "' id='" + subtestId + "'>      <img src='images/icon_draggable.png'>      " + subtestId + "      <a href='#edit/assessment/" + this.model.id + "/subtest/" + subtestId + "'><img class='icon_edit' src='images/icon_edit.png'></a>      <img class='icon_delete show_delete_subtest_confirm' src='images/icon_delete.png'>      <span class='delete_confirm'>Are you sure? <button data-subtest='" + subtestId + "' class='delete_subtest_yes'>Yes</button><button class='delete_subtest_cancel'>Cancel</button></span>    </li>    ";
   };
 
   AssessmentEditView.prototype.addSubtestForm = function() {
-    return $('ul#new_subtest_list').prepend("      <li class='new_subtest' id='new_subtest_" + (parseInt(Math.random() * 1000)) + "'>        <input name='_id' class='_id' type='text' placeholder='Subtest Name'>        <select name='pageType' class='pageType'>          <option>Select a type</option>          " + (_.map(this.config.pageTypes, function(pageType) {
+    return $('ul#new_subtest_list').prepend("      <li class='new_subtest''>        <input name='_id' class='_id' type='text' placeholder='Subtest Name'>        <select name='pageType' class='pageType'>          <option>Select a type</option>          " + (_.map(this.config.pageTypes, function(pageType) {
       return "<option>" + pageType + "</option>";
     }).join("")) + "        </select>        <img src='images/icon_add.png' class='icon_add save_this_subtest'>        <img src='images/icon_delete.png' class='parent_remove'>      </li>");
   };
@@ -92,7 +92,6 @@ AssessmentEditView = (function(_super) {
       pageType: pageType,
       pageId: _id.substring(_id.lastIndexOf(".") + 1)
     });
-    console.log(subtest);
     subtest.set(_.reduce(this.config.pageTypeProperties[pageType], function(result, property) {
       result[property] = "";
       return result;

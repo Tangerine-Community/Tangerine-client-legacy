@@ -8,13 +8,13 @@ class AssessmentEditView extends Backbone.View
     @config = Tangerine.config.Subtest
 
   events:
-    "click button.back_to_assessments"        : "gotoAssessments"
-    "click img.show_delete_subtest_confirm"   : "showConfirmDeleteSubtest"
-    "click button.delete_subtest_affirmative" : "deleteSubtestAffirmative"
-    "click button.delete_subtest_negative"    : "deleteSubtestNegative"
-    "click img#add_subtest_form"              : "addSubtestForm"
-    "click img.save_this_subtest"             : "saveThisSubtest"
-    "click li#save_all_new_subtests"          : "saveAllNewSubtests"
+    "click button.back_to_assessments"      : "gotoAssessments"
+    "click img.show_delete_subtest_confirm" : "showConfirmDeleteSubtest"
+    "click button.delete_subtest_yes"       : "deleteSubtestAffirmative"
+    "click button.delete_subtest_cancel"    : "deleteSubtestNegative"
+    "click img#add_subtest_form"            : "addSubtestForm"
+    "click img.save_this_subtest"           : "saveThisSubtest"
+    "click li#save_all_new_subtests"        : "saveAllNewSubtests"
     "change form.newSubtest select": "subtestTypeSelected"
     "change #edit-archive": "updateArchive"
 
@@ -50,15 +50,13 @@ class AssessmentEditView extends Backbone.View
       #{subtestId}
       <a href='#edit/assessment/#{@model.id}/subtest/#{subtestId}'><img class='icon_edit' src='images/icon_edit.png'></a>
       <img class='icon_delete show_delete_subtest_confirm' src='images/icon_delete.png'>
-      <span class='delete_confirm'>Are you sure? <button data-subtest='#{subtestId}' class='delete_subtest_affirmative'>Yes</button><button class='delete_subtest_negative'>No</button></span>
+      <span class='delete_confirm'>Are you sure? <button data-subtest='#{subtestId}' class='delete_subtest_yes'>Yes</button><button class='delete_subtest_cancel'>Cancel</button></span>
     </li>
     "
 
   addSubtestForm: ->
-    # That random number is so event.target has a firm unique id 
-    # 1-1,000,000 shot of getting the same two, those are odds I can live with
     $('ul#new_subtest_list').prepend "
-      <li class='new_subtest' id='new_subtest_#{parseInt(Math.random()*1000)}'>
+      <li class='new_subtest'>
         <input name='_id' class='_id' type='text' placeholder='Subtest Name'>
         <select name='pageType' class='pageType'>
           <option>Select a type</option>
@@ -95,8 +93,6 @@ class AssessmentEditView extends Backbone.View
       pageType: pageType
       #Use the id to start with a nice default for the pageId
       pageId: _id.substring(_id.lastIndexOf(".")+1)
-
-    console.log subtest
 
     # apply blank subtest template
     subtest.set _.reduce(
