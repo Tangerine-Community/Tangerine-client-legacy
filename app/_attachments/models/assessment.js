@@ -27,9 +27,6 @@ Assessment = (function(_super) {
       target: target
     });
     replicationLogEntry.save();
-    console.log("trying to replicate to server");
-    console.log(target);
-    console.log(options);
     ajaxOptions = {
       success: function() {
         return options.success();
@@ -191,7 +188,7 @@ Assessment = (function(_super) {
       results[page.pageId]["subtestType"] = page.pageType;
     }
     results.timestamp = new Date().valueOf();
-    results.enumerator = $('#enumerator').html();
+    results.enumerator = Tangerine.user.get("name");
     results.assessmentId = this.get("_id");
     return results;
   };
