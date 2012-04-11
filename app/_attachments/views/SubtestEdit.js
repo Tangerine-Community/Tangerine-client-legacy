@@ -19,12 +19,34 @@ SubtestEdit = (function(_super) {
   SubtestEdit.prototype.el = '#content';
 
   SubtestEdit.prototype.events = {
+    "click button.delete_subtest_element_cancel": 'hideDeleteSubtestElementConfirm',
+    "click button.delete_subtest_element_yes": 'deleteSubtestElement',
+    "click img.delete_subtest_element_show_confirm": 'showDeleteSubtestElementConfirm',
     "click img.append_subtest_element": 'appendSubtestElement',
     'click button#return_to_assessment': 'returnToAssessment',
     "click form#subtestEdit button:contains(Save)": "save",
     "click button:contains(Import a subtest)": "showImportSubtestForm",
     "click button#subtest_import_confirm": "importSubtest",
     "click button#subtest_import_cancel": "hideImportSubtestForm"
+  };
+
+  SubtestEdit.prototype.deleteSubtestElement = function(event) {
+    var parent, self;
+    parent = $(event.target).parent().parent();
+    self = this;
+    return parent.fadeOut(250, function() {
+      $(this).remove();
+      self.save();
+      return self.render();
+    });
+  };
+
+  SubtestEdit.prototype.showDeleteSubtestElementConfirm = function(event) {
+    return $(event.target).parent().find("span.delete_subtest_element_confirm").show(250);
+  };
+
+  SubtestEdit.prototype.hideDeleteSubtestElementConfirm = function(event) {
+    return $(event.target).parent().fadeOut(250);
   };
 
   SubtestEdit.prototype.returnToAssessment = function() {
@@ -70,7 +92,7 @@ SubtestEdit = (function(_super) {
       label = "<label for='" + key + "'>" + (key.underscore().humanize()) + "</label>";
       formElement = _.include(_this.config.htmlTextarea, key) ? "<textarea class='html' id='" + key + "' name='" + key + "'></textarea>" : _.include(_this.config.boolean, key) ? "<input id='" + key + "' name='" + key + "' type='checkbox'></input>" : _.include(_this.config.number, key) ? "<input id='" + key + "' name='" + key + "' type='number'></input>" : key === "pageType" ? "<select id='" + key + "' name='" + key + "'>                  " + (_.map(_this.config.pageTypes, function(type) {
         return "<option value=" + type + ">                        " + (type.underscore().humanize()) + "                      </option>";
-      }).join("")) + "                </select>" : _.include(_this.config.textarea, key) || typeof value === "object" ? (console.log(value), object = {}, object[key] = value, "<div id='" + key + "'>" + (Utils.json2Form(object)) + "</div>                <img src='images/icon_add.png' class='icon_add append_subtest_element' data-element='" + key + "'>") : "<input id='" + key + "' name='" + key + "' type='text'></input>";
+      }).join("")) + "                </select>" : _.include(_this.config.textarea, key) ? (console.log("" + key + " is a text area all of a sudden?"), "<textarea id='" + key + "' name='" + key + "'></textarea>") : _.include(_this.config.object, key) || typeof value === "object" ? (console.log("trying to render:"), console.log(value), label = "", object = {}, object[key] = value, "<div id='object_wrapper_" + key + "'>" + (Utils.json2Form(object)) + "<img src='images/icon_add.png' class='icon_add append_subtest_element' data-element='" + key + "'></div>") : "<input id='" + key + "' name='" + key + "' type='text'></input>";
       return "<li>" + label + formElement + "</li>";
     }).compact().value().join("") + "      </ul>      <button type='button'>Save</button>    </form>";
   };
@@ -81,16 +103,26 @@ SubtestEdit = (function(_super) {
     console.log(this.model);
     key = $(event.target).attr("data-element");
     object = this.model.attributes[key];
+    console.log(["object", object]);
+    console.log(["key", key]);
     if (_.isArray(object)) {
+      console.log("adding to the object");
       last = this.zeroOut(_.last(this.model.attributes[key]));
-      return this.model.set(object.push(last));
+      object.push(last);
+      this.model.set(key, object);
     } else {
-      return this.model.set(key)([object, object]);
+      console.log("making object");
+      this.model.set(key, [object, object]);
     }
+    object = {};
+    object[key] = this.model.attributes[key];
+    console.log("new object");
+    console.log(object);
+    return $("div#object_wrapper_" + key).html(Utils.json2Form(object));
   };
 
-  SubtestEdit.prototype.zeroOut = function() {
-    var key, last, value;
+  SubtestEdit.prototype.zeroOut = function(last) {
+    var key, value;
     if (_.isObject(last)) {
       last = _.clone(last);
       for (key in last) {
@@ -131,6 +163,8 @@ SubtestEdit = (function(_super) {
     result = $('form#subtestEdit').toObject({
       skipEmpty: false
     });
+    console.log("back back from toObject");
+    console.log(result);
     if (result.items) result.items = result.items.split(" ");
     if ($('#includeAutostop').length) {
       result.includeAutostop = $('#includeAutostop').prop("checked");

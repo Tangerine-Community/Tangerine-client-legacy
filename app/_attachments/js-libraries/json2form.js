@@ -42,7 +42,7 @@ Utils.json2Form = function( node, parent, parent_type, options )
       if ( ! not_allowed[key] )
       {
         value = node[key];
-        if      ( $.isArray(value) )
+        if ( $.isArray(value) )
         {
           key_wrapped = (parent_type == "array") ? "[" + key + "]" : key
           parent_name = parent  ? parent + "." + key : key;
@@ -60,7 +60,7 @@ Utils.json2Form = function( node, parent, parent_type, options )
         { 
           key = (parent_type == "array") ? "[" + key + "]" : "." + key
           parent_name = parent ? parent + key : key;
-          result += "<fieldset><legend>"+parent_name.var2name()+"</legend>" + g.json2Form( value, parent_name, "object", options ) + "</fieldset>";
+          result += "<fieldset id='"+parseInt(Math.random()*9999)+"'><legend>"+parent_name.var2name()+"</legend>" + g.json2Form( value, parent_name, "object", options ) + "<img src='images/icon_delete.png' class='icon_delete delete_subtest_element_show_confirm'><span class='delete_subtest_element_confirm'>Are you sure? <button class='delete_subtest_element_yes'>Yes</button><button class='delete_subtest_element_cancel'>Cancel</button></span></fieldset>";
         }
         else if ( typeof( value ) == "boolean" ) { 
           result += g.formFor( "boolean", parent, parent_type, key, value, options ); }

@@ -6,12 +6,31 @@ class SubtestEdit extends Backbone.View
   el: '#content'
 
   events:
-    "click img.append_subtest_element"               : 'appendSubtestElement'
-    'click button#return_to_assessment'              : 'returnToAssessment'
-    "click form#subtestEdit button:contains(Save)"   : "save"
-    "click button:contains(Import a subtest)"        : "showImportSubtestForm"
+    "click button.delete_subtest_element_cancel"    : 'hideDeleteSubtestElementConfirm'
+    "click button.delete_subtest_element_yes"       : 'deleteSubtestElement'
+    "click img.delete_subtest_element_show_confirm" : 'showDeleteSubtestElementConfirm'
+    "click img.append_subtest_element"              : 'appendSubtestElement'
+    'click button#return_to_assessment'             : 'returnToAssessment'
+    "click form#subtestEdit button:contains(Save)"  : "save"
+    "click button:contains(Import a subtest)"       : "showImportSubtestForm"
     "click button#subtest_import_confirm" : "importSubtest"
     "click button#subtest_import_cancel"  : "hideImportSubtestForm"
+
+  deleteSubtestElement: (event) ->
+    parent = $(event.target).parent().parent()
+    self = this
+    parent.fadeOut 250, -> 
+      $(this).remove()
+      self.save()
+      self.render()
+    
+    
+  showDeleteSubtestElementConfirm: (event) ->
+    $(event.target).parent().find("span.delete_subtest_element_confirm").show(250)
+    
+  hideDeleteSubtestElementConfirm: (event) ->
+    $(event.target).parent().fadeOut(250)
+    
 
   returnToAssessment: ->
     Tangerine.router.navigate "edit/assessment/#{@assessment_id}", true
@@ -35,7 +54,6 @@ class SubtestEdit extends Backbone.View
     @populateForm(sourceSubtest.toJSON())
 
   render: =>
-
     @$el.html "
       <div id='subtest_edit'>
         <button id='return_to_assessment'>Return to assessment</button>
@@ -85,12 +103,17 @@ class SubtestEdit extends Backbone.View
                     .join("")
                   }
                 </select>"
-              else if _.include(@config.textarea, key) or typeof value is "object"
+              else if _.include(@config.textarea, key)
+                console.log "#{key} is a text area all of a sudden?"
+                "<textarea id='#{key}' name='#{key}'></textarea>"
+                
+              else if _.include(@config.object, key) or typeof value is "object"
+                console.log "trying to render:"
                 console.log value
+                label = "" # makes it's own 'label'
                 object = {}
                 object[key] = value
-                "<div id='#{key}'>#{Utils.json2Form(object)}</div>
-                <img src='images/icon_add.png' class='icon_add append_subtest_element' data-element='#{key}'>"
+                "<div id='object_wrapper_#{key}'>#{Utils.json2Form(object)}<img src='images/icon_add.png' class='icon_add append_subtest_element' data-element='#{key}'></div>"
               else
                 "<input id='#{key}' name='#{key}' type='text'></input>"
             
@@ -98,7 +121,7 @@ class SubtestEdit extends Backbone.View
 
           .compact()
           .value()
-          .join("") + 
+        .join("") + 
         "
       </ul>
       <button type='button'>Save</button>
@@ -113,18 +136,33 @@ class SubtestEdit extends Backbone.View
     key = $(event.target).attr("data-element")
     object = @model.attributes[key]
     
+    console.log ["object",object]
+    console.log ["key",key]
+    
     # is it already an array?
     if _.isArray object
+      console.log "adding to the object"
       # get the last element and zero it out
       # @TODO I should be able to grab an empty from the config, no?
       last = @zeroOut _.last(@model.attributes[key])
-      @model.set object.push(last)
+      object.push(last)
+      @model.set key, object
     else
-      @model.set(key) [object, object]
-      
+      console.log "making object"
+      @model.set key, [object, object]
+    
+    object = {}
+    object[key] = @model.attributes[key]
+    
+    console.log "new object"
+    console.log object
+    
+    $("div#object_wrapper_#{key}").html Utils.json2Form(object)
+    
   # used by appendSubtestElement    
-  zeroOut: ->
+  zeroOut:(last) ->
     # if it's an object, zero out its properties
+
     if _.isObject last
       # Just in case
       # objects are passed by reference but does that apply here?
@@ -156,7 +194,8 @@ class SubtestEdit extends Backbone.View
 
   save: ->
     result = $('form#subtestEdit').toObject {skipEmpty: false}
-    
+    console.log "back back from toObject"
+    console.log result
     # Clean up stuff form2js missed
     result.items = result.items.split(" ") if result.items
     result.includeAutostop = $('#includeAutostop').prop("checked") if $('#includeAutostop').length

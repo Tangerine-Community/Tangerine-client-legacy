@@ -116,7 +116,7 @@ class Assessment extends Backbone.Model
       results[page.pageId] = page.results()
       results[page.pageId]["subtestType"] = page.pageType
     results.timestamp = new Date().valueOf()
-    results.enumerator = $('#enumerator').html()
+    results.enumerator = Tangerine.user.get("name")
     results.assessmentId = @get("_id")
     return results
 
