@@ -169,6 +169,9 @@ div#subtest_edit ul li {
 div#subtest_edit label {
   margin: 0;
 }
+div#subtest_edit .delete_subtest_element_confirm {
+  display: none;
+}
 /*
  * Typography
  */
