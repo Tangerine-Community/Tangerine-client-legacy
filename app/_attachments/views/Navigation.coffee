@@ -67,12 +67,18 @@ class Navigation extends Backbone.View
   # Triggered on page changes
   # @TODO this method breaks easily. Need new way to check.
   handleNavigation: ->
-    if window.location.href.toLowerCase().indexOf("assessment") != -1
-      $("nav#main_nav span").removeClass("border_on")
-      $("#collect_link").addClass("border_on")    
-    if window.location.href.toLowerCase().indexOf("manage") != -1
+    managePages = ["manage", "edit"]
+    collectPages = ["assessments", "assessment/"]
+    href = window.location.hash.toLowerCase().substr(1)
+    if _.any(managePages, ( e ) -> href.substr(0,e.length).indexOf(e) != -1)
       $("nav#main_nav span").removeClass("border_on")
       $("#manage_link").addClass("border_on")
+    else if _.any(collectPages, ( e ) -> href.substr(0,e.length).indexOf(e) != -1)
+      $("nav#main_nav span").removeClass("border_on")
+      $("#collect_link").addClass("border_on")  
+    else
+      $("nav#main_nav span").removeClass("border_on")
+      $("#manage_link").addClass("border_on")  
 
 
   

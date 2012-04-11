@@ -64,11 +64,21 @@ Navigation = (function(_super) {
   };
 
   Navigation.prototype.handleNavigation = function() {
-    if (window.location.href.toLowerCase().indexOf("assessment") !== -1) {
+    var collectPages, href, managePages;
+    managePages = ["manage", "edit"];
+    collectPages = ["assessments", "assessment/"];
+    href = window.location.hash.toLowerCase().substr(1);
+    if (_.any(managePages, function(e) {
+      return href.substr(0, e.length).indexOf(e) !== -1;
+    })) {
       $("nav#main_nav span").removeClass("border_on");
-      $("#collect_link").addClass("border_on");
-    }
-    if (window.location.href.toLowerCase().indexOf("manage") !== -1) {
+      return $("#manage_link").addClass("border_on");
+    } else if (_.any(collectPages, function(e) {
+      return href.substr(0, e.length).indexOf(e) !== -1;
+    })) {
+      $("nav#main_nav span").removeClass("border_on");
+      return $("#collect_link").addClass("border_on");
+    } else {
       $("nav#main_nav span").removeClass("border_on");
       return $("#manage_link").addClass("border_on");
     }
