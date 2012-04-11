@@ -37,7 +37,7 @@ assessment.fetch
             <span class="nv">Tangerine.assessmentEditView.model = </span><span class="nx">assessment</span>
             <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">assessmentEditView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
 
-  <span class="nv">results: </span><span class="nf">(assessmentId,enumerator) -&gt;</span>
+  <span class="nv">results: </span><span class="nf">(assessmentId, enumerator) -&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isUser: </span><span class="o">-&gt;</span>
         <span class="nv">resultCollection = </span><span class="k">new</span> <span class="nx">ResultCollection</span><span class="p">()</span>
@@ -45,7 +45,7 @@ assessment.fetch
           <span class="nv">success: </span><span class="o">-&gt;</span>
             <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">resultsView</span> <span class="o">?=</span> <span class="k">new</span> <span class="nx">ResultsView</span><span class="p">()</span>
             <span class="nv">Tangerine.resultsView.assessment = </span><span class="k">new</span> <span class="nx">Assessment</span>
-              <span class="nv">_id: </span><span class="nx">assessmentId</span>
+              <span class="nv">_id: </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">cleanURL</span> <span class="nx">assessmentId</span>
             <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">resultsView</span><span class="p">.</span><span class="nx">assessment</span><span class="p">.</span><span class="nx">fetch</span>
               <span class="nv">success: </span><span class="o">-&gt;</span>
                 <span class="k">if</span> <span class="nx">enumerator</span>
