@@ -8,7 +8,7 @@
     <span class="vi">@config = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">Subtest</span>
 
   <span class="nv">events:</span>
-    <span class="s">&quot;click button.back_to_assessments&quot;</span>      <span class="o">:</span> <span class="s">&quot;gotoAssessments&quot;</span>
+    <span class="s">&quot;click button</span><span class="err">#</span><span class="s">back_to_assessments&quot;</span>      <span class="o">:</span> <span class="s">&quot;gotoAssessments&quot;</span>
     <span class="s">&quot;click img.show_delete_subtest_confirm&quot;</span> <span class="o">:</span> <span class="s">&quot;showConfirmDeleteSubtest&quot;</span>
     <span class="s">&quot;click button.delete_subtest_yes&quot;</span>       <span class="o">:</span> <span class="s">&quot;deleteSubtestAffirmative&quot;</span>
     <span class="s">&quot;click button.delete_subtest_cancel&quot;</span>    <span class="o">:</span> <span class="s">&quot;deleteSubtestNegative&quot;</span>
@@ -22,7 +22,7 @@
   
   <span class="nv">render: </span><span class="o">=&gt;</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
-<span class="s">    &lt;button id=&#39;back_to_asssessments&#39;&gt;Back to Assessments&lt;/button&gt;</span>
+<span class="s">    &lt;button id=&#39;back_to_assessments&#39;&gt;Back to Assessments&lt;/button&gt;</span>
 <span class="s">    &lt;div id=&#39;edit_assessment&#39;&gt;</span>
 <span class="s">      &lt;h1&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/h1&gt;</span>
 <span class="s">      &lt;div&gt;</span>
@@ -46,7 +46,7 @@
   <span class="nv">renderSubtestItem: </span><span class="nf">(subtestId) -&gt;</span>
     <span class="s">&quot;</span>
 <span class="s">    &lt;li data-subtest=&#39;</span><span class="si">#{</span><span class="nx">subtestId</span><span class="si">}</span><span class="s">&#39; id=&#39;</span><span class="si">#{</span><span class="nx">subtestId</span><span class="si">}</span><span class="s">&#39;&gt;</span>
-<span class="s">      &lt;img src=&#39;images/icon_draggable.png&#39;&gt;</span>
+<span class="s">      &lt;img src=&#39;images/icon_draggable.png&#39; class=&#39;sortable_handle&#39;&gt;</span>
 <span class="s">      </span><span class="si">#{</span><span class="nx">subtestId</span><span class="si">}</span><span class="s"></span>
 <span class="s">      &lt;a href=&#39;</span><span class="err">#</span><span class="s">edit/assessment/</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">/subtest/</span><span class="si">#{</span><span class="nx">subtestId</span><span class="si">}</span><span class="s">&#39;&gt;&lt;img class=&#39;icon_edit&#39; src=&#39;images/icon_edit.png&#39;&gt;&lt;/a&gt;</span>
 <span class="s">      &lt;img class=&#39;icon_delete show_delete_subtest_confirm&#39; src=&#39;images/icon_delete.png&#39;&gt;</span>
@@ -55,13 +55,23 @@
 <span class="s">    &quot;</span>
 
   <span class="nv">addSubtestForm: </span><span class="o">-&gt;</span>
+    <span class="nv">optionListHTML = </span><span class="s">&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="nx">groupName</span><span class="p">,</span> <span class="nx">optionItems</span> <span class="k">of</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">Subtest</span><span class="p">.</span><span class="nx">subtestOptions</span>
+      <span class="nv">optionHTML = </span><span class="s">&quot;&quot;</span>
+      <span class="k">for</span> <span class="nx">optionName</span> <span class="k">in</span> <span class="nx">optionItems</span>
+        <span class="nx">optionHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;option value=&quot;</span><span class="o">+</span><span class="nx">groupName</span><span class="o">+</span><span class="s">&quot;&gt;&quot;</span><span class="o">+</span><span class="nx">optionName</span><span class="o">+</span><span class="s">&quot;&lt;/option&gt;&quot;</span><span class="p">;</span>
+      <span class="nx">optionListHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;optgroup label=&#39;&quot;</span><span class="o">+</span><span class="nx">groupName</span><span class="o">+</span><span class="s">&quot;&#39;&gt;&quot;</span> <span class="o">+</span> <span class="nx">optionHTML</span> <span class="o">+</span> <span class="s">&quot;&lt;/optgroup&gt;&quot;</span><span class="p">;</span>
+
+    <span class="nv">selectFormHTML = </span><span class="s">&quot;&lt;select name=&#39;pageType&#39; class=&#39;pageType&#39;&gt;</span>
+<span class="s">          &lt;option&gt;Select a type&lt;/option&gt;</span>
+<span class="s">          </span><span class="si">#{</span><span class="nx">optionListHTML</span><span class="si">}</span><span class="s"></span>
+<span class="s">        &lt;/select&gt;&quot;</span>
+    
     <span class="nx">$</span><span class="p">(</span><span class="s">&#39;ul#new_subtest_list&#39;</span><span class="p">).</span><span class="nx">prepend</span> <span class="s">&quot;</span>
 <span class="s">      &lt;li class=&#39;new_subtest&#39;&gt;</span>
 <span class="s">        &lt;input name=&#39;_id&#39; class=&#39;_id&#39; type=&#39;text&#39; placeholder=&#39;Subtest Name&#39;&gt;</span>
-<span class="s">        &lt;select name=&#39;pageType&#39; class=&#39;pageType&#39;&gt;</span>
-<span class="s">          &lt;option&gt;Select a type&lt;/option&gt;</span>
-<span class="s">          </span><span class="si">#{</span> <span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">@config</span><span class="p">.</span><span class="nx">pageTypes</span><span class="p">,</span> <span class="nf">(pageType) -&gt;</span> <span class="s">&quot;&lt;option&gt;</span><span class="si">#{</span><span class="nx">pageType</span><span class="si">}</span><span class="s">&lt;/option&gt;&quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="si">}</span><span class="s"></span>
-<span class="s">        &lt;/select&gt;</span>
+<span class="s">        &quot;</span><span class="o">+</span><span class="nx">selectFormHTML</span><span class="o">+</span><span class="s">&quot;</span>
 <span class="s">        &lt;img src=&#39;images/icon_add.png&#39; class=&#39;icon_add save_this_subtest&#39;&gt;</span>
 <span class="s">        &lt;img src=&#39;images/icon_delete.png&#39; class=&#39;parent_remove&#39;&gt;</span>
 <span class="s">      &lt;/li&gt;&quot;</span>
@@ -145,6 +155,7 @@
 
   <span class="nv">makeSortable: </span><span class="o">=&gt;</span>
     <span class="nx">$</span><span class="p">(</span><span class="s">&quot;ul</span><span class="err">#</span><span class="s">subtest_list&quot;</span><span class="p">,</span> <span class="nx">@el</span><span class="p">).</span><span class="nx">sortable</span>
+      <span class="nv">handle : </span><span class="s">&#39;.sortable_handle&#39;</span>
       <span class="nv">update: </span><span class="o">=&gt;</span>
         <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
           <span class="nv">urlPathsForPages: </span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">map</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;li a&quot;</span><span class="p">),</span> <span class="nf">(subtest) -&gt;</span>
@@ -158,6 +169,7 @@
             <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div.message&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;Error saving changes&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">3000</span><span class="p">)</span>
 
   <span class="nv">gotoAssessments: </span><span class="o">-&gt;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;trying ot go back to assessments&quot;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;manage&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">clearNewSubtest: </span><span class="o">-&gt;</span>

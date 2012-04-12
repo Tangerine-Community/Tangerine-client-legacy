@@ -45,12 +45,14 @@ this probably belongs in the constructor/initialization code</p>             </t
       <span class="nv">success: </span><span class="o">=&gt;</span>
         <span class="nx">@changeName</span><span class="p">(</span><span class="nx">@get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">))</span>
         <span class="nv">pages = </span><span class="p">[]</span>
-        <span class="k">for</span> <span class="nx">urlPath</span> <span class="k">in</span> <span class="nx">@get</span><span class="p">(</span><span class="s">&quot;urlPathsForPages&quot;</span><span class="p">)</span>
-          <span class="nv">url = </span><span class="s">&quot;/</span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">db_name</span><span class="si">}</span><span class="s">/</span><span class="si">#{</span><span class="nx">urlPath</span><span class="si">}</span><span class="s">&quot;</span>
-          <span class="nx">JQueryMobilePage</span><span class="p">.</span><span class="nx">loadFromHTTP</span> <span class="p">{</span><span class="nv">url: </span><span class="nx">url</span><span class="p">,</span> <span class="nv">async: </span><span class="kc">false</span><span class="p">},</span> <span class="p">(</span><span class="nx">page</span><span class="p">)</span> <span class="o">=&gt;</span>
-            <span class="nv">page.assessment = </span><span class="k">this</span>
-            <span class="nx">pages</span><span class="p">.</span><span class="nx">push</span> <span class="nx">page</span>
-        <span class="nx">@setPages</span><span class="p">(</span><span class="nx">pages</span><span class="p">)</span>
+        <span class="nv">urlPaths = </span><span class="nx">@get</span><span class="p">(</span><span class="s">&quot;urlPathsForPages&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">urlPaths</span><span class="o">?</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+          <span class="k">for</span> <span class="nx">urlPath</span> <span class="k">in</span> <span class="nx">urlPaths</span>  
+            <span class="nv">url = </span><span class="s">&quot;/</span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">db_name</span><span class="si">}</span><span class="s">/</span><span class="si">#{</span><span class="nx">urlPath</span><span class="si">}</span><span class="s">&quot;</span>
+            <span class="nx">JQueryMobilePage</span><span class="p">.</span><span class="nx">loadFromHTTP</span> <span class="p">{</span><span class="nv">url: </span><span class="nx">url</span><span class="p">,</span> <span class="nv">async: </span><span class="kc">false</span><span class="p">},</span> <span class="p">(</span><span class="nx">page</span><span class="p">)</span> <span class="o">=&gt;</span>
+              <span class="nv">page.assessment = </span><span class="k">this</span>
+              <span class="nx">pages</span><span class="p">.</span><span class="nx">push</span> <span class="nx">page</span>
+          <span class="nx">@setPages</span><span class="p">(</span><span class="nx">pages</span><span class="p">)</span>
         <span class="nx">options</span><span class="o">?</span><span class="p">.</span><span class="nx">success</span><span class="p">()</span>
 
     <span class="k">super</span><span class="p">(</span><span class="nx">superOptions</span><span class="p">)</span>
