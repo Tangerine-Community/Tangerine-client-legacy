@@ -50,12 +50,14 @@ class Assessment extends Backbone.Model
       success: =>
         @changeName(@get("name"))
         pages = []
-        for urlPath in @get("urlPathsForPages")
-          url = "/#{Tangerine.config.db_name}/#{urlPath}"
-          JQueryMobilePage.loadFromHTTP {url: url, async: false}, (page) =>
-            page.assessment = this
-            pages.push page
-        @setPages(pages)
+        urlPaths = @get("urlPathsForPages")
+        if urlPaths?.length > 0
+          for urlPath in urlPaths  
+            url = "/#{Tangerine.config.db_name}/#{urlPath}"
+            JQueryMobilePage.loadFromHTTP {url: url, async: false}, (page) =>
+              page.assessment = this
+              pages.push page
+          @setPages(pages)
         options?.success()
 
     super(superOptions)

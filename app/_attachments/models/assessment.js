@@ -73,22 +73,24 @@ Assessment = (function(_super) {
     superOptions = options;
     superOptions = {
       success: function() {
-        var pages, url, urlPath, _i, _len, _ref;
+        var pages, url, urlPath, urlPaths, _i, _len;
         _this.changeName(_this.get("name"));
         pages = [];
-        _ref = _this.get("urlPathsForPages");
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          urlPath = _ref[_i];
-          url = "/" + Tangerine.config.db_name + "/" + urlPath;
-          JQueryMobilePage.loadFromHTTP({
-            url: url,
-            async: false
-          }, function(page) {
-            page.assessment = _this;
-            return pages.push(page);
-          });
+        urlPaths = _this.get("urlPathsForPages");
+        if ((urlPaths != null ? urlPaths.length : void 0) > 0) {
+          for (_i = 0, _len = urlPaths.length; _i < _len; _i++) {
+            urlPath = urlPaths[_i];
+            url = "/" + Tangerine.config.db_name + "/" + urlPath;
+            JQueryMobilePage.loadFromHTTP({
+              url: url,
+              async: false
+            }, function(page) {
+              page.assessment = _this;
+              return pages.push(page);
+            });
+          }
+          _this.setPages(pages);
         }
-        _this.setPages(pages);
         return options != null ? options.success() : void 0;
       }
     };
