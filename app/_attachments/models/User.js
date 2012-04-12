@@ -54,6 +54,7 @@ User = (function(_super) {
 
   User.prototype.login = function(name, pass) {
     var _this = this;
+    $.cookie("AuthSession", null);
     this.temp = {
       name: name,
       pass: pass

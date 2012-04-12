@@ -39,11 +39,10 @@ class User extends Backbone.Model
           @showMessage "Error username #{@temp.name} already taken. Please try another name."
 
   login: ( name, pass ) ->
-    # $.couch callbacks don't have access to parameters for some reason
+    $.cookie "AuthSession", null
     @temp =
       name : name
       pass : pass
-
     $.couch.login
       name     : @temp.name
       password : @temp.pass
@@ -52,8 +51,8 @@ class User extends Backbone.Model
         @set 
           name  : user.name
           roles : user.roles
-        Tangerine.router.navigate @get("landingPage"), true
         
+        Tangerine.router.navigate @get("landingPage"), true
       error: ( status, error, message ) =>
         if @temp.intent? && @temp.intent == "retry_login"
           @addMessage message
@@ -61,11 +60,12 @@ class User extends Backbone.Model
           @temp.intent = "login"
           @signup @temp.name, @temp.pass
 
+  # $.couch callbacks don't have access to parameters for some reason
   # Hacky note. This method requires that $.couch.session be set to async: false.
   # Apparently my favorite thing to do is mess with $.couch
   # @callbacks Supports isAdmin, isUser, unregistered
   # @upgrade-pof
-  verify: ( callbacks )->
+  verify: ( callbacks ) ->
     $.couch.session
       success: ( resp ) =>
         if resp.userCtx.name == null
@@ -79,8 +79,6 @@ class User extends Backbone.Model
           callbacks?.isUser? resp
           # there has to be a better way to tell what page we're on 
           if location.hash.indexOf("login") != -1 then Tangerine.router.navigate @get("landingPage"), true
-
-        
       error: ( status, error, reason ) ->
         # this is an odd situation to write code for. Don't think it's possible to get here
         console.log ["Session Error", "User does not appear to be logged in. #{error}:<br>#{reason}"]
@@ -97,7 +95,7 @@ class User extends Backbone.Model
         $.cookie "AuthSession", ""
         @clear()
         Tangerine.router.navigate "login", true
-        
+
   clearAttempt: ->
     @temp = @defaults.temp
   
