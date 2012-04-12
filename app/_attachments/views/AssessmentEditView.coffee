@@ -8,7 +8,7 @@ class AssessmentEditView extends Backbone.View
     @config = Tangerine.config.Subtest
 
   events:
-    "click button.back_to_assessments"      : "gotoAssessments"
+    "click button#back_to_assessments"      : "gotoAssessments"
     "click img.show_delete_subtest_confirm" : "showConfirmDeleteSubtest"
     "click button.delete_subtest_yes"       : "deleteSubtestAffirmative"
     "click button.delete_subtest_cancel"    : "deleteSubtestNegative"
@@ -22,7 +22,7 @@ class AssessmentEditView extends Backbone.View
   
   render: =>
     @$el.html "
-    <button id='back_to_asssessments'>Back to Assessments</button>
+    <button id='back_to_assessments'>Back to Assessments</button>
     <div id='edit_assessment'>
       <h1>#{@model.get("name")}</h1>
       <div>
@@ -46,7 +46,7 @@ class AssessmentEditView extends Backbone.View
   renderSubtestItem: (subtestId) ->
     "
     <li data-subtest='#{subtestId}' id='#{subtestId}'>
-      <img src='images/icon_draggable.png'>
+      <img src='images/icon_draggable.png' class='sortable_handle'>
       #{subtestId}
       <a href='#edit/assessment/#{@model.id}/subtest/#{subtestId}'><img class='icon_edit' src='images/icon_edit.png'></a>
       <img class='icon_delete show_delete_subtest_confirm' src='images/icon_delete.png'>
@@ -55,13 +55,23 @@ class AssessmentEditView extends Backbone.View
     "
 
   addSubtestForm: ->
+    optionListHTML = ""
+
+    for groupName, optionItems of Tangerine.config.Subtest.subtestOptions
+      optionHTML = ""
+      for optionName in optionItems
+        optionHTML += "<option value="+groupName+">"+optionName+"</option>";
+      optionListHTML += "<optgroup label='"+groupName+"'>" + optionHTML + "</optgroup>";
+
+    selectFormHTML = "<select name='pageType' class='pageType'>
+          <option>Select a type</option>
+          #{optionListHTML}
+        </select>"
+    
     $('ul#new_subtest_list').prepend "
       <li class='new_subtest'>
         <input name='_id' class='_id' type='text' placeholder='Subtest Name'>
-        <select name='pageType' class='pageType'>
-          <option>Select a type</option>
-          #{ _.map(@config.pageTypes, (pageType) -> "<option>#{pageType}</option>").join("") }
-        </select>
+        "+selectFormHTML+"
         <img src='images/icon_add.png' class='icon_add save_this_subtest'>
         <img src='images/icon_delete.png' class='parent_remove'>
       </li>"
@@ -150,6 +160,7 @@ class AssessmentEditView extends Backbone.View
 
   makeSortable: =>
     $("ul#subtest_list", @el).sortable
+      handle : '.sortable_handle'
       update: =>
         @model.set
           urlPathsForPages: (_.map $("li a"), (subtest) ->
@@ -163,6 +174,7 @@ class AssessmentEditView extends Backbone.View
             $("div.message").html("Error saving changes").show().fadeOut(3000)
 
   gotoAssessments: ->
+    console.log "trying ot go back to assessments"
     Tangerine.router.navigate "manage", true
 
   clearNewSubtest: ->

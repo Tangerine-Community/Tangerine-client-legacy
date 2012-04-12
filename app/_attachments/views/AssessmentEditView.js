@@ -23,7 +23,7 @@ AssessmentEditView = (function(_super) {
   };
 
   AssessmentEditView.prototype.events = {
-    "click button.back_to_assessments": "gotoAssessments",
+    "click button#back_to_assessments": "gotoAssessments",
     "click img.show_delete_subtest_confirm": "showConfirmDeleteSubtest",
     "click button.delete_subtest_yes": "deleteSubtestAffirmative",
     "click button.delete_subtest_cancel": "deleteSubtestNegative",
@@ -36,20 +36,31 @@ AssessmentEditView = (function(_super) {
 
   AssessmentEditView.prototype.render = function() {
     var _this = this;
-    this.$el.html("    <button id='back_to_asssessments'>Back to Assessments</button>    <div id='edit_assessment'>      <h1>" + (this.model.get("name")) + "</h1>      <div>        <label for='edit-archive'>Archived</label><br>        <input type='checkbox' id='edit-archive' name='archived' value='" + (this.model.get("archived" === true) ? "checked" : "") + "'></input><br/>      </div>      <h2>Subtests</h2>      <ul id='subtest_list'>        " + (_.map(this.model.get("urlPathsForPages"), function(subtestId) {
+    this.$el.html("    <button id='back_to_assessments'>Back to Assessments</button>    <div id='edit_assessment'>      <h1>" + (this.model.get("name")) + "</h1>      <div>        <label for='edit-archive'>Archived</label><br>        <input type='checkbox' id='edit-archive' name='archived' value='" + (this.model.get("archived" === true) ? "checked" : "") + "'></input><br/>      </div>      <h2>Subtests</h2>      <ul id='subtest_list'>        " + (_.map(this.model.get("urlPathsForPages"), function(subtestId) {
       return _this.renderSubtestItem(subtestId);
     }).join("")) + "      </ul>      <ul id='new_subtest_list'>        <li><img src='images/icon_add.png' class='icon_add' id='add_subtest_form'></li>        <li id='save_all_new_subtests'><button>Save All Subtests</button></li>      </ul>    </div>    ");
     return this.makeSortable();
   };
 
   AssessmentEditView.prototype.renderSubtestItem = function(subtestId) {
-    return "    <li data-subtest='" + subtestId + "' id='" + subtestId + "'>      <img src='images/icon_draggable.png'>      " + subtestId + "      <a href='#edit/assessment/" + this.model.id + "/subtest/" + subtestId + "'><img class='icon_edit' src='images/icon_edit.png'></a>      <img class='icon_delete show_delete_subtest_confirm' src='images/icon_delete.png'>      <span class='delete_confirm'>Are you sure? <button data-subtest='" + subtestId + "' class='delete_subtest_yes'>Yes</button><button class='delete_subtest_cancel'>Cancel</button></span>    </li>    ";
+    return "    <li data-subtest='" + subtestId + "' id='" + subtestId + "'>      <img src='images/icon_draggable.png' class='sortable_handle'>      " + subtestId + "      <a href='#edit/assessment/" + this.model.id + "/subtest/" + subtestId + "'><img class='icon_edit' src='images/icon_edit.png'></a>      <img class='icon_delete show_delete_subtest_confirm' src='images/icon_delete.png'>      <span class='delete_confirm'>Are you sure? <button data-subtest='" + subtestId + "' class='delete_subtest_yes'>Yes</button><button class='delete_subtest_cancel'>Cancel</button></span>    </li>    ";
   };
 
   AssessmentEditView.prototype.addSubtestForm = function() {
-    return $('ul#new_subtest_list').prepend("      <li class='new_subtest''>        <input name='_id' class='_id' type='text' placeholder='Subtest Name'>        <select name='pageType' class='pageType'>          <option>Select a type</option>          " + (_.map(this.config.pageTypes, function(pageType) {
-      return "<option>" + pageType + "</option>";
-    }).join("")) + "        </select>        <img src='images/icon_add.png' class='icon_add save_this_subtest'>        <img src='images/icon_delete.png' class='parent_remove'>      </li>");
+    var groupName, optionHTML, optionItems, optionListHTML, optionName, selectFormHTML, _i, _len, _ref;
+    optionListHTML = "";
+    _ref = Tangerine.config.Subtest.subtestOptions;
+    for (groupName in _ref) {
+      optionItems = _ref[groupName];
+      optionHTML = "";
+      for (_i = 0, _len = optionItems.length; _i < _len; _i++) {
+        optionName = optionItems[_i];
+        optionHTML += "<option value=" + groupName + ">" + optionName + "</option>";
+      }
+      optionListHTML += "<optgroup label='" + groupName + "'>" + optionHTML + "</optgroup>";
+    }
+    selectFormHTML = "<select name='pageType' class='pageType'>          <option>Select a type</option>          " + optionListHTML + "        </select>";
+    return $('ul#new_subtest_list').prepend("      <li class='new_subtest'>        <input name='_id' class='_id' type='text' placeholder='Subtest Name'>        " + selectFormHTML + "        <img src='images/icon_add.png' class='icon_add save_this_subtest'>        <img src='images/icon_delete.png' class='parent_remove'>      </li>");
   };
 
   AssessmentEditView.prototype.updateSaveAllButton = function() {
@@ -168,6 +179,7 @@ AssessmentEditView = (function(_super) {
   AssessmentEditView.prototype.makeSortable = function() {
     var _this = this;
     return $("ul#subtest_list", this.el).sortable({
+      handle: '.sortable_handle',
       update: function() {
         _this.model.set({
           urlPathsForPages: _.map($("li a"), function(subtest) {
@@ -190,6 +202,7 @@ AssessmentEditView = (function(_super) {
   };
 
   AssessmentEditView.prototype.gotoAssessments = function() {
+    console.log("trying ot go back to assessments");
     return Tangerine.router.navigate("manage", true);
   };
 
