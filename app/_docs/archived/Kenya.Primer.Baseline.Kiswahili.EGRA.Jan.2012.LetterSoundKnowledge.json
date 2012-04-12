@@ -1,6 +1,6 @@
 {
   "collection" : "subtest",
-  "_id":"Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.LetterSoundKnowledge",
+  "_id":"Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.LetterSoundKnowledge",
   "pageType": "ToggleGridWithTimer",
   "pageId": "LetterSoundKnowledge",
   "enumeratorHelp" : "<i>Muonyeshe mwanafunzi orodha ya herufi iliyomo katika kijitabu cha mwanafunzi. Kisha sema ifuatavyo:<br><br>REMINDER:<br><i>Anzisha saa ya kupimia kasi pindi mwanafunzi asomapo herufi ya mwanzo. Touch each incorrect letter (it will become blue). Touch again to mark it correct if the child self-corrects. <b>Unapaswa kukimya</b>, isipokuwa wakati unampa mwanafunzi majibu, ifuatavyo: Iwapo mwanafunzi anasita kwa muda wa sekunde 3, mpe jawabu halafu mwelekeze katika herufii inayofuata kisha umwambie <b>Tafadhali endelea </b>. Kisha utie alama ya kuonyesha hakupata jibu sahihi. If the student gives you the letter name, rather than the sound, provide the letter sound and say : <b> Please tell me the SOUND of the letter</b>. This prompt may be given only once during the exercise.<br><br> BAADA YA SEKUNDE 60 SEMA (the screen will flash red), Acha kusoma. and touch the [Stop] button. Touch the final letter read (it will place a red box on the letter--ensure that this letter is correctly marked as either correct or incorrect.<br><br><u>Kanuni ya kusitisha kusoma mapema:</u> Iwapo mwanafunzi hatapata jawabu sahihi hata moja katika mstari wote wa juu, hata kwa kujikosoa, sema <b>Asante!</b>Press the [Stop] button and the last letter attempted and go on to the next exercise.</i>",

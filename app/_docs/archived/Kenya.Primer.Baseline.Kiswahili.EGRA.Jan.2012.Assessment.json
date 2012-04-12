@@ -1,19 +1,19 @@
 {
-  "name": "Kenya Primer Baseline Kiswahili EGRA Jan 2012",
+  "name": "Kenya PRIMR Baseline Kiswahili EGRA Jan 2012",
   "archived": true,
   "urlPathsForPages": [
-    "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.StudentConsent",
-    "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.StudentInformation",
-    "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.DateTime",
-    "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.School",
-    "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.LetterSoundKnowledge",
-    "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.InventedWordDecoding",
-    "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.OralPassageReadingTimed",
-    "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.ReadingComprehensionTimed",
-    "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.OralPassageReadingUntimed",
-    "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.ReadingComprehensionUntimed",
-    "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.ListeningComprehension",
-    "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.Results"
+    "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.StudentConsent",
+    "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.StudentInformation",
+    "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.DateTime",
+    "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.School",
+    "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.LetterSoundKnowledge",
+    "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.InventedWordDecoding",
+    "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.OralPassageReadingTimed",
+    "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.ReadingComprehensionTimed",
+    "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.OralPassageReadingUntimed",
+    "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.ReadingComprehensionUntimed",
+    "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.ListeningComprehension",
+    "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.Results"
   ],
   "collection" : "assessment",
   "couchapp": {

@@ -1,6 +1,6 @@
 {
   "collection" : "subtest",
-  "_id": "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.DateTime",
+  "_id": "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.DateTime",
   "pageType": "DateTimePage",
   "pageId": "DateTime",
   "couchapp": {

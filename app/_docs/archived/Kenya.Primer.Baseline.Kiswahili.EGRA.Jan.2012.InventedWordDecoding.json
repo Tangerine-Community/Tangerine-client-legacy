@@ -1,6 +1,6 @@
 {
   "collection" : "subtest",
-  "_id": "Kenya.Primer.Baseline.Kiswahili.EGRA.Jan.2012.InventedWordDecoding",
+  "_id": "Kenya.PRIMR.Baseline.Kiswahili.EGRA.Jan.2012.InventedWordDecoding",
   "pageType": "ToggleGridWithTimer",
   "pageId": "InventedWordDecoding",
   "enumeratorHelp" : "<i>Muonyeshe mwanafunzi orodha ya maneno ya kubuni iliyomo ndani ya kijitabu cha mwanafunzi, halafu sema:<br><br>REMINDER:<br>Anzisha saa ya kupimia kasi pindi mwanafunzi asomapo neno la kwanza. Touch each incorrect letter (it will become blue). Touch again to mark it correct if the child self-corrects. <b>Unapaswa kukimya</b>, isipokuwa wakati unampa mwanafunzi majibu, ifuatavyo: Iwapo mwanafunzi anasita kwa muda wa sekunde 3, mpe jawabu halafu mwelekeze katika herufii inayofuata kisha umwambie <b>Tafadhali endelea</b>. Kwa kila neno unalomsomea mwanafunzi, tia alama ya kuonyesha hakupata jibu sahihi.<br><br>BAADA YA SEKUNDE 60 SEMA (the screen will flash red), Acha kusoma. and touch the [Stop] button. Touch the final word read (it will place a red box on the word--ensure that this word is correctly marked as either correct or incorrect).<br><br><u>Kanuni ya kusitisha kusoma mapema:</u> Iwapo mwanafunzi hatapata jawabu sahihi hata moja katika mstari wote wa juu, hata kwa kujikosoa, sema <b>Asante!</b>Press the [Stop] button and the last word attempted and go on to the next exercise.</i>",
