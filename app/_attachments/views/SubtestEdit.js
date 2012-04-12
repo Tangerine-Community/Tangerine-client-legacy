@@ -75,6 +75,7 @@ SubtestEdit = (function(_super) {
   SubtestEdit.prototype.importSubtest = function() {
     var sourceSubtest;
     sourceSubtest = this.existingSubtests.get($("form#import-from select option:selected").val());
+    $("#import-from").fadeOut(250);
     return this.populateForm(sourceSubtest.toJSON());
   };
 

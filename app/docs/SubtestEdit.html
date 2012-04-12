@@ -51,6 +51,7 @@
       
   <span class="nv">importSubtest: </span><span class="o">-&gt;</span>
     <span class="nv">sourceSubtest = </span><span class="nx">@existingSubtests</span><span class="p">.</span><span class="nx">get</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;form</span><span class="err">#</span><span class="s">import-from select option:selected&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">import-from&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
     <span class="nx">@populateForm</span><span class="p">(</span><span class="nx">sourceSubtest</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">())</span>
 
   <span class="nv">render: </span><span class="o">=&gt;</span>

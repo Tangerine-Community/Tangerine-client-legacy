@@ -51,6 +51,7 @@ class SubtestEdit extends Backbone.View
       
   importSubtest: ->
     sourceSubtest = @existingSubtests.get $("form#import-from select option:selected").val()
+    $("#import-from").fadeOut(250)
     @populateForm(sourceSubtest.toJSON())
 
   render: =>
