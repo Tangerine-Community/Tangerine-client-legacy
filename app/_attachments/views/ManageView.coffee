@@ -47,7 +47,9 @@ class ManageView extends Backbone.View
     $("#new_assessment_name").val('')
     @temp.html = ""
     @collection.each ( assessment ) =>
-      docName       = assessment.get("name")
+      docName = assessment.get("name")
+      docId   = assessment.get("_id")
+
       console.log "is archived"
       console.log assessment.get("archived")
       archiveStatus = if  assessment.get("archived") then " class='archived_assessment' " else ""
@@ -58,7 +60,7 @@ class ManageView extends Backbone.View
         <a href='#results/#{docName}'><img class='icon' src='images/icon_result.png'></a>
         <a href='#edit/assessment/#{assessment.id}'><img class='icon' src='images/icon_edit.png'></a> 
         <img class='icon_delete delete_assessment_confirm' src='images/icon_delete.png'>
-        <span class='delete_confirm'>Are you sure? <button data-docName='#{Tangerine.user.get('name')}.#{docName}'class='delete_assessment_yes'>Yes</button><button class='delete_assessment_no'>No</button></span>
+        <span class='delete_confirm'>Are you sure? <button data-docName='#{docId}'class='delete_assessment_yes'>Yes</button><button class='delete_assessment_no'>No</button></span>
       </li>"
     $("ul#assessment_list").html @temp.html
 

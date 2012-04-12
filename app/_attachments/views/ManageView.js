@@ -56,13 +56,14 @@ ManageView = (function(_super) {
     $("#new_assessment_name").val('');
     this.temp.html = "";
     this.collection.each(function(assessment) {
-      var archiveStatus, docName, safeDocName;
+      var archiveStatus, docId, docName, safeDocName;
       docName = assessment.get("name");
+      docId = assessment.get("_id");
       console.log("is archived");
       console.log(assessment.get("archived"));
       archiveStatus = assessment.get("archived") ? " class='archived_assessment' " : "";
       safeDocName = docName.toLowerCase().dasherize();
-      return _this.temp.html += "      <li id='" + safeDocName + "'><span" + archiveStatus + ">" + (assessment.get("name")) + "</span>         <a href='#results/" + docName + "'><img class='icon' src='images/icon_result.png'></a>        <a href='#edit/assessment/" + assessment.id + "'><img class='icon' src='images/icon_edit.png'></a>         <img class='icon_delete delete_assessment_confirm' src='images/icon_delete.png'>        <span class='delete_confirm'>Are you sure? <button data-docName='" + (Tangerine.user.get('name')) + "." + docName + "'class='delete_assessment_yes'>Yes</button><button class='delete_assessment_no'>No</button></span>      </li>";
+      return _this.temp.html += "      <li id='" + safeDocName + "'><span" + archiveStatus + ">" + (assessment.get("name")) + "</span>         <a href='#results/" + docName + "'><img class='icon' src='images/icon_result.png'></a>        <a href='#edit/assessment/" + assessment.id + "'><img class='icon' src='images/icon_edit.png'></a>         <img class='icon_delete delete_assessment_confirm' src='images/icon_delete.png'>        <span class='delete_confirm'>Are you sure? <button data-docName='" + docId + "'class='delete_assessment_yes'>Yes</button><button class='delete_assessment_no'>No</button></span>      </li>";
     });
     return $("ul#assessment_list").html(this.temp.html);
   };
