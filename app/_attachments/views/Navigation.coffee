@@ -35,7 +35,7 @@ class Navigation extends Backbone.View
         <div id='enumerator'></div>
       </div>
     </div>
-    ";
+    "
 
   collect: -> @router.navigate 'assessments', true
   manage: -> @router.navigate 'manage', true
@@ -67,6 +67,7 @@ class Navigation extends Backbone.View
   # Triggered on page changes
   # @TODO this method breaks easily. Need new way to check.
   handleNavigation: ->
+    $('#current-student-id').html "none"
     managePages = ["manage", "edit"]
     collectPages = ["assessments", "assessment/"]
     href = window.location.hash.toLowerCase().substr(1)

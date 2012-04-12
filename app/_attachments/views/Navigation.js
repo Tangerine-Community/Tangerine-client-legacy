@@ -65,6 +65,7 @@ Navigation = (function(_super) {
 
   Navigation.prototype.handleNavigation = function() {
     var collectPages, href, managePages;
+    $('#current-student-id').html("none");
     managePages = ["manage", "edit"];
     collectPages = ["assessments", "assessment/"];
     href = window.location.hash.toLowerCase().substr(1);
