@@ -1,102 +1,149 @@
 {
-    "name":"Config",
+    "name": "Config",
 
     "comment": "Having these here is a security fail - should limit read access to this file",
     "db_name": "tangerine",
     "design_doc_name": "tangerine",
     "user_with_database_create_permission": "tangerine",
-    "password_with_database_create_permission" : "tangytangerine",
+    "password_with_database_create_permission": "tangytangerine",
 
     "Subtest": {
-      "ignore": [
-          "_id",
-          "_rev",
-          "couchapp",
-          "pageType",
-          "collection"
-      ],
-      "htmlTextarea": [
-          "enumeratorHelp",
-          "studentDialog",
-          "content"
-      ],
-      "textarea": [
-          "items"
-      ],
-      "boolean": [
-          "includeAutostop"
-      ],
-      "number": [
-          "timer",
-          "numberOfColumns"
-      ],
-      "object": [
-          "questions"
-      ],
-      "pageTypes": [
-          "ConsentPage",
-          "DateTimePage",
-          "Interview",
-          "ResultsPage",
-          "SchoolPage",
-          "StudentIdPage",
-          "StudentInformationPage",
-          "ToggleGridWithTimer",
-          "UntimedSubtest",
-          "UntimedSubtestLinked"
-      ],
-      "pageTypeProperties": {
-          "ConsentPage": [
-              "content"
-          ],
-          "DateTimePage": [
-              
-          ],
-          "StudentIdPage":[
-          
-          ],
-          "Interview": [
-              "questions"
-          ],
-          "ResultsPage": [
-              
-          ],
-          "SchoolPage": [
-              "districtText",
-              "nameText",
-              "provinceText",
-              "schoolIdText",
-              "schools"
-          ],
-          "StudentInformationPage": [
-              "enumeratorHelp",
-              "questions",
-              "studentDialog",
-              "timer"
-          ],
-          "ToggleGridWithTimer": [
-              "enumeratorHelp",
-              "includeAutostop",
-              "items",
-              "numberOfColumns",
-              "studentDialog"
-          ],
-          "UntimedSubtest": [
-              "allowSkip",
-              "answerOptions",
-              "enumeratorHelp",
-              "questions",
-              "studentDialog"
-          ],
-          "UntimedSubtestLinked": [
-              "allowSkip",
-              "answerOptions",
-              "enumeratorHelp",
-              "linkedToPageId",
-              "questionIndices",
-              "questions",
-              "studentDialog"
-          ]
-      }
+        "ignore": [
+        "_id",
+        "_rev",
+        "couchapp",
+        "pageType",
+        "collection"
+        ],
+        "htmlTextarea": [
+        "enumeratorHelp",
+        "studentDialog",
+        "content"
+        ],
+        "textarea": [
+        "items"
+        ],
+        "boolean": [
+        "includeAutostop"
+        ],
+        "number": [
+        "timer",
+        "numberOfColumns"
+        ],
+        "object": [
+        "questions"
+        ],
+        "pageTypes": [
+        "ConsentPage",
+        "DateTimePage",
+        "Interview",
+        "ResultsPage",
+        "SchoolPage",
+        "StudentIdPage",
+        "StudentInformationPage",
+        "ToggleGridWithTimer",
+        "UntimedSubtest",
+        "UntimedSubtestLinked"
+        ],
+        "pageTypeProperties": {
+            "ConsentPage": [
+            "content"
+            ],
+            "DateTimePage": [
+
+            ],
+            "StudentIdPage": [
+
+            ],
+            "Interview": [
+            "questions"
+            ],
+            "ResultsPage": [
+
+            ],
+            "SchoolPage": [
+            "districtText",
+            "nameText",
+            "provinceText",
+            "schoolIdText",
+            "schools"
+            ],
+            "StudentInformationPage": [
+            "enumeratorHelp",
+            "questions",
+            "studentDialog",
+            "timer"
+            ],
+            "ToggleGridWithTimer": [
+            "enumeratorHelp",
+            "includeAutostop",
+            "items",
+            "numberOfColumns",
+            "studentDialog"
+            ],
+            "UntimedSubtest": [
+            "allowSkip",
+            "answerOptions",
+            "enumeratorHelp",
+            "questions",
+            "studentDialog"
+            ],
+            "UntimedSubtestLinked": [
+            "allowSkip",
+            "answerOptions",
+            "enumeratorHelp",
+            "linkedToPageId",
+            "questionIndices",
+            "questions",
+            "studentDialog"
+            ]
+        },
+        "subtestOptions": {
+            "ToggleGridWithTimer": [
+            "Letter Name Knowledge",
+            "Letter Sound Knowledge",
+            "Familiar word identification",
+            "Invented word decoding",
+            "Oral passage reading",
+            "Addition Level 1",
+            "Number Identification",
+            "Subtraction Level 1",
+            "Timed Syllable Identification"
+            ],
+            "PhonemePage": [
+            "Phoneme Segmentation"
+            ],
+            "UntimedSubtest": [
+            "Listening Comprehension",
+            "Word Problems",
+            "Initial Sounds",
+            "Number Discrimination",
+            "Missing Number",
+            "Addition Level 2"
+            ],
+            "UntimedSubtestLinked": [
+            "Untimed Reading Comprehension",
+            "Timed Reading Comprehension"
+            ],
+            "ConsentPage": [
+            "Consent Page"
+            ],
+            "DateTimePage": [
+            "Date and Time"
+            ],
+            "TextPage": [
+            "Instructions"
+            ],
+            "StudentInformationPage": [
+            "Rational Counting",
+            "Student Information"
+            ],
+            "Interview": [
+            "Pupil Context Interview"
+            ],
+            "Dictation": [
+            "Dictation"
+            ]
+        }
     }
 }
