@@ -45,7 +45,7 @@ class AssessmentListView extends Backbone.View
           success: =>
             resultCollection.each (result) =>
               return unless result.get("enumerator") is Tangerine.user.get("name")
-              assessmentDetails[result.get "assessmentId" ]["number_completed"]+=1
+              assessmentDetails[result.get "assessmentId" ]["number_completed"] += 1
 
             _.each assessmentDetails, (value,key) =>
               console.log "value"

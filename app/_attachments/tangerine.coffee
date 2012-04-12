@@ -23,7 +23,7 @@ class Router extends Backbone.Router
         Tangerine.subtestEdit.assessment_id = assessment_id
         Tangerine.subtestEdit.model = new Subtest
           _id: subtest_id
-        Tangerine.subtestEdit.model.fetch
+        Tangerine.subtestEdit.model.fetch 
           success: ->
             Tangerine.subtestEdit.render()
 
