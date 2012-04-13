@@ -3,7 +3,6 @@ jQuery.fn.topCenter = ->
   @css("top", $(window).scrollTop() + "px");
   @css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
 
-
 class MapReduce
 
   # Only install this on cloud not on data collection devices

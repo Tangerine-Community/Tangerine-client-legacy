@@ -10,7 +10,9 @@
     "Malawi EGRA Apr 2012.ReadingComprehension",
     "Malawi EGRA Apr 2012.Results"
   ],
-  "dKeys" : ["malawi"],
+  "dKeys" : ["malawi_apr_2012"],
+  "language" : "Chichewa",
+  "iso639-3" : "nya",
   "collection" : "assessment",
   "couchapp": {
   }

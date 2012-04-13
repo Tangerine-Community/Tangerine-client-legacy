@@ -1,0 +1,26 @@
+{
+  "_id" : "Language.Chichewa",
+  "language" : "Chichewa",
+  "iso639-3" : "nya",
+  "collection" : "language",
+  "dictionary" : {
+    "school shift" : "mtundu wa sukulu",
+    "school name" : "dzina la sukulu",
+    "starting time" : "nthawi yoyambira",
+    "full day" : "tsiku lonse",
+    "male" : "mwamuna",
+    "standard" : "sitandade",
+    "day" : "tsiku",
+    "month" : "mwezi",
+    "grade" : "kalasi",
+    "zone" : "dera",
+    "morning" : "m'mawa",
+    "afternoon" : "masana",
+    "district" : "boma",
+    "division" : "chigawo",
+    "age" : "zaka zakubadwa",
+    "date" : "tsiku la mayeso"
+  },
+  "couchapp": {
+  }
+}
