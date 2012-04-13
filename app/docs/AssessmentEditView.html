@@ -60,7 +60,10 @@
     <span class="k">for</span> <span class="nx">groupName</span><span class="p">,</span> <span class="nx">optionItems</span> <span class="k">of</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">Subtest</span><span class="p">.</span><span class="nx">subtestOptions</span>
       <span class="nv">optionHTML = </span><span class="s">&quot;&quot;</span>
       <span class="k">for</span> <span class="nx">optionName</span> <span class="k">in</span> <span class="nx">optionItems</span>
-        <span class="nx">optionHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;option value=&quot;</span><span class="o">+</span><span class="nx">groupName</span><span class="o">+</span><span class="s">&quot;&gt;&quot;</span><span class="o">+</span><span class="nx">optionName</span><span class="o">+</span><span class="s">&quot;&lt;/option&gt;&quot;</span><span class="p">;</span>
+        <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isObject</span> <span class="nx">optionName</span>
+          <span class="nx">optionHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;option value=&quot;</span><span class="o">+</span><span class="nx">optionName</span><span class="p">.</span><span class="nx">idValue</span><span class="o">+</span><span class="s">&quot;&gt;&quot;</span><span class="o">+</span><span class="nx">optionName</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="s">&quot;&lt;/option&gt;&quot;</span><span class="p">;</span>
+        <span class="k">else</span>
+          <span class="nx">optionHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;option value=&quot;</span><span class="o">+</span><span class="nx">groupName</span><span class="o">+</span><span class="s">&quot;&gt;&quot;</span><span class="o">+</span><span class="nx">optionName</span><span class="o">+</span><span class="s">&quot;&lt;/option&gt;&quot;</span><span class="p">;</span>
       <span class="nx">optionListHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;optgroup label=&#39;&quot;</span><span class="o">+</span><span class="nx">groupName</span><span class="o">+</span><span class="s">&quot;&#39;&gt;&quot;</span> <span class="o">+</span> <span class="nx">optionHTML</span> <span class="o">+</span> <span class="s">&quot;&lt;/optgroup&gt;&quot;</span><span class="p">;</span>
 
     <span class="nv">selectFormHTML = </span><span class="s">&quot;&lt;select name=&#39;pageType&#39; class=&#39;pageType&#39;&gt;</span>
@@ -105,6 +108,15 @@
       <span class="p">(</span><span class="nx">result</span><span class="p">,</span><span class="nx">property</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">result</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span> <span class="k">return</span> <span class="nx">result</span><span class="p">,</span> 
       <span class="p">{}</span>
     <span class="p">)</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>apply a more specific template if we have one
+@TODO there has got to be a better data structure, this algorithm is ugly
+The problem is it's gotta go option groups too</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">specificName = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;select.pageType option:selected&quot;</span><span class="p">,</span> <span class="nx">toRemove</span><span class="p">).</span><span class="nx">html</span><span class="p">()</span>
+    <span class="k">for</span> <span class="nx">subtestType</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@config</span><span class="p">.</span><span class="nx">subtestOptions</span><span class="p">[</span><span class="nx">pageType</span><span class="p">]</span>
+      <span class="k">if</span> <span class="nx">subtestType</span><span class="p">.</span><span class="nx">name</span><span class="o">?</span> 
+        <span class="k">if</span> <span class="nx">subtestType</span><span class="p">.</span><span class="nx">name</span> <span class="o">==</span> <span class="nx">specificName</span>
+          <span class="nx">subtest</span><span class="p">.</span><span class="nx">set</span> <span class="nx">subtestType</span><span class="p">.</span><span class="nx">template</span>
+        
+    
     
     <span class="nx">subtest</span><span class="p">.</span><span class="nx">save</span> <span class="kc">null</span><span class="p">,</span>
       <span class="nv">success: </span><span class="o">=&gt;</span>
