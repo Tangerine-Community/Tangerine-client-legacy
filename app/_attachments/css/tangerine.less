@@ -33,6 +33,13 @@
   -webkit-border-radius: @radius;
 }
 
+.box-shadow (@x, @y, @blur, @color)
+{
+  -moz-box-shadow: @x @y @blur @color;
+  -webkit-box-shadow: @x @y @blur @color;
+  box-shadow: @x @y @blur @color;
+}
+
 /*
  * Main
  */
@@ -44,6 +51,20 @@ body
 
 body.flash{
   background-color: @yellow;
+}
+
+.disposable_alert
+{
+  background: @orange-4;
+  color: black;
+  .border-radius(10px);
+  padding: 20px;
+  font-size: 30px;
+  .box-shadow (0, 0, 5px, rgba(0,0,0,0.3));
+
+  
+  
+  
 }
 
 /*
@@ -60,7 +81,7 @@ body.flash{
   display: none;
   padding: 5px 0 5px 5px;
   font-size: @menu_big;
-
+  .box-shadow (0, 0, 10px, rgba(100,0,0,0.4));
 }
 
 #corner_logo

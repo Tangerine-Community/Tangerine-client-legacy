@@ -271,12 +271,14 @@ $ -> # run after DOM loads
   $("#content").on("click", ".clear_message",  null, (a) -> $(a.target).parent().fadeOut(250, -> $(this).empty().show() ) )
   $("#content").on("click", ".parent_remove", null, (a) -> $(a.target).parent().fadeOut(250, -> $(this).remove() ) )
 
-  
-  $(".ajax_loading").ajaxStart ->
-    $("#corner_logo").attr "src", "images/spin_orange.gif"
+  $(".ajax_loading").ajaxStart -> $("#corner_logo").attr "src", "images/spin_orange.gif"
+  $(".ajax_loading").ajaxStop ->  $("#corner_logo").attr "src", "images/corner_logo.png"
 
-  $(".ajax_loading").ajaxStop ->
-    $("#corner_logo").attr "src", "images/corner_logo.png"
-    
-  $( '#main_nav button' ).click (event) ->
-    Tangerine.router.navigate( $( event.target ).attr( "href" ), true );
+  $("#content").on "click",".alert_button", ->
+    alert_text = if $(this).attr("data-alert") then $(this).attr("data-alert") else $(this).val()
+    Utils.disposableAlert alert_text
+
+  $("#content").on "click", ".disposable_alert", -> 
+    $(this).stop().fadeOut 250, ->
+      $(this).remove()
+

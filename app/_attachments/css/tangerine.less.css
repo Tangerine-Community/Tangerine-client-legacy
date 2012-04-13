@@ -10,6 +10,18 @@ body {
 body.flash {
   background-color: #f7c942;
 }
+.disposable_alert {
+  background: #f6ef9a;
+  color: black;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  padding: 20px;
+  font-size: 30px;
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
 /*
  * Navigation
  */
@@ -22,6 +34,9 @@ body.flash {
   display: none;
   padding: 5px 0 5px 5px;
   font-size: 20px;
+  -moz-box-shadow: 0 0 10px rgba(100, 0, 0, 0.4);
+  -webkit-box-shadow: 0 0 10px rgba(100, 0, 0, 0.4);
+  box-shadow: 0 0 10px rgba(100, 0, 0, 0.4);
 }
 #corner_logo {
   width: 45px;
@@ -119,6 +134,7 @@ div#manage a {
   background: none;
   margin: 5px;
   padding: 0;
+  -webkit-appearance: none !important;
 }
 div#manage img {
   border: 0;

@@ -1,3 +1,9 @@
+jQuery.fn.topCenter = ->
+  @css("position","absolute");
+  @css("top", $(window).scrollTop() + "px");
+  @css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
+
+
 class MapReduce
 
   # Only install this on cloud not on data collection devices
@@ -72,6 +78,6 @@ class Utils
     $.couch.replicate Tangerine.iris.host + "/tangerine", "tangerine", { success: (a, b) -> console.log [" success",a, b];}, repOps
 #        console.log # @importSubtestsFromIris() 
 
-
-#curl -H 'Content-Type: application/json' -X POST http://tangerine.iriscouch.com/_replicate -d '{"source":"http://tangerine.iriscouch.com/tangerine","target":"http://localhost:5984/tangerine", "filter":"tangerine/downloadFilter", "query_params": {"dKey":"timer-555"}}'
+  @disposableAlert: (alert_text) ->
+    $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").topCenter().delay(2000).fadeOut(250, -> $(this).remove())
 

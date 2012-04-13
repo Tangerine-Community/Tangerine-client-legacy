@@ -270,7 +270,14 @@ $(function() {
   $(".ajax_loading").ajaxStop(function() {
     return $("#corner_logo").attr("src", "images/corner_logo.png");
   });
-  return $('#main_nav button').click(function(event) {
-    return Tangerine.router.navigate($(event.target).attr("href"), true);
+  $("#content").on("click", ".alert_button", function() {
+    var alert_text;
+    alert_text = $(this).attr("data-alert") ? $(this).attr("data-alert") : $(this).val();
+    return Utils.disposableAlert(alert_text);
+  });
+  return $("#content").on("click", ".disposable_alert", function() {
+    return $(this).stop().fadeOut(250, function() {
+      return $(this).remove();
+    });
   });
 });

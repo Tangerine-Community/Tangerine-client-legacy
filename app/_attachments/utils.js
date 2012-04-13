@@ -1,5 +1,11 @@
 var MapReduce, Utils;
 
+jQuery.fn.topCenter = function() {
+  this.css("position", "absolute");
+  this.css("top", $(window).scrollTop() + "px");
+  return this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
+};
+
 MapReduce = (function() {
 
   function MapReduce() {}
@@ -115,6 +121,12 @@ Utils = (function() {
         return console.log([" success", a, b]);
       }
     }, repOps);
+  };
+
+  Utils.disposableAlert = function(alert_text) {
+    return $("<div class='disposable_alert'>" + alert_text + "</div>").appendTo("#content").topCenter().delay(2000).fadeOut(250, function() {
+      return $(this).remove();
+    });
   };
 
   return Utils;
