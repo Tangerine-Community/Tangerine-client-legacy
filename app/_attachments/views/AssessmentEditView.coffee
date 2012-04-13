@@ -60,7 +60,10 @@ class AssessmentEditView extends Backbone.View
     for groupName, optionItems of Tangerine.config.Subtest.subtestOptions
       optionHTML = ""
       for optionName in optionItems
-        optionHTML += "<option value="+groupName+">"+optionName+"</option>";
+        if _.isObject optionName
+          optionHTML += "<option value="+optionName.idValue+">"+optionName.name+"</option>";
+        else
+          optionHTML += "<option value="+groupName+">"+optionName+"</option>";
       optionListHTML += "<optgroup label='"+groupName+"'>" + optionHTML + "</optgroup>";
 
     selectFormHTML = "<select name='pageType' class='pageType'>
@@ -110,6 +113,17 @@ class AssessmentEditView extends Backbone.View
       (result,property) => result[property] = ""; return result, 
       {}
     )
+    
+    # apply a more specific template if we have one
+    # @TODO there has got to be a better data structure, this algorithm is ugly
+    # The problem is it's gotta go option groups too
+    specificName = $("select.pageType option:selected", toRemove).html()
+    for subtestType, i in @config.subtestOptions[pageType]
+      if subtestType.name? 
+        if subtestType.name == specificName
+          subtest.set subtestType.template
+        
+    
     
     subtest.save null,
       success: =>

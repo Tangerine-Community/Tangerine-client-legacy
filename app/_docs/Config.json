@@ -100,8 +100,16 @@
         },
         "subtestOptions": {
             "ToggleGridWithTimer": [
-            "Letter Name Knowledge",
-            "Letter Sound Knowledge",
+            { 
+              "name" : "Letter Name Knowledge", 
+              "idValue" : "ToggleGridWithTimer",
+              "template" : {
+                "items" : ["A", "b", "C", "d", "E"]
+              }
+            },
+            {
+              "name" : "Letter Sound Knowledge"
+            },
             "Familiar word identification",
             "Invented word decoding",
             "Oral passage reading",

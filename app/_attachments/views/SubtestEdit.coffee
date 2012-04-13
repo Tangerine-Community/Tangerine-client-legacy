@@ -18,19 +18,18 @@ class SubtestEdit extends Backbone.View
 
   deleteSubtestElement: (event) ->
     parent = $(event.target).parent().parent()
+    # I believe this type of thising is out of the "scope" of coffescript
     self = this
-    parent.fadeOut 250, -> 
+    parent.fadeOut 250, ->
       $(this).remove()
       self.save()
       self.render()
-    
-    
+
   showDeleteSubtestElementConfirm: (event) ->
     $(event.target).parent().find("span.delete_subtest_element_confirm").show(250)
-    
+
   hideDeleteSubtestElementConfirm: (event) ->
     $(event.target).parent().fadeOut(250)
-    
 
   returnToAssessment: ->
     Tangerine.router.navigate "edit/assessment/#{@assessment_id}", true
@@ -45,14 +44,21 @@ class SubtestEdit extends Backbone.View
         ).map( (subtest) ->
           "<option>#{subtest.get "_id"}</option>"
         ).join("")
-      
+
   hideImportSubtestForm: ->
     $("#import-from").hide()
-      
+
   importSubtest: ->
     sourceSubtest = @existingSubtests.get $("form#import-from select option:selected").val()
-    $("#import-from").fadeOut(250)
-    @populateForm(sourceSubtest.toJSON())
+    Utils.disposableAlert "Subtest imported"
+    $("#import-from").fadeOut 250
+    @populateForm sourceSubtest.toJSON()
+
+  importSubtest: ->
+    sourceSubtest = @existingSubtests.get $("form#import-from select option:selected").val()
+    Utils.disposableAlert "Subtest imported"
+    $("#import-from").fadeOut 250
+    @populateForm sourceSubtest.toJSON()
 
   render: =>
     @$el.html "
@@ -62,7 +68,7 @@ class SubtestEdit extends Backbone.View
 
         <div style='display:none' class='message'></div>
         <h1>#{@model.get "pageType"}</h1>
-      
+
         <form style='display:none' id='import-from'>
           Select an existing subtest and it will fill in all blank elements below with that subtest's contents
           <div>
@@ -70,7 +76,7 @@ class SubtestEdit extends Backbone.View
           </div>
           <button id='subtest_import_confirm'>Import</button><button id='subtest_import_cancel'>Cancel</button>
         </form>
-      
+
         #{@subtestEditForm()}
       </div>
       "
@@ -83,11 +89,11 @@ class SubtestEdit extends Backbone.View
     " +
         _.chain(@model.attributes)
           .map (value,key) =>
-            
+
             return null if _.include(@config.ignore, key)
-            
+
             label = "<label for='#{key}'>#{key.underscore().humanize()}</label>"
-            
+
             formElement =
               if _.include(@config.htmlTextarea, key)
                 "<textarea class='html' id='#{key}' name='#{key}'></textarea>"
@@ -105,65 +111,49 @@ class SubtestEdit extends Backbone.View
                   }
                 </select>"
               else if _.include(@config.textarea, key)
-                console.log "#{key} is a text area all of a sudden?"
                 "<textarea id='#{key}' name='#{key}'></textarea>"
-                
               else if _.include(@config.object, key) or typeof value is "object"
-                console.log "trying to render:"
-                console.log value
                 label = "" # makes it's own 'label'
                 object = {}
                 object[key] = value
                 "<div id='object_wrapper_#{key}'>#{Utils.json2Form(object)}<img src='images/icon_add.png' class='icon_add append_subtest_element' data-element='#{key}'></div>"
               else
                 "<input id='#{key}' name='#{key}' type='text'></input>"
-            
+
             return "<li>#{label}#{formElement}</li>"
 
           .compact()
           .value()
-        .join("") + 
+        .join("") +
         "
       </ul>
       <button type='button'>Save</button>
     </form>"
-  
+
   # this is not a deep copy, only one level
   appendSubtestElement: (event) ->
-    console.log "model"
-    console.log @model
-    
     # what are we copying?
     key = $(event.target).attr("data-element")
     object = @model.attributes[key]
-    
-    console.log ["object",object]
-    console.log ["key",key]
-    
+
     # is it already an array?
     if _.isArray object
-      console.log "adding to the object"
       # get the last element and zero it out
       # @TODO I should be able to grab an empty from the config, no?
       last = @zeroOut _.last(@model.attributes[key])
       object.push(last)
       @model.set key, object
     else
-      console.log "making object"
       @model.set key, [object, object]
-    
+
     object = {}
     object[key] = @model.attributes[key]
-    
-    console.log "new object"
-    console.log object
-    
+
     $("div#object_wrapper_#{key}").html Utils.json2Form(object)
-    
-  # used by appendSubtestElement    
+
+  # used by appendSubtestElement
   zeroOut:(last) ->
     # if it's an object, zero out its properties
-
     if _.isObject last
       # Just in case
       # objects are passed by reference but does that apply here?
@@ -186,8 +176,6 @@ class SubtestEdit extends Backbone.View
         else if typeof value is 'object'
           $('#'+key, @el).val JSON.stringify value,undefined,2
         else
-          console.log key
-          console.log value
           $('#'+key, @el).val value
 
     _.each $("textarea.html", @el).cleditor(), (cleditor) ->
@@ -195,8 +183,6 @@ class SubtestEdit extends Backbone.View
 
   save: ->
     result = $('form#subtestEdit').toObject {skipEmpty: false}
-    console.log "back back from toObject"
-    console.log result
     # Clean up stuff form2js missed
     result.items = result.items.split(" ") if result.items
     result.includeAutostop = $('#includeAutostop').prop("checked") if $('#includeAutostop').length

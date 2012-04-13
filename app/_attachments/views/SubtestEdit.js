@@ -75,12 +75,21 @@ SubtestEdit = (function(_super) {
   SubtestEdit.prototype.importSubtest = function() {
     var sourceSubtest;
     sourceSubtest = this.existingSubtests.get($("form#import-from select option:selected").val());
+    Utils.disposableAlert("Subtest imported");
+    $("#import-from").fadeOut(250);
+    return this.populateForm(sourceSubtest.toJSON());
+  };
+
+  SubtestEdit.prototype.importSubtest = function() {
+    var sourceSubtest;
+    sourceSubtest = this.existingSubtests.get($("form#import-from select option:selected").val());
+    Utils.disposableAlert("Subtest imported");
     $("#import-from").fadeOut(250);
     return this.populateForm(sourceSubtest.toJSON());
   };
 
   SubtestEdit.prototype.render = function() {
-    this.$el.html("      <div id='subtest_edit'>        <button id='return_to_assessment'>Return to assessment</button>        <button>Import a subtest</button>        <div style='display:none' class='message'></div>        <h1>" + (this.model.get("pageType")) + "</h1>              <form style='display:none' id='import-from'>          Select an existing subtest and it will fill in all blank elements below with that subtest's contents          <div>            <select id='existing-subtests'></select>          </div>          <button id='subtest_import_confirm'>Import</button><button id='subtest_import_cancel'>Cancel</button>        </form>              " + (this.subtestEditForm()) + "      </div>      ");
+    this.$el.html("      <div id='subtest_edit'>        <button id='return_to_assessment'>Return to assessment</button>        <button>Import a subtest</button>        <div style='display:none' class='message'></div>        <h1>" + (this.model.get("pageType")) + "</h1>        <form style='display:none' id='import-from'>          Select an existing subtest and it will fill in all blank elements below with that subtest's contents          <div>            <select id='existing-subtests'></select>          </div>          <button id='subtest_import_confirm'>Import</button><button id='subtest_import_cancel'>Cancel</button>        </form>        " + (this.subtestEditForm()) + "      </div>      ");
     $("textarea.html").cleditor();
     return this.populateForm(this.model.toJSON());
   };
@@ -93,32 +102,24 @@ SubtestEdit = (function(_super) {
       label = "<label for='" + key + "'>" + (key.underscore().humanize()) + "</label>";
       formElement = _.include(_this.config.htmlTextarea, key) ? "<textarea class='html' id='" + key + "' name='" + key + "'></textarea>" : _.include(_this.config.boolean, key) ? "<input id='" + key + "' name='" + key + "' type='checkbox'></input>" : _.include(_this.config.number, key) ? "<input id='" + key + "' name='" + key + "' type='number'></input>" : key === "pageType" ? "<select id='" + key + "' name='" + key + "'>                  " + (_.map(_this.config.pageTypes, function(type) {
         return "<option value=" + type + ">                        " + (type.underscore().humanize()) + "                      </option>";
-      }).join("")) + "                </select>" : _.include(_this.config.textarea, key) ? (console.log("" + key + " is a text area all of a sudden?"), "<textarea id='" + key + "' name='" + key + "'></textarea>") : _.include(_this.config.object, key) || typeof value === "object" ? (console.log("trying to render:"), console.log(value), label = "", object = {}, object[key] = value, "<div id='object_wrapper_" + key + "'>" + (Utils.json2Form(object)) + "<img src='images/icon_add.png' class='icon_add append_subtest_element' data-element='" + key + "'></div>") : "<input id='" + key + "' name='" + key + "' type='text'></input>";
+      }).join("")) + "                </select>" : _.include(_this.config.textarea, key) ? "<textarea id='" + key + "' name='" + key + "'></textarea>" : _.include(_this.config.object, key) || typeof value === "object" ? (label = "", object = {}, object[key] = value, "<div id='object_wrapper_" + key + "'>" + (Utils.json2Form(object)) + "<img src='images/icon_add.png' class='icon_add append_subtest_element' data-element='" + key + "'></div>") : "<input id='" + key + "' name='" + key + "' type='text'></input>";
       return "<li>" + label + formElement + "</li>";
     }).compact().value().join("") + "      </ul>      <button type='button'>Save</button>    </form>";
   };
 
   SubtestEdit.prototype.appendSubtestElement = function(event) {
     var key, last, object;
-    console.log("model");
-    console.log(this.model);
     key = $(event.target).attr("data-element");
     object = this.model.attributes[key];
-    console.log(["object", object]);
-    console.log(["key", key]);
     if (_.isArray(object)) {
-      console.log("adding to the object");
       last = this.zeroOut(_.last(this.model.attributes[key]));
       object.push(last);
       this.model.set(key, object);
     } else {
-      console.log("making object");
       this.model.set(key, [object, object]);
     }
     object = {};
     object[key] = this.model.attributes[key];
-    console.log("new object");
-    console.log(object);
     return $("div#object_wrapper_" + key).html(Utils.json2Form(object));
   };
 
@@ -148,8 +149,6 @@ SubtestEdit = (function(_super) {
         } else if (typeof value === 'object') {
           return $('#' + key, this.el).val(JSON.stringify(value, void 0, 2));
         } else {
-          console.log(key);
-          console.log(value);
           return $('#' + key, this.el).val(value);
         }
       }
@@ -164,8 +163,6 @@ SubtestEdit = (function(_super) {
     result = $('form#subtestEdit').toObject({
       skipEmpty: false
     });
-    console.log("back back from toObject");
-    console.log(result);
     if (result.items) result.items = result.items.split(" ");
     if ($('#includeAutostop').length) {
       result.includeAutostop = $('#includeAutostop').prop("checked");

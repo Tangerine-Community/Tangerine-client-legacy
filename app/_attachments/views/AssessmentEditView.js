@@ -55,7 +55,11 @@ AssessmentEditView = (function(_super) {
       optionHTML = "";
       for (_i = 0, _len = optionItems.length; _i < _len; _i++) {
         optionName = optionItems[_i];
-        optionHTML += "<option value=" + groupName + ">" + optionName + "</option>";
+        if (_.isObject(optionName)) {
+          optionHTML += "<option value=" + optionName.idValue + ">" + optionName.name + "</option>";
+        } else {
+          optionHTML += "<option value=" + groupName + ">" + optionName + "</option>";
+        }
       }
       optionListHTML += "<optgroup label='" + groupName + "'>" + optionHTML + "</optgroup>";
     }
@@ -93,7 +97,7 @@ AssessmentEditView = (function(_super) {
   };
 
   AssessmentEditView.prototype.saveNewSubtest = function(options) {
-    var pageType, subtest, toRemove, _id,
+    var i, pageType, specificName, subtest, subtestType, toRemove, _id, _len, _ref,
       _this = this;
     _id = options._id;
     pageType = options.pageType;
@@ -107,6 +111,14 @@ AssessmentEditView = (function(_super) {
       result[property] = "";
       return result;
     }, {}));
+    specificName = $("select.pageType option:selected", toRemove).html();
+    _ref = this.config.subtestOptions[pageType];
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      subtestType = _ref[i];
+      if (subtestType.name != null) {
+        if (subtestType.name === specificName) subtest.set(subtestType.template);
+      }
+    }
     subtest.save(null, {
       success: function() {
         _this.model.set({
