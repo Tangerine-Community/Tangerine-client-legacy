@@ -1,10 +1,10 @@
 {
-  "name": "Kenya PRIMR Baseline EGRA Jan 2012",
+  "name": "Kenya PRIMR Baseline English EGRA Jan 2012",
   "urlPathsForPages": [
     "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.StudentConsent",
-    "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.StudentInformation",
     "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.DateTime",
     "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.School",
+    "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.StudentInformation",
     "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.LetterSoundKnowledge",
     "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.InventedWordDecoding",
     "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.OralPassageReadingTimed",
