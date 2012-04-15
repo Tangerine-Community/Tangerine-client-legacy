@@ -1,5 +1,5 @@
-Tangerine
----------
+![Tangerine](https://github.com/Tangerine-Community/Tangerine/raw/develop/app/_attachments/images/tangerine_logo.png)
+
 A tablet/phone application for assessing students
 
 Tangerine is a couchapp.
