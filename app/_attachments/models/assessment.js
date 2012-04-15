@@ -91,7 +91,14 @@ Assessment = (function(_super) {
           }
           _this.setPages(pages);
         }
-        return options != null ? options.success() : void 0;
+        if (options != null) options.success();
+        if (_this.get("languageName") != null) {
+          return _this.set({
+            "language": new Language({
+              _id: "Language." + _this.get("languageName")
+            })
+          });
+        }
       }
     };
     return Assessment.__super__.fetch.call(this, superOptions);

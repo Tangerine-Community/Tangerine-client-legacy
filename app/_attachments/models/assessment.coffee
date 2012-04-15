@@ -59,6 +59,10 @@ class Assessment extends Backbone.Model
               pages.push page
           @setPages(pages)
         options?.success()
+        if @get("languageName")?
+          @set
+            "language" : new Language
+              _id : "Language." + @get "languageName"
 
     super(superOptions)
 
