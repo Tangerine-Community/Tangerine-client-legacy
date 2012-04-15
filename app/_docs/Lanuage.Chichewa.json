@@ -19,7 +19,12 @@
     "district" : "boma",
     "division" : "chigawo",
     "age" : "zaka zakubadwa",
-    "date" : "tsiku la mayeso"
+    "name" : "dzina",
+    "date" : "tsiku la mayeso",
+    "instructions" : "malangizo",
+    "student consent" : "kupempha chilolezo",
+    "student identifier" : "nambala ya chinsinsi ya ophunzira",
+    "create new id" : "panga nyuwani"
   },
   "couchapp": {
   }
