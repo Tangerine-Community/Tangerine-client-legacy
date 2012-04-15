@@ -329,6 +329,9 @@ div.ui-footer .ui-btn {
   padding: 20px 5px;
   margin: 10px 0 0;
 }
+.student-dialog-notbold {
+  font-weight: normal;
+}
 .student-dialog-nonverbal {
   font-weight: normal;
   font-style: italic;
