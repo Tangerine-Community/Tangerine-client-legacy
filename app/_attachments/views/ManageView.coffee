@@ -50,8 +50,6 @@ class ManageView extends Backbone.View
       docName = assessment.get("name")
       docId   = assessment.get("_id")
 
-      console.log "is archived"
-      console.log assessment.get("archived")
       archiveStatus = if  assessment.get("archived") then " class='archived_assessment' " else ""
       safeDocName   = docName.toLowerCase().dasherize()
 
@@ -87,11 +85,9 @@ class ManageView extends Backbone.View
 
     assessment.save null,
       success: =>
-        console.log "saved assessment, adding to collection"
         @collection.add assessment
         @hideNewAssessmentForm()
       error: ->
-        console.log "error saving assessment"
         $('#assessment_name_error').html 'error'
         messages = $("<span class='error'>Invalid new assessment</span>")
         $('button:contains(Add)').after(messages)
@@ -102,7 +98,6 @@ class ManageView extends Backbone.View
     $(event.target).parent().find(".delete_confirm").fadeIn(250);
 
   deleteAfirmative: (event) ->
-    console.log "trying to get " + $(event.target).attr("data-docName")
     assessment = @collection.get($(event.target).attr("data-docName"))
     assessment.destroy
       success: =>
