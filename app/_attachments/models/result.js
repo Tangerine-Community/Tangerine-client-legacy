@@ -25,7 +25,7 @@ Result = (function(_super) {
   };
 
   Result.prototype.summaryData = function(subtestName, result) {
-    var gender, returnValue, _ref;
+    var filteredResult, gender, key, returnValue, value, _ref;
     if (result.subtestType == null) {
       switch (subtestName) {
         case "timestamp":
@@ -84,7 +84,12 @@ Result = (function(_super) {
       case "UntimedSubtest":
       case "UntimedSubtestLinked":
         returnValue = {};
-        returnValue[subtestName] = Result.CountCorrectIncorrect(result);
+        filteredResult = {};
+        for (key in result) {
+          value = result[key];
+          if (key !== "subtestType") filteredResult[key] = value;
+        }
+        returnValue[subtestName] = Result.CountCorrectIncorrect(filteredResult);
         return returnValue;
       case "PupilContextInterview":
         return {

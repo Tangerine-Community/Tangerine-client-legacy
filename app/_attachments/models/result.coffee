@@ -46,7 +46,11 @@ class Result extends Backbone.Model
         Phonemes: _.keys(result).length
       when "UntimedSubtest","UntimedSubtestLinked"
         returnValue = {}
-        returnValue[subtestName] = Result.CountCorrectIncorrect(result)
+        filteredResult = {}
+        for key, value of result
+          if key != "subtestType"
+            filteredResult[key] = value
+        returnValue[subtestName] = Result.CountCorrectIncorrect(filteredResult)
         returnValue
       when "PupilContextInterview"
         PupilContextInterview: _.keys(result).length
