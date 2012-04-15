@@ -1,10 +1,10 @@
 {
-  "name": "Quick EGRA",
+  "name": "Short EGRA Example",
   "_id": "Quick EGRA.Assessment",
   "urlPathsForPages": [
-    "Example English EGRA May 2011.OralPassageReading",
-    "Example English EGRA May 2011.ReadingComprehension",
-    "Example English EGRA May 2011.Results"
+    "Quick EGRA.OralPassageReading",
+    "Quick EGRA.ReadingComprehension",
+    "Quick EGRA.Results"
   ],
   "collection" : "assessment",
   "couchapp": {
