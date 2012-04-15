@@ -10,6 +10,8 @@ Language = (function(_super) {
     Language.__super__.constructor.apply(this, arguments);
   }
 
+  Language.prototype.url = "/Language";
+
   Language.prototype.initialize = function(options) {
     return this.loadLanguage(options);
   };
@@ -25,7 +27,7 @@ Language = (function(_super) {
   };
 
   Language.prototype.translate = function(string) {
-    return $.i18n._(string);
+    return $.i18n._(string).titleize();
   };
 
   return Language;
