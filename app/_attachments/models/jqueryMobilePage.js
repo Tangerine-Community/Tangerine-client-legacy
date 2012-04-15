@@ -192,8 +192,9 @@ JQueryMobilePage.loadFromHTTP = function(options, callback) {
   $.extend(options, {
     type: 'GET',
     dataType: 'json',
-    success: function(result) {
+    success: function(result, a, b) {
       var jqueryMobilePage;
+      console.log([result, a, b]);
       try {
         jqueryMobilePage = JQueryMobilePage.deserialize(result);
         jqueryMobilePage.urlPath = urlPath;
@@ -201,6 +202,7 @@ JQueryMobilePage.loadFromHTTP = function(options, callback) {
         jqueryMobilePage.revision = result._rev;
         if (callback != null) return callback(jqueryMobilePage);
       } catch (error) {
+        console.log(error);
         console.log("Error in JQueryMobilePage.loadFromHTTP: while loading the following object:");
         console.log(result);
         return console.trace();
@@ -499,7 +501,7 @@ DateTimePage = (function(_super) {
       $("#student-id-message").html("");
       return $('#student-id').val(Checkdigit.randomIdentifier());
     });
-    return this.content = "      <form>        <div data-role='fieldcontain'>          <label for='student-id'>Student Identifier:</label>          <input type='text' name='student-id' id='student-id' />          <div id='student-id-message'></div>          <button style='display:block' type='button'>Create New ID</button>        </div>        <div data-role='fieldcontain'>          <label for='year'>Year:</label>          <input type='number' name='year' id='year' value='" + year + "' />        </div>        <div data-role='fieldcontain'>          <label for='month'>Month:</label>          <input type='text' name='month' id='month' value='" + month + "'/>        </div>        <div data-role='fieldcontain'>          <label for='day'>Day:</label>          <input type='number' name='day' id='day' value='" + day + "' />        </div>        <div data-role='fieldcontain'>          <label for='time'>Time:</label>          <input type='text' name='time' id='time' value='" + time + "' />        </div>      </form>      ";
+    return this.content = "      <form>        <div data-role='fieldcontain'>          <label for='student-id'>Student Identifier</label>          <input type='text' name='student-id' id='student-id' />          <div id='student-id-message'></div>          <button style='display:block' type='button'>Create New ID</button>        </div>        <div data-role='fieldcontain'>          <label for='year'>Year:</label>          <input type='number' name='year' id='year' value='" + year + "' />        </div>        <div data-role='fieldcontain'>          <label for='month'>Month:</label>          <input type='text' name='month' id='month' value='" + month + "'/>        </div>        <div data-role='fieldcontain'>          <label for='day'>Day:</label>          <input type='number' name='day' id='day' value='" + day + "' />        </div>        <div data-role='fieldcontain'>          <label for='time'>Time:</label>          <input type='text' name='time' id='time' value='" + time + "' />        </div>      </form>      ";
   };
 
   DateTimePage.prototype.validate = function() {

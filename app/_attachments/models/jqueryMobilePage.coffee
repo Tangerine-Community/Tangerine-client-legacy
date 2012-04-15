@@ -139,7 +139,8 @@ JQueryMobilePage.loadFromHTTP = (options, callback) ->
   $.extend options,
     type: 'GET',
     dataType: 'json',
-    success: (result) ->
+    success: (result, a, b) ->
+      console.log [result, a, b]
       try
         jqueryMobilePage = JQueryMobilePage.deserialize(result)
         jqueryMobilePage.urlPath = urlPath
@@ -147,6 +148,7 @@ JQueryMobilePage.loadFromHTTP = (options, callback) ->
         jqueryMobilePage.revision = result._rev
         callback(jqueryMobilePage) if callback?
       catch error
+        console.log error
         console.log "Error in JQueryMobilePage.loadFromHTTP: while loading the following object:"
         console.log result
         console.trace()
@@ -407,7 +409,7 @@ class DateTimePage extends AssessmentPage
     @content = "
       <form>
         <div data-role='fieldcontain'>
-          <label for='student-id'>Student Identifier:</label>
+          <label for='student-id'>Student Identifier</label>
           <input type='text' name='student-id' id='student-id' />
           <div id='student-id-message'></div>
           <button style='display:block' type='button'>Create New ID</button>
