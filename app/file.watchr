@@ -1,8 +1,15 @@
+`couchapp push`
+
+def notify(type,message)
+  `growlnotify -t "#{type}" -m "#{message}"`
+  `notify-send "#{type} - #{message}" -i /usr/share/icons/Humanity/status/128/dialog-warning.svg &`
+end
+
 watch ( '.*\.coffee$' ) { |match|
   puts "\nCompiling:\t\t#{match}"
   result = `coffee --bare --compile #{match} 2>&1`
   if result.index "In"
-    `growlnotify -t "CoffeeScript error" -m "#{result}"`
+    notify("CoffeeScript error", result)
     puts "\n\nCoffeescript error\n******************\n#{result}"
   else
     docco_result = `docco #{match}`
@@ -15,7 +22,7 @@ watch ( '.*\.less$' ) { |match|
   puts "\nCompiling:\t\t#{match}"
   result = `lessc #{match} > #{match}.css`
   if result.index "error"
-    `growlnotify -t "LESS error" -m "#{result}"`
+    notify("LESS error",result)
     puts "\n\nLESS error\n******************\n#{result}"
   else
     `couchapp push`
