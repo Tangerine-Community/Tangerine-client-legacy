@@ -1,74 +1,56 @@
-<!DOCTYPE html>  <html> <head>   <title>result.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               result.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">Result</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span>
-  <span class="nv">url: </span><span class="s">&quot;/result&quot;</span>
+<!DOCTYPE html>  <html> <head>   <title>Result.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               Result.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">ResultView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+  <span class="nv">initialize: </span><span class="o">-&gt;</span>
 
-  <span class="nv">subtestResults: </span><span class="o">-&gt;</span>
-    <span class="nv">subtestTypesToSkip = </span><span class="p">[</span>
-      <span class="s">&quot;ConsentPage&quot;</span><span class="p">,</span>
-      <span class="s">&quot;TextPage&quot;</span>
-    <span class="p">]</span>
-    <span class="nv">resultCollection = </span><span class="p">{}</span>
-    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">@toJSON</span><span class="p">(),</span>  <span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">subtestName</span><span class="p">)</span> <span class="o">=&gt;</span>
-      <span class="k">return</span> <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">subtestTypesToSkip</span><span class="p">,</span> <span class="nx">subtestName</span><span class="p">)</span>
-      <span class="nv">resultCollection = </span><span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">resultCollection</span><span class="p">,</span> <span class="nx">@summaryData</span><span class="p">(</span><span class="nx">subtestName</span><span class="p">,</span><span class="nx">result</span><span class="p">))</span>
-    <span class="k">return</span> <span class="nx">resultCollection</span>
+  <span class="nv">template: </span><span class="nx">Handlebars</span><span class="p">.</span><span class="nx">compile</span> <span class="s">&quot;</span>
+<span class="s">    &lt;table class=&#39;tablesorter&#39;&gt;</span>
+<span class="s">      &lt;thead&gt;</span>
+<span class="s">        &lt;tr&gt;</span>
+<span class="s">          &lt;th&gt;&lt;/th&gt;</span>
+<span class="s">          &lt;th&gt;Category&lt;/th&gt;</span>
+<span class="s">          &lt;th&gt;Result&lt;/th&gt;</span>
+<span class="s">        &lt;/tr&gt;</span>
+<span class="s">      &lt;/thead&gt;</span>
+<span class="s">      &lt;tbody&gt;</span>
+<span class="s">        {{{tbody}}}</span>
+<span class="s">      &lt;/tbody&gt;</span>
+<span class="s">    &lt;/table&gt;</span>
+<span class="s">    &lt;script&gt;</span>
+<span class="s">    &lt;/script&gt;</span>
+<span class="s">  &quot;</span>
 
-  <span class="nv">summaryData: </span><span class="nf">(subtestName,result) -&gt;</span>
-    <span class="nx">unless</span> <span class="nx">result</span><span class="p">.</span><span class="nx">subtestType</span><span class="o">?</span>
-      <span class="k">return</span> <span class="k">switch</span> <span class="nx">subtestName</span>
-        <span class="k">when</span> <span class="s">&quot;timestamp&quot;</span>
-          <span class="nv">FinishTime: </span><span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
-        <span class="k">when</span> <span class="s">&quot;enumerator&quot;</span>
-          <span class="nv">Enumerator: </span><span class="nx">result</span>
-        <span class="k">else</span>
-          <span class="p">{}</span>
-    <span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">skipped</span>
-      <span class="nv">returnValue = </span><span class="p">{}</span>
-      <span class="nx">returnValue</span><span class="p">[</span><span class="nx">subtestName</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;Skipped&quot;</span>
-      <span class="k">return</span> <span class="nx">returnValue</span>
-    <span class="k">return</span> <span class="k">switch</span> <span class="nx">result</span><span class="p">.</span><span class="nx">subtestType</span>
-      <span class="k">when</span> <span class="s">&quot;DateTimePage&quot;</span>
-        <span class="nv">Student: </span><span class="nx">result</span><span class="p">[</span><span class="s">&quot;student-id&quot;</span><span class="p">]</span>
-        <span class="nv">StartTime: </span><span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">result</span><span class="p">.</span><span class="nx">month</span><span class="si">}</span><span class="s"> </span><span class="si">#{</span><span class="nx">result</span><span class="p">.</span><span class="nx">day</span><span class="si">}</span><span class="s">, </span><span class="si">#{</span><span class="nx">result</span><span class="p">.</span><span class="nx">year</span><span class="si">}</span><span class="s"> </span><span class="si">#{</span><span class="nx">result</span><span class="p">.</span><span class="nx">time</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)</span>
-      <span class="k">when</span> <span class="s">&quot;Dictation&quot;</span>
-        <span class="nv">DictationScore: </span><span class="nx">_</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">result</span><span class="p">).</span><span class="nx">reduce</span><span class="p">(</span><span class="nf">(sum,n) -&gt;</span> <span class="p">(</span><span class="nx">sum</span><span class="o">+=</span><span class="nx">n</span><span class="p">))</span>
-      <span class="k">when</span> <span class="s">&quot;SchoolPage&quot;</span>
-        <span class="nv">School: </span><span class="nx">result</span><span class="p">.</span><span class="nx">name</span>
-      <span class="k">when</span> <span class="s">&quot;StudentIdPage&quot;</span>
-        <span class="nv">Student: </span><span class="nx">result</span><span class="p">.</span><span class="nx">student_id</span>
-      <span class="k">when</span> <span class="s">&quot;StudentInformationPage&quot;</span>
-        <span class="nv">gender = </span><span class="nx">result</span><span class="p">.</span><span class="nx">gender</span> <span class="o">?</span> <span class="nx">result</span><span class="p">[</span><span class="s">&quot;m--gender&quot;</span><span class="p">]</span>
-        <span class="nv">Gender: </span><span class="nx">gender</span> <span class="k">if</span> <span class="nx">gender</span>
-      <span class="k">when</span> <span class="s">&quot;ToggleGridWithTimer&quot;</span>
-        <span class="nv">returnValue = </span><span class="p">{}</span>
-        <span class="nx">returnValue</span><span class="p">[</span><span class="nx">subtestName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Result</span><span class="p">.</span><span class="nx">GridTemplate</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
-        <span class="nx">returnValue</span>
-      <span class="k">when</span> <span class="s">&quot;Phonemes&quot;</span>
-        <span class="nv">Phonemes: </span><span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">result</span><span class="p">).</span><span class="nx">length</span>
-      <span class="k">when</span> <span class="s">&quot;UntimedSubtest&quot;</span><span class="p">,</span><span class="s">&quot;UntimedSubtestLinked&quot;</span>
-        <span class="nv">returnValue = </span><span class="p">{}</span>
-        <span class="nx">returnValue</span><span class="p">[</span><span class="nx">subtestName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Result</span><span class="p">.</span><span class="nx">CountCorrectIncorrect</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
-        <span class="nx">returnValue</span>
-      <span class="k">when</span> <span class="s">&quot;PupilContextInterview&quot;</span>
-        <span class="nv">PupilContextInterview: </span><span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">result</span><span class="p">).</span><span class="nx">length</span>
-      <span class="k">when</span> <span class="s">&quot;ResultsPage&quot;</span>
-        <span class="nv">Comments: </span><span class="nx">result</span><span class="p">.</span><span class="nx">resultComment</span>
+  <span class="nv">el: </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#content&#39;</span><span class="p">)</span>
 
-<span class="nv">Result.CountCorrectIncorrect = </span><span class="nf">(result) -&gt;</span>
-  <span class="k">return</span> <span class="nx">_</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">result</span><span class="p">).</span><span class="nx">reduce</span><span class="p">(</span> <span class="nf">(memo,result) -&gt;</span>
-     <span class="nx">memo</span><span class="p">.</span><span class="nx">itemsCorrect</span><span class="o">+=</span><span class="mi">1</span> <span class="k">if</span> <span class="nx">result</span><span class="o">==</span><span class="s">&quot;Correct&quot;</span>
-     <span class="nx">memo</span><span class="p">.</span><span class="nx">attempted</span><span class="o">+=</span><span class="mi">1</span>
-     <span class="k">return</span> <span class="nx">memo</span>
-  <span class="p">,</span> <span class="p">{</span><span class="nx">itemsCorrect</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span><span class="nx">attempted</span><span class="o">:</span><span class="mi">0</span><span class="p">})</span>
+  <span class="nv">render: </span><span class="o">=&gt;</span>
+    <span class="k">return</span> <span class="nx">@template</span>
+      <span class="nv">tbody: </span><span class="nx">@tableRows</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">subtestResults</span><span class="p">())</span>
 
-<span class="nv">Result.GridTemplate = </span><span class="nf">(result) -&gt;</span>
-  <span class="nv">itemsCorrect = </span><span class="mi">0</span>
-  <span class="k">for</span> <span class="nx">itemResult</span><span class="p">,</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">result</span><span class="p">.</span><span class="nx">items</span>
-    <span class="k">if</span> <span class="nx">index</span> <span class="o">&lt;=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">attempted</span>
-      <span class="nx">itemsCorrect</span><span class="o">++</span> <span class="k">if</span> <span class="nx">itemResult</span>
-  <span class="k">return</span> <span class="p">{</span>
-    <span class="nv">itemsCorrect: </span><span class="nx">itemsCorrect</span>
-    <span class="nv">attempted: </span><span class="nx">result</span><span class="p">.</span><span class="nx">attempted</span>
-    <span class="nv">total: </span><span class="nx">result</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">length</span>
-  <span class="p">}</span>
+  <span class="nv">tableRows: </span><span class="nf">(resultCollection) -&gt;</span>
+    <span class="nv">rows = </span><span class="k">for</span> <span class="nx">key</span><span class="p">,</span><span class="nx">value</span> <span class="k">of</span> <span class="nx">resultCollection</span>
+      <span class="nv">chart = </span><span class="s">&quot;&quot;</span>
+      <span class="nv">chart = </span><span class="s">&#39;♂&#39;</span> <span class="k">if</span> <span class="nx">value</span> <span class="o">==</span> <span class="s">&#39;Male&#39;</span>
+      <span class="nv">chart = </span><span class="s">&#39;♀&#39;</span> <span class="k">if</span> <span class="nx">value</span> <span class="o">==</span> <span class="s">&#39;Female&#39;</span>
+
+      <span class="nv">key = </span><span class="nx">key</span><span class="p">.</span><span class="nx">underscore</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/_/g</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="nx">value</span><span class="p">.</span><span class="nx">itemsCorrect</span><span class="o">?</span> <span class="o">and</span> <span class="nx">value</span><span class="p">.</span><span class="nx">attempted</span><span class="o">?</span>
+        <span class="nv">chart = </span><span class="s">&quot;&lt;span class=&#39;sparkline&#39;&gt;</span><span class="si">#{</span><span class="nx">value</span><span class="p">.</span><span class="nx">total</span><span class="o">-</span><span class="nx">value</span><span class="p">.</span><span class="nx">attempted</span><span class="si">}</span><span class="s">,</span><span class="si">#{</span><span class="nx">value</span><span class="p">.</span><span class="nx">attempted</span> <span class="o">-</span> <span class="nx">value</span><span class="p">.</span><span class="nx">itemsCorrect</span><span class="si">}</span><span class="s">,</span><span class="si">#{</span><span class="nx">value</span><span class="p">.</span><span class="nx">itemsCorrect</span><span class="si">}</span><span class="s">&lt;/span&gt;&quot;</span>
+        <span class="nv">value = </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">value</span><span class="p">.</span><span class="nx">itemsCorrect</span><span class="si">}</span><span class="s">/</span><span class="si">#{</span><span class="nx">value</span><span class="p">.</span><span class="nx">attempted</span><span class="si">}</span><span class="s">&quot;</span>
+      <span class="k">else</span>
+        <span class="nv">value = </span><span class="nx">moment</span><span class="p">(</span><span class="nx">value</span><span class="p">).</span><span class="nx">format</span><span class="p">(</span><span class="s">&quot;Do MMM HH:mm&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nx">value</span><span class="p">.</span><span class="nx">getMonth</span>
+        <span class="nv">value = </span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="k">if</span> <span class="k">typeof</span> <span class="nx">value</span> <span class="o">==</span> <span class="s">&quot;object&quot;</span>
+      <span class="s">&quot;</span>
+<span class="s">      &lt;tr&gt;</span>
+<span class="s">        &lt;td&gt;</span>
+<span class="s">          </span><span class="si">#{</span><span class="nx">chart</span><span class="si">}</span><span class="s"></span>
+<span class="s">        &lt;/td&gt;</span>
+<span class="s">        &lt;td&gt;</span>
+<span class="s">          </span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s"></span>
+<span class="s">        &lt;/td&gt;</span>
+<span class="s">        &lt;td&gt;</span>
+<span class="s">          </span><span class="si">#{</span><span class="nx">value</span><span class="si">}</span><span class="s"></span>
+<span class="s">        &lt;/td&gt;</span>
+<span class="s">      &lt;/tr&gt;</span>
+<span class="s">      &quot;</span>
+    <span class="k">return</span> <span class="nx">rows</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

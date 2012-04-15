@@ -180,7 +180,6 @@ By default we expect all input fields to be filled
   <span class="nv">results: </span><span class="o">-&gt;</span>
     <span class="nx">unless</span> <span class="nx">@assessment</span><span class="p">.</span><span class="nx">currentPage</span><span class="p">.</span><span class="nx">pageId</span> <span class="o">==</span> <span class="nx">@pageId</span>
       <span class="k">return</span> <span class="nx">@lastResult</span>
-   
     <span class="vi">@lastResult = </span><span class="kc">null</span>
 
     <span class="nv">objectData = </span><span class="p">{}</span>
@@ -314,8 +313,6 @@ By default we expect all input fields to be filled
 <span class="s">          </span><span class="si">#{</span><span class="nx">listElement</span><span class="si">}</span><span class="s"></span>
 <span class="s">        {{/schools}}</span>
 <span class="s">      &lt;/ul&gt;</span>
-<span class="s">      &lt;br/&gt;</span>
-<span class="s">      &lt;br/&gt;</span>
 <span class="s">    &quot;</span>
     <span class="vi">@schoolTemplate = </span><span class="nx">Handlebars</span><span class="p">.</span><span class="nx">compile</span> <span class="nx">template</span>
 
@@ -453,7 +450,6 @@ By default we expect all input fields to be filled
 <span class="s">        You have finished assessment &lt;span class=&#39;randomIdForSubject&#39;&gt;&lt;/span&gt;. Thank the child with a small gift. Please write &lt;span class=&#39;randomIdForSubject&#39;&gt;&lt;/span&gt; on the writing sample.</span>
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;div data-role=&#39;collapsible&#39; data-collapsed=&#39;true&#39; class=&#39;results&#39;&gt;</span>
-<span class="s">        You have finished:</span>
 <span class="s">        &lt;h3&gt;Results&lt;/h3&gt;</span>
 <span class="s">        &lt;div&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
@@ -583,13 +579,16 @@ By default we expect all input fields to be filled
           <span class="nx">$</span><span class="p">(</span><span class="nx">inputElement</span><span class="p">).</span><span class="nx">parents</span><span class="p">(</span><span class="s">&quot;div[data-role=&#39;fieldcontain&#39;]&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">()</span>
           <span class="nx">@numberInputFieldsShown</span><span class="o">++</span>
       <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div</span><span class="err">#</span><span class="si">#{</span><span class="nx">@pageId</span><span class="si">}</span><span class="s">-not-enough-progress-message&quot;</span><span class="p">).</span><span class="nx">toggle</span><span class="p">(</span><span class="nx">@numberInputFieldsShown</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+
       
+
   <span class="nv">propertiesForSerialization: </span><span class="o">-&gt;</span>
     <span class="nv">properties = </span><span class="k">super</span><span class="p">()</span>
     <span class="nv">properties = </span><span class="nx">properties</span><span class="p">.</span><span class="nx">concat</span><span class="p">([</span><span class="s">&quot;questions&quot;</span><span class="p">,</span><span class="s">&quot;linkedToPageId&quot;</span><span class="p">,</span><span class="s">&quot;questionIndices&quot;</span><span class="p">])</span>
     <span class="k">return</span> <span class="nx">properties</span>
 
-  <span class="nv">validate: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Each question has three radio buttons, so divide by 3</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">numberOfQuestionsShown = </span><span class="nx">@numberInputFieldsShown</span><span class="o">/</span><span class="mi">3</span>
+  <span class="nv">validate: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Each question has three radio buttons, so divide by 3</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">numberOfQuestionsShown = </span><span class="nx">@numberInputFieldsShown</span> <span class="o">/</span> <span class="mi">3</span>
+
     <span class="nv">numberOfQuestionsAnswered = </span><span class="nx">_</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">@results</span><span class="p">())</span>
     <span class="k">if</span> <span class="nx">numberOfQuestionsAnswered</span> <span class="o">==</span> <span class="nx">numberOfQuestionsShown</span>
       <span class="k">return</span> <span class="kc">true</span>
@@ -650,7 +649,6 @@ By default we expect all input fields to be filled
   <span class="nv">results: </span><span class="o">-&gt;</span>
     <span class="nx">unless</span> <span class="nx">@assessment</span><span class="p">.</span><span class="nx">currentPage</span><span class="p">.</span><span class="nx">pageId</span> <span class="o">==</span> <span class="nx">@pageId</span>
       <span class="k">return</span> <span class="nx">@lastResult</span>
-
     <span class="vi">@lastResult = </span><span class="kc">null</span>
     <span class="vi">@lastResult = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;form</span><span class="err">#</span><span class="si">#{</span><span class="nx">@subtestId</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">toObject</span><span class="p">({</span><span class="nx">skipEmpty</span><span class="o">:</span><span class="kc">false</span><span class="p">})</span>
 
