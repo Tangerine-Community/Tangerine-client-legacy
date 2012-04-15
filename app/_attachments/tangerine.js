@@ -79,7 +79,7 @@ Router = (function(_super) {
               success: function() {
                 if (enumerator) {
                   Tangerine.resultsView.results = resultCollection.filter(function(result) {
-                    return result.get("assessmentId") === assessmentId && result.get("enumerator") === enumerator;
+                    return result.get("assessmentId") === Utils.cleanURL(assessmentId) && result.get("enumerator") === enumerator;
                   });
                 }
                 return Tangerine.resultsView.render();

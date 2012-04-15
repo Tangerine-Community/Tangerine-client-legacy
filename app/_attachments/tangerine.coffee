@@ -56,7 +56,7 @@ class Router extends Backbone.Router
               success: ->
                 if enumerator
                   Tangerine.resultsView.results = resultCollection.filter (result) ->
-                    result.get("assessmentId") is assessmentId and result.get("enumerator") is enumerator
+                    result.get("assessmentId") is Utils.cleanURL(assessmentId) and result.get("enumerator") is enumerator
                 Tangerine.resultsView.render()
 
   
