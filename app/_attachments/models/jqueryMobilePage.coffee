@@ -120,6 +120,7 @@ JQueryMobilePage.deserialize = (pageObject) ->
     when "PhonemePage"
       return PhonemePage.deserialize(pageObject)
     else
+      if not window[pageObject.pageType]? then throw new Error "Subtest type '#{pageObject.pageType}' does not exist"
       result = new window[pageObject.pageType](pageObject)
       result.load(pageObject)
       return result
@@ -134,27 +135,20 @@ JQueryMobilePage.loadFromHTTP = (options, callback) ->
   if options.url.match(/http/)
     urlPath = options.url.substring(options.url.lastIndexOf("://")+3)
   else
-    urlPath = options.url
-  # extend will merge two associative arrays
-  $.extend options,
-    type: 'GET',
-    dataType: 'json',
-    success: (result, a, b) ->
-      console.log [result, a, b]
-      try
-        jqueryMobilePage = JQueryMobilePage.deserialize(result)
-        jqueryMobilePage.urlPath = urlPath
-        jqueryMobilePage.urlScheme = "http"
-        jqueryMobilePage.revision = result._rev
-        callback(jqueryMobilePage) if callback?
-      catch error
-        console.log error
-        console.log "Error in JQueryMobilePage.loadFromHTTP: while loading the following object:"
-        console.log result
-        console.trace()
-    error: ->
-      throw "Failed to load: #{urlPath}"
-  $.ajax options
+    urlPath = Utils.cleanURL options.url
+
+  $.ajax $.extend options,
+    type     : 'GET'
+    dataType : 'json'
+    success  : (result, a, b) ->
+      jqueryMobilePage = $.extend JQueryMobilePage.deserialize(result),
+        urlPath   : urlPath
+        urlScheme : "http"
+        revision  : result._rev
+      callback jqueryMobilePage
+    error    : ->
+      throw new Error "Subtest '#{urlPath}' failed to load."
+
 
 
 JQueryMobilePage.loadFromCouchDB = (urlPath, callback) ->
@@ -700,7 +694,6 @@ class PhonemePage extends AssessmentPage
     return true
 
 
-
 PhonemePage.deserialize = (pageObject) ->
   page = new PhonemePage(pageObject.words)
   page.load(pageObject)
@@ -747,7 +740,7 @@ class ToggleGridWithTimer extends AssessmentPage
       <div class='timer'>
         <button class='timer-button'>start</button><span class='timer-seconds'></span>
       </div>
-      <div class='toggle-grid-with-timer' data-role='content'>	
+      <div class='toggle-grid-with-timer' data-role='content'>
         <form>
           <div class='grid-width'>
             #{result}

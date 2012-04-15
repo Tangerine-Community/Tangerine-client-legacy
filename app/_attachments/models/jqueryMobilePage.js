@@ -166,6 +166,9 @@ JQueryMobilePage.deserialize = function(pageObject) {
     case "PhonemePage":
       return PhonemePage.deserialize(pageObject);
     default:
+      if (!(window[pageObject.pageType] != null)) {
+        throw new Error("Subtest type '" + pageObject.pageType + "' does not exist");
+      }
       result = new window[pageObject.pageType](pageObject);
       result.load(pageObject);
       return result;
@@ -187,32 +190,24 @@ JQueryMobilePage.loadFromHTTP = function(options, callback) {
   if (options.url.match(/http/)) {
     urlPath = options.url.substring(options.url.lastIndexOf("://") + 3);
   } else {
-    urlPath = options.url;
+    urlPath = Utils.cleanURL(options.url);
   }
-  $.extend(options, {
+  return $.ajax($.extend(options, {
     type: 'GET',
     dataType: 'json',
     success: function(result, a, b) {
       var jqueryMobilePage;
-      console.log([result, a, b]);
-      try {
-        jqueryMobilePage = JQueryMobilePage.deserialize(result);
-        jqueryMobilePage.urlPath = urlPath;
-        jqueryMobilePage.urlScheme = "http";
-        jqueryMobilePage.revision = result._rev;
-        if (callback != null) return callback(jqueryMobilePage);
-      } catch (error) {
-        console.log(error);
-        console.log("Error in JQueryMobilePage.loadFromHTTP: while loading the following object:");
-        console.log(result);
-        return console.trace();
-      }
+      jqueryMobilePage = $.extend(JQueryMobilePage.deserialize(result), {
+        urlPath: urlPath,
+        urlScheme: "http",
+        revision: result._rev
+      });
+      return callback(jqueryMobilePage);
     },
     error: function() {
-      throw "Failed to load: " + urlPath;
+      throw new Error("Subtest '" + urlPath + "' failed to load.");
     }
-  });
-  return $.ajax(options);
+  }));
 };
 
 JQueryMobilePage.loadFromCouchDB = function(urlPath, callback) {
@@ -875,7 +870,7 @@ ToggleGridWithTimer = (function(_super) {
       }
     }
     result += "</tr></table>";
-    this.content = "      <div class='enumerator-help'>" + options.enumeratorHelp + "</div>      <div class='student-dialog'>" + options.studentDialog + "</div>      <div class='timer'>        <button class='timer-button'>start</button><span class='timer-seconds'></span>      </div>      <div class='toggle-grid-with-timer' data-role='content'>	        <form>          <div class='grid-width'>            " + result + "          </div>        </form>      </div>      <small>      <fieldset data-type='horizontal'>        <legend>Mode</legend>        <label for='correctIncorrectMode'>Correct/Incorrect</label><input id='correctIncorrectMode' name='mode' type='radio' value='correct-incorrect' checked='true'>        <label for='lastItemMode'>Last Item</label><input id='lastItemMode' name='mode' type='radio' value='last-item'>      </fieldset>      </small>      <div class='timer'>        <button class='timer-button'>stop</button><span class='timer-seconds'></span>      </div>      <button>reset timer</button>      <span id='confirm-reset' style='display:none;padding:5px;background-color:red;border:solid 1px'>Are you sure?<button>Yes, reset</button><button>No</button></span>      ";
+    this.content = "      <div class='enumerator-help'>" + options.enumeratorHelp + "</div>      <div class='student-dialog'>" + options.studentDialog + "</div>      <div class='timer'>        <button class='timer-button'>start</button><span class='timer-seconds'></span>      </div>      <div class='toggle-grid-with-timer' data-role='content'>        <form>          <div class='grid-width'>            " + result + "          </div>        </form>      </div>      <small>      <fieldset data-type='horizontal'>        <legend>Mode</legend>        <label for='correctIncorrectMode'>Correct/Incorrect</label><input id='correctIncorrectMode' name='mode' type='radio' value='correct-incorrect' checked='true'>        <label for='lastItemMode'>Last Item</label><input id='lastItemMode' name='mode' type='radio' value='last-item'>      </fieldset>      </small>      <div class='timer'>        <button class='timer-button'>stop</button><span class='timer-seconds'></span>      </div>      <button>reset timer</button>      <span id='confirm-reset' style='display:none;padding:5px;background-color:red;border:solid 1px'>Are you sure?<button>Yes, reset</button><button>No</button></span>      ";
     $("#" + this.pageId).live("pageshow", function(eventData) {
       var fontSize, gridWidth, letterSpan, safetyCounter, _i, _len2, _ref3;
       gridWidth = $("#" + _this.pageId + " .grid:first").width();
