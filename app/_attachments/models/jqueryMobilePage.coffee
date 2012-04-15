@@ -199,7 +199,6 @@ class AssessmentPage extends JQueryMobilePage
   results: ->
     unless @assessment.currentPage.pageId == @pageId
       return @lastResult
-   
     @lastResult = null
 
     objectData = {}
@@ -343,8 +342,6 @@ class SchoolPage extends AssessmentPage
           #{listElement}
         {{/schools}}
       </ul>
-      <br/>
-      <br/>
     "
     @schoolTemplate = Handlebars.compile template
 
@@ -488,7 +485,6 @@ class ResultsPage extends AssessmentPage
         You have finished assessment <span class='randomIdForSubject'></span>. Thank the child with a small gift. Please write <span class='randomIdForSubject'></span> on the writing sample.
       </div>
       <div data-role='collapsible' data-collapsed='true' class='results'>
-        You have finished:
         <h3>Results</h3>
         <div>
         </div>
@@ -618,7 +614,9 @@ class UntimedSubtestLinked extends UntimedSubtest
           $(inputElement).parents("div[data-role='fieldcontain']").show()
           @numberInputFieldsShown++
       $("div##{@pageId}-not-enough-progress-message").toggle(@numberInputFieldsShown == 0)
+
       
+
   propertiesForSerialization: ->
     properties = super()
     properties = properties.concat(["questions","linkedToPageId","questionIndices"])
@@ -626,7 +624,8 @@ class UntimedSubtestLinked extends UntimedSubtest
 
   validate: ->
     # Each question has three radio buttons, so divide by 3
-    numberOfQuestionsShown = @numberInputFieldsShown/3
+    numberOfQuestionsShown = @numberInputFieldsShown / 3
+
     numberOfQuestionsAnswered = _.size(@results())
     if numberOfQuestionsAnswered == numberOfQuestionsShown
       return true
@@ -687,7 +686,6 @@ class PhonemePage extends AssessmentPage
   results: ->
     unless @assessment.currentPage.pageId == @pageId
       return @lastResult
-
     @lastResult = null
     @lastResult = $("form##{@subtestId}").toObject({skipEmpty:false})
 
