@@ -9,6 +9,7 @@ class AssessmentEditView extends Backbone.View
 
   events:
     "click button#back_to_assessments"      : "gotoAssessments"
+    "click input#edit-archive"              : "updateArchive"
     "click img.show_delete_subtest_confirm" : "showConfirmDeleteSubtest"
     "click button.delete_subtest_yes"       : "deleteSubtestAffirmative"
     "click button.delete_subtest_cancel"    : "deleteSubtestNegative"
@@ -16,7 +17,6 @@ class AssessmentEditView extends Backbone.View
     "click img.save_this_subtest"           : "saveThisSubtest"
     "click li#save_all_new_subtests"        : "saveAllNewSubtests"
     "change form.newSubtest select": "subtestTypeSelected"
-    "change #edit-archive": "updateArchive"
 
   
   
@@ -152,7 +152,6 @@ class AssessmentEditView extends Backbone.View
 
   deleteSubtestAffirmative: (event) ->
     subtest_id = $(event.target).attr("data-subtest")
-    console.log [subtest_id, event]
     @model.set
       urlPathsForPages: _.without( @model.get("urlPathsForPages"), subtest_id )
     @model.save null,
@@ -188,7 +187,6 @@ class AssessmentEditView extends Backbone.View
             $("div.message").html("Error saving changes").show().fadeOut(3000)
 
   gotoAssessments: ->
-    console.log "trying ot go back to assessments"
     Tangerine.router.navigate "manage", true
 
   clearNewSubtest: ->
