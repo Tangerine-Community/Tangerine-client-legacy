@@ -54,6 +54,10 @@ this probably belongs in the constructor/initialization code</p>             </t
               <span class="nx">pages</span><span class="p">.</span><span class="nx">push</span> <span class="nx">page</span>
           <span class="nx">@setPages</span><span class="p">(</span><span class="nx">pages</span><span class="p">)</span>
         <span class="nx">options</span><span class="o">?</span><span class="p">.</span><span class="nx">success</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nx">@get</span><span class="p">(</span><span class="s">&quot;languageName&quot;</span><span class="p">)</span><span class="o">?</span>
+          <span class="nx">@set</span>
+            <span class="s">&quot;language&quot;</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">Language</span>
+              <span class="nv">_id : </span><span class="s">&quot;Language.&quot;</span> <span class="o">+</span> <span class="nx">@get</span> <span class="s">&quot;languageName&quot;</span>
 
     <span class="k">super</span><span class="p">(</span><span class="nx">superOptions</span><span class="p">)</span>
 

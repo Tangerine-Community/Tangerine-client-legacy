@@ -123,7 +123,8 @@ Should not need these separate deserialize just use the last generic one and the
     <span class="nv">urlPath = </span><span class="nx">options</span><span class="p">.</span><span class="nx">url</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>extend will merge two associative arrays</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">options</span><span class="p">,</span>
     <span class="nv">type: </span><span class="s">&#39;GET&#39;</span><span class="p">,</span>
     <span class="nv">dataType: </span><span class="s">&#39;json&#39;</span><span class="p">,</span>
-    <span class="nv">success: </span><span class="nf">(result) -&gt;</span>
+    <span class="nv">success: </span><span class="nf">(result, a, b) -&gt;</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="p">[</span><span class="nx">result</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">]</span>
       <span class="k">try</span>
         <span class="nv">jqueryMobilePage = </span><span class="nx">JQueryMobilePage</span><span class="p">.</span><span class="nx">deserialize</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
         <span class="nv">jqueryMobilePage.urlPath = </span><span class="nx">urlPath</span>
@@ -131,6 +132,7 @@ Should not need these separate deserialize just use the last generic one and the
         <span class="nv">jqueryMobilePage.revision = </span><span class="nx">result</span><span class="p">.</span><span class="nx">_rev</span>
         <span class="nx">callback</span><span class="p">(</span><span class="nx">jqueryMobilePage</span><span class="p">)</span> <span class="k">if</span> <span class="nx">callback</span><span class="o">?</span>
       <span class="k">catch</span> <span class="nx">error</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">error</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;Error in JQueryMobilePage.loadFromHTTP: while loading the following object:&quot;</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">result</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
@@ -375,7 +377,7 @@ By default we expect all input fields to be filled
     <span class="vi">@content = </span><span class="s">&quot;</span>
 <span class="s">      &lt;form&gt;</span>
 <span class="s">        &lt;div data-role=&#39;fieldcontain&#39;&gt;</span>
-<span class="s">          &lt;label for=&#39;student-id&#39;&gt;Student Identifier:&lt;/label&gt;</span>
+<span class="s">          &lt;label for=&#39;student-id&#39;&gt;Student Identifier&lt;/label&gt;</span>
 <span class="s">          &lt;input type=&#39;text&#39; name=&#39;student-id&#39; id=&#39;student-id&#39; /&gt;</span>
 <span class="s">          &lt;div id=&#39;student-id-message&#39;&gt;&lt;/div&gt;</span>
 <span class="s">          &lt;button style=&#39;display:block&#39; type=&#39;button&#39;&gt;Create New ID&lt;/button&gt;</span>
