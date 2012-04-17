@@ -546,7 +546,7 @@ ResultsPage = (function(_super) {
 
   function ResultsPage(options) {
     ResultsPage.__super__.constructor.call(this, options);
-    this.content = Handlebars.compile("      <div class='message'>        You have finished assessment <span class='randomIdForSubject'></span>. Thank the child with a small gift. Please write <span class='randomIdForSubject'></span> on the writing sample.      </div>      <div data-role='collapsible' data-collapsed='true' class='results'>        <h3>Results</h3>        <div>        </div>        <form>          <label for='comment'>Comments (if any):</label>          <textarea style='width:80%' id='comment' name='resultComment'></textarea>        </form>      </div>      <div id='result_message'>      </div>      <div id='result_controls'>        <button type='button' id='save_results_button'>Save Results</button>      </div>    ");
+    this.content = Handlebars.compile("      <div class='message'>        You have finished assessment <span class='randomIdForSubject'></span>. Thank the child with a small gift. Please write <span class='randomIdForSubject'></span> on the writing sample.      </div>      <div data-role='collapsible' data-collapsed='true' class='results'>        <div>        </div>        <form>          <label for='comment'>Comments (if any):</label>          <textarea style='width:80%' id='comment' name='resultComment'></textarea>        </form>      </div>      <div id='result_message'>      </div>      <div id='result_controls'>        <button type='button' id='save_results_button'>Save Results</button>      </div>    ");
   }
 
   ResultsPage.prototype.load = function(data) {
