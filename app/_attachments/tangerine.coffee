@@ -10,7 +10,9 @@ class Router extends Backbone.Router
     "edit/assessment/:assessment_id/subtest/:subtest_id": "editSubtest"
     "results/tabular/:assessment_id": "tabular_results"
     "results/tabular/:assessment_id/*options": "tabular_results"
-    "results/:assessmentId/*enumerator": "results"
+    "results/:assessmentId/:enumerator": "results"
+    "results/:assessmentId": "adminResults"
+
     "print/:id": "print"
     "student_printout/:id": "student_printout"
 #    "result/:id": "result"
@@ -44,49 +46,51 @@ class Router extends Backbone.Router
             Tangerine.assessmentEditView.render()
 
   results: (assessmentId, enumerator) ->
+    console.log "looking for results for #{assessmentId} by #{enumerator}"
+    assessmentId = Utils.cleanURL assessmentId
+    enumerator   = Utils.cleanURL enumerator
+    console.log "looking for results for #{assessmentId} by #{enumerator}"
+
     Tangerine.user.verify
       isUser: ->
         resultCollection = new ResultCollection()
         resultCollection.fetch
           success: ->
             Tangerine.resultsView ?= new ResultsView()
+            console.log "loading "
             Tangerine.resultsView.assessment = new Assessment
-              _id: Utils.cleanURL assessmentId
+              _id:  assessmentId
             Tangerine.resultsView.assessment.fetch
               success: ->
-                if enumerator
-                  Tangerine.resultsView.results = resultCollection.filter (result) ->
-                    result.get("assessmentId") is Utils.cleanURL(assessmentId) and result.get("enumerator") is enumerator
+                Tangerine.resultsView.results = resultCollection.filter (result) ->
+                  result.get("assessmentId") is assessmentId and result.get("enumerator") is enumerator
                 Tangerine.resultsView.render()
 
-  
-  # Have rewritten map/reduce views for this, need to refactor to use
-  # Note that views are currently not created for any current system
-  # Need to enable for cloud/laptop only situations
-  tabular_results: (assessment_id) ->
-    @verify_logged_in
-      success: ->
-        view = "reports/fields"
-        # TODO - figure out what to do about this limit
-        limit = 10000000
-        $("#content").html("Loading maximum of #{limit} items from view: #{view} from #{assessment_id}")
+  adminResults: (assessmentId) ->
+    assessmentId = Utils.cleanURL assessmentId
 
-        $.couch.db(Tangerine.database_name).view view,
-          reduce: true
-          group: true
-          success: (result) ->
-            uniqueFields = _.pluck result.rows, "key"
+    Tangerine.user.verify
+      isAdmin: ->
+        resultCollection = new ResultCollection()
+        resultCollection.fetch
+          success: ->
+            Tangerine.resultsView ?= new ResultsView()
+            Tangerine.resultsView.assessment = new Assessment
+              _id:  Utils.cleanURL assessmentId
+            Tangerine.resultsView.assessment.fetch
+              success: ->
+                Tangerine.resultsView.isAdmin = true
+                Tangerine.resultsView.results = resultCollection.filter (result) ->
+                  result.get("assessmentId") is assessmentId
+                Tangerine.resultsView.render()
 
-            $.couch.db(Tangerine.database_name).view view,
-              reduce: false
-              limit: limit
-              success: (tableResults) ->
-                Tangerine.resultsView ?= new ResultsView()
-                options = jQuery.deparam.querystring(jQuery.param.fragment())
-                Tangerine.resultsView.uniqueFields = uniqueFields
-                Tangerine.resultsView.tableResults = tableResults
-                Tangerine.resultsView.renderTable(options)
-              
+  tabular_results: (assessmentId) ->
+    assessmentId = Utils.cleanURL assessmentId
+    Tangerine.user.verify 
+      isUser: ->
+        Tangerine.csvView = new CSVView 
+          assessmentId : assessmentId
+    
 
   result: (id) ->
     @verify_logged_in
