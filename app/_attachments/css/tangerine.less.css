@@ -23,6 +23,21 @@ body.flash {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 /*
+ * Remove text-shadow in selection highlight: h5bp.com/i
+ * These selection declarations have to be separate
+ * Also: hot pink! (or customize the background color to match your design)
+ */
+::-moz-selection {
+  background: #8cc63f;
+  color: #fff;
+  text-shadow: none;
+}
+::selection {
+  background: #8cc63f;
+  color: #fff;
+  text-shadow: none;
+}
+/*
  * Navigation
  */
 #navigation {
@@ -187,6 +202,17 @@ div#subtest_edit label {
 }
 div#subtest_edit .delete_subtest_element_confirm {
   display: none;
+}
+/*
+ * CSV View
+ */
+#csv_view {
+  font-size: 12px;
+}
+#csv_view textarea {
+  width: 90%;
+  height: 200px;
+  font-family: "andale mono", "courier new", "courier", monospace;
 }
 /*
  * Typography
