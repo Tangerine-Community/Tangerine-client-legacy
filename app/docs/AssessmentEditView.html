@@ -9,14 +9,14 @@
 
   <span class="nv">events:</span>
     <span class="s">&quot;click button</span><span class="err">#</span><span class="s">back_to_assessments&quot;</span>      <span class="o">:</span> <span class="s">&quot;gotoAssessments&quot;</span>
+    <span class="s">&quot;click input</span><span class="err">#</span><span class="s">edit-archive&quot;</span>              <span class="o">:</span> <span class="s">&quot;updateArchive&quot;</span>
     <span class="s">&quot;click img.show_delete_subtest_confirm&quot;</span> <span class="o">:</span> <span class="s">&quot;showConfirmDeleteSubtest&quot;</span>
     <span class="s">&quot;click button.delete_subtest_yes&quot;</span>       <span class="o">:</span> <span class="s">&quot;deleteSubtestAffirmative&quot;</span>
     <span class="s">&quot;click button.delete_subtest_cancel&quot;</span>    <span class="o">:</span> <span class="s">&quot;deleteSubtestNegative&quot;</span>
     <span class="s">&quot;click img</span><span class="err">#</span><span class="s">add_subtest_form&quot;</span>            <span class="o">:</span> <span class="s">&quot;addSubtestForm&quot;</span>
     <span class="s">&quot;click img.save_this_subtest&quot;</span>           <span class="o">:</span> <span class="s">&quot;saveThisSubtest&quot;</span>
     <span class="s">&quot;click li</span><span class="err">#</span><span class="s">save_all_new_subtests&quot;</span>        <span class="o">:</span> <span class="s">&quot;saveAllNewSubtests&quot;</span>
-    <span class="s">&quot;change form.newSubtest select&quot;</span><span class="o">:</span> <span class="s">&quot;subtestTypeSelected&quot;</span>
-    <span class="s">&quot;change </span><span class="err">#</span><span class="s">edit-archive&quot;</span><span class="o">:</span> <span class="s">&quot;updateArchive&quot;</span>
+    <span class="s">&quot;change form.newSubtest select&quot;</span>         <span class="o">:</span> <span class="s">&quot;subtestTypeSelected&quot;</span>
 
   
   
@@ -145,7 +145,6 @@ The problem is it's gotta go option groups too</p>             </td>            
 
   <span class="nv">deleteSubtestAffirmative: </span><span class="nf">(event) -&gt;</span>
     <span class="nv">subtest_id = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-subtest&quot;</span><span class="p">)</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="p">[</span><span class="nx">subtest_id</span><span class="p">,</span> <span class="nx">event</span><span class="p">]</span>
     <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
       <span class="nv">urlPathsForPages: </span><span class="nx">_</span><span class="p">.</span><span class="nx">without</span><span class="p">(</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;urlPathsForPages&quot;</span><span class="p">),</span> <span class="nx">subtest_id</span> <span class="p">)</span>
     <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span> <span class="kc">null</span><span class="p">,</span>
@@ -181,7 +180,6 @@ The problem is it's gotta go option groups too</p>             </td>            
             <span class="nx">$</span><span class="p">(</span><span class="s">&quot;div.message&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;Error saving changes&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">().</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">3000</span><span class="p">)</span>
 
   <span class="nv">gotoAssessments: </span><span class="o">-&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;trying ot go back to assessments&quot;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;manage&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">clearNewSubtest: </span><span class="o">-&gt;</span>
