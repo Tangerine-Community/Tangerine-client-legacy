@@ -1,6 +1,9 @@
 class ResultsView extends Backbone.View
 
   el: '#content'
+  
+  initialize: ->
+    @serverContext = String(window.location).indexOf("iriscouch") != -1
 
   events:
     "click button:contains(Cloud save)" : "save"
@@ -14,17 +17,16 @@ class ResultsView extends Backbone.View
     @$el.html "
       <div id='message'></div>
       <h2>#{@assessment.get "name"}</h2>
-      <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>
-      <button>Detect save options</button>
+      #{if not @serverContext then '<div>Last save to cloud: <span id=\'lastCloudReplicationTime\'></span></div><button>Detect save options</button>' else ''}
       <div id='saveOptions'>
       </div>
       <button>CSV/Excel</button>
       <hr/>
-      Results saved by #{Tangerine.user.get("name")}:
+      Saved Results
       <div id='results'></div>
     "
-
-    @detectCloud()
+    if not @serverContext
+      @detectCloud()
     @updateLastCloudReplication()
     _.each @results, (result) =>
       Tangerine.resultView ?= new ResultView()

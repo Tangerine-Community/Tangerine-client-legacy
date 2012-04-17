@@ -14,6 +14,10 @@ ResultsView = (function(_super) {
 
   ResultsView.prototype.el = '#content';
 
+  ResultsView.prototype.initialize = function() {
+    return this.serverContext = String(window.location).indexOf("iriscouch") !== -1;
+  };
+
   ResultsView.prototype.events = {
     "click button:contains(Cloud save)": "save",
     "click button:contains(Local save)": "save",
@@ -25,8 +29,8 @@ ResultsView = (function(_super) {
 
   ResultsView.prototype.render = function() {
     var _this = this;
-    this.$el.html("      <div id='message'></div>      <h2>" + (this.assessment.get("name")) + "</h2>      <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>      <button>Detect save options</button>      <div id='saveOptions'>      </div>      <button>CSV/Excel</button>      <hr/>      Results saved by " + (Tangerine.user.get("name")) + ":      <div id='results'></div>    ");
-    this.detectCloud();
+    this.$el.html("      <div id='message'></div>      <h2>" + (this.assessment.get("name")) + "</h2>      " + (!this.serverContext ? '<div>Last save to cloud: <span id=\'lastCloudReplicationTime\'></span></div><button>Detect save options</button>' : '') + "      <div id='saveOptions'>      </div>      <button>CSV/Excel</button>      <hr/>      Saved Results      <div id='results'></div>    ");
+    if (!this.serverContext) this.detectCloud();
     this.updateLastCloudReplication();
     _.each(this.results, function(result) {
       var finishTime;
