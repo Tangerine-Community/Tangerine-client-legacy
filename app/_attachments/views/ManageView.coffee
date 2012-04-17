@@ -55,7 +55,7 @@ class ManageView extends Backbone.View
 
       @temp.html += "
       <li id='#{safeDocName}'><span#{archiveStatus}>#{assessment.get("name")}</span> 
-        <a href='#results/#{docName}'><img class='icon' src='images/icon_result.png'></a>
+        <a href='#results/#{docId}'><img class='icon' src='images/icon_result.png'></a>
         <a href='#edit/assessment/#{assessment.id}'><img class='icon' src='images/icon_edit.png'></a> 
         <img class='icon_delete delete_assessment_confirm' src='images/icon_delete.png'>
         <span class='delete_confirm'>Are you sure? <button data-docName='#{docId}'class='delete_assessment_yes'>Yes</button><button class='delete_assessment_no'>No</button></span>
