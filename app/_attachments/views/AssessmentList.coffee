@@ -31,25 +31,27 @@ class AssessmentListView extends Backbone.View
     assessmentCollection = new AssessmentCollection()
     assessmentCollection.fetch
       success: =>
+
+        archivedAssessments = []
         assessmentDetails = {}
         assessmentCollection.each (assessment) =>
-          return if assessment.get("archived") is true
-          assessmentDetails[assessment.get "_id"] =
-            id : assessment.get "_id" 
-            name : assessment.get "name"
-            enumerator : Tangerine.user.get "name"
-            number_completed : 0
+          if assessment.get("archived") is true
+            archivedAssessments.push(assessment.get "_id")
+          else
+            assessmentDetails[assessment.get "_id"] =
+              id : assessment.get "_id" 
+              name : assessment.get "name"
+              enumerator : Tangerine.user.get "name"
+              number_completed : 0
 
         resultCollection = new ResultCollection()
         resultCollection.fetch
           success: =>
             resultCollection.each (result) =>
-              return unless result.get("enumerator") is Tangerine.user.get("name")
-              assessmentDetails[result.get "assessmentId" ]["number_completed"] += 1
+              if (result.get("enumerator") == Tangerine.user.get("name")) && (_.indexOf(archivedAssessments, result.get("assessmentId")) ==-1)
+                assessmentDetails[result.get("assessmentId")]["number_completed"] += 1
 
             _.each assessmentDetails, (value,key) =>
-              console.log "value"
-              console.log value
               @$el.find("#assessments tbody").append @templateTableRow value
 
             $('table').tablesorter()

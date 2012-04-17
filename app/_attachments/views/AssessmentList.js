@@ -25,27 +25,30 @@ AssessmentListView = (function(_super) {
     assessmentCollection = new AssessmentCollection();
     return assessmentCollection.fetch({
       success: function() {
-        var assessmentDetails, resultCollection;
+        var archivedAssessments, assessmentDetails, resultCollection;
+        archivedAssessments = [];
         assessmentDetails = {};
         assessmentCollection.each(function(assessment) {
-          if (assessment.get("archived") === true) return;
-          return assessmentDetails[assessment.get("_id")] = {
-            id: assessment.get("_id"),
-            name: assessment.get("name"),
-            enumerator: Tangerine.user.get("name"),
-            number_completed: 0
-          };
+          if (assessment.get("archived") === true) {
+            return archivedAssessments.push(assessment.get("_id"));
+          } else {
+            return assessmentDetails[assessment.get("_id")] = {
+              id: assessment.get("_id"),
+              name: assessment.get("name"),
+              enumerator: Tangerine.user.get("name"),
+              number_completed: 0
+            };
+          }
         });
         resultCollection = new ResultCollection();
         return resultCollection.fetch({
           success: function() {
             resultCollection.each(function(result) {
-              if (result.get("enumerator") !== Tangerine.user.get("name")) return;
-              return assessmentDetails[result.get("assessmentId")]["number_completed"] += 1;
+              if ((result.get("enumerator") === Tangerine.user.get("name")) && (_.indexOf(archivedAssessments, result.get("assessmentId")) === -1)) {
+                return assessmentDetails[result.get("assessmentId")]["number_completed"] += 1;
+              }
             });
             _.each(assessmentDetails, function(value, key) {
-              console.log("value");
-              console.log(value);
               return _this.$el.find("#assessments tbody").append(_this.templateTableRow(value));
             });
             return $('table').tablesorter();
