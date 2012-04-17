@@ -54,7 +54,7 @@ class SubtestEdit extends Backbone.View
     $("#import-from").fadeOut 250
     @populateForm sourceSubtest.toJSON()
 
-  importSubtest: ->
+  importSubtest: -> 
     sourceSubtest = @existingSubtests.get $("form#import-from select option:selected").val()
     Utils.disposableAlert "Subtest imported"
     $("#import-from").fadeOut 250
@@ -89,7 +89,6 @@ class SubtestEdit extends Backbone.View
     " +
         _.chain(@model.attributes)
           .map (value,key) =>
-
             return null if _.include(@config.ignore, key)
 
             label = "<label for='#{key}'>#{key.underscore().humanize()}</label>"
@@ -191,6 +190,6 @@ class SubtestEdit extends Backbone.View
     @model.save null,
       success: ->
         $("form#subtestEdit").effect "highlight", {color: "#F7C942"}, 2000
-        $("div.message").html("Saved").show().fadeOut(3000)
+        Utils.disposableAlert "Subtest saved"
       error: ->
-        $("div.message").html("Error saving changes").show().fadeOut(3000)
+        Utils.disposableAlert "Error saving subtest"

@@ -173,10 +173,10 @@ SubtestEdit = (function(_super) {
         $("form#subtestEdit").effect("highlight", {
           color: "#F7C942"
         }, 2000);
-        return $("div.message").html("Saved").show().fadeOut(3000);
+        return Utils.disposableAlert("Subtest saved");
       },
       error: function() {
-        return $("div.message").html("Error saving changes").show().fadeOut(3000);
+        return Utils.disposableAlert("Error saving subtest");
       }
     });
   };
