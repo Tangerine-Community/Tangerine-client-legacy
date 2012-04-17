@@ -1,6 +1,7 @@
 {
-  "name": "Kenya PRIMR English EGRA Jan 2012",
-  "urlPathsForPages": [
+    "_id": "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.Assessment",
+    "name": "Kenya PRIMR English EGRA Jan 2012",
+    "urlPathsForPages": [
     "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.StudentConsent",
     "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.DateTime",
     "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.School",
@@ -13,8 +14,7 @@
     "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.ReadingComprehensionUntimed",
     "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.PupilContextInterview",
     "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.Results"
-  ],
-  "collection" : "assessment",
-  "couchapp": {
-  }
+    ],
+    "collection": "assessment",
+    "couchapp": {}
 }

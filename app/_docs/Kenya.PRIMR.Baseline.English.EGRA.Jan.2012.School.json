@@ -1,74 +1,75 @@
 {
-  "collection" : "subtest",
-  "_id": "Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.School",
-  "pageType": "SchoolPage",
-  "pageId": "School",
-  "schools": [
+  "_id":"Kenya.PRIMR.Baseline.English.EGRA.Jan.2012.School",
+  "pageId":"School",
+  "provinceText":"Zone",
+  "collection":"subtest",
+  "nameText":"Name",
+  "districtText":"District",
+  "schools":[
     {
-      "name": "Excellent Care Centre Starehe Mathare",
-      "district": "Starehe",
-      "schoolId": "100101",
-      "province": "Mathare"
+      "province":"Mathare",
+      "schoolId":"100101",
+      "name":"Excellent Care Centre Starehe Mathare",
+      "district":"Starehe"
     },
     {
-      "name": "Genesis Joy Institute -Primary",
-      "district": "Starehe",
-      "schoolId": "100102",
-      "province": "Mathare"
+      "province":"Mathare",
+      "schoolId":"100102",
+      "name":"Genesis Joy Institute -Primary",
+      "district":"Starehe"
     },
     {
-      "name": "Maji Mazuri Headstart School",
-      "district": "Starehe",
-      "schoolId": "100103",
-      "province": "Mathare"
+      "province":"Mathare",
+      "schoolId":"100103",
+      "name":"Maji Mazuri Headstart School",
+      "district":"Starehe"
     },
     {
-      "name": "MCEDO Beijing",
-      "district": "Starehe",
-      "schoolId": "100104",
-      "province": "Mathare"
+      "province":"Mathare",
+      "schoolId":"100104",
+      "name":"MCEDO Beijing",
+      "district":"Starehe"
     },
     {
-      "name": "MCO - Primary",
-      "district": "Starehe",
-      "schoolId": "100105",
-      "province": "Mathare"
+      "province":"Mathare",
+      "schoolId":"100105",
+      "name":"MCO - Primary",
+      "district":"Starehe"
     },
     {
-      "name": "MCO Joy",
-      "district": "Starehe",
-      "schoolId": "100106",
-      "province": "Mathare"
+      "province":"Mathare",
+      "schoolId":"100106",
+      "name":"MCO Joy",
+      "district":"Starehe"
     },
     {
-      "name": "Mercy Care Centre Primary",
-      "district": "Starehe",
-      "schoolId": "100107",
-      "province": "Mathare"
+      "province":"Mathare",
+      "schoolId":"100107",
+      "name":"Mercy Care Centre Primary",
+      "district":"Starehe"
     },
     {
-      "name": "Naioth Education Center",
-      "district": "Starehe",
-      "schoolId": "100108",
-      "province": "Mathare"
+      "province":"Mathare",
+      "schoolId":"100108",
+      "name":"Naioth Education Center",
+      "district":"Starehe"
     },
     {
-      "name": "NECI Education Center",
-      "district": "Starehe",
-      "schoolId": "100109",
-      "province": "Mathare"
+      "province":"Mathare",
+      "schoolId":"100109",
+      "name":"NECI Education Center",
+      "district":"Starehe"
     },
     {
-      "name": "Valley View Academy",
-      "district": "Starehe",
-      "schoolId": "100110",
-      "province": "Mathare"
+      "province":"Mathare",
+      "schoolId":"100110",
+      "name":"Valley View Academy",
+      "district":"Starehe"
     }
   ],
-  "nameText": "Name",
-  "schoolIdText": "ID",
-  "districtText": "District",
-  "provinceText": "Zone",
-  "couchapp": {
+  "pageType":"SchoolPage",
+  "schoolIdText":"ID",
+  "couchapp":{
+
   }
 }
