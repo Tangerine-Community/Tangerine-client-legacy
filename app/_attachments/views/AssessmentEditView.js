@@ -24,14 +24,14 @@ AssessmentEditView = (function(_super) {
 
   AssessmentEditView.prototype.events = {
     "click button#back_to_assessments": "gotoAssessments",
+    "click input#edit-archive": "updateArchive",
     "click img.show_delete_subtest_confirm": "showConfirmDeleteSubtest",
     "click button.delete_subtest_yes": "deleteSubtestAffirmative",
     "click button.delete_subtest_cancel": "deleteSubtestNegative",
     "click img#add_subtest_form": "addSubtestForm",
     "click img.save_this_subtest": "saveThisSubtest",
     "click li#save_all_new_subtests": "saveAllNewSubtests",
-    "change form.newSubtest select": "subtestTypeSelected",
-    "change #edit-archive": "updateArchive"
+    "change form.newSubtest select": "subtestTypeSelected"
   };
 
   AssessmentEditView.prototype.render = function() {
@@ -154,7 +154,6 @@ AssessmentEditView = (function(_super) {
   AssessmentEditView.prototype.deleteSubtestAffirmative = function(event) {
     var subtest_id;
     subtest_id = $(event.target).attr("data-subtest");
-    console.log([subtest_id, event]);
     this.model.set({
       urlPathsForPages: _.without(this.model.get("urlPathsForPages"), subtest_id)
     });
@@ -214,7 +213,6 @@ AssessmentEditView = (function(_super) {
   };
 
   AssessmentEditView.prototype.gotoAssessments = function() {
-    console.log("trying ot go back to assessments");
     return Tangerine.router.navigate("manage", true);
   };
 
