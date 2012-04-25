@@ -6,7 +6,7 @@
 #       around the thread a bit. It keeps everything in check, no doubt, but it's...inelegant.
 class User extends Backbone.Model
 
-  url: 'user'
+  url: '/user'
 
   defaults:
     name        : null
@@ -55,8 +55,7 @@ class User extends Backbone.Model
         @set 
           name  : user.name
           roles : user.roles
-        
-        Tangerine.router.navigate @get("landingPage"), true
+        # Tangerine.router.navigate @get("landingPage"), true
       error: ( status, error, message ) =>
         if @temp.intent? && @temp.intent == "retry_login"
           @addMessage message
@@ -64,7 +63,6 @@ class User extends Backbone.Model
           @temp.intent = "login"
           @signup @temp.name, @temp.pass
 
-  # $.couch callbacks don't have access to parameters for some reason
   # Hacky note. This method requires that $.couch.session be set to async: false.
   # Apparently my favorite thing to do is mess with $.couch
   # @callbacks Supports isAdmin, isUser, unregistered
@@ -73,8 +71,8 @@ class User extends Backbone.Model
     $.couch.session
       success: ( resp ) =>
         if resp.userCtx.name == null
+          callbacks?.unregistered? resp
           Tangerine.router.navigate "login", true
-          callbacks?.unregistered? resp 
         else
           @set
             name   : resp.userCtx.name
@@ -90,8 +88,6 @@ class User extends Backbone.Model
       error: ( status, error, reason ) ->
         # this is an odd situation to write code for. Don't think it's possible to get here
         console.log ["Session Error", "User does not appear to be logged in. #{error}:<br>#{reason}"]
-        # Send them to the login page
-        Tangerine.router.navigate "login", true
 
   logout: ->
     $.couch.logout

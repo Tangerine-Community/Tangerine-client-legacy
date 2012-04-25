@@ -1,62 +1,63 @@
-var Navigation,
+var NavigationView,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-Navigation = (function(_super) {
+NavigationView = (function(_super) {
 
-  __extends(Navigation, _super);
+  __extends(NavigationView, _super);
 
-  function Navigation() {
+  function NavigationView() {
     this.handleMenu = __bind(this.handleMenu, this);
     this.initialize = __bind(this.initialize, this);
-    Navigation.__super__.constructor.apply(this, arguments);
+    NavigationView.__super__.constructor.apply(this, arguments);
   }
 
-  Navigation.prototype.el = '#navigation';
+  NavigationView.prototype.el = '#navigation';
 
-  Navigation.prototype.events = {
+  NavigationView.prototype.events = {
     'click span#collect_link': 'collect',
     'click span#manage_link': 'manage',
     'click span#logout_link': 'logout',
     'click button': 'submenuHandler'
   };
 
-  Navigation.prototype.initialize = function(options) {
+  NavigationView.prototype.initialize = function(options) {
     this.render();
     this.user = options.user;
     this.router = options.router;
     this.user.on('change', this.handleMenu);
-    this.user.trigger('change');
-    return this.router.on('all', this.handleNavigation);
+    return this.user.trigger('change');
   };
 
-  Navigation.prototype.submenuHandler = function(event) {
+  NavigationView.prototype.submenuHandler = function(event) {
     var _base;
+    console.log("trying to handle");
+    console.log(vm.currentView.submenuHandler != null);
     return typeof (_base = vm.currentView).submenuHandler === "function" ? _base.submenuHandler(event) : void 0;
   };
 
-  Navigation.prototype.closeSubmenu = function() {
+  NavigationView.prototype.closeSubmenu = function() {
     return this.$el.find("main_nav").empty();
   };
 
-  Navigation.prototype.render = function() {
-    return this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <span id='version'></span>    <nav id='main_nav'>            <!--span id='collect_link' class='nav_link'>COLLECT</span>      <span id='manage_link' class='nav_link'>MANAGE</span-->    </nav>    <div id='session_info'>      <div id='student_id_box'>        Student ID <div id='current-student-id'>none</div>      </div>      <div id='enumerator_box'>        Enumerator <span id='logout_link' class='nav_link'>LOGOUT</span>        <div id='enumerator'></div>      </div>    </div>    ");
+  NavigationView.prototype.render = function() {
+    return this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <span id='version'></span>    <nav id='submenu'></nav>    <div id='enumerator_box'>      Enumerator <span id='logout_link'>LOGOUT</span>      <div id='enumerator'></div>    </div>    ");
   };
 
-  Navigation.prototype.collect = function() {
+  NavigationView.prototype.collect = function() {
     return this.router.navigate('assessments', true);
   };
 
-  Navigation.prototype.manage = function() {
+  NavigationView.prototype.manage = function() {
     return this.router.navigate('manage', true);
   };
 
-  Navigation.prototype.logout = function() {
+  NavigationView.prototype.logout = function() {
     return this.router.navigate('logout', true);
   };
 
-  Navigation.prototype.handleMenu = function() {
+  NavigationView.prototype.handleMenu = function() {
     $('#enumerator').html(this.user.get('name'));
     $('#collect_link, #manage_link').hide();
     return this.user.verify({
@@ -72,28 +73,6 @@ Navigation = (function(_super) {
     });
   };
 
-  Navigation.prototype.handleNavigation = function() {
-    var collectPages, href, managePages;
-    $('#current-student-id').html("none");
-    managePages = ["manage", "edit"];
-    collectPages = ["assessments", "assessment/"];
-    href = window.location.hash.toLowerCase().substr(1);
-    if (_.any(managePages, function(e) {
-      return href.substr(0, e.length).indexOf(e) !== -1;
-    })) {
-      $("nav#main_nav span").removeClass("border_on");
-      return $("#manage_link").addClass("border_on");
-    } else if (_.any(collectPages, function(e) {
-      return href.substr(0, e.length).indexOf(e) !== -1;
-    })) {
-      $("nav#main_nav span").removeClass("border_on");
-      return $("#collect_link").addClass("border_on");
-    } else {
-      $("nav#main_nav span").removeClass("border_on");
-      return $("#manage_link").addClass("border_on");
-    }
-  };
-
-  return Navigation;
+  return NavigationView;
 
 })(Backbone.View);

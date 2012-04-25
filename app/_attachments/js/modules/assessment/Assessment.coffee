@@ -3,15 +3,20 @@ class Assessment extends Backbone.Model
   url: '/assessment'
 
   defaults:
-    name   : "Untitled"
-    group  : "default"
-    author : "admin"
+    name     : "Untitled"
+    group    : "default"
+    author   : "admin"
+    subtests : []
 
-  initialize: ->
+  initialize: (options) ->
     @set
-      name   : defaults.name
-      group  : defaults.group
-      author : defaults.author
+      name     : options?.name     ? @defaults.name
+      group    : options?.group    ? @defaults.group
+      author   : options?.author   ? @defaults.author
+      subtests : options?.subtests ? @defaults.subtests
 
-  
+  fetch: (options) ->
+    super(options)
+    subtests
+
   

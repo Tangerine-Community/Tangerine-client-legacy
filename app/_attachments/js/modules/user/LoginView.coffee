@@ -1,32 +1,36 @@
 class LoginView extends Backbone.View
 
-  initialize: (model) ->
-    @model = model
+  className: 'login_view'
+
+  events:
+    "click button" : "login"
+    "submit form"  : "login"
+    "keypress"     : "login"
+
+  initialize: (options) ->
+    @model = options.model
     @model.on "change:messages", @renderMessages
-  
-  el: '#content'
+    @render()
 
   render: =>
     @$el.html "
-      <div id='login_wrapper'>
-        <img src='images/tangerine_logo.png'>
-        <div id='login_message'></div>
-        <form id='login_form'>
-          <label for='login_name'>Enumerator Name</label>
-          <input id='login_username' name='login_username'>
-          <label for='login_password'>Password</label>
-          <input id='login_password' name='login_username' type='password'>
-          <input id='login_button' type='submit' value='Login'>
-        </form>
-      </div>
+      <img src='images/tangerine_logo.png'>
+      <div class='messages'></div>
+      <label for='login_username'>Enumerator Name</label>
+      <input id='login_username' name='login_username'>
+      <label for='login_password'>Password</label>
+      <input id='login_password' name='login_username' type='password'>
+      <button>Login</button>
     "
+    @trigger "rendered"
 
-  events:
-    "submit form#login_form": "login"
-
-  login: ->
-    values = Utils.getValues("#login_form")
-    @model.login values["login_username"], values["login_password"]
+  login: (event) ->
+    if event.which? and event.which == 13
+      values = Utils.getValues(@el)
+      if values['login_password'] == ""
+        @$el.find('#login_password').focus()
+        return
+      @model.login values["login_username"], values["login_password"]
   
   renderMessages: =>
     messages = @model.get("messages") || []
@@ -34,5 +38,5 @@ class LoginView extends Backbone.View
     for message in messages
       html += "<li>#{message}</li>"
     html += "</ul>"
-    $("#login_message").html html 
+    @$el.find(".messages").html html 
     

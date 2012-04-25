@@ -95,14 +95,10 @@ Utils = (function() {
   Utils.getValues = function(selector) {
     var values;
     values = {};
-    $(selector + " input").each(function(index, element) {
+    $(selector).find("input, textarea").each(function(index, element) {
       return values[element.id] = element.value;
     });
     return values;
-  };
-
-  Utils.okBox = function(title, message) {
-    return console.log([title, message]);
   };
 
   Utils.cleanURL = function(url) {

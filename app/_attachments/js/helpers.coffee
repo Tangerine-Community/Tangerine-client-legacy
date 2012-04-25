@@ -62,18 +62,16 @@ class Utils
   # this function is a lot like jQuery.serializeArray, except that it returns useful output
   @getValues: ( selector ) ->
     values = {}
-    $(selector + " input").each ( index, element ) -> 
+    $(selector).find("input, textarea").each ( index, element ) -> 
       values[element.id] = element.value
     return values
-
-  @okBox: ( title, message ) ->
-    console.log [title, message]
 
   @cleanURL: (url) ->
     if url.indexOf?("%") != -1 
       url = decodeURIComponent url
     else
       url
+
   # Should this go another place?
   @importAssessmentFromIris: (dKey) ->
     repOps = 
@@ -82,7 +80,7 @@ class Utils
       'query_params' :
         'dKey' : dKey
     $.couch.replicate Tangerine.iris.host + "/tangerine", "tangerine", { success: (a, b) -> console.log [" success",a, b];}, repOps
-#        console.log # @importSubtestsFromIris() 
+    # console.log @importSubtestsFromIris() 
 
   # Disposable alert
   # @param pause miliseconds to leave message on screen, 0 means it will stay until clicked

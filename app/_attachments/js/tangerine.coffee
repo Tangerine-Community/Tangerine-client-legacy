@@ -19,15 +19,20 @@ class Router extends Backbone.Router
         dashboard = new DashboardView
         vm.show dashboard
       isUser: ->
-        Tangerine.router.navigate "assessments"
+        Tangerine.router.navigate "assessments", true
 
   assessments: ->
-    Tangerine.user.verify()
-    assessments = new AssessmentListView
-    vm.show assessments
+    Tangerine.user.verify
+      isUser: ->
+        assessments = new AssessmentListView
+        vm.show assessments
+
+  run: (name) ->
+    
 
   login: ->
-    loginView = LoginView()
+    loginView = new LoginView
+      model : Tangerine.user
     vm.show loginView
 
   logout: ->
@@ -40,15 +45,14 @@ $ -> # run after DOM loads
   #
   # Start the application
   #
-  
-  # Reuse the view objects to stop events from being duplicated (and to save memory)
-  
+
+  window.vm = new ViewManager()
 
   # Durables
   # Things here should be reused
   Tangerine.router = new Router()
   Tangerine.user   = new User()
-  Tangerine.nav = new Navigation
+  Tangerine.nav    = new NavigationView
     user   : Tangerine.user
     router : Tangerine.router
 
@@ -72,7 +76,7 @@ $ -> # run after DOM loads
   $("#content").on "click",".alert_button", ->
     alert_text = if $(this).attr("data-alert") then $(this).attr("data-alert") else $(this).val()
     Utils.disposableAlert alert_text
-  $("#content").on "click", ".disposable_alert", -> 
+  $("#content").on "click", ".disposable_alert", ->
     $(this).stop().fadeOut 250, ->
       $(this).remove()
 

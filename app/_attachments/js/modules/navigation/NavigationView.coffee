@@ -16,9 +16,10 @@ class NavigationView extends Backbone.View
 
     @user.on 'change', @handleMenu
     @user.trigger 'change'
-    @router.on 'all', @handleNavigation
 
   submenuHandler: (event) ->
+    console.log "trying to handle"
+    console.log vm.currentView.submenuHandler?
     vm.currentView.submenuHandler? event
 
   closeSubmenu: ->
@@ -29,14 +30,9 @@ class NavigationView extends Backbone.View
     <img id='corner_logo' src='images/corner_logo.png'>
     <span id='version'></span>
     <nav id='submenu'></nav>
-    <div id='session_info'>
-      <div id='student_id_box'>
-        Student ID <div id='current-student-id'>none</div>
-      </div>
-      <div id='enumerator_box'>
-        Enumerator <span id='logout_link' class='nav_link'>LOGOUT</span>
-        <div id='enumerator'></div>
-      </div>
+    <div id='enumerator_box'>
+      Enumerator <span id='logout_link'>LOGOUT</span>
+      <div id='enumerator'></div>
     </div>
     "
 
@@ -65,23 +61,6 @@ class NavigationView extends Backbone.View
         $( '#navigation' ).hide()
 
 
-  # Hide and show navigation pane
-  # Triggered on page changes
-  # @TODO this method breaks easily. Need new way to check.
-  handleNavigation: ->
-    $('#current-student-id').html "none"
-    managePages = ["manage", "edit"]
-    collectPages = ["assessments", "assessment/"]
-    href = window.location.hash.toLowerCase().substr(1)
-    if _.any(managePages, ( e ) -> href.substr(0,e.length).indexOf(e) != -1)
-      $("nav#main_nav span").removeClass("border_on")
-      $("#manage_link").addClass("border_on")
-    else if _.any(collectPages, ( e ) -> href.substr(0,e.length).indexOf(e) != -1)
-      $("nav#main_nav span").removeClass("border_on")
-      $("#collect_link").addClass("border_on")  
-    else
-      $("nav#main_nav span").removeClass("border_on")
-      $("#manage_link").addClass("border_on")  
 
 
   

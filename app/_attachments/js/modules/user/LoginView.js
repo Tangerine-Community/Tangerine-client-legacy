@@ -13,25 +13,35 @@ LoginView = (function(_super) {
     LoginView.__super__.constructor.apply(this, arguments);
   }
 
-  LoginView.prototype.initialize = function(model) {
-    this.model = model;
-    return this.model.on("change:messages", this.renderMessages);
-  };
-
-  LoginView.prototype.el = '#content';
-
-  LoginView.prototype.render = function() {
-    return this.$el.html("      <div id='login_wrapper'>        <img src='images/tangerine_logo.png'>        <div id='login_message'></div>        <form id='login_form'>          <label for='login_name'>Enumerator Name</label>          <input id='login_username' name='login_username'>          <label for='login_password'>Password</label>          <input id='login_password' name='login_username' type='password'>          <input id='login_button' type='submit' value='Login'>        </form>      </div>    ");
-  };
+  LoginView.prototype.className = 'login_view';
 
   LoginView.prototype.events = {
-    "submit form#login_form": "login"
+    "click button": "login",
+    "submit form": "login",
+    "keypress": "login"
   };
 
-  LoginView.prototype.login = function() {
+  LoginView.prototype.initialize = function(options) {
+    this.model = options.model;
+    this.model.on("change:messages", this.renderMessages);
+    return this.render();
+  };
+
+  LoginView.prototype.render = function() {
+    this.$el.html("      <img src='images/tangerine_logo.png'>      <div class='messages'></div>      <label for='login_username'>Enumerator Name</label>      <input id='login_username' name='login_username'>      <label for='login_password'>Password</label>      <input id='login_password' name='login_username' type='password'>      <button>Login</button>    ");
+    return this.trigger("rendered");
+  };
+
+  LoginView.prototype.login = function(event) {
     var values;
-    values = Utils.getValues("#login_form");
-    return this.model.login(values["login_username"], values["login_password"]);
+    if ((event.which != null) && event.which === 13) {
+      values = Utils.getValues(this.el);
+      if (values['login_password'] === "") {
+        this.$el.find('#login_password').focus();
+        return;
+      }
+      return this.model.login(values["login_username"], values["login_password"]);
+    }
   };
 
   LoginView.prototype.renderMessages = function() {
@@ -43,7 +53,7 @@ LoginView = (function(_super) {
       html += "<li>" + message + "</li>";
     }
     html += "</ul>";
-    return $("#login_message").html(html);
+    return this.$el.find(".messages").html(html);
   };
 
   return LoginView;

@@ -21,7 +21,7 @@ watch ( '.*\.coffee$' ) { |match|
 watch ( '.*\.less$' ) { |match| 
   puts "\nCompiling:\t\t#{match}"
   result = `lessc #{match} > #{match}.css`
-  if result.index "error"
+  if result.index "Error"
     notify("LESS error",result)
     puts "\n\nLESS error\n******************\n#{result}"
   else

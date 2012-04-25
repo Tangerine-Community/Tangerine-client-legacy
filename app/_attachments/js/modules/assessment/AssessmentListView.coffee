@@ -1,9 +1,5 @@
 class AssessmentListView extends Backbone.View
 
-  tagName   : "ul"
-
-  className : "assessmentList"
-
   events:
     'submit form'                  : 'newAssessmentSave'
     'click .new_assessment_save'   : 'newAssessmentSave'
@@ -24,8 +20,7 @@ class AssessmentListView extends Backbone.View
 
   initialize:(options) ->
     @isAdmin = Tangerine.user.isAdmin
-
-    @initializeSubmenu() unless options.submenu == false
+    #@initializeSubmenu()
 
     @views = []
     @collection = new Assessments null,
@@ -42,11 +37,15 @@ class AssessmentListView extends Backbone.View
         @collection.trigger "change"
 
   initializeSubmenu: ->
+    console.log "test"
     if @isAdmin
-      $("nav#main_nav").html "<button data-submenu='new'>new</button>"
+      
+      $("nav#submenu").html "<button data-submenu='new'>new</button>"
 
   submenuHandler: (event) ->
     submenu = $(event.target).attr "data-submenu"
+    console.log "test"
+    console.log submenu
     if submenu == "new"
       @newAssessmentShow()
 
@@ -56,20 +55,25 @@ class AssessmentListView extends Backbone.View
     @views = []
 
     @$el.html "
+      <h2>Assessments</h2>
       <form class='new_assessment_form'>
         <input type='text' class='new_assessment_name' placeholder='Assessment Name'>
         <button class='new_assessment_save'>Save</button>
         <button class='new_assessment_cancel'>Cancel</button>
-      </form>"
+      </form>
+      "
+
+    unorderedList = $('<ul>').addClass('assessment_list')
 
     for assessment in @collection.models
-      lastView = new AssessmentElementView
+      oneView = new AssessmentElementView
         model : assessment
-        isAdmin : @isAdmin
-      @views.push lastView
-      lastView.render()
-      @$el.append lastView.el
-    
+      @views.push oneView
+      oneView.render()
+      unorderedList.append oneView.el
+
+    @$el.append unorderedList
+
     @trigger "rendered"
   
 

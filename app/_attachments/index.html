@@ -9,6 +9,8 @@
     <link rel="apple-touch-icon-precomposed" href="images/TangerineIcon.png"/> 
 
     <link rel="stylesheet" href="css/tangerine.less.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/jquery-ui.css">
 
     <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
     <script src="js/lib/modernizr-custom.js"></script>
@@ -17,12 +19,7 @@
 
   </head> 
   <body>
-
-    <div id='navigation' class="clearfix">
-    </div>
-
-    <div class="ajax_loading"><img src='images/tangerine-spin.gif'>Loading...</div>
-    
+    <div id='navigation' class="clearfix"></div>
     <div id='content'></div>
 
     <script src="js/lib/jquery.js"></script>
@@ -32,11 +29,9 @@
     <script src="js/lib/jquery-ui.js"></script>
     <script src="js/lib/handlebars.js"></script>
     <script src="js/lib/mobile_boilerplate.js"></script>
-
     <script src="js/lib/inflection.js"></script>
     <script src="js/lib/backbone.js"></script>
     <script src="js/lib/backbone-couchdb.js"></script>
-
     <script src="js/lib/transcriptionCheckdigit.js"></script>
     <script src="js/lib/table2CSV.js"></script>
     <script src="js/lib/base64.js"></script>
@@ -51,7 +46,10 @@
     <script src="js/modules/user/LoginView.js"></script>
 
     <script src="js/modules/dashboard/DashboardView.js"></script>
+
     <script src="js/modules/language/Language.js"></script>
+
+    <script src="js/modules/viewManager/ViewManager.js"></script>
 
     <script src="js/modules/navigation/NavigationView.js"></script>
     

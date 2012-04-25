@@ -10,7 +10,7 @@ User = (function(_super) {
     User.__super__.constructor.apply(this, arguments);
   }
 
-  User.prototype.url = 'user';
+  User.prototype.url = '/user';
 
   User.prototype.defaults = {
     name: null,
@@ -68,11 +68,10 @@ User = (function(_super) {
       password: this.temp.pass,
       success: function(user) {
         _this.clearAttempt();
-        _this.set({
+        return _this.set({
           name: user.name,
           roles: user.roles
         });
-        return Tangerine.router.navigate(_this.get("landingPage"), true);
       },
       error: function(status, error, message) {
         if ((_this.temp.intent != null) && _this.temp.intent === "retry_login") {
@@ -90,8 +89,12 @@ User = (function(_super) {
     return $.couch.session({
       success: function(resp) {
         if (resp.userCtx.name === null) {
-          Tangerine.router.navigate("login", true);
-          return callbacks != null ? typeof callbacks.unregistered === "function" ? callbacks.unregistered(resp) : void 0 : void 0;
+          if (callbacks != null) {
+            if (typeof callbacks.unregistered === "function") {
+              callbacks.unregistered(resp);
+            }
+          }
+          return Tangerine.router.navigate("login", true);
         } else {
           _this.set({
             name: resp.userCtx.name,
@@ -114,8 +117,7 @@ User = (function(_super) {
         }
       },
       error: function(status, error, reason) {
-        console.log(["Session Error", "User does not appear to be logged in. " + error + ":<br>" + reason]);
-        return Tangerine.router.navigate("login", true);
+        return console.log(["Session Error", "User does not appear to be logged in. " + error + ":<br>" + reason]);
       }
     });
   };
