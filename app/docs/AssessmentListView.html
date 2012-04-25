@@ -1,0 +1,74 @@
+<!DOCTYPE html>  <html> <head>   <title>AssessmentListView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               AssessmentListView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">AssessmentListView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">events:</span>
+    <span class="s">&#39;submit form&#39;</span>                  <span class="o">:</span> <span class="s">&#39;newAssessmentSave&#39;</span>
+    <span class="s">&#39;click .new_assessment_save&#39;</span>   <span class="o">:</span> <span class="s">&#39;newAssessmentSave&#39;</span>
+    <span class="s">&#39;click .new_assessment_cancel&#39;</span> <span class="o">:</span> <span class="s">&#39;newAssessmentHide&#39;</span>
+    <span class="s">&#39;click .add_assessment&#39;</span>        <span class="o">:</span> <span class="s">&#39;newAssessmentShow&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Making a new assessment</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">newAssessmentShow: </span> <span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_form&#39;</span><span class="p">).</span><span class="nx">show</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+  <span class="nv">newAssessmentHide: </span> <span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_form&#39;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+  <span class="nv">newAssessmentValid: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_name&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span>
+  <span class="nv">newAssessmentSave: </span><span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="nx">@newAssessmentValid</span>
+      <span class="nv">newAssessment = </span><span class="k">new</span> <span class="nx">Assessment</span>
+        <span class="s">&#39;name&#39;</span> <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_name&#39;</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;messages&#39;</span><span class="p">).</span><span class="nx">append</span> <span class="s">&quot;&lt;span class=&#39;error&#39;&gt;Error saving changes &lt;img src=&#39;images/icon_close.png&#39; class=&#39;clear_message&#39;&gt;&lt;/span&gt;&quot;</span>
+
+
+  <span class="nx">initialize</span><span class="o">:</span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@isAdmin = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isAdmin</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>@initializeSubmenu()</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@views = </span><span class="p">[]</span>
+    <span class="vi">@collection = </span><span class="k">new</span> <span class="nx">Assessments</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nv">group : </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">group</span>
+      <span class="nv">comparator : </span><span class="nf">(a, b) -&gt;</span>
+        <span class="k">if</span> <span class="nx">a</span><span class="p">.</span><span class="nx">name</span> <span class="o">&gt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">name</span> <span class="k">then</span> <span class="mi">1</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="nx">@collection</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;change&quot;</span><span class="p">,</span> <span class="nx">@render</span>
+    <span class="nx">@collection</span><span class="p">.</span><span class="nx">fetch</span>
+      <span class="nv">success: </span><span class="o">=&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>maybe this isn't the best place for a filter
+only applies to this list</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">@collection</span><span class="p">.</span><span class="nx">filter</span> <span class="nf">(a, b, c) -&gt;</span> <span class="k">return</span> <span class="o">-&gt;</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>; if ! assessment.get('group') || assessment.get('group') == @collection.group then true else false</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">@collection</span><span class="p">.</span><span class="nx">trigger</span> <span class="s">&quot;change&quot;</span>
+
+  <span class="nv">initializeSubmenu: </span><span class="o">-&gt;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;test&quot;</span>
+    <span class="k">if</span> <span class="nx">@isAdmin</span>
+      
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;nav</span><span class="err">#</span><span class="s">submenu&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;&lt;button data-submenu=&#39;new&#39;&gt;new&lt;/button&gt;&quot;</span>
+
+  <span class="nv">submenuHandler: </span><span class="nf">(event) -&gt;</span>
+    <span class="nv">submenu = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span> <span class="s">&quot;data-submenu&quot;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;test&quot;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">submenu</span>
+    <span class="k">if</span> <span class="nx">submenu</span> <span class="o">==</span> <span class="s">&quot;new&quot;</span>
+      <span class="nx">@newAssessmentShow</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>maintain thisness</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">render: </span><span class="o">=&gt;</span>
+    <span class="nx">@closeViews</span><span class="p">()</span>
+    <span class="vi">@views = </span><span class="p">[]</span>
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">      &lt;h2&gt;Assessments&lt;/h2&gt;</span>
+<span class="s">      &lt;form class=&#39;new_assessment_form&#39;&gt;</span>
+<span class="s">        &lt;input type=&#39;text&#39; class=&#39;new_assessment_name&#39; placeholder=&#39;Assessment Name&#39;&gt;</span>
+<span class="s">        &lt;button class=&#39;new_assessment_save&#39;&gt;Save&lt;/button&gt;</span>
+<span class="s">        &lt;button class=&#39;new_assessment_cancel&#39;&gt;Cancel&lt;/button&gt;</span>
+<span class="s">      &lt;/form&gt;</span>
+<span class="s">      &quot;</span>
+
+    <span class="nv">unorderedList = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;&lt;ul&gt;&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;assessment_list&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="nx">assessment</span> <span class="k">in</span> <span class="nx">@collection</span><span class="p">.</span><span class="nx">models</span>
+      <span class="nv">oneView = </span><span class="k">new</span> <span class="nx">AssessmentElementView</span>
+        <span class="nv">model : </span><span class="nx">assessment</span>
+      <span class="nx">@views</span><span class="p">.</span><span class="nx">push</span> <span class="nx">oneView</span>
+      <span class="nx">oneView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
+      <span class="nx">unorderedList</span><span class="p">.</span><span class="nx">append</span> <span class="nx">oneView</span><span class="p">.</span><span class="nx">el</span>
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">unorderedList</span>
+
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+  
+
+
+  <span class="nv">closeViews: </span><span class="o">-&gt;</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">@views</span><span class="p">,</span> <span class="nf">(view) -&gt;</span> <span class="nx">view</span><span class="p">.</span><span class="nx">close</span>
+    
+  <span class="nv">onClose: </span><span class="o">-&gt;</span>
+    <span class="nx">@closeViews</span><span class="p">()</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
