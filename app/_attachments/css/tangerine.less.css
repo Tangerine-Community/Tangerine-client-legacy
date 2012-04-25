@@ -43,11 +43,9 @@ body.flash {
 #navigation {
   min-height: 50px;
   background-color: #f6c637;
-  background-image: url("../images/corner_logo.png");
-  background-repeat: no-repeat;
   background-position: 5px 6px;
   display: none;
-  padding: 5px 0 5px 5px;
+  padding: 5px 5px 5px 5px;
   font-size: 20px;
   -moz-box-shadow: 0 0 10px rgba(100, 0, 0, 0.2);
   -webkit-box-shadow: 0 0 10px rgba(100, 0, 0, 0.2);
@@ -71,13 +69,32 @@ nav#main_nav .nav_link {
   vertical-align: middle;
   cursor: pointer;
 }
+nav#main_nav button {
+  font-size: 20px;
+  margin: 0;
+  color: white;
+  background-color: #f26f10;
+  border: 0 !important;
+  vertical-align: middle;
+  padding: 5px !important;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  font-weight: normal;
+}
+nav#main_nav button:active {
+  background-color: #f49b00;
+}
+.new_assessment_form,
+.assessment_menu {
+  display: none;
+}
 #session_info .nav_link {
   color: black;
 }
-.icon_delete,
-.icon_add,
-.icon_edit {
+.link_icon {
   cursor: pointer !important;
+  margin-right: 10px;
 }
 #save_all_new_subtests {
   display: none;
@@ -124,42 +141,26 @@ button {
 #content {
   padding: 5px;
 }
-/*
- * Manage
- */
-#new_assessment {
-  display: none;
-}
-div#manage #import_from_cloud {
-  display: none;
-}
-div#manage ul {
-  list-style: none;
-  text-indent: 0;
-  margin: 0;
-  padding: 0;
-}
-div#manage li {
-  border-bottom: 1px solid #888888;
-  padding: 5px 0;
-  vertical-align: middle;
-}
-div#manage a {
-  border: 0;
-  background: none;
-  margin: 5px;
-  padding: 0;
-  -webkit-appearance: none !important;
-}
-div#manage img {
-  border: 0;
-  vertical-align: middle;
-}
-div#manage .archived_assessment {
-  color: #aaa !important;
-}
 span.delete_confirm {
   display: none;
+}
+/*
+ * assessmentList
+ */
+ul.assessmentList {
+  text-indent: 0px;
+  margin: 0px;
+  padding: 0px;
+}
+ul.assessmentList li {
+  list-style: none;
+  margin-top: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #888888;
+}
+ul.assessmentList .resultCount {
+  color: #888888;
+  font-size: 20px;
 }
 /*
  * edit assessment
@@ -218,12 +219,15 @@ div#subtest_edit .delete_subtest_element_confirm {
  * Typography
  */
 h1 {
+  font-size: 30px;
   margin: 10px 0 15px;
-  font-size: 50px;
 }
 h2 {
+  font-size: 20px;
   margin: 10px 0 15px;
-  font-size: 40px;
+}
+h3 {
+  font-size: 15px;
 }
 /*
  * Subtests
@@ -496,4 +500,99 @@ label[for='edit-archive'] {
   display: block;
   clear: both;
   margin: 10px 0;
+}
+/*
+ * cleditor
+ */
+.cleditorMain {
+  border: 1px solid #999;
+  padding: 0 1px 1px;
+  background-color: #ffffff;
+}
+.cleditorMain iframe {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+.cleditorMain textarea {
+  border: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: scroll;
+  font: 10pt Arial,Verdana;
+  resize: none;
+  outline: none /* webkit grip focus */;
+}
+.cleditorToolbar {
+  background: url('images/toolbar.gif') repeat;
+}
+.cleditorGroup {
+  float: left;
+  height: 26px;
+}
+.cleditorButton {
+  float: left;
+  width: 24px;
+  height: 24px;
+  margin: 1px 0 1px 0;
+  background: url('images/buttons.gif');
+}
+.cleditorDisabled {
+  opacity: 0.3;
+  filter: alpha(opacity=30);
+}
+.cleditorDivider {
+  float: left;
+  width: 1px;
+  height: 23px;
+  margin: 1px 0 1px 0;
+  background: #cccccc;
+}
+.cleditorPopup {
+  border: solid 1px #999;
+  background-color: white;
+  position: absolute;
+  font: 10pt Arial,Verdana;
+  cursor: default;
+  z-index: 10000;
+}
+.cleditorList div {
+  padding: 2px 4px 2px 4px;
+}
+.cleditorList p,
+.cleditorList h1,
+.cleditorList h2,
+.cleditorList h3,
+.cleditorList h4,
+.cleditorList h5,
+.cleditorList h6,
+.cleditorList font {
+  padding: 0;
+  margin: 0;
+  background-color: Transparent;
+}
+.cleditorColor {
+  width: 150px;
+  padding: 1px 0 0 1px;
+}
+.cleditorColor div {
+  float: left;
+  width: 14px;
+  height: 14px;
+  margin: 0 1px 1px 0;
+}
+.cleditorPrompt {
+  background-color: #F6F7F9;
+  padding: 4px;
+  font-size: 8.5pt;
+}
+.cleditorPrompt input,
+.cleditorPrompt textarea {
+  font: 8.5pt Arial,Verdana;
+}
+.cleditorMsg {
+  background-color: #FDFCEE;
+  width: 150px;
+  padding: 4px;
+  font-size: 8.5pt;
 }

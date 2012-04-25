@@ -1,6 +1,7 @@
 {
   "_id" : "Malawi EGRA Apr 2012.Assessment",
   "name": "Malawi EGRA Apr 2012",
+  "group" : "malawi",
   "archived" : true,
   "urlPathsForPages": [
     "Malawi EGRA Apr 2012.StudentConsent",
