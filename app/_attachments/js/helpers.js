@@ -12,6 +12,29 @@ jQuery.fn.topCenter = function() {
   return this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
 };
 
+jQuery.fn.middleCenter = function() {
+  this.css("position", "absolute");
+  this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
+  return this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
+};
+
+jQuery.fn.serializeSubtest = function() {
+  var result;
+  result = {};
+  $.map($(this).serializeArray(), function(element, i) {
+    if (result[element.name] != null) {
+      if ($.isArray(result[element.name])) {
+        return result[element.name].push(element.value);
+      } else {
+        return result[element.name] = [result[element.name], element.value];
+      }
+    } else {
+      return result[element.name] = element.value;
+    }
+  });
+  return result;
+};
+
 MapReduce = (function() {
 
   function MapReduce() {}
@@ -82,16 +105,6 @@ Utils = (function() {
 
   function Utils() {}
 
-  Utils.sudo = function(options) {
-    var credentials;
-    credentials = {
-      name: Tangerine.config.user_with_database_create_permission,
-      password: Tangerine.config.password_with_database_create_permission
-    };
-    options = _.extend(options, credentials);
-    return $.couch.login(options);
-  };
-
   Utils.getValues = function(selector) {
     var values;
     values = {};
@@ -125,10 +138,24 @@ Utils = (function() {
     }, repOps);
   };
 
-  Utils.disposableAlert = function(alert_text, opt) {
+  Utils.topAlert = function(alert_text) {
     return $("<div class='disposable_alert'>" + alert_text + "</div>").appendTo("#content").topCenter().delay(2000).fadeOut(250, function() {
       return $(this).remove();
     });
+  };
+
+  Utils.midAlert = function(alert_text) {
+    return $("<div class='disposable_alert'>" + alert_text + "</div>").appendTo("#content").middleCenter().delay(2000).fadeOut(250, function() {
+      return $(this).remove();
+    });
+  };
+
+  Utils.S4 = function() {
+    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+  };
+
+  Utils.guid = function() {
+    return this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4();
   };
 
   return Utils;
@@ -137,17 +164,35 @@ Utils = (function() {
 
 Context = (function() {
 
-  function Context() {}
-
-  Context.prototype.on = function(callbacks, options) {
-    if (options == null) options = {};
-    if (String(window.location).indexOf("iriscouch") !== -1) {
-      return callbacks.isServer(options);
-    } else {
-      return callbacks.isTablet(options);
-    }
-  };
+  function Context() {
+    this.mobile = ~(String(window.location).indexOf("iriscouch")) ? false : true;
+    this.kindle = /kindle/.test(navigator.userAgent.toLowerCase());
+    this.server = ~(String(window.location).indexOf("iriscouch")) ? true : false;
+  }
 
   return Context;
 
 })();
+
+$(function() {
+  $("#content").on("click", ".clear_message", null, function(a) {
+    return $(a.target).parent().fadeOut(250, function() {
+      return $(this).empty().show();
+    });
+  });
+  $("#content").on("click", ".parent_remove", null, function(a) {
+    return $(a.target).parent().fadeOut(250, function() {
+      return $(this).remove();
+    });
+  });
+  $("#content").on("click", ".alert_button", function() {
+    var alert_text;
+    alert_text = $(this).attr("data-alert") ? $(this).attr("data-alert") : $(this).val();
+    return Utils.disposableAlert(alert_text);
+  });
+  return $("#content").on("click", ".disposable_alert", function() {
+    return $(this).stop().fadeOut(250, function() {
+      return $(this).remove();
+    });
+  });
+});

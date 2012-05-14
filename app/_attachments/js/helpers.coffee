@@ -4,11 +4,35 @@ Backbone.View.prototype.close = ->
   @unbind()
   @onClose?()
 
-# handy jquery function, places content top and center
+
+#
+# handy jquery functions
+#
+
+# place something top and center
 jQuery.fn.topCenter = ->
-  @css("position","absolute");
-  @css("top", $(window).scrollTop() + "px");
-  @css("left", (($(window).width() - @outerWidth()) / 2) + $(window).scrollLeft() + "px");
+  @css "position", "absolute"
+  @css "top", $(window).scrollTop() + "px"
+  @css "left", (($(window).width() - @outerWidth()) / 2) + $(window).scrollLeft() + "px"
+
+# place something middle center
+jQuery.fn.middleCenter = ->
+  @css "position", "absolute"
+  @css "top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px"
+  @css "left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px"
+
+# take a Tangerine "form" and output JSON
+jQuery.fn.serializeSubtest = ->
+  result = {}
+  $.map $(@).serializeArray(), (element, i) ->
+    if result[element.name]?
+      if $.isArray result[element.name]
+        result[element.name].push element.value
+      else
+        result[element.name] = [result[element.name], element.value]
+    else
+      result[element.name] = element.value
+  result
 
 class MapReduce
 
@@ -52,13 +76,6 @@ class MapReduce
 
 class Utils
 
-  @sudo: (options) ->
-    credentials = 
-      name: Tangerine.config.user_with_database_create_permission,
-      password: Tangerine.config.password_with_database_create_permission
-    options = _.extend(options, credentials);
-    $.couch.login options
-
   # this function is a lot like jQuery.serializeArray, except that it returns useful output
   @getValues: ( selector ) ->
     values = {}
@@ -82,15 +99,39 @@ class Utils
     $.couch.replicate Tangerine.iris.host + "/tangerine", "tangerine", { success: (a, b) -> console.log [" success",a, b];}, repOps
     # console.log @importSubtestsFromIris() 
 
-  # Disposable alert
-  # @param pause miliseconds to leave message on screen, 0 means it will stay until clicked
-  @disposableAlert: (alert_text, opt) ->
+  # Disposable alerts
+  @topAlert: (alert_text) ->
     $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").topCenter().delay(2000).fadeOut(250, -> $(this).remove())
 
-class Context
+  @midAlert: (alert_text) ->
+    $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").middleCenter().delay(2000).fadeOut(250, -> $(this).remove())
 
-  on: (callbacks, options={}) ->
-    if String(window.location).indexOf("iriscouch") != -1
-      callbacks.isServer(options)
-    else
-      callbacks.isTablet(options)
+  @S4: ->
+   return ( ( ( 1 + Math.random() ) * 0x10000 ) | 0 ).toString(16).substring(1)
+
+  @guid: ->
+   return @S4()+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+@S4()+@S4()
+
+
+class Context
+  constructor: ->
+    @mobile = if ~(String(window.location).indexOf("iriscouch")) then false else true 
+    @kindle = /kindle/.test(navigator.userAgent.toLowerCase())
+
+    @server = if ~(String(window.location).indexOf("iriscouch")) then true else false 
+
+##UI helpers
+$ ->
+  # ###.clear_message
+  # This little guy will fade out and clear him and his parents. Wrap him wisely.
+  # `<span> my message <button class="clear_message">X</button>`
+  $("#content").on("click", ".clear_message",  null, (a) -> $(a.target).parent().fadeOut(250, -> $(this).empty().show() ) )
+  $("#content").on("click", ".parent_remove", null, (a) -> $(a.target).parent().fadeOut(250, -> $(this).remove() ) )
+
+  # disposable alerts = a non-fancy box
+  $("#content").on "click",".alert_button", ->
+    alert_text = if $(this).attr("data-alert") then $(this).attr("data-alert") else $(this).val()
+    Utils.disposableAlert alert_text
+  $("#content").on "click", ".disposable_alert", ->
+    $(this).stop().fadeOut 250, ->
+      $(this).remove()
