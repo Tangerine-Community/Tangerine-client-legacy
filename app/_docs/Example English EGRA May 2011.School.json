@@ -1,7 +1,10 @@
 {
+  "_id": "Example English EGRA May 2011.School",
   "collection": "subtest",
-  "pageType": "SchoolPage",
-  "pageId": "School",
+  "prototype": "location",
+  "name" : "School ID",
+  "order" : 2,
+  "assessmentId" : "Example English EGRA May 2011.Assessment",
   "schools": [
     {
       "name": "Lilongwe",
@@ -76,11 +79,8 @@
       "province": "California"
     }
   ],
-  "_id": "Example English EGRA May 2011.School",
   "nameText": "Name",
   "schoolIdText": "ID",
- 
- 
   "districtText": "District",
   "provinceText": "Province",
   "couchapp": {
