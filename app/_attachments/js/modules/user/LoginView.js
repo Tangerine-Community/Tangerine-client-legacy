@@ -16,32 +16,48 @@ LoginView = (function(_super) {
   LoginView.prototype.className = 'login_view';
 
   LoginView.prototype.events = {
-    "click button": "login",
-    "submit form": "login",
-    "keypress": "login"
+    "click button.login": "login",
+    "keypress input": "keyHandler"
   };
 
   LoginView.prototype.initialize = function(options) {
-    this.model = options.model;
-    this.model.on("change:messages", this.renderMessages);
-    return this.render();
+    this.model = Tangerine.user;
+    return this.model.on("change:messages", this.renderMessages);
   };
 
   LoginView.prototype.render = function() {
-    this.$el.html("      <img src='images/tangerine_logo.png'>      <div class='messages'></div>      <label for='login_username'>Enumerator Name</label>      <input id='login_username' name='login_username'>      <label for='login_password'>Password</label>      <input id='login_password' name='login_username' type='password'>      <button>Login</button>    ");
+    var parentWidth, width;
+    width = $('#content').width();
+    parentWidth = $('#content').offsetParent().width();
+    this.oldWidth = 100 * width / parentWidth;
+    $("#content").css("width", "100%");
+    this.$el.html("      <img src='images/tangerine_logo.png' id='login_logo'>      <div class='messages'></div>      <label for='login_username'>Enumerator Name</label>      <input id='login_username' name='login_username'>      <label for='login_password'>Password</label>      <input id='login_password' name='login_username' type='password'>      <button class='login'>Login</button>    ");
     return this.trigger("rendered");
+  };
+
+  LoginView.prototype.onClose = function() {
+    return $("#content").css("width", this.oldWidth + "%");
+  };
+
+  LoginView.prototype.keyHandler = function(event) {
+    if (event.which) {
+      if (event.which !== 13) {
+        return true;
+      } else {
+        return this.login();
+      }
+    }
   };
 
   LoginView.prototype.login = function(event) {
     var values;
-    if ((event.which != null) && event.which === 13) {
-      values = Utils.getValues(this.el);
-      if (values['login_password'] === "") {
-        this.$el.find('#login_password').focus();
-        return;
-      }
-      return this.model.login(values["login_username"], values["login_password"]);
+    values = Utils.getValues(this.el);
+    if (values['login_password'] === "") {
+      this.model.showMessage("Please enter a password");
+      this.$el.find('#login_password').focus();
+      return false;
     }
+    return this.model.login(values["login_username"], values["login_password"]);
   };
 
   LoginView.prototype.renderMessages = function() {
