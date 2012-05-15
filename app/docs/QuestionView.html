@@ -3,11 +3,9 @@
   <span class="nv">className: </span><span class="s">&quot;question&quot;</span>
 
   <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;question view initializing&quot;</span>
     <span class="vi">@model = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
 
   <span class="nv">render: </span><span class="o">-&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;question view rendering&quot;</span>
     <span class="nv">name    = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
     <span class="nv">type    = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;type&quot;</span>
     <span class="nv">options = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;options&quot;</span>
@@ -18,7 +16,7 @@
 <span class="s">    &lt;div class=&#39;hint&#39;&gt;</span><span class="si">#{</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;hint&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span>
     
     <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&quot;open&quot;</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;textarea id=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/textarea&gt;&quot;</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;textarea id=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&#39; name=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/textarea&gt;&quot;</span>
     <span class="k">else</span>
       <span class="k">for</span> <span class="nx">option</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">options</span>
         <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;label for=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">option</span><span class="p">.</span><span class="nx">label</span><span class="si">}</span><span class="s">&lt;/label&gt;&lt;input id=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39; name=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&#39; value=&#39;</span><span class="si">#{</span><span class="nx">option</span><span class="p">.</span><span class="nx">value</span><span class="si">}</span><span class="s">&#39; type=&#39;</span><span class="si">#{</span><span class="nx">checkOrRadio</span><span class="si">}</span><span class="s">&#39;&gt;&quot;</span>

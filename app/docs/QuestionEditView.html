@@ -4,7 +4,7 @@
   <span class="nv">tagName   : </span><span class="s">&quot;li&quot;</span>
 
   <span class="nv">events : </span>
-    <span class="s">&#39;click .edit_button&#39;</span>     <span class="o">:</span> <span class="s">&#39;toggleEdit&#39;</span>
+    <span class="s">&#39;click .back&#39;</span>            <span class="o">:</span> <span class="s">&#39;back&#39;</span>
     <span class="s">&#39;click .save&#39;</span>            <span class="o">:</span> <span class="s">&#39;save&#39;</span>
     <span class="s">&#39;click .add_option&#39;</span>      <span class="o">:</span> <span class="s">&#39;addOption&#39;</span>
     <span class="s">&#39;click .delete_option&#39;</span>   <span class="o">:</span> <span class="s">&#39;showDeleteConfirm&#39;</span>
@@ -14,20 +14,43 @@
     <span class="s">&#39;click .delete_question&#39;</span> <span class="o">:</span> <span class="s">&#39;deleteQuestion&#39;</span>
     <span class="s">&#39;keypress&#39;</span>               <span class="o">:</span> <span class="s">&#39;hijackEnter&#39;</span>
 
-  <span class="nv">toggleEdit: </span><span class="nf">(event) -&gt;</span>
-    <span class="vi">@isPreview = </span><span class="o">!</span><span class="nx">@isPreview</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.preview&quot;</span><span class="p">).</span><span class="nx">toggleClass</span> <span class="s">&quot;confirmation&quot;</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.edit_form&quot;</span><span class="p">).</span><span class="nx">toggleClass</span> <span class="s">&quot;confirmation&quot;</span>
+  <span class="nv">back: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;subtest/</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;subtestId&#39;</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
     <span class="k">return</span> <span class="kc">false</span>
-    
-  <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>this is for sortable</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@$el</span><span class="p">.</span><span class="nx">attr</span> <span class="s">&#39;data-id&#39;</span><span class="p">,</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">id</span>
-    
+
+  <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
     <span class="vi">@parent     = </span><span class="nx">options</span><span class="p">.</span><span class="nx">parent</span>
     <span class="vi">@model      = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
-    <span class="vi">@isPreview  = </span><span class="nx">options</span><span class="p">.</span><span class="nx">isPreview</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@isPreview</span>
 
-  <span class="nv">render: </span><span class="o">-&gt;</span>
+  <span class="nv">getOptionList: </span><span class="o">-&gt;</span>
+    <span class="nv">options = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;options&quot;</span> 
+    <span class="nv">html = </span><span class="s">&quot;&lt;div id=&#39;option_list_wrapper&#39;&gt;</span>
+<span class="s">      &lt;h2&gt;Options&lt;/h2&gt;&lt;ul class=&#39;option_list&#39;&gt;&quot;</span>
+    <span class="k">for</span> <span class="nx">option</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">options</span>
+      <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
+<span class="s">      &lt;li class=&#39;question&#39;&gt;</span>
+<span class="s">        &lt;img src=&#39;images/icon_drag.png&#39; class=&#39;sortable_handle&#39;&gt;</span>
+<span class="s">        &lt;div class=&#39;option_label_value&#39;&gt;</span>
+<span class="s">          &lt;label class=&#39;edit&#39; for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_options.</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">.label&#39;&gt;Label&lt;/label&gt;</span>
+<span class="s">          &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_options.</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">.label&#39; value=&#39;</span><span class="si">#{</span><span class="nx">option</span><span class="p">.</span><span class="nx">label</span><span class="si">}</span><span class="s">&#39; placeholder=&#39;Option label&#39; class=&#39;option_label&#39;&gt;&lt;br&gt;</span>
+<span class="s">          &lt;label class=&#39;edit&#39; for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_options.</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">.value&#39;&gt;Value&lt;/label&gt;</span>
+<span class="s">          &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_options.</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">.value&#39; value=&#39;</span><span class="si">#{</span><span class="nx">option</span><span class="p">.</span><span class="nx">value</span><span class="si">}</span><span class="s">&#39; placeholder=&#39;Option value&#39; class=&#39;option_value&#39;&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;img src=&#39;images/icon_delete.png&#39; class=&#39;delete_option&#39; data-index=&#39;</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;div class=&#39;confirmation delete_confirm_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;&lt;button class=&#39;delete_delete&#39; data-index=&#39;</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;Delete&lt;/button&gt;&lt;button data-index=&#39;</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39; class=&#39;delete_cancel&#39;&gt;Cancel&lt;/button&gt;&lt;/div&gt;</span>
+<span class="s">      &lt;/li&gt;</span>
+<span class="s">      &quot;</span>
+    <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;/ul&gt;</span>
+<span class="s">      &lt;button class=&#39;add_option command&#39;&gt;Add option&lt;/button&gt;</span>
+<span class="s">      </span>
+<span class="s">    &lt;/div&gt;&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Adding an option</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">addOption: </span><span class="o">-&gt;</span>
+    <span class="nx">@updateModel</span><span class="p">()</span>
+    <span class="nv">options = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;options&quot;</span>
+    <span class="nx">options</span><span class="p">.</span><span class="nx">push</span>
+      <span class="nv">label : </span><span class="s">&quot;&quot;</span>
+      <span class="nv">value : </span><span class="s">&quot;&quot;</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;options&quot;</span><span class="p">,</span> <span class="nx">options</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#option_list_wrapper&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">@getOptionList</span><span class="p">())</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>@$el.find('.option_list').sortable("refresh")</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">render: </span><span class="o">-&gt;</span>
     <span class="nv">name            = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
     <span class="nv">prompt          = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;prompt&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
     <span class="nv">hint            = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;hint&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
@@ -37,61 +60,59 @@
     
     <span class="nv">checkOrRadio = </span><span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&quot;multiple&quot;</span> <span class="k">then</span> <span class="s">&quot;checkbox&quot;</span> <span class="k">else</span> <span class="s">&quot;radio&quot;</span>
 
-    <span class="k">if</span> <span class="nx">@isPreview</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
-<span class="s">        &lt;div class=&#39;preview&#39;&gt;</span>
-<span class="s">          &lt;img src=&#39;images/icon_drag.png&#39; class=&#39;sortable_handle&#39;&gt;&lt;span&gt;</span><span class="si">#{</span><span class="nx">prompt</span><span class="si">}</span><span class="s">&lt;/span&gt; &lt;span&gt;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&lt;/span&gt; &lt;button class=&#39;edit_button command&#39;&gt;Edit&lt;/button&gt;</span>
-<span class="s">        &lt;/div&gt;</span>
-<span class="s">      &quot;</span>
-    <span class="k">if</span> <span class="o">not</span> <span class="nx">@isPreview</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
-<span class="s">        &lt;div class=&#39;edit_form question&#39;&gt;</span>
-<span class="s">          &lt;button class=&#39;edit_button&#39;&gt;Hide edit&lt;/button&gt;</span>
-<span class="s">          &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">            &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_name&#39;&gt;Data name&lt;/label&gt;</span>
-<span class="s">            &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_name&#39; type=&#39;text&#39; value=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&#39;&gt;</span>
-<span class="s">          &lt;/div&gt;</span>
-<span class="s">          &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">            &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_prompt&#39;&gt;Prompt&lt;/label&gt;</span>
-<span class="s">            &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_prompt&#39; type=&#39;text&#39; value=&#39;</span><span class="si">#{</span><span class="nx">prompt</span><span class="si">}</span><span class="s">&#39;&gt;</span>
-<span class="s">          &lt;/div&gt;</span>
-<span class="s">          &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">            &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_hint&#39;&gt;Hint&lt;/label&gt;</span>
-<span class="s">            &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_hint&#39; type=&#39;text&#39; value=&#39;</span><span class="si">#{</span><span class="nx">hint</span><span class="si">}</span><span class="s">&#39;&gt;</span>
-<span class="s">          &lt;/div&gt;</span>
-<span class="s">          &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">            &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_linked_grid_score&#39;&gt;Linked grid score&lt;/label&gt;</span>
-<span class="s">            &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_linked_grid_score&#39; type=&#39;number&#39; value=&#39;</span><span class="si">#{</span><span class="nx">linkedGridScore</span><span class="si">}</span><span class="s">&#39;&gt;</span>
-<span class="s">          &lt;/div&gt;</span>
-<span class="s">          &lt;div class=&#39;label_value&#39; id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_question_type&#39; class=&#39;question_type&#39;&gt;</span>
-<span class="s">            &lt;p&gt;Question Type&lt;/p&gt;</span>
-<span class="s">            &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_single&#39;&gt;single&lt;/label&gt;</span>
-<span class="s">            &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_single&#39; name=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_type&#39; type=&#39;radio&#39; value=&#39;single&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&#39;single&#39;</span><span class="si">}</span><span class="s">&gt;</span>
-<span class="s">            &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_multiple&#39;&gt;multiple&lt;/label&gt;</span>
-<span class="s">            &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_multiple&#39; name=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_type&#39;  type=&#39;radio&#39; value=&#39;multiple&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&#39;multiple&#39;</span><span class="si">}</span><span class="s">&gt;</span>
-<span class="s">            &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_open&#39;&gt;open&lt;/label&gt;</span>
-<span class="s">            &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_open&#39; name=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_type&#39;  type=&#39;radio&#39; value=&#39;open&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&#39;open&#39;</span><span class="si">}</span><span class="s">&gt;</span>
-<span class="s">          &lt;/div&gt;</span>
-
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">      &lt;button class=&#39;back navigation&#39;&gt;Back&lt;/button&gt;</span>
+<span class="s">      &lt;h1&gt;Question Editor&lt;/h1&gt;</span>
+<span class="s">      &lt;div class=&#39;edit_form question&#39;&gt;</span>
 <span class="s">        &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_question_template_select&#39;&gt;Fill from template&lt;/label&gt;</span>
-<span class="s">        &lt;select id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_question_template_select&#39;&gt;</span>
-<span class="s">          &lt;option disabled selected&gt;Select template&lt;/option&gt;</span>
-<span class="s">        &lt;/select&gt;&quot;</span>
-
-      <span class="k">if</span> <span class="nx">type</span> <span class="o">!=</span> <span class="s">&quot;open&quot;</span>
-        <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">@getOptionList</span><span class="p">()</span>
-
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;button class=&#39;save command&#39;&gt;Save&lt;/button&gt;&lt;button class=&#39;delete_question command&#39;&gt;Delete&lt;/button&gt;</span>
+<span class="s">          &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_name&#39;&gt;Data name&lt;/label&gt;</span>
+<span class="s">          &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_name&#39; type=&#39;text&#39; value=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">          &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_prompt&#39;&gt;Prompt&lt;/label&gt;</span>
+<span class="s">          &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_prompt&#39; type=&#39;text&#39; value=&#39;</span><span class="si">#{</span><span class="nx">prompt</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">          &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_hint&#39;&gt;Hint&lt;/label&gt;</span>
+<span class="s">          &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_hint&#39; type=&#39;text&#39; value=&#39;</span><span class="si">#{</span><span class="nx">hint</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">          &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_linked_grid_score&#39;&gt;Linked grid score&lt;/label&gt;</span>
+<span class="s">          &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_linked_grid_score&#39; type=&#39;number&#39; value=&#39;</span><span class="si">#{</span><span class="nx">linkedGridScore</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div class=&#39;label_value&#39; id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_question_type&#39; class=&#39;question_type&#39;&gt;</span>
+<span class="s">          &lt;label&gt;Question Type&lt;/label&gt;</span>
+<span class="s">          &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_single&#39;&gt;single&lt;/label&gt;</span>
+<span class="s">          &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_single&#39; name=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_type&#39; type=&#39;radio&#39; value=&#39;single&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&#39;single&#39;</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">          &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_multiple&#39;&gt;multiple&lt;/label&gt;</span>
+<span class="s">          &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_multiple&#39; name=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_type&#39;  type=&#39;radio&#39; value=&#39;multiple&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&#39;multiple&#39;</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">          &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_open&#39;&gt;open&lt;/label&gt;</span>
+<span class="s">          &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_open&#39; name=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_type&#39;  type=&#39;radio&#39; value=&#39;open&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&#39;open&#39;</span><span class="si">}</span><span class="s">&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
 <span class="s">        &quot;</span>
 
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_question_type&quot;</span><span class="p">).</span><span class="nx">buttonset</span><span class="p">()</span>
-
+    <span class="k">if</span> <span class="nx">type</span> <span class="o">!=</span> <span class="s">&quot;open&quot;</span>
+      
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;</span>
+<span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">      &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_question_template_select&#39;&gt;Fill from template&lt;/label&gt;</span>
+<span class="s">      &lt;select id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_question_template_select&#39;&gt;</span>
+<span class="s">        &lt;option disabled selected&gt;Select template&lt;/option&gt;</span>
+<span class="s">      &lt;/select&gt;</span>
+<span class="s">      </span>
+<span class="s">      </span><span class="si">#{</span><span class="nx">@getOptionList</span><span class="p">()</span><span class="si">}</span><span class="s"></span>
+<span class="s">      &quot;</span>
+      
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.option_list&quot;</span><span class="p">).</span><span class="nx">sortable</span>
         <span class="nv">handle : </span><span class="s">&#39;.sortable_handle&#39;</span>
         <span class="nv">update : </span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">ui</span><span class="p">)</span> <span class="o">=&gt;</span>
           <span class="nx">@updateModel</span><span class="p">()</span>
+          
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;button class=&#39;save command&#39;&gt;Save&lt;/button&gt;&lt;button class=&#39;delete_question command&#39;&gt;Delete&lt;/button&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &quot;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_question_type&quot;</span><span class="p">).</span><span class="nx">buttonset</span><span class="p">()</span>
 
     <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
 
@@ -103,11 +124,11 @@
       <span class="k">return</span> <span class="kc">false</span>
 
   <span class="nv">changeQuestionType: </span><span class="nf">(event) -&gt;</span>
-    <span class="nv">$target = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>list to open</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">$target</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;open&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;open&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">$target</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;open&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;type&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;open&quot;</span><span class="p">)</span>
+    <span class="nv">$target = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>list to open</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">$target</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;open&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;open&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">$target</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;open&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;type&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;open&quot;</span><span class="p">)</span>
       <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;type&quot;</span><span class="p">,</span> <span class="nx">$target</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span>
       <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;options&quot;</span><span class="p">,</span> <span class="p">[]</span>
-      <span class="nx">@render</span> <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Saving</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">save: </span><span class="o">-&gt;</span>
-    <span class="nx">@updateModel</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>show a message and any we've collected along the way</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
+      <span class="nx">@render</span> <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Saving</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">save: </span><span class="o">-&gt;</span>
+    <span class="nx">@updateModel</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>show a message and any we've collected along the way</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
       <span class="nv">alertText = </span><span class="s">&quot;Question Saved&quot;</span>
       <span class="k">if</span> <span class="nx">@saveMessage</span>
         <span class="nx">alertText</span> <span class="o">+=</span> <span class="nx">@saveMessage</span>
@@ -123,30 +144,28 @@
     <span class="nx">@parentView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
     <span class="k">return</span> <span class="kc">false</span>
   
-  <span class="nv">updateModel: </span><span class="o">=&gt;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>basics</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span> 
+  <span class="nv">updateModel: </span><span class="o">=&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>basics</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span> 
       <span class="s">&quot;prompt&quot;</span>          <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_prompt&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> 
       <span class="s">&quot;name&quot;</span>            <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="s">&quot;hint&quot;</span>            <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_hint&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="s">&quot;linkedGridScore&quot;</span> <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_linked_grid_score&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
-      <span class="s">&quot;type&quot;</span>            <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_question_type input:checked&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;linkedGridScore&quot;</span><span class="p">)</span><span class="o">||</span><span class="mi">0</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">@parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;gridLinkId&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&quot;</span>
-        <span class="vi">@saveMessage = </span><span class="s">&quot;&lt;br&gt;&lt;br&gt;Grid scores require&lt;br&gt;a subtest link&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>options</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">options = </span><span class="p">[]</span>
+      <span class="s">&quot;type&quot;</span>            <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_question_type input:checked&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>options</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">options = </span><span class="p">[]</span>
     <span class="nv">i = </span><span class="mi">0</span>
     <span class="nv">optionListElements = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.option_list li&quot;</span><span class="p">)</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;found options &quot;</span> <span class="o">+</span> <span class="nx">optionListElement</span>
     <span class="k">for</span> <span class="nx">li</span> <span class="k">in</span> <span class="nx">optionListElements</span>
       <span class="nv">label = </span><span class="nx">$</span><span class="p">(</span><span class="nx">li</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.option_label&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="nv">value = </span><span class="nx">$</span><span class="p">(</span><span class="nx">li</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.option_value&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+
       <span class="k">if</span> <span class="nx">label</span><span class="o">?</span> <span class="o">||</span> <span class="nx">value</span><span class="o">?</span>
         <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span>
           <span class="nv">label : </span><span class="nx">label</span>
           <span class="nv">value : </span><span class="nx">value</span>
         <span class="nx">i</span><span class="o">++</span>
+
     <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;options&quot;</span><span class="p">,</span> <span class="nx">options</span>
-    <span class="kc">false</span>
-        </pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Deleting an option</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">showDeleteConfirm: </span><span class="nf">(event) -&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.delete_confirm_</span><span class="si">#{</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-index&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+
+
+        </pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Deleting an option</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">showDeleteConfirm: </span><span class="nf">(event) -&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.delete_confirm_</span><span class="si">#{</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-index&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
   <span class="nv">hideDeleteConfirm: </span><span class="nf">(event) -&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.delete_confirm_</span><span class="si">#{</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-index&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
   <span class="nv">deleteOption: </span><span class="nf">(event) -&gt;</span>
     <span class="nx">@updateModel</span><span class="p">()</span>
@@ -155,32 +174,6 @@
     <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;options&quot;</span><span class="p">,</span> <span class="nx">options</span>
     <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
     <span class="nx">@render</span> <span class="kc">false</span>
-    <span class="k">return</span> <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Adding an option</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">addOption: </span><span class="o">-&gt;</span>
-    <span class="nx">@updateModel</span><span class="p">()</span>
-    <span class="nv">options = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;options&quot;</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">push</span>
-      <span class="nv">label: </span><span class="s">&quot;&quot;</span>
-      <span class="nv">value: </span><span class="s">&quot;&quot;</span>
-    <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;options&quot;</span><span class="p">,</span> <span class="nx">options</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.option_list&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">@getOptionList</span><span class="p">()).</span><span class="nx">sortable</span><span class="p">(</span><span class="s">&quot;refresh&quot;</span><span class="p">)</span>
-
-  <span class="nv">getOptionList: </span><span class="o">-&gt;</span>
-    <span class="nv">options = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;options&quot;</span> 
-    <span class="nv">html = </span><span class="s">&quot;&quot;</span>
-    <span class="k">for</span> <span class="nx">option</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">options</span>
-      <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
-<span class="s">      &lt;li&gt;</span>
-<span class="s">        &lt;img src=&#39;images/icon_drag.png&#39; class=&#39;sortable_handle&#39;&gt;</span>
-<span class="s">        &lt;div class=&#39;option_label_value&#39;&gt;</span>
-<span class="s">          &lt;label class=&#39;edit&#39; for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_options.</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">.label&#39;&gt;Label&lt;/label&gt;</span>
-<span class="s">          &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_options.</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">.label&#39; value=&#39;</span><span class="si">#{</span><span class="nx">option</span><span class="p">.</span><span class="nx">label</span><span class="si">}</span><span class="s">&#39; placeholder=&#39;Option label&#39; class=&#39;option_label&#39;&gt;&lt;br&gt;</span>
-<span class="s">          &lt;label class=&#39;edit&#39; for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_options.</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">.value&#39;&gt;Value&lt;/label&gt;</span>
-<span class="s">          &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_options.</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">.value&#39; value=&#39;</span><span class="si">#{</span><span class="nx">option</span><span class="p">.</span><span class="nx">value</span><span class="si">}</span><span class="s">&#39; placeholder=&#39;Option value&#39; class=&#39;option_value&#39;&gt;</span>
-<span class="s">        &lt;/div&gt;</span>
-<span class="s">        &lt;img src=&#39;images/icon_delete.png&#39; class=&#39;delete_option&#39; data-index=&#39;</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;</span>
-<span class="s">        &lt;div class=&#39;confirmation delete_confirm_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;&lt;button class=&#39;delete_delete&#39; data-index=&#39;</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;Delete&lt;/button&gt;&lt;button data-index=&#39;</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39; class=&#39;delete_cancel&#39;&gt;Cancel&lt;/button&gt;&lt;/div&gt;</span>
-<span class="s">      &lt;/li&gt;</span>
-<span class="s">      &quot;</span>
-    <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;li&gt;&lt;button class=&#39;add_option&#39;&gt;Add option&lt;/button&gt;&lt;/li&gt;&quot;</span>
+    <span class="k">return</span> <span class="kc">false</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

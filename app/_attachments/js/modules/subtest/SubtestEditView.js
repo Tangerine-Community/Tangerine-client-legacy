@@ -18,19 +18,18 @@ SubtestEditView = (function(_super) {
     'click .back_button': 'goBack',
     'click .save_subtest': 'save',
     'keydown': 'hijackEnter',
-    'click .add_question': 'addQuestion'
+    'click .add_question': 'toggleAddQuestion',
+    'click .add_question_cancel': 'toggleAddQuestion',
+    'click .add_question_add': 'addQuestion'
   };
 
   SubtestEditView.prototype.hijackEnter = function(event) {
     if (event.which === 13) return this.save();
   };
 
-  SubtestEditView.prototype.showAddQuestion = function() {
-    return this.$el.find(".add_question_form").fadeIn(250);
-  };
-
-  SubtestEditView.prototype.hideAddQuestion = function() {
-    return this.$el.find(".add_question_form").fadeOut(250);
+  SubtestEditView.prototype.toggleAddQuestion = function() {
+    this.$el.find("#add_question_form").fadeToggle(250);
+    return false;
   };
 
   SubtestEditView.prototype.addQuestion = function() {
@@ -38,10 +37,14 @@ SubtestEditView = (function(_super) {
     newAttributes = $.extend(Tangerine.config.questionTemplate, {
       subtestId: this.model.id,
       assessmentId: this.model.get("assessmentId"),
-      order: this.model.questions.length
+      order: this.model.questions.length,
+      prompt: this.$el.find('#question_prompt').val(),
+      name: this.$el.find('#question_name').val()
     });
     nq = this.model.questions.create(newAttributes);
-    this.render();
+    nq.save();
+    this.renderQuestions();
+    this.$el.find("#add_question_form input").val('');
     return false;
   };
 
@@ -65,18 +68,20 @@ SubtestEditView = (function(_super) {
   SubtestEditView.prototype.initialize = function(options) {
     var _this = this;
     this.subViews = [];
+    this.questionsEditView = null;
     this.model = options.model;
     this.config = Tangerine.config.subtest;
-    console.log(this.model);
     if (this.model.get("prototype") === 'survey') {
-      console.log("getting questions");
       this.model.questions = new Questions;
       return this.model.questions.fetch({
         success: function(collection, response) {
-          console.log("got questions");
           _this.model.questions = new Questions(collection.where({
             subtestId: _this.model.id
           }));
+          _this.questionsEditView = new QuestionsEditView({
+            questions: _this.model.questions
+          });
+          _this.model.questions.on("change", _this.renderQuestions);
           return _this.renderQuestions();
         }
       });
@@ -84,14 +89,9 @@ SubtestEditView = (function(_super) {
   };
 
   SubtestEditView.prototype.renderQuestions = function() {
-    var view;
-    console.log("questions");
-    console.log(this.model.questions);
-    view = new QuestionsEditView({
-      questions: this.model.questions
-    });
-    view.render();
-    return this.$el.find("#question_list_wrapper").append(view.el);
+    var _ref, _ref2;
+    if ((_ref = this.questionsEditView) != null) _ref.render();
+    return this.$el.find("#question_list_wrapper").append((_ref2 = this.questionsEditView) != null ? _ref2.el : void 0);
   };
 
   SubtestEditView.prototype.goBack = function() {
@@ -158,36 +158,8 @@ SubtestEditView = (function(_super) {
     }
     if (prototype === "survey") {
       gridLinkId = this.model.get("gridLinkId") || "";
-      this.$el.find("#prototype_attributes").html("        <div id='grid_link'></div>        <div id='questions'>          <h2>Questions</h2>          <button class='add_question command'>Add Question</button>          <div id='question_list_wrapper'></div>        </div>");
-      this.$el.find("#questions_edit").sortable({
-        handle: '.sortable_handle',
-        update: function(event, ui) {
-          var i, id, li, oneQuestion, _len, _ref, _results;
-          _ref = (function() {
-            var _i, _len, _ref, _results2;
-            _ref = this.$el.find("#questions_edit li.question_list_element");
-            _results2 = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              li = _ref[_i];
-              _results2.push($(li).attr("data-id"));
-            }
-            return _results2;
-          }).call(_this);
-          _results = [];
-          for (i = 0, _len = _ref.length; i < _len; i++) {
-            id = _ref[i];
-            oneQuestion = _this.model.questions.get(id);
-            _results.push(_this.model.questions.get(id).set({
-              "order": i
-            }, {
-              silent: true
-            }).save(null, {
-              silent: true
-            }));
-          }
-          return _results;
-        }
-      });
+      this.$el.find("#prototype_attributes").html("        <div id='grid_link'></div>        <div id='questions'>          <h2>Questions</h2>          <div id='question_list_wrapper'></div>          <button class='add_question command'>Add Question</button>          <div id='add_question_form' class='confirmation'>            <div class='menu_box'>              <h2>New Question</h2>              <label for='question_prompt'>Prompt</label>              <input id='question_prompt'>              <label for='question_name'>Data name</label>              <input id='question_name'>              <button class='add_question_add command'>Add</button><button class='add_question_cancel command'>Cancel</button>            </div>          </div>         </div>");
+      this.renderQuestions();
       subtests = new Subtests;
       subtests.fetch({
         success: function(collection) {

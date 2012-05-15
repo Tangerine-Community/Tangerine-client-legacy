@@ -3,24 +3,30 @@ class SubtestEditView extends Backbone.View
   className: "subtest_edit"
     
   events:
-    'click .back_button'  : 'goBack'
-    'click .save_subtest' : 'save'
-    'keydown'             : 'hijackEnter'
-    'click .add_question' : 'addQuestion'
+    'click .back_button'         : 'goBack'
+    'click .save_subtest'        : 'save'
+    'keydown'                    : 'hijackEnter'
+    'click .add_question'        : 'toggleAddQuestion'
+    'click .add_question_cancel' : 'toggleAddQuestion'
+    'click .add_question_add'    : 'addQuestion'
 
   hijackEnter: (event) ->
     if event.which == 13
       @save()
 
-  showAddQuestion: -> @$el.find(".add_question_form").fadeIn(250)
-  hideAddQuestion: -> @$el.find(".add_question_form").fadeOut(250)
+  toggleAddQuestion: -> @$el.find("#add_question_form").fadeToggle(250); return false
   addQuestion: -> 
     newAttributes = $.extend Tangerine.config.questionTemplate,
       subtestId    : @model.id
       assessmentId : @model.get "assessmentId"
       order        : @model.questions.length
+      prompt       : @$el.find('#question_prompt').val()
+      name         : @$el.find('#question_name').val()
+
     nq = @model.questions.create newAttributes
-    @render()
+    nq.save()
+    @renderQuestions()
+    @$el.find("#add_question_form input").val('')
     return false
 #      "options" : _.find( Tangerine.config.optionsTemplates, (template) ->
 #        return template.options if template.name == @$el.find("#add_question_select option:selected").val() )
@@ -36,26 +42,23 @@ class SubtestEditView extends Backbone.View
     
   initialize: ( options ) ->
     @subViews = []
+    @questionsEditView = null
     @model = options.model
     @config = Tangerine.config.subtest
-    console.log @model
+
     if @model.get("prototype") == 'survey'
-      console.log "getting questions"
       @model.questions = new Questions
       @model.questions.fetch
         success: (collection, response) =>
-          console.log "got questions"
           @model.questions = new Questions(collection.where {subtestId : @model.id })
+          @questionsEditView = new QuestionsEditView
+            questions : @model.questions
+          @model.questions.on "change", @renderQuestions
           @renderQuestions()
 
   renderQuestions: =>
-    console.log "questions"
-    console.log @model.questions
-    view = new QuestionsEditView
-      questions : @model.questions
-    view.render()
-    @$el.find("#question_list_wrapper").append view.el
-
+    @questionsEditView?.render()
+    @$el.find("#question_list_wrapper").append @questionsEditView?.el
 
   goBack: ->
     Tangerine.router.navigate "edit-id/"+@model.get("assessmentId"), true
@@ -89,7 +92,6 @@ class SubtestEditView extends Backbone.View
         gridLinkId : @$el.find("#link_select option:selected").val()
       for question in @model.questions.models
         question.save()
-  
 
     if @model.save() then Utils.midAlert "Subtest Saved"
     return false
@@ -169,19 +171,21 @@ class SubtestEditView extends Backbone.View
         <div id='grid_link'></div>
         <div id='questions'>
           <h2>Questions</h2>
-          <button class='add_question command'>Add Question</button>
           <div id='question_list_wrapper'></div>
+          <button class='add_question command'>Add Question</button>
+          <div id='add_question_form' class='confirmation'>
+            <div class='menu_box'>
+              <h2>New Question</h2>
+              <label for='question_prompt'>Prompt</label>
+              <input id='question_prompt'>
+              <label for='question_name'>Data name</label>
+              <input id='question_name'>
+              <button class='add_question_add command'>Add</button><button class='add_question_cancel command'>Cancel</button>
+            </div>
+          </div> 
         </div>"
 
-
-
-      # make it sortable
-      @$el.find("#questions_edit").sortable
-        handle : '.sortable_handle'
-        update : (event, ui) =>
-          for id, i in ($(li).attr("data-id") for li in @$el.find("#questions_edit li.question_list_element"))
-            oneQuestion = @model.questions.get(id)
-            @model.questions.get(id).set({"order":i},{silent:true}).save(null,{silent:true})
+      @renderQuestions()
 
       subtests = new Subtests
       subtests.fetch
@@ -200,7 +204,9 @@ class SubtestEditView extends Backbone.View
           linkSelect += "</select></div>"
           @$el.find('#grid_link').html linkSelect
 
+
     if prototype == "location"
+
       provinceText = @model.get("provinceText") || ""
       districtText = @model.get("districtText") || ""
       nameText     = @model.get("nameText") || ""

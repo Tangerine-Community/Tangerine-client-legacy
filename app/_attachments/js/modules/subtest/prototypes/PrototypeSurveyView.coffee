@@ -20,7 +20,7 @@ class PrototypeSurveyView extends Backbone.View
       @names[$(field).attr("name")]  = 1
       @filled[$(field).attr("name")] = 1 if $(field).is(":checked")
 
-    for field in $("input:text")
+    for field in $("textarea")
       @names[$(field).attr('name')] = 1
       @filled[$(field).attr('name')] = 1 if $(field).val() != "" 
 
@@ -45,7 +45,7 @@ class PrototypeSurveyView extends Backbone.View
           else
             result[point.attr("name")][point.val()] = "unchecked"
 
-    for p in @$el.find("input:text")
+    for p in @$el.find("textarea")
       point = $(p)
       result[point.attr('name')] = point.val()
     result

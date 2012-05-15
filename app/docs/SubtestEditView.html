@@ -3,24 +3,30 @@
   <span class="nv">className: </span><span class="s">&quot;subtest_edit&quot;</span>
     
   <span class="nv">events:</span>
-    <span class="s">&#39;click .back_button&#39;</span>  <span class="o">:</span> <span class="s">&#39;goBack&#39;</span>
-    <span class="s">&#39;click .save_subtest&#39;</span> <span class="o">:</span> <span class="s">&#39;save&#39;</span>
-    <span class="s">&#39;keydown&#39;</span>             <span class="o">:</span> <span class="s">&#39;hijackEnter&#39;</span>
-    <span class="s">&#39;click .add_question&#39;</span> <span class="o">:</span> <span class="s">&#39;addQuestion&#39;</span>
+    <span class="s">&#39;click .back_button&#39;</span>         <span class="o">:</span> <span class="s">&#39;goBack&#39;</span>
+    <span class="s">&#39;click .save_subtest&#39;</span>        <span class="o">:</span> <span class="s">&#39;save&#39;</span>
+    <span class="s">&#39;keydown&#39;</span>                    <span class="o">:</span> <span class="s">&#39;hijackEnter&#39;</span>
+    <span class="s">&#39;click .add_question&#39;</span>        <span class="o">:</span> <span class="s">&#39;toggleAddQuestion&#39;</span>
+    <span class="s">&#39;click .add_question_cancel&#39;</span> <span class="o">:</span> <span class="s">&#39;toggleAddQuestion&#39;</span>
+    <span class="s">&#39;click .add_question_add&#39;</span>    <span class="o">:</span> <span class="s">&#39;addQuestion&#39;</span>
 
   <span class="nv">hijackEnter: </span><span class="nf">(event) -&gt;</span>
     <span class="k">if</span> <span class="nx">event</span><span class="p">.</span><span class="nx">which</span> <span class="o">==</span> <span class="mi">13</span>
       <span class="nx">@save</span><span class="p">()</span>
 
-  <span class="nv">showAddQuestion: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.add_question_form&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
-  <span class="nv">hideAddQuestion: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.add_question_form&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+  <span class="nv">toggleAddQuestion: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">add_question_form&quot;</span><span class="p">).</span><span class="nx">fadeToggle</span><span class="p">(</span><span class="mi">250</span><span class="p">);</span> <span class="k">return</span> <span class="kc">false</span>
   <span class="nv">addQuestion: </span><span class="o">-&gt;</span> 
     <span class="nv">newAttributes = </span><span class="nx">$</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">questionTemplate</span><span class="p">,</span>
       <span class="nv">subtestId    : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span>
       <span class="nv">assessmentId : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;assessmentId&quot;</span>
       <span class="nv">order        : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span><span class="p">.</span><span class="nx">length</span>
+      <span class="nv">prompt       : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#question_prompt&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="nv">name         : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#question_name&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+
     <span class="nv">nq = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span><span class="p">.</span><span class="nx">create</span> <span class="nx">newAttributes</span>
-    <span class="nx">@render</span><span class="p">()</span>
+    <span class="nx">nq</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
+    <span class="nx">@renderQuestions</span><span class="p">()</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">add_question_form input&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <pre><code> "options" : _.find( Tangerine.config.optionsTemplates, (template) -&gt;
    return template.options if template.name == @$el.find("#add_question_select option:selected").val() )
 </code></pre>             </td>             <td class="code">               <div class="highlight"><pre>        
@@ -35,26 +41,23 @@
     
   <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
     <span class="vi">@subViews = </span><span class="p">[]</span>
+    <span class="vi">@questionsEditView = </span><span class="kc">null</span>
     <span class="vi">@model = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
     <span class="vi">@config = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">subtest</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@model</span>
+
     <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;prototype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#39;survey&#39;</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;getting questions&quot;</span>
       <span class="vi">@model.questions = </span><span class="k">new</span> <span class="nx">Questions</span>
       <span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span><span class="p">.</span><span class="nx">fetch</span>
         <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span>
-          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;got questions&quot;</span>
           <span class="vi">@model.questions = </span><span class="k">new</span> <span class="nx">Questions</span><span class="p">(</span><span class="nx">collection</span><span class="p">.</span><span class="nx">where</span> <span class="p">{</span><span class="nv">subtestId : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span> <span class="p">})</span>
+          <span class="vi">@questionsEditView = </span><span class="k">new</span> <span class="nx">QuestionsEditView</span>
+            <span class="nv">questions : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span>
+          <span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;change&quot;</span><span class="p">,</span> <span class="nx">@renderQuestions</span>
           <span class="nx">@renderQuestions</span><span class="p">()</span>
 
   <span class="nv">renderQuestions: </span><span class="o">=&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;questions&quot;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span>
-    <span class="nv">view = </span><span class="k">new</span> <span class="nx">QuestionsEditView</span>
-      <span class="nv">questions : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span>
-    <span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">question_list_wrapper&quot;</span><span class="p">).</span><span class="nx">append</span> <span class="nx">view</span><span class="p">.</span><span class="nx">el</span>
-
+    <span class="nx">@questionsEditView</span><span class="o">?</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">question_list_wrapper&quot;</span><span class="p">).</span><span class="nx">append</span> <span class="nx">@questionsEditView</span><span class="o">?</span><span class="p">.</span><span class="nx">el</span>
 
   <span class="nv">goBack: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;edit-id/&quot;</span><span class="o">+</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;assessmentId&quot;</span><span class="p">),</span> <span class="kc">true</span>
@@ -86,7 +89,6 @@
         <span class="nv">gridLinkId : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">link_select option:selected&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="k">for</span> <span class="nx">question</span> <span class="k">in</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span><span class="p">.</span><span class="nx">models</span>
         <span class="nx">question</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
-  
 
     <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span> <span class="k">then</span> <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Subtest Saved&quot;</span>
     <span class="k">return</span> <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Wow I'm bad at using templates</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">render: </span><span class="o">-&gt;</span>
@@ -162,14 +164,21 @@
 <span class="s">        &lt;div id=&#39;grid_link&#39;&gt;&lt;/div&gt;</span>
 <span class="s">        &lt;div id=&#39;questions&#39;&gt;</span>
 <span class="s">          &lt;h2&gt;Questions&lt;/h2&gt;</span>
-<span class="s">          &lt;button class=&#39;add_question command&#39;&gt;Add Question&lt;/button&gt;</span>
 <span class="s">          &lt;div id=&#39;question_list_wrapper&#39;&gt;&lt;/div&gt;</span>
-<span class="s">        &lt;/div&gt;&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>make it sortable</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">questions_edit&quot;</span><span class="p">).</span><span class="nx">sortable</span>
-        <span class="nv">handle : </span><span class="s">&#39;.sortable_handle&#39;</span>
-        <span class="nv">update : </span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">ui</span><span class="p">)</span> <span class="o">=&gt;</span>
-          <span class="k">for</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">li</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-id&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="nx">li</span> <span class="k">in</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">questions_edit li.question_list_element&quot;</span><span class="p">))</span>
-            <span class="nv">oneQuestion = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
-            <span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">).</span><span class="nx">set</span><span class="p">({</span><span class="s">&quot;order&quot;</span><span class="o">:</span><span class="nx">i</span><span class="p">},{</span><span class="nx">silent</span><span class="o">:</span><span class="kc">true</span><span class="p">}).</span><span class="nx">save</span><span class="p">(</span><span class="kc">null</span><span class="p">,{</span><span class="nx">silent</span><span class="o">:</span><span class="kc">true</span><span class="p">})</span>
+<span class="s">          &lt;button class=&#39;add_question command&#39;&gt;Add Question&lt;/button&gt;</span>
+<span class="s">          &lt;div id=&#39;add_question_form&#39; class=&#39;confirmation&#39;&gt;</span>
+<span class="s">            &lt;div class=&#39;menu_box&#39;&gt;</span>
+<span class="s">              &lt;h2&gt;New Question&lt;/h2&gt;</span>
+<span class="s">              &lt;label for=&#39;question_prompt&#39;&gt;Prompt&lt;/label&gt;</span>
+<span class="s">              &lt;input id=&#39;question_prompt&#39;&gt;</span>
+<span class="s">              &lt;label for=&#39;question_name&#39;&gt;Data name&lt;/label&gt;</span>
+<span class="s">              &lt;input id=&#39;question_name&#39;&gt;</span>
+<span class="s">              &lt;button class=&#39;add_question_add command&#39;&gt;Add&lt;/button&gt;&lt;button class=&#39;add_question_cancel command&#39;&gt;Cancel&lt;/button&gt;</span>
+<span class="s">            &lt;/div&gt;</span>
+<span class="s">          &lt;/div&gt; </span>
+<span class="s">        &lt;/div&gt;&quot;</span>
+
+      <span class="nx">@renderQuestions</span><span class="p">()</span>
 
       <span class="nv">subtests = </span><span class="k">new</span> <span class="nx">Subtests</span>
       <span class="nx">subtests</span><span class="p">.</span><span class="nx">fetch</span>
@@ -188,7 +197,9 @@
           <span class="nx">linkSelect</span> <span class="o">+=</span> <span class="s">&quot;&lt;/select&gt;&lt;/div&gt;&quot;</span>
           <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#grid_link&#39;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">linkSelect</span>
 
+
     <span class="k">if</span> <span class="nx">prototype</span> <span class="o">==</span> <span class="s">&quot;location&quot;</span>
+
       <span class="nv">provinceText = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;provinceText&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
       <span class="nv">districtText = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;districtText&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
       <span class="nv">nameText     = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;nameText&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>

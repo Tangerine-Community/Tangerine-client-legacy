@@ -6,8 +6,6 @@
     <span class="s">&#39;click .detect&#39;</span>  <span class="o">:</span> <span class="s">&#39;detectOptions&#39;</span>
 
   <span class="nv">cloud: </span><span class="o">-&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;model&quot;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@</span>
     <span class="k">if</span> <span class="o">not</span> <span class="nx">@available</span><span class="p">.</span><span class="nx">cloud</span>
       <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Cannot detect cloud&quot;</span>
       <span class="k">return</span> <span class="kc">false</span>
@@ -15,8 +13,16 @@
     <span class="nv">ajaxOptions =</span>
       <span class="nv">success: </span><span class="o">=&gt;</span>
         <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.status&quot;</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.info_box&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;Results uploaded successfully&quot;</span>
+        <span class="k">new</span> <span class="nx">Log</span>
+          <span class="nv">type         : </span><span class="s">&quot;replication&quot;</span>
+          <span class="nv">event        : </span><span class="s">&quot;cloud:success&quot;</span>
+          <span class="nv">assessmentId : </span><span class="nx">@assessment</span><span class="p">.</span><span class="nx">id</span>
       <span class="nv">error: </span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span>
         <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.status&quot;</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.info_box&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;&lt;div&gt;Upload error&lt;/div&gt;&lt;div&gt;</span><span class="si">#{</span><span class="nx">res</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span>
+        <span class="k">new</span> <span class="nx">Log</span>
+          <span class="nv">type         : </span><span class="s">&quot;replication&quot;</span>
+          <span class="nv">event        : </span><span class="s">&quot;cloud:error&quot;</span>
+          <span class="nv">assessmentId : </span><span class="nx">@assessment</span><span class="p">.</span><span class="nx">id</span>
     <span class="nv">replicationOptions =</span>
       <span class="nv">filter: </span><span class="s">&quot;tangerine/resultFilter&quot;</span>
       <span class="nv">query_params:</span>

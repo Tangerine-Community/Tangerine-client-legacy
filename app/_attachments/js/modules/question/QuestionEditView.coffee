@@ -40,8 +40,9 @@ class QuestionEditView extends Backbone.View
         <div class='confirmation delete_confirm_#{i}'><button class='delete_delete' data-index='#{i}'>Delete</button><button data-index='#{i}' class='delete_cancel'>Cancel</button></div>
       </li>
       "
-    html += "<li><button class='add_option command'>Add option</button></li>
-      </ul>
+    html += "</ul>
+      <button class='add_option command'>Add option</button>
+      
     </div>"
 
   #
@@ -54,7 +55,8 @@ class QuestionEditView extends Backbone.View
       label : ""
       value : ""
     @model.set "options", options
-    @$el.find('#option_list_wrapper').html(@getOptionList()).sortable("refresh")
+    @$el.find('#option_list_wrapper').html(@getOptionList())
+    #@$el.find('.option_list').sortable("refresh")
 
 
   render: ->
@@ -108,19 +110,18 @@ class QuestionEditView extends Backbone.View
       </select>
       
       #{@getOptionList()}
-
       "
+      
+      @$el.find(".option_list").sortable
+        handle : '.sortable_handle'
+        update : (event, ui) =>
+          @updateModel()
+          
 
     @$el.append "<button class='save command'>Save</button><button class='delete_question command'>Delete</button>
       </div>
       "
-
     @$el.find("##{@cid}_question_type").buttonset()
-
-    @$el.find(".option_list").sortable
-      handle : '.sortable_handle'
-      update : (event, ui) =>
-        @updateModel()
 
     @trigger "rendered"
 
@@ -162,7 +163,6 @@ class QuestionEditView extends Backbone.View
     return false
   
   updateModel: =>
-    
     # basics
     @model.set 
       "prompt"          : @$el.find("##{@cid}_prompt").val() 
@@ -171,24 +171,23 @@ class QuestionEditView extends Backbone.View
       "linkedGridScore" : @$el.find("##{@cid}_linked_grid_score").val()
       "type"            : @$el.find("##{@cid}_question_type input:checked").val()
 
-    if parseInt(@model.get("linkedGridScore")||0) != 0 && (@parent.get("gridLinkId") || "") == ""
-        @saveMessage = "<br><br>Grid scores require<br>a subtest link"
-
     # options
     options = []
     i = 0
     optionListElements = @$el.find(".option_list li")
-
     for li in optionListElements
       label = $(li).find(".option_label").val()
       value = $(li).find(".option_value").val()
+
       if label? || value?
         options[i] =
           label : label
           value : value
         i++
+
     @model.set "options", options
-    false
+
+
         
   #
   # Deleting an option

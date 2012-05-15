@@ -40,7 +40,7 @@ PrototypeSurveyView = (function(_super) {
       this.names[$(field).attr("name")] = 1;
       if ($(field).is(":checked")) this.filled[$(field).attr("name")] = 1;
     }
-    _ref2 = $("input:text");
+    _ref2 = $("textarea");
     for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
       field = _ref2[_j];
       this.names[$(field).attr('name')] = 1;
@@ -72,7 +72,7 @@ PrototypeSurveyView = (function(_super) {
         }
       }
     }
-    _ref2 = this.$el.find("input:text");
+    _ref2 = this.$el.find("textarea");
     for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
       p = _ref2[_j];
       point = $(p);

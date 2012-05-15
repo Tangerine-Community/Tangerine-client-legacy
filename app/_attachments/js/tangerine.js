@@ -24,7 +24,8 @@ Router = (function(_super) {
     'edit/:name': 'edit',
     'results/:name': 'results',
     'import': 'import',
-    'subtest/:id': 'editSubtest'
+    'subtest/:id': 'editSubtest',
+    'question/:id': 'editQuestion'
   };
 
   Router.prototype.test = function() {
@@ -35,6 +36,18 @@ Router = (function(_super) {
       success: function(model) {
         console.log("result of all that");
         return console.log(model);
+      }
+    });
+  };
+
+  Router.prototype.setup = function() {
+    return Tangerine.device.fetch({
+      success: function(model) {
+        var view;
+        view = new DeviceView({
+          model: model
+        });
+        return vm.show(view);
       }
     });
   };
@@ -219,14 +232,29 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.setup = function() {
-    return Tangerine.device.fetch({
-      success: function(model) {
-        var view;
-        view = new DeviceView({
-          model: model
+  Router.prototype.editQuestion = function(id) {
+    return Tangerine.user.verify({
+      isAdmin: function() {
+        var question;
+        id = Utils.cleanURL(id);
+        question = new Question({
+          _id: id
         });
-        return vm.show(view);
+        return question.fetch({
+          success: function(model, response) {
+            var view;
+            view = new QuestionEditView({
+              model: model
+            });
+            return vm.show(view);
+          }
+        });
+      },
+      isUser: function() {
+        return Tangerine.router.navigate("", true);
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
       }
     });
   };

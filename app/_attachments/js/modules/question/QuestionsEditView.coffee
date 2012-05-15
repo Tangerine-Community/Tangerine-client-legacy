@@ -5,22 +5,29 @@ class QuestionsEditView extends Backbone.View
   
   events :
     'click .edit' : 'edit'
+    'click .delete' : 'delete'
 
   edit: (event) ->
     id = $(event.target).parent().attr('data-id')
     Tangerine.router.navigate "question/#{id}", true
     return false
 
+  delete: (event) ->
+    id = $(event.target).parent().attr('data-id')
+    @questions.get(id).destroy() 
+    return false
+
   initialize: ( options ) ->
     @questions = options.questions
-    console.log @questions
 
   render: ->
     html = ""
     for question, i in @questions.models
       html += "
         <li class='question_list_element' data-id='#{question.id}'>
-          <img src='images/icon_drag.png' class='sortable_handle'><span>#{question.get 'prompt'}</span> <span>[#{question.get 'name'}]</span> <button class='edit command'>Edit</button>
+          <img src='images/icon_drag.png' class='sortable_handle'><span>#{question.get 'prompt'}</span> <span>[#{question.get 'name'}]</span>
+            <button class='edit command'>Edit</button>
+            <button class='delete command'>Delete</button>
         </li>
       "
 

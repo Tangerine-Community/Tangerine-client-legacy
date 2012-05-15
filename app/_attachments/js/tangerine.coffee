@@ -8,7 +8,6 @@ class Router extends Backbone.Router
 
     'setup' : 'setup'
 
-
     ''            : 'assessments'
     'assessments' : 'assessments'
     
@@ -21,6 +20,8 @@ class Router extends Backbone.Router
     'import'        : 'import'
     
     'subtest/:id' : 'editSubtest'
+    
+    'question/:id' : 'editQuestion'
 
   test: ->
     ass = new Assessment
@@ -29,7 +30,17 @@ class Router extends Backbone.Router
       success:(model)->
         console.log "result of all that"
         console.log model
-        
+
+  #
+  # Device
+  #
+  setup: ->
+    Tangerine.device.fetch
+      success: (model) ->
+        view = new DeviceView
+          model: model
+        vm.show view
+
   # Just an assessment list but interesting idea
   # uses nested views
   dashboard: ->
@@ -145,16 +156,24 @@ class Router extends Backbone.Router
       isUnregistered: ->
         Tangerine.router.navigate "login", true
 
+  #
+  # Question
+  #
+  editQuestion: (id) ->
+    Tangerine.user.verify
+      isAdmin: ->
+        id = Utils.cleanURL id
+        question = new Question _id : id
+        question.fetch
+          success: (model, response) ->
+            view = new QuestionEditView
+              model : model
+            vm.show view
+      isUser: ->
+        Tangerine.router.navigate "", true
+      isUnregistered: ->
+        Tangerine.router.navigate "login", true
 
-  #
-  # Device
-  #
-  setup: ->
-    Tangerine.device.fetch
-      success: (model) ->
-        view = new DeviceView
-          model: model
-        vm.show view
 
   #
   # User

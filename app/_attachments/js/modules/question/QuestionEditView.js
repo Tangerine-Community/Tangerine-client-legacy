@@ -46,7 +46,7 @@ QuestionEditView = (function(_super) {
       option = options[i];
       html += "      <li class='question'>        <img src='images/icon_drag.png' class='sortable_handle'>        <div class='option_label_value'>          <label class='edit' for='" + this.cid + "_options." + i + ".label'>Label</label>          <input id='" + this.cid + "_options." + i + ".label' value='" + option.label + "' placeholder='Option label' class='option_label'><br>          <label class='edit' for='" + this.cid + "_options." + i + ".value'>Value</label>          <input id='" + this.cid + "_options." + i + ".value' value='" + option.value + "' placeholder='Option value' class='option_value'>        </div>        <img src='images/icon_delete.png' class='delete_option' data-index='" + i + "'>        <div class='confirmation delete_confirm_" + i + "'><button class='delete_delete' data-index='" + i + "'>Delete</button><button data-index='" + i + "' class='delete_cancel'>Cancel</button></div>      </li>      ";
     }
-    return html += "<li><button class='add_option command'>Add option</button></li>      </ul>    </div>";
+    return html += "</ul>      <button class='add_option command'>Add option</button>          </div>";
   };
 
   QuestionEditView.prototype.addOption = function() {
@@ -58,7 +58,7 @@ QuestionEditView = (function(_super) {
       value: ""
     });
     this.model.set("options", options);
-    return this.$el.find('#option_list_wrapper').html(this.getOptionList()).sortable("refresh");
+    return this.$el.find('#option_list_wrapper').html(this.getOptionList());
   };
 
   QuestionEditView.prototype.render = function() {
@@ -74,15 +74,15 @@ QuestionEditView = (function(_super) {
     this.$el.html("      <button class='back navigation'>Back</button>      <h1>Question Editor</h1>      <div class='edit_form question'>        <div class='label_value'>          <label for='" + this.cid + "_name'>Data name</label>          <input id='" + this.cid + "_name' type='text' value='" + name + "'>        </div>        <div class='label_value'>          <label for='" + this.cid + "_prompt'>Prompt</label>          <input id='" + this.cid + "_prompt' type='text' value='" + prompt + "'>        </div>        <div class='label_value'>          <label for='" + this.cid + "_hint'>Hint</label>          <input id='" + this.cid + "_hint' type='text' value='" + hint + "'>        </div>        <div class='label_value'>          <label for='" + this.cid + "_linked_grid_score'>Linked grid score</label>          <input id='" + this.cid + "_linked_grid_score' type='number' value='" + linkedGridScore + "'>        </div>        <div class='label_value' id='" + this.cid + "_question_type' class='question_type'>          <label>Question Type</label>          <label for='" + this.cid + "_single'>single</label>          <input id='" + this.cid + "_single' name='" + this.cid + "_type' type='radio' value='single' " + (type === 'single' ? 'checked' : void 0) + ">          <label for='" + this.cid + "_multiple'>multiple</label>          <input id='" + this.cid + "_multiple' name='" + this.cid + "_type'  type='radio' value='multiple' " + (type === 'multiple' ? 'checked' : void 0) + ">          <label for='" + this.cid + "_open'>open</label>          <input id='" + this.cid + "_open' name='" + this.cid + "_type'  type='radio' value='open' " + (type === 'open' ? 'checked' : void 0) + ">        </div>        ");
     if (type !== "open") {
       this.$el.append("      <div class='label_value'>      <label for='" + this.cid + "_question_template_select'>Fill from template</label>      <select id='" + this.cid + "_question_template_select'>        <option disabled selected>Select template</option>      </select>            " + (this.getOptionList()) + "      ");
+      this.$el.find(".option_list").sortable({
+        handle: '.sortable_handle',
+        update: function(event, ui) {
+          return _this.updateModel();
+        }
+      });
     }
     this.$el.append("<button class='save command'>Save</button><button class='delete_question command'>Delete</button>      </div>      ");
     this.$el.find("#" + this.cid + "_question_type").buttonset();
-    this.$el.find(".option_list").sortable({
-      handle: '.sortable_handle',
-      update: function(event, ui) {
-        return _this.updateModel();
-      }
-    });
     return this.trigger("rendered");
   };
 
@@ -135,9 +135,6 @@ QuestionEditView = (function(_super) {
       "linkedGridScore": this.$el.find("#" + this.cid + "_linked_grid_score").val(),
       "type": this.$el.find("#" + this.cid + "_question_type input:checked").val()
     });
-    if (parseInt(this.model.get("linkedGridScore") || 0) !== 0 && (this.parent.get("gridLinkId") || "") === "") {
-      this.saveMessage = "<br><br>Grid scores require<br>a subtest link";
-    }
     options = [];
     i = 0;
     optionListElements = this.$el.find(".option_list li");
@@ -153,8 +150,7 @@ QuestionEditView = (function(_super) {
         i++;
       }
     }
-    this.model.set("options", options);
-    return false;
+    return this.model.set("options", options);
   };
 
   QuestionEditView.prototype.showDeleteConfirm = function(event) {

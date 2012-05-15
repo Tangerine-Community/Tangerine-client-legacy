@@ -6,8 +6,6 @@ class ResultsView extends Backbone.View
     'click .detect'  : 'detectOptions'
 
   cloud: ->
-    console.log "model"
-    console.log @
     if not @available.cloud
       Utils.midAlert "Cannot detect cloud"
       return false
@@ -15,8 +13,16 @@ class ResultsView extends Backbone.View
     ajaxOptions =
       success: =>
         @$el.find(".status").find(".info_box").html "Results uploaded successfully"
+        new Log
+          type         : "replication"
+          event        : "cloud:success"
+          assessmentId : @assessment.id
       error: (res) =>
         @$el.find(".status").find(".info_box").html "<div>Upload error</div><div>#{res}</div>"
+        new Log
+          type         : "replication"
+          event        : "cloud:error"
+          assessmentId : @assessment.id
     replicationOptions =
       filter: "tangerine/resultFilter"
       query_params:

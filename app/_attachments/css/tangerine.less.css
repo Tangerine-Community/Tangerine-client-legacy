@@ -516,21 +516,6 @@ div.timer {
   border-radius: 10px;
   margin: 10px 0;
 }
-.question {
-  display: block;
-  margin: 20px 0 10px;
-}
-.question .prompt {
-  font-size: 25px;
-  color: black;
-  margin: 10px 5px 0;
-}
-.question .hint {
-  font-size: 20px;
-  margin: 5px 5px 10px;
-  color: #999999;
-  font-weight: bold;
-}
 /*
  * Remove text-shadow in selection highlight: h5bp.com/i
  * These selection declarations have to be separate
@@ -680,9 +665,6 @@ ul.assessment_list .assessment_menu {
 /*
  * assessmentEditView
  */
-div.assessmentEditView {
-  width: 80%;
-}
 div.assessmentEditView ul {
   list-style: none;
   text-indent: 0px;
@@ -743,7 +725,7 @@ label.ui-button {
  */
 .question {
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
-  background: none;
+  background: white;
   margin: 0 0 40px;
   padding: 5px 10px 15px;
   border: 2px solid #cccccc;

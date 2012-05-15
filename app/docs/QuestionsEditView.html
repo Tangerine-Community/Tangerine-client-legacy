@@ -2,26 +2,40 @@
 
   <span class="nv">tagName : </span><span class="s">&quot;ul&quot;</span>
   <span class="nv">className : </span><span class="s">&quot;questions_edit_view&quot;</span>
+  
+  <span class="nv">events :</span>
+    <span class="s">&#39;click .edit&#39;</span> <span class="o">:</span> <span class="s">&#39;edit&#39;</span>
+    <span class="s">&#39;click .delete&#39;</span> <span class="o">:</span> <span class="s">&#39;delete&#39;</span>
+
+  <span class="nv">edit: </span><span class="nf">(event) -&gt;</span>
+    <span class="nv">id = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">parent</span><span class="p">().</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-id&#39;</span><span class="p">)</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;question/</span><span class="si">#{</span><span class="nx">id</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
+    <span class="k">return</span> <span class="kc">false</span>
+
+  <span class="k">delete</span><span class="o">:</span> <span class="nf">(event) -&gt;</span>
+    <span class="nv">id = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">parent</span><span class="p">().</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-id&#39;</span><span class="p">)</span>
+    <span class="nx">@questions</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">).</span><span class="nx">destroy</span><span class="p">()</span> 
+    <span class="k">return</span> <span class="kc">false</span>
 
   <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
-
-    <span class="vi">@views = </span><span class="p">[]</span>
-
     <span class="vi">@questions = </span><span class="nx">options</span><span class="p">.</span><span class="nx">questions</span>
-    <span class="vi">@isPreview = </span><span class="p">[]</span>
-    <span class="vi">@views = </span><span class="p">[]</span>
-    <span class="k">for</span> <span class="nx">question</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@questions</span><span class="p">.</span><span class="nx">models</span>
-      <span class="nx">@isPreview</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span>
-      <span class="nx">@views</span><span class="p">.</span><span class="nx">push</span> <span class="k">new</span> <span class="nx">QuestionEditView</span>
-        <span class="nv">model     : </span><span class="nx">question</span>
-        <span class="nv">parent    : </span><span class="nx">@</span>
-        <span class="nv">index     : </span><span class="nx">i</span>
-        <span class="nv">isPreview : </span><span class="nx">@isPreview</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
 
   <span class="nv">render: </span><span class="o">-&gt;</span>
-    <span class="k">for</span> <span class="nx">view</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@views</span>
-      <span class="nx">view</span><span class="p">.</span><span class="nx">render</span> <span class="nx">@isPreview</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">view</span><span class="p">.</span><span class="nx">el</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@el</span>
+    <span class="nv">html = </span><span class="s">&quot;&quot;</span>
+    <span class="k">for</span> <span class="nx">question</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@questions</span><span class="p">.</span><span class="nx">models</span>
+      <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
+<span class="s">        &lt;li class=&#39;question_list_element&#39; data-id=&#39;</span><span class="si">#{</span><span class="nx">question</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">          &lt;img src=&#39;images/icon_drag.png&#39; class=&#39;sortable_handle&#39;&gt;&lt;span&gt;</span><span class="si">#{</span><span class="nx">question</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;prompt&#39;</span><span class="si">}</span><span class="s">&lt;/span&gt; &lt;span&gt;[</span><span class="si">#{</span><span class="nx">question</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;name&#39;</span><span class="si">}</span><span class="s">]&lt;/span&gt;</span>
+<span class="s">            &lt;button class=&#39;edit command&#39;&gt;Edit&lt;/button&gt;</span>
+<span class="s">            &lt;button class=&#39;delete command&#39;&gt;Delete&lt;/button&gt;</span>
+<span class="s">        &lt;/li&gt;</span>
+<span class="s">      &quot;</span>
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="nx">html</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>make it sortable</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@$el</span><span class="p">.</span><span class="nx">sortable</span>
+      <span class="nv">handle : </span><span class="s">&#39;.sortable_handle&#39;</span>
+      <span class="nv">update : </span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">ui</span><span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="k">for</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">li</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-id&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="nx">li</span> <span class="k">in</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;li.question_list_element&quot;</span><span class="p">))</span>
+          <span class="nv">oneQuestion = </span><span class="nx">@questions</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+          <span class="nx">@questions</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">).</span><span class="nx">set</span><span class="p">({</span><span class="s">&quot;order&quot;</span><span class="o">:</span><span class="nx">i</span><span class="p">},{</span><span class="nx">silent</span><span class="o">:</span><span class="kc">true</span><span class="p">}).</span><span class="nx">save</span><span class="p">(</span><span class="kc">null</span><span class="p">,{</span><span class="nx">silent</span><span class="o">:</span><span class="kc">true</span><span class="p">})</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

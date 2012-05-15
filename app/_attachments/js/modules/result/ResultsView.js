@@ -19,8 +19,6 @@ ResultsView = (function(_super) {
   ResultsView.prototype.cloud = function() {
     var ajaxOptions, replicationOptions,
       _this = this;
-    console.log("model");
-    console.log(this);
     if (!this.available.cloud) {
       Utils.midAlert("Cannot detect cloud");
       return false;
@@ -28,10 +26,20 @@ ResultsView = (function(_super) {
     this.$el.find(".status").find(".info_box").html("");
     ajaxOptions = {
       success: function() {
-        return _this.$el.find(".status").find(".info_box").html("Results uploaded successfully");
+        _this.$el.find(".status").find(".info_box").html("Results uploaded successfully");
+        return new Log({
+          type: "replication",
+          event: "cloud:success",
+          assessmentId: _this.assessment.id
+        });
       },
       error: function(res) {
-        return _this.$el.find(".status").find(".info_box").html("<div>Upload error</div><div>" + res + "</div>");
+        _this.$el.find(".status").find(".info_box").html("<div>Upload error</div><div>" + res + "</div>");
+        return new Log({
+          type: "replication",
+          event: "cloud:error",
+          assessmentId: _this.assessment.id
+        });
       }
     };
     replicationOptions = {

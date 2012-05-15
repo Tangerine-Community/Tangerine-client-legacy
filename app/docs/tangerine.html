@@ -8,7 +8,6 @@
 
     <span class="s">&#39;setup&#39;</span> <span class="o">:</span> <span class="s">&#39;setup&#39;</span>
 
-
     <span class="s">&#39;&#39;</span>            <span class="o">:</span> <span class="s">&#39;assessments&#39;</span>
     <span class="s">&#39;assessments&#39;</span> <span class="o">:</span> <span class="s">&#39;assessments&#39;</span>
     
@@ -21,6 +20,8 @@
     <span class="s">&#39;import&#39;</span>        <span class="o">:</span> <span class="s">&#39;import&#39;</span>
     
     <span class="s">&#39;subtest/:id&#39;</span> <span class="o">:</span> <span class="s">&#39;editSubtest&#39;</span>
+    
+    <span class="s">&#39;question/:id&#39;</span> <span class="o">:</span> <span class="s">&#39;editQuestion&#39;</span>
 
   <span class="nv">test: </span><span class="o">-&gt;</span>
     <span class="nv">ass = </span><span class="k">new</span> <span class="nx">Assessment</span>
@@ -28,15 +29,19 @@
       <span class="nx">name</span><span class="o">:</span><span class="s">&quot;Example English EGRA May 2011&quot;</span>
       <span class="nx">success</span><span class="o">:</span><span class="nf">(model)-&gt;</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;result of all that&quot;</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">model</span>
-        </pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Just an assessment list but interesting idea
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">model</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Device</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">setup: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">device</span><span class="p">.</span><span class="nx">fetch</span>
+      <span class="nv">success: </span><span class="nf">(model) -&gt;</span>
+        <span class="nv">view = </span><span class="k">new</span> <span class="nx">DeviceView</span>
+          <span class="nv">model: </span><span class="nx">model</span>
+        <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Just an assessment list but interesting idea
 uses nested views</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">dashboard: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
         <span class="nv">dashboard = </span><span class="k">new</span> <span class="nx">DashboardView</span>
         <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">dashboard</span>
       <span class="nv">isUser: </span><span class="o">-&gt;</span>
-        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;assessments&quot;</span><span class="p">,</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Assessment</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">import: </span><span class="o">-&gt;</span>
+        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;assessments&quot;</span><span class="p">,</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Assessment</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">import: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
         <span class="nv">view = </span><span class="k">new</span> <span class="nx">AssessmentImportView</span>
@@ -117,7 +122,7 @@ uses nested views</p>             </td>             <td class="code">           
               <span class="nv">assessment : </span><span class="nx">model</span>
             <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
       <span class="nv">isUnregistered: </span><span class="nf">(options) -&gt;</span>
-        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Subtests</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">editSubtest: </span><span class="nf">(id) -&gt;</span>
+        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Subtests</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">editSubtest: </span><span class="nf">(id) -&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
         <span class="nv">id = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">cleanURL</span> <span class="nx">id</span>
@@ -130,12 +135,20 @@ uses nested views</p>             </td>             <td class="code">           
       <span class="nv">isUser: </span><span class="o">-&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="kc">true</span>
       <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
-        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Device</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">setup: </span><span class="o">-&gt;</span>
-    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">device</span><span class="p">.</span><span class="nx">fetch</span>
-      <span class="nv">success: </span><span class="nf">(model) -&gt;</span>
-        <span class="nv">view = </span><span class="k">new</span> <span class="nx">DeviceView</span>
-          <span class="nv">model: </span><span class="nx">model</span>
-        <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>User</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">login: </span><span class="o">-&gt;</span>
+        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Question</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">editQuestion: </span><span class="nf">(id) -&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
+      <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
+        <span class="nv">id = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">cleanURL</span> <span class="nx">id</span>
+        <span class="nv">question = </span><span class="k">new</span> <span class="nx">Question</span> <span class="nv">_id : </span><span class="nx">id</span>
+        <span class="nx">question</span><span class="p">.</span><span class="nx">fetch</span>
+          <span class="nv">success: </span><span class="nf">(model, response) -&gt;</span>
+            <span class="nv">view = </span><span class="k">new</span> <span class="nx">QuestionEditView</span>
+              <span class="nv">model : </span><span class="nx">model</span>
+            <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
+      <span class="nv">isUser: </span><span class="o">-&gt;</span>
+        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="kc">true</span>
+      <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
+        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>User</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">login: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="kc">true</span>
@@ -157,7 +170,7 @@ uses nested views</p>             </td>             <td class="code">           
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
 
-<span class="nx">$</span> <span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Start the application</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nb">window</span><span class="p">.</span><span class="nv">vm = </span><span class="k">new</span> <span class="nx">ViewManager</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Singletons</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">Tangerine.router = </span><span class="k">new</span> <span class="nx">Router</span><span class="p">()</span>
+<span class="nx">$</span> <span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Start the application</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nb">window</span><span class="p">.</span><span class="nv">vm = </span><span class="k">new</span> <span class="nx">ViewManager</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Singletons</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">Tangerine.router = </span><span class="k">new</span> <span class="nx">Router</span><span class="p">()</span>
   <span class="nv">Tangerine.user   = </span><span class="k">new</span> <span class="nx">User</span><span class="p">()</span>
   <span class="nv">Tangerine.nav    = </span><span class="k">new</span> <span class="nx">NavigationView</span>
     <span class="nv">user   : </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span>
