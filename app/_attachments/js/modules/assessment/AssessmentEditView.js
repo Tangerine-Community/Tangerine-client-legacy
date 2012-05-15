@@ -91,8 +91,6 @@ AssessmentEditView = (function(_super) {
   AssessmentEditView.prototype.render = function() {
     var arch, archiveChecked, key, notArchiveChecked, subKey, subValue, subtestTypeSelect, unorderedList, value, _ref,
       _this = this;
-    console.log("model");
-    console.log(this.model);
     arch = this.model.get('archived');
     archiveChecked = arch === true || arch === 'true' ? "checked" : "";
     notArchiveChecked = archiveChecked ? "" : "checked";

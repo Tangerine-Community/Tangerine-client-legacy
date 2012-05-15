@@ -62,8 +62,6 @@ class AssessmentEditView extends Backbone.View
     @model.subtests.on "change remove", @render
 
   render: =>
-    console.log "model"
-    console.log @model
     arch = @model.get('archived')
     archiveChecked    = if (arch == true or arch == 'true') then "checked" else ""
     notArchiveChecked = if archiveChecked then "" else "checked"
