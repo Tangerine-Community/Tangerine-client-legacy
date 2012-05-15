@@ -8,6 +8,7 @@ AssessmentListView = (function(_super) {
   __extends(AssessmentListView, _super);
 
   function AssessmentListView() {
+    this.newAssessmentSave = __bind(this.newAssessmentSave, this);
     this.render = __bind(this.render, this);
     AssessmentListView.__super__.constructor.apply(this, arguments);
   }
@@ -16,97 +17,129 @@ AssessmentListView = (function(_super) {
     'submit form': 'newAssessmentSave',
     'click .new_assessment_save': 'newAssessmentSave',
     'click .new_assessment_cancel': 'newAssessmentHide',
-    'click .add_assessment': 'newAssessmentShow'
+    'click .new_assessment': 'newAssessmentShow',
+    'click .import': 'import'
+  };
+
+  AssessmentListView.prototype["import"] = function() {
+    return Tangerine.router.navigate("import", true);
+  };
+
+  AssessmentListView.prototype.initialize = function(options) {
+    this.isAdmin = Tangerine.user.isAdmin;
+    this.views = [];
+    this.publicViews = [];
+    return this.refresh();
+  };
+
+  AssessmentListView.prototype.refresh = function() {
+    var allAssessments,
+      _this = this;
+    allAssessments = new Assessments;
+    return allAssessments.fetch({
+      success: function(collection) {
+        var groupCollection;
+        groupCollection = [];
+        collection.each(function(model) {
+          if (Tangerine.context.server) {
+            if (~Tangerine.user.groups.indexOf(model.get("group"))) {
+              return groupCollection.push(model);
+            }
+          } else {
+            return groupCollection.push(model);
+          }
+        });
+        _this.collection = new Assessments(groupCollection);
+        _this.collection.on("add remove", _this.render);
+        if (Tangerine.context.server) {
+          _this.public = new Assessments(collection.where({
+            group: "public"
+          }));
+        } else {
+          _this.public = null;
+        }
+        return _this.render();
+      }
+    });
+  };
+
+  AssessmentListView.prototype.render = function() {
+    var assessment, groupList, oneView, publicList, _i, _j, _len, _len2, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+    this.closeViews();
+    this.views = [];
+    this.$el.html("      <h1>Assessments</h1>      <button class='new_assessment command'>New</button><button class='import command'>Import</button>      <form class='new_assessment_form'>        <input type='text' class='new_assessment_name' placeholder='Assessment Name'>        <button class='new_assessment_save'>Save</button>        <button class='new_assessment_cancel'>Cancel</button>      </form>      <h2>Group assessments</h2>    ");
+    if (((_ref = this.collection) != null ? (_ref2 = _ref.models) != null ? _ref2.length : void 0 : void 0) > 0) {
+      groupList = $('<ul>').addClass('assessment_list');
+      _ref4 = (_ref3 = this.collection) != null ? _ref3.models : void 0;
+      for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
+        assessment = _ref4[_i];
+        oneView = new AssessmentListElementView({
+          model: assessment,
+          parent: this
+        });
+        this.views.push(oneView);
+        oneView.render();
+        groupList.append(oneView.el);
+      }
+      this.$el.append(groupList);
+    } else {
+      this.$el.append("<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>");
+    }
+    this.$el.append("<h2>Public assessments</h2>");
+    if (((_ref5 = this.public) != null ? (_ref6 = _ref5.models) != null ? _ref6.length : void 0 : void 0) > 0) {
+      publicList = $('<ul>').addClass('public_list');
+      _ref8 = (_ref7 = this.public) != null ? _ref7.models : void 0;
+      for (_j = 0, _len2 = _ref8.length; _j < _len2; _j++) {
+        assessment = _ref8[_j];
+        oneView = new AssessmentListElementView({
+          model: assessment,
+          parent: this,
+          isPublic: true
+        });
+        this.publicViews.push(oneView);
+        oneView.render();
+        publicList.append(oneView.el);
+      }
+    } else {
+      this.$el.append("<p>No assessments available.</p>");
+    }
+    this.$el.append(publicList);
+    return this.trigger("rendered");
   };
 
   AssessmentListView.prototype.newAssessmentShow = function() {
-    return this.$el.find('.new_assessment_form').show(250);
+    this.$el.find('.new_assessment_form').show(250);
+    return false;
   };
 
   AssessmentListView.prototype.newAssessmentHide = function() {
-    return this.$el.find('.new_assessment_form').fadeOut(250);
+    this.$el.find('.new_assessment_form').fadeOut(250);
+    return false;
   };
 
   AssessmentListView.prototype.newAssessmentValid = function() {
-    return this.$el.find('.new_assessment_name').val() !== "";
+    if (this.$el.find('.new_assessment_name').val() !== "") return false;
   };
 
   AssessmentListView.prototype.newAssessmentSave = function() {
     var newAssessment;
     if (this.newAssessmentValid) {
-      return newAssessment = new Assessment({
-        'name': this.$el.find('.new_assessment_name')
+      newAssessment = new Assessment({
+        'name': this.$el.find('.new_assessment_name').val(),
+        'group': Tangerine.user.groups[0]
       });
+      newAssessment.save();
+      this.collection.add(newAssessment);
+      Utils.midAlert("" + (this.$el.find('.new_assessment_name').val()) + " saved");
     } else {
-      return this.$el.find('messages').append("<span class='error'>Error saving changes <img src='images/icon_close.png' class='clear_message'></span>");
+      Utils.midAlert("<span class='error'>Error saving changes <img src='images/icon_close.png' class='clear_message'></span>");
     }
-  };
-
-  AssessmentListView.prototype.initialize = function(options) {
-    var _this = this;
-    this.isAdmin = Tangerine.user.isAdmin;
-    this.views = [];
-    this.collection = new Assessments(null, {
-      group: Tangerine.user.group,
-      comparator: function(a, b) {
-        if (a.name > b.name) {
-          return 1;
-        } else {
-          return -1;
-        }
-      }
-    });
-    this.collection.on("change", this.render);
-    return this.collection.fetch({
-      success: function() {
-        _this.collection.filter(function(a, b, c) {
-          return function() {
-            return true;
-          };
-        });
-        return _this.collection.trigger("change");
-      }
-    });
-  };
-
-  AssessmentListView.prototype.initializeSubmenu = function() {
-    console.log("test");
-    if (this.isAdmin) {
-      return $("nav#submenu").html("<button data-submenu='new'>new</button>");
-    }
-  };
-
-  AssessmentListView.prototype.submenuHandler = function(event) {
-    var submenu;
-    submenu = $(event.target).attr("data-submenu");
-    console.log("test");
-    console.log(submenu);
-    if (submenu === "new") return this.newAssessmentShow();
-  };
-
-  AssessmentListView.prototype.render = function() {
-    var assessment, oneView, unorderedList, _i, _len, _ref;
-    this.closeViews();
-    this.views = [];
-    this.$el.html("      <h2>Assessments</h2>      <form class='new_assessment_form'>        <input type='text' class='new_assessment_name' placeholder='Assessment Name'>        <button class='new_assessment_save'>Save</button>        <button class='new_assessment_cancel'>Cancel</button>      </form>      ");
-    unorderedList = $('<ul>').addClass('assessment_list');
-    _ref = this.collection.models;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      assessment = _ref[_i];
-      oneView = new AssessmentElementView({
-        model: assessment
-      });
-      this.views.push(oneView);
-      oneView.render();
-      unorderedList.append(oneView.el);
-    }
-    this.$el.append(unorderedList);
-    return this.trigger("rendered");
+    return false;
   };
 
   AssessmentListView.prototype.closeViews = function() {
     return _.each(this.views, function(view) {
-      return view.close;
+      return view.close();
     });
   };
 
