@@ -13,13 +13,30 @@ Router = (function(_super) {
   Router.prototype.routes = {
     'login': 'login',
     'logout': 'logout',
-    '': 'dashboard',
+    'account': 'account',
+    'test': 'test',
+    'setup': 'setup',
+    '': 'assessments',
+    'assessments': 'assessments',
     'dashboard': 'dashboard',
-    'assessment/:name': 'assessment',
-    'assessment/:name/run': 'run',
-    'assessment/:name/edit': 'edit',
-    'assessment/:name/results': 'results',
-    "assessments": "assessments"
+    'edit-id/:id': 'editId',
+    'run/:name': 'run',
+    'edit/:name': 'edit',
+    'results/:name': 'results',
+    'import': 'import',
+    'subtest/:id': 'editSubtest'
+  };
+
+  Router.prototype.test = function() {
+    var ass;
+    ass = new Assessment;
+    return ass.fetch({
+      name: "Example English EGRA May 2011",
+      success: function(model) {
+        console.log("result of all that");
+        return console.log(model);
+      }
+    });
   };
 
   Router.prototype.dashboard = function() {
@@ -35,29 +52,216 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.assessments = function() {
+  Router.prototype["import"] = function() {
     return Tangerine.user.verify({
-      isUser: function() {
-        var assessments;
-        assessments = new AssessmentListView;
-        return vm.show(assessments);
+      isRegistered: function() {
+        var view;
+        view = new AssessmentImportView;
+        return vm.show(view);
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
       }
     });
   };
 
-  Router.prototype.run = function(name) {};
+  Router.prototype.assessments = function() {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var assessments;
+        assessments = new AssessmentListView;
+        return vm.show(assessments);
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.editId = function(id) {
+    id = Utils.cleanURL(id);
+    return Tangerine.user.verify({
+      isAdmin: function() {
+        var assessment;
+        assessment = new Assessment({
+          _id: id
+        });
+        return assessment.superFetch({
+          success: function(model) {
+            var view;
+            view = new AssessmentEditView({
+              model: model
+            });
+            return vm.show(view);
+          },
+          error: function(details) {
+            var name, view;
+            name = Utils.cleanURL(name);
+            view = new ErrorView({
+              message: "There was an error loading the assessment '" + name + "'",
+              details: details
+            });
+            return vm.show(view);
+          }
+        });
+      },
+      isUser: function() {
+        return Tangerine.router.navigate("", true);
+      },
+      isUnregistered: function(options) {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.edit = function(name) {
+    return Tangerine.user.verify({
+      isAdmin: function() {
+        var assessment;
+        assessment = new Assessment;
+        return assessment.fetch({
+          name: name,
+          success: function(model) {
+            var view;
+            view = new AssessmentEditView({
+              model: model
+            });
+            return vm.show(view);
+          },
+          error: function(details) {
+            var view;
+            name = Utils.cleanURL(name);
+            view = new ErrorView({
+              message: "There was an error loading the assessment '" + name + "'",
+              details: details
+            });
+            return vm.show(view);
+          }
+        });
+      },
+      isUser: function() {
+        return Tangerine.router.navigate("", true);
+      },
+      isUnregistered: function(options) {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.run = function(name) {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var assessment;
+        assessment = new Assessment;
+        return assessment.fetch({
+          name: name,
+          success: function(model) {
+            var view;
+            view = new AssessmentRunView({
+              model: model
+            });
+            return vm.show(view);
+          }
+        });
+      },
+      isUnregistered: function(options) {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.results = function(name) {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var assessment;
+        assessment = new Assessment;
+        return assessment.fetch({
+          name: name,
+          success: function(model) {
+            var view;
+            view = new ResultsView({
+              assessment: model
+            });
+            return vm.show(view);
+          }
+        });
+      },
+      isUnregistered: function(options) {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.editSubtest = function(id) {
+    return Tangerine.user.verify({
+      isAdmin: function() {
+        var subtest;
+        id = Utils.cleanURL(id);
+        subtest = new Subtest({
+          _id: id
+        });
+        return subtest.fetch({
+          success: function(model, response) {
+            var view;
+            view = new SubtestEditView({
+              model: model
+            });
+            return vm.show(view);
+          }
+        });
+      },
+      isUser: function() {
+        return Tangerine.router.navigate("", true);
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.setup = function() {
+    return Tangerine.device.fetch({
+      success: function(model) {
+        var view;
+        view = new DeviceView({
+          model: model
+        });
+        return vm.show(view);
+      }
+    });
+  };
 
   Router.prototype.login = function() {
-    var loginView;
-    loginView = new LoginView({
-      model: Tangerine.user
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        return Tangerine.router.navigate("", true);
+      },
+      isUnregistered: function() {
+        var view;
+        view = new LoginView;
+        return vm.show(view);
+      }
     });
-    return vm.show(loginView);
   };
 
   Router.prototype.logout = function() {
     Tangerine.user.logout();
     return Tangerine.router.navigate("login", true);
+  };
+
+  Router.prototype.account = function() {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var view;
+        view = new AccountView({
+          model: Tangerine.user
+        });
+        return vm.show(view);
+      },
+      isUnregistered: function(options) {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
   };
 
   return Router;
@@ -72,31 +276,5 @@ $(function() {
     user: Tangerine.user,
     router: Tangerine.router
   });
-  Backbone.history.start();
-  $("#content").on("click", ".clear_message", null, function(a) {
-    return $(a.target).parent().fadeOut(250, function() {
-      return $(this).empty().show();
-    });
-  });
-  $("#content").on("click", ".parent_remove", null, function(a) {
-    return $(a.target).parent().fadeOut(250, function() {
-      return $(this).remove();
-    });
-  });
-  $(".ajax_loading").ajaxStart(function() {
-    return $("#corner_logo").attr("src", "images/spin_orange.gif");
-  });
-  $(".ajax_loading").ajaxStop(function() {
-    return $("#corner_logo").attr("src", "images/corner_logo.png");
-  });
-  $("#content").on("click", ".alert_button", function() {
-    var alert_text;
-    alert_text = $(this).attr("data-alert") ? $(this).attr("data-alert") : $(this).val();
-    return Utils.disposableAlert(alert_text);
-  });
-  return $("#content").on("click", ".disposable_alert", function() {
-    return $(this).stop().fadeOut(250, function() {
-      return $(this).remove();
-    });
-  });
+  return Backbone.history.start();
 });

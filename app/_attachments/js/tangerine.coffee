@@ -1,18 +1,37 @@
 class Router extends Backbone.Router
   routes:
-    'login'  : 'login'
-    'logout' : 'logout'
+    'login'   : 'login'
+    'logout'  : 'logout'
+    'account' : 'account'
 
-    ''          : 'dashboard'
-    'dashboard' : 'dashboard'
+    'test' : 'test'
 
-    'assessment/:name'         : 'assessment'
-    'assessment/:name/run'     : 'run'
-    'assessment/:name/edit'    : 'edit'
-    'assessment/:name/results' : 'results'
+    'setup' : 'setup'
 
-    "assessments" : "assessments"
 
+    ''            : 'assessments'
+    'assessments' : 'assessments'
+    
+    'dashboard' : 'dashboard' 
+
+    'edit-id/:id'   : 'editId'
+    'run/:name'     : 'run'
+    'edit/:name'    : 'edit'
+    'results/:name' : 'results'
+    'import'        : 'import'
+    
+    'subtest/:id' : 'editSubtest'
+
+  test: ->
+    ass = new Assessment
+    ass.fetch
+      name:"Example English EGRA May 2011"
+      success:(model)->
+        console.log "result of all that"
+        console.log model
+        
+  # Just an assessment list but interesting idea
+  # uses nested views
   dashboard: ->
     Tangerine.user.verify
       isAdmin: ->
@@ -21,35 +40,155 @@ class Router extends Backbone.Router
       isUser: ->
         Tangerine.router.navigate "assessments", true
 
+  #
+  # Assessment
+  #
+
+  import: ->
+    Tangerine.user.verify
+      isRegistered: ->
+        view = new AssessmentImportView
+        vm.show view
+      isUnregistered: ->
+        Tangerine.router.navigate "login", true
+
   assessments: ->
     Tangerine.user.verify
-      isUser: ->
+      isRegistered: ->
         assessments = new AssessmentListView
         vm.show assessments
+      isUnregistered: ->
+        Tangerine.router.navigate "login", true
+
+  editId: (id) ->
+    id = Utils.cleanURL id
+    Tangerine.user.verify
+      isAdmin: ->
+        assessment = new Assessment
+          _id: id
+        assessment.superFetch
+          success : ( model ) ->
+            view = new AssessmentEditView model: model
+            vm.show view
+          error: (details) ->
+            name = Utils.cleanURL name
+            view = new ErrorView
+              message : "There was an error loading the assessment '#{name}'"
+              details : details
+            vm.show view
+      isUser: ->
+        Tangerine.router.navigate "", true
+      isUnregistered: (options) ->
+        Tangerine.router.navigate "login", true
+
+  edit: (name) ->
+    Tangerine.user.verify
+      isAdmin: ->    
+        assessment = new Assessment
+        assessment.fetch
+          name : name
+          success : ( model ) ->
+            view = new AssessmentEditView model: model
+            vm.show view
+          error: (details) ->
+            name = Utils.cleanURL name
+            view = new ErrorView
+              message : "There was an error loading the assessment '#{name}'"
+              details : details
+            vm.show view
+      isUser: ->
+        Tangerine.router.navigate "", true
+      isUnregistered: (options) ->
+        Tangerine.router.navigate "login", true
+
 
   run: (name) ->
-    
+    Tangerine.user.verify
+      isRegistered: ->
+        assessment = new Assessment
+        assessment.fetch
+          name : name
+          success : ( model ) ->
+            view = new AssessmentRunView model: model
+            vm.show view
+      isUnregistered: (options) ->
+        Tangerine.router.navigate "login", true
 
+  results: (name) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        assessment = new Assessment
+        assessment.fetch
+          name : name
+          success : ( model ) ->
+            view = new ResultsView 
+              assessment : model
+            vm.show view
+      isUnregistered: (options) ->
+        Tangerine.router.navigate "login", true
+
+  #
+  # Subtests
+  #
+  editSubtest: (id) ->
+    Tangerine.user.verify
+      isAdmin: ->
+        id = Utils.cleanURL id
+        subtest = new Subtest _id : id
+        subtest.fetch
+          success: (model, response) ->
+            view = new SubtestEditView
+              model : model
+            vm.show view
+      isUser: ->
+        Tangerine.router.navigate "", true
+      isUnregistered: ->
+        Tangerine.router.navigate "login", true
+
+
+  #
+  # Device
+  #
+  setup: ->
+    Tangerine.device.fetch
+      success: (model) ->
+        view = new DeviceView
+          model: model
+        vm.show view
+
+  #
+  # User
+  #
   login: ->
-    loginView = new LoginView
-      model : Tangerine.user
-    vm.show loginView
+    Tangerine.user.verify
+      isRegistered: ->
+        Tangerine.router.navigate "", true
+      isUnregistered: ->
+        view = new LoginView
+        vm.show view
 
   logout: ->
     Tangerine.user.logout()
     Tangerine.router.navigate "login", true
 
-# Initialization/Detection
-$ -> # run after DOM loads
 
+  account: ->
+    Tangerine.user.verify
+      isRegistered: ->
+        view = new AccountView model : Tangerine.user
+        vm.show view
+      isUnregistered: (options) ->
+        Tangerine.router.navigate "login", true
+
+
+$ ->
   #
   # Start the application
   #
 
   window.vm = new ViewManager()
 
-  # Durables
-  # Things here should be reused
+  # Singletons
   Tangerine.router = new Router()
   Tangerine.user   = new User()
   Tangerine.nav    = new NavigationView
@@ -57,26 +196,4 @@ $ -> # run after DOM loads
     router : Tangerine.router
 
   Backbone.history.start()
-
-  #
-  # Set up some interface stuff
-  #
-  
-  # ###.clear_message
-  # This little guy will fade out and clear him and his parents. Wrap him wisely.
-  # `<span> my message <button class="clear_message">X</button>`
-  $("#content").on("click", ".clear_message",  null, (a) -> $(a.target).parent().fadeOut(250, -> $(this).empty().show() ) )
-  $("#content").on("click", ".parent_remove", null, (a) -> $(a.target).parent().fadeOut(250, -> $(this).remove() ) )
-
-  # Spin the logo on ajax calls
-  $(".ajax_loading").ajaxStart -> $("#corner_logo").attr "src", "images/spin_orange.gif"
-  $(".ajax_loading").ajaxStop ->  $("#corner_logo").attr "src", "images/corner_logo.png"
-
-  # disposable alerts, this should be moved
-  $("#content").on "click",".alert_button", ->
-    alert_text = if $(this).attr("data-alert") then $(this).attr("data-alert") else $(this).val()
-    Utils.disposableAlert alert_text
-  $("#content").on "click", ".disposable_alert", ->
-    $(this).stop().fadeOut 250, ->
-      $(this).remove()
 
