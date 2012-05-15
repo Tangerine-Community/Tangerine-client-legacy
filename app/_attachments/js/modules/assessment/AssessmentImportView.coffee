@@ -12,7 +12,6 @@ class AssessmentImportView extends Backbone.View
     dKey = @$el.find("#d_key").val()
     @$el.find(".status").fadeIn(250)
     @$el.find("#progress").html "Looking for #{dKey}"
-    console.log dKey
     repOps = 
       'filter' : 'tangerine/importFilter'
       'create_target' : true
@@ -21,24 +20,30 @@ class AssessmentImportView extends Backbone.View
 
     opts = 
       success: (a, b) => 
-        console.log [ "success", a, b ]
         @$el.find("#progress").html "Import successful <h3>Imported</h3>"
-        
+        # this next step is just a test to see everything is there...
+        # maybe it doesn't need to. Kind of impressive though.
         $.couch.db("tangerine").view "tangerine/byDKey",
           keys: [dKey]
           success: (data) =>
-            console.log data
+            questions = 0
+            assessments = 0
+            subtests = 0
+            assessmentName = ""
             for datum in data.rows
               doc = datum.value
-              @$el.find("#progress").append "<div>#{doc.collection} - #{doc.name}</div>"
+              subtests++ if doc.collection == 'subtest'
+              questions++ if doc.collection == 'question'  
+              assessmentName = doc.name if doc.collection == 'assessment'
+            @$el.find("#progress").append "
+              <div>#{assessmentName}</div>
+              <div>Questions - #{questions}</div>
+              <div>Subtests - #{subtests}</div>"
 
           error: (a, b ,c) ->
-            console.log([a,b,c])
-
-        
+            @$el.find("#progress").html "<div>Error after data imported</div><div>#{a}</div><div>#{b}"
 
       error: (a,b) =>
-        console.log [ "error", a, b ]
         @$el.find("#progress").html "<div>Import error</div><div>#{a}</div><div>#{b}"
         
     $.couch.replicate "http://tangerine.iriscouch.com:5984/tangerine", "tangerine", opts, repOps

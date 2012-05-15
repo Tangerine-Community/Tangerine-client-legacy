@@ -26,7 +26,6 @@ AssessmentImportView = (function(_super) {
     dKey = this.$el.find("#d_key").val();
     this.$el.find(".status").fadeIn(250);
     this.$el.find("#progress").html("Looking for " + dKey);
-    console.log(dKey);
     repOps = {
       'filter': 'tangerine/importFilter',
       'create_target': true,
@@ -36,29 +35,31 @@ AssessmentImportView = (function(_super) {
     };
     opts = {
       success: function(a, b) {
-        console.log(["success", a, b]);
         _this.$el.find("#progress").html("Import successful <h3>Imported</h3>");
         return $.couch.db("tangerine").view("tangerine/byDKey", {
           keys: [dKey],
           success: function(data) {
-            var datum, doc, _i, _len, _ref, _results;
-            console.log(data);
+            var assessmentName, assessments, datum, doc, questions, subtests, _i, _len, _ref;
+            questions = 0;
+            assessments = 0;
+            subtests = 0;
+            assessmentName = "";
             _ref = data.rows;
-            _results = [];
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               datum = _ref[_i];
               doc = datum.value;
-              _results.push(_this.$el.find("#progress").append("<div>" + doc.collection + " - " + doc.name + "</div>"));
+              if (doc.collection === 'subtest') subtests++;
+              if (doc.collection === 'question') questions++;
+              if (doc.collection === 'assessment') assessmentName = doc.name;
             }
-            return _results;
+            return _this.$el.find("#progress").append("              <div>" + assessmentName + "</div>              <div>Questions - " + questions + "</div>              <div>Subtests - " + subtests + "</div>");
           },
           error: function(a, b, c) {
-            return console.log([a, b, c]);
+            return this.$el.find("#progress").html("<div>Error after data imported</div><div>" + a + "</div><div>" + b);
           }
         });
       },
       error: function(a, b) {
-        console.log(["error", a, b]);
         return _this.$el.find("#progress").html("<div>Import error</div><div>" + a + "</div><div>" + b);
       }
     };
