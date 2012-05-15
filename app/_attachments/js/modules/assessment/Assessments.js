@@ -12,7 +12,11 @@ Assessments = (function(_super) {
 
   Assessments.prototype.model = Assessment;
 
-  Assessments.prototype.url = '/assessment';
+  Assessments.prototype.url = 'assessment';
+
+  Assessments.prototype.comparator = function(model) {
+    return model.get("name");
+  };
 
   Assessments.prototype.initialize = function(options) {
     if (options != null ? options.group : void 0) {
