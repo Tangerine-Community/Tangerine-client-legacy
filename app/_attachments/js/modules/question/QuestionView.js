@@ -13,20 +13,18 @@ QuestionView = (function(_super) {
   QuestionView.prototype.className = "question";
 
   QuestionView.prototype.initialize = function(options) {
-    console.log("question view initializing");
     return this.model = options.model;
   };
 
   QuestionView.prototype.render = function() {
     var checkOrRadio, i, name, option, options, type, _len;
-    console.log("question view rendering");
     name = this.model.get("name");
     type = this.model.get("type");
     options = this.model.get("options");
     checkOrRadio = type === "multiple" ? "checkbox" : "radio";
     this.$el.html("<div class='prompt'>" + (this.model.get('prompt')) + "</div>    <div class='hint'>" + (this.model.get('hint') || "") + "</div>");
     if (type === "open") {
-      this.$el.append("<textarea id='" + name + "'></textarea>");
+      this.$el.append("<textarea id='" + name + "' name='" + name + "'></textarea>");
     } else {
       for (i = 0, _len = options.length; i < _len; i++) {
         option = options[i];

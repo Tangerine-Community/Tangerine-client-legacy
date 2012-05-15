@@ -4,7 +4,7 @@ class QuestionEditView extends Backbone.View
   tagName   : "li"
 
   events : 
-    'click .edit_button'     : 'toggleEdit'
+    'click .back'            : 'back'
     'click .save'            : 'save'
     'click .add_option'      : 'addOption'
     'click .delete_option'   : 'showDeleteConfirm'
@@ -14,20 +14,48 @@ class QuestionEditView extends Backbone.View
     'click .delete_question' : 'deleteQuestion'
     'keypress'               : 'hijackEnter'
 
-  toggleEdit: (event) ->
-    @isPreview = !@isPreview
-    @$el.find(".preview").toggleClass "confirmation"
-    @$el.find(".edit_form").toggleClass "confirmation"
+  back: ->
+    Tangerine.router.navigate "subtest/#{@model.get 'subtestId'}", true
     return false
-    
+
   initialize: (options) ->
-    # this is for sortable
-    @$el.attr 'data-id', @model.id
-    
     @parent     = options.parent
     @model      = options.model
-    @isPreview  = options.isPreview
-    console.log @isPreview
+
+  getOptionList: ->
+    options = @model.get "options" 
+    html = "<div id='option_list_wrapper'>
+      <h2>Options</h2><ul class='option_list'>"
+    for option, i in options
+      html += "
+      <li class='question'>
+        <img src='images/icon_drag.png' class='sortable_handle'>
+        <div class='option_label_value'>
+          <label class='edit' for='#{@cid}_options.#{i}.label'>Label</label>
+          <input id='#{@cid}_options.#{i}.label' value='#{option.label}' placeholder='Option label' class='option_label'><br>
+          <label class='edit' for='#{@cid}_options.#{i}.value'>Value</label>
+          <input id='#{@cid}_options.#{i}.value' value='#{option.value}' placeholder='Option value' class='option_value'>
+        </div>
+        <img src='images/icon_delete.png' class='delete_option' data-index='#{i}'>
+        <div class='confirmation delete_confirm_#{i}'><button class='delete_delete' data-index='#{i}'>Delete</button><button data-index='#{i}' class='delete_cancel'>Cancel</button></div>
+      </li>
+      "
+    html += "<li><button class='add_option command'>Add option</button></li>
+      </ul>
+    </div>"
+
+  #
+  # Adding an option
+  #
+  addOption: ->
+    @updateModel()
+    options = @model.get "options"
+    options.push
+      label : ""
+      value : ""
+    @model.set "options", options
+    @$el.find('#option_list_wrapper').html(@getOptionList()).sortable("refresh")
+
 
   render: ->
     name            = @model.get("name") || ""
@@ -39,61 +67,60 @@ class QuestionEditView extends Backbone.View
     
     checkOrRadio = if type == "multiple" then "checkbox" else "radio"
 
-    if @isPreview
-      @$el.html "
-        <div class='preview'>
-          <img src='images/icon_drag.png' class='sortable_handle'><span>#{prompt}</span> <span>#{name}</span> <button class='edit_button command'>Edit</button>
-        </div>
-      "
-    if not @isPreview
-      @$el.html "
-        <div class='edit_form question'>
-          <button class='edit_button'>Hide edit</button>
-          <div class='label_value'>
-            <label for='#{@cid}_name'>Data name</label>
-            <input id='#{@cid}_name' type='text' value='#{name}'>
-          </div>
-          <div class='label_value'>
-            <label for='#{@cid}_prompt'>Prompt</label>
-            <input id='#{@cid}_prompt' type='text' value='#{prompt}'>
-          </div>
-          <div class='label_value'>
-            <label for='#{@cid}_hint'>Hint</label>
-            <input id='#{@cid}_hint' type='text' value='#{hint}'>
-          </div>
-          <div class='label_value'>
-            <label for='#{@cid}_linked_grid_score'>Linked grid score</label>
-            <input id='#{@cid}_linked_grid_score' type='number' value='#{linkedGridScore}'>
-          </div>
-          <div class='label_value' id='#{@cid}_question_type' class='question_type'>
-            <p>Question Type</p>
-            <label for='#{@cid}_single'>single</label>
-            <input id='#{@cid}_single' name='#{@cid}_type' type='radio' value='single' #{'checked' if type == 'single'}>
-            <label for='#{@cid}_multiple'>multiple</label>
-            <input id='#{@cid}_multiple' name='#{@cid}_type'  type='radio' value='multiple' #{'checked' if type == 'multiple'}>
-            <label for='#{@cid}_open'>open</label>
-            <input id='#{@cid}_open' name='#{@cid}_type'  type='radio' value='open' #{'checked' if type == 'open'}>
-          </div>
-
+    @$el.html "
+      <button class='back navigation'>Back</button>
+      <h1>Question Editor</h1>
+      <div class='edit_form question'>
         <div class='label_value'>
-        <label for='#{@cid}_question_template_select'>Fill from template</label>
-        <select id='#{@cid}_question_template_select'>
-          <option disabled selected>Select template</option>
-        </select>"
-
-      if type != "open"
-        @$el.append @getOptionList()
-
-      @$el.append "<button class='save command'>Save</button><button class='delete_question command'>Delete</button>
+          <label for='#{@cid}_name'>Data name</label>
+          <input id='#{@cid}_name' type='text' value='#{name}'>
+        </div>
+        <div class='label_value'>
+          <label for='#{@cid}_prompt'>Prompt</label>
+          <input id='#{@cid}_prompt' type='text' value='#{prompt}'>
+        </div>
+        <div class='label_value'>
+          <label for='#{@cid}_hint'>Hint</label>
+          <input id='#{@cid}_hint' type='text' value='#{hint}'>
+        </div>
+        <div class='label_value'>
+          <label for='#{@cid}_linked_grid_score'>Linked grid score</label>
+          <input id='#{@cid}_linked_grid_score' type='number' value='#{linkedGridScore}'>
+        </div>
+        <div class='label_value' id='#{@cid}_question_type' class='question_type'>
+          <label>Question Type</label>
+          <label for='#{@cid}_single'>single</label>
+          <input id='#{@cid}_single' name='#{@cid}_type' type='radio' value='single' #{'checked' if type == 'single'}>
+          <label for='#{@cid}_multiple'>multiple</label>
+          <input id='#{@cid}_multiple' name='#{@cid}_type'  type='radio' value='multiple' #{'checked' if type == 'multiple'}>
+          <label for='#{@cid}_open'>open</label>
+          <input id='#{@cid}_open' name='#{@cid}_type'  type='radio' value='open' #{'checked' if type == 'open'}>
         </div>
         "
 
-      @$el.find("##{@cid}_question_type").buttonset()
+    if type != "open"
+      
+      @$el.append "
+      <div class='label_value'>
+      <label for='#{@cid}_question_template_select'>Fill from template</label>
+      <select id='#{@cid}_question_template_select'>
+        <option disabled selected>Select template</option>
+      </select>
+      
+      #{@getOptionList()}
 
-      @$el.find(".option_list").sortable
-        handle : '.sortable_handle'
-        update : (event, ui) =>
-          @updateModel()
+      "
+
+    @$el.append "<button class='save command'>Save</button><button class='delete_question command'>Delete</button>
+      </div>
+      "
+
+    @$el.find("##{@cid}_question_type").buttonset()
+
+    @$el.find(".option_list").sortable
+      handle : '.sortable_handle'
+      update : (event, ui) =>
+        @updateModel()
 
     @trigger "rendered"
 
@@ -151,7 +178,7 @@ class QuestionEditView extends Backbone.View
     options = []
     i = 0
     optionListElements = @$el.find(".option_list li")
-    console.log "found options " + optionListElement
+
     for li in optionListElements
       label = $(li).find(".option_label").val()
       value = $(li).find(".option_value").val()
@@ -176,38 +203,3 @@ class QuestionEditView extends Backbone.View
     @model.save()
     @render false
     return false
-
-  #
-  # Adding an option
-  #
-  addOption: ->
-    @updateModel()
-    options = @model.get "options"
-    options.push
-      label: ""
-      value: ""
-    @model.set "options", options
-    @$el.find('.option_list').html(@getOptionList()).sortable("refresh")
-
-  getOptionList: ->
-    options = @model.get "options" 
-    html = ""
-    for option, i in options
-      html += "
-      <li>
-        <img src='images/icon_drag.png' class='sortable_handle'>
-        <div class='option_label_value'>
-          <label class='edit' for='#{@cid}_options.#{i}.label'>Label</label>
-          <input id='#{@cid}_options.#{i}.label' value='#{option.label}' placeholder='Option label' class='option_label'><br>
-          <label class='edit' for='#{@cid}_options.#{i}.value'>Value</label>
-          <input id='#{@cid}_options.#{i}.value' value='#{option.value}' placeholder='Option value' class='option_value'>
-        </div>
-        <img src='images/icon_delete.png' class='delete_option' data-index='#{i}'>
-        <div class='confirmation delete_confirm_#{i}'><button class='delete_delete' data-index='#{i}'>Delete</button><button data-index='#{i}' class='delete_cancel'>Cancel</button></div>
-      </li>
-      "
-    html += "<li><button class='add_option'>Add option</button></li>"
-
-
-
-
