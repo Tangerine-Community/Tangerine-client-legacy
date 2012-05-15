@@ -32,43 +32,50 @@
 # Hence our result:
 # BABASK
 
-class Checkdigit
+# This class allows you to set a string of 5 digits in permissible characters.
+# `get` returns the string with a check digit.
+# `set` changes
+# `generate` returns a complete check digit, does not change the id
+class CheckDigit
 
-Checkdigit.allowedChars = "ABCEFGHKMNPQRSTUVWXYZ"
-# TODO automatically calculate coprimes
-Checkdigit.weightings = [1,2,5,11,13]
+  allowed : "ABCEFGHKMNPQRSTUVWXYZ".split ""
 
-Checkdigit.toBase10 = (string) ->
-  _.map string.split(""), (character) ->
-    for allowedChar, index in Checkdigit.allowedChars
-      return index if character == allowedChar
-    throw "#{character} is not valid, must be part of #{Checkdigit.allowedChars}"
+  weights : [1,2,5,11,13]   # TODO automatically calculate coprimes
 
-Checkdigit.generate = (identifier) ->
-  checkdigit = ""
-  identifierInBase10 = Checkdigit.toBase10(identifier)
-  sum = 0
-  for weight, index in Checkdigit.weightings
-    sum += identifierInBase10[index] * weight
-  checkdigitBase10 = sum % Checkdigit.allowedChars.length
-  return Checkdigit.allowedChars[checkdigitBase10]
-
-Checkdigit.isValidIdentifier = (identifier) ->
-  try
-    if identifier.slice(-1) == Checkdigit.generate(identifier.slice(0,-1))
-      return true
-    else
-      return "Invalid student identifier"
-  catch error
-    console.log "ERROR!"
-    return error
-
-Checkdigit.randomIdentifier = ->
-  returnValue = ""
-  #Checkdigit.weightings.length dictates how long the string needed is
-  while returnValue.length < Checkdigit.weightings.length
-    #Checkdigit.allowedChars.length is the upper limit (exclusive) of the range allowed for our random numbers
-    base21Value = Math.floor(Math.random() * Checkdigit.allowedChars.length)
-    returnValue += Checkdigit.allowedChars[base21Value]
+  constructor: ( id = "" ) ->
+    @set( id )
   
-  return returnValue + Checkdigit.generate(returnValue)
+  # set id, force uppercase
+  set: ( id ) ->
+    @id = id.toUpperCase()
+
+  # return full check digit sequence
+  get: ( id = @id ) ->
+    return null if !~( !~@allowed.indexOf(ch) for ch in id.split "" ).indexOf(false)
+    return id + @getDigit id
+  
+  # return full check digit sequence
+  generate: ->
+    return @get( (@allowed[Math.floor(Math.random() * @allowed.length)] for i in @weights ).join "" )
+
+  isValid: (id=@id) ->
+    return false if id.length != 6
+    return (@get(id.slice(0,id.length-1))) == (id)
+
+  # return characters in id not allowed
+  getErrors: ->
+    errors = []
+    result = []
+    (result.push(@id[i]) if ch == -1) for ch, i in (@allowed.indexOf(ch) for ch in @id.split "" )
+    if result.length != 0 then errors.push "#{results[i]} not allowed." for i in results
+    if @id.length    != 6 then errors.push "Identifier must be 6 digits"
+
+    return errors
+
+  # helper function that does all the work
+  # return check digit
+  getDigit: ( id = @id ) ->
+    id_10 = (@allowed.indexOf(ch) for ch in id.split "" )
+    checkDigit_10 = ((id_10[i] * weight ) for weight, i in @weights).reduce (x,y) -> x + y
+    return @allowed[checkDigit_10 % @allowed.length]
+
