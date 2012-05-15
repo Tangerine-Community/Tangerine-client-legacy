@@ -22,6 +22,8 @@ Tangerine = {
   design_doc_name: "tangerine"
 };
 
+Tangerine.context = new Context();
+
 Tangerine.cloud.url = "http://" + Tangerine.cloud.username + ":" + Tangerine.cloud.password + "@" + Tangerine.cloud.target + "/" + Tangerine.database_name;
 
 Backbone.couch_connector.config.db_name = Tangerine.database_name;
@@ -37,3 +39,7 @@ $.couch.db(Backbone.couch_connector.config.db_name).openDoc("Config", {
 }, {
   async: false
 });
+
+_.templateSettings = {
+  interpolate: /\{\{(.+?)\}\}/g
+};
