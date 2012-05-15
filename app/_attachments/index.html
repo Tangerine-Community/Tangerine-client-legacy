@@ -17,10 +17,13 @@
     <script>Modernizr.mq('(min-width:0)') || document.write('<script src="js/lib/respond.min.js">\x3C/script>')</script>
     <!--script src="http://jsconsole.com/remote.js?5619CB79-A171-4967-9479-ADCF72DF1C44"></script-->
 
+
+
   </head> 
   <body>
     <div id='navigation' class="clearfix"></div>
     <div id='content'></div>
+    <div id='footer'></div>
 
     <script src="js/lib/jquery.js"></script>
     <script src="js/lib/underscore.js"></script>
@@ -31,19 +34,61 @@
     <script src="js/lib/mobile_boilerplate.js"></script>
     <script src="js/lib/inflection.js"></script>
     <script src="js/lib/backbone.js"></script>
+    <script src="js/lib/moment.min.js"></script>
     <script src="js/lib/backbone-couchdb.js"></script>
     <script src="js/lib/transcriptionCheckdigit.js"></script>
     <script src="js/lib/table2CSV.js"></script>
     <script src="js/lib/base64.js"></script>
     <script src="js/lib/json2form.js"></script>
 
+    <script src="js/helpers.js"></script>
+    <script src="js/config.js"></script>
+
+
     <script src="js/modules/assessment/Assessment.js"></script>
     <script src="js/modules/assessment/Assessments.js"></script>
-    <script src="js/modules/assessment/AssessmentElementView.js"></script>
+    <script src="js/modules/assessment/AssessmentListElementView.js"></script>
     <script src="js/modules/assessment/AssessmentListView.js"></script>
+    <script src="js/modules/assessment/AssessmentEditView.js"></script>
+    <script src="js/modules/assessment/AssessmentRunView.js"></script>
+    <script src="js/modules/assessment/AssessmentImportView.js"></script>
+
+    <script src="js/modules/subtest/Subtest.js"></script>
+    <script src="js/modules/subtest/Subtests.js"></script>
+    <script src="js/modules/subtest/SubtestListElementView.js"></script>
+    <script src="js/modules/subtest/SubtestEditView.js"></script>
+    <script src="js/modules/subtest/SubtestInputView.js"></script>
+    <script src="js/modules/subtest/SubtestRunView.js"></script>
+
+    <script src="js/modules/subtest/prototypes/PrototypeConsentView.js"></script>
+    <script src="js/modules/subtest/prototypes/PrototypeDatetimeView.js"></script>
+    <script src="js/modules/subtest/prototypes/PrototypeLocationView.js"></script>
+    <script src="js/modules/subtest/prototypes/PrototypeSurveyView.js"></script>
+    <script src="js/modules/subtest/prototypes/PrototypeIdView.js"></script>
+    <script src="js/modules/subtest/prototypes/PrototypeGridView.js"></script>
+
+    <script src="js/modules/result/Result.js"></script>
+    <script src="js/modules/result/Results.js"></script>
+    <script src="js/modules/result/ResultView.js"></script>
+    <script src="js/modules/result/ResultsView.js"></script>
+    <script src="js/modules/result/ResultSumView.js"></script>
+
+    <script src="js/modules/question/Question.js"></script>
+    <script src="js/modules/question/Questions.js"></script>
+    <script src="js/modules/question/QuestionView.js"></script>
+    <script src="js/modules/question/QuestionEditView.js"></script>
+    <script src="js/modules/question/QuestionsEditView.js"></script>
+
 
     <script src="js/modules/user/User.js"></script>
     <script src="js/modules/user/LoginView.js"></script>
+    <script src="js/modules/user/AccountView.js"></script>
+
+    <script src="js/modules/error/ErrorView.js"></script>
+
+    <script src="js/modules/device/Device.js"></script>
+    <script src="js/modules/device/DeviceView.js"></script>
+
 
     <script src="js/modules/dashboard/DashboardView.js"></script>
 
@@ -53,8 +98,6 @@
 
     <script src="js/modules/navigation/NavigationView.js"></script>
     
-    <script src="js/config.js"></script>
-    <script src="js/helpers.js"></script>
     <script src="js/tangerine.js"></script>
 
     <script>MBP.scaleFix();</script>
