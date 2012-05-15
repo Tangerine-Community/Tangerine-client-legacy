@@ -12,7 +12,7 @@ class AssessmentListView extends Backbone.View
     Tangerine.router.navigate "import", true
 
   initialize:(options) ->
-    @isAdmin = Tangerine.user.isAdmin
+    @isAdmin = Tangerine.user.isAdmin()
     @views = []
     @publicViews = []
     @refresh()

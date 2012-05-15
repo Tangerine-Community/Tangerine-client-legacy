@@ -26,7 +26,7 @@ AssessmentListView = (function(_super) {
   };
 
   AssessmentListView.prototype.initialize = function(options) {
-    this.isAdmin = Tangerine.user.isAdmin;
+    this.isAdmin = Tangerine.user.isAdmin();
     this.views = [];
     this.publicViews = [];
     return this.refresh();
