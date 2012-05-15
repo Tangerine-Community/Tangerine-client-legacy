@@ -11,11 +11,10 @@ DashboardView = (function(_super) {
   }
 
   DashboardView.prototype.initialize = function() {
-    this.assessments = new AssessmentListView({
+    return this.assessments = new AssessmentListView({
       isAdmin: Tangerine.user.isAdmin,
       submenu: false
     });
-    return this.render();
   };
 
   DashboardView.prototype.render = function() {
@@ -25,7 +24,9 @@ DashboardView = (function(_super) {
     return this.trigger("rendered");
   };
 
-  DashboardView.submenuHandler;
+  DashboardView.prototype.onClose = function() {
+    return this.assessments.close();
+  };
 
   return DashboardView;
 

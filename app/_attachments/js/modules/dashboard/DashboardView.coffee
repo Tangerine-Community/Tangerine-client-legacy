@@ -5,8 +5,6 @@ class DashboardView extends Backbone.View
       isAdmin : Tangerine.user.isAdmin
       submenu : false
 
-    @render()
-
   render: ->
     @$el.html "
       <h1>Dashboard</h1>
@@ -21,7 +19,7 @@ class DashboardView extends Backbone.View
 
     @assessments.setElement @$el.find "#dash_assessments"
 
-    
-
     @trigger "rendered"
-  @submenuHandler
+    
+  onClose: ->
+    @assessments.close()

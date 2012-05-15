@@ -6,6 +6,7 @@ class Language extends Backbone.Model
 
   initialize: (options) ->
     @loadLanguage(options)
+
     
   loadLanguage: ->
     window.t = @translate
