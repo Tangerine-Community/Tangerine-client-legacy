@@ -12,9 +12,9 @@ watch ( '.*\.coffee$' ) { |match|
     notify("CoffeeScript error", result)
     puts "\n\nCoffeescript error\n******************\n#{result}"
   else
+    `couchapp push`
     docco_result = `docco #{match}`
     puts "\nDocco-menting:\t\t#{match}\n"
-    `couchapp push`
   end
 }
 
