@@ -16,24 +16,34 @@ NavigationView = (function(_super) {
   NavigationView.prototype.el = '#navigation';
 
   NavigationView.prototype.events = {
-    'click span#collect_link': 'collect',
-    'click span#manage_link': 'manage',
     'click span#logout_link': 'logout',
-    'click button': 'submenuHandler'
+    'click button': 'submenuHandler',
+    'click #corner_logo': 'logoClick',
+    'click #enumerator': 'enumeratorClick'
+  };
+
+  NavigationView.prototype.enumeratorClick = function() {
+    return Tangerine.router.navigate("account", true);
+  };
+
+  NavigationView.prototype.logoClick = function() {
+    return Tangerine.router.navigate("", true);
+  };
+
+  NavigationView.prototype.logout = function() {
+    return this.router.navigate('logout', true);
   };
 
   NavigationView.prototype.initialize = function(options) {
     this.render();
     this.user = options.user;
     this.router = options.router;
-    this.user.on('change', this.handleMenu);
-    return this.user.trigger('change');
+    this.router.on('all', this.handleMenu);
+    return this.user.on('change:authentication', this.handleMenu);
   };
 
   NavigationView.prototype.submenuHandler = function(event) {
     var _base;
-    console.log("trying to handle");
-    console.log(vm.currentView.submenuHandler != null);
     return typeof (_base = vm.currentView).submenuHandler === "function" ? _base.submenuHandler(event) : void 0;
   };
 
@@ -42,33 +52,34 @@ NavigationView = (function(_super) {
   };
 
   NavigationView.prototype.render = function() {
-    return this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <span id='version'></span>    <nav id='submenu'></nav>    <div id='enumerator_box'>      Enumerator <span id='logout_link'>LOGOUT</span>      <div id='enumerator'></div>    </div>    ");
+    this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <span id='version'></span>    <nav id='submenu'></nav>    <div id='enumerator_box'>      Enumerator <span id='logout_link'>LOGOUT</span>      <div id='enumerator'></div>    </div>    <div id='current_student'>      Student ID      <div id='current_student_id'></div>    </div>    ");
+    $("body").ajaxStart(function() {
+      return $("#corner_logo").attr("src", "images/spin_orange.gif");
+    });
+    return $("body").ajaxStop(function() {
+      return $("#corner_logo").attr("src", "images/corner_logo.png");
+    });
   };
 
-  NavigationView.prototype.collect = function() {
-    return this.router.navigate('assessments', true);
+  NavigationView.prototype.setStudent = function(id) {
+    if (id === "") {
+      this.$el.find('#current_student_id').fadeOut(250, function(a) {
+        return $(a).html("");
+      });
+      return this.$el.find("#current_student").fadeOut(250);
+    } else {
+      return this.$el.find('#current_student_id').html(id).parent().fadeIn(250);
+    }
   };
 
-  NavigationView.prototype.manage = function() {
-    return this.router.navigate('manage', true);
-  };
-
-  NavigationView.prototype.logout = function() {
-    return this.router.navigate('logout', true);
-  };
-
-  NavigationView.prototype.handleMenu = function() {
-    $('#enumerator').html(this.user.get('name'));
-    $('#collect_link, #manage_link').hide();
+  NavigationView.prototype.handleMenu = function(event) {
+    $('#enumerator').html(this.user.name);
     return this.user.verify({
-      isAdmin: function() {
-        return $('#navigation').show();
+      isRegistered: function() {
+        return $('#navigation').fadeIn(250);
       },
-      isUser: function() {
-        return $('#navigation').show();
-      },
-      unregistered: function() {
-        return $('#navigation').hide();
+      isUnregistered: function() {
+        return $('#navigation').fadeOut(250);
       }
     });
   };

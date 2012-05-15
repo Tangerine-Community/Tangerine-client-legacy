@@ -3,10 +3,16 @@ class NavigationView extends Backbone.View
   el : '#navigation'
 
   events :
-    'click span#collect_link' : 'collect'
-    'click span#manage_link'  : 'manage'
     'click span#logout_link'  : 'logout'
     'click button'            : 'submenuHandler'
+    'click #corner_logo'      : 'logoClick'
+    'click #enumerator'       : 'enumeratorClick'
+    
+  enumeratorClick: -> Tangerine.router.navigate "account", true
+
+  logoClick:-> Tangerine.router.navigate "", true
+    
+  logout: -> @router.navigate 'logout', true
 
   initialize: (options) =>
     @render()
@@ -14,12 +20,10 @@ class NavigationView extends Backbone.View
     @user   = options.user
     @router = options.router
 
-    @user.on 'change', @handleMenu
-    @user.trigger 'change'
+    @router.on 'all', @handleMenu
+    @user.on   'change:authentication', @handleMenu
 
   submenuHandler: (event) ->
-    console.log "trying to handle"
-    console.log vm.currentView.submenuHandler?
     vm.currentView.submenuHandler? event
 
   closeSubmenu: ->
@@ -34,34 +38,36 @@ class NavigationView extends Backbone.View
       Enumerator <span id='logout_link'>LOGOUT</span>
       <div id='enumerator'></div>
     </div>
+    <div id='current_student'>
+      Student ID
+      <div id='current_student_id'></div>
+    </div>
     "
 
-  collect: -> @router.navigate 'assessments', true
-  manage: -> @router.navigate 'manage', true
-  logout: -> @router.navigate 'logout', true
-  
+    # Spin the logo on ajax calls
+    $("body").ajaxStart -> $("#corner_logo").attr "src", "images/spin_orange.gif"
+    $("body").ajaxStop ->  $("#corner_logo").attr "src", "images/corner_logo.png"
+
+
+  setStudent: ( id ) ->
+    if id == ""
+      @$el.find('#current_student_id').fadeOut(250, (a) -> $(a).html(""))
+      @$el.find("#current_student").fadeOut(250)
+    else
+      @$el.find('#current_student_id').html(id).parent().fadeIn(250)
+
+
   # Admins get a manage button 
   # triggered on user changes
-  # @TODO this might not be the right place for this. Another View?
-  handleMenu: =>
-    
-    $('#enumerator').html @user.get 'name'
-    
+  handleMenu: (event) =>
+    $('#enumerator').html @user.name
     # @todo put version number someplace
     #$.ajax {method: 'GET', dataType: 'text', url: 'version', success: (a, b, c) -> $("#corner_logo").attr("title", c.responseText)
 
-    $( '#collect_link, #manage_link' ).hide()
-    
     @user.verify
-      isAdmin: ->
-        $( '#navigation' ).show()
-      isUser: ->
-        $( '#navigation' ).show()
-      unregistered: ->
-        $( '#navigation' ).hide()
+      isRegistered: ->
+        $( '#navigation' ).fadeIn(250)
+      isUnregistered: ->
+        $( '#navigation' ).fadeOut(250)
 
 
-
-
-  
-  
