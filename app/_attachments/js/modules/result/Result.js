@@ -3,7 +3,6 @@ var Result,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
 Result = (function(_super) {
-  var defaults;
 
   __extends(Result, _super);
 
@@ -11,28 +10,37 @@ Result = (function(_super) {
     Result.__super__.constructor.apply(this, arguments);
   }
 
-  Result.prototype.url = "/result";
+  Result.prototype.url = "result";
 
-  defaults = {
-    assessment: "none",
+  Result.prototype.defaults = {
     subtestData: []
   };
 
-  Result.prototype.initialize = function(options) {
-    var _ref, _ref2;
+  Result.prototype.initialize = function(options) {};
+
+  Result.prototype.what = function(event) {
+    console.log("what the hell...");
+    return console.log(event);
+  };
+
+  Result.prototype.add = function(subtestDataElement) {
+    var subtestData;
+    subtestData = this.get('subtestData');
+    subtestData.push(subtestDataElement);
+    this.set('subtestData', subtestData);
+    this.set("timestamp", (new Date()).getTime());
     return this.set({
-      assessment: (_ref = options != null ? options.assessment : void 0) != null ? _ref : defaults.assessment,
-      subtestData: (_ref2 = options != null ? options.subtestData : void 0) != null ? _ref2 : defaults.subtestData
+      "enumerator": Tangerine.user.name
     });
   };
 
-  Result.prototype.add = function(name, data) {
-    var subtestDataElement;
-    subtestDataElement = {
-      "name": name,
-      "data": data
-    };
-    return this.set('subtestData', this.get('subtestData').push(subtestDataElement));
+  Result.prototype.getGridScore = function(id) {
+    var datum, _i, _len, _ref;
+    _ref = this.get('subtestData');
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      datum = _ref[_i];
+      if (datum.subtestId === id) return datum.data.last_attempted;
+    }
   };
 
   return Result;

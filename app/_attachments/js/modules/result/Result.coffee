@@ -1,17 +1,30 @@
 class Result extends Backbone.Model
-  url: "/result"
+  url: "result"
   
-  defaults =
-    assessment  : "none"
-    subtestData : []
-  
+  # name : currentView.model.get "name"
+  # data : currentView.getResult()
+  # subtestId : currentView.model.id
+  # sum : currentView.getSum()
+  #   { correct, incorrect, missing, total }
+  #   
+
+  defaults:
+    subtestData : []  
+
   initialize: ( options ) ->
-    @set
-      assessment  : options?.assessment  ? defaults.assessment
-      subtestData : options?.subtestData ? defaults.subtestData
-  
-  add: ( name, data ) ->
-    subtestDataElement = { "name" : name, "data" : data }
-    @set 'subtestData', @get('subtestData').push subtestDataElement
-    
-    
+
+  what: (event) ->
+    console.log "what the hell..."
+    console.log event
+
+  add: ( subtestDataElement ) ->
+    subtestData = @get 'subtestData'
+    subtestData.push subtestDataElement
+    @set 'subtestData', subtestData
+    @set "timestamp", (new Date()).getTime()
+    @set "enumerator" : Tangerine.user.name
+
+
+  getGridScore: (id) ->
+    for datum in @get 'subtestData'
+      return datum.data.last_attempted if datum.subtestId == id
