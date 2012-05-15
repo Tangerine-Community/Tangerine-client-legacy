@@ -6,34 +6,40 @@ Backbone.View.prototype.close = function() {
   return typeof this.onClose === "function" ? this.onClose() : void 0;
 };
 
-jQuery.fn.topCenter = function() {
-  this.css("position", "absolute");
-  this.css("top", $(window).scrollTop() + "px");
-  return this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
-};
-
-jQuery.fn.middleCenter = function() {
-  this.css("position", "absolute");
-  this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
-  return this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
-};
-
-jQuery.fn.serializeSubtest = function() {
-  var result;
-  result = {};
-  $.map($(this).serializeArray(), function(element, i) {
-    if (result[element.name] != null) {
-      if ($.isArray(result[element.name])) {
-        return result[element.name].push(element.value);
+(function($) {
+  $.fn.scrollTo = function() {
+    $('html, body').animate({
+      scrollTop: $(this).offset().top + 'px'
+    }, 250);
+    return this;
+  };
+  $.fn.topCenter = function() {
+    this.css("position", "absolute");
+    this.css("top", $(window).scrollTop() + "px");
+    return this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
+  };
+  $.fn.middleCenter = function() {
+    this.css("position", "absolute");
+    this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
+    return this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
+  };
+  return $.fn.serializeSubtest = function() {
+    var result;
+    result = {};
+    $.map($(this).serializeArray(), function(element, i) {
+      if (result[element.name] != null) {
+        if ($.isArray(result[element.name])) {
+          return result[element.name].push(element.value);
+        } else {
+          return result[element.name] = [result[element.name], element.value];
+        }
       } else {
-        return result[element.name] = [result[element.name], element.value];
+        return result[element.name] = element.value;
       }
-    } else {
-      return result[element.name] = element.value;
-    }
-  });
-  return result;
-};
+    });
+    return result;
+  };
+})(jQuery);
 
 MapReduce = (function() {
 

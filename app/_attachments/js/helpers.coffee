@@ -8,31 +8,43 @@ Backbone.View.prototype.close = ->
 #
 # handy jquery functions
 #
+( ($) -> 
 
-# place something top and center
-jQuery.fn.topCenter = ->
-  @css "position", "absolute"
-  @css "top", $(window).scrollTop() + "px"
-  @css "left", (($(window).width() - @outerWidth()) / 2) + $(window).scrollLeft() + "px"
+  $.fn.scrollTo = ->
+    $('html, body').animate {
+      scrollTop: $(@).offset().top + 'px'
+    }, 250
+    return @
+  
+  # place something top and center
+  $.fn.topCenter = ->
+    @css "position", "absolute"
+    @css "top", $(window).scrollTop() + "px"
+    @css "left", (($(window).width() - @outerWidth()) / 2) + $(window).scrollLeft() + "px"
 
-# place something middle center
-jQuery.fn.middleCenter = ->
-  @css "position", "absolute"
-  @css "top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px"
-  @css "left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px"
+  # place something middle center
+  $.fn.middleCenter = ->
+    @css "position", "absolute"
+    @css "top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px"
+    @css "left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px"
 
-# take a Tangerine "form" and output JSON
-jQuery.fn.serializeSubtest = ->
-  result = {}
-  $.map $(@).serializeArray(), (element, i) ->
-    if result[element.name]?
-      if $.isArray result[element.name]
-        result[element.name].push element.value
+  # take a Tangerine "form" and output JSON
+  $.fn.serializeSubtest = ->
+    result = {}
+    $.map $(@).serializeArray(), (element, i) ->
+      if result[element.name]?
+        if $.isArray result[element.name]
+          result[element.name].push element.value
+        else
+          result[element.name] = [result[element.name], element.value]
       else
-        result[element.name] = [result[element.name], element.value]
-    else
-      result[element.name] = element.value
-  result
+        result[element.name] = element.value
+    result
+
+
+)(jQuery)
+
+
 
 class MapReduce
 
@@ -111,6 +123,13 @@ class Utils
 
   @guid: ->
    return @S4()+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+@S4()+@S4()
+
+  @entities: (input) ->
+    e = document.createElement 'div'
+    e.innerHTML = input
+    return if e.childNodes.length == 0 then "" else e.childNodes[0].nodeValue
+
+
 
 
 class Context
