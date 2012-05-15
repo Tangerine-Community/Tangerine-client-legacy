@@ -13,12 +13,14 @@ ViewManager = (function(_super) {
   ViewManager.prototype.show = function(view) {
     var _ref,
       _this = this;
+    window.scrollTo(0, 0);
     if ((_ref = this.currentView) != null) _ref.close();
     this.currentView = view;
     this.currentView.on("rendered", function() {
-      return $("#content").html(_this.currentView.el);
+      $("#content").append(_this.currentView.el);
+      return $("#content .richtext").cleditor();
     });
-    return this.currentView.trigger("rendered");
+    return this.currentView.render();
   };
 
   return ViewManager;
