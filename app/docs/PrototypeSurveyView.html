@@ -1,0 +1,120 @@
+<!DOCTYPE html>  <html> <head>   <title>PrototypeSurveyView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               PrototypeSurveyView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">PrototypeSurveyView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@model         = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">model</span>
+    <span class="vi">@parent        = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">parent</span>
+    <span class="vi">@questionViews = </span><span class="p">[]</span>
+    <span class="vi">@questions     = </span><span class="p">[]</span>
+    <span class="nv">questions      = </span><span class="k">new</span> <span class="nx">Questions</span>
+    <span class="nx">questions</span><span class="p">.</span><span class="nx">fetch</span>
+      <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="nv">filteredCollection = </span><span class="nx">collection</span><span class="p">.</span><span class="nx">where</span> <span class="p">{</span> <span class="nv">subtestId : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span> <span class="p">}</span>
+        <span class="vi">@questions = </span><span class="k">new</span> <span class="nx">Questions</span> <span class="nx">filteredCollection</span>
+        <span class="nx">@render</span><span class="p">()</span>
+
+  <span class="nv">isValid: </span><span class="o">-&gt;</span>
+    <span class="vi">@names = </span><span class="p">{}</span>
+    <span class="vi">@filled = </span><span class="p">{}</span>
+
+    <span class="k">for</span> <span class="nx">field</span> <span class="k">in</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;input:radio, input:checkbox&quot;</span><span class="p">)</span>
+      <span class="nx">@names</span><span class="p">[</span><span class="nx">$</span><span class="p">(</span><span class="nx">field</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)]</span>  <span class="o">=</span> <span class="mi">1</span>
+      <span class="nx">@filled</span><span class="p">[</span><span class="nx">$</span><span class="p">(</span><span class="nx">field</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">field</span><span class="p">).</span><span class="o">is</span><span class="p">(</span><span class="s">&quot;:checked&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="nx">field</span> <span class="k">in</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;input:text&quot;</span><span class="p">)</span>
+      <span class="nx">@names</span><span class="p">[</span><span class="nx">$</span><span class="p">(</span><span class="nx">field</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+      <span class="nx">@filled</span><span class="p">[</span><span class="nx">$</span><span class="p">(</span><span class="nx">field</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">field</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> 
+
+    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@names</span><span class="p">).</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@filled</span><span class="p">).</span><span class="nx">length</span> <span class="k">then</span> <span class="k">return</span> <span class="kc">false</span>
+
+    <span class="kc">true</span>
+    
+
+  <span class="nv">getResult: </span><span class="o">-&gt;</span>
+    <span class="nv">result = </span><span class="p">{}</span>
+    <span class="k">for</span> <span class="nx">p</span> <span class="k">in</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;input:radio, input:checkbox&quot;</span><span class="p">)</span>
+      <span class="nv">point = </span><span class="nx">$</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nx">result</span><span class="p">[</span><span class="nx">point</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)]</span><span class="o">?</span>
+          <span class="k">if</span> <span class="nx">point</span><span class="p">.</span><span class="o">is</span><span class="p">(</span><span class="s">&quot;:checked&quot;</span><span class="p">)</span>
+            <span class="nx">result</span><span class="p">[</span><span class="nx">point</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)][</span><span class="nx">point</span><span class="p">.</span><span class="nx">val</span><span class="p">()]</span> <span class="o">=</span> <span class="s">&quot;checked&quot;</span>
+          <span class="k">else</span>
+            <span class="nx">result</span><span class="p">[</span><span class="nx">point</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)][</span><span class="nx">point</span><span class="p">.</span><span class="nx">val</span><span class="p">()]</span> <span class="o">=</span> <span class="s">&quot;unchecked&quot;</span>
+      <span class="k">else</span>
+          <span class="nx">result</span><span class="p">[</span><span class="nx">point</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
+          <span class="k">if</span> <span class="nx">point</span><span class="p">.</span><span class="o">is</span><span class="p">(</span><span class="s">&quot;:checked&quot;</span><span class="p">)</span>
+            <span class="nx">result</span><span class="p">[</span><span class="nx">point</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)][</span><span class="nx">point</span><span class="p">.</span><span class="nx">val</span><span class="p">()]</span> <span class="o">=</span> <span class="s">&quot;checked&quot;</span>
+          <span class="k">else</span>
+            <span class="nx">result</span><span class="p">[</span><span class="nx">point</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)][</span><span class="nx">point</span><span class="p">.</span><span class="nx">val</span><span class="p">()]</span> <span class="o">=</span> <span class="s">&quot;unchecked&quot;</span>
+
+    <span class="k">for</span> <span class="nx">p</span> <span class="k">in</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;input:text&quot;</span><span class="p">)</span>
+      <span class="nv">point = </span><span class="nx">$</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+      <span class="nx">result</span><span class="p">[</span><span class="nx">point</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">point</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span>
+    <span class="nx">result</span>
+
+  <span class="nv">getSum: </span><span class="o">-&gt;</span>
+    <span class="nv">counts =</span>
+      <span class="nv">correct   : </span><span class="mi">0</span>
+      <span class="nv">incorrect : </span><span class="mi">0</span>
+      <span class="nv">missing   : </span><span class="mi">0</span>
+      <span class="nv">total     : </span><span class="mi">0</span>
+
+    <span class="k">for</span> <span class="nx">p</span> <span class="k">in</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;input:radio, input:checkbox, textarea&quot;</span><span class="p">)</span>
+      <span class="nv">$p = </span><span class="nx">$</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+      <span class="nx">counts</span><span class="p">[</span><span class="s">&#39;correct&#39;</span><span class="p">]</span>   <span class="o">+=</span> <span class="mi">1</span> <span class="k">if</span> <span class="p">(</span><span class="nx">$p</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;1&quot;</span> <span class="o">||</span> <span class="nx">$p</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;correct&quot;</span><span class="p">)</span>
+      <span class="nx">counts</span><span class="p">[</span><span class="s">&#39;incorrect&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span> <span class="k">if</span> <span class="p">(</span><span class="nx">$p</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;0&quot;</span> <span class="o">||</span> <span class="nx">$p</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;incorrect&quot;</span><span class="p">)</span>
+      <span class="nx">counts</span><span class="p">[</span><span class="s">&#39;missing&#39;</span><span class="p">]</span>   <span class="o">+=</span> <span class="mi">1</span> <span class="k">if</span> <span class="p">((</span><span class="nx">$p</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span><span class="o">||</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> <span class="o">||</span>
+                                    <span class="nx">$p</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span>      <span class="o">==</span> <span class="s">&quot;99&quot;</span> <span class="o">||</span>
+                                    <span class="nx">$p</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span>      <span class="o">==</span> <span class="s">&quot;9&quot;</span> <span class="o">||</span>
+                                    <span class="nx">$p</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span>      <span class="o">==</span> <span class="s">&quot;8&quot;</span> <span class="o">||</span>
+                                    <span class="nx">$p</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;.&quot;</span><span class="p">)</span>
+      <span class="nx">counts</span><span class="p">[</span><span class="s">&#39;total&#39;</span><span class="p">]</span>     <span class="o">+=</span> <span class="mi">1</span> <span class="k">if</span> <span class="kc">true</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="nv">correct : </span>  <span class="nx">counts</span><span class="p">[</span><span class="s">&#39;correct&#39;</span><span class="p">]</span>
+      <span class="nv">incorrect : </span><span class="nx">counts</span><span class="p">[</span><span class="s">&#39;incorrect&#39;</span><span class="p">]</span>
+      <span class="nv">missing : </span>  <span class="nx">counts</span><span class="p">[</span><span class="s">&#39;missing&#39;</span><span class="p">]</span>
+      <span class="nv">total : </span>    <span class="nx">counts</span><span class="p">[</span><span class="s">&#39;total&#39;</span><span class="p">]</span>
+    <span class="p">}</span>
+
+  <span class="nv">showErrors: </span><span class="o">-&gt;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.message&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+
+    <span class="nv">filledKeys = </span><span class="nx">_</span><span class="p">.</span><span class="nx">keys</span> <span class="nx">@filled</span>
+    <span class="nv">first = </span><span class="kc">true</span>
+    <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">@names</span>
+      <span class="k">if</span> <span class="o">!~</span><span class="nx">filledKeys</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+        <span class="nv">$input = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;input[name=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39;]&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">first</span>
+          <span class="nx">$input</span><span class="p">.</span><span class="nx">parent</span><span class="p">().</span><span class="nx">scrollTo</span><span class="p">()</span>
+          <span class="nv">first = </span><span class="kc">false</span>
+        <span class="nx">$input</span><span class="p">.</span><span class="nx">parent</span><span class="p">().</span><span class="nx">prepend</span><span class="p">(</span><span class="s">&quot;&lt;div class=&#39;message&#39;&gt;Please select one&lt;/div&gt;&quot;</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@names</span><span class="p">).</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@filled</span><span class="p">).</span><span class="nx">length</span>
+      <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Please fill in all questions&quot;</span>
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="nx">@resetViews</span><span class="p">()</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;&lt;form&gt;&quot;</span>
+    <span class="k">if</span> <span class="nx">@questions</span><span class="p">.</span><span class="nx">models</span><span class="o">?</span>
+      <span class="k">for</span> <span class="nx">question</span> <span class="k">in</span> <span class="nx">@questions</span><span class="p">.</span><span class="nx">models</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>skip the rest if score not high enough</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nv">required = </span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">question</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;linkedGridScore&quot;</span><span class="p">))</span> <span class="o">||</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">required</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">@parent</span><span class="p">.</span><span class="nx">getGridScore</span><span class="p">()</span> <span class="o">&lt;</span> <span class="nx">required</span><span class="p">)</span>
+          <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;input type=&#39;hidden&#39; name=&#39;</span><span class="si">#{</span><span class="nx">question</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;name&#39;</span><span class="si">}</span><span class="s">&#39; value=&#39;not_asked&#39;&gt;&quot;</span>
+        <span class="k">else</span>
+          <span class="nv">oneView = </span><span class="k">new</span> <span class="nx">QuestionView</span> 
+            <span class="nv">model : </span><span class="nx">question</span>
+            <span class="nv">parent : </span><span class="nx">@</span>
+          <span class="nx">oneView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
+          <span class="nx">@questionViews</span><span class="p">.</span><span class="nx">push</span> <span class="nx">oneView</span>
+          <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">oneView</span><span class="p">.</span><span class="nx">el</span>
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;/form&gt;&quot;</span>
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+      
+  <span class="nx">onClose</span><span class="o">:-&gt;</span>
+    <span class="nx">@resetViews</span><span class="p">()</span>
+  
+  <span class="nx">resetViews</span><span class="o">:-&gt;</span>
+    <span class="k">for</span> <span class="nx">qv</span> <span class="k">in</span> <span class="nx">@questionViews</span>
+      <span class="nx">qv</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
+    <span class="vi">@questionViews = </span><span class="p">[]</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

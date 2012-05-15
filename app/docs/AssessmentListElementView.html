@@ -1,0 +1,121 @@
+<!DOCTYPE html>  <html> <head>   <title>AssessmentListElementView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               AssessmentListElementView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">AssessmentListElementView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">tagName : </span><span class="s">&quot;li&quot;</span>
+
+  <span class="nv">events:</span>
+    <span class="s">&#39;click .link_icon&#39;</span>                 <span class="o">:</span> <span class="s">&#39;navigate&#39;</span>
+    <span class="s">&#39;click .assessment_menu_toggle&#39;</span>    <span class="o">:</span> <span class="s">&#39;assessmentMenuToggle&#39;</span>
+    <span class="s">&#39;click .assessment_delete&#39;</span>         <span class="o">:</span> <span class="s">&#39;assessmentDeleteToggle&#39;</span>
+    <span class="s">&#39;click .assessment_delete_cancel&#39;</span>  <span class="o">:</span> <span class="s">&#39;assessmentDeleteToggle&#39;</span>
+    <span class="s">&#39;click .assessment_delete_confirm&#39;</span> <span class="o">:</span> <span class="s">&#39;assessmentDelete&#39;</span>
+    <span class="s">&#39;click .copy&#39;</span>                      <span class="o">:</span> <span class="s">&#39;copyToGroup&#39;</span>
+
+  <span class="nx">initialize</span><span class="o">:</span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@parent = </span><span class="nx">options</span><span class="p">.</span><span class="nx">parent</span>
+    <span class="vi">@isAdmin = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isAdmin</span>
+    <span class="vi">@isPublic = </span><span class="nx">options</span><span class="p">.</span><span class="nx">isPublic</span>
+    <span class="vi">@model = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
+
+  <span class="nv">navigate: </span><span class="nf">(event) -&gt;</span>
+    <span class="nv">whereTo = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span> <span class="s">&#39;data-href&#39;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="nx">whereTo</span><span class="p">,</span> <span class="kc">true</span>
+
+  <span class="nv">copyToGroup: </span><span class="o">-&gt;</span>
+    <span class="nv">originalId = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span>
+    <span class="nv">groupModel = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">clone</span><span class="p">()</span>
+
+    <span class="nx">groupModel</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;group&quot;</span><span class="p">,</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nx">groupModel</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;_id&quot;</span><span class="p">,</span> <span class="nx">Utils</span><span class="p">.</span><span class="nx">guid</span><span class="p">()</span>
+
+    <span class="nx">groupModel</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
+
+    <span class="nx">@render</span><span class="p">()</span>
+    <span class="nv">questions = </span><span class="k">new</span> <span class="nx">Questions</span>
+    <span class="nx">questions</span><span class="p">.</span><span class="nx">fetch</span>
+      <span class="nv">success: </span><span class="p">(</span> <span class="nx">questions</span> <span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="nv">filteredQuestions = </span><span class="nx">questions</span><span class="p">.</span><span class="nx">where</span> <span class="p">{</span> <span class="s">&quot;assessmentId&quot;</span> <span class="o">:</span> <span class="nx">originalId</span> <span class="p">}</span>
+        
+        <span class="nv">subtests = </span><span class="k">new</span> <span class="nx">Subtests</span>
+        <span class="nx">subtests</span><span class="p">.</span><span class="nx">fetch</span>
+          <span class="nv">success: </span><span class="p">(</span> <span class="nx">subtests</span> <span class="p">)</span> <span class="o">=&gt;</span>
+          
+            <span class="nv">filteredSubtests = </span><span class="nx">subtests</span><span class="p">.</span><span class="nx">where</span> <span class="p">{</span> <span class="s">&quot;assessmentId&quot;</span> <span class="o">:</span> <span class="nx">originalId</span> <span class="p">}</span>
+            <span class="nv">subtestIdMap = </span><span class="p">{}</span>
+            <span class="nv">newSubtests = </span><span class="p">[]</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>link new subtests to new assessment</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">for</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">filteredSubtests</span>
+              <span class="nv">newSubtest = </span><span class="nx">model</span><span class="p">.</span><span class="nx">clone</span><span class="p">()</span>
+              <span class="nx">newSubtest</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;assessmentId&quot;</span><span class="p">,</span> <span class="nx">groupModel</span><span class="p">.</span><span class="nx">id</span>
+              <span class="nv">newSubtestId = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">guid</span><span class="p">()</span>
+              <span class="nx">subtestIdMap</span><span class="p">[</span><span class="nx">newSubtest</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;_id&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">newSubtestId</span>
+              <span class="nx">newSubtest</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;_id&quot;</span><span class="p">,</span> <span class="nx">newSubtestId</span>
+              <span class="nx">newSubtests</span><span class="p">.</span><span class="nx">push</span> <span class="nx">newSubtest</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>update the links to other subtests</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">for</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">newSubtests</span>
+              <span class="nv">gridId = </span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s">&quot;gridLinkId&quot;</span> <span class="p">)</span>
+              <span class="k">if</span> <span class="p">(</span> <span class="nx">gridId</span> <span class="o">||</span> <span class="s">&quot;&quot;</span> <span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span>
+                <span class="nx">model</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;gridLinkId&quot;</span><span class="p">,</span> <span class="nx">subtestIdMap</span><span class="p">[</span><span class="nx">gridId</span><span class="p">]</span>
+              <span class="nx">model</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>link questions to new subtest</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">for</span> <span class="nx">question</span> <span class="k">in</span> <span class="nx">filteredQuestions</span>
+              <span class="nv">newQuestion = </span><span class="nx">question</span><span class="p">.</span><span class="nx">clone</span><span class="p">()</span>
+              <span class="nv">oldId = </span><span class="nx">newQuestion</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;subtestId&quot;</span>
+              <span class="nx">newQuestion</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;assessmentId&quot;</span><span class="p">,</span> <span class="nx">groupModel</span><span class="p">.</span><span class="nx">id</span>
+              <span class="nx">newQuestion</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;_id&quot;</span><span class="p">,</span> <span class="nx">Utils</span><span class="p">.</span><span class="nx">guid</span><span class="p">()</span> 
+              <span class="nx">newQuestion</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;subtestId&quot;</span><span class="p">,</span> <span class="nx">subtestIdMap</span><span class="p">[</span><span class="nx">oldId</span><span class="p">]</span>
+              <span class="nx">newQuestion</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
+
+            <span class="nx">@parent</span><span class="p">.</span><span class="nx">refresh</span><span class="p">()</span>
+
+        
+  <span class="nv">assessmentMenuToggle: </span><span class="o">-&gt;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.assessment_menu_toggle&#39;</span><span class="p">).</span><span class="nx">toggleClass</span> <span class="s">&#39;icon_down&#39;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.assessment_menu&#39;</span><span class="p">).</span><span class="nx">fadeToggle</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+
+  <span class="nv">assessmentDeleteToggle: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.assessment_delete_confirm&quot;</span><span class="p">).</span><span class="nx">fadeToggle</span><span class="p">(</span><span class="mi">250</span><span class="p">);</span> <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>deep non-gerneric delete</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">assessmentDelete: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>remove from collection</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@$el</span><span class="p">.</span><span class="nx">fadeOut</span> <span class="mi">250</span><span class="p">,</span> <span class="o">=&gt;</span> 
+      <span class="nx">@parent</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">remove</span> <span class="nx">@model</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>remove children</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nv">assessmentId = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span>
+      <span class="nv">subtests = </span><span class="k">new</span> <span class="nx">Subtests</span>
+      <span class="nx">subtests</span><span class="p">.</span><span class="nx">fetch</span>
+        <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">=&gt;</span>
+          <span class="k">for</span> <span class="nx">model</span> <span class="k">in</span> <span class="nx">collection</span><span class="p">.</span><span class="nx">where</span> <span class="p">{</span> <span class="s">&quot;assessmentId&quot;</span> <span class="o">:</span> <span class="nx">assessmentId</span> <span class="p">}</span>
+            <span class="nx">model</span><span class="p">.</span><span class="nx">destroy</span><span class="p">()</span>
+      <span class="nv">questions = </span><span class="k">new</span> <span class="nx">Questions</span>
+      <span class="nx">questions</span><span class="p">.</span><span class="nx">fetch</span>
+        <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">=&gt;</span>
+          <span class="k">for</span> <span class="nx">model</span> <span class="k">in</span> <span class="nx">collection</span><span class="p">.</span><span class="nx">where</span> <span class="p">{</span> <span class="s">&quot;assessmentId&quot;</span> <span class="o">:</span> <span class="nx">assessmentId</span> <span class="p">}</span>
+            <span class="nx">model</span><span class="p">.</span><span class="nx">destroy</span><span class="p">()</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>remove model</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">@model</span><span class="p">.</span><span class="nx">destroy</span><span class="p">()</span>
+      <span class="kc">false</span>
+
+          
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="nv">archiveClass  = </span><span class="k">if</span> <span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;archived&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">true</span> <span class="o">or</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;archived&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#39;true&#39;</span><span class="p">)</span> <span class="k">then</span> <span class="s">&quot; archived_assessment&quot;</span> <span class="k">else</span> <span class="s">&quot;&quot;</span>
+    <span class="nv">copyButton    = </span><span class="s">&quot;&lt;button class=&#39;copy&#39;&gt;Copy to group&lt;/button&gt;&quot;</span>
+    <span class="nv">toggleButton  = </span><span class="s">&quot;&lt;span class=&#39;assessment_menu_toggle icon_ryte&#39;&gt; &lt;/span&gt;&quot;</span>
+    <span class="nv">deleteButton  = </span><span class="s">&quot;&lt;img class=&#39;assessment_delete&#39; src=&#39;images/icon_delete.png&#39;&gt; &lt;span class=&#39;assessment_delete_confirm&#39;&gt;Confirm &lt;button class=&#39;assessment_delete_yes&#39;&gt;Delete&lt;/button&gt; &lt;button class=&#39;assessment_delete_cancel&#39;&gt;Cancel&lt;/button&gt;&lt;/span&gt;&quot;</span>
+    <span class="nv">editButton    = </span><span class="s">&quot;&lt;img data-href=&#39;edit/</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&#39; class=&#39;link_icon&#39; src=&#39;images/icon_edit.png&#39;&gt;&quot;</span>
+    <span class="nv">resultsButton = </span><span class="s">&quot;&lt;img data-href=&#39;results/</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&#39; class=&#39;link_icon&#39; src=&#39;images/icon_result.png&#39;&gt;&quot;</span>
+    <span class="nv">runButton     = </span><span class="s">&quot;&lt;img data-href=&#39;run/</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&#39; class=&#39;link_icon&#39; src=&#39;images/icon_run.png&#39;&gt;&quot;</span>
+    <span class="nv">name          = </span><span class="s">&quot;&lt;span class=&#39;name clickable &#39;&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/span&gt;&quot;</span>
+    <span class="nv">adminName     = </span><span class="s">&quot;&lt;span class=&#39;admin_name clickable </span><span class="si">#{</span><span class="nx">archiveClass</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/span&gt;&quot;</span>
+
+    <span class="nv">resultCount   = </span><span class="s">&quot;&lt;span class=&#39;resultCount&#39;&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;resultCount&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&#39;0&#39;</span><span class="si">}</span><span class="s"> results&lt;/span&gt;&quot;</span>
+
+    <span class="k">if</span> <span class="nx">@isAdmin</span>
+      <span class="nv">html = </span><span class="s">&quot;</span>
+<span class="s">        &lt;div&gt;</span>
+<span class="s">          </span><span class="si">#{</span><span class="nx">toggleButton</span><span class="si">}</span><span class="s"></span>
+<span class="s">          </span><span class="si">#{</span><span class="nx">adminName</span><span class="si">}</span><span class="s"> </span>
+<span class="s">        &lt;/div&gt;&quot;</span>
+      <span class="k">if</span> <span class="nx">@isPublic</span>
+        <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
+<span class="s">        &lt;div class=&#39;assessment_menu&#39;&gt;</span>
+<span class="s">          </span><span class="si">#{</span><span class="nx">copyButton</span><span class="si">}</span><span class="s"></span>
+<span class="s">        &lt;/div&gt;&quot;</span>
+      <span class="k">else</span>
+        <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
+<span class="s">        &lt;div class=&#39;assessment_menu&#39;&gt;</span>
+<span class="s">          </span><span class="si">#{</span><span class="nx">runButton</span><span class="si">}</span><span class="s"></span>
+<span class="s">          </span><span class="si">#{</span><span class="nx">resultsButton</span><span class="si">}</span><span class="s"></span>
+<span class="s">          </span><span class="si">#{</span><span class="nx">editButton</span><span class="si">}</span><span class="s"></span>
+<span class="s">          </span><span class="si">#{</span><span class="nx">deleteButton</span><span class="si">}</span><span class="s"></span>
+<span class="s">        &lt;/div&gt;&quot;</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="nx">html</span>
+    <span class="k">else</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;&lt;div&gt;</span><span class="si">#{</span><span class="nx">runButton</span><span class="si">}#{</span><span class="nx">name</span><span class="si">}</span><span class="s"> </span><span class="si">#{</span><span class="nx">resultsButton</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

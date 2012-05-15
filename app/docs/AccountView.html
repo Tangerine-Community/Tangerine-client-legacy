@@ -1,0 +1,37 @@
+<!DOCTYPE html>  <html> <head>   <title>AccountView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               AccountView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">AccountView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  
+
+  <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
+    <span class="vi">@model = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
+  
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">      &lt;h2&gt;Account&lt;/h2&gt;</span>
+
+<span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">        &lt;label&gt;Name&lt;/label&gt;</span>
+<span class="s">        &lt;p&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="s">&lt;/p&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">        &lt;label&gt;Roles&lt;/label&gt;</span>
+<span class="s">        &lt;p&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">roles</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/p&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">        &lt;label&gt;Group&lt;/label&gt;</span>
+<span class="s">        &lt;p&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/p&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;button class=&#39;command confirmation&#39;&gt;Report a bug&lt;/button&gt;</span>
+<span class="s">      &lt;div class=&#39;confirmation&#39; id=&#39;bug&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;where&#39;&gt;What broke?</span>
+<span class="s">        &lt;input id=&#39;where&#39; placeholder=&#39;where&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;where&#39;&gt;What happened?</span>
+<span class="s">        &lt;input id=&#39;where&#39; placeholder=&#39;what&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;where&#39;&gt;What should have happened?</span>
+<span class="s">        &lt;input id=&#39;should&#39; placeholder=&#39;should&#39;&gt;</span>
+<span class="s">        &lt;button&gt;Send&lt;/button&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &quot;</span>
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

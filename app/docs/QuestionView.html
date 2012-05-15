@@ -1,0 +1,29 @@
+<!DOCTYPE html>  <html> <head>   <title>QuestionView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               QuestionView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">QuestionView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">className: </span><span class="s">&quot;question&quot;</span>
+
+  <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;question view initializing&quot;</span>
+    <span class="vi">@model = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;question view rendering&quot;</span>
+    <span class="nv">name    = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
+    <span class="nv">type    = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;type&quot;</span>
+    <span class="nv">options = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;options&quot;</span>
+    
+    <span class="nv">checkOrRadio = </span><span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&quot;multiple&quot;</span> <span class="k">then</span> <span class="s">&quot;checkbox&quot;</span> <span class="k">else</span> <span class="s">&quot;radio&quot;</span>
+    
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;&lt;div class=&#39;prompt&#39;&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;prompt&#39;</span><span class="si">}</span><span class="s">&lt;/div&gt;</span>
+<span class="s">    &lt;div class=&#39;hint&#39;&gt;</span><span class="si">#{</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;hint&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span>
+    
+    <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&quot;open&quot;</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;textarea id=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/textarea&gt;&quot;</span>
+    <span class="k">else</span>
+      <span class="k">for</span> <span class="nx">option</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">options</span>
+        <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;label for=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">option</span><span class="p">.</span><span class="nx">label</span><span class="si">}</span><span class="s">&lt;/label&gt;&lt;input id=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39; name=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&#39; value=&#39;</span><span class="si">#{</span><span class="nx">option</span><span class="p">.</span><span class="nx">value</span><span class="si">}</span><span class="s">&#39; type=&#39;</span><span class="si">#{</span><span class="nx">checkOrRadio</span><span class="si">}</span><span class="s">&#39;&gt;&quot;</span>
+        <span class="nx">@$el</span><span class="p">.</span><span class="nx">buttonset</span><span class="p">()</span>
+
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

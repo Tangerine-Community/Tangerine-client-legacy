@@ -1,0 +1,27 @@
+<!DOCTYPE html>  <html> <head>   <title>QuestionsEditView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               QuestionsEditView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">QuestionsEditView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">tagName : </span><span class="s">&quot;ul&quot;</span>
+  <span class="nv">className : </span><span class="s">&quot;questions_edit_view&quot;</span>
+
+  <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
+
+    <span class="vi">@views = </span><span class="p">[]</span>
+
+    <span class="vi">@questions = </span><span class="nx">options</span><span class="p">.</span><span class="nx">questions</span>
+    <span class="vi">@isPreview = </span><span class="p">[]</span>
+    <span class="vi">@views = </span><span class="p">[]</span>
+    <span class="k">for</span> <span class="nx">question</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@questions</span><span class="p">.</span><span class="nx">models</span>
+      <span class="nx">@isPreview</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span>
+      <span class="nx">@views</span><span class="p">.</span><span class="nx">push</span> <span class="k">new</span> <span class="nx">QuestionEditView</span>
+        <span class="nv">model     : </span><span class="nx">question</span>
+        <span class="nv">parent    : </span><span class="nx">@</span>
+        <span class="nv">index     : </span><span class="nx">i</span>
+        <span class="nv">isPreview : </span><span class="nx">@isPreview</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="k">for</span> <span class="nx">view</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@views</span>
+      <span class="nx">view</span><span class="p">.</span><span class="nx">render</span> <span class="nx">@isPreview</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">view</span><span class="p">.</span><span class="nx">el</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@el</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

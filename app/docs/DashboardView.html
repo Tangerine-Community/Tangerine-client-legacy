@@ -5,8 +5,6 @@
       <span class="nv">isAdmin : </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isAdmin</span>
       <span class="nv">submenu : </span><span class="kc">false</span>
 
-    <span class="nx">@render</span><span class="p">()</span>
-
   <span class="nv">render: </span><span class="o">-&gt;</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
 <span class="s">      &lt;h1&gt;Dashboard&lt;/h1&gt;</span>
@@ -21,9 +19,9 @@
 
     <span class="nx">@assessments</span><span class="p">.</span><span class="nx">setElement</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span> <span class="s">&quot;</span><span class="err">#</span><span class="s">dash_assessments&quot;</span>
 
-    
-
     <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
-  <span class="nx">@submenuHandler</span>
+    
+  <span class="nv">onClose: </span><span class="o">-&gt;</span>
+    <span class="nx">@assessments</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

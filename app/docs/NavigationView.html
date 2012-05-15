@@ -3,10 +3,16 @@
   <span class="nv">el : </span><span class="s">&#39;#navigation&#39;</span>
 
   <span class="nv">events :</span>
-    <span class="s">&#39;click span#collect_link&#39;</span> <span class="o">:</span> <span class="s">&#39;collect&#39;</span>
-    <span class="s">&#39;click span#manage_link&#39;</span>  <span class="o">:</span> <span class="s">&#39;manage&#39;</span>
     <span class="s">&#39;click span#logout_link&#39;</span>  <span class="o">:</span> <span class="s">&#39;logout&#39;</span>
     <span class="s">&#39;click button&#39;</span>            <span class="o">:</span> <span class="s">&#39;submenuHandler&#39;</span>
+    <span class="s">&#39;click #corner_logo&#39;</span>      <span class="o">:</span> <span class="s">&#39;logoClick&#39;</span>
+    <span class="s">&#39;click #enumerator&#39;</span>       <span class="o">:</span> <span class="s">&#39;enumeratorClick&#39;</span>
+    
+  <span class="nv">enumeratorClick: </span><span class="o">-&gt;</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;account&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
+  <span class="nx">logoClick</span><span class="o">:-&gt;</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="kc">true</span>
+    
+  <span class="nv">logout: </span><span class="o">-&gt;</span> <span class="nx">@router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&#39;logout&#39;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">initialize: </span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="o">=&gt;</span>
     <span class="nx">@render</span><span class="p">()</span>
@@ -14,12 +20,10 @@
     <span class="vi">@user   = </span><span class="nx">options</span><span class="p">.</span><span class="nx">user</span>
     <span class="vi">@router = </span><span class="nx">options</span><span class="p">.</span><span class="nx">router</span>
 
-    <span class="nx">@user</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;change&#39;</span><span class="p">,</span> <span class="nx">@handleMenu</span>
-    <span class="nx">@user</span><span class="p">.</span><span class="nx">trigger</span> <span class="s">&#39;change&#39;</span>
+    <span class="nx">@router</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;all&#39;</span><span class="p">,</span> <span class="nx">@handleMenu</span>
+    <span class="nx">@user</span><span class="p">.</span><span class="kc">on</span>   <span class="s">&#39;change:authentication&#39;</span><span class="p">,</span> <span class="nx">@handleMenu</span>
 
   <span class="nv">submenuHandler: </span><span class="nf">(event) -&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;trying to handle&quot;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">vm</span><span class="p">.</span><span class="nx">currentView</span><span class="p">.</span><span class="nx">submenuHandler</span><span class="o">?</span>
     <span class="nx">vm</span><span class="p">.</span><span class="nx">currentView</span><span class="p">.</span><span class="nx">submenuHandler</span><span class="o">?</span> <span class="nx">event</span>
 
   <span class="nv">closeSubmenu: </span><span class="o">-&gt;</span>
@@ -34,31 +38,26 @@
 <span class="s">      Enumerator &lt;span id=&#39;logout_link&#39;&gt;LOGOUT&lt;/span&gt;</span>
 <span class="s">      &lt;div id=&#39;enumerator&#39;&gt;&lt;/div&gt;</span>
 <span class="s">    &lt;/div&gt;</span>
-<span class="s">    &quot;</span>
-
-  <span class="nv">collect: </span><span class="o">-&gt;</span> <span class="nx">@router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&#39;assessments&#39;</span><span class="p">,</span> <span class="kc">true</span>
-  <span class="nv">manage: </span><span class="o">-&gt;</span> <span class="nx">@router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&#39;manage&#39;</span><span class="p">,</span> <span class="kc">true</span>
-  <span class="nv">logout: </span><span class="o">-&gt;</span> <span class="nx">@router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&#39;logout&#39;</span><span class="p">,</span> <span class="kc">true</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Admins get a manage button 
-triggered on user changes
-@TODO this might not be the right place for this. Another View?</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">handleMenu: </span><span class="o">=&gt;</span>
-    
-    <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#enumerator&#39;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">@user</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;name&#39;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>@todo put version number someplace
-$.ajax {method: 'GET', dataType: 'text', url: 'version', success: (a, b, c) -> $("#corner_logo").attr("title", c.responseText)</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">$</span><span class="p">(</span> <span class="s">&#39;#collect_link, #manage_link&#39;</span> <span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
-    
-    <span class="nx">@user</span><span class="p">.</span><span class="nx">verify</span>
-      <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
-        <span class="nx">$</span><span class="p">(</span> <span class="s">&#39;#navigation&#39;</span> <span class="p">).</span><span class="nx">show</span><span class="p">()</span>
-      <span class="nv">isUser: </span><span class="o">-&gt;</span>
-        <span class="nx">$</span><span class="p">(</span> <span class="s">&#39;#navigation&#39;</span> <span class="p">).</span><span class="nx">show</span><span class="p">()</span>
-      <span class="nv">unregistered: </span><span class="o">-&gt;</span>
-        <span class="nx">$</span><span class="p">(</span> <span class="s">&#39;#navigation&#39;</span> <span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+<span class="s">    &lt;div id=&#39;current_student&#39;&gt;</span>
+<span class="s">      Student ID</span>
+<span class="s">      &lt;div id=&#39;current_student_id&#39;&gt;&lt;/div&gt;</span>
+<span class="s">    &lt;/div&gt;</span>
+<span class="s">    &quot;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Spin the logo on ajax calls</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;body&quot;</span><span class="p">).</span><span class="nx">ajaxStart</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">corner_logo&quot;</span><span class="p">).</span><span class="nx">attr</span> <span class="s">&quot;src&quot;</span><span class="p">,</span> <span class="s">&quot;images/spin_orange.gif&quot;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;body&quot;</span><span class="p">).</span><span class="nx">ajaxStop</span> <span class="o">-&gt;</span>  <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">corner_logo&quot;</span><span class="p">).</span><span class="nx">attr</span> <span class="s">&quot;src&quot;</span><span class="p">,</span> <span class="s">&quot;images/corner_logo.png&quot;</span>
 
 
-
-
-  
-  
+  <span class="nv">setStudent: </span><span class="nf">( id ) -&gt;</span>
+    <span class="k">if</span> <span class="nx">id</span> <span class="o">==</span> <span class="s">&quot;&quot;</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#current_student_id&#39;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="nf">(a) -&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="nx">a</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">))</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current_student&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#current_student_id&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">id</span><span class="p">).</span><span class="nx">parent</span><span class="p">().</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Admins get a manage button 
+triggered on user changes</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">handleMenu: </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#enumerator&#39;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">@user</span><span class="p">.</span><span class="nx">name</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>@todo put version number someplace
+$.ajax {method: 'GET', dataType: 'text', url: 'version', success: (a, b, c) -> $("#corner_logo").attr("title", c.responseText)</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@user</span><span class="p">.</span><span class="nx">verify</span>
+      <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span> <span class="s">&#39;#navigation&#39;</span> <span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+      <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span> <span class="s">&#39;#navigation&#39;</span> <span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
