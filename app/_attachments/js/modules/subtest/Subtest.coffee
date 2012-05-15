@@ -1,11 +1,14 @@
 class Subtest extends Backbone.Model
-  
-  url: "/subtest"
-  
-  defaults =
-    assessment : new Assessment
-  
+
+  url: "subtest"
+
   initialize: (options) ->
-    @set
-      assessment  : options?.assessment ? @defaults.assessment
+    @templates = Tangerine.config.prototypeTemplates
+
+  loadPrototypeTemplate: (prototype) ->
+    console.log "got prototype #{prototype}"
+    for key, value of @templates[prototype]
+      @set key, value
+    @save()
+      
   
