@@ -817,7 +817,7 @@ input {
   padding: 5px !important;
 }
 textarea {
-  height: 200px;
+  height: 100px;
   width: 95%;
 }
 button[disabled] {
