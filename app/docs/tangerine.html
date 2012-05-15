@@ -37,7 +37,6 @@ uses nested views</p>             </td>             <td class="code">           
         <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">dashboard</span>
       <span class="nv">isUser: </span><span class="o">-&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;assessments&quot;</span><span class="p">,</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Assessment</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">import: </span><span class="o">-&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;route import&quot;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
         <span class="nv">view = </span><span class="k">new</span> <span class="nx">AssessmentImportView</span>
@@ -46,7 +45,6 @@ uses nested views</p>             </td>             <td class="code">           
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">assessments: </span><span class="o">-&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;route assessments&quot;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
         <span class="nv">assessments = </span><span class="k">new</span> <span class="nx">AssessmentListView</span>
@@ -55,7 +53,6 @@ uses nested views</p>             </td>             <td class="code">           
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">editId: </span><span class="nf">(id) -&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;route editing id&quot;</span>
     <span class="nv">id = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">cleanURL</span> <span class="nx">id</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
@@ -77,7 +74,6 @@ uses nested views</p>             </td>             <td class="code">           
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">edit: </span><span class="nf">(name) -&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;editing assessment&quot;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isAdmin: </span><span class="o">-&gt;</span>    
         <span class="nv">assessment = </span><span class="k">new</span> <span class="nx">Assessment</span>
@@ -99,7 +95,6 @@ uses nested views</p>             </td>             <td class="code">           
 
 
   <span class="nv">run: </span><span class="nf">(name) -&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;route run&quot;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
         <span class="nv">assessment = </span><span class="k">new</span> <span class="nx">Assessment</span>
@@ -112,7 +107,6 @@ uses nested views</p>             </td>             <td class="code">           
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">results: </span><span class="nf">(name) -&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;route results&quot;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
         <span class="nv">assessment = </span><span class="k">new</span> <span class="nx">Assessment</span>
@@ -124,7 +118,6 @@ uses nested views</p>             </td>             <td class="code">           
             <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
       <span class="nv">isUnregistered: </span><span class="nf">(options) -&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Subtests</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">editSubtest: </span><span class="nf">(id) -&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;route edit subtests&quot;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
         <span class="nv">id = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">cleanURL</span> <span class="nx">id</span>
@@ -143,7 +136,6 @@ uses nested views</p>             </td>             <td class="code">           
         <span class="nv">view = </span><span class="k">new</span> <span class="nx">DeviceView</span>
           <span class="nv">model: </span><span class="nx">model</span>
         <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>User</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">login: </span><span class="o">-&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;route login&quot;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="kc">true</span>
@@ -152,13 +144,11 @@ uses nested views</p>             </td>             <td class="code">           
         <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
 
   <span class="nv">logout: </span><span class="o">-&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;route logout&quot;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">logout</span><span class="p">()</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
 
   <span class="nv">account: </span><span class="o">-&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;route account&quot;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
         <span class="nv">view = </span><span class="k">new</span> <span class="nx">AccountView</span> <span class="nv">model : </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span>
