@@ -113,6 +113,9 @@
     },
     "location" : {
       "School Location":{}
+    },
+    "datetime" : {
+      "Date and Time":{}
     }
   },
   "questionTemplate" : {
