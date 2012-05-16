@@ -44,7 +44,7 @@ QuestionsEditView = (function(_super) {
     _ref = this.questions.models;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       question = _ref[i];
-      html += "        <li class='question_list_element' data-id='" + question.id + "'>          <img src='images/icon_drag.png' class='sortable_handle'><span>" + (question.get('prompt')) + "</span> <span>[" + (question.get('name')) + "]</span>            <button class='edit command'>Edit</button>            <button class='delete command'>Delete</button>        </li>      ";
+      html += "        <li class='question_list_element' data-id='" + question.id + "'>          <img src='images/icon_drag.png' class='sortable_handle'>            <span>" + (question.get('prompt')) + "</span> <span>[" + (question.get('name')) + "]</span>            <button class='edit command'>Edit</button>            <button class='delete command'>Delete</button>        </li>      ";
     }
     this.$el.html(html);
     return this.$el.sortable({

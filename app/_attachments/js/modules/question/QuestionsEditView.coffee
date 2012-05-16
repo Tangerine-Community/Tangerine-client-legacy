@@ -25,7 +25,8 @@ class QuestionsEditView extends Backbone.View
     for question, i in @questions.models
       html += "
         <li class='question_list_element' data-id='#{question.id}'>
-          <img src='images/icon_drag.png' class='sortable_handle'><span>#{question.get 'prompt'}</span> <span>[#{question.get 'name'}]</span>
+          <img src='images/icon_drag.png' class='sortable_handle'>
+            <span>#{question.get 'prompt'}</span> <span>[#{question.get 'name'}]</span>
             <button class='edit command'>Edit</button>
             <button class='delete command'>Delete</button>
         </li>
