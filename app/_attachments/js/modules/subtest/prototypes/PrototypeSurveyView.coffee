@@ -13,6 +13,7 @@ class PrototypeSurveyView extends Backbone.View
         @render()
 
   isValid: ->
+    console.log "prototype is valid here"
     @names = {}
     @filled = {}
 
@@ -24,8 +25,18 @@ class PrototypeSurveyView extends Backbone.View
       @names[$(field).attr('name')] = 1
       @filled[$(field).attr('name')] = 1 if $(field).val() != "" 
 
-    if _.keys(@names).length != _.keys(@filled).length then return false
-
+    console.log "names"
+    console.log @names
+    console.log "names length #{_.keys(@names).length}"
+    console.log "filled"
+    console.log @filled
+    console.log "filled length"+ _.keys(@filled).length 
+    console.log "test"
+    console.log (_.keys(@names).length <= _.keys(@filled).length)
+    if _.keys(@names).length > _.keys(@filled).length
+      console.log " prototype retrning false"
+      return false
+    console.log "prototype returning true"
     true
     
 
@@ -47,7 +58,7 @@ class PrototypeSurveyView extends Backbone.View
 
     for p in @$el.find("textarea")
       point = $(p)
-      result[point.attr('name')] = point.val()
+      result[point.attr('name')] < point.val()
     result
 
   getSum: ->
@@ -82,13 +93,14 @@ class PrototypeSurveyView extends Backbone.View
     first = true
     for key, value of @names
       if !~filledKeys.indexOf(key)
-        $input = @$el.find("input[name='#{key}']")
+        $input = @$el.find("input[name='#{key}'], textarea[name='#{key}']")
         if first
-          $input.parent().scrollTo()
-          first = false
-        $input.parent().prepend("<div class='message'>Please select one</div>")
-        
-    if _.keys(@names).length != _.keys(@filled).length
+          if $input.first().parent()?
+            $input.first().parent().scrollTo()
+            first = false
+        $input.first().parent().prepend("<div class='message'>Please answer this question</div>")
+    
+    if _.keys(@names).length > _.keys(@filled).length
       Utils.midAlert "Please fill in all questions"
 
   render: ->

@@ -32,6 +32,7 @@ PrototypeSurveyView = (function(_super) {
 
   PrototypeSurveyView.prototype.isValid = function() {
     var field, _i, _j, _len, _len2, _ref, _ref2;
+    console.log("prototype is valid here");
     this.names = {};
     this.filled = {};
     _ref = this.$el.find("input:radio, input:checkbox");
@@ -46,7 +47,19 @@ PrototypeSurveyView = (function(_super) {
       this.names[$(field).attr('name')] = 1;
       if ($(field).val() !== "") this.filled[$(field).attr('name')] = 1;
     }
-    if (_.keys(this.names).length !== _.keys(this.filled).length) return false;
+    console.log("names");
+    console.log(this.names);
+    console.log("names length " + (_.keys(this.names).length));
+    console.log("filled");
+    console.log(this.filled);
+    console.log("filled length" + _.keys(this.filled).length);
+    console.log("test");
+    console.log(_.keys(this.names).length <= _.keys(this.filled).length);
+    if (_.keys(this.names).length > _.keys(this.filled).length) {
+      console.log(" prototype retrning false");
+      return false;
+    }
+    console.log("prototype returning true");
     return true;
   };
 
@@ -76,7 +89,7 @@ PrototypeSurveyView = (function(_super) {
     for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
       p = _ref2[_j];
       point = $(p);
-      result[point.attr('name')] = point.val();
+      result[point.attr('name')] < point.val();
     }
     return result;
   };
@@ -117,15 +130,17 @@ PrototypeSurveyView = (function(_super) {
     for (key in _ref) {
       value = _ref[key];
       if (!~filledKeys.indexOf(key)) {
-        $input = this.$el.find("input[name='" + key + "']");
+        $input = this.$el.find("input[name='" + key + "'], textarea[name='" + key + "']");
         if (first) {
-          $input.parent().scrollTo();
-          first = false;
+          if ($input.first().parent() != null) {
+            $input.first().parent().scrollTo();
+            first = false;
+          }
         }
-        $input.parent().prepend("<div class='message'>Please select one</div>");
+        $input.first().parent().prepend("<div class='message'>Please answer this question</div>");
       }
     }
-    if (_.keys(this.names).length !== _.keys(this.filled).length) {
+    if (_.keys(this.names).length > _.keys(this.filled).length) {
       return Utils.midAlert("Please fill in all questions");
     }
   };
