@@ -24,7 +24,7 @@ QuestionView = (function(_super) {
     checkOrRadio = type === "multiple" ? "checkbox" : "radio";
     this.$el.html("<div class='prompt'>" + (this.model.get('prompt')) + "</div>    <div class='hint'>" + (this.model.get('hint') || "") + "</div>");
     if (type === "open") {
-      this.$el.append("<textarea id='" + name + "' name='" + name + "'></textarea>");
+      this.$el.append("<div><textarea id='" + name + "' name='" + name + "'></textarea></div>");
     } else {
       for (i = 0, _len = options.length; i < _len; i++) {
         option = options[i];
