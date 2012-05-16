@@ -6,11 +6,10 @@ class User extends Backbone.Model
 
   default:
     name        : null
-    roles       : null
+    roles       : []
     groups      : ["default"]
 
   initialize: ->
-
 
     # these aren't `set` because we don't want them to save with the model
     # they're handled by couchdb, so we have to load them manually

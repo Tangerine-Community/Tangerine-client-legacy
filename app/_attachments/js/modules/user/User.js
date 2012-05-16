@@ -15,7 +15,7 @@ User = (function(_super) {
 
   User.prototype["default"] = {
     name: null,
-    roles: null,
+    roles: [],
     groups: ["default"]
   };
 
