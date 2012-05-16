@@ -833,6 +833,12 @@ button[disabled] {
 .grey {
   color: #999999;
 }
+img.loading {
+  padding: 8px 20px;
+  background: #8CC63F;
+  border-radius: 10px;
+  margin: 20px;
+}
 button.navigation {
   display: inline-block;
   font-size: 25px;
