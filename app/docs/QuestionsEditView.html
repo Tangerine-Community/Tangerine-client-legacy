@@ -15,6 +15,7 @@
   <span class="k">delete</span><span class="o">:</span> <span class="nf">(event) -&gt;</span>
     <span class="nv">id = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">parent</span><span class="p">().</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-id&#39;</span><span class="p">)</span>
     <span class="nx">@questions</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">).</span><span class="nx">destroy</span><span class="p">()</span> 
+    <span class="nx">@render</span><span class="p">()</span>
     <span class="k">return</span> <span class="kc">false</span>
 
   <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
