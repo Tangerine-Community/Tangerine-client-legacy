@@ -49,8 +49,16 @@ class SubtestRunView extends Backbone.View
     @prototypeView?.close?()
 
   isValid: ->
-    if not @prototypeView.isValid?()
+    console.log "subtest"
+    console.log "is prototype validation there? " + @prototypeView.isValid?
+    if @prototypeView.isValid?
+      console.log "returning prototype validation"
+      console.log @prototypeView.isValid()
+      return @prototypeView.isValid()
+    else
+      console.log "returning false"
       return false
+    console.log "just gonna return true"
     true
 
   showErrors: ->

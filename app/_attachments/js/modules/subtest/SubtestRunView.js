@@ -58,10 +58,17 @@ SubtestRunView = (function(_super) {
   };
 
   SubtestRunView.prototype.isValid = function() {
-    var _base;
-    if (!(typeof (_base = this.prototypeView).isValid === "function" ? _base.isValid() : void 0)) {
+    console.log("subtest");
+    console.log("is prototype validation there? " + (this.prototypeView.isValid != null));
+    if (this.prototypeView.isValid != null) {
+      console.log("returning prototype validation");
+      console.log(this.prototypeView.isValid());
+      return this.prototypeView.isValid();
+    } else {
+      console.log("returning false");
       return false;
     }
+    console.log("just gonna return true");
     return true;
   };
 
