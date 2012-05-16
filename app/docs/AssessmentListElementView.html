@@ -12,7 +12,7 @@
 
   <span class="nx">initialize</span><span class="o">:</span><span class="nf">(options) -&gt;</span>
     <span class="vi">@parent = </span><span class="nx">options</span><span class="p">.</span><span class="nx">parent</span>
-    <span class="vi">@isAdmin = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isAdmin</span>
+    <span class="vi">@isAdmin = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isAdmin</span><span class="p">()</span>
     <span class="vi">@isPublic = </span><span class="nx">options</span><span class="p">.</span><span class="nx">isPublic</span>
     <span class="vi">@model = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
 
@@ -68,6 +68,7 @@
 
   <span class="nv">assessmentDeleteToggle: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.assessment_delete_confirm&quot;</span><span class="p">).</span><span class="nx">fadeToggle</span><span class="p">(</span><span class="mi">250</span><span class="p">);</span> <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>deep non-gerneric delete</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">assessmentDelete: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>remove from collection</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@$el</span><span class="p">.</span><span class="nx">fadeOut</span> <span class="mi">250</span><span class="p">,</span> <span class="o">=&gt;</span> 
       <span class="nx">@parent</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">remove</span> <span class="nx">@model</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>remove children</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nv">assessmentId = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span>
+      
       <span class="nv">subtests = </span><span class="k">new</span> <span class="nx">Subtests</span>
       <span class="nx">subtests</span><span class="p">.</span><span class="nx">fetch</span>
         <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">=&gt;</span>

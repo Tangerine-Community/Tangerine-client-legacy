@@ -4,10 +4,12 @@
 
   <span class="nv">events: </span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">kindle</span> <span class="k">then</span>  <span class="p">{</span>
     <span class="s">&#39;touchstart .grid_element&#39;</span> <span class="o">:</span> <span class="s">&#39;gridClick&#39;</span>
+    <span class="s">&#39;touchstart .end_of_grid_line&#39;</span> <span class="o">:</span> <span class="s">&#39;endOfGridLineClick&#39;</span>
     <span class="s">&#39;click .grid_mode input&#39;</span>   <span class="o">:</span> <span class="s">&#39;updateMode&#39;</span>
     <span class="s">&#39;click .start_time&#39;</span>        <span class="o">:</span> <span class="s">&#39;startTimer&#39;</span>
     <span class="s">&#39;click .stop_time&#39;</span>         <span class="o">:</span> <span class="s">&#39;stopTimer&#39;</span>
   <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="s">&#39;click .end_of_grid_line&#39;</span> <span class="o">:</span> <span class="s">&#39;endOfGridLineClick&#39;</span>
     <span class="s">&#39;click .grid_element&#39;</span>    <span class="o">:</span> <span class="s">&#39;gridClick&#39;</span>
     <span class="s">&#39;click .grid_mode input&#39;</span> <span class="o">:</span> <span class="s">&#39;updateMode&#39;</span>
     <span class="s">&#39;click .start_time&#39;</span>      <span class="o">:</span> <span class="s">&#39;startTimer&#39;</span>
@@ -20,26 +22,46 @@
 
   <span class="nv">markHandler: </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span>
     <span class="nv">$target = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nx">@lastAttempted</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">$target</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-index&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nx">@lastAttempted</span>
-      <span class="k">return</span>
-    <span class="nx">$target</span><span class="p">.</span><span class="nx">toggleClass</span> <span class="s">&quot;element_wrong&quot;</span>
     <span class="nv">index = </span><span class="nx">$target</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-index&#39;</span><span class="p">)</span>
-    <span class="nx">@markRecord</span><span class="p">.</span><span class="nx">push</span> <span class="nx">index</span>
-    <span class="nx">@gridOutput</span><span class="p">[</span><span class="nx">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="k">if</span> <span class="p">(</span><span class="nx">@gridOutput</span><span class="p">[</span><span class="nx">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;correct&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="s">&quot;incorrect&quot;</span> <span class="k">else</span> <span class="s">&quot;correct&quot;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span>  <span class="nx">@autostop</span>
+    <span class="k">if</span> <span class="nx">@lastAttempted</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">index</span> <span class="o">&gt;</span> <span class="nx">@lastAttempted</span>
+      <span class="k">return</span>
+    <span class="nx">@markElement</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span>
     <span class="k">if</span> <span class="nx">@autostop</span> <span class="o">!=</span> <span class="mi">0</span>
-      <span class="nv">autoCount = </span><span class="mi">0</span>
-      <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">@autostop</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nx">@gridOutput</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;correct&quot;</span> <span class="k">then</span> <span class="k">break</span>
-        <span class="nx">autoCount</span><span class="o">++</span>
-      <span class="k">if</span> <span class="nx">@autostopped</span> <span class="o">==</span> <span class="kc">false</span>
-        <span class="k">if</span> <span class="nx">autoCount</span> <span class="o">==</span> <span class="nx">@autostop</span> <span class="k">then</span> <span class="nx">@autostopTest</span><span class="p">()</span>
-      <span class="k">if</span> <span class="nx">@autostopped</span> <span class="o">==</span> <span class="kc">true</span> <span class="o">&amp;&amp;</span> <span class="nx">autoCount</span> <span class="o">&lt;</span> <span class="nx">@autostop</span> <span class="o">&amp;&amp;</span> <span class="nx">@undoable</span> <span class="o">==</span> <span class="kc">true</span> <span class="k">then</span> <span class="nx">@unAutostopTest</span><span class="p">()</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;\nchecking undoability&quot;</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@autostopped</span> <span class="o">==</span> <span class="kc">true</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">autoCount</span> <span class="o">&lt;</span> <span class="nx">@autostop</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@undoable</span> <span class="o">==</span> <span class="kc">true</span>
+      <span class="nx">@checkAutostop</span><span class="p">()</span>
       
+  <span class="nv">checkAutostop: </span><span class="o">-&gt;</span>
+    <span class="nv">autoCount = </span><span class="mi">0</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">@autostop</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+      <span class="k">if</span> <span class="nx">@gridOutput</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;correct&quot;</span> <span class="k">then</span> <span class="k">break</span>
+      <span class="nx">autoCount</span><span class="o">++</span>
+    <span class="k">if</span> <span class="nx">@autostopped</span> <span class="o">==</span> <span class="kc">false</span>
+      <span class="k">if</span> <span class="nx">autoCount</span> <span class="o">==</span> <span class="nx">@autostop</span> <span class="k">then</span> <span class="nx">@autostopTest</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nx">@autostopped</span> <span class="o">==</span> <span class="kc">true</span> <span class="o">&amp;&amp;</span> <span class="nx">autoCount</span> <span class="o">&lt;</span> <span class="nx">@autostop</span> <span class="o">&amp;&amp;</span> <span class="nx">@undoable</span> <span class="o">==</span> <span class="kc">true</span> <span class="k">then</span> <span class="nx">@unAutostopTest</span><span class="p">()</span>
+
+  <span class="nv">markElement: </span><span class="nf">(index, value = null) -&gt;</span>
+    <span class="nv">$target = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;div[data-index=</span><span class="si">#{</span><span class="nx">index</span><span class="si">}</span><span class="s">]&quot;</span><span class="p">)</span>
+    <span class="nx">@markRecord</span><span class="p">.</span><span class="nx">push</span> <span class="nx">index</span>
+    <span class="k">if</span> <span class="nx">value</span> <span class="o">==</span> <span class="kc">null</span>
+      <span class="nx">@gridOutput</span><span class="p">[</span><span class="nx">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="k">if</span> <span class="p">(</span><span class="nx">@gridOutput</span><span class="p">[</span><span class="nx">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;correct&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="s">&quot;incorrect&quot;</span> <span class="k">else</span> <span class="s">&quot;correct&quot;</span>
+      <span class="nx">$target</span><span class="p">.</span><span class="nx">toggleClass</span> <span class="s">&quot;element_wrong&quot;</span>
+    <span class="k">else</span>
+      <span class="nx">@gridOutput</span><span class="p">[</span><span class="nx">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span>
+      <span class="k">if</span> <span class="nx">value</span> <span class="o">==</span> <span class="s">&quot;incorrect&quot;</span>
+        <span class="nx">$target</span><span class="p">.</span><span class="nx">addClass</span> <span class="s">&quot;element_wrong&quot;</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="nx">value</span> <span class="o">==</span> <span class="s">&quot;correct&quot;</span>
+        <span class="nx">$target</span><span class="p">.</span><span class="nx">removeClass</span> <span class="s">&quot;element_wrong&quot;</span>
+        
+  <span class="nv">endOfGridLineClick: </span><span class="nf">(event) -&gt;</span>
+    <span class="k">if</span> <span class="nx">@mode</span> <span class="o">==</span> <span class="s">&quot;mark&quot;</span>
+      <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">hasClass</span><span class="p">(</span><span class="s">&quot;element_wrong&quot;</span><span class="p">)</span>
+        <span class="nv">value = </span><span class="s">&quot;correct&quot;</span>
+      <span class="k">else</span>
+        <span class="nv">value = </span><span class="s">&quot;incorrect&quot;</span>
+      <span class="nv">index = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-index&#39;</span><span class="p">)</span>
+      <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="nx">index</span><span class="p">..(</span><span class="nx">index</span><span class="o">-</span><span class="mi">10</span><span class="p">)]</span>
+        <span class="nx">@markElement</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">value</span>
+      <span class="k">if</span> <span class="nx">@autostop</span> <span class="o">!=</span> <span class="mi">0</span>
+        <span class="nx">@checkAutostop</span><span class="p">()</span>
 
   <span class="nv">lastHandler: </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span>
     <span class="nv">$target = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span>
@@ -143,7 +165,7 @@
     <span class="vi">@autostopped = </span><span class="kc">false</span>
 
     <span class="vi">@gridElement = </span><span class="nx">_</span><span class="p">.</span><span class="nx">template</span> <span class="s">&quot;&lt;td&gt;&lt;div data-label=&#39;{{label}}&#39; data-index=&#39;{{i}}&#39; class=&#39;grid_element&#39;&gt;{{label}}&lt;/div&gt;&lt;/td&gt;&quot;</span>
-  
+    <span class="vi">@endOfGridLine = </span><span class="nx">_</span><span class="p">.</span><span class="nx">template</span> <span class="s">&quot;&lt;td&gt;&lt;div data-index=&#39;{{i}}&#39; class=&#39;end_of_grid_line&#39;&gt;*&lt;/div&gt;&lt;/td&gt;&quot;</span>
   <span class="nv">render: </span><span class="o">-&gt;</span>
     <span class="nv">done = </span><span class="mi">0</span>
     <span class="nv">html = </span><span class="s">&quot;</span>
@@ -157,7 +179,7 @@
         <span class="k">if</span> <span class="nx">done</span> <span class="o">&lt;</span> <span class="nx">@items</span><span class="p">.</span><span class="nx">length</span>
           <span class="nx">html</span> <span class="o">+=</span> <span class="nx">@gridElement</span> <span class="p">{</span> <span class="nv">label : </span><span class="nx">@items</span><span class="p">[</span><span class="nx">done</span><span class="p">],</span> <span class="nv">i: </span><span class="nx">done</span><span class="o">+</span><span class="mi">1</span> <span class="p">}</span>
         <span class="nx">done</span><span class="o">++</span>
-      <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;/tr&gt;&quot;</span>
+      <span class="nx">html</span> <span class="o">+=</span> <span class="nx">@endOfGridLine</span><span class="p">({</span><span class="nx">i</span><span class="o">:</span><span class="nx">done</span><span class="p">})</span><span class="o">+</span><span class="s">&quot;&lt;/tr&gt;&quot;</span>
     <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;/table&gt;</span>
 <span class="s">    </span>
 <span class="s">    &lt;div class=&#39;timer_wrapper&#39;&gt;&lt;button class=&#39;stop_time time&#39;&gt;Stop&lt;/button&gt;&lt;div class=&#39;timer&#39;&gt;</span><span class="si">#{</span><span class="nx">@timer</span><span class="si">}</span><span class="s">&lt;/div&gt;&lt;/div&gt;</span>

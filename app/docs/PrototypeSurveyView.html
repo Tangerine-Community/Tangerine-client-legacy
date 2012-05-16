@@ -13,6 +13,7 @@
         <span class="nx">@render</span><span class="p">()</span>
 
   <span class="nv">isValid: </span><span class="o">-&gt;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;prototype is valid here&quot;</span>
     <span class="vi">@names = </span><span class="p">{}</span>
     <span class="vi">@filled = </span><span class="p">{}</span>
 
@@ -24,8 +25,18 @@
       <span class="nx">@names</span><span class="p">[</span><span class="nx">$</span><span class="p">(</span><span class="nx">field</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="nx">@filled</span><span class="p">[</span><span class="nx">$</span><span class="p">(</span><span class="nx">field</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">field</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> 
 
-    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@names</span><span class="p">).</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@filled</span><span class="p">).</span><span class="nx">length</span> <span class="k">then</span> <span class="k">return</span> <span class="kc">false</span>
-
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;names&quot;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@names</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;names length </span><span class="si">#{</span><span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@names</span><span class="p">).</span><span class="nx">length</span><span class="si">}</span><span class="s">&quot;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;filled&quot;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@filled</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;filled length&quot;</span><span class="o">+</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@filled</span><span class="p">).</span><span class="nx">length</span> 
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;test&quot;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@names</span><span class="p">).</span><span class="nx">length</span> <span class="o">&lt;=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@filled</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@names</span><span class="p">).</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@filled</span><span class="p">).</span><span class="nx">length</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot; prototype retrning false&quot;</span>
+      <span class="k">return</span> <span class="kc">false</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;prototype returning true&quot;</span>
     <span class="kc">true</span>
     
 
@@ -47,7 +58,7 @@
 
     <span class="k">for</span> <span class="nx">p</span> <span class="k">in</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;textarea&quot;</span><span class="p">)</span>
       <span class="nv">point = </span><span class="nx">$</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
-      <span class="nx">result</span><span class="p">[</span><span class="nx">point</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">point</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span>
+      <span class="nx">result</span><span class="p">[</span><span class="nx">point</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)]</span> <span class="o">&lt;</span> <span class="nx">point</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span>
     <span class="nx">result</span>
 
   <span class="nv">getSum: </span><span class="o">-&gt;</span>
@@ -82,13 +93,14 @@
     <span class="nv">first = </span><span class="kc">true</span>
     <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">@names</span>
       <span class="k">if</span> <span class="o">!~</span><span class="nx">filledKeys</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
-        <span class="nv">$input = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;input[name=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39;]&quot;</span><span class="p">)</span>
+        <span class="nv">$input = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;input[name=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39;], textarea[name=&#39;</span><span class="si">#{</span><span class="nx">key</span><span class="si">}</span><span class="s">&#39;]&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nx">first</span>
-          <span class="nx">$input</span><span class="p">.</span><span class="nx">parent</span><span class="p">().</span><span class="nx">scrollTo</span><span class="p">()</span>
-          <span class="nv">first = </span><span class="kc">false</span>
-        <span class="nx">$input</span><span class="p">.</span><span class="nx">parent</span><span class="p">().</span><span class="nx">prepend</span><span class="p">(</span><span class="s">&quot;&lt;div class=&#39;message&#39;&gt;Please select one&lt;/div&gt;&quot;</span><span class="p">)</span>
-        
-    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@names</span><span class="p">).</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@filled</span><span class="p">).</span><span class="nx">length</span>
+          <span class="k">if</span> <span class="nx">$input</span><span class="p">.</span><span class="nx">first</span><span class="p">().</span><span class="nx">parent</span><span class="p">()</span><span class="o">?</span>
+            <span class="nx">$input</span><span class="p">.</span><span class="nx">first</span><span class="p">().</span><span class="nx">parent</span><span class="p">().</span><span class="nx">scrollTo</span><span class="p">()</span>
+            <span class="nv">first = </span><span class="kc">false</span>
+        <span class="nx">$input</span><span class="p">.</span><span class="nx">first</span><span class="p">().</span><span class="nx">parent</span><span class="p">().</span><span class="nx">prepend</span><span class="p">(</span><span class="s">&quot;&lt;div class=&#39;message&#39;&gt;Please answer this question&lt;/div&gt;&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@names</span><span class="p">).</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">@filled</span><span class="p">).</span><span class="nx">length</span>
       <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Please fill in all questions&quot;</span>
 
   <span class="nv">render: </span><span class="o">-&gt;</span>

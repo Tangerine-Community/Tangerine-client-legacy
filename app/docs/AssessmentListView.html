@@ -13,6 +13,7 @@
 
   <span class="nx">initialize</span><span class="o">:</span><span class="nf">(options) -&gt;</span>
     <span class="vi">@isAdmin = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isAdmin</span><span class="p">()</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;is admin &quot;</span> <span class="o">+</span> <span class="nx">@isAdmin</span>
     <span class="vi">@views = </span><span class="p">[]</span>
     <span class="vi">@publicViews = </span><span class="p">[]</span>
     <span class="nx">@refresh</span><span class="p">()</span>
@@ -41,16 +42,21 @@ only applies to this list</p>             </td>             <td class="code">   
   <span class="nv">render: </span><span class="o">=&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>clean up</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@closeViews</span><span class="p">()</span>
     <span class="vi">@views = </span><span class="p">[]</span>
 
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+    <span class="nv">html = </span><span class="s">&quot;</span>
 <span class="s">      &lt;h1&gt;Assessments&lt;/h1&gt;</span>
-<span class="s">      &lt;button class=&#39;new_assessment command&#39;&gt;New&lt;/button&gt;&lt;button class=&#39;import command&#39;&gt;Import&lt;/button&gt;</span>
-<span class="s">      &lt;form class=&#39;new_assessment_form&#39;&gt;</span>
-<span class="s">        &lt;input type=&#39;text&#39; class=&#39;new_assessment_name&#39; placeholder=&#39;Assessment Name&#39;&gt;</span>
-<span class="s">        &lt;button class=&#39;new_assessment_save&#39;&gt;Save&lt;/button&gt;</span>
-<span class="s">        &lt;button class=&#39;new_assessment_cancel&#39;&gt;Cancel&lt;/button&gt;</span>
-<span class="s">      &lt;/form&gt;</span>
-<span class="s">      &lt;h2&gt;Group assessments&lt;/h2&gt;</span>
-<span class="s">    &quot;</span>
+<span class="s">      &quot;</span>
+    <span class="k">if</span> <span class="nx">@isAdmin</span>
+      <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
+<span class="s">        &lt;button class=&#39;new_assessment command&#39;&gt;New&lt;/button&gt;&lt;button class=&#39;import command&#39;&gt;Import&lt;/button&gt;</span>
+<span class="s">        &lt;form class=&#39;new_assessment_form&#39;&gt;</span>
+<span class="s">          &lt;input type=&#39;text&#39; class=&#39;new_assessment_name&#39; placeholder=&#39;Assessment Name&#39;&gt;</span>
+<span class="s">          &lt;button class=&#39;new_assessment_save&#39;&gt;Save&lt;/button&gt;</span>
+<span class="s">          &lt;button class=&#39;new_assessment_cancel&#39;&gt;Cancel&lt;/button&gt;</span>
+<span class="s">        &lt;/form&gt;</span>
+<span class="s">        &lt;h2&gt;Group assessments&lt;/h2&gt;</span>
+<span class="s">      &quot;</span>
+    
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="nx">html</span>
 
     <span class="k">if</span> <span class="nx">@collection</span><span class="o">?</span><span class="p">.</span><span class="nx">models</span><span class="o">?</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
       <span class="nv">groupList = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;&lt;ul&gt;&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;assessment_list&#39;</span><span class="p">)</span>
@@ -65,24 +71,27 @@ only applies to this list</p>             </td>             <td class="code">   
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">groupList</span>
     <span class="k">else</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;p class=&#39;grey&#39;&gt;No assessments yet. Click &lt;b&gt;new&lt;/b&gt; to start making one.&lt;/p&gt;&quot;</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;h2&gt;Public assessments&lt;/h2&gt;&quot;</span>
+    
+    <span class="k">if</span> <span class="nx">@isAdmin</span>
 
-    <span class="k">if</span> <span class="nx">@public</span><span class="o">?</span><span class="p">.</span><span class="nx">models</span><span class="o">?</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;h2&gt;Public assessments&lt;/h2&gt;&quot;</span>
 
-      <span class="nv">publicList = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;&lt;ul&gt;&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;public_list&#39;</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nx">@public</span><span class="o">?</span><span class="p">.</span><span class="nx">models</span><span class="o">?</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
-      <span class="k">for</span> <span class="nx">assessment</span> <span class="k">in</span> <span class="nx">@public</span><span class="o">?</span><span class="p">.</span><span class="nx">models</span>
-        <span class="nv">oneView = </span><span class="k">new</span> <span class="nx">AssessmentListElementView</span>
-          <span class="nv">model : </span><span class="nx">assessment</span>
-          <span class="nv">parent : </span><span class="nx">@</span>
-          <span class="nv">isPublic : </span><span class="kc">true</span>
-        <span class="nx">@publicViews</span><span class="p">.</span><span class="nx">push</span> <span class="nx">oneView</span>
-        <span class="nx">oneView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
-        <span class="nx">publicList</span><span class="p">.</span><span class="nx">append</span> <span class="nx">oneView</span><span class="p">.</span><span class="nx">el</span>
-    <span class="k">else</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;p&gt;No assessments available.&lt;/p&gt;&quot;</span>
+        <span class="nv">publicList = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;&lt;ul&gt;&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;public_list&#39;</span><span class="p">)</span>
 
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">publicList</span>
+        <span class="k">for</span> <span class="nx">assessment</span> <span class="k">in</span> <span class="nx">@public</span><span class="o">?</span><span class="p">.</span><span class="nx">models</span>
+          <span class="nv">oneView = </span><span class="k">new</span> <span class="nx">AssessmentListElementView</span>
+            <span class="nv">model : </span><span class="nx">assessment</span>
+            <span class="nv">parent : </span><span class="nx">@</span>
+            <span class="nv">isPublic : </span><span class="kc">true</span>
+          <span class="nx">@publicViews</span><span class="p">.</span><span class="nx">push</span> <span class="nx">oneView</span>
+          <span class="nx">oneView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
+          <span class="nx">publicList</span><span class="p">.</span><span class="nx">append</span> <span class="nx">oneView</span><span class="p">.</span><span class="nx">el</span>
+      <span class="k">else</span>
+        <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;p&gt;No assessments available.&lt;/p&gt;&quot;</span>
+
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">publicList</span>
 
 
 

@@ -25,7 +25,8 @@
     <span class="k">for</span> <span class="nx">question</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@questions</span><span class="p">.</span><span class="nx">models</span>
       <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
 <span class="s">        &lt;li class=&#39;question_list_element&#39; data-id=&#39;</span><span class="si">#{</span><span class="nx">question</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">&#39;&gt;</span>
-<span class="s">          &lt;img src=&#39;images/icon_drag.png&#39; class=&#39;sortable_handle&#39;&gt;&lt;span&gt;</span><span class="si">#{</span><span class="nx">question</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;prompt&#39;</span><span class="si">}</span><span class="s">&lt;/span&gt; &lt;span&gt;[</span><span class="si">#{</span><span class="nx">question</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;name&#39;</span><span class="si">}</span><span class="s">]&lt;/span&gt;</span>
+<span class="s">          &lt;img src=&#39;images/icon_drag.png&#39; class=&#39;sortable_handle&#39;&gt;</span>
+<span class="s">            &lt;span&gt;</span><span class="si">#{</span><span class="nx">question</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;prompt&#39;</span><span class="si">}</span><span class="s">&lt;/span&gt; &lt;span&gt;[</span><span class="si">#{</span><span class="nx">question</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;name&#39;</span><span class="si">}</span><span class="s">]&lt;/span&gt;</span>
 <span class="s">            &lt;button class=&#39;edit command&#39;&gt;Edit&lt;/button&gt;</span>
 <span class="s">            &lt;button class=&#39;delete command&#39;&gt;Delete&lt;/button&gt;</span>
 <span class="s">        &lt;/li&gt;</span>

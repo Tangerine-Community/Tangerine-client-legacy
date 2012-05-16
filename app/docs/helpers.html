@@ -4,11 +4,16 @@
   <span class="nx">@onClose</span><span class="o">?</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>handy jquery functions</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="p">(</span> <span class="nf">($) -&gt;</span> 
 
   <span class="nv">$.fn.scrollTo = </span><span class="o">-&gt;</span>
-    <span class="nx">$</span><span class="p">(</span><span class="s">&#39;html, body&#39;</span><span class="p">).</span><span class="nx">animate</span> <span class="p">{</span>
-      <span class="nv">scrollTop: </span><span class="nx">$</span><span class="p">(</span><span class="nx">@</span><span class="p">).</span><span class="nx">offset</span><span class="p">().</span><span class="nx">top</span> <span class="o">+</span> <span class="s">&#39;px&#39;</span>
-    <span class="p">},</span> <span class="mi">250</span>
-    <span class="k">return</span> <span class="nx">@</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>place something top and center</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">$.fn.topCenter = </span><span class="o">-&gt;</span>
+    <span class="k">try</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&#39;html, body&#39;</span><span class="p">).</span><span class="nx">animate</span> <span class="p">{</span>
+        <span class="nv">scrollTop: </span><span class="nx">$</span><span class="p">(</span><span class="nx">@</span><span class="p">).</span><span class="nx">offset</span><span class="p">().</span><span class="nx">top</span> <span class="o">+</span> <span class="s">&#39;px&#39;</span>
+        <span class="p">},</span> <span class="mi">250</span>
+    <span class="k">catch</span> <span class="nx">e</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">e</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;Scroll error with &#39;this&#39;&quot;</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@</span>
+
+    <span class="k">return</span> <span class="nx">@</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>place something top and center</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">$.fn.topCenter = </span><span class="o">-&gt;</span>
     <span class="nx">@css</span> <span class="s">&quot;position&quot;</span><span class="p">,</span> <span class="s">&quot;absolute&quot;</span>
     <span class="nx">@css</span> <span class="s">&quot;top&quot;</span><span class="p">,</span> <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">scrollTop</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;px&quot;</span>
     <span class="nx">@css</span> <span class="s">&quot;left&quot;</span><span class="p">,</span> <span class="p">((</span><span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">width</span><span class="p">()</span> <span class="o">-</span> <span class="nx">@outerWidth</span><span class="p">())</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">scrollLeft</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;px&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>place something middle center</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">$.fn.middleCenter = </span><span class="o">-&gt;</span>
@@ -26,9 +31,7 @@
         <span class="nx">result</span><span class="p">[</span><span class="nx">element</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">value</span>
     <span class="nx">result</span>
 
-
 <span class="p">)(</span><span class="nx">jQuery</span><span class="p">)</span>
-
 
 
 <span class="k">class</span> <span class="nx">MapReduce</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Only install this on cloud not on data collection devices</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="vi">@mapFields: </span><span class="nf">(doc, req) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>recursion!</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">concatNodes: </span><span class="nf">(parent,object) -&gt;</span>
@@ -92,6 +95,13 @@
 
   <span class="vi">@guid: </span><span class="o">-&gt;</span>
    <span class="k">return</span> <span class="nx">@S4</span><span class="p">()</span><span class="o">+</span><span class="nx">@S4</span><span class="p">()</span><span class="o">+</span><span class="s">&quot;-&quot;</span><span class="o">+</span><span class="nx">@S4</span><span class="p">()</span><span class="o">+</span><span class="s">&quot;-&quot;</span><span class="o">+</span><span class="nx">@S4</span><span class="p">()</span><span class="o">+</span><span class="s">&quot;-&quot;</span><span class="o">+</span><span class="nx">@S4</span><span class="p">()</span><span class="o">+</span><span class="s">&quot;-&quot;</span><span class="o">+</span><span class="nx">@S4</span><span class="p">()</span><span class="o">+</span><span class="nx">@S4</span><span class="p">()</span><span class="o">+</span><span class="nx">@S4</span><span class="p">()</span>
+
+  <span class="vi">@entities: </span><span class="nf">(input) -&gt;</span>
+    <span class="nv">e = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s">&#39;div&#39;</span>
+    <span class="nv">e.innerHTML = </span><span class="nx">input</span>
+    <span class="k">return</span> <span class="k">if</span> <span class="nx">e</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">then</span> <span class="s">&quot;&quot;</span> <span class="k">else</span> <span class="nx">e</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">nodeValue</span>
+
+
 
 
 <span class="k">class</span> <span class="nx">Context</span>
