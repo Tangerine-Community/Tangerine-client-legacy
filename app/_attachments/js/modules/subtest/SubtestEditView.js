@@ -42,7 +42,6 @@ SubtestEditView = (function(_super) {
       name: this.$el.find('#question_name').val()
     });
     nq = this.model.questions.create(newAttributes);
-    nq.save();
     this.renderQuestions();
     this.$el.find("#add_question_form input").val('');
     return false;

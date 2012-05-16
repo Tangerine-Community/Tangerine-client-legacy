@@ -30,6 +30,7 @@ QuestionsEditView = (function(_super) {
     var id;
     id = $(event.target).parent().attr('data-id');
     this.questions.get(id).destroy();
+    this.render();
     return false;
   };
 

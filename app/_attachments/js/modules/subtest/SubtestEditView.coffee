@@ -24,9 +24,10 @@ class SubtestEditView extends Backbone.View
       name         : @$el.find('#question_name').val()
 
     nq = @model.questions.create newAttributes
-    nq.save()
     @renderQuestions()
     @$el.find("#add_question_form input").val('')
+#   Close the adder at creation?
+#   @$el.add_question_form
     return false
 #      "options" : _.find( Tangerine.config.optionsTemplates, (template) ->
 #        return template.options if template.name == @$el.find("#add_question_select option:selected").val() )

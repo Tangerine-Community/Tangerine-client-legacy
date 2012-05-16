@@ -15,6 +15,7 @@ class QuestionsEditView extends Backbone.View
   delete: (event) ->
     id = $(event.target).parent().attr('data-id')
     @questions.get(id).destroy() 
+    @render()
     return false
 
   initialize: ( options ) ->
