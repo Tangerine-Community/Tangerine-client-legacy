@@ -1,17 +1,60 @@
 class PrototypeLocationView extends Backbone.View
 
+  events:
+    "click #school_list li" : "autofill"
+    "keyup input" : "showOptions"
+
   initialize: (options) ->
     @model  = @options.model
     @parent = @options.parent
-  
-  
-  render: ->
+    @haystack = []
+    @li = _.template "<li style='display:none;' data-index='{{i}}'>{{province}} - {{name}} - {{district}} - {{id}}</li>"
+    for school, i in @model.get "schools"
+      @haystack[i] = school.join("").toLowerCase()
+
+  autofill: (event) ->
+    @$el.find("#autofill").fadeOut(250)
+    index = $(event.target).attr("data-index")
+    school = @model.get("schools")[index]
+    name     = school[2]
+    district = school[1]
+    id       = school[3]
+    province = school[0]
+    @$el.find("#school_id").val(id)
+    @$el.find("#district").val(district)
+    @$el.find("#province").val(province)
+    @$el.find("#name").val(name)
+
+  showOptions: (event) ->
+    needle = $(event.target).val().toLowerCase()
+    atLeastOne = false
+    for li, i in $("#school_list li")
+      isThere = ~@haystack[i].indexOf(needle)
+      $(li).css("display", "block") if     isThere
+      $(li).css("display", "none")  if not isThere
+      atLeastOne = true if isThere
     
+    @$el.find("#autofill").fadeIn(250)  if     atLeastOne
+    @$el.find("#autofill").fadeOut(250) if not atLeastOne
+    
+    return true
+
+  render: ->
     provinceText = @model.get "provinceText"
     districtText = @model.get "districtText"
     nameText     = @model.get "nameText"
     schoolIdText = @model.get "schoolIdText"
-    
+
+    schoolListElements = ""
+
+    for school, i in @model.get "schools"
+      schoolListElements += @li
+        i        : i
+        province : school[0]
+        district : school[1]
+        name     : school[2]
+        id       : school[3]
+
     @$el.html "
     <form>
       <div class='label_value'>
@@ -31,7 +74,16 @@ class PrototypeLocationView extends Backbone.View
         <input id='school_id' name='school_id' value=''>
       </div>
     <form>
+    <div id='autofill' style='display:none'>
+      <h2>Select one from autofill list</h2>
+      <ul id='school_list'>
+        #{schoolListElements}
+      </ul>
+    </div>
     "
+
+    list = ""
+
     @trigger "rendered"
 
   isValid: ->

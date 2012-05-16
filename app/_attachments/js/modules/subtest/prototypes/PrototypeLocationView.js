@@ -10,18 +10,78 @@ PrototypeLocationView = (function(_super) {
     PrototypeLocationView.__super__.constructor.apply(this, arguments);
   }
 
+  PrototypeLocationView.prototype.events = {
+    "click #school_list li": "autofill",
+    "keyup input": "showOptions"
+  };
+
   PrototypeLocationView.prototype.initialize = function(options) {
+    var i, school, _len, _ref, _results;
     this.model = this.options.model;
-    return this.parent = this.options.parent;
+    this.parent = this.options.parent;
+    this.haystack = [];
+    this.li = _.template("<li style='display:none;' data-index='{{i}}'>{{province}} - {{name}} - {{district}} - {{id}}</li>");
+    _ref = this.model.get("schools");
+    _results = [];
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      school = _ref[i];
+      _results.push(this.haystack[i] = school.join("").toLowerCase());
+    }
+    return _results;
+  };
+
+  PrototypeLocationView.prototype.autofill = function(event) {
+    var district, id, index, name, province, school;
+    this.$el.find("#autofill").fadeOut(250);
+    index = $(event.target).attr("data-index");
+    school = this.model.get("schools")[index];
+    name = school[2];
+    district = school[1];
+    id = school[3];
+    province = school[0];
+    this.$el.find("#school_id").val(id);
+    this.$el.find("#district").val(district);
+    this.$el.find("#province").val(province);
+    return this.$el.find("#name").val(name);
+  };
+
+  PrototypeLocationView.prototype.showOptions = function(event) {
+    var atLeastOne, i, isThere, li, needle, _len, _ref;
+    needle = $(event.target).val().toLowerCase();
+    atLeastOne = false;
+    _ref = $("#school_list li");
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      li = _ref[i];
+      isThere = ~this.haystack[i].indexOf(needle);
+      if (isThere) $(li).css("display", "block");
+      if (!isThere) $(li).css("display", "none");
+      if (isThere) atLeastOne = true;
+    }
+    if (atLeastOne) this.$el.find("#autofill").fadeIn(250);
+    if (!atLeastOne) this.$el.find("#autofill").fadeOut(250);
+    return true;
   };
 
   PrototypeLocationView.prototype.render = function() {
-    var districtText, nameText, provinceText, schoolIdText;
+    var districtText, i, list, nameText, provinceText, school, schoolIdText, schoolListElements, _len, _ref;
     provinceText = this.model.get("provinceText");
     districtText = this.model.get("districtText");
     nameText = this.model.get("nameText");
     schoolIdText = this.model.get("schoolIdText");
-    this.$el.html("    <form>      <div class='label_value'>        <label for='province'>" + provinceText + "</label>        <input id='province' name='province' value=''>      </div>      <div class='label_value'>        <label for='district'>" + districtText + "</label>        <input id='district' name='district' value=''>      </div>      <div class='label_value'>        <label for='name'>" + nameText + "</label>        <input id='name' name='name' value=''>      </div>      <div class='label_value'>        <label for='school_id'>" + schoolIdText + "</label>        <input id='school_id' name='school_id' value=''>      </div>    <form>    ");
+    schoolListElements = "";
+    _ref = this.model.get("schools");
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      school = _ref[i];
+      schoolListElements += this.li({
+        i: i,
+        province: school[0],
+        district: school[1],
+        name: school[2],
+        id: school[3]
+      });
+    }
+    this.$el.html("    <form>      <div class='label_value'>        <label for='province'>" + provinceText + "</label>        <input id='province' name='province' value=''>      </div>      <div class='label_value'>        <label for='district'>" + districtText + "</label>        <input id='district' name='district' value=''>      </div>      <div class='label_value'>        <label for='name'>" + nameText + "</label>        <input id='name' name='name' value=''>      </div>      <div class='label_value'>        <label for='school_id'>" + schoolIdText + "</label>        <input id='school_id' name='school_id' value=''>      </div>    <form>    <div id='autofill' style='display:none'>      <h2>Select one from autofill list</h2>      <ul id='school_list'>        " + schoolListElements + "      </ul>    </div>    ");
+    list = "";
     return this.trigger("rendered");
   };
 
