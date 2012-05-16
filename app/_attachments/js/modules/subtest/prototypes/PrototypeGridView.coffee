@@ -39,7 +39,7 @@ class PrototypeGridView extends Backbone.View
     if @autostopped == true && autoCount < @autostop && @undoable == true then @unAutostopTest()
 
   markElement: (index, value = null) ->
-    $target = @$el.find("div[data-index=#{index}]")
+    $target = @$el.find("div.grid_element[data-index=#{index}]")
     @markRecord.push index
     if value == null
       @gridOutput[index-1] = if (@gridOutput[index-1] == "correct") then "incorrect" else "correct"
@@ -53,12 +53,15 @@ class PrototypeGridView extends Backbone.View
         
   endOfGridLineClick: (event) ->
     if @mode == "mark"
-      if $(event.target).hasClass("element_wrong")
+      $target = $(event.target)
+      if $target.hasClass("element_wrong")
+        $target.removeClass "element_wrong"
         value = "correct"
       else
+        $target.addClass "element_wrong"
         value = "incorrect"
-      index = $(event.target).attr('data-index')
-      for i in [index..(index-10)]
+      index = $target.attr('data-index')
+      for i in [index..(index-(@columns-1))]
         @markElement i, value
       if @autostop != 0
         @checkAutostop()
@@ -98,7 +101,7 @@ class PrototypeGridView extends Backbone.View
     @timeRunning = false
     @$el.find(".grid_element").slice(@autostop-1,@autostop).addClass "element_last" #jquery is weird sometimes
     @lastAttempted = @autostop
-    @timeout = setTimeout(@removeUndo, 7000) # give them 7 seconds to undo
+    @timeout = setTimeout(@removeUndo, 3000) # give them 3 seconds to undo
     Utils.topAlert "Autostop activated. Discontinue test."
 
   removeUndo: =>
@@ -111,7 +114,7 @@ class PrototypeGridView extends Backbone.View
     @autostopped = false
     @lastAttempted = 0
     @$el.find(".grid_element").slice(@autostop-1,@autostop).removeClass "element_last"
-    @timeRunning = false
+    @timeRunning = true
     @updateMode null, "mark"
     Utils.topAlert "Autostop removed. Continue."
 
@@ -179,7 +182,8 @@ class PrototypeGridView extends Backbone.View
         if done < @items.length
           html += @gridElement { label : @items[done], i: done+1 }
         done++
-      html += @endOfGridLine({i:done})+"</tr>"
+      html += @endOfGridLine({i:done}) if done < ( @items.length + 1 )
+      html += "</tr>"
     html += "</table>
     
     <div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>#{@timer}</div></div>

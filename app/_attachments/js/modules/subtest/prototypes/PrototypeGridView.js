@@ -63,7 +63,7 @@ PrototypeGridView = (function(_super) {
   PrototypeGridView.prototype.markElement = function(index, value) {
     var $target;
     if (value == null) value = null;
-    $target = this.$el.find("div[data-index=" + index + "]");
+    $target = this.$el.find("div.grid_element[data-index=" + index + "]");
     this.markRecord.push(index);
     if (value === null) {
       this.gridOutput[index - 1] = this.gridOutput[index - 1] === "correct" ? "incorrect" : "correct";
@@ -79,15 +79,18 @@ PrototypeGridView = (function(_super) {
   };
 
   PrototypeGridView.prototype.endOfGridLineClick = function(event) {
-    var i, index, value, _ref;
+    var $target, i, index, value, _ref;
     if (this.mode === "mark") {
-      if ($(event.target).hasClass("element_wrong")) {
+      $target = $(event.target);
+      if ($target.hasClass("element_wrong")) {
+        $target.removeClass("element_wrong");
         value = "correct";
       } else {
+        $target.addClass("element_wrong");
         value = "incorrect";
       }
-      index = $(event.target).attr('data-index');
-      for (i = index, _ref = index - 10; index <= _ref ? i <= _ref : i >= _ref; index <= _ref ? i++ : i--) {
+      index = $target.attr('data-index');
+      for (i = index, _ref = index - (this.columns - 1); index <= _ref ? i <= _ref : i >= _ref; index <= _ref ? i++ : i--) {
         this.markElement(i, value);
       }
       if (this.autostop !== 0) return this.checkAutostop();
@@ -137,7 +140,7 @@ PrototypeGridView = (function(_super) {
     this.timeRunning = false;
     this.$el.find(".grid_element").slice(this.autostop - 1, this.autostop).addClass("element_last");
     this.lastAttempted = this.autostop;
-    this.timeout = setTimeout(this.removeUndo, 7000);
+    this.timeout = setTimeout(this.removeUndo, 3000);
     return Utils.topAlert("Autostop activated. Discontinue test.");
   };
 
@@ -152,7 +155,7 @@ PrototypeGridView = (function(_super) {
     this.autostopped = false;
     this.lastAttempted = 0;
     this.$el.find(".grid_element").slice(this.autostop - 1, this.autostop).removeClass("element_last");
-    this.timeRunning = false;
+    this.timeRunning = true;
     this.updateMode(null, "mark");
     return Utils.topAlert("Autostop removed. Continue.");
   };
@@ -228,9 +231,12 @@ PrototypeGridView = (function(_super) {
         }
         done++;
       }
-      html += this.endOfGridLine({
-        i: done
-      }) + "</tr>";
+      if (done < (this.items.length + 1)) {
+        html += this.endOfGridLine({
+          i: done
+        });
+      }
+      html += "</tr>";
     }
     html += "</table>        <div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>        <div id='grid_mode' class='question clearfix'>      <label>Input mode</label>      <label for='mark'>Mark</label>      <input name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>      <label for='last_attempted'>Last attempted</label>      <input name='grid_mode' id='last_attempted' type='radio' value='last'>    </div>    ";
     this.$el.html(html);
