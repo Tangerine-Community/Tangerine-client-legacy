@@ -4,18 +4,23 @@ Backbone.View.prototype.close = ->
   @unbind()
   @onClose?()
 
-
 #
 # handy jquery functions
 #
 ( ($) -> 
 
   $.fn.scrollTo = ->
-    $('html, body').animate {
-      scrollTop: $(@).offset().top + 'px'
-    }, 250
+    try
+      $('html, body').animate {
+        scrollTop: $(@).offset().top + 'px'
+        }, 250
+    catch e
+      console.log e
+      console.log "Scroll error with 'this'"
+      console.log @
+
     return @
-  
+
   # place something top and center
   $.fn.topCenter = ->
     @css "position", "absolute"
@@ -41,9 +46,7 @@ Backbone.View.prototype.close = ->
         result[element.name] = element.value
     result
 
-
 )(jQuery)
-
 
 
 class MapReduce

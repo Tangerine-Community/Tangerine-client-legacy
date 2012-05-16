@@ -8,9 +8,15 @@ Backbone.View.prototype.close = function() {
 
 (function($) {
   $.fn.scrollTo = function() {
-    $('html, body').animate({
-      scrollTop: $(this).offset().top + 'px'
-    }, 250);
+    try {
+      $('html, body').animate({
+        scrollTop: $(this).offset().top + 'px'
+      }, 250);
+    } catch (e) {
+      console.log(e);
+      console.log("Scroll error with 'this'");
+      console.log(this);
+    }
     return this;
   };
   $.fn.topCenter = function() {
@@ -162,6 +168,17 @@ Utils = (function() {
 
   Utils.guid = function() {
     return this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4();
+  };
+
+  Utils.entities = function(input) {
+    var e;
+    e = document.createElement('div');
+    e.innerHTML = input;
+    if (e.childNodes.length === 0) {
+      return "";
+    } else {
+      return e.childNodes[0].nodeValue;
+    }
   };
 
   return Utils;
