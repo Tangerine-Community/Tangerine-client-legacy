@@ -20,10 +20,12 @@ PrototypeGridView = (function(_super) {
 
   PrototypeGridView.prototype.events = Tangerine.context.kindle ? {
     'touchstart .grid_element': 'gridClick',
+    'touchstart .end_of_grid_line': 'endOfGridLineClick',
     'click .grid_mode input': 'updateMode',
     'click .start_time': 'startTimer',
     'click .stop_time': 'stopTimer'
   } : {
+    'click .end_of_grid_line': 'endOfGridLineClick',
     'click .grid_element': 'gridClick',
     'click .grid_mode input': 'updateMode',
     'click .start_time': 'startTimer',
@@ -35,32 +37,60 @@ PrototypeGridView = (function(_super) {
   };
 
   PrototypeGridView.prototype.markHandler = function(event) {
-    var $target, autoCount, i, index, _ref;
+    var $target, index;
     $target = $(event.target);
-    if (this.lastAttempted !== 0 && $target.attr('data-index') > this.lastAttempted) {
-      return;
-    }
-    $target.toggleClass("element_wrong");
     index = $target.attr('data-index');
+    if (this.lastAttempted !== 0 && index > this.lastAttempted) return;
+    this.markElement(index);
+    if (this.autostop !== 0) return this.checkAutostop();
+  };
+
+  PrototypeGridView.prototype.checkAutostop = function() {
+    var autoCount, i, _ref;
+    autoCount = 0;
+    for (i = 0, _ref = this.autostop - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+      if (this.gridOutput[i] === "correct") break;
+      autoCount++;
+    }
+    if (this.autostopped === false) {
+      if (autoCount === this.autostop) this.autostopTest();
+    }
+    if (this.autostopped === true && autoCount < this.autostop && this.undoable === true) {
+      return this.unAutostopTest();
+    }
+  };
+
+  PrototypeGridView.prototype.markElement = function(index, value) {
+    var $target;
+    if (value == null) value = null;
+    $target = this.$el.find("div[data-index=" + index + "]");
     this.markRecord.push(index);
-    this.gridOutput[index - 1] = this.gridOutput[index - 1] === "correct" ? "incorrect" : "correct";
-    console.log(this.autostop);
-    if (this.autostop !== 0) {
-      autoCount = 0;
-      for (i = 0, _ref = this.autostop - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
-        if (this.gridOutput[i] === "correct") break;
-        autoCount++;
+    if (value === null) {
+      this.gridOutput[index - 1] = this.gridOutput[index - 1] === "correct" ? "incorrect" : "correct";
+      return $target.toggleClass("element_wrong");
+    } else {
+      this.gridOutput[index - 1] = value;
+      if (value === "incorrect") {
+        return $target.addClass("element_wrong");
+      } else if (value === "correct") {
+        return $target.removeClass("element_wrong");
       }
-      if (this.autostopped === false) {
-        if (autoCount === this.autostop) this.autostopTest();
+    }
+  };
+
+  PrototypeGridView.prototype.endOfGridLineClick = function(event) {
+    var i, index, value, _ref;
+    if (this.mode === "mark") {
+      if ($(event.target).hasClass("element_wrong")) {
+        value = "correct";
+      } else {
+        value = "incorrect";
       }
-      if (this.autostopped === true && autoCount < this.autostop && this.undoable === true) {
-        this.unAutostopTest();
+      index = $(event.target).attr('data-index');
+      for (i = index, _ref = index - 10; index <= _ref ? i <= _ref : i >= _ref; index <= _ref ? i++ : i--) {
+        this.markElement(i, value);
       }
-      console.log("\nchecking undoability");
-      console.log(this.autostopped === true);
-      console.log(autoCount < this.autostop);
-      return console.log(this.undoable === true);
+      if (this.autostop !== 0) return this.checkAutostop();
     }
   };
 
@@ -178,7 +208,8 @@ PrototypeGridView = (function(_super) {
     this.columns = this.model.get("columns") || 0;
     this.autostop = parseInt(this.model.get("autostop")) || 0;
     this.autostopped = false;
-    return this.gridElement = _.template("<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element'>{{label}}</div></td>");
+    this.gridElement = _.template("<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element'>{{label}}</div></td>");
+    return this.endOfGridLine = _.template("<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>");
   };
 
   PrototypeGridView.prototype.render = function() {
@@ -197,7 +228,9 @@ PrototypeGridView = (function(_super) {
         }
         done++;
       }
-      html += "</tr>";
+      html += this.endOfGridLine({
+        i: done
+      }) + "</tr>";
     }
     html += "</table>        <div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>        <div id='grid_mode' class='question clearfix'>      <label>Input mode</label>      <label for='mark'>Mark</label>      <input name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>      <label for='last_attempted'>Last attempted</label>      <input name='grid_mode' id='last_attempted' type='radio' value='last'>    </div>    ";
     this.$el.html(html);

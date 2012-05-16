@@ -4,10 +4,12 @@ class PrototypeGridView extends Backbone.View
 
   events: if Tangerine.context.kindle then  {
     'touchstart .grid_element' : 'gridClick'
+    'touchstart .end_of_grid_line' : 'endOfGridLineClick'
     'click .grid_mode input'   : 'updateMode'
     'click .start_time'        : 'startTimer'
     'click .stop_time'         : 'stopTimer'
   } else {
+    'click .end_of_grid_line' : 'endOfGridLineClick'
     'click .grid_element'    : 'gridClick'
     'click .grid_mode input' : 'updateMode'
     'click .start_time'      : 'startTimer'
@@ -20,26 +22,46 @@ class PrototypeGridView extends Backbone.View
 
   markHandler: (event) =>
     $target = $(event.target)
-    if @lastAttempted != 0 && $target.attr('data-index') > @lastAttempted
-      return
-    $target.toggleClass "element_wrong"
     index = $target.attr('data-index')
-    @markRecord.push index
-    @gridOutput[index-1] = if (@gridOutput[index-1] == "correct") then "incorrect" else "correct"
-    console.log  @autostop
+    if @lastAttempted != 0 && index > @lastAttempted
+      return
+    @markElement(index)
     if @autostop != 0
-      autoCount = 0
-      for i in [0..@autostop-1]
-        if @gridOutput[i] == "correct" then break
-        autoCount++
-      if @autostopped == false
-        if autoCount == @autostop then @autostopTest()
-      if @autostopped == true && autoCount < @autostop && @undoable == true then @unAutostopTest()
-      console.log "\nchecking undoability"
-      console.log @autostopped == true
-      console.log autoCount < @autostop
-      console.log @undoable == true
+      @checkAutostop()
       
+  checkAutostop: ->
+    autoCount = 0
+    for i in [0..@autostop-1]
+      if @gridOutput[i] == "correct" then break
+      autoCount++
+    if @autostopped == false
+      if autoCount == @autostop then @autostopTest()
+    if @autostopped == true && autoCount < @autostop && @undoable == true then @unAutostopTest()
+
+  markElement: (index, value = null) ->
+    $target = @$el.find("div[data-index=#{index}]")
+    @markRecord.push index
+    if value == null
+      @gridOutput[index-1] = if (@gridOutput[index-1] == "correct") then "incorrect" else "correct"
+      $target.toggleClass "element_wrong"
+    else
+      @gridOutput[index-1] = value
+      if value == "incorrect"
+        $target.addClass "element_wrong"
+      else if value == "correct"
+        $target.removeClass "element_wrong"
+        
+  endOfGridLineClick: (event) ->
+    if @mode == "mark"
+      if $(event.target).hasClass("element_wrong")
+        value = "correct"
+      else
+        value = "incorrect"
+      index = $(event.target).attr('data-index')
+      for i in [index..(index-10)]
+        @markElement i, value
+      if @autostop != 0
+        @checkAutostop()
 
   lastHandler: (event) =>
     $target = $(event.target)
@@ -143,7 +165,7 @@ class PrototypeGridView extends Backbone.View
     @autostopped = false
 
     @gridElement = _.template "<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element'>{{label}}</div></td>"
-  
+    @endOfGridLine = _.template "<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>"
   render: ->
     done = 0
     html = "
@@ -157,7 +179,7 @@ class PrototypeGridView extends Backbone.View
         if done < @items.length
           html += @gridElement { label : @items[done], i: done+1 }
         done++
-      html += "</tr>"
+      html += @endOfGridLine({i:done})+"</tr>"
     html += "</table>
     
     <div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>#{@timer}</div></div>
