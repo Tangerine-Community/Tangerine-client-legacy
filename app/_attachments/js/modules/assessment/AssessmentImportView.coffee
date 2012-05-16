@@ -11,8 +11,11 @@ class AssessmentImportView extends Backbone.View
   import: ->
     
     # This is supposed to work
-    #$.couch.db("tangerine").compact
-    #  success: (a,b,c) =>
+#    $.couch.db("tangerine").compact
+#      complete: (a,b,c) =>
+#        console.log "compact"
+#        console.log [a,b,c]
+
     dKey = @$el.find("#d_key").val()
     @$el.find(".status").fadeIn(250)
     @$el.find("#progress").html "Looking for #{dKey}"
@@ -41,8 +44,8 @@ class AssessmentImportView extends Backbone.View
               assessmentName = doc.name if doc.collection == 'assessment'
             @$el.find("#progress").append "
               <div>#{assessmentName}</div>
-              <div>Questions - #{questions}</div>
-              <div>Subtests - #{subtests}</div>"
+              <div>Subtests - #{subtests}</div>
+              <div>Questions - #{questions}</div>"
 
           error: (a, b ,c) ->
             @$el.find("#progress").html "<div>Error after data imported</div><div>#{a}</div><div>#{b}"
