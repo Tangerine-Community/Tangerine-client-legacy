@@ -27,6 +27,7 @@ AssessmentListView = (function(_super) {
 
   AssessmentListView.prototype.initialize = function(options) {
     this.isAdmin = Tangerine.user.isAdmin();
+    console.log("is admin " + this.isAdmin);
     this.views = [];
     this.publicViews = [];
     return this.refresh();
@@ -64,10 +65,14 @@ AssessmentListView = (function(_super) {
   };
 
   AssessmentListView.prototype.render = function() {
-    var assessment, groupList, oneView, publicList, _i, _j, _len, _len2, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+    var assessment, groupList, html, oneView, publicList, _i, _j, _len, _len2, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
     this.closeViews();
     this.views = [];
-    this.$el.html("      <h1>Assessments</h1>      <button class='new_assessment command'>New</button><button class='import command'>Import</button>      <form class='new_assessment_form'>        <input type='text' class='new_assessment_name' placeholder='Assessment Name'>        <button class='new_assessment_save'>Save</button>        <button class='new_assessment_cancel'>Cancel</button>      </form>      <h2>Group assessments</h2>    ");
+    html = "      <h1>Assessments</h1>      ";
+    if (this.isAdmin) {
+      html += "        <button class='new_assessment command'>New</button><button class='import command'>Import</button>        <form class='new_assessment_form'>          <input type='text' class='new_assessment_name' placeholder='Assessment Name'>          <button class='new_assessment_save'>Save</button>          <button class='new_assessment_cancel'>Cancel</button>        </form>        <h2>Group assessments</h2>      ";
+    }
+    this.$el.html(html);
     if (((_ref = this.collection) != null ? (_ref2 = _ref.models) != null ? _ref2.length : void 0 : void 0) > 0) {
       groupList = $('<ul>').addClass('assessment_list');
       _ref4 = (_ref3 = this.collection) != null ? _ref3.models : void 0;
@@ -85,25 +90,27 @@ AssessmentListView = (function(_super) {
     } else {
       this.$el.append("<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>");
     }
-    this.$el.append("<h2>Public assessments</h2>");
-    if (((_ref5 = this.public) != null ? (_ref6 = _ref5.models) != null ? _ref6.length : void 0 : void 0) > 0) {
-      publicList = $('<ul>').addClass('public_list');
-      _ref8 = (_ref7 = this.public) != null ? _ref7.models : void 0;
-      for (_j = 0, _len2 = _ref8.length; _j < _len2; _j++) {
-        assessment = _ref8[_j];
-        oneView = new AssessmentListElementView({
-          model: assessment,
-          parent: this,
-          isPublic: true
-        });
-        this.publicViews.push(oneView);
-        oneView.render();
-        publicList.append(oneView.el);
+    if (this.isAdmin) {
+      this.$el.append("<h2>Public assessments</h2>");
+      if (((_ref5 = this.public) != null ? (_ref6 = _ref5.models) != null ? _ref6.length : void 0 : void 0) > 0) {
+        publicList = $('<ul>').addClass('public_list');
+        _ref8 = (_ref7 = this.public) != null ? _ref7.models : void 0;
+        for (_j = 0, _len2 = _ref8.length; _j < _len2; _j++) {
+          assessment = _ref8[_j];
+          oneView = new AssessmentListElementView({
+            model: assessment,
+            parent: this,
+            isPublic: true
+          });
+          this.publicViews.push(oneView);
+          oneView.render();
+          publicList.append(oneView.el);
+        }
+      } else {
+        this.$el.append("<p>No assessments available.</p>");
       }
-    } else {
-      this.$el.append("<p>No assessments available.</p>");
+      this.$el.append(publicList);
     }
-    this.$el.append(publicList);
     return this.trigger("rendered");
   };
 

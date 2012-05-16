@@ -13,6 +13,7 @@ class AssessmentListView extends Backbone.View
 
   initialize:(options) ->
     @isAdmin = Tangerine.user.isAdmin()
+    console.log "is admin " + @isAdmin
     @views = []
     @publicViews = []
     @refresh()
@@ -45,16 +46,21 @@ class AssessmentListView extends Backbone.View
     @closeViews()
     @views = []
 
-    @$el.html "
+    html = "
       <h1>Assessments</h1>
-      <button class='new_assessment command'>New</button><button class='import command'>Import</button>
-      <form class='new_assessment_form'>
-        <input type='text' class='new_assessment_name' placeholder='Assessment Name'>
-        <button class='new_assessment_save'>Save</button>
-        <button class='new_assessment_cancel'>Cancel</button>
-      </form>
-      <h2>Group assessments</h2>
-    "
+      "
+    if @isAdmin
+      html += "
+        <button class='new_assessment command'>New</button><button class='import command'>Import</button>
+        <form class='new_assessment_form'>
+          <input type='text' class='new_assessment_name' placeholder='Assessment Name'>
+          <button class='new_assessment_save'>Save</button>
+          <button class='new_assessment_cancel'>Cancel</button>
+        </form>
+        <h2>Group assessments</h2>
+      "
+    
+    @$el.html html
 
     if @collection?.models?.length > 0
       groupList = $('<ul>').addClass('assessment_list')
@@ -69,24 +75,27 @@ class AssessmentListView extends Backbone.View
       @$el.append groupList
     else
       @$el.append "<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>"
-    @$el.append "<h2>Public assessments</h2>"
+    
+    if @isAdmin
 
-    if @public?.models?.length > 0
+      @$el.append "<h2>Public assessments</h2>"
 
-      publicList = $('<ul>').addClass('public_list')
+      if @public?.models?.length > 0
 
-      for assessment in @public?.models
-        oneView = new AssessmentListElementView
-          model : assessment
-          parent : @
-          isPublic : true
-        @publicViews.push oneView
-        oneView.render()
-        publicList.append oneView.el
-    else
-      @$el.append "<p>No assessments available.</p>"
+        publicList = $('<ul>').addClass('public_list')
 
-    @$el.append publicList
+        for assessment in @public?.models
+          oneView = new AssessmentListElementView
+            model : assessment
+            parent : @
+            isPublic : true
+          @publicViews.push oneView
+          oneView.render()
+          publicList.append oneView.el
+      else
+        @$el.append "<p>No assessments available.</p>"
+
+      @$el.append publicList
 
 
 
