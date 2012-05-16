@@ -52,7 +52,7 @@ AssessmentImportView = (function(_super) {
               if (doc.collection === 'question') questions++;
               if (doc.collection === 'assessment') assessmentName = doc.name;
             }
-            return _this.$el.find("#progress").append("              <div>" + assessmentName + "</div>              <div>Questions - " + questions + "</div>              <div>Subtests - " + subtests + "</div>");
+            return _this.$el.find("#progress").append("              <div>" + assessmentName + "</div>              <div>Subtests - " + subtests + "</div>              <div>Questions - " + questions + "</div>");
           },
           error: function(a, b, c) {
             return this.$el.find("#progress").html("<div>Error after data imported</div><div>" + a + "</div><div>" + b);
