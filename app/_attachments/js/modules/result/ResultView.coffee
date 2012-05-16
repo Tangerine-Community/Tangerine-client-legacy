@@ -61,8 +61,8 @@ class ResultView extends Backbone.View
       <div class='prompt'>Additional comments (optional)</div>
       <textarea id='additional_comments full_width'></textarea>
       </div>
-      <button class='save'>Save result</button><br>
-      <button class='another confirmation'>Perform another assessment</button>
+      <button class='save command'>Save result</button><br>
+      <div class='confirmation'><button class='another command'>Perform another assessment</button></div>
     "
 
     @trigger "rendered"
