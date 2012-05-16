@@ -12,7 +12,7 @@ class AssessmentListElementView extends Backbone.View
 
   initialize:(options) ->
     @parent = options.parent
-    @isAdmin = Tangerine.user.isAdmin
+    @isAdmin = Tangerine.user.isAdmin()
     @isPublic = options.isPublic
     @model = options.model
 
@@ -84,6 +84,7 @@ class AssessmentListElementView extends Backbone.View
 
       # remove children
       assessmentId = @model.id
+      
       subtests = new Subtests
       subtests.fetch
         success: (collection) =>

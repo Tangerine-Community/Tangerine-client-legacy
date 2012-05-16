@@ -23,7 +23,7 @@ AssessmentListElementView = (function(_super) {
 
   AssessmentListElementView.prototype.initialize = function(options) {
     this.parent = options.parent;
-    this.isAdmin = Tangerine.user.isAdmin;
+    this.isAdmin = Tangerine.user.isAdmin();
     this.isPublic = options.isPublic;
     return this.model = options.model;
   };
