@@ -362,6 +362,20 @@ table.grid
     font-size: 40px;
   }
 
+  .end_of_grid_line
+  {
+    margin: 5px;
+    padding: 5px 5px;
+    cursor: pointer;
+    background: @orange-3 !important;
+    color: white !important;
+    font-weight: bold;
+    font-size: 40px;
+    border: 5px solid @orange-3;
+    text-align: center;
+    border-radius: 10px;
+  }
+
   .element_wrong
   {
     background: @green;
@@ -829,7 +843,24 @@ label.ui-button
   {
     margin: 10px;
   }
-    
+
+
+  .prompt
+  {
+    font-size: 25px;
+    color: black;
+    margin: 10px 5px 0;
+  }
+  
+  .hint
+  {
+    font-size: 20px;
+    margin: 5px 5px 10px;
+    color: @grey-2;
+    font-weight: bold;
+  }
+
+
 }
 
 /*
@@ -902,8 +933,9 @@ input
 
 textarea
 {
-  height: 100px;
-  width: 95%
+  height: 1.25  em;
+  padding: 5px;
+  width: 95%;
 }
 
 
@@ -929,7 +961,7 @@ button.navigation
   background-color: @orange-2;
   border: 0 !important;
   margin: 10px 10px 5px 0;
-  padding: 5px 15px !important;
+  padding: 7px 20px !important;
   .border-radius(10px);
   font-weight: normal;
   &:active
@@ -952,7 +984,7 @@ button.command
   background-color: @grey-1;
   border: 0 !important;
   margin: 10px 10px 5px 0;
-  padding: 5px 20px !important;
+  padding: 7px 25px !important;
   .border-radius(10px);
   font-weight: normal;
   &:active

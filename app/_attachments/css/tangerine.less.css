@@ -430,6 +430,18 @@ table.grid .grid_element {
   border-radius: 10px;
   font-size: 40px;
 }
+table.grid .end_of_grid_line {
+  margin: 5px;
+  padding: 5px 5px;
+  cursor: pointer;
+  background: #f6c637 !important;
+  color: white !important;
+  font-weight: bold;
+  font-size: 40px;
+  border: 5px solid #f6c637;
+  text-align: center;
+  border-radius: 10px;
+}
 table.grid .element_wrong {
   background: #8cc63f;
   text-decoration: line-through;
@@ -754,6 +766,17 @@ label.ui-button {
 .question button {
   margin: 10px;
 }
+.question .prompt {
+  font-size: 25px;
+  color: black;
+  margin: 10px 5px 0;
+}
+.question .hint {
+  font-size: 20px;
+  margin: 5px 5px 10px;
+  color: #999999;
+  font-weight: bold;
+}
 /*
  * CSV View
  */
@@ -799,7 +822,8 @@ input {
   padding: 5px !important;
 }
 textarea {
-  height: 100px;
+  height: 1.25  em;
+  padding: 5px;
   width: 95%;
 }
 button[disabled] {
@@ -817,7 +841,7 @@ button.navigation {
   background-color: #f49b00;
   border: 0 !important;
   margin: 10px 10px 5px 0;
-  padding: 5px 15px !important;
+  padding: 7px 20px !important;
   border-radius: 10px;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
@@ -836,7 +860,7 @@ button.command {
   background-color: #cccccc;
   border: 0 !important;
   margin: 10px 10px 5px 0;
-  padding: 5px 20px !important;
+  padding: 7px 25px !important;
   border-radius: 10px;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
