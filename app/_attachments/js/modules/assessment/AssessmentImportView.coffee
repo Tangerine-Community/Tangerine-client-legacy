@@ -9,6 +9,10 @@ class AssessmentImportView extends Backbone.View
     false
 
   import: ->
+    
+    # This is supposed to work
+    #$.couch.db("tangerine").compact
+    #  success: (a,b,c) =>
     dKey = @$el.find("#d_key").val()
     @$el.find(".status").fadeIn(250)
     @$el.find("#progress").html "Looking for #{dKey}"
@@ -18,8 +22,8 @@ class AssessmentImportView extends Backbone.View
       'query_params' :
         'downloadKey' : dKey
 
-    opts = 
-      success: (a, b) => 
+    opts =
+      success: (a, b) =>
         @$el.find("#progress").html "Import successful <h3>Imported</h3>"
         # this next step is just a test to see everything is there...
         # maybe it doesn't need to. Kind of impressive though.
@@ -45,8 +49,10 @@ class AssessmentImportView extends Backbone.View
 
       error: (a,b) =>
         @$el.find("#progress").html "<div>Import error</div><div>#{a}</div><div>#{b}"
-        
+    
     $.couch.replicate "http://tangerine.iriscouch.com:5984/tangerine", "tangerine", opts, repOps
+
+
     false
 
   render: ->
