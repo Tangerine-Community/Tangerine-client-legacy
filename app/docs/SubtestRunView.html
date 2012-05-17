@@ -11,22 +11,23 @@
     <span class="vi">@model       = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
     <span class="vi">@parent      = </span><span class="nx">options</span><span class="p">.</span><span class="nx">parent</span>
 
+    <span class="vi">@prototypeRendered = </span><span class="kc">false</span>
 
-  <span class="nv">render: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>in case we hit a back button accidentally
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>in case we hit a back button accidentally
 window.onbeforeunload = => "Assessment is still running"</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">enumeratorHelp = </span><span class="k">if</span> <span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;enumeratorHelp&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> <span class="k">then</span> <span class="s">&quot;&lt;button class=&#39;subtest_help command&#39;&gt;help&lt;/button&gt;&lt;div class=&#39;enumerator_help&#39;&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;enumeratorHelp&#39;</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span> <span class="k">else</span> <span class="s">&quot;&quot;</span>
     <span class="nv">studentDialog  = </span><span class="k">if</span> <span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;studentDialog&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> <span class="k">then</span> <span class="s">&quot;&lt;div class=&#39;student_dialog command&#39;&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;studentDialog&#39;</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span> <span class="k">else</span> <span class="s">&quot;&quot;</span>
 
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
 <span class="s">      &lt;h2&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;name&#39;</span><span class="si">}</span><span class="s">&lt;/h2&gt;</span>
-
 <span class="s">      </span><span class="si">#{</span><span class="nx">enumeratorHelp</span><span class="si">}</span><span class="s"></span>
 <span class="s">      </span><span class="si">#{</span><span class="nx">studentDialog</span><span class="si">}</span><span class="s"></span>
-<span class="s">      </span>
 <span class="s">    &quot;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Use prototype specific views here</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@prototypeView = </span><span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="nx">@protoViews</span><span class="p">[</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;prototype&#39;</span><span class="p">]]</span>
       <span class="nv">model: </span><span class="nx">@model</span>
       <span class="nv">parent: </span><span class="nx">@</span>
     <span class="nx">@prototypeView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">@prototypeView</span><span class="p">.</span><span class="nx">el</span>
+    <span class="vi">@prototypeRendered = </span><span class="kc">true</span>
 
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;button class=&#39;next navigation&#39;&gt;Next&lt;/button&gt;&quot;</span>
 
@@ -43,16 +44,13 @@ window.onbeforeunload = => "Assessment is still running"</p>             </td>  
     <span class="nx">@prototypeView</span><span class="o">?</span><span class="p">.</span><span class="nx">close</span><span class="o">?</span><span class="p">()</span>
 
   <span class="nv">isValid: </span><span class="o">-&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;subtest&quot;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;is prototype validation there? &quot;</span> <span class="o">+</span> <span class="nx">@prototypeView</span><span class="p">.</span><span class="nx">isValid</span><span class="o">?</span>
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">@prototypeRendered</span> <span class="k">then</span> <span class="k">return</span> <span class="kc">false</span>
+    <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;skippable&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">true</span> <span class="o">||</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;skippable&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;true&quot;</span>
+      <span class="k">return</span> <span class="kc">true</span>
     <span class="k">if</span> <span class="nx">@prototypeView</span><span class="p">.</span><span class="nx">isValid</span><span class="o">?</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;returning prototype validation&quot;</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@prototypeView</span><span class="p">.</span><span class="nx">isValid</span><span class="p">()</span>
       <span class="k">return</span> <span class="nx">@prototypeView</span><span class="p">.</span><span class="nx">isValid</span><span class="p">()</span>
     <span class="k">else</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;returning false&quot;</span>
       <span class="k">return</span> <span class="kc">false</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;just gonna return true&quot;</span>
     <span class="kc">true</span>
 
   <span class="nv">showErrors: </span><span class="o">-&gt;</span>

@@ -95,6 +95,7 @@
         <span class="nx">Utils</span><span class="p">.</span><span class="nx">topAlert</span> <span class="s">&quot;Please mark &lt;br&gt;last item attempted&quot;</span>
 
   <span class="nv">autostopTest: </span><span class="o">-&gt;</span>
+    <span class="nx">Utils</span><span class="p">.</span><span class="nx">flash</span><span class="p">()</span>
     <span class="nx">clearInterval</span> <span class="nx">@interval</span>
     <span class="vi">@stopTime = </span><span class="nx">@getTime</span><span class="p">()</span>
     <span class="vi">@autostopped = </span><span class="kc">true</span>
@@ -169,6 +170,7 @@
 
     <span class="vi">@gridElement = </span><span class="nx">_</span><span class="p">.</span><span class="nx">template</span> <span class="s">&quot;&lt;td&gt;&lt;div data-label=&#39;{{label}}&#39; data-index=&#39;{{i}}&#39; class=&#39;grid_element&#39;&gt;{{label}}&lt;/div&gt;&lt;/td&gt;&quot;</span>
     <span class="vi">@endOfGridLine = </span><span class="nx">_</span><span class="p">.</span><span class="nx">template</span> <span class="s">&quot;&lt;td&gt;&lt;div data-index=&#39;{{i}}&#39; class=&#39;end_of_grid_line&#39;&gt;*&lt;/div&gt;&lt;/td&gt;&quot;</span>
+
   <span class="nv">render: </span><span class="o">-&gt;</span>
     <span class="nv">done = </span><span class="mi">0</span>
     <span class="nv">html = </span><span class="s">&quot;</span>

@@ -8,6 +8,7 @@
       <span class="nv">assessmentId : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span>
       <span class="nv">assessmentName : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
     <span class="vi">@subtestViews = </span><span class="p">[]</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">subtests</span><span class="p">.</span><span class="nx">sort</span><span class="p">()</span>
     <span class="nx">@model</span><span class="p">.</span><span class="nx">subtests</span><span class="p">.</span><span class="nx">each</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="o">=&gt;</span>
       <span class="nx">@subtestViews</span><span class="p">.</span><span class="nx">push</span> <span class="k">new</span> <span class="nx">SubtestRunView</span> 
         <span class="nv">model  : </span><span class="nx">model</span>
@@ -41,7 +42,7 @@
     <span class="nx">@result</span><span class="p">.</span><span class="nx">clear</span><span class="p">()</span>
     <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current_student_id&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="nx">@</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">))</span>
     <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current_student&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
-
+    
   <span class="nv">abort: </span><span class="o">-&gt;</span>
     <span class="vi">@abortAssessment = </span><span class="kc">true</span>
     <span class="nx">@next</span><span class="p">()</span>
@@ -51,7 +52,6 @@
 
   <span class="nx">next</span><span class="o">:-&gt;</span>
     <span class="nv">currentView = </span><span class="nx">@subtestViews</span><span class="p">[</span><span class="nx">@index</span><span class="p">]</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">currentView</span>
     <span class="k">if</span> <span class="nx">currentView</span><span class="p">.</span><span class="nx">isValid</span><span class="p">()</span>
       <span class="nx">@result</span><span class="p">.</span><span class="nx">add</span>
         <span class="nv">name : </span><span class="nx">currentView</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>

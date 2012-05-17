@@ -10,8 +10,10 @@
 
   <span class="nv">import: </span><span class="o">-&gt;</span>
     </pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>This is supposed to work
-$.couch.db("tangerine").compact
- success: (a,b,c) =></p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">dKey = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">d_key&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+   $.couch.db("tangerine").compact
+     complete: (a,b,c) =>
+       console.log "compact"
+       console.log [a,b,c]</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">dKey = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">d_key&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.status&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">progress&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;Looking for </span><span class="si">#{</span><span class="nx">dKey</span><span class="si">}</span><span class="s">&quot;</span>
     <span class="nv">repOps = </span>
@@ -37,8 +39,8 @@ maybe it doesn't need to. Kind of impressive though.</p>             </td>      
               <span class="nv">assessmentName = </span><span class="nx">doc</span><span class="p">.</span><span class="nx">name</span> <span class="k">if</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">collection</span> <span class="o">==</span> <span class="s">&#39;assessment&#39;</span>
             <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">progress&quot;</span><span class="p">).</span><span class="nx">append</span> <span class="s">&quot;</span>
 <span class="s">              &lt;div&gt;</span><span class="si">#{</span><span class="nx">assessmentName</span><span class="si">}</span><span class="s">&lt;/div&gt;</span>
-<span class="s">              &lt;div&gt;Questions - </span><span class="si">#{</span><span class="nx">questions</span><span class="si">}</span><span class="s">&lt;/div&gt;</span>
-<span class="s">              &lt;div&gt;Subtests - </span><span class="si">#{</span><span class="nx">subtests</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span>
+<span class="s">              &lt;div&gt;Subtests - </span><span class="si">#{</span><span class="nx">subtests</span><span class="si">}</span><span class="s">&lt;/div&gt;</span>
+<span class="s">              &lt;div&gt;Questions - </span><span class="si">#{</span><span class="nx">questions</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span>
 
           <span class="nv">error: </span><span class="nf">(a, b ,c) -&gt;</span>
             <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">progress&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;&lt;div&gt;Error after data imported&lt;/div&gt;&lt;div&gt;</span><span class="si">#{</span><span class="nx">a</span><span class="si">}</span><span class="s">&lt;/div&gt;&lt;div&gt;</span><span class="si">#{</span><span class="nx">b</span><span class="si">}</span><span class="s">&quot;</span>
