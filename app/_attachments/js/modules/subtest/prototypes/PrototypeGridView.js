@@ -109,17 +109,20 @@ PrototypeGridView = (function(_super) {
   };
 
   PrototypeGridView.prototype.startTimer = function() {
-    this.updateMode(null, "mark");
-    this.interval = setInterval(this.updateCountdown, 1000);
-    this.startTime = this.getTime();
-    this.timeRunning = true;
-    this.$el.find("table.disabled").removeClass("disabled");
-    return this.updateCountdown();
+    if (this.timerStopped === false) {
+      this.updateMode(null, "mark");
+      this.interval = setInterval(this.updateCountdown, 1000);
+      this.startTime = this.getTime();
+      this.timeRunning = true;
+      this.$el.find("table.disabled").removeClass("disabled");
+      return this.updateCountdown();
+    }
   };
 
   PrototypeGridView.prototype.stopTimer = function(event, message) {
     if (message == null) message = false;
     if (this.timeRunning === true) {
+      Utils.flash();
       clearInterval(this.interval);
       this.stopTime = this.getTime();
       this.timeRunning = false;
@@ -162,8 +165,8 @@ PrototypeGridView = (function(_super) {
   };
 
   PrototypeGridView.prototype.updateCountdown = function() {
-    this.elapsedTime = this.getTime() - this.startTime;
-    this.timeRemaining = this.timer - this.elapsedTime;
+    this.timeElapsed = this.getTime() - this.startTime;
+    this.timeRemaining = this.timer - this.timeElapsed;
     this.$el.find(".timer").html(this.timeRemaining);
     if (this.timeRemaining === 0 && this.timeRunning === true) {
       return this.stopTimer(null, "Time<br><br>Please mark<br>last item attempted");
@@ -194,6 +197,7 @@ PrototypeGridView = (function(_super) {
     };
     this.model = this.options.model;
     this.parent = this.options.parent;
+    this.timerStopped = false;
     this.startTime = 0;
     this.stopTime = 0;
     this.timeElapsed = 0;

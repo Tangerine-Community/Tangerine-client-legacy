@@ -76,18 +76,16 @@ class AssessmentListView extends Backbone.View
     else
       @$el.append "<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>"
     
-    if @isAdmin
+    if @isAdmin && Tangerine.context.server
 
       @$el.append "<h2>Public assessments</h2>"
 
       if @public?.models?.length > 0
-
-        publicList = $('<ul>').addClass('public_list')
-
+        publicList = $('<ul>').addClass('public_list assessment_list')
         for assessment in @public?.models
           oneView = new AssessmentListElementView
-            model : assessment
-            parent : @
+            model    : assessment
+            parent   : @
             isPublic : true
           @publicViews.push oneView
           oneView.render()

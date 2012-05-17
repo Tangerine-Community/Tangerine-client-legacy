@@ -72,18 +72,16 @@ only applies to this list</p>             </td>             <td class="code">   
     <span class="k">else</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;p class=&#39;grey&#39;&gt;No assessments yet. Click &lt;b&gt;new&lt;/b&gt; to start making one.&lt;/p&gt;&quot;</span>
     
-    <span class="k">if</span> <span class="nx">@isAdmin</span>
+    <span class="k">if</span> <span class="nx">@isAdmin</span> <span class="o">&amp;&amp;</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">server</span>
 
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;h2&gt;Public assessments&lt;/h2&gt;&quot;</span>
 
       <span class="k">if</span> <span class="nx">@public</span><span class="o">?</span><span class="p">.</span><span class="nx">models</span><span class="o">?</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
-
-        <span class="nv">publicList = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;&lt;ul&gt;&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;public_list&#39;</span><span class="p">)</span>
-
+        <span class="nv">publicList = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;&lt;ul&gt;&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;public_list assessment_list&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="nx">assessment</span> <span class="k">in</span> <span class="nx">@public</span><span class="o">?</span><span class="p">.</span><span class="nx">models</span>
           <span class="nv">oneView = </span><span class="k">new</span> <span class="nx">AssessmentListElementView</span>
-            <span class="nv">model : </span><span class="nx">assessment</span>
-            <span class="nv">parent : </span><span class="nx">@</span>
+            <span class="nv">model    : </span><span class="nx">assessment</span>
+            <span class="nv">parent   : </span><span class="nx">@</span>
             <span class="nv">isPublic : </span><span class="kc">true</span>
           <span class="nx">@publicViews</span><span class="p">.</span><span class="nx">push</span> <span class="nx">oneView</span>
           <span class="nx">oneView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>

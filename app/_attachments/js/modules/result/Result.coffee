@@ -1,4 +1,5 @@
 class Result extends Backbone.Model
+
   url: "result"
   
   # name : currentView.model.get "name"
@@ -12,10 +13,6 @@ class Result extends Backbone.Model
     subtestData : []  
 
   initialize: ( options ) ->
-
-  what: (event) ->
-    console.log "what the hell..."
-    console.log event
 
   add: ( subtestDataElement ) ->
     subtestData = @get 'subtestData'

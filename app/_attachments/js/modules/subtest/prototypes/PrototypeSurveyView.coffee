@@ -75,6 +75,7 @@ class PrototypeSurveyView extends Backbone.View
 
 
   render: ->
+    @questions.sort()
     if @questions.models?
       for question, i in @questions.models
         # skip the rest if score not high enough

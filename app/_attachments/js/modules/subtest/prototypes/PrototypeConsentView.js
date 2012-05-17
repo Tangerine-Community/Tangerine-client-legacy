@@ -66,6 +66,15 @@ PrototypeConsentView = (function(_super) {
     }
   };
 
+  PrototypeConsentView.prototype.getSum = function() {
+    return {
+      correct: 1,
+      incorrect: 0,
+      missing: 0,
+      total: 1
+    };
+  };
+
   return PrototypeConsentView;
 
 })(Backbone.View);

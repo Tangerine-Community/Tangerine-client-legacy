@@ -30,6 +30,15 @@ PrototypeDatetimeView = (function(_super) {
     return this.trigger("rendered");
   };
 
+  PrototypeDatetimeView.prototype.getSum = function() {
+    return {
+      correct: 1,
+      incorrect: 0,
+      missing: 0,
+      total: 1
+    };
+  };
+
   PrototypeDatetimeView.prototype.isValid = function() {
     return true;
   };

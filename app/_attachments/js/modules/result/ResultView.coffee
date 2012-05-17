@@ -44,7 +44,6 @@ class ResultView extends Backbone.View
       model : @model
     
   render: ->
-    console.log @
     @$el.append "<h2>Assessment complete</h2>
     <div class='label_value'>
       <label>Result</label>

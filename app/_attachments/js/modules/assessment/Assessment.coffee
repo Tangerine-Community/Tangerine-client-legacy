@@ -40,10 +40,63 @@ class Assessment extends Backbone.Model
     
     Assessment.__super__.fetch.call @,
       success: (model) =>
-      allSubtests = new Subtests
-      allSubtests.fetch
-        success: (collection) =>
-          @subtests = new Subtests(collection.where { 'assessmentId' : @id } )
-          @subtests.maintainOrder()
-          options.success @
+        allSubtests = new Subtests
+        allSubtests.fetch
+          success: (collection) =>
+            @subtests = new Subtests(collection.where { 'assessmentId' : @id } )
+            @subtests.maintainOrder()
+            options.success @
+  
+  duplicate: (assessmentAttributes, subtestAttributes, questionAttributes, callback) ->
+    originalId = @id
+    newModel = @clone()
+
+    newModel.set assessmentAttributes
+    console.log "new model's attributes"
+    console.log newModel.attributes
+    ##newModel.set "group", Tangerine.user.groups[0]
+    newModel.set "_id", Utils.guid()
+
+    newModel.save()
+
+    questions = new Questions
+    questions.fetch
+      success: ( questions ) =>
+        filteredQuestions = questions.where { "assessmentId" : originalId }
+      
+        subtests = new Subtests
+        subtests.fetch
+          success: ( subtests ) =>
+        
+            filteredSubtests = subtests.where { "assessmentId" : originalId }
+            subtestIdMap = {}
+            newSubtests = []
+            # link new subtests to new assessment
+            for model, i in filteredSubtests
+              newSubtest = model.clone()
+              newSubtest.set "assessmentId", newModel.id
+              newSubtestId = Utils.guid()
+              subtestIdMap[newSubtest.get("_id")] = newSubtestId
+              newSubtest.set "_id", newSubtestId
+              newSubtests.push newSubtest
+
+            # update the links to other subtests
+            for model, i in newSubtests
+              gridId = model.get( "gridLinkId" )
+              if ( gridId || "" ) != ""
+                model.set "gridLinkId", subtestIdMap[gridId]
+              model.save()
+
+            # link questions to new subtest
+            for question in filteredQuestions
+              newQuestion = question.clone()
+              oldId = newQuestion.get "subtestId"
+              newQuestion.set "assessmentId", newModel.id
+              newQuestion.set "_id", Utils.guid() 
+              newQuestion.set "subtestId", subtestIdMap[oldId]
+              newQuestion.save()
+
+            callback()
+
+
 

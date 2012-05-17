@@ -7,6 +7,8 @@
     <span class="vi">@result = </span><span class="k">new</span> <span class="nx">Result</span>
       <span class="nv">assessmentId : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span>
       <span class="nv">assessmentName : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
+      <span class="nv">starttime : </span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">()</span>
+
     <span class="vi">@subtestViews = </span><span class="p">[]</span>
     <span class="nx">@model</span><span class="p">.</span><span class="nx">subtests</span><span class="p">.</span><span class="nx">sort</span><span class="p">()</span>
     <span class="nx">@model</span><span class="p">.</span><span class="nx">subtests</span><span class="p">.</span><span class="nx">each</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="o">=&gt;</span>

@@ -12,6 +12,7 @@ ResultsView = (function(_super) {
 
   ResultsView.prototype.events = {
     'click .cloud': 'cloud',
+    'click .csv': 'csv',
     'click .tablets': 'tablets',
     'click .detect': 'detectOptions'
   };
@@ -58,7 +59,9 @@ ResultsView = (function(_super) {
     }
   };
 
-  ResultsView.prototype.csv = function() {};
+  ResultsView.prototype.csv = function() {
+    return Utils.midAlert("Coming soon");
+  };
 
   ResultsView.prototype.detectOptions = function() {
     var _this = this;
@@ -112,12 +115,18 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.render = function() {
-    var cloudButton, csvButton, result, tabletButton, view, _i, _len, _ref, _ref2;
+    var cloudButton, csvButton, html, result, tabletButton, view, _i, _len, _ref, _ref2;
     this.clearSubViews();
     cloudButton = "<button class='cloud command' disabled='disabled'>Cloud</button>";
     tabletButton = "<button class='tablets command' disabled='disabled'>Tablets</button>";
     csvButton = "<button class='csv command'>CSV</button>";
-    this.$el.html("      <h1>" + (this.assessment.get('name')) + "</h1>      <div>Save options</div>      <div class='menu_box'>        " + cloudButton + "        " + tabletButton + "        " + csvButton + "      </div>      <button class='detect command'>Detect options</button>      <div class='status'>        <h2>Status</h2>        <div class='info_box'>Detecting options</div>      </div>      <h2>Results</h2>    ");
+    html = "      <h1>" + (this.assessment.get('name')) + "</h1>";
+    html += "      <h2>Save options</h2>      <div class='menu_box'>        " + (Tangerine.context.mobile ? cloudButton : "") + "        " + (Tangerine.context.mobile ? tabletButton : "") + "        " + csvButton + "      </div>";
+    if (Tangerine.context.mobile) {
+      html += "        <button class='detect command'>Detect options</button>        <div class='status'>          <h2>Status</h2>          <div class='info_box'></div>        </div>        ";
+    }
+    html += "      <h2>Results</h2>    ";
+    this.$el.html(html);
     if (((_ref = this.results) != null ? _ref.length : void 0) === 0) {
       this.$el.append("No results yet!");
     } else {

@@ -102,6 +102,9 @@ Router = (function(_super) {
         return assessment.superFetch({
           success: function(model) {
             var view;
+            console.log("model name");
+            console.log(model.attributes.name);
+            console.log(model);
             view = new AssessmentEditView({
               model: model
             });

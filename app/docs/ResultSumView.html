@@ -10,10 +10,7 @@
 
   <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
     <span class="vi">@model = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;my model&quot;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@model</span>
   <span class="nv">render: </span><span class="o">-&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@</span>
     <span class="nv">html = </span><span class="s">&quot;&lt;div&gt;</span>
 <span class="s">        </span><span class="si">#{</span><span class="nx">moment</span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;timestamp&#39;</span><span class="p">))).</span><span class="nx">format</span><span class="p">(</span> <span class="s">&#39;YYYY-MMM-DD HH:mm&#39;</span><span class="p">)</span><span class="si">}</span><span class="s"></span>
 <span class="s">        (</span><span class="si">#{</span><span class="nx">moment</span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;timestamp&#39;</span><span class="p">))).</span><span class="nx">fromNow</span><span class="p">()</span><span class="si">}</span><span class="s">)</span>
@@ -21,7 +18,6 @@
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;div class=&#39;confirmation detail_box&#39;&gt;&quot;</span>
     <span class="k">for</span> <span class="nx">datum</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;subtestData&quot;</span><span class="p">)</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">datum</span>
       <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;div&gt;&lt;span id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_@{datum.name}_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/span&gt;</span><span class="si">#{</span><span class="nx">datum</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="s"> - items </span><span class="si">#{</span><span class="nx">datum</span><span class="p">.</span><span class="nx">sum</span><span class="p">.</span><span class="nx">total</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span>
     <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
 <span class="s">      &lt;/div&gt;</span>

@@ -57,12 +57,15 @@ class AssessmentEditView extends Backbone.View
     model.destroy()
   
   initialize: (options) ->
+    console.log "new assessment says"
+    console.log options.model.attributes.name
     @views = []
     @model = options.model
     @model.subtests.on "change remove", @render
 
   render: =>
     arch = @model.get('archived')
+    console.log "the name is " + @model.get("name")
     archiveChecked    = if (arch == true or arch == 'true') then "checked" else ""
     notArchiveChecked = if archiveChecked then "" else "checked"
     @$el.html "

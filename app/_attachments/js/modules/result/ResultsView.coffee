@@ -2,6 +2,7 @@ class ResultsView extends Backbone.View
 
   events:
     'click .cloud'   : 'cloud'
+    'click .csv'     : 'csv'
     'click .tablets' : 'tablets'
     'click .detect'  : 'detectOptions'
 
@@ -36,6 +37,8 @@ class ResultsView extends Backbone.View
       return false
 
   csv: ->
+    
+    Utils.midAlert "Coming soon"
 
   detectOptions: ->
     @available = 
@@ -94,21 +97,30 @@ class ResultsView extends Backbone.View
     tabletButton = "<button class='tablets command' disabled='disabled'>Tablets</button>"
     csvButton = "<button class='csv command'>CSV</button>"
 
-    @$el.html "
-      <h1>#{@assessment.get('name')}</h1>
-      <div>Save options</div>
+    html = "
+      <h1>#{@assessment.get('name')}</h1>"
+
+    html += "
+      <h2>Save options</h2>
       <div class='menu_box'>
-        #{cloudButton}
-        #{tabletButton}
+        #{if Tangerine.context.mobile then cloudButton  else ""}
+        #{if Tangerine.context.mobile then tabletButton else ""}
         #{csvButton}
-      </div>
-      <button class='detect command'>Detect options</button>
-      <div class='status'>
-        <h2>Status</h2>
-        <div class='info_box'>Detecting options</div>
-      </div>
+      </div>"
+
+    if Tangerine.context.mobile
+      html += "
+        <button class='detect command'>Detect options</button>
+        <div class='status'>
+          <h2>Status</h2>
+          <div class='info_box'></div>
+        </div>
+        "
+    html += "
       <h2>Results</h2>
     "
+    
+    @$el.html html
     
     if @results?.length == 0
       @$el.append "No results yet!"

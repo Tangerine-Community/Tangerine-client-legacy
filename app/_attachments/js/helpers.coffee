@@ -133,7 +133,7 @@ class Utils
     return if e.childNodes.length == 0 then "" else e.childNodes[0].nodeValue
 
   @flash: ->
-    $("body").css "backgroundColor" : "#8CC63F"
+    $("body").css "backgroundColor" : "red"
     setTimeout ->
       $("body").css "backgroundColor" : "white"
     , 1000

@@ -79,6 +79,9 @@ class Router extends Backbone.Router
           _id: id
         assessment.superFetch
           success : ( model ) ->
+            console.log "model name"
+            console.log model.attributes.name
+            console.log model
             view = new AssessmentEditView model: model
             vm.show view
           error: (details) ->
@@ -125,6 +128,8 @@ class Router extends Backbone.Router
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
 
+  # maybe this one can take the id instead
+  # since it doesn't use the assessment
   results: (name) ->
     Tangerine.user.verify
       isRegistered: ->

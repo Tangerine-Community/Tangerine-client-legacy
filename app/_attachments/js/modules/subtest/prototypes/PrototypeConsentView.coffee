@@ -60,3 +60,11 @@ class PrototypeConsentView extends Backbone.View
       @showNonConsent
     else if answer == undefined
       $(".messages").html "Please select one"
+
+  getSum: ->
+    return {
+      correct: 1
+      incorrect: 0
+      missing: 0
+      total: 1
+    }

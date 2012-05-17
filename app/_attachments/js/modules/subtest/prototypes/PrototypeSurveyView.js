@@ -118,6 +118,7 @@ PrototypeSurveyView = (function(_super) {
 
   PrototypeSurveyView.prototype.render = function() {
     var i, oneView, question, required, _len, _ref;
+    this.questions.sort();
     if (this.questions.models != null) {
       _ref = this.questions.models;
       for (i = 0, _len = _ref.length; i < _len; i++) {

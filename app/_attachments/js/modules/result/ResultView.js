@@ -59,7 +59,6 @@ ResultView = (function(_super) {
   };
 
   ResultView.prototype.render = function() {
-    console.log(this);
     this.$el.append("<h2>Assessment complete</h2>    <div class='label_value'>      <label>Result</label>      <div class='info_box save_status not_saved'>Not saved yet</div>        <h2>Subtests completed</h2>    ");
     this.resultSumView.render();
     this.$el.append(this.resultSumView.el);

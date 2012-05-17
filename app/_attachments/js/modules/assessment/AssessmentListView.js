@@ -90,10 +90,10 @@ AssessmentListView = (function(_super) {
     } else {
       this.$el.append("<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>");
     }
-    if (this.isAdmin) {
+    if (this.isAdmin && Tangerine.context.server) {
       this.$el.append("<h2>Public assessments</h2>");
       if (((_ref5 = this.public) != null ? (_ref6 = _ref5.models) != null ? _ref6.length : void 0 : void 0) > 0) {
-        publicList = $('<ul>').addClass('public_list');
+        publicList = $('<ul>').addClass('public_list assessment_list');
         _ref8 = (_ref7 = this.public) != null ? _ref7.models : void 0;
         for (_j = 0, _len2 = _ref8.length; _j < _len2; _j++) {
           assessment = _ref8[_j];

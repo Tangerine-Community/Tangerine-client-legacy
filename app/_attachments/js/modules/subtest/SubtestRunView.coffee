@@ -19,7 +19,7 @@ class SubtestRunView extends Backbone.View
     # window.onbeforeunload = => "Assessment is still running"
 
     enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help'>#{@model.get 'enumeratorHelp'}</div>" else ""
-    studentDialog  = if (@model.get("studentDialog") || "") != "" then "<div class='student_dialog command'>#{@model.get 'studentDialog'}</div>" else ""
+    studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog command'>#{@model.get 'studentDialog'}</div>" else ""
 
     @$el.html "
       <h2>#{@model.get 'name'}</h2>

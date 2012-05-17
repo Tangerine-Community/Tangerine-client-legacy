@@ -7,6 +7,8 @@ class AssessmentRunView extends Backbone.View
     @result = new Result
       assessmentId : @model.id
       assessmentName : @model.get "name"
+      starttime : (new Date()).getTime()
+
     @subtestViews = []
     @model.subtests.sort()
     @model.subtests.each (model) =>

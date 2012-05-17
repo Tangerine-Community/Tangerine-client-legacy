@@ -18,11 +18,6 @@ Result = (function(_super) {
 
   Result.prototype.initialize = function(options) {};
 
-  Result.prototype.what = function(event) {
-    console.log("what the hell...");
-    return console.log(event);
-  };
-
   Result.prototype.add = function(subtestDataElement) {
     var subtestData;
     subtestData = this.get('subtestData');

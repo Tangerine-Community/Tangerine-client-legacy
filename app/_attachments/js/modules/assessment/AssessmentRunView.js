@@ -20,7 +20,8 @@ AssessmentRunView = (function(_super) {
     this.model = options.model;
     this.result = new Result({
       assessmentId: this.model.id,
-      assessmentName: this.model.get("name")
+      assessmentName: this.model.get("name"),
+      starttime: (new Date()).getTime()
     });
     this.subtestViews = [];
     this.model.subtests.sort();

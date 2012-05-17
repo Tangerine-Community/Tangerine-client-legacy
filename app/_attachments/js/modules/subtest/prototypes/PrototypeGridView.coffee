@@ -75,15 +75,17 @@ class PrototypeGridView extends Backbone.View
       @lastAttempted = index
 
   startTimer: ->
-    @updateMode null, "mark"
-    @interval = setInterval(@updateCountdown,1000 )
-    @startTime = @getTime()
-    @timeRunning = true
-    @$el.find("table.disabled").removeClass("disabled")
-    @updateCountdown()
+    if @timerStopped == false
+      @updateMode null, "mark"
+      @interval = setInterval(@updateCountdown,1000 )
+      @startTime = @getTime()
+      @timeRunning = true
+      @$el.find("table.disabled").removeClass("disabled")
+      @updateCountdown()
 
   stopTimer: (event, message = false) ->
     if @timeRunning == true
+      Utils.flash()
       clearInterval @interval
       @stopTime = @getTime()
       @timeRunning = false
@@ -120,8 +122,9 @@ class PrototypeGridView extends Backbone.View
     Utils.topAlert "Autostop removed. Continue."
 
   updateCountdown: =>
-    @elapsedTime = @getTime() - @startTime
-    @timeRemaining = @timer - @elapsedTime
+    @timeElapsed = @getTime() - @startTime
+    @timeRemaining = @timer - @timeElapsed
+    
     @$el.find(".timer").html @timeRemaining
     if @timeRemaining == 0 && @timeRunning == true then @stopTimer null, "Time<br><br>Please mark<br>last item attempted"
       
@@ -147,6 +150,8 @@ class PrototypeGridView extends Backbone.View
 
     @model  = @options.model
     @parent = @options.parent
+
+    @timerStopped = false
 
     @startTime = 0
     @stopTime  = 0

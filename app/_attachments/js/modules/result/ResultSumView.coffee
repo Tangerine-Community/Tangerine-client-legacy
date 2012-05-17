@@ -10,10 +10,7 @@ class ResultSumView extends Backbone.View
 
   initialize: ( options ) ->
     @model = options.model
-    console.log "my model"
-    console.log @model
   render: ->
-    console.log @
     html = "<div>
         #{moment(new Date(@model.get('timestamp'))).format( 'YYYY-MMM-DD HH:mm')}
         (#{moment(new Date(@model.get('timestamp'))).fromNow()})
@@ -21,7 +18,6 @@ class ResultSumView extends Backbone.View
       </div>
       <div class='confirmation detail_box'>"
     for datum, i in @model.get("subtestData")
-      console.log datum
       html += "<div><span id='#{@cid}_@{datum.name}_#{i}'></span>#{datum.name} - items #{datum.sum.total}</div>"
     html += "
       </div>

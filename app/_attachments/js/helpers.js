@@ -183,7 +183,7 @@ Utils = (function() {
 
   Utils.flash = function() {
     $("body").css({
-      "backgroundColor": "#8CC63F"
+      "backgroundColor": "red"
     });
     return setTimeout(function() {
       return $("body").css({

@@ -14,7 +14,13 @@ class SubtestEditView extends Backbone.View
     if event.which == 13
       @save()
 
-  toggleAddQuestion: -> @$el.find("#add_question_form").fadeToggle(250); return false
+  toggleAddQuestion: =>
+    @$el.find("#add_question_form").fadeToggle 250, =>
+      if @$el.find("#add_question_form").is(":visible")
+        @$el.find("#question_prompt").focus()
+
+      
+    return false
   addQuestion: -> 
     newAttributes = $.extend Tangerine.config.questionTemplate,
       subtestId    : @model.id
@@ -27,8 +33,6 @@ class SubtestEditView extends Backbone.View
     nq = @model.questions.create newAttributes
     @renderQuestions()
     @$el.find("#add_question_form input").val('')
-#   Close the adder at creation?
-#   @$el.add_question_form
     return false
 #      "options" : _.find( Tangerine.config.optionsTemplates, (template) ->
 #        return template.options if template.name == @$el.find("#add_question_select option:selected").val() )
@@ -62,7 +66,7 @@ class SubtestEditView extends Backbone.View
     @questionsEditView?.render()
     @$el.find("#question_list_wrapper").html @questionsEditView?.el
 
-  goBack: ->
+  goBack: =>
     Tangerine.router.navigate "edit-id/"+@model.get("assessmentId"), true
 
   save: ->
@@ -92,13 +96,22 @@ class SubtestEditView extends Backbone.View
     if prototype == 'survey'
       @model.set
         gridLinkId : @$el.find("#link_select option:selected").val()
-      for question in @model.questions.models
-        question.save()
+      notSaved = []
+      for question, i in @model.questions.models
+        if not question.save()
+          notSaved.push i
+      if notSaved.length > 0
+        Utils.midAlert "Error<br><br>Questions: <br>#{notSaved.join(', ')}<br>not saved"
 
     if prototype == 'consent'
       @model.set
         "prompt" : @$el.find("#consent_prompt").val()
-    if @model.save() then Utils.midAlert "Subtest Saved"
+    if @model.save()
+      Utils.midAlert "Subtest Saved"
+      setTimeout @goBack, 500
+    else
+      Utils.midAlert "Save error"
+      
     return false
 
   # Wow I'm bad at using templates
@@ -112,7 +125,7 @@ class SubtestEditView extends Backbone.View
     @$el.html "
       <button class='back_button navigation'>Back</button><br>
       <h1>Subtest Editor</h1>
-      <button class='save_subtest command'>Save</button>
+      <button class='save_subtest command'>Done</button>
       <form id='subtest_edit_form'>
         <div class='label_value'>
           <label for='subtest_name'>Name</label>
@@ -138,7 +151,7 @@ class SubtestEditView extends Backbone.View
         </div>
         <div id='prototype_attributes'></div>
       </form>
-      <button class='save_subtest command'>Save Subtest</button>"
+      <button class='save_subtest command'>Done</button>"
 
     if prototype == "grid"
 

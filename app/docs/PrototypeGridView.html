@@ -75,15 +75,17 @@
       <span class="vi">@lastAttempted = </span><span class="nx">index</span>
 
   <span class="nv">startTimer: </span><span class="o">-&gt;</span>
-    <span class="nx">@updateMode</span> <span class="kc">null</span><span class="p">,</span> <span class="s">&quot;mark&quot;</span>
-    <span class="vi">@interval = </span><span class="nx">setInterval</span><span class="p">(</span><span class="nx">@updateCountdown</span><span class="p">,</span><span class="mi">1000</span> <span class="p">)</span>
-    <span class="vi">@startTime = </span><span class="nx">@getTime</span><span class="p">()</span>
-    <span class="vi">@timeRunning = </span><span class="kc">true</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;table.disabled&quot;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&quot;disabled&quot;</span><span class="p">)</span>
-    <span class="nx">@updateCountdown</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nx">@timerStopped</span> <span class="o">==</span> <span class="kc">false</span>
+      <span class="nx">@updateMode</span> <span class="kc">null</span><span class="p">,</span> <span class="s">&quot;mark&quot;</span>
+      <span class="vi">@interval = </span><span class="nx">setInterval</span><span class="p">(</span><span class="nx">@updateCountdown</span><span class="p">,</span><span class="mi">1000</span> <span class="p">)</span>
+      <span class="vi">@startTime = </span><span class="nx">@getTime</span><span class="p">()</span>
+      <span class="vi">@timeRunning = </span><span class="kc">true</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;table.disabled&quot;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&quot;disabled&quot;</span><span class="p">)</span>
+      <span class="nx">@updateCountdown</span><span class="p">()</span>
 
   <span class="nv">stopTimer: </span><span class="nf">(event, message = false) -&gt;</span>
     <span class="k">if</span> <span class="nx">@timeRunning</span> <span class="o">==</span> <span class="kc">true</span>
+      <span class="nx">Utils</span><span class="p">.</span><span class="nx">flash</span><span class="p">()</span>
       <span class="nx">clearInterval</span> <span class="nx">@interval</span>
       <span class="vi">@stopTime = </span><span class="nx">@getTime</span><span class="p">()</span>
       <span class="vi">@timeRunning = </span><span class="kc">false</span>
@@ -120,8 +122,9 @@
     <span class="nx">Utils</span><span class="p">.</span><span class="nx">topAlert</span> <span class="s">&quot;Autostop removed. Continue.&quot;</span>
 
   <span class="nv">updateCountdown: </span><span class="o">=&gt;</span>
-    <span class="vi">@elapsedTime = </span><span class="nx">@getTime</span><span class="p">()</span> <span class="o">-</span> <span class="nx">@startTime</span>
-    <span class="vi">@timeRemaining = </span><span class="nx">@timer</span> <span class="o">-</span> <span class="nx">@elapsedTime</span>
+    <span class="vi">@timeElapsed = </span><span class="nx">@getTime</span><span class="p">()</span> <span class="o">-</span> <span class="nx">@startTime</span>
+    <span class="vi">@timeRemaining = </span><span class="nx">@timer</span> <span class="o">-</span> <span class="nx">@timeElapsed</span>
+    
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.timer&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">@timeRemaining</span>
     <span class="k">if</span> <span class="nx">@timeRemaining</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">@timeRunning</span> <span class="o">==</span> <span class="kc">true</span> <span class="k">then</span> <span class="nx">@stopTimer</span> <span class="kc">null</span><span class="p">,</span> <span class="s">&quot;Time&lt;br&gt;&lt;br&gt;Please mark&lt;br&gt;last item attempted&quot;</span>
       
@@ -147,6 +150,8 @@
 
     <span class="vi">@model  = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">model</span>
     <span class="vi">@parent = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">parent</span>
+
+    <span class="vi">@timerStopped = </span><span class="kc">false</span>
 
     <span class="vi">@startTime = </span><span class="mi">0</span>
     <span class="vi">@stopTime  = </span><span class="mi">0</span>
