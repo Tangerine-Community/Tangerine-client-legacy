@@ -777,6 +777,9 @@ label.ui-button {
   color: #999999;
   font-weight: bold;
 }
+.question_list_element {
+  border-bottom: 1px solid #cccccc;
+}
 /*
  * CSV View
  */
