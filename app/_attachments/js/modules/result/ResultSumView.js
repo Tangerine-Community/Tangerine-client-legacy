@@ -29,7 +29,7 @@ ResultSumView = (function(_super) {
   ResultSumView.prototype.render = function() {
     var datum, html, i, spark_id, _len, _len2, _ref, _ref2;
     console.log(this);
-    html = "<div>        " + (moment(new Date(this.model.get('timestamp'))).format('YYYY-MMM-DD HH:mm')) + "        (" + (moment(new Date(this.model.get('timestamp'))).fromNow()) + ")        <button class='details'>details</button>      </div>      <div class='confirmation detail_box'>";
+    html = "<div>        " + (moment(new Date(this.model.get('timestamp'))).format('YYYY-MMM-DD HH:mm')) + "        (" + (moment(new Date(this.model.get('timestamp'))).fromNow()) + ")        <button class='details command'>details</button>      </div>      <div class='confirmation detail_box'>";
     _ref = this.model.get("subtestData");
     for (i = 0, _len = _ref.length; i < _len; i++) {
       datum = _ref[i];

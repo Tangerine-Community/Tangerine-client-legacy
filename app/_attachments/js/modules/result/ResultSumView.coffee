@@ -17,7 +17,7 @@ class ResultSumView extends Backbone.View
     html = "<div>
         #{moment(new Date(@model.get('timestamp'))).format( 'YYYY-MMM-DD HH:mm')}
         (#{moment(new Date(@model.get('timestamp'))).fromNow()})
-        <button class='details'>details</button>
+        <button class='details command'>details</button>
       </div>
       <div class='confirmation detail_box'>"
     for datum, i in @model.get("subtestData")
