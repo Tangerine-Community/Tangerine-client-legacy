@@ -19,6 +19,7 @@ class SubtestEditView extends Backbone.View
     newAttributes = $.extend Tangerine.config.questionTemplate,
       subtestId    : @model.id
       assessmentId : @model.get "assessmentId"
+      id           : Utils.guid()
       order        : @model.questions.length
       prompt       : @$el.find('#question_prompt').val()
       name         : @$el.find('#question_name').val()
@@ -59,7 +60,7 @@ class SubtestEditView extends Backbone.View
 
   renderQuestions: =>
     @questionsEditView?.render()
-    @$el.find("#question_list_wrapper").append @questionsEditView?.el
+    @$el.find("#question_list_wrapper").html @questionsEditView?.el
 
   goBack: ->
     Tangerine.router.navigate "edit-id/"+@model.get("assessmentId"), true
@@ -94,6 +95,9 @@ class SubtestEditView extends Backbone.View
       for question in @model.questions.models
         question.save()
 
+    if prototype == 'consent'
+      @model.set
+        "prompt" : @$el.find("#consent_prompt").val()
     if @model.save() then Utils.midAlert "Subtest Saved"
     return false
 
@@ -106,8 +110,9 @@ class SubtestEditView extends Backbone.View
     skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
 
     @$el.html "
-      <button class='back_button navigation'>back</button><br>
-      <button class='save_subtest command'>Save Subtest</button>
+      <button class='back_button navigation'>Back</button><br>
+      <h1>Subtest Editor</h1>
+      <button class='save_subtest command'>Save</button>
       <form id='subtest_edit_form'>
         <div class='label_value'>
           <label for='subtest_name'>Name</label>
@@ -160,6 +165,15 @@ class SubtestEditView extends Backbone.View
           <input id='subtest_timer' value='#{timer}' type='number'>
         </div>"
 
+    if prototype == "consent"
+      prompt = @model.get("prompt") || ""
+      @$el.find("#prototype_attributes").html "
+        <div class='label_value'>
+          <label for='consent_prompt'>Consent prompt</label>
+          <input id='consent_prompt' value='#{prompt}'>
+        </div>
+      "
+      
     if prototype == "survey"
       gridLinkId = @model.get("gridLinkId") || ""
       
@@ -172,19 +186,20 @@ class SubtestEditView extends Backbone.View
         <div id='grid_link'></div>
         <div id='questions'>
           <h2>Questions</h2>
-          <div id='question_list_wrapper'></div>
+          <div id='question_list_wrapper'><img class='loading' src='images/loading.gif'></div>
           <button class='add_question command'>Add Question</button>
           <div id='add_question_form' class='confirmation'>
             <div class='menu_box'>
               <h2>New Question</h2>
               <label for='question_prompt'>Prompt</label>
               <input id='question_prompt'>
-              <label for='question_name'>Data name</label>
+              <label for='question_name'>Variable name</label>
               <input id='question_name'>
               <button class='add_question_add command'>Add</button><button class='add_question_cancel command'>Cancel</button>
             </div>
           </div> 
         </div>"
+      
 
       @renderQuestions()
 

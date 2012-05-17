@@ -37,6 +37,7 @@ SubtestEditView = (function(_super) {
     newAttributes = $.extend(Tangerine.config.questionTemplate, {
       subtestId: this.model.id,
       assessmentId: this.model.get("assessmentId"),
+      id: Utils.guid(),
       order: this.model.questions.length,
       prompt: this.$el.find('#question_prompt').val(),
       name: this.$el.find('#question_name').val()
@@ -90,7 +91,7 @@ SubtestEditView = (function(_super) {
   SubtestEditView.prototype.renderQuestions = function() {
     var _ref, _ref2;
     if ((_ref = this.questionsEditView) != null) _ref.render();
-    return this.$el.find("#question_list_wrapper").append((_ref2 = this.questionsEditView) != null ? _ref2.el : void 0);
+    return this.$el.find("#question_list_wrapper").html((_ref2 = this.questionsEditView) != null ? _ref2.el : void 0);
   };
 
   SubtestEditView.prototype.goBack = function() {
@@ -135,19 +136,24 @@ SubtestEditView = (function(_super) {
         question.save();
       }
     }
+    if (prototype === 'consent') {
+      this.model.set({
+        "prompt": this.$el.find("#consent_prompt").val()
+      });
+    }
     if (this.model.save()) Utils.midAlert("Subtest Saved");
     return false;
   };
 
   SubtestEditView.prototype.render = function() {
-    var autostop, columns, dialog, districtText, gridLinkId, help, items, name, nameText, prototype, provinceText, schoolIdText, skippable, subtests, timer,
+    var autostop, columns, dialog, districtText, gridLinkId, help, items, name, nameText, prompt, prototype, provinceText, schoolIdText, skippable, subtests, timer,
       _this = this;
     name = this.model.get("name");
     prototype = this.model.get("prototype");
     help = this.model.get("enumeratorHelp") || "";
     dialog = this.model.get("studentDialog") || "";
     skippable = this.model.get("skippable") === true || this.model.get("skippable") === "true";
-    this.$el.html("      <button class='back_button navigation'>back</button><br>      <button class='save_subtest command'>Save Subtest</button>      <form id='subtest_edit_form'>        <div class='label_value'>          <label for='subtest_name'>Name</label>          <input id='subtest_name' value='" + name + "'>        </div>        <div class='label_value'>          <label for='subtest_prototype' title='This is a basic type of subtest. (e.g. Survey, Grid, Location, Id, Consent)'>Prototype</label>" + prototype + "        </div>        <div class='label_value'>          <label>Skippable</label>          <div id='skip_radio'>            <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' " + (skippable ? 'checked' : void 0) + ">            <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' " + (!skippable ? 'checked' : void 0) + ">          </div>        </div>        <div class='label_value'>          <label for='subtest_help'>Enumerator help</label>          <textarea id='subtest_help' class='richtext'>" + help + "</textarea>        </div>        <div class='label_value'>          <label for='subtest_dialog'>Student Dialog</label>          <textarea id='subtest_dialog' class='richtext'>" + dialog + "</textarea>        </div>        <div id='prototype_attributes'></div>      </form>      <button class='save_subtest command'>Save Subtest</button>");
+    this.$el.html("      <button class='back_button navigation'>Back</button><br>      <h1>Subtest Editor</h1>      <button class='save_subtest command'>Save</button>      <form id='subtest_edit_form'>        <div class='label_value'>          <label for='subtest_name'>Name</label>          <input id='subtest_name' value='" + name + "'>        </div>        <div class='label_value'>          <label for='subtest_prototype' title='This is a basic type of subtest. (e.g. Survey, Grid, Location, Id, Consent)'>Prototype</label>" + prototype + "        </div>        <div class='label_value'>          <label>Skippable</label>          <div id='skip_radio'>            <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' " + (skippable ? 'checked' : void 0) + ">            <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' " + (!skippable ? 'checked' : void 0) + ">          </div>        </div>        <div class='label_value'>          <label for='subtest_help'>Enumerator help</label>          <textarea id='subtest_help' class='richtext'>" + help + "</textarea>        </div>        <div class='label_value'>          <label for='subtest_dialog'>Student Dialog</label>          <textarea id='subtest_dialog' class='richtext'>" + dialog + "</textarea>        </div>        <div id='prototype_attributes'></div>      </form>      <button class='save_subtest command'>Save Subtest</button>");
     if (prototype === "grid") {
       timer = this.model.get("timer") || 0;
       items = this.model.get("items").join(" ");
@@ -155,9 +161,13 @@ SubtestEditView = (function(_super) {
       autostop = this.model.get("autostop") || 0;
       this.$el.find("#prototype_attributes").html("        <div class='label_value'>          <label for='subtest_items'>Grid Items (space delimited)</label>          <textarea id='subtest_items'>" + items + "</textarea>        </div>        <div class='label_value'>          <label for='subtest_columns'>Columns</label>          <input id='subtest_columns' value='" + columns + "' type='number'>        </div>        <div class='label_value'>          <label for='subtest_autostop'>Autostop</label>          <input id='subtest_autostop' value='" + autostop + "' type='number'>        </div>        <div class='label_value'>          <label for='subtest_timer'>Timer</label>          <input id='subtest_timer' value='" + timer + "' type='number'>        </div>");
     }
+    if (prototype === "consent") {
+      prompt = this.model.get("prompt") || "";
+      this.$el.find("#prototype_attributes").html("        <div class='label_value'>          <label for='consent_prompt'>Consent prompt</label>          <input id='consent_prompt' value='" + prompt + "'>        </div>      ");
+    }
     if (prototype === "survey") {
       gridLinkId = this.model.get("gridLinkId") || "";
-      this.$el.find("#prototype_attributes").html("        <div id='grid_link'></div>        <div id='questions'>          <h2>Questions</h2>          <div id='question_list_wrapper'></div>          <button class='add_question command'>Add Question</button>          <div id='add_question_form' class='confirmation'>            <div class='menu_box'>              <h2>New Question</h2>              <label for='question_prompt'>Prompt</label>              <input id='question_prompt'>              <label for='question_name'>Data name</label>              <input id='question_name'>              <button class='add_question_add command'>Add</button><button class='add_question_cancel command'>Cancel</button>            </div>          </div>         </div>");
+      this.$el.find("#prototype_attributes").html("        <div id='grid_link'></div>        <div id='questions'>          <h2>Questions</h2>          <div id='question_list_wrapper'><img class='loading' src='images/loading.gif'></div>          <button class='add_question command'>Add Question</button>          <div id='add_question_form' class='confirmation'>            <div class='menu_box'>              <h2>New Question</h2>              <label for='question_prompt'>Prompt</label>              <input id='question_prompt'>              <label for='question_name'>Variable name</label>              <input id='question_name'>              <button class='add_question_add command'>Add</button><button class='add_question_cancel command'>Cancel</button>            </div>          </div>         </div>");
       this.renderQuestions();
       subtests = new Subtests;
       subtests.fetch({

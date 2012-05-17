@@ -23,14 +23,14 @@ PrototypeConsentView = (function(_super) {
   };
 
   PrototypeConsentView.prototype.render = function() {
-    this.$el.html("    <form>      <div class='question'>        <p>Does the child consent?</p>        <div class='messages'></div>        <div class='non_consent_form confirmation'>          <div>Click to confirm the child does not consent</div>          <button id='non_consent_confirm'>Confirm</button>        </div>        <div id='consent_options'>          <label for='consent_yes'>Yes, continue</label>          <input id='consent_yes' type='radio' name='child_consents' value='yes'>          <label for='consent_no'>No, stop</label>          <input id='consent_no' type='radio' name='child_consents' value='no'>        </div>      </div>    </form>    ");
+    this.$el.html("    <form>      <div class='question'>        <label>" + (this.model.get('prompt') || 'Does the child consent?') + "</label>        <div class='messages'></div>        <div class='non_consent_form confirmation'>          <div>Click to confirm consent not obtained.</div>          <button id='non_consent_confirm'>Confirm</button>        </div>        <div id='consent_options'>          <label for='consent_yes'>Yes, continue</label>          <input id='consent_yes' type='radio' name='participant_consents' value='yes'>          <label for='consent_no'>No, stop</label>          <input id='consent_no' type='radio' name='participant_consents' value='no'>        </div>      </div>    </form>    ");
     this.$el.find('#consent_options').buttonset();
     return this.trigger("rendered");
   };
 
   PrototypeConsentView.prototype.isValid = function() {
     if (this.confirmedNonConsent === false) {
-      if (this.$el.find("input[name=child_consents]:checked").val() === "yes") {
+      if (this.$el.find("input[name=participant_consents]:checked").val() === "yes") {
         return true;
       } else {
         return false;
@@ -57,9 +57,9 @@ PrototypeConsentView = (function(_super) {
 
   PrototypeConsentView.prototype.showErrors = function() {
     var answer;
-    answer = this.$el.find("input[name=child_consents]:checked").val();
+    answer = this.$el.find("input[name=participant_consents]:checked").val();
     if (answer === "no") {
-      Utils.midAlert("Please confirm that<br>the child does not consent");
+      Utils.midAlert("Please confirm");
       return this.showNonConsent;
     } else if (answer === void 0) {
       return $(".messages").html("Please select one");
