@@ -181,6 +181,17 @@ Utils = (function() {
     }
   };
 
+  Utils.flash = function() {
+    $("body").css({
+      "backgroundColor": "#8CC63F"
+    });
+    return setTimeout(function() {
+      return $("body").css({
+        "backgroundColor": "white"
+      });
+    }, 1000);
+  };
+
   return Utils;
 
 })();
