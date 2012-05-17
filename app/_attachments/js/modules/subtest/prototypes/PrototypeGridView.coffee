@@ -95,6 +95,7 @@ class PrototypeGridView extends Backbone.View
         Utils.topAlert "Please mark <br>last item attempted"
 
   autostopTest: ->
+    Utils.flash()
     clearInterval @interval
     @stopTime = @getTime()
     @autostopped = true
@@ -169,6 +170,7 @@ class PrototypeGridView extends Backbone.View
 
     @gridElement = _.template "<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element'>{{label}}</div></td>"
     @endOfGridLine = _.template "<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>"
+
   render: ->
     done = 0
     html = "

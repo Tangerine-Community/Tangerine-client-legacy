@@ -134,6 +134,7 @@ PrototypeGridView = (function(_super) {
   };
 
   PrototypeGridView.prototype.autostopTest = function() {
+    Utils.flash();
     clearInterval(this.interval);
     this.stopTime = this.getTime();
     this.autostopped = true;
