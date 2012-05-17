@@ -8,6 +8,7 @@ class AssessmentRunView extends Backbone.View
       assessmentId : @model.id
       assessmentName : @model.get "name"
     @subtestViews = []
+    @model.subtests.sort()
     @model.subtests.each (model) =>
       @subtestViews.push new SubtestRunView 
         model  : model
@@ -41,7 +42,7 @@ class AssessmentRunView extends Backbone.View
     @result.clear()
     $("#current_student_id").fadeOut(250, -> $(@).html(""))
     $("#current_student").fadeOut(250)
-
+    
   abort: ->
     @abortAssessment = true
     @next()
@@ -51,7 +52,6 @@ class AssessmentRunView extends Backbone.View
 
   next:->
     currentView = @subtestViews[@index]
-    console.log currentView
     if currentView.isValid()
       @result.add
         name : currentView.model.get "name"

@@ -23,6 +23,7 @@ AssessmentRunView = (function(_super) {
       assessmentName: this.model.get("name")
     });
     this.subtestViews = [];
+    this.model.subtests.sort();
     this.model.subtests.each(function(model) {
       return _this.subtestViews.push(new SubtestRunView({
         model: model,
@@ -80,7 +81,6 @@ AssessmentRunView = (function(_super) {
   AssessmentRunView.prototype.next = function() {
     var currentView;
     currentView = this.subtestViews[this.index];
-    console.log(currentView);
     if (currentView.isValid()) {
       this.result.add({
         name: currentView.model.get("name"),

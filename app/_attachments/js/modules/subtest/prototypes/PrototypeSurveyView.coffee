@@ -10,56 +10,31 @@ class PrototypeSurveyView extends Backbone.View
       success: (collection) =>
         filteredCollection = collection.where { subtestId : @model.id }
         @questions = new Questions filteredCollection
+        @questions.sort()
         @render()
 
   isValid: ->
-    console.log "prototype is valid here"
-    @names = {}
-    @filled = {}
-
-    for field in @$el.find("input:radio, input:checkbox")
-      @names[$(field).attr("name")]  = 1
-      @filled[$(field).attr("name")] = 1 if $(field).is(":checked")
-
-    for field in $("textarea")
-      @names[$(field).attr('name')] = 1
-      @filled[$(field).attr('name')] = 1 if $(field).val() != "" 
-
-    console.log "names"
-    console.log @names
-    console.log "names length #{_.keys(@names).length}"
-    console.log "filled"
-    console.log @filled
-    console.log "filled length"+ _.keys(@filled).length 
-    console.log "test"
-    console.log (_.keys(@names).length <= _.keys(@filled).length)
-    if _.keys(@names).length > _.keys(@filled).length
-      console.log " prototype retrning false"
-      return false
-    console.log "prototype returning true"
-    true
+    for qv, i in @questionViews
+      # does it have a method? otherwise it's a string
+      if qv.isValid?
+        # can we skip it?
+        if not ( qv.model.get("skippable") == "true" || qv.model.get("skippable") == true )
+          # is it valid
+          if not qv.isValid
+            # red alert!!
+            return false
+    return true
     
 
   getResult: ->
     result = {}
-    for p in @$el.find("input:radio, input:checkbox")
-      point = $(p)
-      if result[point.attr("name")]?
-          if point.is(":checked")
-            result[point.attr("name")][point.val()] = "checked"
-          else
-            result[point.attr("name")][point.val()] = "unchecked"
+    for qv, i in @questionViews
+      # questions not asked are strings "not_asked"
+      if _.isString qv
+        result[@questions.models[i].get("name")] == qv
       else
-          result[point.attr("name")] = {}
-          if point.is(":checked")
-            result[point.attr("name")][point.val()] = "checked"
-          else
-            result[point.attr("name")][point.val()] = "unchecked"
-
-    for p in @$el.find("textarea")
-      point = $(p)
-      result[point.attr('name')] < point.val()
-    result
+        result = $.extend result, qv.result
+    return result
 
   getSum: ->
     counts =
@@ -68,65 +43,57 @@ class PrototypeSurveyView extends Backbone.View
       missing   : 0
       total     : 0
 
-    for p in @$el.find("input:radio, input:checkbox, textarea")
-      $p = $(p)
-      counts['correct']   += 1 if ($p.val() == "1" || $p.val() == "correct")
-      counts['incorrect'] += 1 if ($p.val() == "0" || $p.val() == "incorrect")
-      counts['missing']   += 1 if (($p.val()||"") == "" ||
-                                    $p.val()      == "99" ||
-                                    $p.val()      == "9" ||
-                                    $p.val()      == "8" ||
-                                    $p.val() == ".")
-      counts['total']     += 1 if true
+    for qv, i in @questionViews
+      if _.isString(qv)
+        counts.missing++
+      else
+        counts['correct']   += 1 if qv.isValid
+        counts['incorrect'] += 1 if not qv.isValid
+        counts['missing']   += 1 if not qv.isValid && (qv.model.get "skippable" == 'true' || qv.model.get "skippable" == true)
+        counts['total']     += 1 if true
 
     return {
-      correct :   counts['correct']
+      correct   : counts['correct']
       incorrect : counts['incorrect']
-      missing :   counts['missing']
-      total :     counts['total']
+      missing   : counts['missing']
+      total     : counts['total']
     }
 
   showErrors: ->
     @$el.find('.message').remove()
-
-    filledKeys = _.keys @filled
     first = true
-    for key, value of @names
-      if !~filledKeys.indexOf(key)
-        $input = @$el.find("input[name='#{key}'], textarea[name='#{key}']")
-        if first
-          if $input.first().parent()?
-            $input.first().parent().scrollTo()
+    for qv, i in @questionViews
+      if not _.isString(qv)
+        message = ""
+        if not qv.isValid
+          message = "Please answer this question"
+          if first == true
+            qv.$el.scrollTo()
+            Utils.midAlert "Please correct the errors on this page"
             first = false
-        $input.first().parent().prepend("<div class='message'>Please answer this question</div>")
-    
-    if _.keys(@names).length > _.keys(@filled).length
-      Utils.midAlert "Please fill in all questions"
+        qv.setMessage message
+
 
   render: ->
-    @resetViews()
-    @$el.html "<form>"
     if @questions.models?
-      for question in @questions.models
+      for question, i in @questions.models
         # skip the rest if score not high enough
         required = parseInt(question.get("linkedGridScore")) || 0
         if (required != 0 && @parent.getGridScore() < required)
-          @$el.append "<input type='hidden' name='#{question.get 'name'}' value='not_asked'>"
+          # if no question was asked, push a string rahter than a dummy view
+          @questionViews[i] = "not_asked"
         else
           oneView = new QuestionView 
             model : question
             parent : @
           oneView.render()
-          @questionViews.push oneView
+          @questionViews[i] = oneView
           @$el.append oneView.el
 
-    @$el.append "</form>"
+
     @trigger "rendered"
-      
+
   onClose:->
-    @resetViews()
-  
-  resetViews:->
     for qv in @questionViews
       qv.close()
     @questionViews = []

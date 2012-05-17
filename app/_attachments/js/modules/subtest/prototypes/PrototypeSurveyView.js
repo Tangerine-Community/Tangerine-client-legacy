@@ -25,93 +25,62 @@ PrototypeSurveyView = (function(_super) {
           subtestId: _this.model.id
         });
         _this.questions = new Questions(filteredCollection);
+        _this.questions.sort();
         return _this.render();
       }
     });
   };
 
   PrototypeSurveyView.prototype.isValid = function() {
-    var field, _i, _j, _len, _len2, _ref, _ref2;
-    console.log("prototype is valid here");
-    this.names = {};
-    this.filled = {};
-    _ref = this.$el.find("input:radio, input:checkbox");
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      field = _ref[_i];
-      this.names[$(field).attr("name")] = 1;
-      if ($(field).is(":checked")) this.filled[$(field).attr("name")] = 1;
+    var i, qv, _len, _ref;
+    _ref = this.questionViews;
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      qv = _ref[i];
+      if (qv.isValid != null) {
+        if (!(qv.model.get("skippable") === "true" || qv.model.get("skippable") === true)) {
+          if (!qv.isValid) return false;
+        }
+      }
     }
-    _ref2 = $("textarea");
-    for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-      field = _ref2[_j];
-      this.names[$(field).attr('name')] = 1;
-      if ($(field).val() !== "") this.filled[$(field).attr('name')] = 1;
-    }
-    console.log("names");
-    console.log(this.names);
-    console.log("names length " + (_.keys(this.names).length));
-    console.log("filled");
-    console.log(this.filled);
-    console.log("filled length" + _.keys(this.filled).length);
-    console.log("test");
-    console.log(_.keys(this.names).length <= _.keys(this.filled).length);
-    if (_.keys(this.names).length > _.keys(this.filled).length) {
-      console.log(" prototype retrning false");
-      return false;
-    }
-    console.log("prototype returning true");
     return true;
   };
 
   PrototypeSurveyView.prototype.getResult = function() {
-    var p, point, result, _i, _j, _len, _len2, _ref, _ref2;
+    var i, qv, result, _len, _ref;
     result = {};
-    _ref = this.$el.find("input:radio, input:checkbox");
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      p = _ref[_i];
-      point = $(p);
-      if (result[point.attr("name")] != null) {
-        if (point.is(":checked")) {
-          result[point.attr("name")][point.val()] = "checked";
-        } else {
-          result[point.attr("name")][point.val()] = "unchecked";
-        }
+    _ref = this.questionViews;
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      qv = _ref[i];
+      if (_.isString(qv)) {
+        result[this.questions.models[i].get("name")] === qv;
       } else {
-        result[point.attr("name")] = {};
-        if (point.is(":checked")) {
-          result[point.attr("name")][point.val()] = "checked";
-        } else {
-          result[point.attr("name")][point.val()] = "unchecked";
-        }
+        result = $.extend(result, qv.result);
       }
-    }
-    _ref2 = this.$el.find("textarea");
-    for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-      p = _ref2[_j];
-      point = $(p);
-      result[point.attr('name')] < point.val();
     }
     return result;
   };
 
   PrototypeSurveyView.prototype.getSum = function() {
-    var $p, counts, p, _i, _len, _ref;
+    var counts, i, qv, _len, _ref;
     counts = {
       correct: 0,
       incorrect: 0,
       missing: 0,
       total: 0
     };
-    _ref = this.$el.find("input:radio, input:checkbox, textarea");
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      p = _ref[_i];
-      $p = $(p);
-      if ($p.val() === "1" || $p.val() === "correct") counts['correct'] += 1;
-      if ($p.val() === "0" || $p.val() === "incorrect") counts['incorrect'] += 1;
-      if (($p.val() || "") === "" || $p.val() === "99" || $p.val() === "9" || $p.val() === "8" || $p.val() === ".") {
-        counts['missing'] += 1;
+    _ref = this.questionViews;
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      qv = _ref[i];
+      if (_.isString(qv)) {
+        counts.missing++;
+      } else {
+        if (qv.isValid) counts['correct'] += 1;
+        if (!qv.isValid) counts['incorrect'] += 1;
+        if (!qv.isValid && (qv.model.get("skippable" === 'true' || qv.model.get("skippable" === true)))) {
+          counts['missing'] += 1;
+        }
+        if (true) counts['total'] += 1;
       }
-      if (true) counts['total'] += 1;
     }
     return {
       correct: counts['correct'],
@@ -122,60 +91,55 @@ PrototypeSurveyView = (function(_super) {
   };
 
   PrototypeSurveyView.prototype.showErrors = function() {
-    var $input, filledKeys, first, key, value, _ref;
+    var first, i, message, qv, _len, _ref, _results;
     this.$el.find('.message').remove();
-    filledKeys = _.keys(this.filled);
     first = true;
-    _ref = this.names;
-    for (key in _ref) {
-      value = _ref[key];
-      if (!~filledKeys.indexOf(key)) {
-        $input = this.$el.find("input[name='" + key + "'], textarea[name='" + key + "']");
-        if (first) {
-          if ($input.first().parent() != null) {
-            $input.first().parent().scrollTo();
+    _ref = this.questionViews;
+    _results = [];
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      qv = _ref[i];
+      if (!_.isString(qv)) {
+        message = "";
+        if (!qv.isValid) {
+          message = "Please answer this question";
+          if (first === true) {
+            qv.$el.scrollTo();
+            Utils.midAlert("Please correct the errors on this page");
             first = false;
           }
         }
-        $input.first().parent().prepend("<div class='message'>Please answer this question</div>");
+        _results.push(qv.setMessage(message));
+      } else {
+        _results.push(void 0);
       }
     }
-    if (_.keys(this.names).length > _.keys(this.filled).length) {
-      return Utils.midAlert("Please fill in all questions");
-    }
+    return _results;
   };
 
   PrototypeSurveyView.prototype.render = function() {
-    var oneView, question, required, _i, _len, _ref;
-    this.resetViews();
-    this.$el.html("<form>");
+    var i, oneView, question, required, _len, _ref;
     if (this.questions.models != null) {
       _ref = this.questions.models;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        question = _ref[_i];
+      for (i = 0, _len = _ref.length; i < _len; i++) {
+        question = _ref[i];
         required = parseInt(question.get("linkedGridScore")) || 0;
         if (required !== 0 && this.parent.getGridScore() < required) {
-          this.$el.append("<input type='hidden' name='" + (question.get('name')) + "' value='not_asked'>");
+          this.questionViews[i] = "not_asked";
         } else {
           oneView = new QuestionView({
             model: question,
             parent: this
           });
           oneView.render();
-          this.questionViews.push(oneView);
+          this.questionViews[i] = oneView;
           this.$el.append(oneView.el);
         }
       }
     }
-    this.$el.append("</form>");
     return this.trigger("rendered");
   };
 
   PrototypeSurveyView.prototype.onClose = function() {
-    return this.resetViews();
-  };
-
-  PrototypeSurveyView.prototype.resetViews = function() {
     var qv, _i, _len, _ref;
     _ref = this.questionViews;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {

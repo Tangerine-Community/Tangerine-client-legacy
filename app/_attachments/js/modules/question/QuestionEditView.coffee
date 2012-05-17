@@ -1,7 +1,6 @@
 class QuestionEditView extends Backbone.View
 
   className : "question_list_element"
-  tagName   : "li"
 
   events : 
     'click .back'            : 'back'
@@ -13,6 +12,17 @@ class QuestionEditView extends Backbone.View
     'click input:radio'      : 'changeQuestionType'
     'click .delete_question' : 'deleteQuestion'
     'keypress'               : 'hijackEnter'
+    'change .option_select'   : 'templateFill'
+
+  templateFill: (event) ->
+    
+    index = $(event.target).find("option:selected").attr('data-index')
+    console.log index
+    @model.set "options", Tangerine.config.optionTemplates[index].options
+    console.log Tangerine.config.optionTemplates[index].options
+    @$el.find('#option_list_wrapper').html @getOptionList()
+    console.log @getOptionList()
+    return false
 
   back: ->
     Tangerine.router.navigate "subtest/#{@model.get 'subtestId'}", true
@@ -31,10 +41,10 @@ class QuestionEditView extends Backbone.View
       <li class='question'>
         <img src='images/icon_drag.png' class='sortable_handle'>
         <div class='option_label_value'>
-          <label class='edit' for='#{@cid}_options.#{i}.label'>Label</label>
-          <input id='#{@cid}_options.#{i}.label' value='#{option.label}' placeholder='Option label' class='option_label'><br>
-          <label class='edit' for='#{@cid}_options.#{i}.value'>Value</label>
-          <input id='#{@cid}_options.#{i}.value' value='#{option.value}' placeholder='Option value' class='option_value'>
+          <label class='edit' for='options.#{i}.label'>Label</label>
+          <input id='options.#{i}.label' value='#{option.label}' placeholder='Option label' class='option_label'><br>
+          <label class='edit' for='options.#{i}.value'>Value</label>
+          <input id='options.#{i}.value' value='#{option.value}' placeholder='Option value' class='option_value'>
         </div>
         <img src='images/icon_delete.png' class='delete_option' data-index='#{i}'>
         <div class='confirmation delete_confirm_#{i}'><button class='delete_delete' data-index='#{i}'>Delete</button><button data-index='#{i}' class='delete_cancel'>Cancel</button></div>
@@ -66,7 +76,8 @@ class QuestionEditView extends Backbone.View
     type            = @model.get "type"
     options         = @model.get "options"
     linkedGridScore = @model.get("linkedGridScore") || 0
-    
+    skippable       = @model.get("skippable") == true || @model.get("skippable") == "true"
+
     checkOrRadio = if type == "multiple" then "checkbox" else "radio"
 
     @$el.html "
@@ -74,44 +85,56 @@ class QuestionEditView extends Backbone.View
       <h1>Question Editor</h1>
       <div class='edit_form question'>
         <div class='label_value'>
-          <label for='#{@cid}_name'>Data name</label>
-          <input id='#{@cid}_name' type='text' value='#{name}'>
+          <label for='name'>Variable name</label>
+          <input id='name' type='text' value='#{name}'>
         </div>
         <div class='label_value'>
-          <label for='#{@cid}_prompt'>Prompt</label>
-          <input id='#{@cid}_prompt' type='text' value='#{prompt}'>
+          <label for='prompt'>Prompt</label>
+          <input id='prompt' type='text' value='#{prompt}'>
         </div>
         <div class='label_value'>
-          <label for='#{@cid}_hint'>Hint</label>
-          <input id='#{@cid}_hint' type='text' value='#{hint}'>
+          <label for='hint'>Hint</label>
+          <input id='hint' type='text' value='#{hint}'>
         </div>
         <div class='label_value'>
-          <label for='#{@cid}_linked_grid_score'>Linked grid score</label>
-          <input id='#{@cid}_linked_grid_score' type='number' value='#{linkedGridScore}'>
+          <label>Skippable</label>
+          <div id='skip_radio'>
+            <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' #{'checked' if skippable}>
+            <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' #{'checked' if not skippable}>
+          </div>
         </div>
-        <div class='label_value' id='#{@cid}_question_type' class='question_type'>
+        <div class='label_value'>
+          <label for='linked_grid_score'>Linked grid score</label>
+          <input id='linked_grid_score' type='number' value='#{linkedGridScore}'>
+        </div>
+        <div class='label_value' id='question_type' class='question_type'>
           <label>Question Type</label>
-          <label for='#{@cid}_single'>single</label>
-          <input id='#{@cid}_single' name='#{@cid}_type' type='radio' value='single' #{'checked' if type == 'single'}>
-          <label for='#{@cid}_multiple'>multiple</label>
-          <input id='#{@cid}_multiple' name='#{@cid}_type'  type='radio' value='multiple' #{'checked' if type == 'multiple'}>
-          <label for='#{@cid}_open'>open</label>
-          <input id='#{@cid}_open' name='#{@cid}_type'  type='radio' value='open' #{'checked' if type == 'open'}>
+          <label for='single'>single</label>
+          <input id='single' name='type' type='radio' value='single' #{'checked' if type == 'single'}>
+          <label for='multiple'>multiple</label>
+          <input id='multiple' name='type'  type='radio' value='multiple' #{'checked' if type == 'multiple'}>
+          <label for='open'>open</label>
+          <input id='open' name='type'  type='radio' value='open' #{'checked' if type == 'open'}>
         </div>
         "
 
     if type != "open"
-      
-      @$el.append "
-      <div class='label_value'>
-      <label for='#{@cid}_question_template_select'>Fill from template</label>
-      <select id='#{@cid}_question_template_select'>
-        <option disabled selected>Select template</option>
-      </select>
-      
-      #{@getOptionList()}
-      "
-      
+      optionHTML = "
+        <div class='label_value'>
+        <label for='question_template_select'>Fill from template</label>
+        <select id='question_template_select' class='option_select'>
+          <option disabled selected>Select template</option>
+        "
+      # ok to refernce things by index if not an object
+      for option, i in Tangerine.config.optionTemplates
+        optionHTML += "<option data-index='#{i}' class='template_option'>#{option.name}</option>"
+
+      optionHTML += "</select>
+        <div id='option_list_wrapper'></div>
+        "
+      @$el.append optionHTML
+      @$el.find("#option_list_wrapper").html @getOptionList()
+
       @$el.find(".option_list").sortable
         handle : '.sortable_handle'
         update : (event, ui) =>
@@ -121,7 +144,7 @@ class QuestionEditView extends Backbone.View
     @$el.append "<button class='save command'>Save</button><button class='delete_question command'>Delete</button>
       </div>
       "
-    @$el.find("##{@cid}_question_type").buttonset()
+    @$el.find("#question_type, #skip_radio").buttonset()
 
     @trigger "rendered"
 
@@ -165,11 +188,12 @@ class QuestionEditView extends Backbone.View
   updateModel: =>
     # basics
     @model.set 
-      "prompt"          : @$el.find("##{@cid}_prompt").val() 
-      "name"            : @$el.find("##{@cid}_name").val()
-      "hint"            : @$el.find("##{@cid}_hint").val()
-      "linkedGridScore" : @$el.find("##{@cid}_linked_grid_score").val()
-      "type"            : @$el.find("##{@cid}_question_type input:checked").val()
+      "prompt"          : @$el.find("#prompt").val() 
+      "name"            : @$el.find("#name").val()
+      "hint"            : @$el.find("#hint").val()
+      "linkedGridScore" : @$el.find("#linked_grid_score").val()
+      "type"            : @$el.find("#question_type input:checked").val()
+      "skippable"       : @$el.find("#skip_radio input:radio[name=skippable]:checked").val()
 
     # options
     options = []
