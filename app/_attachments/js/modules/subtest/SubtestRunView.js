@@ -22,20 +22,22 @@ SubtestRunView = (function(_super) {
   SubtestRunView.prototype.initialize = function(options) {
     this.protoViews = Tangerine.config.prototypeViews;
     this.model = options.model;
-    return this.parent = options.parent;
+    this.parent = options.parent;
+    return this.prototypeRendered = false;
   };
 
   SubtestRunView.prototype.render = function() {
     var enumeratorHelp, studentDialog;
     enumeratorHelp = (this.model.get("enumeratorHelp") || "") !== "" ? "<button class='subtest_help command'>help</button><div class='enumerator_help'>" + (this.model.get('enumeratorHelp')) + "</div>" : "";
     studentDialog = (this.model.get("studentDialog") || "") !== "" ? "<div class='student_dialog command'>" + (this.model.get('studentDialog')) + "</div>" : "";
-    this.$el.html("      <h2>" + (this.model.get('name')) + "</h2>      " + enumeratorHelp + "      " + studentDialog + "          ");
+    this.$el.html("      <h2>" + (this.model.get('name')) + "</h2>      " + enumeratorHelp + "      " + studentDialog + "    ");
     this.prototypeView = new window[this.protoViews[this.model.get('prototype')]]({
       model: this.model,
       parent: this
     });
     this.prototypeView.render();
     this.$el.append(this.prototypeView.el);
+    this.prototypeRendered = true;
     this.$el.append("<button class='next navigation'>Next</button>");
     return this.trigger("rendered");
   };
@@ -58,17 +60,15 @@ SubtestRunView = (function(_super) {
   };
 
   SubtestRunView.prototype.isValid = function() {
-    console.log("subtest");
-    console.log("is prototype validation there? " + (this.prototypeView.isValid != null));
+    if (!this.prototypeRendered) return false;
+    if (this.model.get("skippable") === true || this.model.get("skippable") === "true") {
+      return true;
+    }
     if (this.prototypeView.isValid != null) {
-      console.log("returning prototype validation");
-      console.log(this.prototypeView.isValid());
       return this.prototypeView.isValid();
     } else {
-      console.log("returning false");
       return false;
     }
-    console.log("just gonna return true");
     return true;
   };
 

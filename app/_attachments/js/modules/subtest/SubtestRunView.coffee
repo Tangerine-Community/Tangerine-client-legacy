@@ -11,8 +11,10 @@ class SubtestRunView extends Backbone.View
     @model       = options.model
     @parent      = options.parent
 
+    @prototypeRendered = false
 
   render: ->
+    
     # in case we hit a back button accidentally
     # window.onbeforeunload = => "Assessment is still running"
 
@@ -21,10 +23,8 @@ class SubtestRunView extends Backbone.View
 
     @$el.html "
       <h2>#{@model.get 'name'}</h2>
-
       #{enumeratorHelp}
       #{studentDialog}
-      
     "
 
     # Use prototype specific views here
@@ -33,6 +33,7 @@ class SubtestRunView extends Backbone.View
       parent: @
     @prototypeView.render()
     @$el.append @prototypeView.el
+    @prototypeRendered = true
 
     @$el.append "<button class='next navigation'>Next</button>"
 
@@ -49,16 +50,13 @@ class SubtestRunView extends Backbone.View
     @prototypeView?.close?()
 
   isValid: ->
-    console.log "subtest"
-    console.log "is prototype validation there? " + @prototypeView.isValid?
+    if not @prototypeRendered then return false
+    if @model.get("skippable") == true || @model.get("skippable") == "true"
+      return true
     if @prototypeView.isValid?
-      console.log "returning prototype validation"
-      console.log @prototypeView.isValid()
       return @prototypeView.isValid()
     else
-      console.log "returning false"
       return false
-    console.log "just gonna return true"
     true
 
   showErrors: ->
