@@ -20,6 +20,6 @@ sum : currentView.getSum()
 
   <span class="nv">getGridScore: </span><span class="nf">(id) -&gt;</span>
     <span class="k">for</span> <span class="nx">datum</span> <span class="k">in</span> <span class="nx">@get</span> <span class="s">&#39;subtestData&#39;</span>
-      <span class="k">return</span> <span class="nx">datum</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">last_attempted</span> <span class="k">if</span> <span class="nx">datum</span><span class="p">.</span><span class="nx">subtestId</span> <span class="o">==</span> <span class="nx">id</span>
+      <span class="k">return</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">datum</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">last_attempted</span><span class="p">)</span> <span class="k">if</span> <span class="nx">datum</span><span class="p">.</span><span class="nx">subtestId</span> <span class="o">==</span> <span class="nx">id</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

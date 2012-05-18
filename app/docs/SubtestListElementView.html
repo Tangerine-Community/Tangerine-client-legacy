@@ -20,14 +20,16 @@
 
   <span class="nv">render: </span><span class="o">-&gt;</span>
     <span class="nv">subtestName   = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span>
+    <span class="nv">prototype     = </span><span class="s">&quot;[</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;prototype&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">]&quot;</span>
     <span class="nv">iconDrag      = </span><span class="s">&quot;&lt;img src=&#39;images/icon_drag.png&#39; class=&#39;sortable_handle&#39;&gt;&quot;</span>
     <span class="nv">iconEdit      = </span><span class="s">&quot;&lt;img src=&#39;images/icon_edit.png&#39; class=&#39;icon_edit&#39;&gt;&quot;</span>
     <span class="nv">iconDelete    = </span><span class="s">&quot;&lt;img src=&#39;images/icon_delete.png&#39; class=&#39;icon_delete&#39;&gt;&quot;</span>
-    <span class="nv">deleteConfirm = </span><span class="s">&quot;&lt;span class=&#39;delete_confirm&#39;&gt;&lt;button data-subtest=&#39;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">&#39; class=&#39;delete_delete&#39;&gt;Delete&lt;/button&gt;&lt;button class=&#39;delete_cancel&#39;&gt;Cancel&lt;/button&gt;&lt;/span&gt;&quot;</span>
+    <span class="nv">deleteConfirm = </span><span class="s">&quot;&lt;span class=&#39;delete_confirm&#39;&gt;&lt;button data-subtest=&#39;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">&#39; class=&#39;delete_delete command&#39;&gt;Delete&lt;/button&gt;&lt;button class=&#39;delete_cancel command&#39;&gt;Cancel&lt;/button&gt;&lt;/span&gt;&quot;</span>
 
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
 <span class="s">      </span><span class="si">#{</span><span class="nx">iconDrag</span><span class="si">}</span><span class="s"></span>
 <span class="s">      </span><span class="si">#{</span><span class="nx">subtestName</span><span class="si">}</span><span class="s"></span>
+<span class="s">      </span><span class="si">#{</span><span class="nx">prototype</span><span class="si">}</span><span class="s"></span>
 <span class="s">      </span><span class="si">#{</span><span class="nx">iconEdit</span><span class="si">}</span><span class="s"></span>
 <span class="s">      </span><span class="si">#{</span><span class="nx">iconDelete</span><span class="si">}</span><span class="s"></span>
 <span class="s">      </span><span class="si">#{</span><span class="nx">deleteConfirm</span><span class="si">}</span><span class="s"></span>
