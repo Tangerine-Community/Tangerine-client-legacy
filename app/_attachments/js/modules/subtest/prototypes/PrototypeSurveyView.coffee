@@ -95,6 +95,7 @@ class PrototypeSurveyView extends Backbone.View
     @trigger "rendered"
 
   onClose:->
-    for qv in @questionViews
-      qv.close()
+    # QuestionView doesn't have a close methods - MVM
+    #for qv in @questionViews
+    #  qv.close()
     @questionViews = []
