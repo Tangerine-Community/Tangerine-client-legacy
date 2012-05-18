@@ -23,13 +23,20 @@ PrototypeGridView = (function(_super) {
     'touchstart .end_of_grid_line': 'endOfGridLineClick',
     'click .grid_mode input': 'updateMode',
     'click .start_time': 'startTimer',
-    'click .stop_time': 'stopTimer'
+    'click .stop_time': 'stopTimer',
+    'click .restart': 'restartTimer'
   } : {
     'click .end_of_grid_line': 'endOfGridLineClick',
     'click .grid_element': 'gridClick',
     'click .grid_mode input': 'updateMode',
     'click .start_time': 'startTimer',
-    'click .stop_time': 'stopTimer'
+    'click .stop_time': 'stopTimer',
+    'click .restart': 'restartTimer'
+  };
+
+  PrototypeGridView.prototype.restartTimer = function() {
+    console.log("trying to restart");
+    return this.resetVariables();
   };
 
   PrototypeGridView.prototype.gridClick = function(event) {
@@ -109,7 +116,7 @@ PrototypeGridView = (function(_super) {
   };
 
   PrototypeGridView.prototype.startTimer = function() {
-    if (this.timerStopped === false) {
+    if (this.timerStopped === false && this.timeRunning === false) {
       this.updateMode(null, "mark");
       this.interval = setInterval(this.updateCountdown, 1000);
       this.startTime = this.getTime();
@@ -126,6 +133,7 @@ PrototypeGridView = (function(_super) {
       clearInterval(this.interval);
       this.stopTime = this.getTime();
       this.timeRunning = false;
+      this.timerStopped = true;
       this.updateCountdown();
       this.updateMode(null, "last");
       if (message) {
@@ -141,6 +149,7 @@ PrototypeGridView = (function(_super) {
     clearInterval(this.interval);
     this.stopTime = this.getTime();
     this.autostopped = true;
+    this.timerStopped = true;
     this.timeRunning = false;
     this.$el.find(".grid_element").slice(this.autostop - 1, this.autostop).addClass("element_last");
     this.lastAttempted = this.autostop;
@@ -173,10 +182,6 @@ PrototypeGridView = (function(_super) {
     }
   };
 
-  PrototypeGridView.prototype.getTime = function() {
-    return Math.round((new Date()).getTime() / 1000);
-  };
-
   PrototypeGridView.prototype.updateMode = function(event, mode) {
     if (mode != null) {
       this.mode = mode;
@@ -187,23 +192,22 @@ PrototypeGridView = (function(_super) {
     return this.mode = $(event.target).val();
   };
 
-  PrototypeGridView.prototype.initialize = function(options) {
+  PrototypeGridView.prototype.getTime = function() {
+    return Math.round((new Date()).getTime() / 1000);
+  };
+
+  PrototypeGridView.prototype.resetVariables = function() {
     var i, item, _len, _ref;
     this.markRecord = [];
-    this.modeHandlers = {
-      mark: this.markHandler,
-      last: this.lastHandler,
-      disabled: $.noop
-    };
-    this.model = this.options.model;
-    this.parent = this.options.parent;
     this.timerStopped = false;
     this.startTime = 0;
     this.stopTime = 0;
     this.timeElapsed = 0;
+    this.timeRemaining = this.timer;
     this.lastAttempted = 0;
     this.interval = null;
     this.undoable = true;
+    this.timeRunning = false;
     this.timer = this.model.get("timer") || 0;
     this.items = _.compact(this.model.get("items"));
     this.mode = "disabled";
@@ -216,6 +220,22 @@ PrototypeGridView = (function(_super) {
     this.columns = this.model.get("columns") || 0;
     this.autostop = parseInt(this.model.get("autostop")) || 0;
     this.autostopped = false;
+    this.$el.find(".grid_element").removeClass("element_wrong").removeClass("element_last").addClass("disabled");
+    this.$el.find("table").addClass("disabled");
+    this.$el.find(".timer").html(this.timer);
+    return this.updateMode(this.mode);
+  };
+
+  PrototypeGridView.prototype.initialize = function(options) {
+    this.totalTime = this.model.get("timer") || 0;
+    this.modeHandlers = {
+      mark: this.markHandler,
+      last: this.lastHandler,
+      disabled: $.noop
+    };
+    this.model = this.options.model;
+    this.parent = this.options.parent;
+    this.resetVariables();
     this.gridElement = _.template("<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element'>{{label}}</div></td>");
     return this.endOfGridLine = _.template("<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>");
   };
@@ -243,7 +263,7 @@ PrototypeGridView = (function(_super) {
       }
       html += "</tr>";
     }
-    html += "</table>        <div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>        <div id='grid_mode' class='question clearfix'>      <label>Input mode</label>      <label for='mark'>Mark</label>      <input name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>      <label for='last_attempted'>Last attempted</label>      <input name='grid_mode' id='last_attempted' type='radio' value='last'>    </div>    ";
+    html += "</table>        <div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>    <div>          <button class='restart command'>Restart</button>          <br>    </div>        <div id='grid_mode' class='question clearfix'>      <label>Input mode</label>      <label for='mark'>Mark</label>      <input name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>      <label for='last_attempted'>Last attempted</label>      <input name='grid_mode' id='last_attempted' type='radio' value='last'>    </div>    ";
     this.$el.html(html);
     this.$el.find("#grid_mode").buttonset();
     return this.trigger("rendered");
@@ -257,7 +277,7 @@ PrototypeGridView = (function(_super) {
 
   PrototypeGridView.prototype.showErrors = function() {
     if (this.lastAttempted === 0) {
-      Utils.midAlert("Please select<br>last item attempted.");
+      Utils.midAlert("Please touch<br>last item read.");
     }
     if (this.timeRuning === true) return Utils.midAlert("Time still running.");
   };

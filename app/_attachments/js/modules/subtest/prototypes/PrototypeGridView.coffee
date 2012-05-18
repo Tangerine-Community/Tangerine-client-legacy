@@ -8,15 +8,21 @@ class PrototypeGridView extends Backbone.View
     'click .grid_mode input'   : 'updateMode'
     'click .start_time'        : 'startTimer'
     'click .stop_time'         : 'stopTimer'
+    'click .restart'         : 'restartTimer'
   } else {
     'click .end_of_grid_line' : 'endOfGridLineClick'
     'click .grid_element'    : 'gridClick'
     'click .grid_mode input' : 'updateMode'
     'click .start_time'      : 'startTimer'
     'click .stop_time'       : 'stopTimer'
+    'click .restart'         : 'restartTimer'
     
   }
   
+  restartTimer: ->
+    console.log "trying to restart"
+    @resetVariables()
+
   gridClick: (event) ->
     @modeHandlers[@mode](event)
 
@@ -75,7 +81,7 @@ class PrototypeGridView extends Backbone.View
       @lastAttempted = index
 
   startTimer: ->
-    if @timerStopped == false
+    if @timerStopped == false && @timeRunning == false
       @updateMode null, "mark"
       @interval = setInterval(@updateCountdown,1000 )
       @startTime = @getTime()
@@ -89,6 +95,7 @@ class PrototypeGridView extends Backbone.View
       clearInterval @interval
       @stopTime = @getTime()
       @timeRunning = false
+      @timerStopped = true
       @updateCountdown()
       @updateMode null, "last"
       if message
@@ -101,6 +108,7 @@ class PrototypeGridView extends Backbone.View
     clearInterval @interval
     @stopTime = @getTime()
     @autostopped = true
+    @timerStopped = true
     @timeRunning = false
     @$el.find(".grid_element").slice(@autostop-1,@autostop).addClass "element_last" #jquery is weird sometimes
     @lastAttempted = @autostop
@@ -127,9 +135,6 @@ class PrototypeGridView extends Backbone.View
     
     @$el.find(".timer").html @timeRemaining
     if @timeRemaining == 0 && @timeRunning == true then @stopTimer null, "Time<br><br>Please mark<br>last item attempted"
-      
-  getTime: ->
-    Math.round((new Date()).getTime() / 1000)
 
   updateMode: (event, mode) =>
     if mode?
@@ -139,28 +144,26 @@ class PrototypeGridView extends Backbone.View
       return
     @mode = $(event.target).val()
 
-  initialize: (options) ->
+  getTime: ->
+    Math.round((new Date()).getTime() / 1000)
+
+  resetVariables: ->
+
     @markRecord = []
-
-
-    @modeHandlers =
-      mark : @markHandler
-      last : @lastHandler
-      disabled : $.noop
-
-    @model  = @options.model
-    @parent = @options.parent
 
     @timerStopped = false
 
     @startTime = 0
     @stopTime  = 0
     @timeElapsed = 0
+    @timeRemaining = @timer
     @lastAttempted = 0
 
     @interval = null
 
     @undoable = true
+
+    @timeRunning = false
 
     @timer    = @model.get("timer") || 0
     @items    = _.compact(@model.get("items")) # mild sanitization, happens at save too
@@ -172,6 +175,27 @@ class PrototypeGridView extends Backbone.View
 
     @autostop = parseInt(@model.get("autostop")) || 0
     @autostopped = false
+
+    @$el.find(".grid_element").removeClass("element_wrong").removeClass("element_last").addClass("disabled")
+    @$el.find("table").addClass("disabled")
+    
+    @$el.find(".timer").html @timer
+    
+    @updateMode(@mode)
+
+  initialize: (options) ->
+
+    @totalTime = @model.get("timer") || 0
+
+    @modeHandlers =
+      mark : @markHandler
+      last : @lastHandler
+      disabled : $.noop
+      
+    @model  = @options.model
+    @parent = @options.parent
+
+    @resetVariables()
 
     @gridElement = _.template "<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element'>{{label}}</div></td>"
     @endOfGridLine = _.template "<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>"
@@ -194,7 +218,10 @@ class PrototypeGridView extends Backbone.View
     html += "</table>
     
     <div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>#{@timer}</div></div>
-
+    <div>
+          <button class='restart command'>Restart</button>
+          <br>
+    </div>
     
     <div id='grid_mode' class='question clearfix'>
       <label>Input mode</label>
@@ -203,6 +230,7 @@ class PrototypeGridView extends Backbone.View
       <label for='last_attempted'>Last attempted</label>
       <input name='grid_mode' id='last_attempted' type='radio' value='last'>
     </div>
+
     "
 
     @$el.html html
@@ -217,7 +245,7 @@ class PrototypeGridView extends Backbone.View
     true
     
   showErrors: ->
-    Utils.midAlert "Please select<br>last item attempted." if @lastAttempted == 0
+    Utils.midAlert "Please touch<br>last item read." if @lastAttempted == 0
     Utils.midAlert "Time still running." if @timeRuning == true
   
   getResult: ->
