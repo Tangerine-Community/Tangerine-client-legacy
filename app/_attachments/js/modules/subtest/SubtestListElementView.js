@@ -46,13 +46,14 @@ SubtestListElementView = (function(_super) {
   };
 
   SubtestListElementView.prototype.render = function() {
-    var deleteConfirm, iconDelete, iconDrag, iconEdit, subtestName;
+    var deleteConfirm, iconDelete, iconDrag, iconEdit, prototype, subtestName;
     subtestName = this.model.get("name");
+    prototype = "[" + (this.model.get("prototype")) + "]";
     iconDrag = "<img src='images/icon_drag.png' class='sortable_handle'>";
     iconEdit = "<img src='images/icon_edit.png' class='icon_edit'>";
     iconDelete = "<img src='images/icon_delete.png' class='icon_delete'>";
-    deleteConfirm = "<span class='delete_confirm'><button data-subtest='" + this.model.id + "' class='delete_delete'>Delete</button><button class='delete_cancel'>Cancel</button></span>";
-    this.$el.html("      " + iconDrag + "      " + subtestName + "      " + iconEdit + "      " + iconDelete + "      " + deleteConfirm + "    ");
+    deleteConfirm = "<span class='delete_confirm'><button data-subtest='" + this.model.id + "' class='delete_delete command'>Delete</button><button class='delete_cancel command'>Cancel</button></span>";
+    this.$el.html("      " + iconDrag + "      " + subtestName + "      " + prototype + "      " + iconEdit + "      " + iconDelete + "      " + deleteConfirm + "    ");
     return this.trigger("rendered");
   };
 

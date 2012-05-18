@@ -22,14 +22,16 @@ class SubtestListElementView extends Backbone.View
 
   render: ->
     subtestName   = @model.get("name")
+    prototype     = "[#{@model.get("prototype")}]"
     iconDrag      = "<img src='images/icon_drag.png' class='sortable_handle'>"
     iconEdit      = "<img src='images/icon_edit.png' class='icon_edit'>"
     iconDelete    = "<img src='images/icon_delete.png' class='icon_delete'>"
-    deleteConfirm = "<span class='delete_confirm'><button data-subtest='#{@model.id}' class='delete_delete'>Delete</button><button class='delete_cancel'>Cancel</button></span>"
+    deleteConfirm = "<span class='delete_confirm'><button data-subtest='#{@model.id}' class='delete_delete command'>Delete</button><button class='delete_cancel command'>Cancel</button></span>"
 
     @$el.html "
       #{iconDrag}
       #{subtestName}
+      #{prototype}
       #{iconEdit}
       #{iconDelete}
       #{deleteConfirm}
