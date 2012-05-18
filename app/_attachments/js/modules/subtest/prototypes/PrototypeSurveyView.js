@@ -152,6 +152,14 @@ PrototypeSurveyView = (function(_super) {
   };
 
   PrototypeSurveyView.prototype.onClose = function() {
+    var qv, _i, _len, _ref;
+    _ref = this.questionViews;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      qv = _ref[_i];
+      if (typeof qv.close === "function") {
+        qv.close();
+      }
+    }
     return this.questionViews = [];
   };
 
