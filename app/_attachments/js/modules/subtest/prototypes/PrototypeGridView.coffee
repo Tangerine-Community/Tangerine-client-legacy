@@ -20,7 +20,6 @@ class PrototypeGridView extends Backbone.View
   }
   
   restartTimer: ->
-    console.log "trying to restart"
     @resetVariables()
 
   gridClick: (event) ->
@@ -36,13 +35,14 @@ class PrototypeGridView extends Backbone.View
       @checkAutostop()
       
   checkAutostop: ->
-    autoCount = 0
-    for i in [0..@autostop-1]
-      if @gridOutput[i] == "correct" then break
-      autoCount++
-    if @autostopped == false
-      if autoCount == @autostop then @autostopTest()
-    if @autostopped == true && autoCount < @autostop && @undoable == true then @unAutostopTest()
+    if @timeRunning
+      autoCount = 0
+      for i in [0..@autostop-1]
+        if @gridOutput[i] == "correct" then break
+        autoCount++
+      if @autostopped == false
+        if autoCount == @autostop then @autostopTest()
+      if @autostopped == true && autoCount < @autostop && @undoable == true then @unAutostopTest()
 
   markElement: (index, value = null) ->
     $target = @$el.find("div.grid_element[data-index=#{index}]")
@@ -101,7 +101,7 @@ class PrototypeGridView extends Backbone.View
       if message
         Utils.topAlert message
       else
-        Utils.topAlert "Please mark <br>last item attempted"
+        Utils.midAlert "Please mark <br>last item attempted"
 
   autostopTest: ->
     Utils.flash()

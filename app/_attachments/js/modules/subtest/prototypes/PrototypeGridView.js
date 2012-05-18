@@ -35,7 +35,6 @@ PrototypeGridView = (function(_super) {
   };
 
   PrototypeGridView.prototype.restartTimer = function() {
-    console.log("trying to restart");
     return this.resetVariables();
   };
 
@@ -54,16 +53,18 @@ PrototypeGridView = (function(_super) {
 
   PrototypeGridView.prototype.checkAutostop = function() {
     var autoCount, i, _ref;
-    autoCount = 0;
-    for (i = 0, _ref = this.autostop - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
-      if (this.gridOutput[i] === "correct") break;
-      autoCount++;
-    }
-    if (this.autostopped === false) {
-      if (autoCount === this.autostop) this.autostopTest();
-    }
-    if (this.autostopped === true && autoCount < this.autostop && this.undoable === true) {
-      return this.unAutostopTest();
+    if (this.timeRunning) {
+      autoCount = 0;
+      for (i = 0, _ref = this.autostop - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+        if (this.gridOutput[i] === "correct") break;
+        autoCount++;
+      }
+      if (this.autostopped === false) {
+        if (autoCount === this.autostop) this.autostopTest();
+      }
+      if (this.autostopped === true && autoCount < this.autostop && this.undoable === true) {
+        return this.unAutostopTest();
+      }
     }
   };
 
@@ -139,7 +140,7 @@ PrototypeGridView = (function(_super) {
       if (message) {
         return Utils.topAlert(message);
       } else {
-        return Utils.topAlert("Please mark <br>last item attempted");
+        return Utils.midAlert("Please mark <br>last item attempted");
       }
     }
   };
