@@ -30,8 +30,7 @@ class QuestionView extends Backbone.View
         @result[@options[i].value] = if $input.is(":checked") then "checked" else "unchecked"
 
   updateValidity: ->
-    console.log @model.get("skippable") + " for " + @name
-    if @model.get("skippable") == "true" || @model.get("skippable") == true
+    if @model.has("skippable") == "true" || @model.get("skippable") == true
       @isValid = true
     else
       @isValid = false if _.values(@result).indexOf("checked") < @options.length

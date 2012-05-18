@@ -54,8 +54,7 @@ QuestionView = (function(_super) {
   };
 
   QuestionView.prototype.updateValidity = function() {
-    console.log(this.model.get("skippable") + " for " + this.name);
-    if (this.model.get("skippable") === "true" || this.model.get("skippable") === true) {
+    if (this.model.has("skippable") === "true" || this.model.get("skippable") === true) {
       return this.isValid = true;
     } else {
       if (_.values(this.result).indexOf("checked") < this.options.length) {
