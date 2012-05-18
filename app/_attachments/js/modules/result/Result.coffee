@@ -24,4 +24,4 @@ class Result extends Backbone.Model
 
   getGridScore: (id) ->
     for datum in @get 'subtestData'
-      return datum.data.last_attempted if datum.subtestId == id
+      return parseInt(datum.data.last_attempted) if datum.subtestId == id

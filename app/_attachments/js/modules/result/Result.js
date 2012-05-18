@@ -34,7 +34,7 @@ Result = (function(_super) {
     _ref = this.get('subtestData');
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       datum = _ref[_i];
-      if (datum.subtestId === id) return datum.data.last_attempted;
+      if (datum.subtestId === id) return parseInt(datum.data.last_attempted);
     }
   };
 

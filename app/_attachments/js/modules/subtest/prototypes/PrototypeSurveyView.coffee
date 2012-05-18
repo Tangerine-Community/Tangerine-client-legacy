@@ -24,7 +24,6 @@ class PrototypeSurveyView extends Backbone.View
             # red alert!!
             return false
     return true
-    
 
   getResult: ->
     result = {}
@@ -33,7 +32,7 @@ class PrototypeSurveyView extends Backbone.View
       if _.isString qv
         result[@questions.models[i].get("name")] == qv
       else
-        result = $.extend result, qv.result
+        result[@questions.models[i].get("name")] = qv.result
     return result
 
   getSum: ->
@@ -79,8 +78,9 @@ class PrototypeSurveyView extends Backbone.View
     if @questions.models?
       for question, i in @questions.models
         # skip the rest if score not high enough
+      
         required = parseInt(question.get("linkedGridScore")) || 0
-        if (required != 0 && @parent.getGridScore() < required)
+        if (required != 0 && @parent.getGridScore() > required)
           # if no question was asked, push a string rahter than a dummy view
           @questionViews[i] = "not_asked"
         else
@@ -96,5 +96,5 @@ class PrototypeSurveyView extends Backbone.View
 
   onClose:->
     for qv in @questionViews
-      qv.close()
+      qv.close?()
     @questionViews = []

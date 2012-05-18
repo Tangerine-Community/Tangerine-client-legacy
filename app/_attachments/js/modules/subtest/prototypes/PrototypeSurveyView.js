@@ -54,7 +54,7 @@ PrototypeSurveyView = (function(_super) {
       if (_.isString(qv)) {
         result[this.questions.models[i].get("name")] === qv;
       } else {
-        result = $.extend(result, qv.result);
+        result[this.questions.models[i].get("name")] = qv.result;
       }
     }
     return result;
@@ -124,7 +124,7 @@ PrototypeSurveyView = (function(_super) {
       for (i = 0, _len = _ref.length; i < _len; i++) {
         question = _ref[i];
         required = parseInt(question.get("linkedGridScore")) || 0;
-        if (required !== 0 && this.parent.getGridScore() < required) {
+        if (required !== 0 && this.parent.getGridScore() > required) {
           this.questionViews[i] = "not_asked";
         } else {
           oneView = new QuestionView({
@@ -145,7 +145,7 @@ PrototypeSurveyView = (function(_super) {
     _ref = this.questionViews;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       qv = _ref[_i];
-      qv.close();
+      if (typeof qv.close === "function") qv.close();
     }
     return this.questionViews = [];
   };
