@@ -22,6 +22,7 @@ Router = (function(_super) {
     'edit-id/:id': 'editId',
     'run/:name': 'run',
     'edit/:name': 'edit',
+    'csv/:id': 'csv',
     'results/:name': 'results',
     'import': 'import',
     'subtest/:id': 'editSubtest',
@@ -204,6 +205,21 @@ Router = (function(_super) {
       },
       isUnregistered: function(options) {
         return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.csv = function(id) {
+    return Tangerine.user.verify({
+      isAdmin: function() {
+        var view;
+        view = new CSVView({
+          assessmentId: id
+        });
+        return vm.show(view);
+      },
+      isUser: function() {
+        return $("#content").html("<h1>You're not an admin user</h1><p>How did you get here?</p>");
       }
     });
   };

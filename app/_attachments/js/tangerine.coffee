@@ -10,12 +10,13 @@ class Router extends Backbone.Router
 
     ''            : 'assessments'
     'assessments' : 'assessments'
-    
+
     'dashboard' : 'dashboard' 
 
     'edit-id/:id'   : 'editId'
     'run/:name'     : 'run'
     'edit/:name'    : 'edit'
+    'csv/:id'       : 'csv'
     'results/:name' : 'results'
     'import'        : 'import'
     
@@ -142,6 +143,16 @@ class Router extends Backbone.Router
             vm.show view
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
+
+  csv: (id) ->
+    Tangerine.user.verify
+      isAdmin: ->
+        view = new CSVView
+          assessmentId : id
+        vm.show view
+      isUser: ->
+        $("#content").html "<h1>You're not an admin user</h1><p>How did you get here?</p>"
+
 
   #
   # Subtests

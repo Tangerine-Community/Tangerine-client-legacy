@@ -37,7 +37,7 @@ class ResultsView extends Backbone.View
       return false
 
   csv: ->
-    
+    Tangerine.router.navigate "csv/"+@assessment.id
     Utils.midAlert "Coming soon"
 
   detectOptions: ->
