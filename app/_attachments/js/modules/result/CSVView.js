@@ -29,7 +29,6 @@ CSVView = (function(_super) {
 
   CSVView.prototype.render = function() {
     var dataKey, dataValue, i, key, keys, questionVariable, result, resultDataArray, row, subtestKey, subtestName, subtestValue, tableHTML, value, valueName, values, variableName, _i, _j, _len, _len2, _len3, _ref, _ref2, _ref3, _ref4, _ref5;
-    console.log(this.results);
     if (this.results != null) {
       tableHTML = "";
       resultDataArray = [];
@@ -40,9 +39,7 @@ CSVView = (function(_super) {
       _ref = this.results[0].attributes.subtestData;
       for (i = 0, _len = _ref.length; i < _len; i++) {
         subtestValue = _ref[i];
-        console.log("before:" + subtestValue.name);
         subtestName = subtestValue.name.toLowerCase().dasherize();
-        console.log("after: " + subtestName);
         _ref2 = subtestValue.data;
         for (dataKey in _ref2) {
           dataValue = _ref2[dataKey];
@@ -78,7 +75,6 @@ CSVView = (function(_super) {
             if (_.isObject(dataValue)) {
               for (key in dataValue) {
                 value = dataValue[key];
-                console.log("pushing shallow " + value);
                 values.push(value);
               }
             } else {
