@@ -25,12 +25,7 @@ class Router extends Backbone.Router
     'question/:id' : 'editQuestion'
 
   test: ->
-    ass = new Assessment
-    ass.fetch
-      name:"Example English EGRA May 2011"
-      success:(model)->
-        console.log "result of all that"
-        console.log model
+    console.log "insert tests"
 
   #
   # Device

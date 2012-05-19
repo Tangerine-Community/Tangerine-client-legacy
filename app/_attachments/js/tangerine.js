@@ -30,15 +30,7 @@ Router = (function(_super) {
   };
 
   Router.prototype.test = function() {
-    var ass;
-    ass = new Assessment;
-    return ass.fetch({
-      name: "Example English EGRA May 2011",
-      success: function(model) {
-        console.log("result of all that");
-        return console.log(model);
-      }
-    });
+    return console.log("insert tests");
   };
 
   Router.prototype.setup = function() {
