@@ -78,15 +78,15 @@ class PrototypeSurveyView extends Backbone.View
     if @questions.models?
       for question, i in @questions.models
         # skip the rest if score not high enough
-      
+
         required = parseInt(question.get("linkedGridScore")) || 0
-# switched > to < - mikeymckay
+
         if (required != 0 && @parent.getGridScore() < required)
           # if no question was asked, push a string rahter than a dummy view
           @questionViews[i] = "not_asked"
         else
           oneView = new QuestionView 
-            model : question
+            model  : question
             parent : @
           oneView.render()
           @questionViews[i] = oneView
