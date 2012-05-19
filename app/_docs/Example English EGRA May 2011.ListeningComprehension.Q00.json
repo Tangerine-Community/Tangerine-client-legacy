@@ -4,7 +4,8 @@
   "prompt": "Where does Pat live?",
   "name" : "pat_live",
   "hint": "[on a farm; home]",
-  "type": "binary",
+  "order" : 0,
+  "type": "single",
   "options": [
     {
       "label": "Correct",

@@ -4,7 +4,8 @@
   "prompt": "What hit Pat on the head?",
   "hint": "[rain; water drops]",
   "name" : "pat_head",
-  "type": "binary",
+  "order" : 2,
+  "type": "single",
   "options": [
     {
       "label": "Correct",

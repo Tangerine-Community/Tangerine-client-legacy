@@ -3,6 +3,7 @@
   "subtestId": "Example English EGRA May 2011.Phonemes",
   "prompt": "thank",
   "name" : "thank",
+  "order" : 4,
   "type": "multiple",
   "options": [
     {
