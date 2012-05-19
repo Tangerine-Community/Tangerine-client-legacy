@@ -27,11 +27,26 @@ class CSVView extends Backbone.View
       keys.push "starttime"
       keys.push "timestamp"
     
-      for subtestKey, subtestValue of @results[0].attributes.subtestData
+      for subtestValue, i in @results[0].attributes.subtestData
+        console.log "before:" + subtestValue.name
+        subtestName =  subtestValue.name.toLowerCase().dasherize()
+        console.log "after: " + subtestName
         for dataKey, dataValue of subtestValue.data
+
           if _.isObject(dataValue)
+
+            questionVariable = dataKey.toLowerCase().dasherize()
+
             for key, value of dataValue
-              keys.push key
+              valueName = key
+              variableName = subtestName + ":" + questionVariable + ":" + valueName.toLowerCase().underscore()
+              keys.push variableName
+
+          else
+
+            valueName = dataKey
+            variableName = subtestName + ":" + valueName
+            keys.push variableName
 
       resultDataArray.push keys
 
@@ -44,7 +59,10 @@ class CSVView extends Backbone.View
           for dataKey, dataValue of subtestValue.data
             if _.isObject(dataValue)
               for key, value of dataValue
+                console.log "pushing shallow #{value}"
                 values.push value
+            else
+              values.push dataValue
 
         resultDataArray.push values
     

@@ -60,8 +60,7 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.csv = function() {
-    Tangerine.router.navigate("csv/" + this.assessment.id);
-    return Utils.midAlert("Coming soon");
+    return Tangerine.router.navigate("csv/" + this.assessment.id, true);
   };
 
   ResultsView.prototype.detectOptions = function() {

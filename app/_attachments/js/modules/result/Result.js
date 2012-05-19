@@ -22,10 +22,10 @@ Result = (function(_super) {
     var subtestData;
     subtestData = this.get('subtestData');
     subtestData.push(subtestDataElement);
-    this.set('subtestData', subtestData);
-    this.set("timestamp", (new Date()).getTime());
     return this.set({
-      "enumerator": Tangerine.user.name
+      'subtestData': subtestData,
+      'timestamp': (new Date()).getTime(),
+      'enumerator': Tangerine.user.name
     });
   };
 

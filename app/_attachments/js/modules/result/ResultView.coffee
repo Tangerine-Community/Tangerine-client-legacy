@@ -16,9 +16,8 @@ class ResultView extends Backbone.View
     if @$el.find('#additional_comments').val() != ""
       @model.add
         name : "Assessment complete"
-        data : {
+        data :
           "comment" : @$el.find('#additional_comments').val()
-        }
         subtestId : "result"
         sum :
           correct : 1

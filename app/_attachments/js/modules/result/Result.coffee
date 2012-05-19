@@ -17,9 +17,10 @@ class Result extends Backbone.Model
   add: ( subtestDataElement ) ->
     subtestData = @get 'subtestData'
     subtestData.push subtestDataElement
-    @set 'subtestData', subtestData
-    @set "timestamp", (new Date()).getTime()
-    @set "enumerator" : Tangerine.user.name
+    @set 
+      'subtestData' : subtestData
+      'timestamp'   : (new Date()).getTime()
+      'enumerator'  : Tangerine.user.name
 
 
   getGridScore: (id) ->
