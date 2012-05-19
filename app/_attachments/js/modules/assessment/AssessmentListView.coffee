@@ -66,8 +66,8 @@ class AssessmentListView extends Backbone.View
       groupList = $('<ul>').addClass('assessment_list')
       for assessment in @collection?.models
         oneView = new AssessmentListElementView
-          model    : assessment
-          parent   : @
+          model  : assessment
+          parent : @
         @views.push oneView
         oneView.render()
         groupList.append oneView.el
@@ -75,7 +75,7 @@ class AssessmentListView extends Backbone.View
       @$el.append groupList
     else
       @$el.append "<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>"
-    
+
     if @isAdmin && Tangerine.context.server
 
       @$el.append "<h2>Public assessments</h2>"
@@ -94,8 +94,6 @@ class AssessmentListView extends Backbone.View
         @$el.append "<p>No assessments available.</p>"
 
       @$el.append publicList
-
-
 
     @trigger "rendered"
 
