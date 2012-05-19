@@ -13,9 +13,10 @@ sum : currentView.getSum()
   <span class="nv">add: </span><span class="nf">( subtestDataElement ) -&gt;</span>
     <span class="nv">subtestData = </span><span class="nx">@get</span> <span class="s">&#39;subtestData&#39;</span>
     <span class="nx">subtestData</span><span class="p">.</span><span class="nx">push</span> <span class="nx">subtestDataElement</span>
-    <span class="nx">@set</span> <span class="s">&#39;subtestData&#39;</span><span class="p">,</span> <span class="nx">subtestData</span>
-    <span class="nx">@set</span> <span class="s">&quot;timestamp&quot;</span><span class="p">,</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">()</span>
-    <span class="nx">@set</span> <span class="s">&quot;enumerator&quot;</span> <span class="o">:</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span>
+    <span class="nx">@set</span> 
+      <span class="s">&#39;subtestData&#39;</span> <span class="o">:</span> <span class="nx">subtestData</span>
+      <span class="s">&#39;timestamp&#39;</span>   <span class="o">:</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">()</span>
+      <span class="s">&#39;enumerator&#39;</span>  <span class="o">:</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span>
 
 
   <span class="nv">getGridScore: </span><span class="nf">(id) -&gt;</span>

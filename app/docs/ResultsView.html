@@ -37,8 +37,7 @@
       <span class="k">return</span> <span class="kc">false</span>
 
   <span class="nv">csv: </span><span class="o">-&gt;</span>
-    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;csv/&quot;</span><span class="o">+</span><span class="nx">@assessment</span><span class="p">.</span><span class="nx">id</span>
-    <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Coming soon&quot;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;csv/&quot;</span><span class="o">+</span><span class="nx">@assessment</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">detectOptions: </span><span class="o">-&gt;</span>
     <span class="vi">@available = </span>

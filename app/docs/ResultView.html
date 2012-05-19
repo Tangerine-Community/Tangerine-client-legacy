@@ -13,9 +13,8 @@ Tangerine.router.navigate "run/#{@assessment.get('name')}", {trigger:true,replac
     <span class="k">if</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#additional_comments&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span>
       <span class="nx">@model</span><span class="p">.</span><span class="nx">add</span>
         <span class="nv">name : </span><span class="s">&quot;Assessment complete&quot;</span>
-        <span class="nv">data : </span><span class="p">{</span>
+        <span class="nv">data :</span>
           <span class="s">&quot;comment&quot;</span> <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#additional_comments&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
-        <span class="p">}</span>
         <span class="nv">subtestId : </span><span class="s">&quot;result&quot;</span>
         <span class="nv">sum :</span>
           <span class="nv">correct : </span><span class="mi">1</span>
