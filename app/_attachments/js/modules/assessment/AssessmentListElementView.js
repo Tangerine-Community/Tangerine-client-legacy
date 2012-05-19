@@ -109,12 +109,12 @@ AssessmentListElementView = (function(_super) {
   };
 
   AssessmentListElementView.prototype.render = function() {
-    var adminName, archiveClass, copyButton, deleteButton, editButton, html, name, resultCount, resultsButton, runButton, toggleButton;
+    var adminName, archiveClass, copyButton, deleteButton, duplicateButton, editButton, html, name, resultCount, resultsButton, runButton, toggleButton;
     archiveClass = this.model.get('archived') === true || this.model.get('archived') === 'true' ? " archived_assessment" : "";
     copyButton = "<button class='copy command'>Copy to group</button>";
     toggleButton = "<span class='assessment_menu_toggle icon_ryte'> </span>";
     deleteButton = "<img class='assessment_delete' src='images/icon_delete.png'> <span class='assessment_delete_confirm'>Confirm <button class='assessment_delete_yes'>Delete</button> <button class='assessment_delete_cancel'>Cancel</button></span>";
-    copyButton = "<button class='duplicate command'>Duplicate</button>";
+    duplicateButton = "<button class='duplicate command'>Duplicate</button>";
     editButton = "<img data-href='edit/" + (this.model.get('name')) + "' class='link_icon' src='images/icon_edit.png'>";
     resultsButton = "<img data-href='results/" + (this.model.get('name')) + "' class='link_icon' src='images/icon_result.png'>";
     runButton = "<img data-href='run/" + (this.model.get('name')) + "' class='link_icon' src='images/icon_run.png'>";
@@ -126,7 +126,7 @@ AssessmentListElementView = (function(_super) {
       if (this.isPublic) {
         html += "          <div class='assessment_menu'>            " + copyButton + "          </div>        ";
       } else {
-        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + editButton + "            " + copyButton + "            " + deleteButton + "          </div>        ";
+        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + editButton + "            " + duplicateButton + "            " + deleteButton + "          </div>        ";
       }
     } else {
       html = "<div>" + runButton + name + " " + resultsButton + "</div>";

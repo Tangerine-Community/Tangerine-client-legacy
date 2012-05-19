@@ -64,17 +64,17 @@ class AssessmentListElementView extends Backbone.View
 
           
   render: ->
-    archiveClass  = if (@model.get('archived') == true or @model.get('archived') == 'true') then " archived_assessment" else ""
-    copyButton    = "<button class='copy command'>Copy to group</button>"
-    toggleButton  = "<span class='assessment_menu_toggle icon_ryte'> </span>"
-    deleteButton  = "<img class='assessment_delete' src='images/icon_delete.png'> <span class='assessment_delete_confirm'>Confirm <button class='assessment_delete_yes'>Delete</button> <button class='assessment_delete_cancel'>Cancel</button></span>"
-    copyButton    = "<button class='duplicate command'>Duplicate</button>"
-    editButton    = "<img data-href='edit/#{@model.get('name')}' class='link_icon' src='images/icon_edit.png'>"
-    resultsButton = "<img data-href='results/#{@model.get('name')}' class='link_icon' src='images/icon_result.png'>"
-    runButton     = "<img data-href='run/#{@model.get('name')}' class='link_icon' src='images/icon_run.png'>"
-    name          = "<span class='name clickable '>#{@model.get('name')}</span>"
-    adminName     = "<span class='admin_name clickable #{archiveClass}'>#{@model.get('name')}</span>"
-    resultCount   = "<span class='resultCount'>#{@model.get('resultCount') || '0'} results</span>"
+    archiveClass    = if (@model.get('archived') == true or @model.get('archived') == 'true') then " archived_assessment" else ""
+    copyButton      = "<button class='copy command'>Copy to group</button>"
+    toggleButton    = "<span class='assessment_menu_toggle icon_ryte'> </span>"
+    deleteButton    = "<img class='assessment_delete' src='images/icon_delete.png'> <span class='assessment_delete_confirm'>Confirm <button class='assessment_delete_yes'>Delete</button> <button class='assessment_delete_cancel'>Cancel</button></span>"
+    duplicateButton = "<button class='duplicate command'>Duplicate</button>"
+    editButton      = "<img data-href='edit/#{@model.get('name')}' class='link_icon' src='images/icon_edit.png'>"
+    resultsButton   = "<img data-href='results/#{@model.get('name')}' class='link_icon' src='images/icon_result.png'>"
+    runButton       = "<img data-href='run/#{@model.get('name')}' class='link_icon' src='images/icon_run.png'>"
+    name            = "<span class='name clickable '>#{@model.get('name')}</span>"
+    adminName       = "<span class='admin_name clickable #{archiveClass}'>#{@model.get('name')}</span>"
+    resultCount     = "<span class='resultCount'>#{@model.get('resultCount') || '0'} results</span>"
 
     if @isAdmin
       # admin standard
@@ -98,7 +98,7 @@ class AssessmentListElementView extends Backbone.View
             #{runButton}
             #{resultsButton}
             #{editButton}
-            #{copyButton}
+            #{duplicateButton}
             #{deleteButton}
           </div>
         "
