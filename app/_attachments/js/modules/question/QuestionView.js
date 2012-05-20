@@ -25,10 +25,15 @@ QuestionView = (function(_super) {
     this.name = this.model.get("name");
     this.type = this.model.get("type");
     this.options = this.model.get("options");
+    this.notAsked = options.notAsked;
     if (this.model.get("skippable") === "true" || this.model.get("skippable") === true) {
-      return this.isValid = true;
+      this.isValid = true;
     } else {
-      return this.isValid = false;
+      this.isValid = false;
+    }
+    if (this.notAsked === true) {
+      this.isValid = true;
+      return this.updateResult();
     }
   };
 
@@ -38,18 +43,33 @@ QuestionView = (function(_super) {
   };
 
   QuestionView.prototype.updateResult = function() {
-    var $input, i, input, inputs, _len, _results;
+    var i, option, _len, _len2, _ref, _ref2, _results, _results2;
     if (this.type === "open") {
-      return this.result[this.name] = this.$el.find("#" + this.cid + "_" + this.name).val();
-    } else {
-      inputs = this.$el.find("textarea, input:radio");
-      _results = [];
-      for (i = 0, _len = inputs.length; i < _len; i++) {
-        input = inputs[i];
-        $input = $(input);
-        _results.push(this.result[this.options[i].value] = $input.is(":checked") ? "checked" : "unchecked");
+      if (this.notAsked === true) {
+        console.log("not askresults");
+        return this.result[this.name] = "not_asked";
+      } else {
+        return this.result[this.name] = this.$el.find("#" + this.cid + "_" + this.name).val();
       }
-      return _results;
+    } else {
+      if (this.notAsked === true) {
+        _ref = this.options;
+        _results = [];
+        for (i = 0, _len = _ref.length; i < _len; i++) {
+          option = _ref[i];
+          console.log("not askresults");
+          _results.push(this.result[this.options[i].value] = "not_asked");
+        }
+        return _results;
+      } else {
+        _ref2 = this.options;
+        _results2 = [];
+        for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
+          option = _ref2[i];
+          _results2.push(this.result[this.options[i].value] = this.$el.find("#" + this.cid + "_" + this.name + "_" + i).is(":checked") ? "checked" : "unchecked");
+        }
+        return _results2;
+      }
     }
   };
 
@@ -70,23 +90,27 @@ QuestionView = (function(_super) {
 
   QuestionView.prototype.render = function() {
     var checkOrRadio, html, i, option, _len, _ref;
-    html = "<div class='error_message'></div><div class='prompt'>" + (this.model.get('prompt')) + "</div>    <div class='hint'>" + (this.model.get('hint') || "") + "</div>";
-    if (this.type === "open") {
-      if (this.model.get("multiline")) {
-        html += "<div><textarea id='" + this.cid + "_" + this.name + "'></textarea></div>";
+    if (!this.notAsked) {
+      html = "<div class='error_message'></div><div class='prompt'>" + (this.model.get('prompt')) + "</div>      <div class='hint'>" + (this.model.get('hint') || "") + "</div>";
+      if (this.type === "open") {
+        if (this.model.get("multiline")) {
+          html += "<div><textarea id='" + this.cid + "_" + this.name + "'></textarea></div>";
+        } else {
+          html += "<div><input id='" + this.cid + "_" + this.name + "'></div>";
+        }
+        this.$el.html(html);
       } else {
-        html += "<div><input id='" + this.cid + "_" + this.name + "'></div>";
+        checkOrRadio = this.type === "multiple" ? "checkbox" : "radio";
+        _ref = this.options;
+        for (i = 0, _len = _ref.length; i < _len; i++) {
+          option = _ref[i];
+          html += "            <label for='" + this.cid + "_" + this.name + "_" + i + "'>" + option.label + "</label>            <input id='" + this.cid + "_" + this.name + "_" + i + "' name='" + this.name + "' value='" + option.value + "' type='" + checkOrRadio + "'>          ";
+        }
+        this.$el.html(html);
+        this.$el.buttonset();
       }
-      this.$el.html(html);
     } else {
-      checkOrRadio = this.type === "multiple" ? "checkbox" : "radio";
-      _ref = this.options;
-      for (i = 0, _len = _ref.length; i < _len; i++) {
-        option = _ref[i];
-        html += "          <label for='" + this.name + "_" + i + "'>" + option.label + "</label>          <input id='" + this.name + "_" + i + "' name='" + this.name + "' value='" + option.value + "' type='" + checkOrRadio + "'>        ";
-      }
-      this.$el.html(html);
-      this.$el.buttonset();
+      this.$el.hide();
     }
     return this.trigger("rendered");
   };

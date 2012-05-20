@@ -36,6 +36,7 @@ PrototypeSurveyView = (function(_super) {
     _ref = this.questionViews;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       qv = _ref[i];
+      console.log(qv.isValid);
       if (qv.isValid != null) {
         if (!(qv.model.get("skippable") === "true" || qv.model.get("skippable") === true)) {
           if (!qv.isValid) return false;
@@ -117,24 +118,22 @@ PrototypeSurveyView = (function(_super) {
   };
 
   PrototypeSurveyView.prototype.render = function() {
-    var i, oneView, question, required, _len, _ref;
+    var i, isNotAsked, oneView, question, required, _len, _ref;
     this.questions.sort();
     if (this.questions.models != null) {
       _ref = this.questions.models;
       for (i = 0, _len = _ref.length; i < _len; i++) {
         question = _ref[i];
         required = parseInt(question.get("linkedGridScore")) || 0;
-        if (required !== 0 && this.parent.getGridScore() < required) {
-          this.questionViews[i] = "not_asked";
-        } else {
-          oneView = new QuestionView({
-            model: question,
-            parent: this
-          });
-          oneView.render();
-          this.questionViews[i] = oneView;
-          this.$el.append(oneView.el);
-        }
+        isNotAsked = required !== 0 && this.parent.getGridScore() < required;
+        oneView = new QuestionView({
+          model: question,
+          parent: this,
+          notAsked: isNotAsked
+        });
+        oneView.render();
+        this.questionViews[i] = oneView;
+        this.$el.append(oneView.el);
       }
     }
     return this.trigger("rendered");

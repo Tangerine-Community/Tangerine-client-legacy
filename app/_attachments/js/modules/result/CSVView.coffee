@@ -10,14 +10,14 @@ class CSVView extends Backbone.View
         @results = collection.where {assessmentId : @assessmentId}
         @render()
     
-    @disallowedKeys = ["_id","_rev","collection","assessmentId","subtestType"]
+    @disallowedKeys = ["mark_record"]
     @metaKeys = ["timestamp","enumerator"]
     
 
   render: ->
     if @results?
       tableHTML = ""
-    
+
       resultDataArray = []
 
       keys = []
@@ -25,21 +25,24 @@ class CSVView extends Backbone.View
       keys.push "enumerator"
       keys.push "starttime"
       keys.push "timestamp"
-    
+
       for subtestValue, i in @results[0].attributes.subtestData
         subtestName =  subtestValue.name.toLowerCase().dasherize()
         for dataKey, dataValue of subtestValue.data
-          if _.isObject(dataValue)
-            questionVariable = dataKey.toLowerCase().dasherize()
-            for key, value of dataValue
-              valueName = key
-              variableName = subtestName + ":" + questionVariable + ":" + valueName.toLowerCase().underscore()
+          if !(dataKey in @disallowedKeys)
+            if _.isObject(dataValue)
+              questionVariable = dataKey.toLowerCase().dasherize()
+              for key, value of dataValue
+                valueName = key
+                variableName = subtestName + ":" + questionVariable + ":" + valueName.toLowerCase().underscore()
+                keys.push variableName
+            else
+              valueName = dataKey
+              variableName = subtestName + ":" + valueName
               keys.push variableName
-          else
-            valueName = dataKey
-            variableName = subtestName + ":" + valueName
-            keys.push variableName
+
       resultDataArray.push keys
+
 
       for result in @results
         values = []
@@ -48,11 +51,13 @@ class CSVView extends Backbone.View
         values.push result.attributes.timestamp
         for subtestKey, subtestValue of result.attributes.subtestData
           for dataKey, dataValue of subtestValue.data
-            if _.isObject(dataValue)
-              for key, value of dataValue
-                values.push value
-            else
-              values.push dataValue
+            if !(dataKey in @disallowedKeys)
+
+              if _.isObject(dataValue)
+                for key, value of dataValue
+                  values.push value
+              else
+                values.push dataValue
 
         resultDataArray.push values
     

@@ -15,6 +15,7 @@ class PrototypeSurveyView extends Backbone.View
 
   isValid: ->
     for qv, i in @questionViews
+      console.log qv.isValid
       # does it have a method? otherwise it's a string
       if qv.isValid?
         # can we skip it?
@@ -81,16 +82,14 @@ class PrototypeSurveyView extends Backbone.View
 
         required = parseInt(question.get("linkedGridScore")) || 0
 
-        if (required != 0 && @parent.getGridScore() < required)
-          # if no question was asked, push a string rahter than a dummy view
-          @questionViews[i] = "not_asked"
-        else
-          oneView = new QuestionView 
-            model  : question
-            parent : @
-          oneView.render()
-          @questionViews[i] = oneView
-          @$el.append oneView.el
+        isNotAsked = (required != 0 && @parent.getGridScore() < required)
+        oneView = new QuestionView 
+          model  : question
+          parent : @
+          notAsked : isNotAsked
+        oneView.render()
+        @questionViews[i] = oneView
+        @$el.append oneView.el
 
 
     @trigger "rendered"
