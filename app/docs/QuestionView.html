@@ -11,23 +11,36 @@
     <span class="vi">@name    = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
     <span class="vi">@type    = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;type&quot;</span>
     <span class="vi">@options = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;options&quot;</span>
+    <span class="vi">@notAsked = </span><span class="nx">options</span><span class="p">.</span><span class="nx">notAsked</span>
 
     <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;skippable&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;true&quot;</span> <span class="o">||</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;skippable&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">true</span>
       <span class="vi">@isValid = </span><span class="kc">true</span>
     <span class="k">else</span>
       <span class="vi">@isValid = </span><span class="kc">false</span>
+    
+    <span class="k">if</span> <span class="nx">@notAsked</span> <span class="o">==</span> <span class="kc">true</span>
+      <span class="vi">@isValid = </span><span class="kc">true</span>
+      <span class="nx">@updateResult</span><span class="p">()</span>
+    
   <span class="nv">update: </span><span class="o">-&gt;</span>
     <span class="nx">@updateResult</span><span class="p">()</span>
     <span class="nx">@updateValidity</span><span class="p">()</span>
 
   <span class="nv">updateResult: </span><span class="o">-&gt;</span>
     <span class="k">if</span> <span class="nx">@type</span> <span class="o">==</span> <span class="s">&quot;open&quot;</span>
-      <span class="nx">@result</span><span class="p">[</span><span class="nx">@name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="k">if</span> <span class="nx">@notAsked</span> <span class="o">==</span> <span class="kc">true</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;not askresults&quot;</span>
+        <span class="nx">@result</span><span class="p">[</span><span class="nx">@name</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;not_asked&quot;</span>
+      <span class="k">else</span>
+        <span class="nx">@result</span><span class="p">[</span><span class="nx">@name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
     <span class="k">else</span>
-      <span class="nv">inputs = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;textarea, input:radio&quot;</span><span class="p">)</span>
-      <span class="k">for</span> <span class="nx">input</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">inputs</span>
-        <span class="nv">$input = </span><span class="nx">$</span><span class="p">(</span><span class="nx">input</span><span class="p">)</span>
-        <span class="nx">@result</span><span class="p">[</span><span class="nx">@options</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">value</span><span class="p">]</span> <span class="o">=</span> <span class="k">if</span> <span class="nx">$input</span><span class="p">.</span><span class="o">is</span><span class="p">(</span><span class="s">&quot;:checked&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="s">&quot;checked&quot;</span> <span class="k">else</span> <span class="s">&quot;unchecked&quot;</span>
+      <span class="k">if</span> <span class="nx">@notAsked</span> <span class="o">==</span> <span class="kc">true</span>
+        <span class="k">for</span> <span class="nx">option</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@options</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;not askresults&quot;</span>
+          <span class="nx">@result</span><span class="p">[</span><span class="nx">@options</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">value</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;not_asked&quot;</span>
+      <span class="k">else</span>
+        <span class="k">for</span> <span class="nx">option</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@options</span>
+          <span class="nx">@result</span><span class="p">[</span><span class="nx">@options</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">value</span><span class="p">]</span> <span class="o">=</span> <span class="k">if</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="o">is</span><span class="p">(</span><span class="s">&quot;:checked&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="s">&quot;checked&quot;</span> <span class="k">else</span> <span class="s">&quot;unchecked&quot;</span>
 
   <span class="nv">updateValidity: </span><span class="o">-&gt;</span>
     <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;skippable&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;true&quot;</span> <span class="o">||</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;skippable&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">true</span>
@@ -35,31 +48,36 @@
     <span class="k">else</span>
       <span class="vi">@isValid = </span><span class="kc">false</span> <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">@result</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&quot;checked&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">length</span>
       <span class="vi">@isValid = </span><span class="kc">true</span>
+    
 
   <span class="nv">setMessage: </span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="o">=&gt;</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.error_message&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">message</span>
 
   <span class="nv">render: </span><span class="o">-&gt;</span>
 
-    <span class="nv">html = </span><span class="s">&quot;&lt;div class=&#39;error_message&#39;&gt;&lt;/div&gt;&lt;div class=&#39;prompt&#39;&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;prompt&#39;</span><span class="si">}</span><span class="s">&lt;/div&gt;</span>
-<span class="s">    &lt;div class=&#39;hint&#39;&gt;</span><span class="si">#{</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;hint&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span>
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">@notAsked</span>
+      <span class="nv">html = </span><span class="s">&quot;&lt;div class=&#39;error_message&#39;&gt;&lt;/div&gt;&lt;div class=&#39;prompt&#39;&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;prompt&#39;</span><span class="si">}</span><span class="s">&lt;/div&gt;</span>
+<span class="s">      &lt;div class=&#39;hint&#39;&gt;</span><span class="si">#{</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;hint&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span>
 
-    <span class="k">if</span> <span class="nx">@type</span> <span class="o">==</span> <span class="s">&quot;open&quot;</span>
-      <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;multiline&quot;</span><span class="p">)</span>
-        <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;div&gt;&lt;textarea id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/textarea&gt;&lt;/div&gt;&quot;</span>
+      <span class="k">if</span> <span class="nx">@type</span> <span class="o">==</span> <span class="s">&quot;open&quot;</span>
+        <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;multiline&quot;</span><span class="p">)</span>
+          <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;div&gt;&lt;textarea id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/textarea&gt;&lt;/div&gt;&quot;</span>
+        <span class="k">else</span>
+          <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;div&gt;&lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/div&gt;&quot;</span>
+        <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="nx">html</span>
+
       <span class="k">else</span>
-        <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;div&gt;&lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/div&gt;&quot;</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="nx">html</span>
+        <span class="nv">checkOrRadio = </span><span class="k">if</span> <span class="nx">@type</span> <span class="o">==</span> <span class="s">&quot;multiple&quot;</span> <span class="k">then</span> <span class="s">&quot;checkbox&quot;</span> <span class="k">else</span> <span class="s">&quot;radio&quot;</span>
+        <span class="k">for</span> <span class="nx">option</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@options</span>
+          <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
+<span class="s">            &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">option</span><span class="p">.</span><span class="nx">label</span><span class="si">}</span><span class="s">&lt;/label&gt;</span>
+<span class="s">            &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39; name=&#39;</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">&#39; value=&#39;</span><span class="si">#{</span><span class="nx">option</span><span class="p">.</span><span class="nx">value</span><span class="si">}</span><span class="s">&#39; type=&#39;</span><span class="si">#{</span><span class="nx">checkOrRadio</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">          &quot;</span>
+        <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="nx">html</span>
+        <span class="nx">@$el</span><span class="p">.</span><span class="nx">buttonset</span><span class="p">()</span>
 
     <span class="k">else</span>
-      <span class="nv">checkOrRadio = </span><span class="k">if</span> <span class="nx">@type</span> <span class="o">==</span> <span class="s">&quot;multiple&quot;</span> <span class="k">then</span> <span class="s">&quot;checkbox&quot;</span> <span class="k">else</span> <span class="s">&quot;radio&quot;</span>
-      <span class="k">for</span> <span class="nx">option</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@options</span>
-        <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
-<span class="s">          &lt;label for=&#39;</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">option</span><span class="p">.</span><span class="nx">label</span><span class="si">}</span><span class="s">&lt;/label&gt;</span>
-<span class="s">          &lt;input id=&#39;</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39; name=&#39;</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">&#39; value=&#39;</span><span class="si">#{</span><span class="nx">option</span><span class="p">.</span><span class="nx">value</span><span class="si">}</span><span class="s">&#39; type=&#39;</span><span class="si">#{</span><span class="nx">checkOrRadio</span><span class="si">}</span><span class="s">&#39;&gt;</span>
-<span class="s">        &quot;</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="nx">html</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">buttonset</span><span class="p">()</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
 
     <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
 
