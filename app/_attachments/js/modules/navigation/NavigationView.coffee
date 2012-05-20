@@ -10,7 +10,10 @@ class NavigationView extends Backbone.View
     
   enumeratorClick: -> Tangerine.router.navigate "account", true
 
-  logoClick:-> Tangerine.router.navigate "", true
+  # If you use the logo to switch assessments, results aren't clearing properly - so force a reload #HACK #TODO
+  logoClick:->
+    Tangerine.router.navigate "", false
+    document.location.reload()
     
   logout: -> @router.navigate 'logout', true
 
