@@ -36,7 +36,6 @@ PrototypeSurveyView = (function(_super) {
     _ref = this.questionViews;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       qv = _ref[i];
-      console.log(qv.isValid);
       if (qv.isValid != null) {
         if (!(qv.model.get("skippable") === "true" || qv.model.get("skippable") === true)) {
           if (!qv.isValid) return false;
