@@ -25,32 +25,34 @@ CSVView = (function(_super) {
       }
     });
     this.disallowedKeys = ["mark_record"];
-    return this.metaKeys = ["timestamp", "enumerator"];
+    return this.metaKeys = ["enumerator", "starttime", "timestamp"];
   };
 
   CSVView.prototype.render = function() {
-    var dataKey, dataValue, i, key, keys, questionVariable, result, resultDataArray, row, subtestKey, subtestName, subtestValue, tableHTML, value, valueName, values, variableName, _i, _j, _len, _len2, _len3, _ref, _ref2, _ref3, _ref4, _ref5;
+    var dataKey, dataValue, i, key, keys, metaKey, questionVariable, result, resultDataArray, row, subtestKey, subtestName, subtestValue, tableHTML, value, valueName, values, variableName, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
     if (this.results != null) {
       tableHTML = "";
       resultDataArray = [];
       keys = [];
-      keys.push("enumerator");
-      keys.push("starttime");
-      keys.push("timestamp");
-      _ref = this.results[0].attributes.subtestData;
-      for (i = 0, _len = _ref.length; i < _len; i++) {
-        subtestValue = _ref[i];
+      _ref = this.metaKeys;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        metaKey = _ref[_i];
+        keys.push(metaKey);
+      }
+      _ref2 = this.results[0].attributes.subtestData;
+      for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
+        subtestValue = _ref2[i];
         subtestName = subtestValue.name.toLowerCase().dasherize();
-        _ref2 = subtestValue.data;
-        for (dataKey in _ref2) {
-          dataValue = _ref2[dataKey];
+        _ref3 = subtestValue.data;
+        for (dataKey in _ref3) {
+          dataValue = _ref3[dataKey];
           if (!(__indexOf.call(this.disallowedKeys, dataKey) >= 0)) {
             if (_.isObject(dataValue)) {
               questionVariable = dataKey.toLowerCase().dasherize();
               for (key in dataValue) {
                 value = dataValue[key];
                 valueName = key;
-                variableName = subtestName + ":" + questionVariable + ":" + valueName.toLowerCase().underscore();
+                variableName = subtestName + ":" + questionVariable + ":" + valueName;
                 keys.push(variableName);
               }
             } else {
@@ -62,26 +64,40 @@ CSVView = (function(_super) {
         }
       }
       resultDataArray.push(keys);
-      _ref3 = this.results;
-      for (_i = 0, _len2 = _ref3.length; _i < _len2; _i++) {
-        result = _ref3[_i];
+      _ref4 = this.results;
+      for (_j = 0, _len3 = _ref4.length; _j < _len3; _j++) {
+        result = _ref4[_j];
         values = [];
-        values.push(result.attributes.enumerator);
-        values.push(result.attributes.starttime);
-        values.push(result.attributes.timestamp);
-        _ref4 = result.attributes.subtestData;
-        for (subtestKey in _ref4) {
-          subtestValue = _ref4[subtestKey];
-          _ref5 = subtestValue.data;
-          for (dataKey in _ref5) {
-            dataValue = _ref5[dataKey];
+        _ref5 = this.metaKeys;
+        for (_k = 0, _len4 = _ref5.length; _k < _len4; _k++) {
+          metaKey = _ref5[_k];
+          values.push(result.attributes[metaKey]);
+        }
+        _ref6 = result.attributes.subtestData;
+        for (subtestKey in _ref6) {
+          subtestValue = _ref6[subtestKey];
+          subtestName = subtestValue.name.toLowerCase().dasherize();
+          _ref7 = subtestValue.data;
+          for (dataKey in _ref7) {
+            dataValue = _ref7[dataKey];
             if (!(__indexOf.call(this.disallowedKeys, dataKey) >= 0)) {
               if (_.isObject(dataValue)) {
+                questionVariable = dataKey.toLowerCase().dasherize();
                 for (key in dataValue) {
                   value = dataValue[key];
+                  valueName = key;
+                  variableName = subtestName + ":" + questionVariable + ":" + valueName;
+                  if (keys.indexOf(variableName) === -1) {
+                    console.log("error, inconsistency\n" + variableName + " not in first row");
+                  }
                   values.push(value);
                 }
               } else {
+                valueName = dataKey;
+                variableName = subtestName + ":" + valueName;
+                if (keys.indexOf(variableName) === -1) {
+                  console.log("error, inconsistency\n" + variableName + " not in first row");
+                }
                 values.push(dataValue);
               }
             }
@@ -89,8 +105,8 @@ CSVView = (function(_super) {
         }
         resultDataArray.push(values);
       }
-      for (_j = 0, _len3 = resultDataArray.length; _j < _len3; _j++) {
-        row = resultDataArray[_j];
+      for (_l = 0, _len5 = resultDataArray.length; _l < _len5; _l++) {
+        row = resultDataArray[_l];
         tableHTML += "<tr>";
         for (key in row) {
           value = row[key];

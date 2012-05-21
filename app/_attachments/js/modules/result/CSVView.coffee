@@ -11,7 +11,7 @@ class CSVView extends Backbone.View
         @render()
     
     @disallowedKeys = ["mark_record"]
-    @metaKeys = ["timestamp","enumerator"]
+    @metaKeys = ["enumerator","starttime","timestamp"]
     
 
   render: ->
@@ -22,9 +22,9 @@ class CSVView extends Backbone.View
 
       keys = []
 
-      keys.push "enumerator"
-      keys.push "starttime"
-      keys.push "timestamp"
+      for metaKey in @metaKeys
+        keys.push metaKey
+
 
       for subtestValue, i in @results[0].attributes.subtestData
         subtestName =  subtestValue.name.toLowerCase().dasherize()
@@ -34,7 +34,7 @@ class CSVView extends Backbone.View
               questionVariable = dataKey.toLowerCase().dasherize()
               for key, value of dataValue
                 valueName = key
-                variableName = subtestName + ":" + questionVariable + ":" + valueName.toLowerCase().underscore()
+                variableName = subtestName + ":" + questionVariable + ":" + valueName
                 keys.push variableName
             else
               valueName = dataKey
@@ -46,17 +46,26 @@ class CSVView extends Backbone.View
 
       for result in @results
         values = []
-        values.push result.attributes.enumerator
-        values.push result.attributes.starttime
-        values.push result.attributes.timestamp
+        for metaKey in @metaKeys
+          values.push result.attributes[metaKey]
+          
         for subtestKey, subtestValue of result.attributes.subtestData
+          subtestName =  subtestValue.name.toLowerCase().dasherize()
           for dataKey, dataValue of subtestValue.data
             if !(dataKey in @disallowedKeys)
-
               if _.isObject(dataValue)
+                questionVariable = dataKey.toLowerCase().dasherize()
                 for key, value of dataValue
+                  valueName = key
+                  variableName = subtestName + ":" + questionVariable + ":" + valueName
+                  if keys.indexOf(variableName) == -1
+                    console.log "error, inconsistency\n#{variableName} not in first row"
                   values.push value
               else
+                valueName = dataKey
+                variableName = subtestName + ":" + valueName
+                if keys.indexOf(variableName) == -1
+                  console.log "error, inconsistency\n#{variableName} not in first row"
                 values.push dataValue
 
         resultDataArray.push values
