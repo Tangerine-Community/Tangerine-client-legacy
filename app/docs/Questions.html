@@ -4,7 +4,12 @@
   <span class="nv">url   : </span><span class="s">&quot;question&quot;</span>
 
   <span class="nv">comparator: </span><span class="nf">(subtest) -&gt;</span>
-    <span class="nx">subtest</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;order&quot;</span>
-  
+    <span class="nx">subtest</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;order&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>call this after you load the collection you're going to be working with</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">maintainOrder: </span><span class="o">-&gt;</span>
+    <span class="nv">test = </span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;order&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="nx">model</span> <span class="k">in</span> <span class="nx">@models</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="nv">ordered = </span><span class="p">(</span><span class="nx">i</span> <span class="k">for</span> <span class="nx">model</span><span class="p">,</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">@models</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">test</span> <span class="o">!=</span> <span class="nx">ordered</span>
+      <span class="k">for</span> <span class="nx">subtest</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@models</span>
+        <span class="nx">subtest</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;order&quot;</span><span class="p">,</span> <span class="nx">i</span>
+        <span class="nx">subtest</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
