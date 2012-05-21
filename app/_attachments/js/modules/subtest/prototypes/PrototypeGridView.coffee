@@ -257,12 +257,12 @@ class PrototypeGridView extends Backbone.View
         letterResults[item] = "missing"
 
     result =
-      "autostopped" : @autostopped
-      "last_attempted" : @lastAttempted
+      "autostopped"     : @autostopped
+      "last_attempted"  : @lastAttempted
       "letters_results" : letterResults
-      "time_remaining" : @timeRemaining
-      "time_elapsed" : @timeElapsed
-      "mark_record" : @markRecord
+      "time_remaining"  : @timeRemaining
+      "time_elapsed"    : @timeElapsed
+      "mark_record"     : @markRecord
 
   onClose: ->
     clearInterval(@interval)

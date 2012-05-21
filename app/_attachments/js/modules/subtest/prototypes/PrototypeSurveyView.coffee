@@ -15,7 +15,6 @@ class PrototypeSurveyView extends Backbone.View
 
   isValid: ->
     for qv, i in @questionViews
-      console.log qv.isValid
       # does it have a method? otherwise it's a string
       if qv.isValid?
         # can we skip it?
@@ -90,7 +89,6 @@ class PrototypeSurveyView extends Backbone.View
         oneView.render()
         @questionViews[i] = oneView
         @$el.append oneView.el
-
 
     @trigger "rendered"
 
