@@ -18,10 +18,59 @@ CSVView = (function(_super) {
     allResults = new Results;
     allResults.fetch({
       success: function(collection) {
+        var allSubtests;
         _this.results = collection.where({
           assessmentId: _this.assessmentId
         });
-        return _this.render();
+        allSubtests = new Subtests;
+        return allSubtests.fetch({
+          success: function(collection) {
+            var grid, grids, gridsByName, i, item, k, key, markIndex, newGridData, result, subtestKey, subtestValue, v, _i, _j, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4, _ref5;
+            grids = collection.where({
+              assessmentId: _this.assessmentId,
+              prototype: "grid"
+            });
+            gridsByName = {};
+            for (_i = 0, _len = grids.length; _i < _len; _i++) {
+              grid = grids[_i];
+              gridsByName[grid.attributes.name] = grid.attributes;
+            }
+            _ref = _this.results;
+            for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+              result = _ref[_j];
+              _ref2 = result.attributes.subtestData;
+              for (subtestKey in _ref2) {
+                subtestValue = _ref2[subtestKey];
+                if (subtestValue.data.letters_results != null) {
+                  newGridData = [];
+                  if (_.keys(subtestValue.data.letters_results).length !== gridsByName[subtestValue.name].items.length) {
+                    console.log("" + subtestValue.name + " reconstructing from mark_record");
+                    subtestValue.data.letters_results = [];
+                    _ref3 = gridsByName[subtestValue.name].items;
+                    for (i = 0, _len3 = _ref3.length; i < _len3; i++) {
+                      item = _ref3[i];
+                      subtestValue.data.letters_results[i] = {};
+                      subtestValue.data.letters_results[i][item] = i < parseInt(subtestValue.data.last_attempted) ? "correct" : "missing";
+                    }
+                    _ref4 = subtestValue.data.mark_record;
+                    for (i = 0, _len4 = _ref4.length; i < _len4; i++) {
+                      markIndex = _ref4[i];
+                      markIndex--;
+                      key = "";
+                      _ref5 = subtestValue.data.letters_results[markIndex];
+                      for (k in _ref5) {
+                        v = _ref5[k];
+                        key = k;
+                      }
+                      subtestValue.data.letters_results[markIndex][key] = subtestValue.data.letters_results[markIndex][key] === "correct" ? "incorrect" : "correct";
+                    }
+                  }
+                }
+              }
+            }
+            return _this.render();
+          }
+        });
       }
     });
     this.disallowedKeys = ["mark_record"];
@@ -29,7 +78,7 @@ CSVView = (function(_super) {
   };
 
   CSVView.prototype.render = function() {
-    var dataKey, dataValue, i, key, keys, metaKey, questionVariable, result, resultDataArray, row, subtestKey, subtestName, subtestValue, tableHTML, value, valueName, values, variableName, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+    var dataKey, dataValue, firstIndex, i, itemCount, k, key, keyIndex, keys, metaKey, questionVariable, result, resultDataArray, row, subtestKey, subtestName, subtestValue, tableHTML, v, value, valueIndex, valueName, values, variableName, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
     if (this.results != null) {
       tableHTML = "";
       resultDataArray = [];
@@ -51,9 +100,18 @@ CSVView = (function(_super) {
               questionVariable = dataKey.toLowerCase().dasherize();
               for (key in dataValue) {
                 value = dataValue[key];
-                valueName = key;
-                variableName = subtestName + ":" + questionVariable + ":" + valueName;
-                keys.push(variableName);
+                if (_.isObject(value)) {
+                  for (k in value) {
+                    v = value[k];
+                    valueName = k;
+                    variableName = subtestName + ":" + questionVariable + ":" + valueName;
+                    keys.push(variableName);
+                  }
+                } else {
+                  valueName = key;
+                  variableName = subtestName + ":" + questionVariable + ":" + valueName;
+                  keys.push(variableName);
+                }
               }
             } else {
               valueName = dataKey;
@@ -83,29 +141,48 @@ CSVView = (function(_super) {
             if (!(__indexOf.call(this.disallowedKeys, dataKey) >= 0)) {
               if (_.isObject(dataValue)) {
                 questionVariable = dataKey.toLowerCase().dasherize();
+                itemCount = 0;
                 for (key in dataValue) {
                   value = dataValue[key];
-                  valueName = key;
-                  variableName = subtestName + ":" + questionVariable + ":" + valueName;
-                  if (keys.indexOf(variableName) === -1) {
-                    console.log("error, inconsistency\n" + variableName + " not in first row");
+                  if (_.isObject(value)) {
+                    for (k in value) {
+                      v = value[k];
+                      valueName = k;
+                      variableName = subtestName + ":" + questionVariable + ":" + valueName;
+                      valueIndex = keys.indexOf(variableName);
+                      firstIndex = null;
+                      for (keyIndex = 0, _len5 = keys.length; keyIndex < _len5; keyIndex++) {
+                        key = keys[keyIndex];
+                        if (~key.indexOf(subtestName + ":" + questionVariable) && firstIndex === null) {
+                          firstIndex = keyIndex;
+                        }
+                      }
+                      values[firstIndex + itemCount] = v;
+                    }
+                    itemCount++;
+                  } else {
+                    valueName = key;
+                    variableName = subtestName + ":" + questionVariable + ":" + valueName;
+                    valueIndex = keys.indexOf(variableName);
+                    if (keys.indexOf(variableName) === -1) {} else {
+                      values[valueIndex] = value;
+                    }
                   }
-                  values.push(value);
                 }
               } else {
                 valueName = dataKey;
                 variableName = subtestName + ":" + valueName;
-                if (keys.indexOf(variableName) === -1) {
-                  console.log("error, inconsistency\n" + variableName + " not in first row");
+                valueIndex = keys.indexOf(variableName);
+                if (valueIndex === -1) {} else {
+                  values[valueIndex] = dataValue;
                 }
-                values.push(dataValue);
               }
             }
           }
         }
         resultDataArray.push(values);
       }
-      for (_l = 0, _len5 = resultDataArray.length; _l < _len5; _l++) {
+      for (_l = 0, _len6 = resultDataArray.length; _l < _len6; _l++) {
         row = resultDataArray[_l];
         tableHTML += "<tr>";
         for (key in row) {
