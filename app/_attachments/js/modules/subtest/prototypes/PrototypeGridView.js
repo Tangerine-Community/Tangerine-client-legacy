@@ -285,14 +285,15 @@ PrototypeGridView = (function(_super) {
 
   PrototypeGridView.prototype.getResult = function() {
     var i, item, letterResults, result, _len, _ref;
-    letterResults = {};
+    letterResults = [];
     _ref = this.items;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       item = _ref[i];
+      letterResults[i] = {};
       if (i < this.lastAttempted) {
-        letterResults[item] = this.gridOutput[i];
+        letterResults[i][item] = this.gridOutput[i];
       } else {
-        letterResults[item] = "missing";
+        letterResults[i][item] = "missing";
       }
     }
     return result = {

@@ -249,12 +249,13 @@ class PrototypeGridView extends Backbone.View
     Utils.midAlert "Time still running." if @timeRuning == true
   
   getResult: ->
-    letterResults = {}
+    letterResults = []
     for item, i in @items
+      letterResults[i] = {} 
       if i < (@lastAttempted)
-        letterResults[item] = @gridOutput[i]
+        letterResults[i][item] = @gridOutput[i]
       else
-        letterResults[item] = "missing"
+        letterResults[i][item] = "missing"
 
     result =
       "autostopped"     : @autostopped
