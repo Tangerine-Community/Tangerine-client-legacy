@@ -98,9 +98,12 @@ only applies to this list</p>             </td>             <td class="code">   
 
   <span class="nv">newAssessmentSave: </span><span class="o">=&gt;</span>
     <span class="k">if</span> <span class="nx">@newAssessmentValid</span>
+      <span class="nv">newId = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">guid</span><span class="p">()</span>
       <span class="nv">newAssessment = </span><span class="k">new</span> <span class="nx">Assessment</span>
-        <span class="s">&#39;name&#39;</span> <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_name&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
-        <span class="s">&#39;group&#39;</span> <span class="o">:</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="s">&#39;name&#39;</span>         <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_name&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+        <span class="s">&#39;group&#39;</span>        <span class="o">:</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="s">&#39;_id&#39;</span>          <span class="o">:</span> <span class="nx">newId</span>
+        <span class="s">&#39;assessmentId&#39;</span> <span class="o">:</span> <span class="nx">newId</span>
       <span class="nx">newAssessment</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
       <span class="nx">@collection</span><span class="p">.</span><span class="nx">add</span> <span class="nx">newAssessment</span>
       <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_name&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span><span class="si">}</span><span class="s"> saved&quot;</span>
