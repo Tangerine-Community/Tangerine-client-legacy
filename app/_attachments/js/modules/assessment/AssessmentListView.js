@@ -129,11 +129,14 @@ AssessmentListView = (function(_super) {
   };
 
   AssessmentListView.prototype.newAssessmentSave = function() {
-    var newAssessment;
+    var newAssessment, newId;
     if (this.newAssessmentValid) {
+      newId = Utils.guid();
       newAssessment = new Assessment({
         'name': this.$el.find('.new_assessment_name').val(),
-        'group': Tangerine.user.groups[0]
+        'group': Tangerine.user.groups[0],
+        '_id': newId,
+        'assessmentId': newId
       });
       newAssessment.save();
       this.collection.add(newAssessment);

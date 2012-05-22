@@ -105,9 +105,12 @@ class AssessmentListView extends Backbone.View
 
   newAssessmentSave: =>
     if @newAssessmentValid
+      newId = Utils.guid()
       newAssessment = new Assessment
-        'name' : @$el.find('.new_assessment_name').val()
-        'group' : Tangerine.user.groups[0]
+        'name'         : @$el.find('.new_assessment_name').val()
+        'group'        : Tangerine.user.groups[0]
+        '_id'          : newId
+        'assessmentId' : newId
       newAssessment.save()
       @collection.add newAssessment
       Utils.midAlert "#{@$el.find('.new_assessment_name').val()} saved"
