@@ -1,6 +1,10 @@
 class AccountView extends Backbone.View
 
+  events:
+    "click .klass" : "gotoKlass"
   
+  gotoKlass: ->
+    Tangerine.router.navigate "class", true
 
   initialize: ( options ) ->
     @model = options.model
@@ -8,7 +12,7 @@ class AccountView extends Backbone.View
   render: ->
     @$el.html "
       <h2>Account</h2>
-
+      <button class='klass'>Tangerine Class</button>
       <div class='label_value'>
         <label>Name</label>
         <p>#{@model.name}</p>
