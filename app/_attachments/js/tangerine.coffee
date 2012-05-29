@@ -1,10 +1,19 @@
 class Router extends Backbone.Router
   routes:
-    'login'   : 'login'
-    'logout'  : 'logout'
-    'account' : 'account'
+    'login'    : 'login'
+    'register' : 'register'
+    'logout'   : 'logout'
+    'account'  : 'account'
 
     'test' : 'test'
+
+    'class'          : 'klass'
+    'classes'        : 'klasses'
+    'class/register' : 'klassRegister'
+    'class/edit/:id' : 'klassEdit'
+
+    'student/edit/:id' : 'studentEdit'
+
 
     'setup' : 'setup'
 
@@ -24,8 +33,90 @@ class Router extends Backbone.Router
     
     'question/:id' : 'editQuestion'
 
+
+
   test: ->
+    
     console.log "insert tests"
+
+  klass: ->
+    Tangerine.user.verify
+      isRegistered: ->
+        view = new KlassMenuView
+        vm.show view
+      isUnregistered: ->
+        Tangerine.router.navigate "login", true
+
+  klasses: ->
+    Tangerine.user.verify
+      isRegistered: ->
+        console.log "is registered"
+        allKlasses = new Klasses
+        allKlasses.fetch
+          success: (collection) ->
+            console.log "fetched"
+            console.log collection
+            view = new KlassesView
+              klasses : collection
+            vm.show view
+
+  klassRegister: ->
+    Tangerine.user.verify
+      isRegistered: ->
+      
+      isUnregistered: ->
+        Tangerine.router.navigate "", true
+
+  klassEdit: (id) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        klass = new Klass _id : id
+        klass.fetch
+          success: ( model ) ->
+            allStudents = new Students
+            allStudents.fetch
+              success: (allStudents) ->
+                klassStudents = new Students allStudents.where {klassId : id}
+                view = new KlassEditView
+                  klass       : model
+                  students    : klassStudents
+                  allStudents : allStudents
+
+                vm.show view
+      isUnregistered: ->
+        Tangerine.router.navigate "", true
+
+
+  register: ->
+    Tangerine.user.verify
+      isUnregistered: ->
+        view = new RegisterTeacherView
+          user : new User
+        vm.show view
+      isRegistered: ->
+        Tangerine.router.navigate "", true
+
+
+  #
+  # Student
+  #
+
+  studentEdit: (id) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        student = new Student _id : id
+        student.fetch
+          success: (model) ->
+            allKlasses = new Klasses
+            allKlasses.fetch
+              success: ( klassCollection )->
+                view = new StudentEditView
+                  student : model
+                  klasses : klassCollection
+                vm.show view
+
+      isUnregistered: ->
+        Tangerine.router.navigate "", true
 
   #
   # Device
@@ -75,9 +166,6 @@ class Router extends Backbone.Router
           _id: id
         assessment.superFetch
           success : ( model ) ->
-            console.log "model name"
-            console.log model.attributes.name
-            console.log model
             view = new AssessmentEditView model: model
             vm.show view
           error: (details) ->
@@ -227,3 +315,4 @@ $ ->
 
   Backbone.history.start()
 
+  
