@@ -3,8 +3,10 @@ class Assessment extends Backbone.Model
   url: 'assessment'
 
   defaults:
-    name       : "Untitled"
-    group      : "default"
+    name         : "Untitled"
+    group        : "default"
+    assessmentId : "none"
+    classId      : "none"
     
   initialize: (options={}) ->
     # this collection doesn't get saved

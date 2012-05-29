@@ -16,7 +16,9 @@ Assessment = (function(_super) {
 
   Assessment.prototype.defaults = {
     name: "Untitled",
-    group: "default"
+    group: "default",
+    assessmentId: "none",
+    classId: "none"
   };
 
   Assessment.prototype.initialize = function(options) {

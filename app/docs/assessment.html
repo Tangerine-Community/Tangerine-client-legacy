@@ -3,8 +3,10 @@
   <span class="nv">url: </span><span class="s">&#39;assessment&#39;</span>
 
   <span class="nv">defaults:</span>
-    <span class="nv">name       : </span><span class="s">&quot;Untitled&quot;</span>
-    <span class="nv">group      : </span><span class="s">&quot;default&quot;</span>
+    <span class="nv">name         : </span><span class="s">&quot;Untitled&quot;</span>
+    <span class="nv">group        : </span><span class="s">&quot;default&quot;</span>
+    <span class="nv">assessmentId : </span><span class="s">&quot;none&quot;</span>
+    <span class="nv">classId      : </span><span class="s">&quot;none&quot;</span>
     
   <span class="nv">initialize: </span><span class="nf">(options={}) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>this collection doesn't get saved
 changes update the subtest view, it keeps order</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@subtests = </span><span class="k">new</span> <span class="nx">Subtests</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Hijacked success() for later
