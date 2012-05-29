@@ -8,8 +8,7 @@ class PrototypeSurveyView extends Backbone.View
     questions      = new Questions
     questions.fetch
       success: (collection) =>
-        filteredCollection = collection.where { subtestId : @model.id }
-        @questions = new Questions filteredCollection
+        @questions = new Questions collection.where { subtestId : @model.id }
         @questions.sort()
         @render()
 
