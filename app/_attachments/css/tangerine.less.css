@@ -961,6 +961,17 @@ label {
   margin: 10px 0;
 }
 /*
+ * Tangerine Class
+ */
+ul.klass_list li {
+  padding: 5px 0;
+  border-bottom: 1px solid #cccccc;
+}
+.student_list_element {
+  padding: 5px 0;
+  border-bottom: 1px solid #cccccc;
+}
+/*
  * cleditor
  */
 .cleditorMain {
