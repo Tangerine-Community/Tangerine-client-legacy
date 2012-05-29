@@ -18,9 +18,8 @@ class SubtestEditView extends Backbone.View
     @$el.find("#add_question_form").fadeToggle 250, =>
       if @$el.find("#add_question_form").is(":visible")
         @$el.find("#question_prompt").focus()
-
-      
     return false
+
   addQuestion: -> 
     newAttributes = $.extend Tangerine.config.questionTemplate,
       subtestId    : @model.id
@@ -34,20 +33,11 @@ class SubtestEditView extends Backbone.View
     @renderQuestions()
     @$el.find("#add_question_form input").val('')
     return false
-#      "options" : _.find( Tangerine.config.optionsTemplates, (template) ->
-#        return template.options if template.name == @$el.find("#add_question_select option:selected").val() )
-        
-        
-  closeSubViews: ->
-    for subView in @subViews
-      subView.close()
-  
+
   onClose: ->
-    @closeSubViews()
     @questionsListEdit?.close()
     
   initialize: ( options ) ->
-    @subViews = []
     @questionsEditView = null
     @model = options.model
     @config = Tangerine.config.subtest
@@ -57,6 +47,7 @@ class SubtestEditView extends Backbone.View
       @model.questions.fetch
         success: (collection, response) =>
           @model.questions = new Questions(collection.where {subtestId : @model.id })
+          @model.questions.maintainOrder()
           @questionsEditView = new QuestionsEditView
             questions : @model.questions
           @model.questions.on "change", @renderQuestions

@@ -55,26 +55,13 @@ SubtestEditView = (function(_super) {
     return false;
   };
 
-  SubtestEditView.prototype.closeSubViews = function() {
-    var subView, _i, _len, _ref, _results;
-    _ref = this.subViews;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      subView = _ref[_i];
-      _results.push(subView.close());
-    }
-    return _results;
-  };
-
   SubtestEditView.prototype.onClose = function() {
     var _ref;
-    this.closeSubViews();
     return (_ref = this.questionsListEdit) != null ? _ref.close() : void 0;
   };
 
   SubtestEditView.prototype.initialize = function(options) {
     var _this = this;
-    this.subViews = [];
     this.questionsEditView = null;
     this.model = options.model;
     this.config = Tangerine.config.subtest;
@@ -85,6 +72,7 @@ SubtestEditView = (function(_super) {
           _this.model.questions = new Questions(collection.where({
             subtestId: _this.model.id
           }));
+          _this.model.questions.maintainOrder();
           _this.questionsEditView = new QuestionsEditView({
             questions: _this.model.questions
           });
