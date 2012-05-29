@@ -1,0 +1,22 @@
+{
+  "_id": "TangerineClassExample-w01-letters",
+  "collection": "subtest",
+  "prototype": "grid",
+  "name" : "Letters",
+  "klassId" : "fffffffffffffffffffffffffffffffe",
+  "order" : 0,
+  "timer" : 30,
+  "autostop" : 0,
+  "columns" : 3,
+  "assessmentId" : "TangerineClassExample-w01",
+  "enumeratorHelp" : "",
+  "studentDialog" : "",
+  "items": [
+    "x",
+    "Q",
+    "k",
+    "j",
+    "d",
+    "w"
+  ]
+}
