@@ -11,6 +11,19 @@ CSVView = (function(_super) {
     CSVView.__super__.constructor.apply(this, arguments);
   }
 
+  CSVView.prototype.events = {
+    'click .option_reduce': 'toggleReduce'
+  };
+
+  CSVView.prototype.toggleReduce = function(event) {
+    var value;
+    value = $(event.target).val();
+    this.reduceExclusive = value === "true" ? true : false;
+    return this.initialize({
+      assessmentId: this.assessmentId
+    });
+  };
+
   CSVView.prototype.initialize = function(options) {
     var allResults,
       _this = this;
@@ -18,57 +31,86 @@ CSVView = (function(_super) {
     allResults = new Results;
     allResults.fetch({
       success: function(collection) {
-        var allSubtests;
+        var allQuestions;
         _this.results = collection.where({
           assessmentId: _this.assessmentId
         });
-        allSubtests = new Subtests;
-        return allSubtests.fetch({
+        allQuestions = new Questions;
+        return allQuestions.fetch({
           success: function(collection) {
-            var grid, grids, gridsByName, i, item, k, key, markIndex, newGridData, result, subtestKey, subtestValue, v, _i, _j, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4, _ref5;
-            grids = collection.where({
-              assessmentId: _this.assessmentId,
-              prototype: "grid"
+            var allSubtests, q, questions, _i, _len;
+            questions = collection.where({
+              assessmentId: _this.assessmentId
             });
-            gridsByName = {};
-            for (_i = 0, _len = grids.length; _i < _len; _i++) {
-              grid = grids[_i];
-              gridsByName[grid.attributes.name] = grid.attributes;
+            _this.singleQuestions = [];
+            for (_i = 0, _len = questions.length; _i < _len; _i++) {
+              q = questions[_i];
+              if (q.attributes.type === "single") {
+                _this.singleQuestions.push(q.attributes.name);
+              }
             }
-            _ref = _this.results;
-            for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
-              result = _ref[_j];
-              _ref2 = result.attributes.subtestData;
-              for (subtestKey in _ref2) {
-                subtestValue = _ref2[subtestKey];
-                if (subtestValue.data.letters_results != null) {
-                  newGridData = [];
-                  if (_.keys(subtestValue.data.letters_results).length !== gridsByName[subtestValue.name].items.length) {
-                    console.log("" + subtestValue.name + " reconstructing from mark_record");
-                    subtestValue.data.letters_results = [];
-                    _ref3 = gridsByName[subtestValue.name].items;
-                    for (i = 0, _len3 = _ref3.length; i < _len3; i++) {
-                      item = _ref3[i];
-                      subtestValue.data.letters_results[i] = {};
-                      subtestValue.data.letters_results[i][item] = i < parseInt(subtestValue.data.last_attempted) ? "correct" : "missing";
-                    }
-                    _ref4 = subtestValue.data.mark_record;
-                    for (i = 0, _len4 = _ref4.length; i < _len4; i++) {
-                      markIndex = _ref4[i];
-                      markIndex--;
-                      key = "";
-                      _ref5 = subtestValue.data.letters_results[markIndex];
-                      for (k in _ref5) {
-                        v = _ref5[k];
-                        key = k;
+            console.log(_this.singleQuestions);
+            allSubtests = new Subtests;
+            return allSubtests.fetch({
+              success: function(collection) {
+                var dataKey, dataValue, grid, grids, gridsByName, i, item, k, key, markIndex, newGridData, result, singleResult, subtestKey, subtestValue, v, _j, _k, _len2, _len3, _len4, _len5, _ref, _ref2, _ref3, _ref4, _ref5, _ref6;
+                grids = collection.where({
+                  assessmentId: _this.assessmentId,
+                  prototype: "grid"
+                });
+                gridsByName = {};
+                for (_j = 0, _len2 = grids.length; _j < _len2; _j++) {
+                  grid = grids[_j];
+                  gridsByName[grid.attributes.name] = grid.attributes;
+                }
+                _ref = _this.results;
+                for (_k = 0, _len3 = _ref.length; _k < _len3; _k++) {
+                  result = _ref[_k];
+                  _ref2 = result.attributes.subtestData;
+                  for (subtestKey in _ref2) {
+                    subtestValue = _ref2[subtestKey];
+                    if (subtestValue.data.letters_results != null) {
+                      newGridData = [];
+                      if (_.keys(subtestValue.data.letters_results).length !== gridsByName[subtestValue.name].items.length) {
+                        subtestValue.data.letters_results = [];
+                        _ref3 = gridsByName[subtestValue.name].items;
+                        for (i = 0, _len4 = _ref3.length; i < _len4; i++) {
+                          item = _ref3[i];
+                          subtestValue.data.letters_results[i] = {};
+                          subtestValue.data.letters_results[i][item] = i < parseInt(subtestValue.data.last_attempted) ? "correct" : "missing";
+                        }
+                        _ref4 = subtestValue.data.mark_record;
+                        for (i = 0, _len5 = _ref4.length; i < _len5; i++) {
+                          markIndex = _ref4[i];
+                          markIndex--;
+                          key = "";
+                          _ref5 = subtestValue.data.letters_results[markIndex];
+                          for (k in _ref5) {
+                            v = _ref5[k];
+                            key = k;
+                          }
+                          subtestValue.data.letters_results[markIndex][key] = subtestValue.data.letters_results[markIndex][key] === "correct" ? "incorrect" : "correct";
+                        }
                       }
-                      subtestValue.data.letters_results[markIndex][key] = subtestValue.data.letters_results[markIndex][key] === "correct" ? "incorrect" : "correct";
+                    }
+                    if (_this.reduceExclusive !== void 0 && _this.reduceExclusive !== null && _this.reduceExclusive !== false) {
+                      _ref6 = subtestValue.data;
+                      for (dataKey in _ref6) {
+                        dataValue = _ref6[dataKey];
+                        if (~_this.singleQuestions.indexOf(dataKey)) {
+                          for (k in dataValue) {
+                            v = dataValue[k];
+                            if (v === "checked") singleResult = k;
+                          }
+                          subtestValue.data[dataKey] = singleResult;
+                        }
+                      }
                     }
                   }
                 }
+                return _this.render();
               }
-            }
-            return _this.render();
+            });
           }
         });
       }
@@ -78,7 +120,7 @@ CSVView = (function(_super) {
   };
 
   CSVView.prototype.render = function() {
-    var dataKey, dataValue, firstIndex, i, itemCount, k, key, keyIndex, keys, metaKey, questionVariable, result, resultDataArray, row, subtestKey, subtestName, subtestValue, tableHTML, v, value, valueIndex, valueName, values, variableName, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+    var checkedString, dataKey, dataValue, firstIndex, i, itemCount, k, key, keyIndex, keys, metaKey, questionVariable, result, resultDataArray, row, subtestKey, subtestName, subtestValue, tableHTML, v, value, valueIndex, valueName, values, variableName, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
     if (this.results != null) {
       tableHTML = "";
       resultDataArray = [];
@@ -196,7 +238,9 @@ CSVView = (function(_super) {
       this.csv = this.$el.table2CSV({
         delivery: "value"
       });
-      this.$el.html("        <div id='csv_view'>        <h1>Result CSV</h1>        <textarea>" + this.csv + "</textarea><br>        <a href='data:text/octet-stream;base64," + (Base64.encode(this.csv)) + "' download='" + this.assessmentId + ".csv'>Download file</a>        (Right click and click <i>Save Link As...</i>)        </div>        ");
+      checkedString = "checked='checked'";
+      this.$el.html("        <div id='csv_view'>        <h1>Result CSV</h1>        <h2>Options</h2>        <div class='menu_box'>          <label>Reduce exclusive</label>          <div id='output_options'>            <label for='reduce_on'>On</label>            <input class='option_reduce' name='reduce' type='radio' value='true' id='reduce_on' " + (this.reduceExclusive ? checkedString : void 0) + ">            <label for='reduce_off'>Off</label>            <input class='option_reduce' name='reduce' type='radio' value='false' id='reduce_off' " + (!this.reduceExclusive ? checkedString : void 0) + ">          </div>        </div>        <textarea>" + this.csv + "</textarea><br>        <a href='data:text/octet-stream;base64," + (Base64.encode(this.csv)) + "' download='" + this.assessmentId + ".csv'>Download file</a>        (Right click and click <i>Save Link As...</i>)        </div>        ");
+      this.$el.find("#output_options").buttonset();
     }
     return this.trigger("rendered");
   };
