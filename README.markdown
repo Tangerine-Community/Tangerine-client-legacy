@@ -6,7 +6,7 @@ Tangerine is a couchapp (http://couchapp.org/page/index) that uses
 couchdb (http://couchdb.apache.org/) for a more streamlined process
 
 #### Getting Started - Mac
-This guide is for snow leopard, but Lion users shouldn't have too much trouble. 
+This guide is for snow leopard (Mac OS 10.6.x)
 
 ##### 1. Follow this tutorial
     http://moncefbelyamani.com/how-to-install-xcode-homebrew-git-rvm-ruby-on-mac/
