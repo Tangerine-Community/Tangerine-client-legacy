@@ -5,10 +5,10 @@ A tablet/phone application for assessing students
 Tangerine is a couchapp (http://couchapp.org/page/index) that uses 
 couchdb (http://couchdb.apache.org/) for a more streamlined process
 
-## Getting Started - Mac
+#### Getting Started - Mac
 This guide is for snow leopard, but Lion users shouldn't have too much trouble. 
 
-### 1. Follow this tutorial
+##### 1. Follow this tutorial
     http://moncefbelyamani.com/how-to-install-xcode-homebrew-git-rvm-ruby-on-mac/
 This should install xCode, homebrew, git, rvm, and ruby. 
 Install couchdb and couchapp from the sites above. 
@@ -23,7 +23,7 @@ Some known problems that can occur:
 - Error running 'make'
         Run all the updates for brew, git, ruby, etc.
 
-### 2. Install additional programs:
+##### 2. Install additional programs:
 Ruby
     rvm install 1.9.3
 Watchr
@@ -34,21 +34,21 @@ Couchapp
     sudo env ARCHFLAGS="-arch i386 -arch x86_64" pip install couchapp
 Install coffeescript (http://coffeescript.org) and node (http://nodejs.org)
 
-### 3. Build couchdb
+##### 3. Build couchdb
 Use one of the commands below:
     build/bin/couchdb
     ~/build-couchdb/build/bin/couchdb
 Note building couchdb may take upwards of an hour
 
-### 4. Get Tangerine
+##### 4. Get Tangerine
 Using github create a local clone of the tangerine repository.
 Note that the cloud version can be found at tangerine.iriscouch.com/tangerine
 
-### 5. Troubleshooting
+##### 5. Troubleshooting
 - With couchdb running, go to the localhost server and add /_util to the url. Register as an admin. 
 - You may need to get couchapprc and couchappignore from someone. 
 
-### 6. Ready to go
+##### 6. Ready to go
 With couchdb running, run watchr using 
     watchr file.watchr
 and use
