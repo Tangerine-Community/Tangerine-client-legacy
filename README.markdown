@@ -18,10 +18,11 @@ Use the command
 to make sure everything is correct. When you have all the above installed 
 and brew reports "Raring to Brew" you should be ready to move on.
 Some known problems that can occur:
-- Problem with the pathing of redundant config files. 
-        Solved by moving them away from the root directory. 
-- Error running 'make'
-        Run all the updates for brew, git, ruby, etc.
+- Problem: Problem with the pathing of redundant config files. 
+- Solution: Solved by moving them away from the root directory. 
+
+- Problem: Error running 'make'
+- Solution: Run all the updates for brew, git, ruby, etc.
 
 ##### 2. Install additional programs:
 Ruby
