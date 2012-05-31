@@ -45,11 +45,11 @@ Note building couchdb may take upwards of an hour
 Using github create a local clone of the tangerine repository.
 Note that the cloud version can be found at tangerine.iriscouch.com/tangerine
 
-##### 5. Troubleshooting
+##### 5. Troubleshooting Tips
 - With couchdb running, go to the localhost server and add /_util to the url. Register as an admin. 
 - You may need to get couchapprc and couchappignore from someone. 
 
-##### 6. Ready to go
+##### 6. Finish
 With couchdb running, run watchr using 
     watchr file.watchr
 and use
