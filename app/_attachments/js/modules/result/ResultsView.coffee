@@ -97,9 +97,7 @@ class ResultsView extends Backbone.View
     csvButton = "<button class='csv command'>CSV</button>"
 
     html = "
-      <h1>#{@assessment.get('name')}</h1>"
-
-    html += "
+      <h1>#{@assessment.get('name')}</h1>
       <h2>Save options</h2>
       <div class='menu_box'>
         #{if Tangerine.context.mobile then cloudButton  else ""}
@@ -120,6 +118,8 @@ class ResultsView extends Backbone.View
     "
     
     @$el.html html
+    
+    
     
     if @results?.length == 0
       @$el.append "No results yet!"

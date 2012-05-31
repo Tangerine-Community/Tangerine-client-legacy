@@ -28,13 +28,39 @@ class CSVView extends Backbone.View
               if q.attributes.type == "single"
                 @singleQuestions.push q.attributes.name
 
-            console.log @singleQuestions
-
             # unfortunate cleaning code
             allSubtests = new Subtests
             allSubtests.fetch 
               success: ( collection ) =>
             
+                # create first row
+                @surveyColumns = {}
+                subtests = collection.where { assessmentId : @assessmentId }
+
+                surveys = collection.where
+                  assessmentId : @assessmentId
+                  prototype    : "survey" 
+
+                questionsAdded = []
+                for subtest in surveys
+                  subtestName = subtest.attributes.name.toLowerCase().dasherize()
+                  @surveyColumns[subtestName] = []
+                  for question in allQuestions.where {subtestId:subtest.id}
+                    questionVariable = question.attributes.name.toLowerCase().dasherize()
+                    questionsAdded.push questionVariable
+                    if (@reduceExclusive? && @reduceExclusive == true) && (question.attributes.type == "single")
+                      @surveyColumns[subtestName].push subtestName + ":" + questionVariable
+                    else if question.attributes.type == "single"
+                      for option in question.attributes.options
+                        valueName = option.value
+                        @surveyColumns[subtestName].push subtestName + ":" + questionVariable + ":" + valueName
+                    else if question.attributes.type == "multiple"
+                      for option in question.attributes.options
+                        valueName = option.value
+                        @surveyColumns[subtestName].push subtestName + ":" + questionVariable + ":" + valueName
+                    else if question.attributes.type == "open"
+                      @surveyColumns[subtestName].push subtestName + ":" + questionVariable + ":" + question.attributes.name
+
                 # get all subtests that are grids in this assessment
                 grids = collection.where
                   assessmentId : @assessmentId
@@ -83,41 +109,54 @@ class CSVView extends Backbone.View
 
       keys = []
 
+      notFound = []
+
       for metaKey in @metaKeys
         keys.push metaKey
 
-      for subtestValue, i in @results[0].attributes.subtestData
-        subtestName =  subtestValue.name.toLowerCase().dasherize()
-        for dataKey, dataValue of subtestValue.data
-          if !(dataKey in @disallowedKeys)
-            if _.isObject(dataValue)
-              questionVariable = dataKey.toLowerCase().dasherize()
-              for key, value of dataValue
+      maxIndex = 0
+      maxSubtests = -1
+      for subtest, i in @results
+        subtestLength = subtest.attributes.subtestData.length
+        if subtestLength >= maxSubtests
+          maxSubtests = subtestLength
+          maxIndex = i
 
-                # this clause mark_record fix
-                if _.isObject(value) 
-                  for k, v of value
-                    valueName = k
-                    variableName = subtestName + ":" + questionVariable + ":" + valueName
-                    keys.push variableName
-                else
-                    valueName = key
-                    variableName = subtestName + ":" + questionVariable + ":" + valueName
-                    keys.push variableName
-            else
-              valueName = dataKey
-              variableName = subtestName + ":" + valueName
-              keys.push variableName
+      for subtestValue in @results[maxIndex].attributes.subtestData
+        subtestName = subtestValue.name.toLowerCase().dasherize()
+        if subtestName in _.keys(@surveyColumns)
+          keys = keys.concat(@surveyColumns[subtestName])
+        else
+          for dataKey, dataValue of subtestValue.data
+            if !(dataKey in @disallowedKeys)
+              if _.isObject(dataValue)
+                questionVariable = dataKey.toLowerCase().dasherize()
+                for key, value of dataValue
+
+                  # this clause mark_record fix
+                  if _.isObject(value) 
+                    for k, v of value
+                      valueName = k
+                      variableName = subtestName + ":" + questionVariable + ":" + valueName
+                      keys.push variableName
+                  else
+                      valueName = key
+                      variableName = subtestName + ":" + questionVariable + ":" + valueName
+                      keys.push variableName
+              else
+                valueName = dataKey
+                variableName = subtestName + ":" + valueName
+                keys.push variableName
 
       resultDataArray.push keys
 
-      for result in @results
+      for result, d in @results
         values = []
         for metaKey in @metaKeys
           values.push result.attributes[metaKey]
-          
-        for subtestKey, subtestValue of result.attributes.subtestData
-          subtestName =  subtestValue.name.toLowerCase().dasherize()
+        for subtestValue in result.attributes.subtestData
+          subtestName = subtestValue.name.toLowerCase().dasherize()
+
           for dataKey, dataValue of subtestValue.data
             if !(dataKey in @disallowedKeys)
               if _.isObject(dataValue)
@@ -125,41 +164,36 @@ class CSVView extends Backbone.View
                 itemCount = 0
                 for key, value of dataValue
                   if _.isObject(value)
+                    firstIndex = null
+                    for oneKey, keyIndex in keys
+                      firstIndex = keyIndex if ~oneKey.indexOf(subtestName + ":" + questionVariable) && firstIndex == null
+                    addedRecord = []
                     for k, v of value
                       valueName    = k
                       variableName = subtestName + ":" + questionVariable + ":" + valueName
+                      addedRecord.push variableName
                       valueIndex   = keys.indexOf(variableName)
-                      firstIndex = null
-                      for key, keyIndex in keys
-                        if ~key.indexOf(subtestName + ":" + questionVariable) && firstIndex == null
-                          firstIndex = keyIndex
                       values[firstIndex + itemCount] = v
                     itemCount++
                   else
-                    valueName = key
+                    valueName    = key
                     variableName = subtestName + ":" + questionVariable + ":" + valueName
-                    valueIndex = keys.indexOf(variableName)
-                    if keys.indexOf(variableName) == -1
-
-                    else
-                      values[valueIndex] = value
+                    valueIndex   = keys.indexOf(variableName)
+                    values[valueIndex] = value if keys.indexOf(variableName) != -1
               else
-                valueName = dataKey
+                valueName    = dataKey
                 variableName = subtestName + ":" + valueName
-                valueIndex = keys.indexOf(variableName)
-                if valueIndex == -1
-                  #console.log "error, inconsistency\n#{variableName} not in first row"
-                else
-                  values[valueIndex] = dataValue
-                #values.push dataValue
+                valueIndex   = keys.indexOf(variableName)
+                values[valueIndex] = dataValue if valueIndex != -1
 
         resultDataArray.push values
-    
 
-      for row in resultDataArray
+      for row, i in resultDataArray
         tableHTML += "<tr>"
-        for key, value of row
-          tableHTML += "<td>#{value}</td>"
+        count = 0
+        for index in [0..row.length]
+          tableHTML += "<td>#{row[index] || ""}</td>"
+          count++
         tableHTML += "</tr>"
 
       tableHTML = "<table>#{tableHTML}</table>"

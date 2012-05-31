@@ -120,8 +120,7 @@ ResultsView = (function(_super) {
     cloudButton = "<button class='cloud command' disabled='disabled'>Cloud</button>";
     tabletButton = "<button class='tablets command' disabled='disabled'>Tablets</button>";
     csvButton = "<button class='csv command'>CSV</button>";
-    html = "      <h1>" + (this.assessment.get('name')) + "</h1>";
-    html += "      <h2>Save options</h2>      <div class='menu_box'>        " + (Tangerine.context.mobile ? cloudButton : "") + "        " + (Tangerine.context.mobile ? tabletButton : "") + "        " + csvButton + "      </div>";
+    html = "      <h1>" + (this.assessment.get('name')) + "</h1>      <h2>Save options</h2>      <div class='menu_box'>        " + (Tangerine.context.mobile ? cloudButton : "") + "        " + (Tangerine.context.mobile ? tabletButton : "") + "        " + csvButton + "      </div>";
     if (Tangerine.context.mobile) {
       html += "        <button class='detect command'>Detect options</button>        <div class='status'>          <h2>Status</h2>          <div class='info_box'></div>        </div>        ";
     }
