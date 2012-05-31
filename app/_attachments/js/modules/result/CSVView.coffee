@@ -48,7 +48,7 @@ class CSVView extends Backbone.View
                 
                     if subtestValue.data.letters_results?
                       newGridData = []
-                      if _.keys(subtestValue.data.letters_results).length != gridsByName[subtestValue.name].items.length
+                      if gridsByName[subtestValue.name]? and _.keys(subtestValue.data.letters_results).length != gridsByName[subtestValue.name].items.length
                         subtestValue.data.letters_results = []
                         for item, i in gridsByName[subtestValue.name].items
                           subtestValue.data.letters_results[i] = {}
