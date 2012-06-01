@@ -146,7 +146,12 @@ class Router extends Backbone.Router
           assessmentId : id
         vm.show view
       isUser: ->
-        $("#content").html "<h1>You're not an admin user</h1><p>How did you get here?</p>"
+        console.log "JUST APPENDED TO CONTENT"
+        errView = new ErrorView
+          message : "You're not an admin user"
+          details : "How did you get here?"
+        vm.show errView
+
 
 
   #
