@@ -51,8 +51,10 @@ Note that the cloud version can be found at tangerine.iriscouch.com/tangerine
 
 ##### 6. Finish
 With couchdb running, run watchr using 
+
     watchr file.watchr
 and use
+
     couchapp push
 to push tangerine to your localhost server. Time to begin developing!
 
