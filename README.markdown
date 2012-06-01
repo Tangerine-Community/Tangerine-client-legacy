@@ -26,17 +26,22 @@ Some known problems that can occur:
 
 ##### 2. Install additional programs:
 Ruby
+
     rvm install 1.9.3
 Watchr
+
     gem install watchr
 Rake
+
     gem install rake
 Couchapp
+
     sudo env ARCHFLAGS="-arch i386 -arch x86_64" pip install couchapp
 Install coffeescript (http://coffeescript.org) and node (http://nodejs.org)
 
 ##### 3. Build couchdb
 Use one of the commands below:
+
     build/bin/couchdb
     ~/build-couchdb/build/bin/couchdb
 Note building couchdb may take upwards of an hour
