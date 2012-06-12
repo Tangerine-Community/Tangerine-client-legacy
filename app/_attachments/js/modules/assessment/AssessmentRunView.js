@@ -1,5 +1,4 @@
 var AssessmentRunView,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -8,21 +7,19 @@ AssessmentRunView = (function(_super) {
   __extends(AssessmentRunView, _super);
 
   function AssessmentRunView() {
-    this.restart = __bind(this.restart, this);
     AssessmentRunView.__super__.constructor.apply(this, arguments);
   }
 
   AssessmentRunView.prototype.initialize = function(options) {
-    var resultView,
-      _this = this;
     this.abortAssessment = false;
     this.index = 0;
     this.model = options.model;
-    this.result = new Result({
-      assessmentId: this.model.id,
-      assessmentName: this.model.get("name"),
-      starttime: (new Date()).getTime()
-    });
+    return this.initializeViews();
+  };
+
+  AssessmentRunView.prototype.initializeViews = function() {
+    var resultView,
+      _this = this;
     this.subtestViews = [];
     this.model.subtests.sort();
     this.model.subtests.each(function(model) {
@@ -31,17 +28,22 @@ AssessmentRunView = (function(_super) {
         parent: _this
       }));
     });
+    this.result = new Result({
+      assessmentId: this.model.id,
+      assessmentName: this.model.get("name"),
+      starttime: (new Date()).getTime()
+    });
     resultView = new ResultView({
       model: this.result,
       assessment: this.model,
       assessmentView: this
     });
-    resultView.on("assessment:restart", this.restart);
     return this.subtestViews.push(resultView);
   };
 
   AssessmentRunView.prototype.render = function() {
     var currentView;
+    if (this.index === 0 && (this.result != null)) this.initializeViews();
     currentView = this.subtestViews[this.index];
     if (this.model.subtests.length === 0) {
       this.$el.append("<h1>Oops...</h1><p>This assessment is blank. Perhaps you meant to add some subtests.</p>");
@@ -73,10 +75,6 @@ AssessmentRunView = (function(_super) {
   AssessmentRunView.prototype.abort = function() {
     this.abortAssessment = true;
     return this.next();
-  };
-
-  AssessmentRunView.prototype.restart = function() {
-    return alert('assessment restart not implemented');
   };
 
   AssessmentRunView.prototype.next = function() {

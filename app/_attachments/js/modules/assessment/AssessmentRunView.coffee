@@ -4,25 +4,31 @@ class AssessmentRunView extends Backbone.View
     @abortAssessment = false
     @index = 0
     @model = options.model
-    @result = new Result
-      assessmentId : @model.id
-      assessmentName : @model.get "name"
-      starttime : (new Date()).getTime()
+    @initializeViews()
 
+  initializeViews: ->
     @subtestViews = []
     @model.subtests.sort()
     @model.subtests.each (model) =>
       @subtestViews.push new SubtestRunView 
         model  : model
         parent : @
+    @result = new Result
+      assessmentId : @model.id
+      assessmentName : @model.get "name"
+      starttime : (new Date()).getTime()
     resultView = new ResultView
         model          : @result
         assessment     : @model
         assessmentView : @
-    resultView.on "assessment:restart", @restart
     @subtestViews.push resultView
-        
+  
   render: ->
+    # this prevents doubling up results
+    # the inefficiency is that it gets called twice the first time
+    if @index == 0 && @result?
+      @initializeViews()
+      
     currentView = @subtestViews[@index]
     
     if @model.subtests.length == 0
@@ -48,9 +54,6 @@ class AssessmentRunView extends Backbone.View
   abort: ->
     @abortAssessment = true
     @next()
-
-  restart: =>
-    alert 'assessment restart not implemented'
 
   next:->
     currentView = @subtestViews[@index]
