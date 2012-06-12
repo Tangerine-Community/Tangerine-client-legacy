@@ -181,6 +181,14 @@ Utils = (function() {
     }
   };
 
+  Utils.encode = function(s) {
+    return $("<div/>").text(s).html().replace("'", "&#39;").replace('"', "&#34;");
+  };
+
+  Utils.decode = function(s) {
+    return $("<div/>").html(s).text();
+  };
+
   Utils.flash = function() {
     $("body").css({
       "backgroundColor": "red"
@@ -199,9 +207,9 @@ Utils = (function() {
 Context = (function() {
 
   function Context() {
-    this.mobile = ~(String(window.location).indexOf("iriscouch")) ? false : true;
+    this.mobile = !~(String(window.location).indexOf("iriscouch"));
     this.kindle = /kindle/.test(navigator.userAgent.toLowerCase());
-    this.server = ~(String(window.location).indexOf("iriscouch")) ? true : false;
+    this.server = !!~(String(window.location).indexOf("iriscouch"));
   }
 
   return Context;

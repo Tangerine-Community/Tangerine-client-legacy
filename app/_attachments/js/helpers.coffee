@@ -132,6 +132,11 @@ class Utils
     e.innerHTML = input
     return if e.childNodes.length == 0 then "" else e.childNodes[0].nodeValue
 
+  # Handle html entities
+  @encode: (s) -> $("<div/>").text(s).html().replace("'", "&#39;").replace('"', "&#34;")
+  @decode: (s) -> $("<div/>").html(s).text()
+
+
   @flash: ->
     $("body").css "backgroundColor" : "red"
     setTimeout ->
@@ -141,10 +146,12 @@ class Utils
 
 class Context
   constructor: ->
-    @mobile = if ~(String(window.location).indexOf("iriscouch")) then false else true 
+    # false if it finds "iriscouch" in url
+    @mobile = !~(String(window.location).indexOf("iriscouch"))
+    # true if "kindle" is in userAgent
     @kindle = /kindle/.test(navigator.userAgent.toLowerCase())
-
-    @server = if ~(String(window.location).indexOf("iriscouch")) then true else false 
+    # true if it finds "iriscouch" in url
+    @server = !!~(String(window.location).indexOf("iriscouch"))
 
 ##UI helpers
 $ ->
