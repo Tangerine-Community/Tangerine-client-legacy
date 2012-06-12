@@ -37,7 +37,7 @@ class Assessment extends Backbone.Model
 
   # this is for the subtest edit back button, probably a better way
   superFetch: (options) =>
-    
+    # point of failure: this could break if coffeescript changes it's conventions
     Assessment.__super__.fetch.call @,
       success: (model) =>
         allSubtests = new Subtests
@@ -52,8 +52,7 @@ class Assessment extends Backbone.Model
     newModel = @clone()
 
     newModel.set assessmentAttributes
-    console.log "new model's attributes"
-    console.log newModel.attributes
+
     ##newModel.set "group", Tangerine.user.groups[0]
     newModel.set "_id", Utils.guid()
 
