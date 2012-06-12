@@ -20,16 +20,12 @@ Question = (function(_super) {
     order: 0,
     prompt: "Is this an example question?",
     hint: "[hint or answer]",
-    type: "",
+    type: "single",
     otherWriteIn: false,
     options: [],
     linkedGridScore: 0,
     skipLink: null,
     skipRequirement: null
-  };
-
-  Question.prototype.comparator = function(question) {
-    return question.get("order");
   };
 
   Question.prototype.initialize = function(options) {};

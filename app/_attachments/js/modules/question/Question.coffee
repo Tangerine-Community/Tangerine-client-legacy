@@ -13,13 +13,11 @@ class Question extends Backbone.Model
     hint   : "[hint or answer]"
 
     # main question types
-    type : ""
+    type : "single"
 
     # question features
     otherWriteIn : false
     options      : [] # tricky bit, contains `label`,`value` property
-
-    # Applicability
 
     # outside requirements
     linkedGridScore : 0
@@ -27,10 +25,6 @@ class Question extends Backbone.Model
     # Within subtest requirements
     skipLink        : null
     skipRequirement : null
-
-  comparator: (question) ->
-    question.get "order"
-  
 
   initialize: ( options )->
     

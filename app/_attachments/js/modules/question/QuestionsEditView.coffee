@@ -3,37 +3,26 @@ class QuestionsEditView extends Backbone.View
   tagName : "ul"
   className : "questions_edit_view"
   
-  events :
-    'click .edit' : 'edit'
-    'click .delete' : 'delete'
-
-  edit: (event) ->
-    id = $(event.target).parent().attr('data-id')
-    Tangerine.router.navigate "question/#{id}", true
-    return false
-
-  delete: (event) ->
-    id = $(event.target).parent().attr('data-id')
-    @questions.get(id).destroy() 
-    @render()
-    return false
-
   initialize: ( options ) ->
+    @views = []
     @questions = options.questions
 
-  render: ->
-    html = ""
-    for question, i in @questions.models
-      html += "
-        <li class='question_list_element' data-id='#{question.id}'>
-          <img src='images/icon_drag.png' class='sortable_handle'>
-            <span>#{question.get 'prompt'}</span> <span>[#{question.get 'name'}]</span>
-            <button class='edit command'>Edit</button>
-            <button class='delete command'>Delete</button>
-        </li>
-      "
+  onClose: ->
+    @closeViews()
 
-    @$el.html html
+  closeViews: ->
+    for view in @views
+      view.close()
+
+  render: =>
+    @closeViews()
+    for question, i in @questions.models
+      view = new QuestionsEditListElementView
+        "question" : question
+      @views.push view
+      view.on "deleted", @render
+      view.render()
+      @$el.append view.el
 
     # make it sortable
     @$el.sortable
@@ -41,4 +30,6 @@ class QuestionsEditView extends Backbone.View
       update : (event, ui) =>
         for id, i in ($(li).attr("data-id") for li in @$el.find("li.question_list_element"))
           oneQuestion = @questions.get(id)
+          console.log @questions.get(id).get("prompt")
           @questions.get(id).set({"order":i},{silent:true}).save(null,{silent:true})
+        #@render()

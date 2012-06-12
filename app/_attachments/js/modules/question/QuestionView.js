@@ -22,7 +22,7 @@ QuestionView = (function(_super) {
   QuestionView.prototype.initialize = function(options) {
     this.model = options.model;
     this.result = {};
-    this.name = this.model.get("name");
+    this.name = Utils.decode(this.model.get("name"));
     this.type = this.model.get("type");
     this.options = this.model.get("options");
     this.notAsked = options.notAsked;
@@ -46,18 +46,22 @@ QuestionView = (function(_super) {
     var i, option, _len, _len2, _ref, _ref2, _results, _results2;
     if (this.type === "open") {
       if (this.notAsked === true) {
-        console.log("not askresults");
         return this.result[this.name] = "not_asked";
       } else {
         return this.result[this.name] = this.$el.find("#" + this.cid + "_" + this.name).val();
       }
-    } else {
+    } else if (this.type === "single") {
+      if (this.notAsked === true) {
+        return this.result[this.name] = "not_asked";
+      } else {
+        return this.result[this.name] = this.$el.find("#" + this.cid + "_" + this.name + "_" + i).is(":checked") ? "checked" : "unchecked";
+      }
+    } else if (this.type === "multiple") {
       if (this.notAsked === true) {
         _ref = this.options;
         _results = [];
         for (i = 0, _len = _ref.length; i < _len; i++) {
           option = _ref[i];
-          console.log("not askresults");
           _results.push(this.result[this.options[i].value] = "not_asked");
         }
         return _results;

@@ -57,15 +57,12 @@ class AssessmentEditView extends Backbone.View
     model.destroy()
   
   initialize: (options) ->
-    console.log "new assessment says"
-    console.log options.model.attributes.name
     @views = []
     @model = options.model
     @model.subtests.on "change remove", @render
 
   render: =>
     arch = @model.get('archived')
-    console.log "the name is " + @model.get("name")
     archiveChecked    = if (arch == true or arch == 'true') then "checked" else ""
     notArchiveChecked = if archiveChecked then "" else "checked"
     @$el.html "
@@ -73,7 +70,7 @@ class AssessmentEditView extends Backbone.View
         <h1>Assessment Builder</h1>
       <div id='basic'>
         <label for='assessment_name'>Name</label>
-        <input id='assessment_name' value='#{@model.get("name")}'>
+        <input id='assessment_name' value='#{Utils.encode(@model.get("name"))}'>
         <button class='assessment_save confirmation'>Save</button>
 
         <label for='assessment_d_key'>Download Key</label>

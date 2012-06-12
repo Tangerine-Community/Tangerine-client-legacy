@@ -85,6 +85,7 @@ SubtestEditView = (function(_super) {
           _this.model.questions = new Questions(collection.where({
             subtestId: _this.model.id
           }));
+          _this.model.questions.maintainOrder();
           _this.questionsEditView = new QuestionsEditView({
             questions: _this.model.questions
           });
@@ -97,8 +98,9 @@ SubtestEditView = (function(_super) {
 
   SubtestEditView.prototype.renderQuestions = function() {
     var _ref, _ref2;
+    this.$el.find("#question_list_wrapper").empty();
     if ((_ref = this.questionsEditView) != null) _ref.render();
-    return this.$el.find("#question_list_wrapper").html((_ref2 = this.questionsEditView) != null ? _ref2.el : void 0);
+    return this.$el.find("#question_list_wrapper").append((_ref2 = this.questionsEditView) != null ? _ref2.el : void 0);
   };
 
   SubtestEditView.prototype.goBack = function() {
@@ -164,7 +166,7 @@ SubtestEditView = (function(_super) {
   SubtestEditView.prototype.render = function() {
     var autostop, columns, dialog, districtText, gridLinkId, help, items, name, nameText, prompt, prototype, provinceText, schoolIdText, skippable, subtests, timer,
       _this = this;
-    name = this.model.get("name");
+    name = Utils.encode(this.model.get("name"));
     prototype = this.model.get("prototype");
     help = this.model.get("enumeratorHelp") || "";
     dialog = this.model.get("studentDialog") || "";

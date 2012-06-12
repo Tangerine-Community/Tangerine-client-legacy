@@ -57,14 +57,16 @@ class SubtestEditView extends Backbone.View
       @model.questions.fetch
         success: (collection, response) =>
           @model.questions = new Questions(collection.where {subtestId : @model.id })
+          @model.questions.maintainOrder()
           @questionsEditView = new QuestionsEditView
             questions : @model.questions
           @model.questions.on "change", @renderQuestions
           @renderQuestions()
 
   renderQuestions: =>
+    @$el.find("#question_list_wrapper").empty()
     @questionsEditView?.render()
-    @$el.find("#question_list_wrapper").html @questionsEditView?.el
+    @$el.find("#question_list_wrapper").append @questionsEditView?.el
 
   goBack: =>
     Tangerine.router.navigate "edit-id/"+@model.get("assessmentId"), true
@@ -72,7 +74,7 @@ class SubtestEditView extends Backbone.View
   save: ->
     prototype = @model.get("prototype")
     @model.set
-      name : @$el.find("#subtest_name").val()
+      name           : @$el.find("#subtest_name").val()
       enumeratorHelp : @$el.find("#subtest_help").val()
       studentDialog  : @$el.find("#subtest_dialog").val()
       skippable      : @$el.find("#skip_radio input:radio[name=skippable]:checked").val()
@@ -116,7 +118,7 @@ class SubtestEditView extends Backbone.View
 
   # Wow I'm bad at using templates
   render: ->
-    name      = @model.get "name"
+    name      = Utils.encode @model.get "name"
     prototype = @model.get "prototype"
     help      = @model.get("enumeratorHelp") || ""
     dialog    = @model.get("studentDialog") || ""

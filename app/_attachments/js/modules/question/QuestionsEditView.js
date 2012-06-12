@@ -1,4 +1,5 @@
 var QuestionsEditView,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -7,6 +8,7 @@ QuestionsEditView = (function(_super) {
   __extends(QuestionsEditView, _super);
 
   function QuestionsEditView() {
+    this.render = __bind(this.render, this);
     QuestionsEditView.__super__.constructor.apply(this, arguments);
   }
 
@@ -14,40 +16,41 @@ QuestionsEditView = (function(_super) {
 
   QuestionsEditView.prototype.className = "questions_edit_view";
 
-  QuestionsEditView.prototype.events = {
-    'click .edit': 'edit',
-    'click .delete': 'delete'
-  };
-
-  QuestionsEditView.prototype.edit = function(event) {
-    var id;
-    id = $(event.target).parent().attr('data-id');
-    Tangerine.router.navigate("question/" + id, true);
-    return false;
-  };
-
-  QuestionsEditView.prototype["delete"] = function(event) {
-    var id;
-    id = $(event.target).parent().attr('data-id');
-    this.questions.get(id).destroy();
-    this.render();
-    return false;
-  };
-
   QuestionsEditView.prototype.initialize = function(options) {
+    this.views = [];
     return this.questions = options.questions;
   };
 
+  QuestionsEditView.prototype.onClose = function() {
+    return this.closeViews();
+  };
+
+  QuestionsEditView.prototype.closeViews = function() {
+    var view, _i, _len, _ref, _results;
+    _ref = this.views;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      view = _ref[_i];
+      _results.push(view.close());
+    }
+    return _results;
+  };
+
   QuestionsEditView.prototype.render = function() {
-    var html, i, question, _len, _ref,
+    var i, question, view, _len, _ref,
       _this = this;
-    html = "";
+    this.closeViews();
     _ref = this.questions.models;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       question = _ref[i];
-      html += "        <li class='question_list_element' data-id='" + question.id + "'>          <img src='images/icon_drag.png' class='sortable_handle'>            <span>" + (question.get('prompt')) + "</span> <span>[" + (question.get('name')) + "]</span>            <button class='edit command'>Edit</button>            <button class='delete command'>Delete</button>        </li>      ";
+      view = new QuestionsEditListElementView({
+        "question": question
+      });
+      this.views.push(view);
+      view.on("deleted", this.render);
+      view.render();
+      this.$el.append(view.el);
     }
-    this.$el.html(html);
     return this.$el.sortable({
       handle: '.sortable_handle',
       update: function(event, ui) {
@@ -66,6 +69,7 @@ QuestionsEditView = (function(_super) {
         for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
           id = _ref2[i];
           oneQuestion = _this.questions.get(id);
+          console.log(_this.questions.get(id).get("prompt"));
           _results.push(_this.questions.get(id).set({
             "order": i
           }, {
