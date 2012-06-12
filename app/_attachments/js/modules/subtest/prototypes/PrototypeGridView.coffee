@@ -23,7 +23,7 @@ class PrototypeGridView extends Backbone.View
     @resetVariables()
 
   gridClick: (event) ->
-    @modeHandlers[@mode](event)
+    @modeHandlers[@mode]?(event)
 
   markHandler: (event) =>
     $target = $(event.target)
