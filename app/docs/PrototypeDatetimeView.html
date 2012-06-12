@@ -19,16 +19,16 @@
 <span class="s">      &lt;form&gt;</span>
 <span class="s">          &lt;table&gt;</span>
 <span class="s">            &lt;tr&gt;</span>
-<span class="s">          &lt;td&gt;&lt;label for=&#39;year&#39;&gt;Year&lt;/label&gt;&lt;input type name=&#39;year&#39; value=&#39;</span><span class="si">#{</span><span class="nx">year</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/td&gt;</span>
-<span class="s">          &lt;td&gt;&lt;label for=&#39;month&#39;&gt;Month&lt;/label&gt;&lt;input type=&#39;month&#39; name=&#39;month&#39; value=&#39;</span><span class="si">#{</span><span class="nx">month</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/td&gt;</span>
-<span class="s">          &lt;td&gt;&lt;label for=&#39;day&#39;&gt;Day&lt;/label&gt;&lt;input type=&#39;day&#39; name=&#39;day&#39; value=&#39;</span><span class="si">#{</span><span class="nx">day</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/td&gt;</span>
-<span class="s">          &lt;/tr&gt;</span>
+<span class="s">              &lt;td&gt;&lt;label for=&#39;year&#39;&gt;Year&lt;/label&gt;&lt;input type name=&#39;year&#39; value=&#39;</span><span class="si">#{</span><span class="nx">year</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/td&gt;</span>
+<span class="s">              &lt;td&gt;&lt;label for=&#39;month&#39;&gt;Month&lt;/label&gt;&lt;input type=&#39;month&#39; name=&#39;month&#39; value=&#39;</span><span class="si">#{</span><span class="nx">month</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/td&gt;</span>
+<span class="s">              &lt;td&gt;&lt;label for=&#39;day&#39;&gt;Day&lt;/label&gt;&lt;input type=&#39;day&#39; name=&#39;day&#39; value=&#39;</span><span class="si">#{</span><span class="nx">day</span><span class="si">}</span><span class="s">&#39;&gt;&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
 <span class="s">          &lt;/table&gt;</span>
 <span class="s">          &lt;label for=&#39;time&#39;&gt;Time&lt;/label&gt;&lt;input type=&#39;text&#39; name=&#39;time&#39; value=&#39;</span><span class="si">#{</span><span class="nx">time</span><span class="si">}</span><span class="s">&#39;&gt;</span>
 <span class="s">      &lt;/form&gt;</span>
 <span class="s">      &quot;</span>
-
     <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+    
   <span class="nv">getSum: </span><span class="o">-&gt;</span>
     <span class="k">return</span> <span class="p">{</span>
       <span class="nv">correct: </span><span class="mi">1</span>

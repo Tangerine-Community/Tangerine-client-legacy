@@ -56,14 +56,16 @@
       <span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span><span class="p">.</span><span class="nx">fetch</span>
         <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span>
           <span class="vi">@model.questions = </span><span class="k">new</span> <span class="nx">Questions</span><span class="p">(</span><span class="nx">collection</span><span class="p">.</span><span class="nx">where</span> <span class="p">{</span><span class="nv">subtestId : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span> <span class="p">})</span>
+          <span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span><span class="p">.</span><span class="nx">maintainOrder</span><span class="p">()</span>
           <span class="vi">@questionsEditView = </span><span class="k">new</span> <span class="nx">QuestionsEditView</span>
             <span class="nv">questions : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span>
           <span class="nx">@model</span><span class="p">.</span><span class="nx">questions</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;change&quot;</span><span class="p">,</span> <span class="nx">@renderQuestions</span>
           <span class="nx">@renderQuestions</span><span class="p">()</span>
 
   <span class="nv">renderQuestions: </span><span class="o">=&gt;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">question_list_wrapper&quot;</span><span class="p">).</span><span class="nx">empty</span><span class="p">()</span>
     <span class="nx">@questionsEditView</span><span class="o">?</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">question_list_wrapper&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">@questionsEditView</span><span class="o">?</span><span class="p">.</span><span class="nx">el</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">question_list_wrapper&quot;</span><span class="p">).</span><span class="nx">append</span> <span class="nx">@questionsEditView</span><span class="o">?</span><span class="p">.</span><span class="nx">el</span>
 
   <span class="nv">goBack: </span><span class="o">=&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;edit-id/&quot;</span><span class="o">+</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;assessmentId&quot;</span><span class="p">),</span> <span class="kc">true</span>
@@ -71,7 +73,7 @@
   <span class="nv">save: </span><span class="o">-&gt;</span>
     <span class="nv">prototype = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;prototype&quot;</span><span class="p">)</span>
     <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
-      <span class="nv">name : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="nv">name           : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="nv">enumeratorHelp : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_help&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="nv">studentDialog  : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_dialog&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="nv">skippable      : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">skip_radio input:radio[name=skippable]:checked&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
@@ -110,7 +112,7 @@
       <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Save error&quot;</span>
       
     <span class="k">return</span> <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Wow I'm bad at using templates</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">render: </span><span class="o">-&gt;</span>
-    <span class="nv">name      = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
+    <span class="nv">name      = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">encode</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
     <span class="nv">prototype = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;prototype&quot;</span>
     <span class="nv">help      = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;enumeratorHelp&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
     <span class="nv">dialog    = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;studentDialog&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
