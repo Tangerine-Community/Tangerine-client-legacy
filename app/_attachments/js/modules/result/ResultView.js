@@ -18,7 +18,7 @@ ResultView = (function(_super) {
   };
 
   ResultView.prototype.another = function() {
-    return window.location.reload();
+    return Tangerine.router.navigate("restart/" + (this.assessment.get('name')), true);
   };
 
   ResultView.prototype.save = function() {

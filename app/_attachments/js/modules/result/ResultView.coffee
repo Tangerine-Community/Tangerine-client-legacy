@@ -3,14 +3,12 @@ class ResultView extends Backbone.View
   className: "result_view"
 
   events:
-    'click .save' : 'save'
+    'click .save'    : 'save'
     'click .another' : 'another'
 
 
   another: ->
-    window.location.reload()
-    #@trigger "assessment:restart"
-    #Tangerine.router.navigate "run/#{@assessment.get('name')}", {trigger:true,replace:true}
+    Tangerine.router.navigate "restart/#{@assessment.get('name')}", true
 
   save: ->
     if @$el.find('#additional_comments').val() != ""
