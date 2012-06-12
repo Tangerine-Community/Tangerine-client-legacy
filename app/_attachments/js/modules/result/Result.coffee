@@ -9,10 +9,10 @@ class Result extends Backbone.Model
   #   { correct, incorrect, missing, total }
   #   
 
-  defaults:
-    subtestData : []  
-
   initialize: ( options ) ->
+    # could use defaults but it messes things up
+    @set
+      subtestData : []
 
   add: ( subtestDataElement ) ->
     subtestData = @get 'subtestData'
