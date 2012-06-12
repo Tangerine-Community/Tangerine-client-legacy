@@ -38,7 +38,7 @@ Assessment = (function(_super) {
         for (_i = 0, _len = results.length; _i < _len; _i++) {
           assessment = results[_i];
           if (Tangerine.context.server) {
-            if (~Tangerine.user.groups.indexOf(assessment.get("group"))) {
+            if (~Tangerine.user.get("groups").indexOf(assessment.get("group"))) {
               _this.constructor(assessment.attributes);
             }
           } else {
