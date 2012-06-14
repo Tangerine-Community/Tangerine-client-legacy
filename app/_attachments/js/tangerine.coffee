@@ -144,9 +144,9 @@ class Router extends Backbone.Router
       isAdmin: ->
         view = new CSVView
           assessmentId : id
+          reduceExclusive : true
         vm.show view
       isUser: ->
-        console.log "JUST APPENDED TO CONTENT"
         errView = new ErrorView
           message : "You're not an admin user"
           details : "How did you get here?"

@@ -28,7 +28,64 @@ CSVView = (function(_super) {
   CSVView.prototype.initialize = function(options) {
     var allResults,
       _this = this;
+    this.reduceExclusive = options.reduceExclusive;
     this.assessmentId = Utils.cleanURL(options.assessmentId);
+    this.malawi2012EGRA = false;
+    if (this.assessmentId === "b6faf1dcbe0aac8e66fc4607aa2c348b") {
+      this.reduceExclusive = true;
+      this.malawi2012EGRA = true;
+      console.log("Malawi 2012 May EGRA");
+      this.replaceMapValues = {
+        "1": ["yes", "true", "TRUE", "True", "correct", "checked", "mkazi"],
+        "0": ["no", "false", "FALSE", "False", "incorrect", "unchecked", "mwamuna"],
+        ".": ["missing", "na", "Na", "NA", "undefined", "not_asked", "no_response", "skip"]
+      };
+      this.replaceMapKeys = {
+        "enumerator": "admin_name",
+        "starttime": "start_time",
+        "endtime": "end_time",
+        "date-and-time:year": "year",
+        "date-and-time:month": "month",
+        "date-and-time:day": "day",
+        "date-and-time:time": "assess_time",
+        "school:province": "region",
+        "school:district": "district",
+        "school:name": "school",
+        "school:school_id": "school_code",
+        "student-consent:participant_consents": "consent",
+        "student-information:school_shift": "shift",
+        "student-information:zaka_zakubadwa": "age",
+        "student-information:mkazi": "gender",
+        "letter-name:autostopped": "letter_auto_stop",
+        "letter-name:last_attempted": "letter_attempted",
+        "letter-name:time_remaining": "letter_time_remain",
+        "letter-name:time_elapsed": "NOT USED - time_elapsed",
+        "syllables:autostopped": "syllable_sound_auto_stop",
+        "syllables:last_attempted": "syllable_sound_attempted",
+        "syllables:time_remaining": "syllable_sound_time_remain",
+        "syllables:time_elapsed": "NOT USED - time_elapsed",
+        "invented-words:autostopped": "invent_word_auto_stop",
+        "invented-words:last_attempted": "invent_word_attempted",
+        "invented-words:time_remaining": "invent_word_time_remain",
+        "invented-words:time_elapsed": "NOT USED - time_elapsed",
+        "oral-passage-reading:autostopped": "oral_read_auto_stop",
+        "oral-passage-reading:last_attempted": "oral_read_attempted",
+        "oral-passage-reading:time_remaining": "oral_read_time_remain",
+        "oral-passage-reading:time_elapsed": "NOT USED - time_elapsed"
+      };
+      this.replaceWithNumbering = {
+        "initial-sounds": "pa_init_sound",
+        "letter-name:letters-results": "letter",
+        "syllables:letters-results": "syllable_sound",
+        "invented-words:letters-results": "invent_word",
+        "oral-passage-reading:letters-results": "oral_read_word",
+        "reading-comprehension:comp": "read_comp"
+      };
+      this.abnormalNamingTag = "pupil-context-interview";
+      this.abnormalNamingReplacement = "exit_interview";
+      this.alphabetLetters = ["", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"];
+      this.betweenColonsIgnore = [":lang-spec", ":Kodi kunyumba kwanu kuli zinthu ngati izi", ":16b"];
+    }
     allResults = new Results;
     allResults.fetch({
       success: function(collection) {
@@ -50,7 +107,6 @@ CSVView = (function(_super) {
                 _this.singleQuestions.push(q.attributes.name);
               }
             }
-            console.log(_this.singleQuestions);
             allSubtests = new Subtests;
             return allSubtests.fetch({
               success: function(collection) {
@@ -78,7 +134,7 @@ CSVView = (function(_super) {
                         for (i = _l = 0, _len3 = _ref2.length; _l < _len3; i = ++_l) {
                           item = _ref2[i];
                           subtestValue.data.letters_results[i] = {};
-                          subtestValue.data.letters_results[i][item] = i < parseInt(subtestValue.data.last_attempted) ? "correct" : "missing";
+                          subtestValue.data.letters_results[i][item] = i < parseInt(subtestValue.data.last_attempted) ? "checked" : "missing";
                         }
                         _ref3 = subtestValue.data.mark_record;
                         for (i = _m = 0, _len4 = _ref3.length; _m < _len4; i = ++_m) {
@@ -90,7 +146,7 @@ CSVView = (function(_super) {
                             v = _ref4[k];
                             key = k;
                           }
-                          subtestValue.data.letters_results[markIndex][key] = subtestValue.data.letters_results[markIndex][key] === "correct" ? "incorrect" : "correct";
+                          subtestValue.data.letters_results[markIndex][key] = subtestValue.data.letters_results[markIndex][key] === "checked" ? "unchecked" : "checked";
                         }
                       }
                     }
@@ -123,7 +179,7 @@ CSVView = (function(_super) {
   };
 
   CSVView.prototype.render = function() {
-    var checkedString, dataKey, dataValue, firstIndex, i, itemCount, k, key, keyIndex, keys, metaKey, questionVariable, result, resultDataArray, row, subtestKey, subtestName, subtestValue, tableHTML, v, value, valueIndex, valueName, values, variableName, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _m, _n, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+    var betweenColons, checkedString, dataKey, dataValue, firstIndex, i, index, indexFirstColon, indexLastColon, itemCount, k, key, keyIndex, keys, lastAbnormalReplace, lastNumberedReplace, letterIndex, mapKey, mapValue, metaKey, prefixTag, questionVariable, replacement, result, resultDataArray, row, rowNumber, subtestKey, subtestName, subtestValue, tableHTML, v, value, valueIndex, valueName, values, variableName, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     if (this.results != null) {
       tableHTML = "";
       resultDataArray = [];
@@ -133,40 +189,42 @@ CSVView = (function(_super) {
         metaKey = _ref[_i];
         keys.push(metaKey);
       }
-      _ref1 = this.results[0].attributes.subtestData;
-      for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
-        subtestValue = _ref1[i];
-        subtestName = subtestValue.name.toLowerCase().dasherize();
-        _ref2 = subtestValue.data;
-        for (dataKey in _ref2) {
-          dataValue = _ref2[dataKey];
-          if (!(__indexOf.call(this.disallowedKeys, dataKey) >= 0)) {
-            if (_.isObject(dataValue)) {
-              questionVariable = dataKey.toLowerCase().dasherize();
-              for (key in dataValue) {
-                value = dataValue[key];
-                if (_.isObject(value)) {
-                  for (k in value) {
-                    v = value[k];
-                    valueName = k;
+      if (this.results[0] != null) {
+        _ref1 = this.results[0].attributes.subtestData;
+        for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
+          subtestValue = _ref1[i];
+          subtestName = subtestValue.name.toLowerCase().dasherize();
+          _ref2 = subtestValue.data;
+          for (dataKey in _ref2) {
+            dataValue = _ref2[dataKey];
+            if (!(__indexOf.call(this.disallowedKeys, dataKey) >= 0)) {
+              if (_.isObject(dataValue)) {
+                questionVariable = dataKey.toLowerCase().dasherize();
+                for (key in dataValue) {
+                  value = dataValue[key];
+                  if (_.isObject(value)) {
+                    for (k in value) {
+                      v = value[k];
+                      valueName = k;
+                      variableName = subtestName + ":" + questionVariable + ":" + valueName;
+                      keys.push(variableName);
+                    }
+                  } else {
+                    valueName = key;
                     variableName = subtestName + ":" + questionVariable + ":" + valueName;
                     keys.push(variableName);
                   }
-                } else {
-                  valueName = key;
-                  variableName = subtestName + ":" + questionVariable + ":" + valueName;
-                  keys.push(variableName);
                 }
+              } else {
+                valueName = dataKey;
+                variableName = subtestName + ":" + valueName;
+                keys.push(variableName);
               }
-            } else {
-              valueName = dataKey;
-              variableName = subtestName + ":" + valueName;
-              keys.push(variableName);
             }
           }
         }
+        resultDataArray.push(keys);
       }
-      resultDataArray.push(keys);
       _ref3 = this.results;
       for (_k = 0, _len2 = _ref3.length; _k < _len2; _k++) {
         result = _ref3[_k];
@@ -176,63 +234,131 @@ CSVView = (function(_super) {
           metaKey = _ref4[_l];
           values.push(result.attributes[metaKey]);
         }
-        _ref5 = result.attributes.subtestData;
-        for (subtestKey in _ref5) {
-          subtestValue = _ref5[subtestKey];
-          subtestName = subtestValue.name.toLowerCase().dasherize();
-          _ref6 = subtestValue.data;
-          for (dataKey in _ref6) {
-            dataValue = _ref6[dataKey];
-            if (!(__indexOf.call(this.disallowedKeys, dataKey) >= 0)) {
-              if (_.isObject(dataValue)) {
-                questionVariable = dataKey.toLowerCase().dasherize();
-                itemCount = 0;
-                for (key in dataValue) {
-                  value = dataValue[key];
-                  if (_.isObject(value)) {
-                    for (k in value) {
-                      v = value[k];
-                      valueName = k;
+        if (result != null) {
+          _ref5 = result.attributes.subtestData;
+          for (subtestKey in _ref5) {
+            subtestValue = _ref5[subtestKey];
+            subtestName = subtestValue.name.toLowerCase().dasherize();
+            _ref6 = subtestValue.data;
+            for (dataKey in _ref6) {
+              dataValue = _ref6[dataKey];
+              if (!(__indexOf.call(this.disallowedKeys, dataKey) >= 0)) {
+                if (_.isObject(dataValue)) {
+                  questionVariable = dataKey.toLowerCase().dasherize();
+                  itemCount = 0;
+                  for (key in dataValue) {
+                    value = dataValue[key];
+                    if (_.isObject(value)) {
+                      for (k in value) {
+                        v = value[k];
+                        valueName = k;
+                        variableName = subtestName + ":" + questionVariable + ":" + valueName;
+                        valueIndex = keys.indexOf(variableName);
+                        firstIndex = null;
+                        for (keyIndex = _m = 0, _len4 = keys.length; _m < _len4; keyIndex = ++_m) {
+                          key = keys[keyIndex];
+                          if (~key.indexOf(subtestName + ":" + questionVariable) && firstIndex === null) {
+                            firstIndex = keyIndex;
+                          }
+                        }
+                        values[firstIndex + itemCount] = v;
+                      }
+                      itemCount++;
+                    } else {
+                      valueName = key;
                       variableName = subtestName + ":" + questionVariable + ":" + valueName;
                       valueIndex = keys.indexOf(variableName);
-                      firstIndex = null;
-                      for (keyIndex = _m = 0, _len4 = keys.length; _m < _len4; keyIndex = ++_m) {
-                        key = keys[keyIndex];
-                        if (~key.indexOf(subtestName + ":" + questionVariable) && firstIndex === null) {
-                          firstIndex = keyIndex;
-                        }
+                      if (keys.indexOf(variableName) !== -1) {
+                        values[valueIndex] = value;
                       }
-                      values[firstIndex + itemCount] = v;
-                    }
-                    itemCount++;
-                  } else {
-                    valueName = key;
-                    variableName = subtestName + ":" + questionVariable + ":" + valueName;
-                    valueIndex = keys.indexOf(variableName);
-                    if (keys.indexOf(variableName) === -1) {
-
-                    } else {
-                      values[valueIndex] = value;
                     }
                   }
-                }
-              } else {
-                valueName = dataKey;
-                variableName = subtestName + ":" + valueName;
-                valueIndex = keys.indexOf(variableName);
-                if (valueIndex === -1) {
-
                 } else {
-                  values[valueIndex] = dataValue;
+                  valueName = dataKey;
+                  variableName = subtestName + ":" + valueName;
+                  valueIndex = keys.indexOf(variableName);
+                  if (valueIndex === -1) {
+
+                  } else {
+                    values[valueIndex] = dataValue;
+                  }
+                }
+              }
+            }
+          }
+          resultDataArray.push(values);
+        }
+      }
+      for (rowNumber in resultDataArray) {
+        row = resultDataArray[rowNumber];
+        if (this.malawi2012EGRA) {
+          if (rowNumber === "0") {
+            lastNumberedReplace = "**TRASHVALUE**";
+            lastAbnormalReplace = "**TRASHVALUE**";
+            index = 0;
+            letterIndex = 0;
+            _ref7 = resultDataArray[0];
+            for (i in _ref7) {
+              key = _ref7[i];
+              if (this.replaceMapKeys[key] != null) {
+                resultDataArray[0][i] = this.replaceMapKeys[key];
+                index = 0;
+              } else {
+                _ref8 = this.replaceWithNumbering;
+                for (prefixTag in _ref8) {
+                  replacement = _ref8[prefixTag];
+                  if (~key.indexOf(prefixTag)) {
+                    if (lastNumberedReplace === prefixTag) {
+                      index++;
+                    } else {
+                      lastNumberedReplace = prefixTag;
+                      index = 1;
+                    }
+                    resultDataArray[0][i] = replacement + index.toString();
+                  }
+                }
+                if (~key.indexOf(this.abnormalNamingTag)) {
+                  if (lastNumberedReplace !== this.abnormalNamingTag) {
+                    index = 0;
+                    lastNumberedReplace = this.abnormalNamingTag;
+                  }
+                  indexFirstColon = key.indexOf(":");
+                  indexLastColon = key.lastIndexOf(":");
+                  betweenColons = key.substring(indexFirstColon, indexLastColon);
+                  if (indexFirstColon === indexLastColon || ~this.betweenColonsIgnore.indexOf(betweenColons)) {
+                    index++;
+                    letterIndex = 0;
+                  } else if (betweenColons !== lastAbnormalReplace) {
+                    letterIndex = 1;
+                    index++;
+                    lastAbnormalReplace = betweenColons;
+                  } else {
+                    letterIndex++;
+                    if (letterIndex === 1) {
+                      index++;
+                    }
+                  }
+                  resultDataArray[0][i] = this.abnormalNamingReplacement + index.toString() + this.alphabetLetters[letterIndex];
+                }
+              }
+            }
+          } else {
+            _ref9 = resultDataArray[rowNumber];
+            for (i in _ref9) {
+              value = _ref9[i];
+              _ref10 = this.replaceMapValues;
+              for (mapKey in _ref10) {
+                mapValue = _ref10[mapKey];
+                if (_.isBoolean(value)) {
+                  value = value.toString();
+                }
+                if (~_.indexOf(mapValue, value)) {
+                  resultDataArray[rowNumber][i] = mapKey;
                 }
               }
             }
           }
         }
-        resultDataArray.push(values);
-      }
-      for (_n = 0, _len5 = resultDataArray.length; _n < _len5; _n++) {
-        row = resultDataArray[_n];
         tableHTML += "<tr>";
         for (key in row) {
           value = row[key];

@@ -207,13 +207,13 @@ Router = (function(_super) {
       isAdmin: function() {
         var view;
         view = new CSVView({
-          assessmentId: id
+          assessmentId: id,
+          reduceExclusive: true
         });
         return vm.show(view);
       },
       isUser: function() {
         var errView;
-        console.log("JUST APPENDED TO CONTENT");
         errView = new ErrorView({
           message: "You're not an admin user",
           details: "How did you get here?"
