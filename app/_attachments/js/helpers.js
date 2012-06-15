@@ -200,13 +200,14 @@ Utils = (function() {
     }, 1000);
   };
 
-  Utils.get = function(q, s) {
-    var re;
-    s = s != null ? s : {
-      s: window.location.search
-    };
-    re = new RegExp('&' + q + '(?:=([^&]*))?(?=&|$)', 'i');
-    return (s=s.replace(/^?/,'&').match(re)) ? (typeof s[1] == 'undefined' ? '' : decodeURIComponent(s[1])) : undefined;
+  Utils.$_GET = function(q, s) {
+    var parts, vars;
+    vars = {};
+    parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+      value = ~value.indexOf("#") ? value.split("#")[0] : value;
+      return vars[key] = value.split("#")[0];
+    });
+    return vars;
   };
 
   return Utils;

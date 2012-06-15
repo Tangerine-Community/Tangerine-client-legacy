@@ -143,10 +143,13 @@ class Utils
       $("body").css "backgroundColor" : "white"
     , 1000
 
-  @get: (q,s) ->
-    s = s ? s : window.location.search
-    re = new RegExp('&'+q+'(?:=([^&]*))?(?=&|$)','i')
-    `(s=s.replace(/^?/,'&').match(re)) ? (typeof s[1] == 'undefined' ? '' : decodeURIComponent(s[1])) : undefined`
+  @$_GET: (q,s) ->
+    vars = {}
+    parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m,key,value) ->
+        value = if ~value.indexOf("#") then value.split("#")[0] else value
+        vars[key] = value.split("#")[0];
+    )
+    vars
 
 
 class Context
