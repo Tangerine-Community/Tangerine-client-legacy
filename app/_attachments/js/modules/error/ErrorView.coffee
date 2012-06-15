@@ -5,7 +5,6 @@ class ErrorView extends Backbone.View
     @details = options.details
 
   render: ->
-    console.log "rendering error"
     @$el.html "
     <h2>Oops</h2>
     <p>#{@message}</p>

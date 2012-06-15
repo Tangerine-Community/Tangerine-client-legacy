@@ -16,7 +16,6 @@ ErrorView = (function(_super) {
   };
 
   ErrorView.prototype.render = function() {
-    console.log("rendering error");
     this.$el.html("    <h2>Oops</h2>    <p>" + this.message + "</p>    <p>Sorry about that.</p>    <p>" + this.details + "</p>    ");
     return this.trigger("rendered");
   };
