@@ -9,6 +9,11 @@ class LoginView extends Backbone.View
   initialize: (options) ->
     @model = Tangerine.user
     @model.on "change:messages", @renderMessages
+    @model.on "change:authentication", @goOn
+
+  goOn: ->
+    Tangerine.router.navigate "", true
+
 
   render: =>
     width = $('#content').width()
