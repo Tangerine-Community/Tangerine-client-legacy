@@ -21,7 +21,7 @@
   <span class="nv">showSave: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.assessment_save&#39;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
 
   <span class="nv">back: </span><span class="o">-&gt;</span>
-    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="kc">true</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">back</span><span class="p">()</span>
 
   <span class="nv">updateModel: </span><span class="o">=&gt;</span>
     <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>

@@ -21,7 +21,7 @@ class AssessmentEditView extends Backbone.View
   showSave: -> @$el.find('.assessment_save').fadeIn(250)
 
   back: ->
-    Tangerine.router.navigate "", true
+    window.history.back()
 
   updateModel: =>
     @model.set

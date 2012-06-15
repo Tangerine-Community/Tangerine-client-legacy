@@ -43,7 +43,7 @@ AssessmentEditView = (function(_super) {
   };
 
   AssessmentEditView.prototype.back = function() {
-    return Tangerine.router.navigate("", true);
+    return window.history.back();
   };
 
   AssessmentEditView.prototype.updateModel = function() {
