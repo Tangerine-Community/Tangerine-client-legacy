@@ -20,9 +20,13 @@ class GroupsView extends Backbone.View
       <h1>Groups</h1>
     "
 
-    for group, i in groups
-      console.log group
-      html += "<button class='command goto' data-group='#{group}'>#{group}</button>"
+    if groups.length == 0
+      html += "You are not yet a member of a group. Go to Account to join a group."
+    else 
+      for group, i in groups
+        console.log group
+        html += "<button class='command goto' data-group='#{group}'>#{group}</button>"
+
 
     @$el.html html
     @trigger "rendered"

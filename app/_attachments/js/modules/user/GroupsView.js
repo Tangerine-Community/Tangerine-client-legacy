@@ -29,10 +29,14 @@ GroupsView = (function(_super) {
     var group, groups, html, i, _len;
     groups = Tangerine.user.get("groups");
     html = "      <button class='account navigation'>Account</button>      <h1>Groups</h1>    ";
-    for (i = 0, _len = groups.length; i < _len; i++) {
-      group = groups[i];
-      console.log(group);
-      html += "<button class='command goto' data-group='" + group + "'>" + group + "</button>";
+    if (groups.length === 0) {
+      html += "You are not yet a member of a group. Go to Account to join a group.";
+    } else {
+      for (i = 0, _len = groups.length; i < _len; i++) {
+        group = groups[i];
+        console.log(group);
+        html += "<button class='command goto' data-group='" + group + "'>" + group + "</button>";
+      }
     }
     this.$el.html(html);
     return this.trigger("rendered");

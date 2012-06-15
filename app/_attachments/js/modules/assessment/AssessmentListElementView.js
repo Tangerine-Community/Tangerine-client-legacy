@@ -51,7 +51,7 @@ AssessmentListElementView = (function(_super) {
   AssessmentListElementView.prototype.copyToGroup = function() {
     var _this = this;
     return this.model.duplicate({
-      group: Tangerine.user.groups[0]
+      group: Tangerine.user.get("groups")[0]
     }, null, null, function() {
       _this.render();
       return _this.parent.refresh();

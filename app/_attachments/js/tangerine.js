@@ -14,10 +14,12 @@ Router = (function(_super) {
     'login': 'login',
     'logout': 'logout',
     'account': 'account',
-    'test': 'test',
+    'transfer': 'transfer',
     'setup': 'setup',
-    '': 'assessments',
+    '': 'groups',
+    'groups': 'groups',
     'assessments': 'assessments',
+    'assessments/:group': 'assessments',
     'dashboard': 'dashboard',
     'edit-id/:id': 'editId',
     'run/:name': 'run',
@@ -29,8 +31,71 @@ Router = (function(_super) {
     'question/:id': 'editQuestion'
   };
 
-  Router.prototype.test = function() {
-    return console.log("insert tests");
+  Router.prototype.transfer = function() {
+    var getVars, name,
+      _this = this;
+    getVars = Utils.$_GET();
+    name = getVars.name;
+    return $.couch.logout({
+      success: function() {
+        $.cookie("AuthSession", null);
+        return $.couch.login({
+          "name": name,
+          "password": name,
+          success: function() {
+            Tangerine.router.navigate("");
+            return window.location.reload();
+          },
+          error: function() {
+            return $.couch.signup({
+              "name": name,
+              "roles": ["_admin"]
+            }, name, {
+              success: function() {
+                return $.couch.login({
+                  "name": name,
+                  "password": name,
+                  success: function() {
+                    Tangerine.router.navigate("");
+                    return window.location.reload();
+                  },
+                  error: function() {
+                    var view;
+                    view = new ErrorView({
+                      message: "There was a username collision",
+                      details: ""
+                    });
+                    return vm.show(view);
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+  };
+
+  Router.prototype.groups = function(a, b, c) {
+    if (!Tangerine.context.server) {
+      return Tangerine.router.navigate("assessments", true);
+    } else {
+      return Tangerine.user.verify({
+        isAdmin: function() {
+          var groups, view;
+          groups = Tangerine.user.get("groups");
+          if (groups.length === 1 && (window.location.hash = "")) {
+            return Tangerine.router.navigate("assessments/" + groups[0], true);
+          } else {
+            view = new GroupsView;
+            return vm.show(view);
+          }
+        },
+        isUnregistered: function() {
+          return Tangerine.router.navigate("login", true);
+        }
+      });
+    }
   };
 
   Router.prototype.setup = function() {
@@ -71,17 +136,25 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.assessments = function() {
-    return Tangerine.user.verify({
-      isRegistered: function() {
-        var assessments;
-        assessments = new AssessmentListView;
-        return vm.show(assessments);
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
-      }
-    });
+  Router.prototype.assessments = function(group) {
+    if (group == null) group = null;
+    console.log("testing");
+    if (group === null && Tangerine.context.server) {
+      return Tangerine.router.navigate("groups", true);
+    } else {
+      return Tangerine.user.verify({
+        isRegistered: function() {
+          var assessments;
+          assessments = new AssessmentListView({
+            group: group
+          });
+          return vm.show(assessments);
+        },
+        isUnregistered: function() {
+          return Tangerine.router.navigate("login", true);
+        }
+      });
+    }
   };
 
   Router.prototype.editId = function(id) {
@@ -95,9 +168,6 @@ Router = (function(_super) {
         return assessment.superFetch({
           success: function(model) {
             var view;
-            console.log("model name");
-            console.log(model.attributes.name);
-            console.log(model);
             view = new AssessmentEditView({
               model: model
             });
@@ -155,6 +225,10 @@ Router = (function(_super) {
         return Tangerine.router.navigate("login", true);
       }
     });
+  };
+
+  Router.prototype.restart = function(name) {
+    return Tangerine.router.navgate("run/" + name, true);
   };
 
   Router.prototype.run = function(name) {
@@ -293,7 +367,7 @@ Router = (function(_super) {
       isRegistered: function() {
         var view;
         view = new AccountView({
-          model: Tangerine.user
+          user: Tangerine.user
         });
         return vm.show(view);
       },
@@ -301,6 +375,12 @@ Router = (function(_super) {
         return Tangerine.router.navigate("login", true);
       }
     });
+  };
+
+  Router.prototype.logs = function() {
+    var view;
+    view = new LogView;
+    return vm.show(view);
   };
 
   return Router;
@@ -315,5 +395,12 @@ $(function() {
     user: Tangerine.user,
     router: Tangerine.router
   });
-  return Backbone.history.start();
+  return Tangerine.user.fetch({
+    success: function() {
+      return Backbone.history.start();
+    },
+    error: function() {
+      return Backbone.history.start();
+    }
+  });
 });

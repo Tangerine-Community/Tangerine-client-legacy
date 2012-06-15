@@ -6,14 +6,17 @@ class AssessmentListView extends Backbone.View
     'click .new_assessment_cancel' : 'newAssessmentHide'
     'click .new_assessment'        : 'newAssessmentShow'
     'click .import'                : 'import'
+    'click .groups'                : 'gotoGroups'
 
+  gotoGroups: ->
+    Tangerine.router.navigate "groups", true
 
   import: ->
     Tangerine.router.navigate "import", true
 
   initialize:(options) ->
+    @group = options.group
     @isAdmin = Tangerine.user.isAdmin()
-    console.log "is admin " + @isAdmin
     @views = []
     @publicViews = []
     @refresh()
@@ -25,9 +28,9 @@ class AssessmentListView extends Backbone.View
         # maybe this isn't the best place for a filter
         # only applies to this list
         groupCollection = []
-        collection.each (model) ->
+        collection.each (model) =>
           if Tangerine.context.server
-            if ~Tangerine.user.groups.indexOf(model.get("group"))
+            if model.get("group") == @group
               groupCollection.push model
           else
             groupCollection.push model
@@ -46,12 +49,18 @@ class AssessmentListView extends Backbone.View
     @closeViews()
     @views = []
 
+    newButton    = "<button class='new_assessment command'>New</button>"
+    importButton = "<button class='import command'>Import</button>"
+    groupsButton = "<button class='navigation groups'>Groups</button>"
+
     html = "
+      #{if Tangerine.context.server then groupsButton else ""}
       <h1>Assessments</h1>
       "
     if @isAdmin
       html += "
-        <button class='new_assessment command'>New</button><button class='import command'>Import</button>
+        #{newButton}
+        #{if Tangerine.context.mobile then importButton else ""}
         <form class='new_assessment_form'>
           <input type='text' class='new_assessment_name' placeholder='Assessment Name'>
           <button class='new_assessment_save'>Save</button>
@@ -108,9 +117,10 @@ class AssessmentListView extends Backbone.View
       newId = Utils.guid()
       newAssessment = new Assessment
         'name'         : @$el.find('.new_assessment_name').val()
-        'group'        : Tangerine.user.groups[0]
+        'group'        : @group
         '_id'          : newId
         'assessmentId' : newId
+        
       newAssessment.save()
       @collection.add newAssessment
       Utils.midAlert "#{@$el.find('.new_assessment_name').val()} saved"
