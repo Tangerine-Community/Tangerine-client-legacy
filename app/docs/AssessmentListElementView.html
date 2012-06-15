@@ -29,7 +29,7 @@
       <span class="nx">@parent</span><span class="p">.</span><span class="nx">refresh</span><span class="p">()</span>
 
   <span class="nv">copyToGroup: </span><span class="o">-&gt;</span>
-    <span class="nx">@model</span><span class="p">.</span><span class="nx">duplicate</span> <span class="p">{</span><span class="nx">group</span><span class="o">:</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]},</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="o">=&gt;</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">duplicate</span> <span class="p">{</span><span class="nx">group</span><span class="o">:</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;groups&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]},</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="o">=&gt;</span>
       <span class="nx">@render</span><span class="p">()</span>
       <span class="nx">@parent</span><span class="p">.</span><span class="nx">refresh</span><span class="p">()</span>
 

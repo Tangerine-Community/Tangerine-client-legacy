@@ -13,7 +13,7 @@
 
   <span class="nv">save: </span><span class="o">=&gt;</span>
     <span class="nx">@updateModel</span><span class="p">()</span>
-    <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span> 
+    <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span><span class="p">({</span><span class="nx">wait</span><span class="o">:</span><span class="kc">true</span><span class="p">})</span> 
       <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Assessment saved&quot;</span> 
       <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;edit/&quot;</span><span class="o">+</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">),</span> <span class="kc">true</span>
       <span class="nx">@render</span><span class="p">()</span>
@@ -27,6 +27,7 @@
     <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
       <span class="nv">archived : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">archive_buttons input:checked&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="nv">name     : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">assessment_name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="nv">group    : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">assessment_group&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="nv">dKey     : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">assessment_d_key&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="nv">assessmentId : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span>
 
@@ -65,6 +66,10 @@
 <span class="s">      &lt;div id=&#39;basic&#39;&gt;</span>
 <span class="s">        &lt;label for=&#39;assessment_name&#39;&gt;Name&lt;/label&gt;</span>
 <span class="s">        &lt;input id=&#39;assessment_name&#39; value=&#39;</span><span class="si">#{</span><span class="nx">Utils</span><span class="p">.</span><span class="nx">encode</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">))</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+
+<span class="s">        &lt;label for=&#39;assessment_group&#39;&gt;Group&lt;/label&gt;</span>
+<span class="s">        &lt;input id=&#39;assessment_group&#39; value=&#39;</span><span class="si">#{</span><span class="nx">Utils</span><span class="p">.</span><span class="nx">encode</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;group&quot;</span><span class="p">))</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+
 <span class="s">        &lt;button class=&#39;assessment_save confirmation&#39;&gt;Save&lt;/button&gt;</span>
 
 <span class="s">        &lt;label for=&#39;assessment_d_key&#39;&gt;Download Key&lt;/label&gt;</span>

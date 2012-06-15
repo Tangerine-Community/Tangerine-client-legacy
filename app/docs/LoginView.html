@@ -9,6 +9,11 @@
   <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
     <span class="vi">@model = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span>
     <span class="nx">@model</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;change:messages&quot;</span><span class="p">,</span> <span class="nx">@renderMessages</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;change:authentication&quot;</span><span class="p">,</span> <span class="nx">@goOn</span>
+
+  <span class="nv">goOn: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
 
   <span class="nv">render: </span><span class="o">=&gt;</span>
     <span class="nv">width = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#content&#39;</span><span class="p">).</span><span class="nx">width</span><span class="p">()</span>

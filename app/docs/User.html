@@ -8,12 +8,10 @@ $.couch.session needs to be async: false</p>             </td>             <td c
     <span class="nv">roles       : </span><span class="p">[]</span>
     <span class="nv">groups      : </span><span class="p">[</span><span class="s">&quot;default&quot;</span><span class="p">]</span>
 
-  <span class="nv">initialize: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>these aren't <code>set</code> because we don't want them to save with the model
+  <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>these aren't <code>set</code> because we don't want them to save with the model
 they're handled by couchdb, so we have to load them manually</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@name = </span><span class="nx">@default</span><span class="p">.</span><span class="nx">name</span>
-    <span class="vi">@roles = </span><span class="nx">@default</span><span class="p">.</span><span class="nx">roles</span>
-    <span class="vi">@groups = </span><span class="p">[]</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>these aren't <code>set</code> because they're temporary</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@messages = </span><span class="p">[]</span>
+    <span class="vi">@roles = </span><span class="nx">@default</span><span class="p">.</span><span class="nx">roles</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>these aren't <code>set</code> because they're temporary</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@messages = </span><span class="p">[]</span>
     <span class="vi">@temp = </span><span class="p">{}</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>get the current user</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@fetch</span><span class="p">()</span>
 
   <span class="nv">signup: </span><span class="nf">( name, pass ) -&gt;</span>
     <span class="nx">$</span><span class="p">.</span><span class="nx">couch</span><span class="p">.</span><span class="nx">signup</span> <span class="p">{</span> <span class="nv">name : </span><span class="nx">name</span> <span class="p">},</span> <span class="nx">pass</span><span class="p">,</span>
@@ -43,22 +41,21 @@ they're handled by couchdb, so we have to load them manually</p>             </t
         <span class="vi">@roles  = </span><span class="nx">user</span><span class="p">.</span><span class="nx">roles</span>
         <span class="nx">@fetch</span>
           <span class="nv">success: </span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="o">=&gt;</span>
-            <span class="vi">@groups = </span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;groups&quot;</span>
+            <span class="nx">@clearAttempt</span><span class="p">()</span>
+            <span class="nx">@trigger</span> <span class="s">&quot;change:authentication&quot;</span>
 
-        <span class="nx">@clearAttempt</span><span class="p">()</span>
-        <span class="nx">@trigger</span> <span class="s">&quot;change:authentication&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>any way not to have this here?</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="kc">true</span>
       <span class="nv">error: </span><span class="p">(</span> <span class="nx">status</span><span class="p">,</span> <span class="nx">error</span><span class="p">,</span> <span class="nx">message</span> <span class="p">)</span> <span class="o">=&gt;</span>
         <span class="vi">@name  = </span><span class="nx">@default</span><span class="p">.</span><span class="nx">name</span>
         <span class="vi">@roles = </span><span class="nx">@default</span><span class="p">.</span><span class="nx">roles</span>
-        <span class="vi">@groups = </span><span class="nx">@default</span><span class="p">.</span><span class="nx">groups</span>
         <span class="k">if</span> <span class="nx">@temp</span><span class="p">.</span><span class="nx">intent</span><span class="o">?</span> <span class="o">&amp;&amp;</span> <span class="nx">@temp</span><span class="p">.</span><span class="nx">intent</span> <span class="o">==</span> <span class="s">&quot;retry_login&quot;</span>
           <span class="nx">@addMessage</span> <span class="nx">message</span>
         <span class="k">else</span> 
           <span class="vi">@temp.intent = </span><span class="s">&quot;login&quot;</span>
-          <span class="nx">@signup</span> <span class="nx">@temp</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">@temp</span><span class="p">.</span><span class="nx">pass</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>@callbacks Supports isAdmin, isUser, isRegistered, isUnregistered</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">verify: </span><span class="nf">( callbacks ) -&gt;</span>
+          <span class="nx">@signup</span> <span class="nx">@temp</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">@temp</span><span class="p">.</span><span class="nx">pass</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>@callbacks Supports isAdmin, isUser, isRegistered, isUnregistered</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">verify: </span><span class="nf">( callbacks ) -&gt;</span>
     <span class="k">if</span> <span class="nx">@name</span> <span class="o">==</span> <span class="kc">null</span>
       <span class="k">if</span> <span class="nx">callbacks</span><span class="o">?</span><span class="p">.</span><span class="nx">isUnregistered</span><span class="o">?</span>
         <span class="nx">callbacks</span><span class="p">.</span><span class="nx">isUnregistered</span><span class="p">()</span>
+      <span class="k">else</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
     <span class="k">else</span>
       <span class="nx">callbacks</span><span class="o">?</span><span class="p">.</span><span class="nx">isRegistered</span><span class="o">?</span><span class="p">()</span>
@@ -67,26 +64,40 @@ they're handled by couchdb, so we have to load them manually</p>             </t
       <span class="k">else</span>
         <span class="nx">callbacks</span><span class="o">?</span><span class="p">.</span><span class="nx">isUser</span><span class="o">?</span><span class="p">()</span>
 
-  <span class="nv">fetch: </span><span class="nf">(options) -&gt;</span>
-    <span class="k">super</span><span class="p">(</span> <span class="nx">options</span> <span class="p">)</span>
+  <span class="nv">fetch: </span><span class="nf">(options={}) -&gt;</span>
     <span class="nx">$</span><span class="p">.</span><span class="nx">couch</span><span class="p">.</span><span class="nx">session</span>
       <span class="nv">success: </span><span class="p">(</span> <span class="nx">resp</span> <span class="p">)</span> <span class="o">=&gt;</span>
         <span class="k">if</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">userCtx</span><span class="p">.</span><span class="nx">name</span> <span class="o">!=</span> <span class="kc">null</span>
-          <span class="vi">@id = </span><span class="nx">resp</span><span class="p">.</span><span class="nx">userCtx</span><span class="p">.</span><span class="nx">name</span>
+          <span class="vi">@id = </span><span class="s">&quot;tangerine.user:&quot;</span><span class="o">+</span><span class="nx">resp</span><span class="p">.</span><span class="nx">userCtx</span><span class="p">.</span><span class="nx">name</span>
           <span class="vi">@name = </span><span class="nx">resp</span><span class="p">.</span><span class="nx">userCtx</span><span class="p">.</span><span class="nx">name</span>
           <span class="vi">@roles = </span><span class="p">[]</span>
-          <span class="vi">@groups = </span><span class="p">[]</span>
-          
+
           <span class="k">for</span> <span class="nx">role</span> <span class="k">in</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">userCtx</span><span class="p">.</span><span class="nx">roles</span>
-            <span class="nv">groupName = </span><span class="nx">role</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s">&quot;group.&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nx">$</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">groupName</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">groupName</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span>
-              <span class="nx">@groups</span><span class="p">.</span><span class="nx">push</span> <span class="nx">groupName</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">else</span>
+            <span class="k">if</span> <span class="o">!~</span><span class="nx">role</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&quot;group.&quot;</span><span class="p">)</span>
               <span class="nx">@roles</span><span class="p">.</span><span class="nx">push</span> <span class="nx">role</span>
-          <span class="nx">@trigger</span> <span class="s">&quot;change:authentication&quot;</span>
+          <span class="nx">User</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">fetch</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">@</span><span class="p">,</span> 
+            <span class="nv">success: </span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">,</span><span class="nx">c</span><span class="p">)</span> <span class="o">=&gt;</span>
+              <span class="nx">options</span><span class="p">.</span><span class="nx">success</span><span class="o">?</span><span class="p">()</span>
+            <span class="nv">error: </span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">,</span><span class="nx">c</span><span class="p">)</span> <span class="o">=&gt;</span>
+              <span class="nx">@save</span>
+                <span class="s">&quot;_id&quot;</span>    <span class="o">:</span> <span class="nx">@id</span>
+                <span class="s">&quot;groups&quot;</span> <span class="o">:</span> <span class="p">[]</span>
+              <span class="p">,</span>
+                <span class="s">&quot;wait&quot;</span>   <span class="o">:</span> <span class="kc">true</span>
+              <span class="nx">User</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">fetch</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">@</span><span class="p">,</span>
+                <span class="nv">success: </span><span class="o">=&gt;</span>
+                  <span class="nx">options</span><span class="p">.</span><span class="nx">success</span><span class="o">?</span><span class="p">()</span>
+                <span class="nv">error: </span><span class="o">=&gt;</span>
+                  <span class="k">throw</span> <span class="s">&quot;User model fetch error&quot;</span>
+              <span class="p">)</span>
+          <span class="p">)</span>
+        <span class="k">else</span>
+          <span class="nx">options</span><span class="p">.</span><span class="nx">success</span><span class="o">?</span><span class="p">()</span>
+
       <span class="nv">error: </span><span class="nf">( status, error, reason ) -&gt;</span>
         <span class="nx">@trigger</span> <span class="s">&quot;change:authentication&quot;</span>
         <span class="k">throw</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">status</span><span class="si">}</span><span class="s"> Session Error\n</span><span class="si">#{</span><span class="nx">error</span><span class="si">}</span><span class="s">\n</span><span class="si">#{</span><span class="nx">reason</span><span class="si">}</span><span class="s">&quot;</span>
+
 
 
   <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
@@ -98,13 +109,23 @@ they're handled by couchdb, so we have to load them manually</p>             </t
         <span class="nx">$</span><span class="p">.</span><span class="nx">cookie</span> <span class="s">&quot;AuthSession&quot;</span><span class="p">,</span> <span class="kc">null</span>
         <span class="vi">@name  = </span><span class="nx">@default</span><span class="p">.</span><span class="nx">name</span>
         <span class="vi">@roles = </span><span class="nx">@default</span><span class="p">.</span><span class="nx">roles</span>
-        <span class="vi">@groups = </span><span class="nx">@default</span><span class="p">.</span><span class="nx">groups</span>
         <span class="nx">@clear</span><span class="p">()</span>
         <span class="nx">@trigger</span> <span class="s">&quot;change:authentication&quot;</span>
+        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">clearAttempt: </span><span class="o">-&gt;</span>
     <span class="vi">@temp = </span><span class="nx">@default</span><span class="p">.</span><span class="nx">temp</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Groups</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">joinGroup: </span><span class="nf">(group) -&gt;</span>
+    <span class="nv">groups = </span><span class="nx">@get</span> <span class="s">&quot;groups&quot;</span>
+    <span class="k">if</span> <span class="o">!~</span><span class="nx">groups</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">group</span><span class="p">)</span>
+      <span class="nx">groups</span><span class="p">.</span><span class="nx">push</span> <span class="nx">group</span>
+      <span class="nx">@save</span> <span class="s">&quot;groups&quot;</span> <span class="o">:</span> <span class="nx">groups</span>
   
+  <span class="nv">leaveGroup: </span><span class="nf">(group) -&gt;</span>
+    <span class="nv">groups = </span><span class="nx">@get</span> <span class="s">&quot;groups&quot;</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nx">groups</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">group</span><span class="p">)</span>
+      <span class="nv">groups = </span><span class="nx">_</span><span class="p">.</span><span class="nx">without</span> <span class="nx">groups</span><span class="p">,</span> <span class="nx">group</span>
+      <span class="nx">@save</span> <span class="s">&quot;groups&quot;</span> <span class="o">:</span> <span class="nx">groups</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Mensajes</p>             </td>             <td class="code">               <div class="highlight"><pre>  
   <span class="nv">addMessage: </span>   <span class="nf">( content ) -&gt;</span> <span class="nx">@set</span> <span class="s">&quot;messages&quot;</span><span class="p">,</span> <span class="nx">@get</span><span class="p">(</span><span class="s">&quot;messages&quot;</span><span class="p">).</span><span class="nx">push</span> <span class="nx">content</span>
   <span class="nv">showMessage: </span>  <span class="nf">( content ) -&gt;</span> <span class="nx">@set</span> <span class="s">&quot;messages&quot;</span><span class="p">,</span> <span class="p">[</span> <span class="nx">content</span> <span class="p">]</span>
   <span class="nv">clearMessages: </span><span class="nf">( content ) -&gt;</span> <span class="nx">@set</span> <span class="s">&quot;messages&quot;</span><span class="p">,</span> <span class="p">[</span> <span class="p">]</span>
