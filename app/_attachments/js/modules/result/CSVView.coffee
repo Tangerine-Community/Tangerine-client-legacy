@@ -39,27 +39,27 @@ class CSVView extends Backbone.View
         "school:province" : "region"
         "school:district" : "district"
         "school:name" : "school"
-        "school:school_id" : "school_code"
-        "student-consent:participant_consents" : "consent"
-        "student-information:school_shift" : "shift"
-        "student-information:zaka_zakubadwa" : "age"
+        "school:school-id" : "school_code"
+        "student-consent:participant-consents" : "consent"
+        "student-information:school-shift" : "shift"
+        "student-information:zaka-zakubadwa" : "age"
         "student-information:mkazi" : "gender"
         "letter-name:autostopped" : "letter_auto_stop"
-        "letter-name:last_attempted" : "letter_attempted"
-        "letter-name:time_remaining" : "letter_time_remain"
-        "letter-name:time_elapsed" : "NOT USED - time_elapsed"
+        "letter-name:last-attempted" : "letter_attempted"
+        "letter-name:time-remaining" : "letter_time_remain"
+        "letter-name:time-elapsed" : "NOT USED - time_elapsed"
         "syllables:autostopped" : "syllable_sound_auto_stop"
-        "syllables:last_attempted" : "syllable_sound_attempted"
-        "syllables:time_remaining" : "syllable_sound_time_remain"
-        "syllables:time_elapsed" : "NOT USED - time_elapsed"
+        "syllables:last-attempted" : "syllable_sound_attempted"
+        "syllables:time-remaining" : "syllable_sound_time_remain"
+        "syllables:time-elapsed" : "NOT USED - time_elapsed"
         "invented-words:autostopped" : "invent_word_auto_stop"
-        "invented-words:last_attempted" : "invent_word_attempted"
-        "invented-words:time_remaining" : "invent_word_time_remain"
-        "invented-words:time_elapsed" : "NOT USED - time_elapsed"
+        "invented-words:last-attempted" : "invent_word_attempted"
+        "invented-words:time-remaining" : "invent_word_time_remain"
+        "invented-words:time-elapsed" : "NOT USED - time_elapsed"
         "oral-passage-reading:autostopped" : "oral_read_auto_stop"
-        "oral-passage-reading:last_attempted" : "oral_read_attempted"
-        "oral-passage-reading:time_remaining" : "oral_read_time_remain"
-        "oral-passage-reading:time_elapsed" : "NOT USED - time_elapsed"
+        "oral-passage-reading:last-attempted" : "oral_read_attempted"
+        "oral-passage-reading:time-remaining" : "oral_read_time_remain"
+        "oral-passage-reading:time-elapsed" : "NOT USED - time_elapsed"
         "student-information:stream:stream" : "section"
 
 
@@ -80,7 +80,7 @@ class CSVView extends Backbone.View
       
       # Used to give letters to exit_interviews
       @alphabetLetters = ["", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"]
-      @betweenColonsIgnore = [":lang-spec", ":Kodi kunyumba kwanu kuli zinthu ngati izi", ":16b"]
+      @betweenColonsIgnore = [":lang-spec", ":kodi-kunyumba-kwanu-kuli-zinthu-ngati-izi", ":16b"]
     
     # This is where the real work starts
     
@@ -114,7 +114,7 @@ class CSVView extends Backbone.View
                 for subtest in surveys
                   subtestName = subtest.attributes.name.toLowerCase().dasherize()
                   @surveyColumns[subtestName] = []
-                  for question in allQuestions.where {subtestId:subtest.id}
+                  for question in allQuestions.where { subtestId : subtest.id }
                     questionVariable = question.attributes.name.toLowerCase().dasherize()
                     if @reduceExclusive? && @reduceExclusive == true && question.attributes.type == "single"
                       @surveyColumns[subtestName].push subtestName + ":" + questionVariable
@@ -171,7 +171,7 @@ class CSVView extends Backbone.View
     
 
   render: ->
-    if @results?
+    if @results? && @results[0]?
       tableHTML = ""
 
       resultDataArray = []
@@ -181,10 +181,19 @@ class CSVView extends Backbone.View
       for metaKey in @metaKeys
         keys.push metaKey
 
-      if @results[0]?   # If there's no data, avoid crashing
-        for subtestValue, i in @results[0].attributes.subtestData
-          subtestName =  subtestValue.name.toLowerCase().dasherize()
+      maxIndex = 0
+      maxSubtests = -1
+      for subtest, i in @results
+        subtestLength = subtest.attributes.subtestData.length
+        if subtestLength >= maxSubtests
+          maxSubtests = subtestLength
+          maxIndex = i
 
+      for subtestValue in @results[maxIndex].attributes.subtestData
+        subtestName = subtestValue.name.toLowerCase().dasherize()
+        if subtestName in _.keys(@surveyColumns)
+          keys = keys.concat(@surveyColumns[subtestName])
+        else
           for dataKey, dataValue of subtestValue.data
             if !(dataKey in @disallowedKeys)
               if _.isObject(dataValue)
@@ -193,31 +202,22 @@ class CSVView extends Backbone.View
 
                   # this clause mark_record fix
                   if _.isObject(value) 
-                    firstIndex = null
-                    for oneKey, keyIndex in keys
-                      firstIndex = keyIndex if ~oneKey.indexOf(subtestName + ":" + questionVariable) && firstIndex == null
                     for k, v of value
                       valueName = k
                       variableName = subtestName + ":" + questionVariable + ":" + valueName
-                      valueIndex   = keys.indexOf(variableName)
-                      values[firstIndex + itemCount] = v
-                      #console.log "3rd level: " + variableName
-                    itemCount++
+                      keys.push variableName
                   else
-                    valueName    = key
-                    variableName = subtestName + ":" + questionVariable + ":" + valueName
-                    valueIndex   = keys.indexOf(variableName)
-                    #console.log "2nd level: " + variableName
-                    values[valueIndex] = value if keys.indexOf(variableName) != -1
+                      valueName = key
+                      variableName = subtestName + ":" + questionVariable + ":" + valueName
+                      keys.push variableName
               else
-                valueName    = dataKey.toLowerCase().dasherize()
+                valueName = dataKey.toLowerCase().dasherize()
                 variableName = subtestName + ":" + valueName
                 keys.push variableName
-        
-        
-        resultDataArray.push keys
 
-      for result in @results
+      resultDataArray.push keys
+
+      for result, d in @results
         values = []
         for metaKey in @metaKeys
           values.push result.attributes[metaKey]
@@ -235,6 +235,7 @@ class CSVView extends Backbone.View
                       for k, v of value
                         valueName    = k
                         variableName = subtestName + ":" + questionVariable + ":" + valueName
+                        #console.log "1st level: #{variableName}"
                         valueIndex   = keys.indexOf(variableName)
                         firstIndex = null
                         for key, keyIndex in keys
@@ -245,17 +246,18 @@ class CSVView extends Backbone.View
                     else
                       valueName = key
                       variableName = subtestName + ":" + questionVariable + ":" + valueName
+                      #console.log "2nd level: #{variableName}"
                       valueIndex = keys.indexOf(variableName)
                       if keys.indexOf(variableName) != -1
                         values[valueIndex] = value
                 else
-                  valueName = dataKey
+                  valueName = dataKey.toLowerCase().dasherize()
                   variableName = subtestName + ":" + valueName
+                  #console.log "3rd level: #{variableName}"
                   valueIndex   = keys.indexOf(variableName)
                   values[valueIndex] = dataValue if valueIndex != -1
 
         resultDataArray.push values
-      
       
       for rowNumber, row of resultDataArray
         
@@ -267,7 +269,6 @@ class CSVView extends Backbone.View
             index = 0
             letterIndex = 0
             for i, key of resultDataArray[0]
-            
               if @replaceMapKeys[key]? # Is it a simple substitute?
                 resultDataArray[0][i] = @replaceMapKeys[key]
                 index = 0
@@ -309,16 +310,15 @@ class CSVView extends Backbone.View
               for mapKey, mapValue of @replaceMapValues
                 if _.isBoolean(value) # Handle values that pretend to be a boolean
                   value = value.toString()
-                if ~_.indexOf(mapValue, value) # Can we convert it?
+                if ~mapValue.indexOf(value) # Can we convert it?
                   resultDataArray[rowNumber][i] = mapKey
         
         # End Taylor's Edits for Malawi 2012 EGRA May
-        
 
       for row, i in resultDataArray
         tableHTML += "<tr>"
         count = 0
-        for index in [0..row.length]
+        for index in [0..row.length-1]
           tableHTML += "<td>#{row[index]}</td>"
           count++
         tableHTML += "</tr>"
