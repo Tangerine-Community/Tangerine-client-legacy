@@ -28,7 +28,8 @@ Router = (function(_super) {
     'results/:name': 'results',
     'import': 'import',
     'subtest/:id': 'editSubtest',
-    'question/:id': 'editQuestion'
+    'question/:id': 'editQuestion',
+    'report/:name': 'report'
   };
 
   Router.prototype.transfer = function() {
@@ -137,7 +138,9 @@ Router = (function(_super) {
   };
 
   Router.prototype.assessments = function(group) {
-    if (group == null) group = null;
+    if (group == null) {
+      group = null;
+    }
     console.log("testing");
     if (group === null && Tangerine.context.server) {
       return Tangerine.router.navigate("groups", true);
@@ -292,6 +295,21 @@ Router = (function(_super) {
           details: "How did you get here?"
         });
         return vm.show(errView);
+      }
+    });
+  };
+
+  Router.prototype.report = function(id) {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var view;
+        view = new ReportView({
+          assessmentId: id
+        });
+        return vm.show(view);
+      },
+      isUnregistered: function(options) {
+        return Tangerine.router.navigate("login", true);
       }
     });
   };

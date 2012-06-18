@@ -1,0 +1,24 @@
+<!DOCTYPE html>  <html> <head>   <title>ReportView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               ReportView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>Taylor's class!</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">ReportView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+  
+  <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
+    <span class="vi">@assessmentId = </span><span class="nx">options</span><span class="p">.</span><span class="nx">assessmentId</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;Initializing ReportView: &quot;</span> <span class="o">+</span> <span class="nx">@assessmentId</span>
+    
+    <span class="nv">allResults = </span><span class="k">new</span> <span class="nx">Results</span>
+    <span class="nx">allResults</span><span class="p">.</span><span class="nx">fetch</span>
+      <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">collection</span>
+        <span class="vi">@grids = </span><span class="nx">collection</span><span class="p">.</span><span class="nx">where</span>
+          <span class="nv">assessmentId : </span><span class="nx">@assessmentId</span>
+          <span class="nv">prototype    : </span><span class="s">&quot;grid&quot;</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@grids</span>
+          <span class="k">for</span> <span class="nx">grid</span> <span class="k">in</span> <span class="nx">@grids</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">grid</span>
+            
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    
+      
+      
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

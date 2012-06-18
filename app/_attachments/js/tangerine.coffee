@@ -27,6 +27,8 @@ class Router extends Backbone.Router
     'subtest/:id' : 'editSubtest'
     
     'question/:id' : 'editQuestion'
+    
+    'report/:name' : 'report'
 
   transfer: ->
     getVars = Utils.$_GET()
@@ -208,7 +210,15 @@ class Router extends Backbone.Router
           details : "How did you get here?"
         vm.show errView
 
-
+  # Taylor's addition - class summary for single assessment
+  report: (id) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        view = new ReportView
+          assessmentId : id
+        vm.show view
+      isUnregistered: (options) ->
+        Tangerine.router.navigate "login", true
 
   #
   # Subtests
