@@ -14,9 +14,10 @@
         <span class="nv">model  : </span><span class="nx">model</span>
         <span class="nv">parent : </span><span class="nx">@</span>
     <span class="vi">@result = </span><span class="k">new</span> <span class="nx">Result</span>
-      <span class="nv">assessmentId : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span>
+      <span class="nv">assessmentId   : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span>
       <span class="nv">assessmentName : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
-      <span class="nv">starttime : </span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">()</span>
+      <span class="nv">blank          : </span><span class="kc">true</span>
+      <span class="nv">starttime      : </span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">()</span>
     <span class="nv">resultView = </span><span class="k">new</span> <span class="nx">ResultView</span>
         <span class="nv">model          : </span><span class="nx">@result</span>
         <span class="nv">assessment     : </span><span class="nx">@model</span>

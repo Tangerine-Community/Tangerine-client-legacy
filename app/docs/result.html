@@ -5,8 +5,9 @@
 data : currentView.getResult()
 subtestId : currentView.model.id
 sum : currentView.getSum()
-  { correct, incorrect, missing, total }</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>could use defaults but it messes things up</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@set</span>
-      <span class="nv">subtestData : </span><span class="p">[]</span>
+  { correct, incorrect, missing, total }</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>could use defaults but it messes things up</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">blank</span> <span class="o">==</span> <span class="kc">true</span>
+      <span class="nx">@set</span>
+        <span class="nv">subtestData : </span><span class="p">[]</span>
 
   <span class="nv">add: </span><span class="nf">( subtestDataElement ) -&gt;</span>
     <span class="nv">subtestData = </span><span class="nx">@get</span> <span class="s">&#39;subtestData&#39;</span>

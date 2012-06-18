@@ -182,9 +182,13 @@ since it doesn't use the assessment</p>             </td>             <td class=
       <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
         <span class="nv">view = </span><span class="k">new</span> <span class="nx">CSVView</span>
           <span class="nv">assessmentId : </span><span class="nx">id</span>
+          <span class="nv">reduceExclusive : </span><span class="kc">true</span>
         <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
       <span class="nv">isUser: </span><span class="o">-&gt;</span>
-        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">content&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;&lt;h1&gt;You&#39;re not an admin user&lt;/h1&gt;&lt;p&gt;How did you get here?&lt;/p&gt;&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Subtests</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">editSubtest: </span><span class="nf">(id) -&gt;</span>
+        <span class="nv">errView = </span><span class="k">new</span> <span class="nx">ErrorView</span>
+          <span class="nv">message : </span><span class="s">&quot;You&#39;re not an admin user&quot;</span>
+          <span class="nv">details : </span><span class="s">&quot;How did you get here?&quot;</span>
+        <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">errView</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Subtests</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">editSubtest: </span><span class="nf">(id) -&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
         <span class="nv">id = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">cleanURL</span> <span class="nx">id</span>
