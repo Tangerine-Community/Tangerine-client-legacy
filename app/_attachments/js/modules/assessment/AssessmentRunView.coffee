@@ -14,9 +14,10 @@ class AssessmentRunView extends Backbone.View
         model  : model
         parent : @
     @result = new Result
-      assessmentId : @model.id
+      assessmentId   : @model.id
       assessmentName : @model.get "name"
-      starttime : (new Date()).getTime()
+      blank          : true
+      starttime      : (new Date()).getTime()
     resultView = new ResultView
         model          : @result
         assessment     : @model

@@ -31,6 +31,7 @@ AssessmentRunView = (function(_super) {
     this.result = new Result({
       assessmentId: this.model.id,
       assessmentName: this.model.get("name"),
+      blank: true,
       starttime: (new Date()).getTime()
     });
     resultView = new ResultView({
