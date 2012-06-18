@@ -60,6 +60,7 @@ class CSVView extends Backbone.View
         "oral-passage-reading:last_attempted" : "oral_read_attempted"
         "oral-passage-reading:time_remaining" : "oral_read_time_remain"
         "oral-passage-reading:time_elapsed" : "NOT USED - time_elapsed"
+        "student-information:stream:stream" : "section"
 
 
       # Look for variable names starting with the left side
