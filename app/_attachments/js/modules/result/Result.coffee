@@ -11,8 +11,9 @@ class Result extends Backbone.Model
 
   initialize: ( options ) ->
     # could use defaults but it messes things up
-    @set
-      subtestData : []
+    if options.blank == true
+      @set
+        subtestData : []
 
   add: ( subtestDataElement ) ->
     subtestData = @get 'subtestData'

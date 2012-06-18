@@ -13,9 +13,11 @@ Result = (function(_super) {
   Result.prototype.url = "result";
 
   Result.prototype.initialize = function(options) {
-    return this.set({
-      subtestData: []
-    });
+    if (options.blank === true) {
+      return this.set({
+        subtestData: []
+      });
+    }
   };
 
   Result.prototype.add = function(subtestDataElement) {
