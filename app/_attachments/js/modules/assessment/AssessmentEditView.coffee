@@ -13,7 +13,7 @@ class AssessmentEditView extends Backbone.View
 
   save: =>
     @updateModel()
-    if @model.save() 
+    if @model.save({wait:true}) 
       Utils.midAlert "Assessment saved" 
       Tangerine.router.navigate "edit/"+@model.get("name"), true
       @render()
@@ -21,12 +21,13 @@ class AssessmentEditView extends Backbone.View
   showSave: -> @$el.find('.assessment_save').fadeIn(250)
 
   back: ->
-    Tangerine.router.navigate "", true
+    window.history.back()
 
   updateModel: =>
     @model.set
       archived : @$el.find("#archive_buttons input:checked").val()
       name     : @$el.find("#assessment_name").val()
+      group    : @$el.find("#assessment_group").val()
       dKey     : @$el.find("#assessment_d_key").val()
       assessmentId : @model.id
 
@@ -57,15 +58,12 @@ class AssessmentEditView extends Backbone.View
     model.destroy()
   
   initialize: (options) ->
-    console.log "new assessment says"
-    console.log options.model.attributes.name
     @views = []
     @model = options.model
     @model.subtests.on "change remove", @render
 
   render: =>
     arch = @model.get('archived')
-    console.log "the name is " + @model.get("name")
     archiveChecked    = if (arch == true or arch == 'true') then "checked" else ""
     notArchiveChecked = if archiveChecked then "" else "checked"
     @$el.html "
@@ -73,7 +71,11 @@ class AssessmentEditView extends Backbone.View
         <h1>Assessment Builder</h1>
       <div id='basic'>
         <label for='assessment_name'>Name</label>
-        <input id='assessment_name' value='#{@model.get("name")}'>
+        <input id='assessment_name' value='#{Utils.encode(@model.get("name"))}'>
+
+        <label for='assessment_group'>Group</label>
+        <input id='assessment_group' value='#{Utils.encode(@model.get("group"))}'>
+
         <button class='assessment_save confirmation'>Save</button>
 
         <label for='assessment_d_key'>Download Key</label>

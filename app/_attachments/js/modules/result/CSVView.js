@@ -111,51 +111,90 @@ CSVView = (function(_super) {
             allSubtests = new Subtests;
             return allSubtests.fetch({
               success: function(collection) {
-                var dataKey, dataValue, grid, grids, gridsByName, i, item, k, key, markIndex, newGridData, result, singleResult, subtestKey, subtestValue, v, _j, _k, _l, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+                var dataKey, dataValue, grid, grids, gridsByName, i, item, k, key, markIndex, newGridData, option, question, questionVariable, result, singleResult, subtest, subtestKey, subtestName, subtestValue, subtests, surveys, v, valueName, _j, _k, _l, _len1, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _m, _n, _o, _p, _q, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+                _this.surveyColumns = {};
+                subtests = collection.where({
+                  assessmentId: _this.assessmentId
+                });
+                surveys = collection.where({
+                  assessmentId: _this.assessmentId,
+                  prototype: "survey"
+                });
+                for (_j = 0, _len1 = surveys.length; _j < _len1; _j++) {
+                  subtest = surveys[_j];
+                  subtestName = subtest.attributes.name.toLowerCase().dasherize();
+                  _this.surveyColumns[subtestName] = [];
+                  _ref = allQuestions.where({
+                    subtestId: subtest.id
+                  });
+                  for (_k = 0, _len2 = _ref.length; _k < _len2; _k++) {
+                    question = _ref[_k];
+                    questionVariable = question.attributes.name.toLowerCase().dasherize();
+                    if ((_this.reduceExclusive != null) && _this.reduceExclusive === true && question.attributes.type === "single") {
+                      _this.surveyColumns[subtestName].push(subtestName + ":" + questionVariable);
+                    } else if (question.attributes.type === "single") {
+                      _ref1 = question.attributes.options;
+                      for (_l = 0, _len3 = _ref1.length; _l < _len3; _l++) {
+                        option = _ref1[_l];
+                        valueName = option.value;
+                        _this.surveyColumns[subtestName].push(subtestName + ":" + questionVariable + ":" + valueName);
+                      }
+                    } else if (question.attributes.type === "multiple") {
+                      _ref2 = question.attributes.options;
+                      for (_m = 0, _len4 = _ref2.length; _m < _len4; _m++) {
+                        option = _ref2[_m];
+                        valueName = option.value;
+                        _this.surveyColumns[subtestName].push(subtestName + ":" + questionVariable + ":" + valueName);
+                      }
+                    } else if (question.attributes.type === "open") {
+                      _this.surveyColumns[subtestName].push(subtestName + ":" + questionVariable + ":" + question.attributes.name);
+                    }
+                  }
+                }
                 grids = collection.where({
                   assessmentId: _this.assessmentId,
                   prototype: "grid"
                 });
                 gridsByName = {};
-                for (_j = 0, _len1 = grids.length; _j < _len1; _j++) {
-                  grid = grids[_j];
+                for (_n = 0, _len5 = grids.length; _n < _len5; _n++) {
+                  grid = grids[_n];
                   gridsByName[grid.attributes.name] = grid.attributes;
                 }
-                _ref = _this.results;
-                for (_k = 0, _len2 = _ref.length; _k < _len2; _k++) {
-                  result = _ref[_k];
-                  _ref1 = result.attributes.subtestData;
-                  for (subtestKey in _ref1) {
-                    subtestValue = _ref1[subtestKey];
+                _ref3 = _this.results;
+                for (_o = 0, _len6 = _ref3.length; _o < _len6; _o++) {
+                  result = _ref3[_o];
+                  _ref4 = result.attributes.subtestData;
+                  for (subtestKey in _ref4) {
+                    subtestValue = _ref4[subtestKey];
                     if (subtestValue.data.letters_results != null) {
                       newGridData = [];
                       if ((gridsByName[subtestValue.name] != null) && _.keys(subtestValue.data.letters_results).length !== gridsByName[subtestValue.name].items.length) {
                         subtestValue.data.letters_results = [];
-                        _ref2 = gridsByName[subtestValue.name].items;
-                        for (i = _l = 0, _len3 = _ref2.length; _l < _len3; i = ++_l) {
-                          item = _ref2[i];
+                        _ref5 = gridsByName[subtestValue.name].items;
+                        for (i = _p = 0, _len7 = _ref5.length; _p < _len7; i = ++_p) {
+                          item = _ref5[i];
                           subtestValue.data.letters_results[i] = {};
                           subtestValue.data.letters_results[i][item] = i < parseInt(subtestValue.data.last_attempted) ? "checked" : "missing";
                         }
-                        _ref3 = subtestValue.data.mark_record;
-                        for (i = _m = 0, _len4 = _ref3.length; _m < _len4; i = ++_m) {
-                          markIndex = _ref3[i];
+                        _ref6 = subtestValue.data.mark_record;
+                        for (i = _q = 0, _len8 = _ref6.length; _q < _len8; i = ++_q) {
+                          markIndex = _ref6[i];
                           markIndex--;
                           key = "";
-                          _ref4 = subtestValue.data.letters_results[markIndex];
-                          for (k in _ref4) {
-                            v = _ref4[k];
+                          _ref7 = subtestValue.data.letters_results[markIndex];
+                          for (k in _ref7) {
+                            v = _ref7[k];
                             key = k;
                           }
                           subtestValue.data.letters_results[markIndex][key] = subtestValue.data.letters_results[markIndex][key] === "checked" ? "unchecked" : "checked";
                         }
                       }
                     }
-                    if (_this.reduceExclusive !== void 0 && _this.reduceExclusive !== null && _this.reduceExclusive !== false) {
-                      _ref5 = subtestValue.data;
-                      for (dataKey in _ref5) {
-                        dataValue = _ref5[dataKey];
-                        if (~_this.singleQuestions.indexOf(dataKey)) {
+                    if ((_this.reduceExclusive != null) && _this.reduceExclusive === true) {
+                      _ref8 = subtestValue.data;
+                      for (dataKey in _ref8) {
+                        dataValue = _ref8[dataKey];
+                        if (__indexOf.call(_this.singleQuestions, dataKey) >= 0) {
                           for (k in dataValue) {
                             v = dataValue[k];
                             if (v === "checked") {
@@ -180,7 +219,7 @@ CSVView = (function(_super) {
   };
 
   CSVView.prototype.render = function() {
-    var betweenColons, checkedString, dataKey, dataValue, firstIndex, i, index, indexFirstColon, indexLastColon, itemCount, k, key, keyIndex, keys, lastAbnormalReplace, lastNumberedReplace, letterIndex, mapKey, mapValue, metaKey, prefixTag, questionVariable, replacement, result, resultDataArray, row, rowNumber, subtestKey, subtestName, subtestValue, tableHTML, v, value, valueIndex, valueName, values, variableName, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+    var betweenColons, checkedString, count, dataKey, dataValue, firstIndex, i, index, indexFirstColon, indexLastColon, itemCount, k, key, keyIndex, keys, lastAbnormalReplace, lastNumberedReplace, letterIndex, mapKey, mapValue, metaKey, oneKey, prefixTag, questionVariable, replacement, result, resultDataArray, row, rowNumber, subtestKey, subtestName, subtestValue, tableHTML, v, value, valueIndex, valueName, values, variableName, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _m, _n, _o, _p, _ref, _ref1, _ref10, _ref11, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     if (this.results != null) {
       tableHTML = "";
       resultDataArray = [];
@@ -204,20 +243,32 @@ CSVView = (function(_super) {
                 for (key in dataValue) {
                   value = dataValue[key];
                   if (_.isObject(value)) {
+                    firstIndex = null;
+                    for (keyIndex = _k = 0, _len2 = keys.length; _k < _len2; keyIndex = ++_k) {
+                      oneKey = keys[keyIndex];
+                      if (~oneKey.indexOf(subtestName + ":" + questionVariable) && firstIndex === null) {
+                        firstIndex = keyIndex;
+                      }
+                    }
                     for (k in value) {
                       v = value[k];
                       valueName = k;
                       variableName = subtestName + ":" + questionVariable + ":" + valueName;
-                      keys.push(variableName);
+                      valueIndex = keys.indexOf(variableName);
+                      values[firstIndex + itemCount] = v;
                     }
+                    itemCount++;
                   } else {
                     valueName = key;
                     variableName = subtestName + ":" + questionVariable + ":" + valueName;
-                    keys.push(variableName);
+                    valueIndex = keys.indexOf(variableName);
+                    if (keys.indexOf(variableName) !== -1) {
+                      values[valueIndex] = value;
+                    }
                   }
                 }
               } else {
-                valueName = dataKey;
+                valueName = dataKey.toLowerCase().dasherize();
                 variableName = subtestName + ":" + valueName;
                 keys.push(variableName);
               }
@@ -227,12 +278,12 @@ CSVView = (function(_super) {
         resultDataArray.push(keys);
       }
       _ref3 = this.results;
-      for (_k = 0, _len2 = _ref3.length; _k < _len2; _k++) {
-        result = _ref3[_k];
+      for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
+        result = _ref3[_l];
         values = [];
         _ref4 = this.metaKeys;
-        for (_l = 0, _len3 = _ref4.length; _l < _len3; _l++) {
-          metaKey = _ref4[_l];
+        for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
+          metaKey = _ref4[_m];
           values.push(result.attributes[metaKey]);
         }
         if (result != null) {
@@ -256,7 +307,7 @@ CSVView = (function(_super) {
                         variableName = subtestName + ":" + questionVariable + ":" + valueName;
                         valueIndex = keys.indexOf(variableName);
                         firstIndex = null;
-                        for (keyIndex = _m = 0, _len4 = keys.length; _m < _len4; keyIndex = ++_m) {
+                        for (keyIndex = _n = 0, _len5 = keys.length; _n < _len5; keyIndex = ++_n) {
                           key = keys[keyIndex];
                           if (~key.indexOf(subtestName + ":" + questionVariable) && firstIndex === null) {
                             firstIndex = keyIndex;
@@ -278,17 +329,15 @@ CSVView = (function(_super) {
                   valueName = dataKey;
                   variableName = subtestName + ":" + valueName;
                   valueIndex = keys.indexOf(variableName);
-                  if (valueIndex === -1) {
-
-                  } else {
+                  if (valueIndex !== -1) {
                     values[valueIndex] = dataValue;
                   }
                 }
               }
             }
           }
-          resultDataArray.push(values);
         }
+        resultDataArray.push(values);
       }
       for (rowNumber in resultDataArray) {
         row = resultDataArray[rowNumber];
@@ -360,10 +409,14 @@ CSVView = (function(_super) {
             }
           }
         }
+      }
+      for (i = _o = 0, _len6 = resultDataArray.length; _o < _len6; i = ++_o) {
+        row = resultDataArray[i];
         tableHTML += "<tr>";
-        for (key in row) {
-          value = row[key];
-          tableHTML += "<td>" + value + "</td>";
+        count = 0;
+        for (index = _p = 0, _ref11 = row.length; 0 <= _ref11 ? _p <= _ref11 : _p >= _ref11; index = 0 <= _ref11 ? ++_p : --_p) {
+          tableHTML += "<td>" + row[index] + "</td>";
+          count++;
         }
         tableHTML += "</tr>";
       }

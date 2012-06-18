@@ -9,20 +9,16 @@ class User extends Backbone.Model
     roles       : []
     groups      : ["default"]
 
-  initialize: ->
+  initialize: (options) ->
 
     # these aren't `set` because we don't want them to save with the model
     # they're handled by couchdb, so we have to load them manually
     @name = @default.name
     @roles = @default.roles
-    @groups = []
 
     # these aren't `set` because they're temporary
     @messages = []
     @temp = {}
-    
-    # get the current user
-    @fetch()
 
   signup: ( name, pass ) ->
     $.couch.signup { name : name }, pass,
@@ -32,6 +28,7 @@ class User extends Backbone.Model
           @login @temp.name, @temp.pass
         else
           @addMessage "New user #{temp['name']} created. Welcome to Tangerine."
+        @save()
       error: ( status, error, message ) =>
         if @temp.intent? && @temp.intent == "login"
           @showMessage "Password incorrect, please try again."
@@ -48,23 +45,15 @@ class User extends Backbone.Model
       password : @temp.pass
       success: ( user ) =>
         @name   = @temp.name
-        @roles  = []
-        @groups = []
-        for role in user.roles
-          groupName = role.split("group.")
-          if $.isArray(groupName) && groupName.length > 1
-            @groups.push groupName[1]
-          else
-            @roles.push role
+        @roles  = user.roles
+        @fetch
+          success: (model) =>
+            @clearAttempt()
+            @trigger "change:authentication"
 
-        @clearAttempt()
-        @trigger "change:authentication"
-        # any way not to have this here?
-        Tangerine.router.navigate "", true
       error: ( status, error, message ) =>
         @name  = @default.name
         @roles = @default.roles
-        @groups = @default.groups
         if @temp.intent? && @temp.intent == "retry_login"
           @addMessage message
         else 
@@ -76,6 +65,7 @@ class User extends Backbone.Model
     if @name == null
       if callbacks?.isUnregistered?
         callbacks.isUnregistered()
+      else
         Tangerine.router.navigate "login", true
     else
       callbacks?.isRegistered?()
@@ -84,25 +74,40 @@ class User extends Backbone.Model
       else
         callbacks?.isUser?()
 
-  fetch: (options) ->
+  fetch: (options={}) ->
     $.couch.session
       success: ( resp ) =>
         if resp.userCtx.name != null
-          @id = resp.userCtx.name
+          @id = "tangerine.user:"+resp.userCtx.name
           @name = resp.userCtx.name
           @roles = []
-          @groups = []
-          
+
           for role in resp.userCtx.roles
-            groupName = role.split("group.")
-            if $.isArray(groupName) && groupName.length > 1
-              @groups.push groupName[1]
-            else
+            if !~role.indexOf("group.")
               @roles.push role
-          @trigger "change:authentication"
+          User.__super__.fetch.call(@, 
+            success: (a,b,c) =>
+              options.success?()
+            error: (a,b,c) =>
+              @save
+                "_id"    : @id
+                "groups" : []
+              ,
+                "wait"   : true
+              User.__super__.fetch.call(@,
+                success: =>
+                  options.success?()
+                error: =>
+                  throw "User model fetch error"
+              )
+          )
+        else
+          options.success?()
+
       error: ( status, error, reason ) ->
         @trigger "change:authentication"
         throw "#{status} Session Error\n#{error}\n#{reason}"
+
 
 
   isAdmin: ->
@@ -114,12 +119,32 @@ class User extends Backbone.Model
         $.cookie "AuthSession", null
         @name  = @default.name
         @roles = @default.roles
-        @groups = @default.groups
         @clear()
         @trigger "change:authentication"
+        Tangerine.router.navigate "login", true
 
   clearAttempt: ->
     @temp = @default.temp
+  
+  #
+  # Groups
+  #
+
+  joinGroup: (group) ->
+    groups = @get "groups"
+    if !~groups.indexOf(group)
+      groups.push group
+      @save "groups" : groups
+  
+  leaveGroup: (group) ->
+    groups = @get "groups"
+    if ~groups.indexOf(group)
+      groups = _.without groups, group
+      @save "groups" : groups
+
+  #
+  # Mensajes
+  #
   
   addMessage:    ( content ) -> @set "messages", @get("messages").push content
   showMessage:   ( content ) -> @set "messages", [ content ]

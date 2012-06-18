@@ -4,12 +4,16 @@ class Router extends Backbone.Router
     'logout'  : 'logout'
     'account' : 'account'
 
-    'test' : 'test'
+    'transfer' : 'transfer'
 
     'setup' : 'setup'
 
-    ''            : 'assessments'
-    'assessments' : 'assessments'
+    ''            : 'groups'
+    'groups'      : 'groups'
+    
+    'assessments'       : 'assessments'
+    'assessments/:group' : 'assessments'
+
 
     'dashboard' : 'dashboard' 
 
@@ -24,8 +28,54 @@ class Router extends Backbone.Router
     
     'question/:id' : 'editQuestion'
 
-  test: ->
-    console.log "insert tests"
+  transfer: ->
+    getVars = Utils.$_GET()
+    name = getVars.name
+    $.couch.logout
+      success: =>
+        $.cookie "AuthSession", null
+        $.couch.login
+          "name"     : name
+          "password" : name
+          success: ->
+            Tangerine.router.navigate ""
+            window.location.reload()
+          error: ->
+            $.couch.signup
+              "name" :  name
+              "roles" : ["_admin"]
+            , name,
+              success: ->
+                $.couch.login
+                  "name"     : name
+                  "password" : name
+                  success : ->
+                    Tangerine.router.navigate ""
+                    window.location.reload()
+                  error : ->
+                    view = new ErrorView
+                      message : "There was a username collision"
+                      details : ""
+                    vm.show view
+
+        
+
+  groups: (a,b, c) ->
+    if not Tangerine.context.server
+      Tangerine.router.navigate "assessments", true
+    else 
+      Tangerine.user.verify
+        isAdmin: ->
+          groups = Tangerine.user.get("groups")
+          if groups.length == 1 && window.location.hash = ""
+            Tangerine.router.navigate "assessments/#{groups[0]}", true
+          else
+            view = new GroupsView
+            vm.show view
+        isUnregistered: ->
+          Tangerine.router.navigate "login", true
+    
+
 
   #
   # Device
@@ -59,13 +109,19 @@ class Router extends Backbone.Router
       isUnregistered: ->
         Tangerine.router.navigate "login", true
 
-  assessments: ->
-    Tangerine.user.verify
-      isRegistered: ->
-        assessments = new AssessmentListView
-        vm.show assessments
-      isUnregistered: ->
-        Tangerine.router.navigate "login", true
+  assessments:(group=null) ->
+
+    console.log "testing"
+    if group == null && Tangerine.context.server
+      Tangerine.router.navigate "groups", true
+    else
+      Tangerine.user.verify
+        isRegistered: ->
+          assessments = new AssessmentListView
+            group : group
+          vm.show assessments
+        isUnregistered: ->
+          Tangerine.router.navigate "login", true
 
   editId: (id) ->
     id = Utils.cleanURL id
@@ -75,9 +131,6 @@ class Router extends Backbone.Router
           _id: id
         assessment.superFetch
           success : ( model ) ->
-            console.log "model name"
-            console.log model.attributes.name
-            console.log model
             view = new AssessmentEditView model: model
             vm.show view
           error: (details) ->
@@ -111,6 +164,9 @@ class Router extends Backbone.Router
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
 
+
+  restart: (name) ->
+    Tangerine.router.navgate "run/#{name}", true
 
   run: (name) ->
     Tangerine.user.verify
@@ -206,15 +262,17 @@ class Router extends Backbone.Router
     Tangerine.user.logout()
     Tangerine.router.navigate "login", true
 
-
   account: ->
     Tangerine.user.verify
       isRegistered: ->
-        view = new AccountView model : Tangerine.user
+        view = new AccountView user : Tangerine.user
         vm.show view
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
 
+  logs: ->
+    view = new LogView
+    vm.show view
 
 $ ->
   #
@@ -229,6 +287,11 @@ $ ->
   Tangerine.nav    = new NavigationView
     user   : Tangerine.user
     router : Tangerine.router
+  
 
-  Backbone.history.start()
+  Tangerine.user.fetch
+    success: ->
+      Backbone.history.start()
+    error: ->
+      Backbone.history.start()
 

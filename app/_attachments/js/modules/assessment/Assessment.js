@@ -38,7 +38,7 @@ Assessment = (function(_super) {
         for (_i = 0, _len = results.length; _i < _len; _i++) {
           assessment = results[_i];
           if (Tangerine.context.server) {
-            if (~Tangerine.user.groups.indexOf(assessment.get("group"))) {
+            if (~Tangerine.user.get("groups").indexOf(assessment.get("group"))) {
               _this.constructor(assessment.attributes);
             }
           } else {
@@ -84,8 +84,6 @@ Assessment = (function(_super) {
     originalId = this.id;
     newModel = this.clone();
     newModel.set(assessmentAttributes);
-    console.log("new model's attributes");
-    console.log(newModel.attributes);
     newModel.set("_id", Utils.guid());
     newModel.save();
     questions = new Questions;

@@ -102,7 +102,34 @@ class CSVView extends Backbone.View
             allSubtests = new Subtests
             allSubtests.fetch 
               success: ( collection ) =>
-                
+            
+                # create first row
+                @surveyColumns = {}
+                subtests = collection.where { assessmentId : @assessmentId }
+
+                surveys = collection.where
+                  assessmentId : @assessmentId
+                  prototype    : "survey" 
+
+                for subtest in surveys
+                  subtestName = subtest.attributes.name.toLowerCase().dasherize()
+                  @surveyColumns[subtestName] = []
+                  for question in allQuestions.where {subtestId:subtest.id}
+                    questionVariable = question.attributes.name.toLowerCase().dasherize()
+                    if @reduceExclusive? && @reduceExclusive == true && question.attributes.type == "single"
+                      @surveyColumns[subtestName].push subtestName + ":" + questionVariable
+                      
+                    else if question.attributes.type == "single"
+                      for option in question.attributes.options
+                        valueName = option.value
+                        @surveyColumns[subtestName].push subtestName + ":" + questionVariable + ":" + valueName
+                    else if question.attributes.type == "multiple"
+                      for option in question.attributes.options
+                        valueName = option.value
+                        @surveyColumns[subtestName].push subtestName + ":" + questionVariable + ":" + valueName
+                    else if question.attributes.type == "open"
+                      @surveyColumns[subtestName].push subtestName + ":" + questionVariable + ":" + question.attributes.name
+
                 # get all subtests that are grids in this assessment
                 grids = collection.where
                   assessmentId : @assessmentId
@@ -116,6 +143,7 @@ class CSVView extends Backbone.View
                 
                     if subtestValue.data.letters_results?
                       newGridData = []
+
                       if gridsByName[subtestValue.name]? and _.keys(subtestValue.data.letters_results).length != gridsByName[subtestValue.name].items.length
                         subtestValue.data.letters_results = []
                         for item, i in gridsByName[subtestValue.name].items
@@ -129,9 +157,9 @@ class CSVView extends Backbone.View
                           subtestValue.data.letters_results[markIndex][key] = if (subtestValue.data.letters_results[markIndex][key] == "checked") then "unchecked" else "checked"
                       
 
-                    if @reduceExclusive != undefined && @reduceExclusive != null && @reduceExclusive != false
+                    if @reduceExclusive? && @reduceExclusive == true
                       for dataKey, dataValue of subtestValue.data
-                        if ~@singleQuestions.indexOf(dataKey)
+                        if dataKey in @singleQuestions
                           for k, v of dataValue
                             singleResult = k if v == "checked" 
                           subtestValue.data[dataKey] = singleResult
@@ -156,6 +184,7 @@ class CSVView extends Backbone.View
       if @results[0]?   # If there's no data, avoid crashing
         for subtestValue, i in @results[0].attributes.subtestData
           subtestName =  subtestValue.name.toLowerCase().dasherize()
+
           for dataKey, dataValue of subtestValue.data
             if !(dataKey in @disallowedKeys)
               if _.isObject(dataValue)
@@ -164,16 +193,24 @@ class CSVView extends Backbone.View
 
                   # this clause mark_record fix
                   if _.isObject(value) 
+                    firstIndex = null
+                    for oneKey, keyIndex in keys
+                      firstIndex = keyIndex if ~oneKey.indexOf(subtestName + ":" + questionVariable) && firstIndex == null
                     for k, v of value
                       valueName = k
                       variableName = subtestName + ":" + questionVariable + ":" + valueName
-                      keys.push variableName
+                      valueIndex   = keys.indexOf(variableName)
+                      values[firstIndex + itemCount] = v
+                      #console.log "3rd level: " + variableName
+                    itemCount++
                   else
-                      valueName = key
-                      variableName = subtestName + ":" + questionVariable + ":" + valueName
-                      keys.push variableName
+                    valueName    = key
+                    variableName = subtestName + ":" + questionVariable + ":" + valueName
+                    valueIndex   = keys.indexOf(variableName)
+                    #console.log "2nd level: " + variableName
+                    values[valueIndex] = value if keys.indexOf(variableName) != -1
               else
-                valueName = dataKey
+                valueName    = dataKey.toLowerCase().dasherize()
                 variableName = subtestName + ":" + valueName
                 keys.push variableName
         
@@ -214,17 +251,10 @@ class CSVView extends Backbone.View
                 else
                   valueName = dataKey
                   variableName = subtestName + ":" + valueName
-                  valueIndex = keys.indexOf(variableName)
-                  if valueIndex == -1
-                    #console.log "error, inconsistency\n#{variableName} not in first row"
-                  else
-                    values[valueIndex] = dataValue
-                  #values.push dataValue
-            
-            
-            
-        
-          resultDataArray.push values
+                  valueIndex   = keys.indexOf(variableName)
+                  values[valueIndex] = dataValue if valueIndex != -1
+
+        resultDataArray.push values
       
       
       for rowNumber, row of resultDataArray
@@ -284,9 +314,13 @@ class CSVView extends Backbone.View
         
         # End Taylor's Edits for Malawi 2012 EGRA May
         
+
+      for row, i in resultDataArray
         tableHTML += "<tr>"
-        for key, value of row
-          tableHTML += "<td>#{value}</td>"
+        count = 0
+        for index in [0..row.length]
+          tableHTML += "<td>#{row[index]}</td>"
+          count++
         tableHTML += "</tr>"
 
       tableHTML = "<table>#{tableHTML}</table>"

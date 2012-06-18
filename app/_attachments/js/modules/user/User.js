@@ -19,13 +19,11 @@ User = (function(_super) {
     groups: ["default"]
   };
 
-  User.prototype.initialize = function() {
+  User.prototype.initialize = function(options) {
     this.name = this["default"].name;
     this.roles = this["default"].roles;
-    this.groups = [];
     this.messages = [];
-    this.temp = {};
-    return this.fetch();
+    return this.temp = {};
   };
 
   User.prototype.signup = function(name, pass) {
@@ -36,10 +34,11 @@ User = (function(_super) {
       success: function(a, b, c) {
         if (_this.temp.intent === "login") {
           _this.temp.intent = "retry_login";
-          return _this.login(_this.temp.name, _this.temp.pass);
+          _this.login(_this.temp.name, _this.temp.pass);
         } else {
-          return _this.addMessage("New user " + temp['name'] + " created. Welcome to Tangerine.");
+          _this.addMessage("New user " + temp['name'] + " created. Welcome to Tangerine.");
         }
+        return _this.save();
       },
       error: function(status, error, message) {
         if ((_this.temp.intent != null) && _this.temp.intent === "login") {
@@ -61,28 +60,18 @@ User = (function(_super) {
       name: this.temp.name,
       password: this.temp.pass,
       success: function(user) {
-        var groupName, role, _i, _len, _ref;
         _this.name = _this.temp.name;
-        _this.roles = [];
-        _this.groups = [];
-        _ref = user.roles;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          role = _ref[_i];
-          groupName = role.split("group.");
-          if ($.isArray(groupName) && groupName.length > 1) {
-            _this.groups.push(groupName[1]);
-          } else {
-            _this.roles.push(role);
+        _this.roles = user.roles;
+        return _this.fetch({
+          success: function(model) {
+            _this.clearAttempt();
+            return _this.trigger("change:authentication");
           }
-        }
-        _this.clearAttempt();
-        _this.trigger("change:authentication");
-        return Tangerine.router.navigate("", true);
+        });
       },
       error: function(status, error, message) {
         _this.name = _this["default"].name;
         _this.roles = _this["default"].roles;
-        _this.groups = _this["default"].groups;
         if ((_this.temp.intent != null) && _this.temp.intent === "retry_login") {
           return _this.addMessage(message);
         } else {
@@ -96,7 +85,8 @@ User = (function(_super) {
   User.prototype.verify = function(callbacks) {
     if (this.name === null) {
       if ((callbacks != null ? callbacks.isUnregistered : void 0) != null) {
-        callbacks.isUnregistered();
+        return callbacks.isUnregistered();
+      } else {
         return Tangerine.router.navigate("login", true);
       }
     } else {
@@ -113,25 +103,42 @@ User = (function(_super) {
 
   User.prototype.fetch = function(options) {
     var _this = this;
+    if (options == null) options = {};
     return $.couch.session({
       success: function(resp) {
-        var groupName, role, _i, _len, _ref;
+        var role, _i, _len, _ref;
         if (resp.userCtx.name !== null) {
-          _this.id = resp.userCtx.name;
+          _this.id = "tangerine.user:" + resp.userCtx.name;
           _this.name = resp.userCtx.name;
           _this.roles = [];
-          _this.groups = [];
           _ref = resp.userCtx.roles;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             role = _ref[_i];
-            groupName = role.split("group.");
-            if ($.isArray(groupName) && groupName.length > 1) {
-              _this.groups.push(groupName[1]);
-            } else {
-              _this.roles.push(role);
-            }
+            if (!~role.indexOf("group.")) _this.roles.push(role);
           }
-          return _this.trigger("change:authentication");
+          return User.__super__.fetch.call(_this, {
+            success: function(a, b, c) {
+              return typeof options.success === "function" ? options.success() : void 0;
+            },
+            error: function(a, b, c) {
+              _this.save({
+                "_id": _this.id,
+                "groups": []
+              }, {
+                "wait": true
+              });
+              return User.__super__.fetch.call(_this, {
+                success: function() {
+                  return typeof options.success === "function" ? options.success() : void 0;
+                },
+                error: function() {
+                  throw "User model fetch error";
+                }
+              });
+            }
+          });
+        } else {
+          return typeof options.success === "function" ? options.success() : void 0;
         }
       },
       error: function(status, error, reason) {
@@ -152,15 +159,37 @@ User = (function(_super) {
         $.cookie("AuthSession", null);
         _this.name = _this["default"].name;
         _this.roles = _this["default"].roles;
-        _this.groups = _this["default"].groups;
         _this.clear();
-        return _this.trigger("change:authentication");
+        _this.trigger("change:authentication");
+        return Tangerine.router.navigate("login", true);
       }
     });
   };
 
   User.prototype.clearAttempt = function() {
     return this.temp = this["default"].temp;
+  };
+
+  User.prototype.joinGroup = function(group) {
+    var groups;
+    groups = this.get("groups");
+    if (!~groups.indexOf(group)) {
+      groups.push(group);
+      return this.save({
+        "groups": groups
+      });
+    }
+  };
+
+  User.prototype.leaveGroup = function(group) {
+    var groups;
+    groups = this.get("groups");
+    if (~groups.indexOf(group)) {
+      groups = _.without(groups, group);
+      return this.save({
+        "groups": groups
+      });
+    }
   };
 
   User.prototype.addMessage = function(content) {

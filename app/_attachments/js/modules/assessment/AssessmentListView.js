@@ -18,7 +18,12 @@ AssessmentListView = (function(_super) {
     'click .new_assessment_save': 'newAssessmentSave',
     'click .new_assessment_cancel': 'newAssessmentHide',
     'click .new_assessment': 'newAssessmentShow',
-    'click .import': 'import'
+    'click .import': 'import',
+    'click .groups': 'gotoGroups'
+  };
+
+  AssessmentListView.prototype.gotoGroups = function() {
+    return Tangerine.router.navigate("groups", true);
   };
 
   AssessmentListView.prototype["import"] = function() {
@@ -26,8 +31,8 @@ AssessmentListView = (function(_super) {
   };
 
   AssessmentListView.prototype.initialize = function(options) {
+    this.group = options.group;
     this.isAdmin = Tangerine.user.isAdmin();
-    console.log("is admin " + this.isAdmin);
     this.views = [];
     this.publicViews = [];
     return this.refresh();
@@ -43,7 +48,7 @@ AssessmentListView = (function(_super) {
         groupCollection = [];
         collection.each(function(model) {
           if (Tangerine.context.server) {
-            if (~Tangerine.user.groups.indexOf(model.get("group"))) {
+            if (model.get("group") === _this.group) {
               return groupCollection.push(model);
             }
           } else {
@@ -65,12 +70,15 @@ AssessmentListView = (function(_super) {
   };
 
   AssessmentListView.prototype.render = function() {
-    var assessment, groupList, html, oneView, publicList, _i, _j, _len, _len2, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+    var assessment, groupList, groupsButton, html, importButton, newButton, oneView, publicList, _i, _j, _len, _len2, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
     this.closeViews();
     this.views = [];
-    html = "      <h1>Assessments</h1>      ";
+    newButton = "<button class='new_assessment command'>New</button>";
+    importButton = "<button class='import command'>Import</button>";
+    groupsButton = "<button class='navigation groups'>Groups</button>";
+    html = "      " + (Tangerine.context.server ? groupsButton : "") + "      <h1>Assessments</h1>      ";
     if (this.isAdmin) {
-      html += "        <button class='new_assessment command'>New</button><button class='import command'>Import</button>        <form class='new_assessment_form'>          <input type='text' class='new_assessment_name' placeholder='Assessment Name'>          <button class='new_assessment_save'>Save</button>          <button class='new_assessment_cancel'>Cancel</button>        </form>        <h2>Group assessments</h2>      ";
+      html += "        " + newButton + "        " + (Tangerine.context.mobile ? importButton : "") + "        <form class='new_assessment_form'>          <input type='text' class='new_assessment_name' placeholder='Assessment Name'>          <button class='new_assessment_save'>Save</button>          <button class='new_assessment_cancel'>Cancel</button>        </form>        <h2>Group assessments</h2>      ";
     }
     this.$el.html(html);
     if (((_ref = this.collection) != null ? (_ref2 = _ref.models) != null ? _ref2.length : void 0 : void 0) > 0) {
@@ -134,7 +142,7 @@ AssessmentListView = (function(_super) {
       newId = Utils.guid();
       newAssessment = new Assessment({
         'name': this.$el.find('.new_assessment_name').val(),
-        'group': Tangerine.user.groups[0],
+        'group': this.group,
         '_id': newId,
         'assessmentId': newId
       });

@@ -3,13 +3,14 @@
   <span class="nv">className: </span><span class="s">&quot;result_view&quot;</span>
 
   <span class="nv">events:</span>
-    <span class="s">&#39;click .save&#39;</span> <span class="o">:</span> <span class="s">&#39;save&#39;</span>
+    <span class="s">&#39;click .save&#39;</span>    <span class="o">:</span> <span class="s">&#39;save&#39;</span>
     <span class="s">&#39;click .another&#39;</span> <span class="o">:</span> <span class="s">&#39;another&#39;</span>
 
 
   <span class="nv">another: </span><span class="o">-&gt;</span>
-    <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">reload</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>@trigger "assessment:restart"
-Tangerine.router.navigate "run/#{@assessment.get('name')}", {trigger:true,replace:true}</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">save: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;restart/</span><span class="si">#{</span><span class="nx">@assessment</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
+  <span class="nv">save: </span><span class="o">-&gt;</span>
     <span class="k">if</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#additional_comments&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span>
       <span class="nx">@model</span><span class="p">.</span><span class="nx">add</span>
         <span class="nv">name : </span><span class="s">&quot;Assessment complete&quot;</span>

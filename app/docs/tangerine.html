@@ -4,12 +4,16 @@
     <span class="s">&#39;logout&#39;</span>  <span class="o">:</span> <span class="s">&#39;logout&#39;</span>
     <span class="s">&#39;account&#39;</span> <span class="o">:</span> <span class="s">&#39;account&#39;</span>
 
-    <span class="s">&#39;test&#39;</span> <span class="o">:</span> <span class="s">&#39;test&#39;</span>
+    <span class="s">&#39;transfer&#39;</span> <span class="o">:</span> <span class="s">&#39;transfer&#39;</span>
 
     <span class="s">&#39;setup&#39;</span> <span class="o">:</span> <span class="s">&#39;setup&#39;</span>
 
-    <span class="s">&#39;&#39;</span>            <span class="o">:</span> <span class="s">&#39;assessments&#39;</span>
-    <span class="s">&#39;assessments&#39;</span> <span class="o">:</span> <span class="s">&#39;assessments&#39;</span>
+    <span class="s">&#39;&#39;</span>            <span class="o">:</span> <span class="s">&#39;groups&#39;</span>
+    <span class="s">&#39;groups&#39;</span>      <span class="o">:</span> <span class="s">&#39;groups&#39;</span>
+    
+    <span class="s">&#39;assessments&#39;</span>       <span class="o">:</span> <span class="s">&#39;assessments&#39;</span>
+    <span class="s">&#39;assessments/:group&#39;</span> <span class="o">:</span> <span class="s">&#39;assessments&#39;</span>
+
 
     <span class="s">&#39;dashboard&#39;</span> <span class="o">:</span> <span class="s">&#39;dashboard&#39;</span> 
 
@@ -24,8 +28,53 @@
     
     <span class="s">&#39;question/:id&#39;</span> <span class="o">:</span> <span class="s">&#39;editQuestion&#39;</span>
 
-  <span class="nv">test: </span><span class="o">-&gt;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;insert tests&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Device</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">setup: </span><span class="o">-&gt;</span>
+  <span class="nv">transfer: </span><span class="o">-&gt;</span>
+    <span class="nv">getVars = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">$_GET</span><span class="p">()</span>
+    <span class="nv">name = </span><span class="nx">getVars</span><span class="p">.</span><span class="nx">name</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">couch</span><span class="p">.</span><span class="nx">logout</span>
+      <span class="nv">success: </span><span class="o">=&gt;</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">cookie</span> <span class="s">&quot;AuthSession&quot;</span><span class="p">,</span> <span class="kc">null</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">couch</span><span class="p">.</span><span class="nx">login</span>
+          <span class="s">&quot;name&quot;</span>     <span class="o">:</span> <span class="nx">name</span>
+          <span class="s">&quot;password&quot;</span> <span class="o">:</span> <span class="nx">name</span>
+          <span class="nv">success: </span><span class="o">-&gt;</span>
+            <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span>
+            <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">reload</span><span class="p">()</span>
+          <span class="nv">error: </span><span class="o">-&gt;</span>
+            <span class="nx">$</span><span class="p">.</span><span class="nx">couch</span><span class="p">.</span><span class="nx">signup</span>
+              <span class="s">&quot;name&quot;</span> <span class="o">:</span>  <span class="nx">name</span>
+              <span class="s">&quot;roles&quot;</span> <span class="o">:</span> <span class="p">[</span><span class="s">&quot;_admin&quot;</span><span class="p">]</span>
+            <span class="p">,</span> <span class="nx">name</span><span class="p">,</span>
+              <span class="nv">success: </span><span class="o">-&gt;</span>
+                <span class="nx">$</span><span class="p">.</span><span class="nx">couch</span><span class="p">.</span><span class="nx">login</span>
+                  <span class="s">&quot;name&quot;</span>     <span class="o">:</span> <span class="nx">name</span>
+                  <span class="s">&quot;password&quot;</span> <span class="o">:</span> <span class="nx">name</span>
+                  <span class="nv">success : </span><span class="o">-&gt;</span>
+                    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span>
+                    <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">reload</span><span class="p">()</span>
+                  <span class="nv">error : </span><span class="o">-&gt;</span>
+                    <span class="nv">view = </span><span class="k">new</span> <span class="nx">ErrorView</span>
+                      <span class="nv">message : </span><span class="s">&quot;There was a username collision&quot;</span>
+                      <span class="nv">details : </span><span class="s">&quot;&quot;</span>
+                    <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
+
+        
+
+  <span class="nv">groups: </span><span class="nf">(a,b, c) -&gt;</span>
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">server</span>
+      <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;assessments&quot;</span><span class="p">,</span> <span class="kc">true</span>
+    <span class="k">else</span> 
+      <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
+        <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
+          <span class="nv">groups = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;groups&quot;</span><span class="p">)</span>
+          <span class="k">if</span> <span class="nx">groups</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="p">.</span><span class="nv">location.hash = </span><span class="s">&quot;&quot;</span>
+            <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;assessments/</span><span class="si">#{</span><span class="nx">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
+          <span class="k">else</span>
+            <span class="nv">view = </span><span class="k">new</span> <span class="nx">GroupsView</span>
+            <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
+        <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
+          <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Device</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">setup: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">device</span><span class="p">.</span><span class="nx">fetch</span>
       <span class="nv">success: </span><span class="nf">(model) -&gt;</span>
         <span class="nv">view = </span><span class="k">new</span> <span class="nx">DeviceView</span>
@@ -45,13 +94,19 @@ uses nested views</p>             </td>             <td class="code">           
       <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
-  <span class="nv">assessments: </span><span class="o">-&gt;</span>
-    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
-      <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
-        <span class="nv">assessments = </span><span class="k">new</span> <span class="nx">AssessmentListView</span>
-        <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">assessments</span>
-      <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
-        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
+  <span class="nx">assessments</span><span class="o">:</span><span class="nf">(group=null) -&gt;</span>
+
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;testing&quot;</span>
+    <span class="k">if</span> <span class="nx">group</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">server</span>
+      <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;groups&quot;</span><span class="p">,</span> <span class="kc">true</span>
+    <span class="k">else</span>
+      <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
+        <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
+          <span class="nv">assessments = </span><span class="k">new</span> <span class="nx">AssessmentListView</span>
+            <span class="nv">group : </span><span class="nx">group</span>
+          <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">assessments</span>
+        <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
+          <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">editId: </span><span class="nf">(id) -&gt;</span>
     <span class="nv">id = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">cleanURL</span> <span class="nx">id</span>
@@ -61,9 +116,6 @@ uses nested views</p>             </td>             <td class="code">           
           <span class="nv">_id: </span><span class="nx">id</span>
         <span class="nx">assessment</span><span class="p">.</span><span class="nx">superFetch</span>
           <span class="nv">success : </span><span class="nf">( model ) -&gt;</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;model name&quot;</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">model</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">name</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">model</span>
             <span class="nv">view = </span><span class="k">new</span> <span class="nx">AssessmentEditView</span> <span class="nv">model: </span><span class="nx">model</span>
             <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
           <span class="nv">error: </span><span class="nf">(details) -&gt;</span>
@@ -97,6 +149,9 @@ uses nested views</p>             </td>             <td class="code">           
       <span class="nv">isUnregistered: </span><span class="nf">(options) -&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
+
+  <span class="nv">restart: </span><span class="nf">(name) -&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navgate</span> <span class="s">&quot;run/</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">run: </span><span class="nf">(name) -&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
@@ -167,22 +222,29 @@ since it doesn't use the assessment</p>             </td>             <td class=
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">logout</span><span class="p">()</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
-
   <span class="nv">account: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
-        <span class="nv">view = </span><span class="k">new</span> <span class="nx">AccountView</span> <span class="nv">model : </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span>
+        <span class="nv">view = </span><span class="k">new</span> <span class="nx">AccountView</span> <span class="nv">user : </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span>
         <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
       <span class="nv">isUnregistered: </span><span class="nf">(options) -&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
+  <span class="nv">logs: </span><span class="o">-&gt;</span>
+    <span class="nv">view = </span><span class="k">new</span> <span class="nx">LogView</span>
+    <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
 
 <span class="nx">$</span> <span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Start the application</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nb">window</span><span class="p">.</span><span class="nv">vm = </span><span class="k">new</span> <span class="nx">ViewManager</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Singletons</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">Tangerine.router = </span><span class="k">new</span> <span class="nx">Router</span><span class="p">()</span>
   <span class="nv">Tangerine.user   = </span><span class="k">new</span> <span class="nx">User</span><span class="p">()</span>
   <span class="nv">Tangerine.nav    = </span><span class="k">new</span> <span class="nx">NavigationView</span>
     <span class="nv">user   : </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span>
     <span class="nv">router : </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span>
+  
 
-  <span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">()</span>
+  <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">fetch</span>
+    <span class="nv">success: </span><span class="o">-&gt;</span>
+      <span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">()</span>
+    <span class="nv">error: </span><span class="o">-&gt;</span>
+      <span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">()</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

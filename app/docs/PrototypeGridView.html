@@ -23,7 +23,7 @@
     <span class="nx">@resetVariables</span><span class="p">()</span>
 
   <span class="nv">gridClick: </span><span class="nf">(event) -&gt;</span>
-    <span class="nx">@modeHandlers</span><span class="p">[</span><span class="nx">@mode</span><span class="p">](</span><span class="nx">event</span><span class="p">)</span>
+    <span class="nx">@modeHandlers</span><span class="p">[</span><span class="nx">@mode</span><span class="p">]</span><span class="o">?</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span>
 
   <span class="nv">markHandler: </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span>
     <span class="nv">$target = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span>

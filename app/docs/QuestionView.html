@@ -8,7 +8,7 @@
   <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
     <span class="vi">@model = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
     <span class="vi">@result = </span><span class="p">{}</span>
-    <span class="vi">@name    = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
+    <span class="vi">@name    = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">decode</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
     <span class="vi">@type    = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;type&quot;</span>
     <span class="vi">@options = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;options&quot;</span>
     <span class="vi">@notAsked = </span><span class="nx">options</span><span class="p">.</span><span class="nx">notAsked</span>
@@ -29,14 +29,18 @@
   <span class="nv">updateResult: </span><span class="o">-&gt;</span>
     <span class="k">if</span> <span class="nx">@type</span> <span class="o">==</span> <span class="s">&quot;open&quot;</span>
       <span class="k">if</span> <span class="nx">@notAsked</span> <span class="o">==</span> <span class="kc">true</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;not askresults&quot;</span>
         <span class="nx">@result</span><span class="p">[</span><span class="nx">@name</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;not_asked&quot;</span>
       <span class="k">else</span>
         <span class="nx">@result</span><span class="p">[</span><span class="nx">@name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
-    <span class="k">else</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="nx">@type</span> <span class="o">==</span> <span class="s">&quot;single&quot;</span>
+      <span class="k">if</span> <span class="nx">@notAsked</span> <span class="o">==</span> <span class="kc">true</span>
+        <span class="nx">@result</span><span class="p">[</span><span class="nx">@name</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;not_asked&quot;</span>
+      <span class="k">else</span>
+        <span class="nx">@result</span><span class="p">[</span><span class="nx">@name</span><span class="p">]</span> <span class="o">=</span> <span class="k">if</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@cid</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">@name</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="o">is</span><span class="p">(</span><span class="s">&quot;:checked&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="s">&quot;checked&quot;</span> <span class="k">else</span> <span class="s">&quot;unchecked&quot;</span>
+
+    <span class="k">else</span> <span class="k">if</span> <span class="nx">@type</span> <span class="o">==</span> <span class="s">&quot;multiple&quot;</span>
       <span class="k">if</span> <span class="nx">@notAsked</span> <span class="o">==</span> <span class="kc">true</span>
         <span class="k">for</span> <span class="nx">option</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@options</span>
-          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;not askresults&quot;</span>
           <span class="nx">@result</span><span class="p">[</span><span class="nx">@options</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">value</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;not_asked&quot;</span>
       <span class="k">else</span>
         <span class="k">for</span> <span class="nx">option</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@options</span>

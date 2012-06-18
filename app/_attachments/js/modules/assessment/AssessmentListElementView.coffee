@@ -5,6 +5,7 @@ class AssessmentListElementView extends Backbone.View
   events:
     'click .link_icon'                 : 'navigate'
     'click .assessment_menu_toggle'    : 'assessmentMenuToggle'
+    'click .admin_name'                : 'assessmentMenuToggle'
     'click .assessment_delete'         : 'assessmentDeleteToggle'
     'click .assessment_delete_cancel'  : 'assessmentDeleteToggle'
     'click .assessment_delete_confirm' : 'assessmentDelete'
@@ -28,7 +29,7 @@ class AssessmentListElementView extends Backbone.View
       @parent.refresh()
 
   copyToGroup: ->
-    @model.duplicate {group:Tangerine.user.groups[0]}, null, null, =>
+    @model.duplicate {group:Tangerine.user.get("groups")[0]}, null, null, =>
       @render()
       @parent.refresh()
 
@@ -69,9 +70,9 @@ class AssessmentListElementView extends Backbone.View
     toggleButton    = "<span class='assessment_menu_toggle icon_ryte'> </span>"
     deleteButton    = "<img class='assessment_delete' src='images/icon_delete.png'> <span class='assessment_delete_confirm'>Confirm <button class='assessment_delete_yes'>Delete</button> <button class='assessment_delete_cancel'>Cancel</button></span>"
     duplicateButton = "<button class='duplicate command'>Duplicate</button>"
-    editButton      = "<img data-href='edit/#{@model.get('name')}' class='link_icon' src='images/icon_edit.png'>"
-    resultsButton   = "<img data-href='results/#{@model.get('name')}' class='link_icon' src='images/icon_result.png'>"
-    runButton       = "<img data-href='run/#{@model.get('name')}' class='link_icon' src='images/icon_run.png'>"
+    editButton      = "<img class='link_icon' data-href='edit/#{@model.get('name')}' src='images/icon_edit.png'>"
+    resultsButton   = "<img class='link_icon' data-href='results/#{@model.get('name')}' src='images/icon_result.png'>"
+    runButton       = "<img class='link_icon' data-href='run/#{@model.get('name')}' src='images/icon_run.png'>"
     name            = "<span class='name clickable '>#{@model.get('name')}</span>"
     adminName       = "<span class='admin_name clickable #{archiveClass}'>#{@model.get('name')}</span>"
     resultCount     = "<span class='resultCount'>#{@model.get('resultCount') || '0'} results</span>"
@@ -84,24 +85,35 @@ class AssessmentListElementView extends Backbone.View
           #{adminName} 
         </div>
       "
-      # admin and public
-      if @isPublic
-        html += "
-          <div class='assessment_menu'>
-            #{copyButton}
-          </div>
-        "
-      # admin and group
-      else
+      # Admin on mobile
+      if Tangerine.context.mobile
         html += "
           <div class='assessment_menu'>
             #{runButton}
             #{resultsButton}
-            #{editButton}
-            #{duplicateButton}
             #{deleteButton}
           </div>
         "
+      # not on mobile
+      else
+        # admin and public
+        if @isPublic
+          html += "
+            <div class='assessment_menu'>
+              #{copyButton}
+            </div>
+          "
+        # admin and group
+        else
+          html += "
+            <div class='assessment_menu'>
+              #{runButton}
+              #{resultsButton}
+              #{editButton}
+              #{duplicateButton}
+              #{deleteButton}
+            </div>
+          "
     # enumerator user
     else
       html = "<div>#{runButton}#{name} #{resultsButton}</div>"

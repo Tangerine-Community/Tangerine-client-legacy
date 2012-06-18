@@ -39,7 +39,8 @@ PrototypeGridView = (function(_super) {
   };
 
   PrototypeGridView.prototype.gridClick = function(event) {
-    return this.modeHandlers[this.mode](event);
+    var _base, _name;
+    return typeof (_base = this.modeHandlers)[_name = this.mode] === "function" ? _base[_name](event) : void 0;
   };
 
   PrototypeGridView.prototype.markHandler = function(event) {

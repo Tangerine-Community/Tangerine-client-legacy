@@ -22,7 +22,12 @@ LoginView = (function(_super) {
 
   LoginView.prototype.initialize = function(options) {
     this.model = Tangerine.user;
-    return this.model.on("change:messages", this.renderMessages);
+    this.model.on("change:messages", this.renderMessages);
+    return this.model.on("change:authentication", this.goOn);
+  };
+
+  LoginView.prototype.goOn = function() {
+    return Tangerine.router.navigate("", true);
   };
 
   LoginView.prototype.render = function() {

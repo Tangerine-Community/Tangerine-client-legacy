@@ -132,19 +132,34 @@ class Utils
     e.innerHTML = input
     return if e.childNodes.length == 0 then "" else e.childNodes[0].nodeValue
 
+  # Handle html entities
+  @encode: (s) -> $("<div/>").text(s).html().replace("'", "&#39;").replace('"', "&#34;")
+  @decode: (s) -> $("<div/>").html(s).text()
+
+
   @flash: ->
     $("body").css "backgroundColor" : "red"
     setTimeout ->
       $("body").css "backgroundColor" : "white"
     , 1000
 
+  @$_GET: (q,s) ->
+    vars = {}
+    parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m,key,value) ->
+        value = if ~value.indexOf("#") then value.split("#")[0] else value
+        vars[key] = value.split("#")[0];
+    )
+    vars
+
 
 class Context
   constructor: ->
-    @mobile = if ~(String(window.location).indexOf("iriscouch")) then false else true 
+    # false if it finds "iriscouch" in url
+    @mobile = !~(String(window.location).indexOf("iriscouch"))
+    # true if "kindle" is in userAgent
     @kindle = /kindle/.test(navigator.userAgent.toLowerCase())
-
-    @server = if ~(String(window.location).indexOf("iriscouch")) then true else false 
+    # true if it finds "iriscouch" in url
+    @server = !!~(String(window.location).indexOf("iriscouch"))
 
 ##UI helpers
 $ ->

@@ -3,34 +3,30 @@ class QuestionEditView extends Backbone.View
   className : "question_list_element"
 
   events : 
-    'click .back'            : 'back'
-    'click .save'            : 'save'
-    'click .add_option'      : 'addOption'
-    'click .delete_option'   : 'showDeleteConfirm'
-    'click .delete_cancel'   : 'hideDeleteConfirm'
-    'click .delete_delete'   : 'deleteOption'
-    'click input:radio'      : 'changeQuestionType'
-    'click .delete_question' : 'deleteQuestion'
-    'keypress'               : 'hijackEnter'
+    'click .back'             : 'goBack'
+    'click .done'             : 'done'
+    'click .add_option'       : 'addOption'
+    'click .delete_option'    : 'showDeleteConfirm'
+    'click .delete_cancel'    : 'hideDeleteConfirm'
+    'click .delete_delete'    : 'deleteOption'
+    'click input:radio'       : 'changeQuestionType'
+    'click .delete_question'  : 'deleteQuestion'
+    'keypress'                : 'hijackEnter'
     'change .option_select'   : 'templateFill'
 
   templateFill: (event) ->
-    
     index = $(event.target).find("option:selected").attr('data-index')
-    console.log index
     @model.set "options", Tangerine.config.optionTemplates[index].options
-    console.log Tangerine.config.optionTemplates[index].options
     @$el.find('#option_list_wrapper').html @getOptionList()
-    console.log @getOptionList()
     return false
 
-  back: ->
+  goBack: =>
     Tangerine.router.navigate "subtest/#{@model.get 'subtestId'}", true
     return false
 
   initialize: (options) ->
-    @parent     = options.parent
-    @model      = options.model
+    @parent = options.parent
+    @model  = options.model
 
   getOptionList: ->
     options = @model.get "options" 
@@ -40,14 +36,19 @@ class QuestionEditView extends Backbone.View
       html += "
       <li class='question'>
         <img src='images/icon_drag.png' class='sortable_handle'>
-        <div class='option_label_value'>
-          <label class='edit' for='options.#{i}.label'>Label</label>
-          <input id='options.#{i}.label' value='#{option.label}' placeholder='Option label' class='option_label'><br>
-          <label class='edit' for='options.#{i}.value'>Value</label>
-          <input id='options.#{i}.value' value='#{option.value}' placeholder='Option value' class='option_value'>
+        <div style='display: block;'>
+          <div class='option_label_value'>
+            <label class='edit' for='options.#{i}.label'>Label</label>
+            <input id='options.#{i}.label' value='#{Utils.encode(option.label)}' placeholder='Option label' class='option_label'><br>
+            <label class='edit' for='options.#{i}.value'>Value</label>
+            <input id='options.#{i}.value' value='#{Utils.encode(option.value)}' placeholder='Option value' class='option_value'>
+          </div>
+          <img src='images/icon_delete.png' class='delete_option' data-index='#{i}'>
+          <div class='confirmation delete_confirm_#{i}'>
+            <button class='delete_delete' data-index='#{i}'>Delete</button>
+            <button data-index='#{i}' class='delete_cancel'>Cancel</button>
+          </div>
         </div>
-        <img src='images/icon_delete.png' class='delete_option' data-index='#{i}'>
-        <div class='confirmation delete_confirm_#{i}'><button class='delete_delete' data-index='#{i}'>Delete</button><button data-index='#{i}' class='delete_cancel'>Cancel</button></div>
       </li>
       "
     html += "</ul>
@@ -70,9 +71,9 @@ class QuestionEditView extends Backbone.View
 
 
   render: ->
-    name            = @model.get("name") || ""
-    prompt          = @model.get("prompt") || ""
-    hint            = @model.get("hint") || ""
+    name            = Utils.encode(@model.get("name") || "")
+    prompt          = Utils.encode(@model.get("prompt") || "")
+    hint            = Utils.encode(@model.get("hint") || "")
     type            = @model.get "type"
     options         = @model.get "options"
     linkedGridScore = @model.get("linkedGridScore") || 0
@@ -83,6 +84,7 @@ class QuestionEditView extends Backbone.View
     @$el.html "
       <button class='back navigation'>Back</button>
       <h1>Question Editor</h1>
+      <button class='done command'>Done</button>
       <div class='edit_form question'>
         <div class='label_value'>
           <label for='name'>Variable name</label>
@@ -139,9 +141,8 @@ class QuestionEditView extends Backbone.View
         handle : '.sortable_handle'
         update : (event, ui) =>
           @updateModel()
-          
 
-    @$el.append "<button class='save command'>Save</button><button class='delete_question command'>Delete</button>
+    @$el.append "<button class='done command'>Done</button>
       </div>
       "
     @$el.find("#question_type, #skip_radio").buttonset()
@@ -166,17 +167,14 @@ class QuestionEditView extends Backbone.View
   #
   # Saving
   #
-  save: ->
+  done: ->
     @updateModel()
     # show a message and any we've collected along the way
     if @model.save()
-      alertText = "Question Saved"
-      if @saveMessage
-        alertText += @saveMessage
-        @saveMessage = ''
-      Utils.midAlert alertText 
-    @savedMessage = ""
-    window.onbeforeunload = null
+      Utils.midAlert "Question Saved"
+      setTimeout @goBack, 500
+    else
+      Utils.midAlert "Save error"
     return false
   
   deleteQuestion: ->
@@ -189,7 +187,7 @@ class QuestionEditView extends Backbone.View
     # basics
     @model.set 
       "prompt"          : @$el.find("#prompt").val() 
-      "name"            : @$el.find("#name").val()
+      "name"            : Utils.encode @$el.find("#name").val()
       "hint"            : @$el.find("#hint").val()
       "linkedGridScore" : @$el.find("#linked_grid_score").val()
       "type"            : @$el.find("#question_type input:checked").val()

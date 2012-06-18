@@ -181,6 +181,14 @@ Utils = (function() {
     }
   };
 
+  Utils.encode = function(s) {
+    return $("<div/>").text(s).html().replace("'", "&#39;").replace('"', "&#34;");
+  };
+
+  Utils.decode = function(s) {
+    return $("<div/>").html(s).text();
+  };
+
   Utils.flash = function() {
     $("body").css({
       "backgroundColor": "red"
@@ -192,6 +200,16 @@ Utils = (function() {
     }, 1000);
   };
 
+  Utils.$_GET = function(q, s) {
+    var parts, vars;
+    vars = {};
+    parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+      value = ~value.indexOf("#") ? value.split("#")[0] : value;
+      return vars[key] = value.split("#")[0];
+    });
+    return vars;
+  };
+
   return Utils;
 
 })();
@@ -199,9 +217,9 @@ Utils = (function() {
 Context = (function() {
 
   function Context() {
-    this.mobile = ~(String(window.location).indexOf("iriscouch")) ? false : true;
+    this.mobile = !~(String(window.location).indexOf("iriscouch"));
     this.kindle = /kindle/.test(navigator.userAgent.toLowerCase());
-    this.server = ~(String(window.location).indexOf("iriscouch")) ? true : false;
+    this.server = !!~(String(window.location).indexOf("iriscouch"));
   }
 
   return Context;

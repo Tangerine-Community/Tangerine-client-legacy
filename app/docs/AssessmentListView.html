@@ -6,14 +6,17 @@
     <span class="s">&#39;click .new_assessment_cancel&#39;</span> <span class="o">:</span> <span class="s">&#39;newAssessmentHide&#39;</span>
     <span class="s">&#39;click .new_assessment&#39;</span>        <span class="o">:</span> <span class="s">&#39;newAssessmentShow&#39;</span>
     <span class="s">&#39;click .import&#39;</span>                <span class="o">:</span> <span class="s">&#39;import&#39;</span>
+    <span class="s">&#39;click .groups&#39;</span>                <span class="o">:</span> <span class="s">&#39;gotoGroups&#39;</span>
 
+  <span class="nv">gotoGroups: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;groups&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">import: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;import&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nx">initialize</span><span class="o">:</span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@group = </span><span class="nx">options</span><span class="p">.</span><span class="nx">group</span>
     <span class="vi">@isAdmin = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isAdmin</span><span class="p">()</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;is admin &quot;</span> <span class="o">+</span> <span class="nx">@isAdmin</span>
     <span class="vi">@views = </span><span class="p">[]</span>
     <span class="vi">@publicViews = </span><span class="p">[]</span>
     <span class="nx">@refresh</span><span class="p">()</span>
@@ -23,9 +26,9 @@
     <span class="nx">allAssessments</span><span class="p">.</span><span class="nx">fetch</span>
       <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">=&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>maybe this isn't the best place for a filter
 only applies to this list</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nv">groupCollection = </span><span class="p">[]</span>
-        <span class="nx">collection</span><span class="p">.</span><span class="nx">each</span> <span class="nf">(model) -&gt;</span>
+        <span class="nx">collection</span><span class="p">.</span><span class="nx">each</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="o">=&gt;</span>
           <span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">server</span>
-            <span class="k">if</span> <span class="o">~</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;group&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;group&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="nx">@group</span>
               <span class="nx">groupCollection</span><span class="p">.</span><span class="nx">push</span> <span class="nx">model</span>
           <span class="k">else</span>
             <span class="nx">groupCollection</span><span class="p">.</span><span class="nx">push</span> <span class="nx">model</span>
@@ -42,12 +45,18 @@ only applies to this list</p>             </td>             <td class="code">   
   <span class="nv">render: </span><span class="o">=&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>clean up</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@closeViews</span><span class="p">()</span>
     <span class="vi">@views = </span><span class="p">[]</span>
 
+    <span class="nv">newButton    = </span><span class="s">&quot;&lt;button class=&#39;new_assessment command&#39;&gt;New&lt;/button&gt;&quot;</span>
+    <span class="nv">importButton = </span><span class="s">&quot;&lt;button class=&#39;import command&#39;&gt;Import&lt;/button&gt;&quot;</span>
+    <span class="nv">groupsButton = </span><span class="s">&quot;&lt;button class=&#39;navigation groups&#39;&gt;Groups&lt;/button&gt;&quot;</span>
+
     <span class="nv">html = </span><span class="s">&quot;</span>
+<span class="s">      </span><span class="si">#{</span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">server</span> <span class="k">then</span> <span class="nx">groupsButton</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s"></span>
 <span class="s">      &lt;h1&gt;Assessments&lt;/h1&gt;</span>
 <span class="s">      &quot;</span>
     <span class="k">if</span> <span class="nx">@isAdmin</span>
       <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
-<span class="s">        &lt;button class=&#39;new_assessment command&#39;&gt;New&lt;/button&gt;&lt;button class=&#39;import command&#39;&gt;Import&lt;/button&gt;</span>
+<span class="s">        </span><span class="si">#{</span><span class="nx">newButton</span><span class="si">}</span><span class="s"></span>
+<span class="s">        </span><span class="si">#{</span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">mobile</span> <span class="k">then</span> <span class="nx">importButton</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s"></span>
 <span class="s">        &lt;form class=&#39;new_assessment_form&#39;&gt;</span>
 <span class="s">          &lt;input type=&#39;text&#39; class=&#39;new_assessment_name&#39; placeholder=&#39;Assessment Name&#39;&gt;</span>
 <span class="s">          &lt;button class=&#39;new_assessment_save&#39;&gt;Save&lt;/button&gt;</span>
@@ -101,9 +110,10 @@ only applies to this list</p>             </td>             <td class="code">   
       <span class="nv">newId = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">guid</span><span class="p">()</span>
       <span class="nv">newAssessment = </span><span class="k">new</span> <span class="nx">Assessment</span>
         <span class="s">&#39;name&#39;</span>         <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_name&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
-        <span class="s">&#39;group&#39;</span>        <span class="o">:</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="s">&#39;group&#39;</span>        <span class="o">:</span> <span class="nx">@group</span>
         <span class="s">&#39;_id&#39;</span>          <span class="o">:</span> <span class="nx">newId</span>
         <span class="s">&#39;assessmentId&#39;</span> <span class="o">:</span> <span class="nx">newId</span>
+        
       <span class="nx">newAssessment</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
       <span class="nx">@collection</span><span class="p">.</span><span class="nx">add</span> <span class="nx">newAssessment</span>
       <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_name&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span><span class="si">}</span><span class="s"> saved&quot;</span>

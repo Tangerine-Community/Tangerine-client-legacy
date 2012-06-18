@@ -15,6 +15,7 @@ AssessmentListElementView = (function(_super) {
   AssessmentListElementView.prototype.events = {
     'click .link_icon': 'navigate',
     'click .assessment_menu_toggle': 'assessmentMenuToggle',
+    'click .admin_name': 'assessmentMenuToggle',
     'click .assessment_delete': 'assessmentDeleteToggle',
     'click .assessment_delete_cancel': 'assessmentDeleteToggle',
     'click .assessment_delete_confirm': 'assessmentDelete',
@@ -50,7 +51,7 @@ AssessmentListElementView = (function(_super) {
   AssessmentListElementView.prototype.copyToGroup = function() {
     var _this = this;
     return this.model.duplicate({
-      group: Tangerine.user.groups[0]
+      group: Tangerine.user.get("groups")[0]
     }, null, null, function() {
       _this.render();
       return _this.parent.refresh();
@@ -115,18 +116,22 @@ AssessmentListElementView = (function(_super) {
     toggleButton = "<span class='assessment_menu_toggle icon_ryte'> </span>";
     deleteButton = "<img class='assessment_delete' src='images/icon_delete.png'> <span class='assessment_delete_confirm'>Confirm <button class='assessment_delete_yes'>Delete</button> <button class='assessment_delete_cancel'>Cancel</button></span>";
     duplicateButton = "<button class='duplicate command'>Duplicate</button>";
-    editButton = "<img data-href='edit/" + (this.model.get('name')) + "' class='link_icon' src='images/icon_edit.png'>";
-    resultsButton = "<img data-href='results/" + (this.model.get('name')) + "' class='link_icon' src='images/icon_result.png'>";
-    runButton = "<img data-href='run/" + (this.model.get('name')) + "' class='link_icon' src='images/icon_run.png'>";
+    editButton = "<img class='link_icon' data-href='edit/" + (this.model.get('name')) + "' src='images/icon_edit.png'>";
+    resultsButton = "<img class='link_icon' data-href='results/" + (this.model.get('name')) + "' src='images/icon_result.png'>";
+    runButton = "<img class='link_icon' data-href='run/" + (this.model.get('name')) + "' src='images/icon_run.png'>";
     name = "<span class='name clickable '>" + (this.model.get('name')) + "</span>";
     adminName = "<span class='admin_name clickable " + archiveClass + "'>" + (this.model.get('name')) + "</span>";
     resultCount = "<span class='resultCount'>" + (this.model.get('resultCount') || '0') + " results</span>";
     if (this.isAdmin) {
       html = "        <div>          " + toggleButton + "          " + adminName + "         </div>      ";
-      if (this.isPublic) {
-        html += "          <div class='assessment_menu'>            " + copyButton + "          </div>        ";
+      if (Tangerine.context.mobile) {
+        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + deleteButton + "          </div>        ";
       } else {
-        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + editButton + "            " + duplicateButton + "            " + deleteButton + "          </div>        ";
+        if (this.isPublic) {
+          html += "            <div class='assessment_menu'>              " + copyButton + "            </div>          ";
+        } else {
+          html += "            <div class='assessment_menu'>              " + runButton + "              " + resultsButton + "              " + editButton + "              " + duplicateButton + "              " + deleteButton + "            </div>          ";
+        }
       }
     } else {
       html = "<div>" + runButton + name + " " + resultsButton + "</div>";

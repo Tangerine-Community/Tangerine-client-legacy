@@ -8,7 +8,7 @@ class QuestionView extends Backbone.View
   initialize: (options) ->
     @model = options.model
     @result = {}
-    @name    = @model.get "name"
+    @name    = Utils.decode @model.get "name"
     @type    = @model.get "type"
     @options = @model.get "options"
     @notAsked = options.notAsked
@@ -29,14 +29,18 @@ class QuestionView extends Backbone.View
   updateResult: ->
     if @type == "open"
       if @notAsked == true
-        console.log "not askresults"
         @result[@name] = "not_asked"
       else
         @result[@name] = @$el.find("##{@cid}_#{@name}").val()
-    else
+    else if @type == "single"
+      if @notAsked == true
+        @result[@name] = "not_asked"
+      else
+        @result[@name] = if @$el.find("##{@cid}_#{@name}_#{i}").is(":checked") then "checked" else "unchecked"
+
+    else if @type == "multiple"
       if @notAsked == true
         for option, i in @options
-          console.log "not askresults"
           @result[@options[i].value] = "not_asked"
       else
         for option, i in @options
