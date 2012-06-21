@@ -56,7 +56,7 @@ class AccountView extends Backbone.View
           <input id='group_name' placeholder='Group name'>
           <small>Please be specific.<br>
           Good examples: MalawiJun2012, MikeTestGroup2012, EGRAGroup2012<br>
-          Bad examples: group, test, mine</small>
+          Bad examples: group, test, mine</small><br>
           <button class='command join_group'>Join Group</button>
           <button class='command join_cancel'>Cancel</button>
         </div>
