@@ -14,26 +14,41 @@ ReportView = (function(_super) {
   ReportView.prototype.initialize = function(options) {
     var allResults,
       _this = this;
+    this.table = {
+      'studentId': [],
+      'correct': [],
+      'incorrect': [],
+      'missing': []
+    };
     this.assessmentId = options.assessmentId;
     console.log("Initializing ReportView: " + this.assessmentId);
     allResults = new Results;
     return allResults.fetch({
       success: function(collection) {
-        var grid;
+        var result, subtestKey, subtestValue, _i, _len, _ref, _ref1;
         console.log(collection);
-        return _this.grids = collection.where({
-          assessmentId: _this.assessmentId,
-          prototype: "grid"
-        }, console.log(_this.grids), (function() {
-          var _i, _len, _ref, _results;
-          _ref = this.grids;
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            grid = _ref[_i];
-            _results.push(console.log(grid));
+        _this.results = collection.where({
+          assessmentId: _this.assessmentId
+        });
+        _ref = _this.results;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          result = _ref[_i];
+          _ref1 = result.attributes.subtestData;
+          for (subtestKey in _ref1) {
+            subtestValue = _ref1[subtestKey];
+            if (subtestValue.name === "Student ID") {
+              _this.table.studentId.push(subtestValue.data.student_id);
+              _this.table.correct.push(0);
+              _this.table.incorrect.push(0);
+              _this.table.missing.push(0);
+            } else if (subtestValue.data.letters_results != null) {
+              _this.table.correct[_this.table.correct.lastIndexOf(0)] = _this.table.correct[_this.table.correct.lastIndexOf(0)] + subtestValue.sum.correct;
+              _this.table.incorrect[_this.table.incorrect.lastIndexOf(0)] = _this.table.incorrect[_this.table.incorrect.lastIndexOf(0)] + subtestValue.sum.incorrect;
+              _this.table.missing[_this.table.missing.lastIndexOf(0)] = _this.table.missing[_this.table.missing.lastIndexOf(0)] + subtestValue.sum.missing;
+            }
           }
-          return _results;
-        }).call(_this));
+        }
+        return console.log(_this.table);
       }
     });
   };
