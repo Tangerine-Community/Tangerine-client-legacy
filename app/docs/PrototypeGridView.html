@@ -134,7 +134,7 @@
     <span class="vi">@timeRemaining = </span><span class="nx">@timer</span> <span class="o">-</span> <span class="nx">@timeElapsed</span>
     
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.timer&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">@timeRemaining</span>
-    <span class="k">if</span> <span class="nx">@timeRemaining</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">@timeRunning</span> <span class="o">==</span> <span class="kc">true</span> <span class="k">then</span> <span class="nx">@stopTimer</span> <span class="kc">null</span><span class="p">,</span> <span class="s">&quot;Time&lt;br&gt;&lt;br&gt;Please mark&lt;br&gt;last item attempted&quot;</span>
+    <span class="k">if</span> <span class="nx">@timeRemaining</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">@timeRunning</span> <span class="o">==</span> <span class="kc">true</span> <span class="k">then</span> <span class="nx">@stopTimer</span> <span class="kc">null</span><span class="p">,</span> <span class="s">&quot;Time&lt;br&gt;&lt;br&gt;Please mark&lt;br&gt;last item attempted&quot;</span>
 
   <span class="nv">updateMode: </span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">mode</span><span class="p">)</span> <span class="o">=&gt;</span>
     <span class="k">if</span> <span class="nx">mode</span><span class="o">?</span>

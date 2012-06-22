@@ -179,7 +179,7 @@ PrototypeGridView = (function(_super) {
     this.timeElapsed = this.getTime() - this.startTime;
     this.timeRemaining = this.timer - this.timeElapsed;
     this.$el.find(".timer").html(this.timeRemaining);
-    if (this.timeRemaining === 0 && this.timeRunning === true) {
+    if (this.timeRemaining <= 0 && this.timeRunning === true) {
       return this.stopTimer(null, "Time<br><br>Please mark<br>last item attempted");
     }
   };

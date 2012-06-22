@@ -134,7 +134,7 @@ class PrototypeGridView extends Backbone.View
     @timeRemaining = @timer - @timeElapsed
     
     @$el.find(".timer").html @timeRemaining
-    if @timeRemaining == 0 && @timeRunning == true then @stopTimer null, "Time<br><br>Please mark<br>last item attempted"
+    if @timeRemaining <= 0 && @timeRunning == true then @stopTimer null, "Time<br><br>Please mark<br>last item attempted"
 
   updateMode: (event, mode) =>
     if mode?
