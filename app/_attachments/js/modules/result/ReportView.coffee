@@ -1,4 +1,7 @@
-# Taylor's class!
+  # Taylor's ReportView Class - creates a class summary for a single subtest
+  # Note that currently reports can only be accessed by URL
+  # Example URL: http://localhost:5984/tangerine/_design/tangerine/index.html#report/3893245d0c5104822af8e6855e0000df-3893245d0c5104822af8e6855e00760f
+  # Where the first id gives the assessment id and the second gives the subtest id
 class ReportView extends Backbone.View
   
   initialize: ( options ) -> 
@@ -48,12 +51,18 @@ class ReportView extends Backbone.View
       0.49995, 0.49995, 0.49996, 0.49996, 0.49996, 0.49996, 0.49996, 0.49996, 0.49997, 0.49997,
       0.49997, 0.49997, 0.49997, 0.49997, 0.49997, 0.49997, 0.49998, 0.49998, 0.49998, 0.49998]
     
-    
-    
     @assessmentId = options.assessmentId
-    console.log "Initializing ReportView: " + @assessmentId
+    @testId = "N/A"
+    if ~@assessmentId.lastIndexOf "-"
+      @testId = @assessmentId.substring((@assessmentId.lastIndexOf "-") + 1, @assessmentId.length)
+      @assessmentId = @assessmentId.substring(0, @assessmentId.lastIndexOf "-")
+    else
+      console.log "Need to provide a subtestID - Procedure CRASHED"
+    console.log "Assessment ID: " + @assessmentId
+    console.log "Subtest ID: " + @testId
     @avgCorrect = 0
     @stdDev = 0
+    @assessmentName = "N/A"
     @testName = "N/A"
     @numStudents = 0
     @studentsToWatch = ""
@@ -63,8 +72,8 @@ class ReportView extends Backbone.View
       success: (collection) =>
         @results = collection.where {assessmentId : @assessmentId}
         console.log @results
-        @testName = @results[0].attributes.assessmentName if @results[0].attributes.assessmentName?
-        
+        @assessmentName = @results[0].attributes.assessmentName if @results[0].attributes.assessmentName?
+        ids = []
         for result in @results
           id = ""
           for subtestKey, subtestValue of result.attributes.subtestData
@@ -73,30 +82,37 @@ class ReportView extends Backbone.View
             missing = 0
             if subtestValue.name == "Student ID"
               id = subtestValue.data.student_id
-            else if id != "" and subtestValue.data.letters_results?
-              @avgCorrect += subtestValue.sum.correct
+              if ~ids.indexOf id
+                id = ""
+              else
+                ids.push id
+            else if id != "" and subtestValue.subtestId == @testId
+              @testName = subtestValue.name
+              @numQuestions = subtestValue.sum.correct + subtestValue.sum.incorrect
               person =
                 'StudentId' : id
-                'Correct' : subtestValue.sum.correct
-                'Incorrect' : subtestValue.sum.incorrect
+                'PercentCorrect' : 0
+                'NumberCorrect' : subtestValue.sum.correct - subtestValue.sum.missing
+                'NumberAttempted' : subtestValue.sum.correct + subtestValue.sum.incorrect - subtestValue.sum.missing
                 'Deviation' : 0
                 'Percentile' : 0
                 'Status' : 0
+              person.PercentCorrect = Math.round(person.NumberCorrect / person.NumberAttempted * 10000) / 100.0
+              @avgCorrect += person.PercentCorrect
               id = ""
               @table.push person
         @avgCorrect = @avgCorrect / @table.length
         @avgCorrect = Math.round(@avgCorrect*100) / 100.0
       
         for person in @table
-          @stdDev += Math.pow(person.Correct - @avgCorrect, 2)
+          @stdDev += Math.pow(person.PercentCorrect - @avgCorrect, 2)
         @stdDev = @stdDev / @table.length
         @stdDev = Math.pow(@stdDev, 0.5)
         @stdDev = Math.round(@stdDev*100) / 100.0
       
         for person in @table
           @numStudents++
-          @numQuestions = person.Correct + person.Incorrect
-          dev = (person.Correct - @avgCorrect) / @stdDev
+          dev = (person.PercentCorrect - @avgCorrect) / @stdDev
           index =  Math.round(dev * 100)
           person.Deviation = index / 100
           if index > 409 or index < -409
@@ -115,20 +131,20 @@ class ReportView extends Backbone.View
     if @table.length > 0
       # Sort by descending
       @table.sort (a, b) ->
-        b.Percentile - a.Percentile
+        b.PercentCorrect - a.PercentCorrect
       
       # Write HTML Table of all data
       tableHTML = "<h4>Detailed Student Data Summary:</h4>"
       tableHTML += "<table border=\"3\">"
       tableHTML += "<tr>"
       for colHeader, value of @table[0]
-        tableHTML += "<th>#{colHeader}</th>"
+        if colHeader != "Deviation" then tableHTML += "<th>#{colHeader}</th>"
       tableHTML += "</tr>"
       for person in @table
         color = @getColorTag(person.Percentile, person.StudentId)
         tableHTML += "<tr BGCOLOR=\"#{color}\">"
         for colHeader, value of person
-          tableHTML += "<td>#{value}</td>"
+          if colHeader != "Deviation" then tableHTML += "<td>#{value}</td>"
         tableHTML += "</tr>"
       tableHTML += "</table>"
       
@@ -136,12 +152,16 @@ class ReportView extends Backbone.View
       testStats = "<h4>Test Statistics at a glance:</h4>"
       testStats += "<table border=\"3\">"
       testStats += "<tr><th>Assessment Name:</th>"
-      testStats += "<td>#{@testName}</td></tr>"
+      testStats += "<td>#{@assessmentName}</td></tr>"
       testStats += "<tr><th>Assessment ID:</th>"
       testStats += "<td>#{@assessmentId}</td></tr>"
-      testStats += "<tr><th>Average:</th>"
+      testStats += "<tr><th>Subtest Name:</th>"
+      testStats += "<td>#{@testName}</td></tr>"
+      testStats += "<tr><th>Subtest ID:</th>"
+      testStats += "<td>#{@testId}</td></tr>"
+      testStats += "<tr><th>Average (%):</th>"
       testStats += "<td>#{@avgCorrect}</td></tr>"
-      testStats += "<tr><th>Standard Deviation:</th>"
+      testStats += "<tr><th>Standard Deviation (%):</th>"
       testStats += "<td>#{@stdDev}</td></tr>"
       testStats += "<tr><th>Class Size:</th>"
       testStats += "<td>#{@numStudents}</td></tr>"
@@ -166,7 +186,7 @@ class ReportView extends Backbone.View
     return @colors[index]
 
   getStatusTag: (percentile) ->
-    @status = ["Below Average","Average", "Above Average"]
+    @status = ["Concerning","Average", "Great"]
     index = Math.round((percentile - 17) / 33)
     if index < 0
       index = 0
