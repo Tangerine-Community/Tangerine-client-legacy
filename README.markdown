@@ -63,6 +63,14 @@ and use
     couchapp push
 to push tangerine to your localhost server. Time to begin developing!
 
+
+#### Getting Started - PC
+Getting started developing on a pc is much more complicated, as a pc does not run on unix. Two options are available:
+
+- Use a virtual box to run linux
+- Try to find the pc equivalent of the above software
+
+
 ----
 
 Copyright (C) 2012  Michael McKay
