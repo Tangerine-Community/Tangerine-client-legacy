@@ -20,6 +20,9 @@ ReportView = (function(_super) {
     console.log("Initializing ReportView: " + this.assessmentId);
     this.avgCorrect = 0;
     this.stdDev = 0;
+    this.testName = "N/A";
+    this.numStudents = 0;
+    this.studentsToWatch = "";
     allResults = new Results;
     return allResults.fetch({
       success: function(collection) {
@@ -27,6 +30,10 @@ ReportView = (function(_super) {
         _this.results = collection.where({
           assessmentId: _this.assessmentId
         });
+        console.log(_this.results);
+        if (_this.results[0].attributes.assessmentName != null) {
+          _this.testName = _this.results[0].attributes.assessmentName;
+        }
         _ref = _this.results;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           result = _ref[_i];
@@ -42,12 +49,12 @@ ReportView = (function(_super) {
             } else if (id !== "" && (subtestValue.data.letters_results != null)) {
               _this.avgCorrect += subtestValue.sum.correct;
               person = {
-                'studentId': id,
-                'correct': subtestValue.sum.correct,
-                'incorrect': subtestValue.sum.incorrect,
-                'deviation': 0,
-                'percentile': 0,
-                'status': 0
+                'StudentId': id,
+                'Correct': subtestValue.sum.correct,
+                'Incorrect': subtestValue.sum.incorrect,
+                'Deviation': 0,
+                'Percentile': 0,
+                'Status': 0
               };
               id = "";
               _this.table.push(person);
@@ -55,55 +62,58 @@ ReportView = (function(_super) {
           }
         }
         _this.avgCorrect = _this.avgCorrect / _this.table.length;
+        _this.avgCorrect = Math.round(_this.avgCorrect * 100) / 100.0;
         _ref2 = _this.table;
         for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
           person = _ref2[_j];
-          _this.stdDev += Math.pow(person.correct - _this.avgCorrect, 2);
+          _this.stdDev += Math.pow(person.Correct - _this.avgCorrect, 2);
         }
         _this.stdDev = _this.stdDev / _this.table.length;
         _this.stdDev = Math.pow(_this.stdDev, 0.5);
+        _this.stdDev = Math.round(_this.stdDev * 100) / 100.0;
         _ref3 = _this.table;
         for (_k = 0, _len2 = _ref3.length; _k < _len2; _k++) {
           person = _ref3[_k];
-          dev = (person.correct - _this.avgCorrect) / _this.stdDev;
+          _this.numStudents++;
+          _this.numQuestions = person.Correct + person.Incorrect;
+          dev = (person.Correct - _this.avgCorrect) / _this.stdDev;
           index = Math.round(dev * 100);
-          person.deviation = index / 100;
+          person.Deviation = index / 100;
           if (index > 409 || index < -409) {
-            person.percentile = 0;
+            person.Percentile = 0;
           } else if (index > 0) {
-            person.percentile = Math.round(50 + 100 * _this.normalCurve[index]) / 100;
+            person.Percentile = 100 * Math.round(50 + 100 * _this.normalCurve[index]) / 100;
           } else if (index < 0) {
-            person.percentile = Math.round(50 - 100 * _this.normalCurve[index * -1]) / 100;
+            person.Percentile = 100 * Math.round(50 - 100 * _this.normalCurve[index * -1]) / 100;
           } else {
-            person.percentile = 0.5;
+            person.Percentile = 50;
           }
-          person.status = _this.getStatusTag(person.percentile);
+          person.Status = _this.getStatusTag(person.Percentile);
         }
-        console.log("Average: " + _this.avgCorrect);
-        console.log("Std Dev: " + _this.stdDev);
-        console.log(_this.table);
         return _this.render();
       }
     });
   };
 
   ReportView.prototype.render = function() {
-    var colHeader, color, person, tableHTML, value, _i, _len, _ref, _ref1;
+    var colHeader, color, person, tableHTML, testStats, toHTML, value, _i, _len, _ref, _ref1;
     if (this.table.length > 0) {
       this.table.sort(function(a, b) {
-        return b.percentile - a.percentile;
+        return b.Percentile - a.Percentile;
       });
-      tableHTML = "<tr>";
+      tableHTML = "<h4>Detailed Student Data Summary:</h4>";
+      tableHTML += "<table border=\"3\">";
+      tableHTML += "<tr>";
       _ref = this.table[0];
       for (colHeader in _ref) {
         value = _ref[colHeader];
-        tableHTML += "<td>" + colHeader + "</td>";
+        tableHTML += "<th>" + colHeader + "</th>";
       }
       tableHTML += "</tr>";
       _ref1 = this.table;
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
         person = _ref1[_i];
-        color = this.getColorTag(person.percentile);
+        color = this.getColorTag(person.Percentile, person.StudentId);
         tableHTML += "<tr BGCOLOR=\"" + color + "\">";
         for (colHeader in person) {
           value = person[colHeader];
@@ -111,18 +121,40 @@ ReportView = (function(_super) {
         }
         tableHTML += "</tr>";
       }
-      console.log(tableHTML);
-      this.$el.html(tableHTML);
+      tableHTML += "</table>";
+      testStats = "<h4>Test Statistics at a glance:</h4>";
+      testStats += "<table border=\"3\">";
+      testStats += "<tr><th>Assessment Name:</th>";
+      testStats += "<td>" + this.testName + "</td></tr>";
+      testStats += "<tr><th>Assessment ID:</th>";
+      testStats += "<td>" + this.assessmentId + "</td></tr>";
+      testStats += "<tr><th>Average:</th>";
+      testStats += "<td>" + this.avgCorrect + "</td></tr>";
+      testStats += "<tr><th>Standard Deviation:</th>";
+      testStats += "<td>" + this.stdDev + "</td></tr>";
+      testStats += "<tr><th>Class Size:</th>";
+      testStats += "<td>" + this.numStudents + "</td></tr>";
+      testStats += "<tr><th>Number of Questions:</th>";
+      testStats += "<td>" + this.numQuestions + "</td></tr>";
+      testStats += "<tr><th>Students to watch:</th>";
+      testStats += "<td>" + this.studentsToWatch + "</td></tr></table>";
+      toHTML = testStats + tableHTML;
+      this.$el.html(toHTML);
       return this.trigger("rendered");
     }
   };
 
-  ReportView.prototype.getColorTag = function(percentile) {
+  ReportView.prototype.getColorTag = function(percentile, id) {
     var index;
-    this.colors = ["2E8B57", "90EE90", "DDA0DD"];
-    index = Math.round((percentile - 0.17) / 0.33);
-    if (index < 0) {
+    this.colors = ["2E8B57", "90EE90", "00FF00"];
+    index = Math.round((percentile - 17) / 33);
+    if (index <= 0) {
       index = 0;
+      if (this.studentsToWatch !== "") {
+        this.studentsToWatch += ", " + id;
+      } else {
+        this.studentsToWatch += id;
+      }
     } else if (index > 2) {
       index = 2;
     }
@@ -132,7 +164,7 @@ ReportView = (function(_super) {
   ReportView.prototype.getStatusTag = function(percentile) {
     var index;
     this.status = ["Below Average", "Average", "Above Average"];
-    index = Math.round((percentile - 0.17) / 0.33);
+    index = Math.round((percentile - 17) / 33);
     if (index < 0) {
       index = 0;
     } else if (index > 2) {

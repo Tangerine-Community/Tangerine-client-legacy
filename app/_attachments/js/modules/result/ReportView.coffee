@@ -54,11 +54,17 @@ class ReportView extends Backbone.View
     console.log "Initializing ReportView: " + @assessmentId
     @avgCorrect = 0
     @stdDev = 0
+    @testName = "N/A"
+    @numStudents = 0
+    @studentsToWatch = ""
     
     allResults = new Results
     allResults.fetch
       success: (collection) =>
         @results = collection.where {assessmentId : @assessmentId}
+        console.log @results
+        @testName = @results[0].attributes.assessmentName if @results[0].attributes.assessmentName?
+        
         for result in @results
           id = ""
           for subtestKey, subtestValue of result.attributes.subtestData
@@ -70,78 +76,98 @@ class ReportView extends Backbone.View
             else if id != "" and subtestValue.data.letters_results?
               @avgCorrect += subtestValue.sum.correct
               person =
-                'studentId' : id
-                'correct' : subtestValue.sum.correct
-                'incorrect' : subtestValue.sum.incorrect
-                'deviation' : 0
-                'percentile' : 0
-                'status' : 0
+                'StudentId' : id
+                'Correct' : subtestValue.sum.correct
+                'Incorrect' : subtestValue.sum.incorrect
+                'Deviation' : 0
+                'Percentile' : 0
+                'Status' : 0
               id = ""
               @table.push person
         @avgCorrect = @avgCorrect / @table.length
+        @avgCorrect = Math.round(@avgCorrect*100) / 100.0
       
         for person in @table
-          @stdDev += Math.pow(person.correct - @avgCorrect, 2)
+          @stdDev += Math.pow(person.Correct - @avgCorrect, 2)
         @stdDev = @stdDev / @table.length
         @stdDev = Math.pow(@stdDev, 0.5)
+        @stdDev = Math.round(@stdDev*100) / 100.0
       
         for person in @table
-          dev = (person.correct - @avgCorrect) / @stdDev
+          @numStudents++
+          @numQuestions = person.Correct + person.Incorrect
+          dev = (person.Correct - @avgCorrect) / @stdDev
           index =  Math.round(dev * 100)
-          person.deviation = index / 100
+          person.Deviation = index / 100
           if index > 409 or index < -409
-            person.percentile = 0
+            person.Percentile = 0
           else if index > 0
-            person.percentile = Math.round(50 + 100*@normalCurve[index]) / 100
+            person.Percentile = 100*Math.round(50 + 100*@normalCurve[index]) / 100
           else if index < 0
-            person.percentile = Math.round(50 - 100*@normalCurve[index * -1]) / 100
+            person.Percentile = 100*Math.round(50 - 100*@normalCurve[index * -1]) / 100
           else
-            person.percentile = 0.5
-          person.status = @getStatusTag(person.percentile)
+            person.Percentile = 50
+          person.Status = @getStatusTag(person.Percentile)
         
-        console.log "Average: " + @avgCorrect
-        console.log "Std Dev: " + @stdDev
-        console.log @table
         @render()
     
   render: ->
     if @table.length > 0
       # Sort by descending
       @table.sort (a, b) ->
-        b.percentile - a.percentile
+        b.Percentile - a.Percentile
       
-      # Write HTML Table
-      tableHTML = "<table border=\"1\">"
+      # Write HTML Table of all data
+      tableHTML = "<h4>Detailed Student Data Summary:</h4>"
+      tableHTML += "<table border=\"3\">"
       tableHTML += "<tr>"
       for colHeader, value of @table[0]
-        tableHTML += "<td>#{colHeader}</td>"
+        tableHTML += "<th>#{colHeader}</th>"
       tableHTML += "</tr>"
       for person in @table
-        color = @getColorTag(person.percentile)
+        color = @getColorTag(person.Percentile, person.StudentId)
         tableHTML += "<tr BGCOLOR=\"#{color}\">"
         for colHeader, value of person
           tableHTML += "<td>#{value}</td>"
         tableHTML += "</tr>"
       tableHTML += "</table>"
       
+      # Write HTML table of quick summary stats
+      testStats = "<h4>Test Statistics at a glance:</h4>"
+      testStats += "<table border=\"3\">"
+      testStats += "<tr><th>Assessment Name:</th>"
+      testStats += "<td>#{@testName}</td></tr>"
+      testStats += "<tr><th>Assessment ID:</th>"
+      testStats += "<td>#{@assessmentId}</td></tr>"
+      testStats += "<tr><th>Average:</th>"
+      testStats += "<td>#{@avgCorrect}</td></tr>"
+      testStats += "<tr><th>Standard Deviation:</th>"
+      testStats += "<td>#{@stdDev}</td></tr>"
+      testStats += "<tr><th>Class Size:</th>"
+      testStats += "<td>#{@numStudents}</td></tr>"
+      testStats += "<tr><th>Number of Questions:</th>"
+      testStats += "<td>#{@numQuestions}</td></tr>"
+      testStats += "<tr><th>Students to watch:</th>"
+      testStats += "<td>#{@studentsToWatch}</td></tr></table>"
       
-      console.log tableHTML
-      @$el.html tableHTML
+      toHTML = testStats + tableHTML
+      @$el.html toHTML
       
       @trigger "rendered"
   
-  getColorTag: (percentile) ->
-    @colors = ["2E8B57","90EE90","DDA0DD"]
-    index = Math.round((percentile - 0.17) / 0.33)
-    if index < 0
+  getColorTag: (percentile, id) ->
+    @colors = ["2E8B57","90EE90","00FF00"]
+    index = Math.round((percentile - 17) / 33)
+    if index <= 0
       index = 0
+      if (@studentsToWatch != "") then @studentsToWatch += (", " + id) else @studentsToWatch += id
     else if index > 2
       index = 2
     return @colors[index]
 
   getStatusTag: (percentile) ->
     @status = ["Below Average","Average", "Above Average"]
-    index = Math.round((percentile - 0.17) / 0.33)
+    index = Math.round((percentile - 17) / 33)
     if index < 0
       index = 0
     else if index > 2
