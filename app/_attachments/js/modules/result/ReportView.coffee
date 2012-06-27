@@ -111,7 +111,8 @@ class ReportView extends Backbone.View
         b.percentile - a.percentile
       
       # Write HTML Table
-      tableHTML = "<tr>"
+      tableHTML = "<table border=\"1\">"
+      tableHTML += "<tr>"
       for colHeader, value of @table[0]
         tableHTML += "<td>#{colHeader}</td>"
       tableHTML += "</tr>"
@@ -121,7 +122,7 @@ class ReportView extends Backbone.View
         for colHeader, value of person
           tableHTML += "<td>#{value}</td>"
         tableHTML += "</tr>"
-      
+      tableHTML += "</table>"
       
       
       console.log tableHTML
