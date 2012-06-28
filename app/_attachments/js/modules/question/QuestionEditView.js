@@ -52,7 +52,7 @@ QuestionEditView = (function(_super) {
     html = "<div id='option_list_wrapper'>      <h2>Options</h2><ul class='option_list'>";
     for (i = 0, _len = options.length; i < _len; i++) {
       option = options[i];
-      html += "      <li class='question'>        <img src='images/icon_drag.png' class='sortable_handle'>        <div style='display: block;'>          <div class='option_label_value'>            <label class='edit' for='options." + i + ".label'>Label</label>            <input id='options." + i + ".label' value='" + (Utils.encode(option.label)) + "' placeholder='Option label' class='option_label'><br>            <label class='edit' for='options." + i + ".value'>Value</label>            <input id='options." + i + ".value' value='" + (Utils.encode(option.value)) + "' placeholder='Option value' class='option_value'>          </div>          <img src='images/icon_delete.png' class='delete_option' data-index='" + i + "'>          <div class='confirmation delete_confirm_" + i + "'>            <button class='delete_delete' data-index='" + i + "'>Delete</button>            <button data-index='" + i + "' class='delete_cancel'>Cancel</button>          </div>        </div>      </li>      ";
+      html += "      <li class='question'>        <table><tr><td>          <img src='images/icon_drag.png' class='sortable_handle'>        </td>        <td>          <div style='display: block;'>            <div class='option_label_value'>              <label class='edit' for='options." + i + ".label'>Label</label>              <input id='options." + i + ".label' value='" + (Utils.encode(option.label)) + "' placeholder='Option label' class='option_label'><br>              <label class='edit' for='options." + i + ".value'>Value</label>              <input id='options." + i + ".value' value='" + (Utils.encode(option.value)) + "' placeholder='Option value' class='option_value'><br>            <small>Allowed characters: A-Z, a-z, 0-9, and underscores.</small><br>            </div>            <img src='images/icon_delete.png' class='delete_option' data-index='" + i + "'>            <div class='confirmation delete_confirm_" + i + "'>              <button class='delete_delete' data-index='" + i + "'>Delete</button>              <button data-index='" + i + "' class='delete_cancel'>Cancel</button>            </div>          </div>        </td></tr></table>      </li>      ";
     }
     return html += "</ul>      <button class='add_option command'>Add option</button>          </div>";
   };
@@ -93,6 +93,12 @@ QuestionEditView = (function(_super) {
       this.$el.find("#option_list_wrapper").html(this.getOptionList());
       this.$el.find(".option_list").sortable({
         handle: '.sortable_handle',
+        start: function(event, ui) {
+          return ui.item.addClass("drag_shadow");
+        },
+        stop: function(event, ui) {
+          return ui.item.removeClass("drag_shadow");
+        },
         update: function(event, ui) {
           return _this.updateModel();
         }
@@ -154,7 +160,7 @@ QuestionEditView = (function(_super) {
     for (_i = 0, _len = optionListElements.length; _i < _len; _i++) {
       li = optionListElements[_i];
       label = $(li).find(".option_label").val();
-      value = $(li).find(".option_value").val();
+      value = $(li).find(".option_value").val().replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
       if ((label != null) || (value != null)) {
         options[i] = {
           label: label,

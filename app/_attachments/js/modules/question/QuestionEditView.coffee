@@ -33,22 +33,28 @@ class QuestionEditView extends Backbone.View
     html = "<div id='option_list_wrapper'>
       <h2>Options</h2><ul class='option_list'>"
     for option, i in options
+      
       html += "
       <li class='question'>
-        <img src='images/icon_drag.png' class='sortable_handle'>
-        <div style='display: block;'>
-          <div class='option_label_value'>
-            <label class='edit' for='options.#{i}.label'>Label</label>
-            <input id='options.#{i}.label' value='#{Utils.encode(option.label)}' placeholder='Option label' class='option_label'><br>
-            <label class='edit' for='options.#{i}.value'>Value</label>
-            <input id='options.#{i}.value' value='#{Utils.encode(option.value)}' placeholder='Option value' class='option_value'>
+        <table><tr><td>
+          <img src='images/icon_drag.png' class='sortable_handle'>
+        </td>
+        <td>
+          <div style='display: block;'>
+            <div class='option_label_value'>
+              <label class='edit' for='options.#{i}.label'>Label</label>
+              <input id='options.#{i}.label' value='#{Utils.encode(option.label)}' placeholder='Option label' class='option_label'><br>
+              <label class='edit' for='options.#{i}.value'>Value</label>
+              <input id='options.#{i}.value' value='#{Utils.encode(option.value)}' placeholder='Option value' class='option_value'><br>
+            <small>Allowed characters: A-Z, a-z, 0-9, and underscores.</small><br>
+            </div>
+            <img src='images/icon_delete.png' class='delete_option' data-index='#{i}'>
+            <div class='confirmation delete_confirm_#{i}'>
+              <button class='delete_delete' data-index='#{i}'>Delete</button>
+              <button data-index='#{i}' class='delete_cancel'>Cancel</button>
+            </div>
           </div>
-          <img src='images/icon_delete.png' class='delete_option' data-index='#{i}'>
-          <div class='confirmation delete_confirm_#{i}'>
-            <button class='delete_delete' data-index='#{i}'>Delete</button>
-            <button data-index='#{i}' class='delete_cancel'>Cancel</button>
-          </div>
-        </div>
+        </td></tr></table>
       </li>
       "
     html += "</ul>
@@ -67,7 +73,6 @@ class QuestionEditView extends Backbone.View
       value : ""
     @model.set "options", options
     @$el.find('#option_list_wrapper').html(@getOptionList())
-    #@$el.find('.option_list').sortable("refresh")
 
 
   render: ->
@@ -139,6 +144,8 @@ class QuestionEditView extends Backbone.View
 
       @$el.find(".option_list").sortable
         handle : '.sortable_handle'
+        start: (event, ui) -> ui.item.addClass "drag_shadow"
+        stop:  (event, ui) -> ui.item.removeClass "drag_shadow"
         update : (event, ui) =>
           @updateModel()
 
@@ -199,7 +206,7 @@ class QuestionEditView extends Backbone.View
     optionListElements = @$el.find(".option_list li")
     for li in optionListElements
       label = $(li).find(".option_label").val()
-      value = $(li).find(".option_value").val()
+      value = $(li).find(".option_value").val().replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g,"")
 
       if label? || value?
         options[i] =
