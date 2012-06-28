@@ -14,6 +14,7 @@ class Result extends Backbone.Model
     if options.blank == true
       @set
         subtestData : []
+      @unset "blank" # options automatically get added to the model. Lame.
 
   add: ( subtestDataElement ) ->
     subtestData = @get 'subtestData'
@@ -26,4 +27,4 @@ class Result extends Backbone.Model
 
   getGridScore: (id) ->
     for datum in @get 'subtestData'
-      return parseInt(datum.data.last_attempted) if datum.subtestId == id
+      return parseInt(datum.data.attempted) if datum.subtestId == id

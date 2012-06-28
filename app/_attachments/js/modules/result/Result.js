@@ -14,9 +14,10 @@ Result = (function(_super) {
 
   Result.prototype.initialize = function(options) {
     if (options.blank === true) {
-      return this.set({
+      this.set({
         subtestData: []
       });
+      return this.unset("blank");
     }
   };
 
@@ -36,7 +37,7 @@ Result = (function(_super) {
     _ref = this.get('subtestData');
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       datum = _ref[_i];
-      if (datum.subtestId === id) return parseInt(datum.data.last_attempted);
+      if (datum.subtestId === id) return parseInt(datum.data.attempted);
     }
   };
 
