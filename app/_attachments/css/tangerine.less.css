@@ -485,6 +485,12 @@ div.timer {
 .timer_wrapper {
   margin: 15px 0 20px;
 }
+/*
+ * Location
+ */
+.school_list {
+  padding: 10px 0;
+}
 .disposable_alert {
   text-align: center;
   background: #f6ef9a;
@@ -679,27 +685,24 @@ ul.assessment_list .assessment_menu {
 /*
  * assessmentEditView
  */
-div.assessmentEditView ul {
+div.assessment_edit_view ul {
   list-style: none;
   text-indent: 0px;
   margin: 0px;
   padding: 0px;
 }
-div.assessmentEditView ul li {
+div.assessment_edit_view ul li {
   line-height: 40px;
   border-bottom: 1px solid #888888;
   padding: 5px 0;
   vertical-align: middle;
 }
-div.assessmentEditView a {
+div.assessment_edit_view a {
   border: 0 !important;
   background: none !important;
   margin: 5px !important;
   padding: 0 !important;
   -webkit-appearance: none !important;
-}
-div.assessmentEditView input {
-  width: 100%;
 }
 ul {
   padding: 0;
@@ -718,8 +721,9 @@ div.subtest_edit ul li {
   padding: 5px 0;
   vertical-align: middle;
 }
-div.subtest_edit .delete_subtest_element_confirm {
-  display: none;
+div.subtest_edit td {
+  padding-right: 10px;
+  vertical-align: middle;
 }
 .confirmation {
   display: none;
@@ -781,6 +785,16 @@ label.ui-button {
 }
 .question_list_element {
   border-bottom: 1px solid #cccccc;
+  background: white;
+}
+.question_list_element td {
+  padding-right: 10px;
+  vertical-align: middle;
+}
+.drag_shadow {
+  background: white;
+  opacity: 0.95;
+  box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.2);
 }
 /*
  * CSV View
