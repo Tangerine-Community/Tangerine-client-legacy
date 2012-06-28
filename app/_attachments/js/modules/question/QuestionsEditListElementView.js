@@ -16,12 +16,18 @@ QuestionsEditListElementView = (function(_super) {
 
   QuestionsEditListElementView.prototype.events = {
     'click .edit': 'edit',
-    'click .delete': 'delete'
+    'click .delete': 'toggleDelete',
+    'click .delete_cancel': 'toggleDelete',
+    'click .delete_delete': 'delete'
   };
 
   QuestionsEditListElementView.prototype.edit = function(event) {
     Tangerine.router.navigate("question/" + this.question.id, true);
     return false;
+  };
+
+  QuestionsEditListElementView.prototype.toggleDelete = function() {
+    return this.$el.find(".delete_confirm").fadeToggle(250);
   };
 
   QuestionsEditListElementView.prototype["delete"] = function(event) {
@@ -37,7 +43,7 @@ QuestionsEditListElementView = (function(_super) {
   };
 
   QuestionsEditListElementView.prototype.render = function() {
-    this.$el.html("      <img src='images/icon_drag.png' class='sortable_handle'>      <span>" + (this.question.get('prompt')) + "</span> <span>[<small>" + (this.question.get('name')) + ", " + (this.question.get('type')) + "</small>]</span>      <button class='edit command'>Edit</button>      <button class='delete command'>Delete</button>      ");
+    this.$el.html("      <table>        <tr>          <td>            <img src='images/icon_drag.png' class='sortable_handle'>          </td>          <td>            <span>" + (this.question.get('prompt')) + "</span> <span>[<small>" + (this.question.get('name')) + ", " + (this.question.get('type')) + "</small>]</span>            <button class='edit command'>Edit</button>            <button class='delete command'>Delete</button>            <div class='confirmation delete_confirm'>            Are you sure? <button class='delete_delete'>Delete</button><button class='delete_cancel'>Cancel</button>            </div>          </td>        </tr>      </table>      ");
     return this.trigger("rendered");
   };
 
