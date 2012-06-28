@@ -22,26 +22,25 @@ ResultView = (function(_super) {
   };
 
   ResultView.prototype.save = function() {
-    if (this.$el.find('#additional_comments').val() !== "") {
-      this.model.add({
-        name: "Assessment complete",
-        data: {
-          "comment": this.$el.find('#additional_comments').val()
-        },
-        subtestId: "result",
-        sum: {
-          correct: 1,
-          incorrect: 0,
-          missing: 0,
-          total: 1
-        }
-      });
-    }
+    this.model.add({
+      name: "Assessment complete",
+      prototype: "complete",
+      data: {
+        "comment": this.$el.find('#additional_comments').val() || ""
+      },
+      subtestId: "result",
+      sum: {
+        correct: 1,
+        incorrect: 0,
+        missing: 0,
+        total: 1
+      }
+    });
     if (this.model.save()) {
       Utils.midAlert("Result saved");
       this.$el.find('.save_status').html("saved");
       this.$el.find('.save_status').removeClass('not_saved');
-      this.$el.find('button.save').fadeOut(250);
+      this.$el.find('button.save, .question').fadeOut(250);
       return this.$el.find('.confirmation').removeClass('confirmation');
     } else {
       Utils.midAlert("Save error");
@@ -62,7 +61,7 @@ ResultView = (function(_super) {
     this.$el.append("<h2>Assessment complete</h2>    <div class='label_value'>      <label>Result</label>      <div class='info_box save_status not_saved'>Not saved yet</div>        <h2>Subtests completed</h2>    ");
     this.resultSumView.render();
     this.$el.append(this.resultSumView.el);
-    this.$el.append("      <div class='question'>      <div class='prompt'>Additional comments (optional)</div>      <textarea id='additional_comments full_width'></textarea>      </div>      <button class='save command'>Save result</button><br>      <div class='confirmation'><button class='another command'>Perform another assessment</button></div>    ");
+    this.$el.append("      <div class='question'>      <div class='prompt'>Additional comments (optional)</div>      <textarea id='additional_comments' class='full_width'></textarea>      </div>      <button class='save command'>Save result</button><br>      <div class='confirmation'><button class='another command'>Perform another assessment</button></div>    ");
     return this.trigger("rendered");
   };
 
