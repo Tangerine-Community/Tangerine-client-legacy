@@ -1,10 +1,10 @@
-class PrototypeIdView extends Backbone.View
+class IdRunView extends Backbone.View
 
   className: "id"
   
   events:
     'click #generate' : 'generate'
-    'change #student_id' : 'setValidator'
+    'change #participant_id' : 'setValidator'
   
   initialize: (options) ->
     @model  = @options.model
@@ -14,12 +14,15 @@ class PrototypeIdView extends Backbone.View
   render: ->
     @$el.html "
     <form>
-      <label for='student_id'>Random Identifier</label>
-      <input id='student_id' name='student_id'>
+      <label for='participant_id'>Random Identifier</label>
+      <input id='participant_id' name='participant_id'>
       <button id='generate' class='command'>Generate</button>
       <div class='messages'></div>
     </form>"
     @trigger "rendered"
+
+  getResult: ->
+    return { 'participant_id' : @$el.find("#participant_id").val() }
 
   getSum: ->
     correct   : 1
@@ -28,7 +31,7 @@ class PrototypeIdView extends Backbone.View
     total     : 1
 
   setValidator: ->
-    @validator.set @$el.find('#student_id').val()
+    @validator.set @$el.find('#participant_id').val()
 
   isValid: ->
     @setValidator()
@@ -40,8 +43,8 @@ class PrototypeIdView extends Backbone.View
 
   generate: ->
     @$el.find(".messages").empty()
-    @$el.find('#student_id').val @validator.generate()
+    @$el.find('#participant_id').val @validator.generate()
     false
 
   updateNavigation: ->
-    Tangerine.nav.setStudent @$el.find('#student_id').val()
+    Tangerine.nav.setStudent @$el.find('#participant_id').val()

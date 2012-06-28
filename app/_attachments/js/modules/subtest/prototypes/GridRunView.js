@@ -1,24 +1,24 @@
-var PrototypeGridView,
+var GridRunView,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-PrototypeGridView = (function(_super) {
+GridRunView = (function(_super) {
 
-  __extends(PrototypeGridView, _super);
+  __extends(GridRunView, _super);
 
-  function PrototypeGridView() {
+  function GridRunView() {
     this.updateMode = __bind(this.updateMode, this);
     this.updateCountdown = __bind(this.updateCountdown, this);
     this.removeUndo = __bind(this.removeUndo, this);
     this.lastHandler = __bind(this.lastHandler, this);
     this.markHandler = __bind(this.markHandler, this);
-    PrototypeGridView.__super__.constructor.apply(this, arguments);
+    GridRunView.__super__.constructor.apply(this, arguments);
   }
 
-  PrototypeGridView.prototype.className = "grid_prototype";
+  GridRunView.prototype.className = "grid_prototype";
 
-  PrototypeGridView.prototype.events = Tangerine.context.kindle ? {
+  GridRunView.prototype.events = Tangerine.context.kindle ? {
     'touchstart .grid_element': 'gridClick',
     'touchstart .end_of_grid_line': 'endOfGridLineClick',
     'click .grid_mode input': 'updateMode',
@@ -34,16 +34,17 @@ PrototypeGridView = (function(_super) {
     'click .restart': 'restartTimer'
   };
 
-  PrototypeGridView.prototype.restartTimer = function() {
-    return this.resetVariables();
+  GridRunView.prototype.restartTimer = function() {
+    this.resetVariables();
+    return this.$el.find(".element_wrong").removeClass("element_wrong");
   };
 
-  PrototypeGridView.prototype.gridClick = function(event) {
+  GridRunView.prototype.gridClick = function(event) {
     var _base, _name;
     return typeof (_base = this.modeHandlers)[_name = this.mode] === "function" ? _base[_name](event) : void 0;
   };
 
-  PrototypeGridView.prototype.markHandler = function(event) {
+  GridRunView.prototype.markHandler = function(event) {
     var $target, index;
     $target = $(event.target);
     index = $target.attr('data-index');
@@ -52,7 +53,7 @@ PrototypeGridView = (function(_super) {
     if (this.autostop !== 0) return this.checkAutostop();
   };
 
-  PrototypeGridView.prototype.checkAutostop = function() {
+  GridRunView.prototype.checkAutostop = function() {
     var autoCount, i, _ref;
     if (this.timeRunning) {
       autoCount = 0;
@@ -69,44 +70,50 @@ PrototypeGridView = (function(_super) {
     }
   };
 
-  PrototypeGridView.prototype.markElement = function(index, value) {
+  GridRunView.prototype.markElement = function(index, value) {
     var $target;
     if (value == null) value = null;
     $target = this.$el.find("div.grid_element[data-index=" + index + "]");
     this.markRecord.push(index);
     if (value === null) {
-      this.gridOutput[index - 1] = this.gridOutput[index - 1] === "correct" ? "incorrect" : "correct";
+      this.gridOutput[index - 1] = this.gridOutput[index - 1] === "correct" || this.autostopped ? "incorrect" : "correct";
       return $target.toggleClass("element_wrong");
     } else {
-      this.gridOutput[index - 1] = value;
-      if (value === "incorrect") {
-        return $target.addClass("element_wrong");
-      } else if (value === "correct") {
-        return $target.removeClass("element_wrong");
+      if (!this.autostopped || value === "correct") {
+        this.gridOutput[index - 1] = value;
+        if (value === "incorrect") {
+          return $target.addClass("element_wrong");
+        } else if (value === "correct") {
+          return $target.removeClass("element_wrong");
+        }
       }
     }
   };
 
-  PrototypeGridView.prototype.endOfGridLineClick = function(event) {
-    var $target, i, index, value, _ref;
+  GridRunView.prototype.endOfGridLineClick = function(event) {
+    var $target, i, index, value, _ref, _ref2;
     if (this.mode === "mark") {
       $target = $(event.target);
       if ($target.hasClass("element_wrong")) {
         $target.removeClass("element_wrong");
         value = "correct";
-      } else {
+        index = $target.attr('data-index');
+        for (i = index, _ref = index - (this.columns - 1); index <= _ref ? i <= _ref : i >= _ref; index <= _ref ? i++ : i--) {
+          this.markElement(i, value);
+        }
+      } else if (!$target.hasClass("element_wrong") && !this.autostopped) {
         $target.addClass("element_wrong");
         value = "incorrect";
-      }
-      index = $target.attr('data-index');
-      for (i = index, _ref = index - (this.columns - 1); index <= _ref ? i <= _ref : i >= _ref; index <= _ref ? i++ : i--) {
-        this.markElement(i, value);
+        index = $target.attr('data-index');
+        for (i = index, _ref2 = index - (this.columns - 1); index <= _ref2 ? i <= _ref2 : i >= _ref2; index <= _ref2 ? i++ : i--) {
+          this.markElement(i, value);
+        }
       }
       if (this.autostop !== 0) return this.checkAutostop();
     }
   };
 
-  PrototypeGridView.prototype.lastHandler = function(event) {
+  GridRunView.prototype.lastHandler = function(event) {
     var $target, index;
     $target = $(event.target);
     index = $target.attr('data-index');
@@ -117,7 +124,7 @@ PrototypeGridView = (function(_super) {
     }
   };
 
-  PrototypeGridView.prototype.startTimer = function() {
+  GridRunView.prototype.startTimer = function() {
     if (this.timerStopped === false && this.timeRunning === false) {
       this.updateMode(null, "mark");
       this.interval = setInterval(this.updateCountdown, 1000);
@@ -128,7 +135,7 @@ PrototypeGridView = (function(_super) {
     }
   };
 
-  PrototypeGridView.prototype.stopTimer = function(event, message) {
+  GridRunView.prototype.stopTimer = function(event, message) {
     if (message == null) message = false;
     if (this.timeRunning === true) {
       Utils.flash();
@@ -146,7 +153,7 @@ PrototypeGridView = (function(_super) {
     }
   };
 
-  PrototypeGridView.prototype.autostopTest = function() {
+  GridRunView.prototype.autostopTest = function() {
     Utils.flash();
     clearInterval(this.interval);
     this.stopTime = this.getTime();
@@ -159,12 +166,13 @@ PrototypeGridView = (function(_super) {
     return Utils.topAlert("Autostop activated. Discontinue test.");
   };
 
-  PrototypeGridView.prototype.removeUndo = function() {
+  GridRunView.prototype.removeUndo = function() {
     this.undoable = false;
+    this.updateMode(null, "disabled");
     return clearTimeout(this.timeout);
   };
 
-  PrototypeGridView.prototype.unAutostopTest = function() {
+  GridRunView.prototype.unAutostopTest = function() {
     this.interval = setInterval(this.updateCountdown, 1000);
     this.updateCountdown();
     this.autostopped = false;
@@ -175,7 +183,7 @@ PrototypeGridView = (function(_super) {
     return Utils.topAlert("Autostop removed. Continue.");
   };
 
-  PrototypeGridView.prototype.updateCountdown = function() {
+  GridRunView.prototype.updateCountdown = function() {
     this.timeElapsed = this.getTime() - this.startTime;
     this.timeRemaining = this.timer - this.timeElapsed;
     this.$el.find(".timer").html(this.timeRemaining);
@@ -184,21 +192,21 @@ PrototypeGridView = (function(_super) {
     }
   };
 
-  PrototypeGridView.prototype.updateMode = function(event, mode) {
+  GridRunView.prototype.updateMode = function(event, mode) {
     if (mode != null) {
       this.mode = mode;
       this.$el.find("#grid_mode :radio[value=" + mode + "]").attr("checked", "checked");
       this.$el.find("#grid_mode").buttonset("refresh").click(this.updateMode);
       return;
     }
-    return this.mode = $(event.target).val();
+    if (!this.autostopped) return this.mode = $(event.target).val();
   };
 
-  PrototypeGridView.prototype.getTime = function() {
+  GridRunView.prototype.getTime = function() {
     return Math.round((new Date()).getTime() / 1000);
   };
 
-  PrototypeGridView.prototype.resetVariables = function() {
+  GridRunView.prototype.resetVariables = function() {
     var i, item, _len, _ref;
     this.markRecord = [];
     this.timerStopped = false;
@@ -210,7 +218,7 @@ PrototypeGridView = (function(_super) {
     this.interval = null;
     this.undoable = true;
     this.timeRunning = false;
-    this.timer = this.model.get("timer") || 0;
+    this.timer = parseInt(this.model.get("timer")) || 0;
     this.items = _.compact(this.model.get("items"));
     this.mode = "disabled";
     this.gridOutput = [];
@@ -219,7 +227,7 @@ PrototypeGridView = (function(_super) {
       item = _ref[i];
       this.gridOutput[i] = 'correct';
     }
-    this.columns = this.model.get("columns") || 0;
+    this.columns = parseInt(this.model.get("columns")) || 0;
     this.autostop = parseInt(this.model.get("autostop")) || 0;
     this.autostopped = false;
     this.$el.find(".grid_element").removeClass("element_wrong").removeClass("element_last").addClass("disabled");
@@ -228,7 +236,7 @@ PrototypeGridView = (function(_super) {
     return this.updateMode(this.mode);
   };
 
-  PrototypeGridView.prototype.initialize = function(options) {
+  GridRunView.prototype.initialize = function(options) {
     this.totalTime = this.model.get("timer") || 0;
     this.modeHandlers = {
       mark: this.markHandler,
@@ -242,7 +250,7 @@ PrototypeGridView = (function(_super) {
     return this.endOfGridLine = _.template("<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>");
   };
 
-  PrototypeGridView.prototype.render = function() {
+  GridRunView.prototype.render = function() {
     var done, html, i, _ref;
     done = 0;
     html = "        <div class='timer_wrapper'><button class='start_time time'>Start</button><div class='timer'>" + this.timer + "</div></div>    <table class='grid disabled'>";
@@ -271,47 +279,50 @@ PrototypeGridView = (function(_super) {
     return this.trigger("rendered");
   };
 
-  PrototypeGridView.prototype.isValid = function() {
+  GridRunView.prototype.isValid = function() {
     if (this.lastAttempted === 0) return false;
     if (this.timeRunning === true) return false;
     return true;
   };
 
-  PrototypeGridView.prototype.showErrors = function() {
+  GridRunView.prototype.showErrors = function() {
     if (this.lastAttempted === 0) {
       Utils.midAlert("Please touch<br>last item read.");
     }
     if (this.timeRuning === true) return Utils.midAlert("Time still running.");
   };
 
-  PrototypeGridView.prototype.getResult = function() {
-    var i, item, letterResults, result, _len, _ref;
-    letterResults = [];
+  GridRunView.prototype.getResult = function() {
+    var i, item, itemResults, result, _len, _ref;
+    itemResults = [];
     _ref = this.items;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       item = _ref[i];
-      letterResults[i] = {};
       if (i < this.lastAttempted) {
-        letterResults[i][item] = this.gridOutput[i];
+        itemResults[i] = this.gridOutput[i];
       } else {
-        letterResults[i][item] = "missing";
+        itemResults[i] = "missing";
       }
     }
     return result = {
-      "autostopped": this.autostopped,
-      "last_attempted": this.lastAttempted,
-      "letters_results": letterResults,
-      "time_remaining": this.timeRemaining,
-      "time_elapsed": this.timeElapsed,
-      "mark_record": this.markRecord
+      "auto_stop": this.autostopped,
+      "attempted": this.lastAttempted,
+      "items": itemResults,
+      "time_remain": this.timeRemaining,
+      "mark_record": this.markRecord,
+      "variable_name": this.model.get("variableName")
     };
   };
 
-  PrototypeGridView.prototype.onClose = function() {
+  GridRunView.prototype.getSkippedResult = function() {
+    return "skipped";
+  };
+
+  GridRunView.prototype.onClose = function() {
     return clearInterval(this.interval);
   };
 
-  PrototypeGridView.prototype.getSum = function() {
+  GridRunView.prototype.getSum = function() {
     var counts, i, _i, _len, _ref;
     counts = {
       correct: 0,
@@ -333,6 +344,6 @@ PrototypeGridView = (function(_super) {
     };
   };
 
-  return PrototypeGridView;
+  return GridRunView;
 
 })(Backbone.View);

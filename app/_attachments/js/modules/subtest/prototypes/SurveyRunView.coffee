@@ -1,4 +1,4 @@
-class PrototypeSurveyView extends Backbone.View
+class SurveyRunView extends Backbone.View
 
   initialize: (options) ->
     @model         = @options.model
@@ -25,14 +25,17 @@ class PrototypeSurveyView extends Backbone.View
             return false
     return true
 
+  getSkipped: ->
+    if ( model.get("skippable") == "true" || model.get("skippable") == true )
+      result = {}
+      for qv, i in @questionViews
+        result[@questions.models[i].get("name")] = qv.answer
+      return result
+
   getResult: ->
     result = {}
     for qv, i in @questionViews
-      # questions not asked are strings "not_asked"
-      if _.isString qv
-        result[@questions.models[i].get("name")] == qv
-      else
-        result[@questions.models[i].get("name")] = qv.result
+      result[@questions.models[i].get("name")] = qv.answer
     return result
 
   getSum: ->
@@ -48,7 +51,7 @@ class PrototypeSurveyView extends Backbone.View
       else
         counts['correct']   += 1 if qv.isValid
         counts['incorrect'] += 1 if not qv.isValid
-        counts['missing']   += 1 if not qv.isValid && (qv.model.get "skippable" == 'true' || qv.model.get "skippable" == true)
+        counts['missing']   += 1 if not qv.isValid && ( qv.model.get "skippable" == 'true' || qv.model.get "skippable" == true )
         counts['total']     += 1 if true
 
     return {

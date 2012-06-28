@@ -1,8 +1,9 @@
-class PrototypeLocationView extends Backbone.View
+class LocationRunView extends Backbone.View
 
   events:
     "click #school_list li" : "autofill"
     "keyup input" : "showOptions"
+    "click clear" : "clearInputs"
 
   initialize: (options) ->
     @model  = @options.model
@@ -11,6 +12,9 @@ class PrototypeLocationView extends Backbone.View
     @li = _.template "<li style='display:none;' data-index='{{i}}'>{{province}} - {{name}} - {{district}} - {{id}}</li>"
     for school, i in @model.get "schools"
       @haystack[i] = school.join("").toLowerCase()
+
+  clearInputs: ->
+    @$el.find("#school_id, #district, #province, #name").val("")
 
   autofill: (event) ->
     @$el.find("#autofill").fadeOut(250)
@@ -73,6 +77,7 @@ class PrototypeLocationView extends Backbone.View
         <label for='school_id'>#{schoolIdText}</label>
         <input id='school_id' name='school_id' value=''>
       </div>
+      <button class='clear command'>Clear</button>
     <form>
     <div id='autofill' style='display:none'>
       <h2>Select one from autofill list</h2>
@@ -81,8 +86,6 @@ class PrototypeLocationView extends Backbone.View
       </ul>
     </div>
     "
-
-    list = ""
 
     @trigger "rendered"
 

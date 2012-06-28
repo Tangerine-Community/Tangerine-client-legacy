@@ -1,4 +1,4 @@
-class PrototypeConsentView extends Backbone.View
+class ConsentRunView extends Backbone.View
 
   events:
     'click #non_consent_confirm' : 'noConsent'
@@ -61,6 +61,9 @@ class PrototypeConsentView extends Backbone.View
     else if answer == undefined
       $(".messages").html "Please select one"
 
+  getResult: ->
+    return "consent" : @$el.find("input[name=participant_consents]:checked").val()
+      
   getSum: ->
     return {
       correct: 1

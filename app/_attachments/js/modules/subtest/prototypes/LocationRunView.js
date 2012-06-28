@@ -1,21 +1,22 @@
-var PrototypeLocationView,
+var LocationRunView,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-PrototypeLocationView = (function(_super) {
+LocationRunView = (function(_super) {
 
-  __extends(PrototypeLocationView, _super);
+  __extends(LocationRunView, _super);
 
-  function PrototypeLocationView() {
-    PrototypeLocationView.__super__.constructor.apply(this, arguments);
+  function LocationRunView() {
+    LocationRunView.__super__.constructor.apply(this, arguments);
   }
 
-  PrototypeLocationView.prototype.events = {
+  LocationRunView.prototype.events = {
     "click #school_list li": "autofill",
-    "keyup input": "showOptions"
+    "keyup input": "showOptions",
+    "click clear": "clearInputs"
   };
 
-  PrototypeLocationView.prototype.initialize = function(options) {
+  LocationRunView.prototype.initialize = function(options) {
     var i, school, _len, _ref, _results;
     this.model = this.options.model;
     this.parent = this.options.parent;
@@ -30,7 +31,11 @@ PrototypeLocationView = (function(_super) {
     return _results;
   };
 
-  PrototypeLocationView.prototype.autofill = function(event) {
+  LocationRunView.prototype.clearInputs = function() {
+    return this.$el.find("#school_id, #district, #province, #name").val("");
+  };
+
+  LocationRunView.prototype.autofill = function(event) {
     var district, id, index, name, province, school;
     this.$el.find("#autofill").fadeOut(250);
     index = $(event.target).attr("data-index");
@@ -45,7 +50,7 @@ PrototypeLocationView = (function(_super) {
     return this.$el.find("#name").val(name);
   };
 
-  PrototypeLocationView.prototype.showOptions = function(event) {
+  LocationRunView.prototype.showOptions = function(event) {
     var atLeastOne, i, isThere, li, needle, _len, _ref;
     needle = $(event.target).val().toLowerCase();
     atLeastOne = false;
@@ -62,8 +67,8 @@ PrototypeLocationView = (function(_super) {
     return true;
   };
 
-  PrototypeLocationView.prototype.render = function() {
-    var districtText, i, list, nameText, provinceText, school, schoolIdText, schoolListElements, _len, _ref;
+  LocationRunView.prototype.render = function() {
+    var districtText, i, nameText, provinceText, school, schoolIdText, schoolListElements, _len, _ref;
     provinceText = this.model.get("provinceText");
     districtText = this.model.get("districtText");
     nameText = this.model.get("nameText");
@@ -80,12 +85,11 @@ PrototypeLocationView = (function(_super) {
         id: school[3]
       });
     }
-    this.$el.html("    <form>      <div class='label_value'>        <label for='province'>" + provinceText + "</label>        <input id='province' name='province' value=''>      </div>      <div class='label_value'>        <label for='district'>" + districtText + "</label>        <input id='district' name='district' value=''>      </div>      <div class='label_value'>        <label for='name'>" + nameText + "</label>        <input id='name' name='name' value=''>      </div>      <div class='label_value'>        <label for='school_id'>" + schoolIdText + "</label>        <input id='school_id' name='school_id' value=''>      </div>    <form>    <div id='autofill' style='display:none'>      <h2>Select one from autofill list</h2>      <ul id='school_list'>        " + schoolListElements + "      </ul>    </div>    ");
-    list = "";
+    this.$el.html("    <form>      <div class='label_value'>        <label for='province'>" + provinceText + "</label>        <input id='province' name='province' value=''>      </div>      <div class='label_value'>        <label for='district'>" + districtText + "</label>        <input id='district' name='district' value=''>      </div>      <div class='label_value'>        <label for='name'>" + nameText + "</label>        <input id='name' name='name' value=''>      </div>      <div class='label_value'>        <label for='school_id'>" + schoolIdText + "</label>        <input id='school_id' name='school_id' value=''>      </div>      <button class='clear command'>Clear</button>    <form>    <div id='autofill' style='display:none'>      <h2>Select one from autofill list</h2>      <ul id='school_list'>        " + schoolListElements + "      </ul>    </div>    ");
     return this.trigger("rendered");
   };
 
-  PrototypeLocationView.prototype.isValid = function() {
+  LocationRunView.prototype.isValid = function() {
     var input, _i, _len, _ref;
     this.$el.find(".message").remove();
     _ref = this.$el.find("input");
@@ -96,7 +100,7 @@ PrototypeLocationView = (function(_super) {
     return true;
   };
 
-  PrototypeLocationView.prototype.showErrors = function() {
+  LocationRunView.prototype.showErrors = function() {
     var input, _i, _len, _ref, _results;
     _ref = this.$el.find("input");
     _results = [];
@@ -111,7 +115,7 @@ PrototypeLocationView = (function(_super) {
     return _results;
   };
 
-  PrototypeLocationView.prototype.getSum = function() {
+  LocationRunView.prototype.getSum = function() {
     var $input, counts, input, _i, _len, _ref;
     counts = {
       correct: 0,
@@ -136,6 +140,6 @@ PrototypeLocationView = (function(_super) {
     };
   };
 
-  return PrototypeLocationView;
+  return LocationRunView;
 
 })(Backbone.View);

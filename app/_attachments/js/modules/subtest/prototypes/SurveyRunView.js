@@ -1,16 +1,16 @@
-var PrototypeSurveyView,
+var SurveyRunView,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-PrototypeSurveyView = (function(_super) {
+SurveyRunView = (function(_super) {
 
-  __extends(PrototypeSurveyView, _super);
+  __extends(SurveyRunView, _super);
 
-  function PrototypeSurveyView() {
-    PrototypeSurveyView.__super__.constructor.apply(this, arguments);
+  function SurveyRunView() {
+    SurveyRunView.__super__.constructor.apply(this, arguments);
   }
 
-  PrototypeSurveyView.prototype.initialize = function(options) {
+  SurveyRunView.prototype.initialize = function(options) {
     var questions,
       _this = this;
     this.model = this.options.model;
@@ -31,7 +31,7 @@ PrototypeSurveyView = (function(_super) {
     });
   };
 
-  PrototypeSurveyView.prototype.isValid = function() {
+  SurveyRunView.prototype.isValid = function() {
     var i, qv, _len, _ref;
     _ref = this.questionViews;
     for (i = 0, _len = _ref.length; i < _len; i++) {
@@ -45,22 +45,31 @@ PrototypeSurveyView = (function(_super) {
     return true;
   };
 
-  PrototypeSurveyView.prototype.getResult = function() {
+  SurveyRunView.prototype.getSkipped = function() {
+    var i, qv, result, _len, _ref;
+    if (model.get("skippable") === "true" || model.get("skippable") === true) {
+      result = {};
+      _ref = this.questionViews;
+      for (i = 0, _len = _ref.length; i < _len; i++) {
+        qv = _ref[i];
+        result[this.questions.models[i].get("name")] = qv.answer;
+      }
+      return result;
+    }
+  };
+
+  SurveyRunView.prototype.getResult = function() {
     var i, qv, result, _len, _ref;
     result = {};
     _ref = this.questionViews;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       qv = _ref[i];
-      if (_.isString(qv)) {
-        result[this.questions.models[i].get("name")] === qv;
-      } else {
-        result[this.questions.models[i].get("name")] = qv.result;
-      }
+      result[this.questions.models[i].get("name")] = qv.answer;
     }
     return result;
   };
 
-  PrototypeSurveyView.prototype.getSum = function() {
+  SurveyRunView.prototype.getSum = function() {
     var counts, i, qv, _len, _ref;
     counts = {
       correct: 0,
@@ -90,7 +99,7 @@ PrototypeSurveyView = (function(_super) {
     };
   };
 
-  PrototypeSurveyView.prototype.showErrors = function() {
+  SurveyRunView.prototype.showErrors = function() {
     var first, i, message, qv, _len, _ref, _results;
     this.$el.find('.message').remove();
     first = true;
@@ -116,7 +125,7 @@ PrototypeSurveyView = (function(_super) {
     return _results;
   };
 
-  PrototypeSurveyView.prototype.render = function() {
+  SurveyRunView.prototype.render = function() {
     var i, isNotAsked, oneView, question, required, _len, _ref;
     this.questions.sort();
     if (this.questions.models != null) {
@@ -138,7 +147,7 @@ PrototypeSurveyView = (function(_super) {
     return this.trigger("rendered");
   };
 
-  PrototypeSurveyView.prototype.onClose = function() {
+  SurveyRunView.prototype.onClose = function() {
     var qv, _i, _len, _ref;
     _ref = this.questionViews;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -148,6 +157,6 @@ PrototypeSurveyView = (function(_super) {
     return this.questionViews = [];
   };
 
-  return PrototypeSurveyView;
+  return SurveyRunView;
 
 })(Backbone.View);

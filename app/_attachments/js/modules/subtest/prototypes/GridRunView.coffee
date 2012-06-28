@@ -1,8 +1,8 @@
-class PrototypeGridView extends Backbone.View
+class GridRunView extends Backbone.View
 
   className: "grid_prototype"
 
-  events: if Tangerine.context.kindle then  {
+  events: if Tangerine.context.kindle then {
     'touchstart .grid_element' : 'gridClick'
     'touchstart .end_of_grid_line' : 'endOfGridLineClick'
     'click .grid_mode input'   : 'updateMode'
@@ -16,11 +16,12 @@ class PrototypeGridView extends Backbone.View
     'click .start_time'      : 'startTimer'
     'click .stop_time'       : 'stopTimer'
     'click .restart'         : 'restartTimer'
-    
   }
   
   restartTimer: ->
     @resetVariables()
+    @$el.find(".element_wrong").removeClass "element_wrong"
+
 
   gridClick: (event) ->
     @modeHandlers[@mode]?(event)
@@ -48,27 +49,31 @@ class PrototypeGridView extends Backbone.View
     $target = @$el.find("div.grid_element[data-index=#{index}]")
     @markRecord.push index
     if value == null
-      @gridOutput[index-1] = if (@gridOutput[index-1] == "correct") then "incorrect" else "correct"
+      @gridOutput[index-1] = if (@gridOutput[index-1] == "correct" || @autostopped) then "incorrect" else "correct"
       $target.toggleClass "element_wrong"
     else
-      @gridOutput[index-1] = value
-      if value == "incorrect"
-        $target.addClass "element_wrong"
-      else if value == "correct"
-        $target.removeClass "element_wrong"
+      if !@autostopped || value == "correct"
+        @gridOutput[index-1] = value
+        if value == "incorrect"
+          $target.addClass "element_wrong"
+        else if value == "correct"
+          $target.removeClass "element_wrong"
         
   endOfGridLineClick: (event) ->
     if @mode == "mark"
       $target = $(event.target)
-      if $target.hasClass("element_wrong")
-        $target.removeClass "element_wrong"
+      if $target.hasClass("element_wrong") 
+        $target.removeClass "element_wrong" 
         value = "correct"
-      else
+        index = $target.attr('data-index')
+        for i in [index..(index-(@columns-1))]
+          @markElement i, value
+      else if !$target.hasClass("element_wrong") && !@autostopped
         $target.addClass "element_wrong"
         value = "incorrect"
-      index = $target.attr('data-index')
-      for i in [index..(index-(@columns-1))]
-        @markElement i, value
+        index = $target.attr('data-index')
+        for i in [index..(index-(@columns-1))]
+          @markElement i, value
       if @autostop != 0
         @checkAutostop()
 
@@ -117,6 +122,7 @@ class PrototypeGridView extends Backbone.View
 
   removeUndo: =>
     @undoable = false
+    @updateMode null, "disabled"
     clearTimeout(@timeout)
 
   unAutostopTest: ->
@@ -142,7 +148,7 @@ class PrototypeGridView extends Backbone.View
       @$el.find("#grid_mode :radio[value=#{mode}]").attr("checked", "checked")
       @$el.find("#grid_mode").buttonset("refresh").click @updateMode
       return
-    @mode = $(event.target).val()
+    @mode = $(event.target).val() unless @autostopped
 
   getTime: ->
     Math.round((new Date()).getTime() / 1000)
@@ -165,13 +171,13 @@ class PrototypeGridView extends Backbone.View
 
     @timeRunning = false
 
-    @timer    = @model.get("timer") || 0
+    @timer    = parseInt(@model.get("timer")) || 0
     @items    = _.compact(@model.get("items")) # mild sanitization, happens at save too
     @mode     = "disabled"
     @gridOutput = []
     for item, i in @items
       @gridOutput[i] = 'correct'
-    @columns  = @model.get("columns") || 0
+    @columns  = parseInt(@model.get("columns")) || 0
 
     @autostop = parseInt(@model.get("autostop")) || 0
     @autostopped = false
@@ -249,21 +255,23 @@ class PrototypeGridView extends Backbone.View
     Utils.midAlert "Time still running." if @timeRuning == true
   
   getResult: ->
-    letterResults = []
+    itemResults = []
     for item, i in @items
-      letterResults[i] = {} 
-      if i < (@lastAttempted)
-        letterResults[i][item] = @gridOutput[i]
+      if i < @lastAttempted
+        itemResults[i] = @gridOutput[i]
       else
-        letterResults[i][item] = "missing"
+        itemResults[i] = "missing"
 
     result =
-      "autostopped"     : @autostopped
-      "last_attempted"  : @lastAttempted
-      "letters_results" : letterResults
-      "time_remaining"  : @timeRemaining
-      "time_elapsed"    : @timeElapsed
-      "mark_record"     : @markRecord
+      "auto_stop"     : @autostopped
+      "attempted"     : @lastAttempted
+      "items"         : itemResults
+      "time_remain"   : @timeRemaining
+      "mark_record"   : @markRecord
+      "variable_name" : @model.get("variableName")
+
+  getSkippedResult: ->
+    return "skipped"
 
   onClose: ->
     clearInterval(@interval)
