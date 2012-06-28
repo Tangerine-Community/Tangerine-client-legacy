@@ -88,83 +88,7 @@ class CSVView extends Backbone.View
     allResults.fetch
       success: (collection) =>
         @results = collection.where {assessmentId : @assessmentId}
-        allQuestions = new Questions
-        allQuestions.fetch
-          success: (collection) =>
-            questions = collection.where {assessmentId : @assessmentId}
-            @singleQuestions = []
-
-            for q in questions
-              if q.attributes.type == "single"
-                @singleQuestions.push q.attributes.name
-
-            # unfortunate cleaning code
-            allSubtests = new Subtests
-            allSubtests.fetch 
-              success: ( collection ) =>
-            
-                # create first row
-                @surveyColumns = {}
-                subtests = collection.where { assessmentId : @assessmentId }
-
-                surveys = collection.where
-                  assessmentId : @assessmentId
-                  prototype    : "survey" 
-
-                for subtest in surveys
-                  subtestName = subtest.attributes.name.toLowerCase().dasherize()
-                  @surveyColumns[subtestName] = []
-                  for question in allQuestions.where { subtestId : subtest.id }
-                    questionVariable = question.attributes.name.toLowerCase().dasherize()
-                    if @reduceExclusive? && @reduceExclusive == true && question.attributes.type == "single"
-                      @surveyColumns[subtestName].push subtestName + ":" + questionVariable
-                      
-                    else if question.attributes.type == "single"
-                      for option in question.attributes.options
-                        valueName = option.value
-                        @surveyColumns[subtestName].push subtestName + ":" + questionVariable + ":" + valueName
-                    else if question.attributes.type == "multiple"
-                      for option in question.attributes.options
-                        valueName = option.value
-                        @surveyColumns[subtestName].push subtestName + ":" + questionVariable + ":" + valueName
-                    else if question.attributes.type == "open"
-                      @surveyColumns[subtestName].push subtestName + ":" + questionVariable + ":" + question.attributes.name
-
-                # get all subtests that are grids in this assessment
-                grids = collection.where
-                  assessmentId : @assessmentId
-                  prototype    : "grid"
-                gridsByName = {}
-                for grid in grids
-                  gridsByName[grid.attributes.name] = grid.attributes
-
-                for result in @results
-                  for subtestKey, subtestValue of result.attributes.subtestData
-                
-                    if subtestValue.data.letters_results?
-                      newGridData = []
-
-                      if gridsByName[subtestValue.name]? and _.keys(subtestValue.data.letters_results).length != gridsByName[subtestValue.name].items.length
-                        subtestValue.data.letters_results = []
-                        for item, i in gridsByName[subtestValue.name].items
-                          subtestValue.data.letters_results[i] = {}
-                          subtestValue.data.letters_results[i][item] = if ( i < parseInt(subtestValue.data.last_attempted) ) then "checked" else "missing"
-                        for markIndex, i in subtestValue.data.mark_record
-                          markIndex--
-                          key = ""
-                          for k, v of subtestValue.data.letters_results[markIndex]
-                            key = k
-                          subtestValue.data.letters_results[markIndex][key] = if (subtestValue.data.letters_results[markIndex][key] == "checked") then "unchecked" else "checked"
-                      
-
-                    if @reduceExclusive? && @reduceExclusive == true
-                      for dataKey, dataValue of subtestValue.data
-                        if dataKey in @singleQuestions
-                          for k, v of dataValue
-                            singleResult = k if v == "checked" 
-                          subtestValue.data[dataKey] = singleResult
-                
-                @render()
+        @render()
     
     @disallowedKeys = ["mark_record"]
     @metaKeys = ["enumerator","starttime","timestamp"]
@@ -178,87 +102,101 @@ class CSVView extends Backbone.View
 
       keys = []
 
+      # make keys for our buckets
       for metaKey in @metaKeys
         keys.push metaKey
 
       maxIndex = 0
-      maxSubtests = -1
-      for subtest, i in @results
-        subtestLength = subtest.attributes.subtestData.length
-        if subtestLength >= maxSubtests
-          maxSubtests = subtestLength
-          maxIndex = i
 
-      for subtestValue in @results[maxIndex].attributes.subtestData
-        subtestName = subtestValue.name.toLowerCase().dasherize()
-        if subtestName in _.keys(@surveyColumns)
-          keys = keys.concat(@surveyColumns[subtestName])
-        else
-          for dataKey, dataValue of subtestValue.data
-            if !(dataKey in @disallowedKeys)
-              if _.isObject(dataValue)
-                questionVariable = dataKey.toLowerCase().dasherize()
-                for key, value of dataValue
-
-                  # this clause mark_record fix
-                  if _.isObject(value) 
-                    for k, v of value
-                      valueName = k
-                      variableName = subtestName + ":" + questionVariable + ":" + valueName
-                      keys.push variableName
-                  else
-                      valueName = key
-                      variableName = subtestName + ":" + questionVariable + ":" + valueName
-                      keys.push variableName
-              else
-                valueName = dataKey.toLowerCase().dasherize()
-                variableName = subtestName + ":" + valueName
-                keys.push variableName
+      for subtest in @results[0].attributes.subtestData
+        subtestName = subtest.name.toLowerCase().dasherize()
+        prototype = subtest.prototype
+        
+        # should break these out into classes at some point
+        if prototype == "id"
+          keys.push "id"
+        else if prototype == "datetime"
+          keys.push "year", "month", "date", "assess_time"
+        else if prototype == "consent"
+          keys.push "consent"
+        else if prototype == "grid"
+          variableName = subtest.data.variable_name
+          keys.push "#{variableName}_auto_stop","#{variableName}_time_remain", "#{variableName}_attempted"
+          for item, i in subtest.data.items
+            keys.push "#{variableName}#{i+1}"
+        else if prototype == "survey"
+          for surveyVariable, surveyValue of subtest.data
+            if _.isObject(surveyValue)
+              for optionKey, optionValue of surveyValue
+                keys.push "#{surveyVariable}_#{optionKey}"
+            else
+              keys.push surveyVariable
+        else if prototype == "complete"
+          keys.push "additional_comments"
 
       resultDataArray.push keys
 
+      # iterate all results
       for result, d in @results
+        #console.log result
         values = []
+        # add meta keys
         for metaKey in @metaKeys
           values.push result.attributes[metaKey]
+
+        # add subtest data
+        for subtest in result.attributes.subtestData
+
+          prototype = subtest.prototype
+
+          if prototype == "id"
+            values[keys.indexOf("id")] = subtest.data.participant_id
           
-        if result?
-          for subtestKey, subtestValue of result.attributes.subtestData
-            subtestName =  subtestValue.name.toLowerCase().dasherize()
-            for dataKey, dataValue of subtestValue.data
-              if !(dataKey in @disallowedKeys)
-                if _.isObject(dataValue)
-                  questionVariable = dataKey.toLowerCase().dasherize()
-                  itemCount = 0
-                  for key, value of dataValue
-                    if _.isObject(value)
-                      for k, v of value
-                        valueName    = k
-                        variableName = subtestName + ":" + questionVariable + ":" + valueName
-                        #console.log "1st level: #{variableName}"
-                        valueIndex   = keys.indexOf(variableName)
-                        firstIndex = null
-                        for key, keyIndex in keys
-                          if ~key.indexOf(subtestName + ":" + questionVariable) && firstIndex == null
-                            firstIndex = keyIndex
-                        values[firstIndex + itemCount] = v
-                      itemCount++
-                    else
-                      valueName = key
-                      variableName = subtestName + ":" + questionVariable + ":" + valueName
-                      #console.log "2nd level: #{variableName}"
-                      valueIndex = keys.indexOf(variableName)
-                      if keys.indexOf(variableName) != -1
-                        values[valueIndex] = value
-                else
-                  valueName = dataKey.toLowerCase().dasherize()
-                  variableName = subtestName + ":" + valueName
-                  #console.log "3rd level: #{variableName}"
-                  valueIndex   = keys.indexOf(variableName)
-                  values[valueIndex] = dataValue if valueIndex != -1
+          else if prototype == "datetime"
+            values[keys.indexOf("year")]        = subtest.data.year
+            values[keys.indexOf("month")]       = ["","Jan","Feb","Mar","Apr","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(subtest.data.month)
+            values[keys.indexOf("date")]        = subtest.data.day
+            values[keys.indexOf("assess_time")] = subtest.data.time
+            
+          else if prototype == "consent"
+            values[keys.indexOf("consent")] = subtest.data.consent
+          
+          else if prototype == "grid"
+            variableName = subtest.data.variable_name
+            values[keys.indexOf("#{variableName}_auto_stop")] = subtest.data.auto_stop
+            values[keys.indexOf("#{variableName}_time_remain")] = subtest.data.time_remain
+            values[keys.indexOf("#{variableName}_attempted")] = subtest.data.attempted
+            for item, i in subtest.data.items
+              if item == "correct"
+                exportValue = 1
+              else if item == "incorrect"
+                exportValue = 0
+              else if item == "missing"
+                exportValue = "."
+              values[keys.indexOf("#{variableName}#{i+1}")] = exportValue
+
+          else if prototype == "survey"
+            for surveyVariable, surveyValue of subtest.data
+              if _.isObject(surveyValue)
+                for optionKey, optionValue of surveyValue
+                  if optionValue == "checked"
+                    exportValue = 1
+                  else if optionValue == "unchecked"
+                    exportValue = 0
+                  else if optionValue == "not_asked"
+                    exportValue = "."
+                  values[keys.indexOf("#{surveyVariable}_#{optionKey}")] = exportValue
+              else
+                exportValue = if surveyValue == "not_asked" then "." else surveyValue
+                values[keys.indexOf("#{surveyVariable}")] = exportValue
+
+          else if prototype == "complete"
+            console.log subtest.data.comment
+            values[keys.indexOf("additional_comments")] = subtest.data.comment
 
         resultDataArray.push values
-      
+
+      `/*
       for rowNumber, row of resultDataArray
         
         # Begin Taylor's Edits for Malawi 2012 EGRA May
@@ -314,7 +252,7 @@ class CSVView extends Backbone.View
                   resultDataArray[rowNumber][i] = mapKey
         
         # End Taylor's Edits for Malawi 2012 EGRA May
-
+        */`
       for row, i in resultDataArray
         tableHTML += "<tr>"
         count = 0
@@ -332,7 +270,7 @@ class CSVView extends Backbone.View
       @$el.html "
         <div id='csv_view'>
         <h1>Result CSV</h1>
-        <h2>Options</h2>
+        <!--h2>Options</h2>
         <div class='menu_box'>
           <label>Reduce exclusive</label>
           <div id='output_options'>
@@ -341,7 +279,7 @@ class CSVView extends Backbone.View
             <label for='reduce_off'>Off</label>
             <input class='option_reduce' name='reduce' type='radio' value='false' id='reduce_off' #{checkedString if !@reduceExclusive}>
           </div>
-        </div>
+        </div-->
         <textarea>#{@csv}</textarea><br>
         <a href='data:text/octet-stream;base64,#{Base64.encode(@csv)}' download='#{@assessmentId}.csv'>Download file</a>
         (Right click and click <i>Save Link As...</i>)
