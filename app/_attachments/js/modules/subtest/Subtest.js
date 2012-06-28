@@ -18,7 +18,6 @@ Subtest = (function(_super) {
 
   Subtest.prototype.loadPrototypeTemplate = function(prototype) {
     var key, value, _ref;
-    console.log("got prototype " + prototype);
     _ref = this.templates[prototype];
     for (key in _ref) {
       value = _ref[key];
