@@ -1,12 +1,12 @@
 class AssessmentEditView extends Backbone.View
 
-  className : 'assessmentEditView'
+  className : 'assessment_edit_view'
 
   events :
     'click #archive_buttons input' : 'save'
     'click .back'               : 'back'
-    'click .new_subtest_button' : 'showNewSubtestForm'
-    'click .new_subtest_cancel' : 'hideNewSubtestForm'
+    'click .new_subtest_button' : 'toggleNewSubtestForm'
+    'click .new_subtest_cancel' : 'toggleNewSubtestForm'
     'click .new_subtest_save'   : 'saveNewSubtest'
     'change #basic input' : 'showSave'
     'click .assessment_save' : 'save'
@@ -21,7 +21,7 @@ class AssessmentEditView extends Backbone.View
   showSave: -> @$el.find('.assessment_save').fadeIn(250)
 
   back: ->
-    window.history.back()
+    Tangerine.router.navigate "assessments", true
 
   updateModel: =>
     @model.set
@@ -32,8 +32,7 @@ class AssessmentEditView extends Backbone.View
       assessmentId : @model.id
 
 
-  showNewSubtestForm: -> @$el.find(".new_subtest_form").fadeIn(250)
-  hideNewSubtestForm: -> @$el.find(".new_subtest_form").fadeOut(250)
+  toggleNewSubtestForm: -> @$el.find(".new_subtest_form, .new_subtest_button").fadeToggle(250)
   saveNewSubtest: ->
     # general template
     newAttributes = Tangerine.config.subtestTemplate
@@ -89,15 +88,17 @@ class AssessmentEditView extends Backbone.View
       <h2>Subtests</h2>
       <button class='new_subtest_button command'>New</button>
       <div class='new_subtest_form confirmation'>
-        <div class='label_value'>
-          <label for='new_subtest_type'>Type</label>
-          <div id='subtest_type'></div>
+        <div class='menu_box clearfix'>
+          <div class='label_value'>
+            <label for='new_subtest_type'>Type</label>
+            <div id='subtest_type'></div>
+          </div>
+          <div class='label_value'>
+            <label for='new_subtest_name'>Name</label>
+            <input type='text' id='new_subtest_name'>
+          </div>
+          <button class='new_subtest_save command'>Save</button><button class='new_subtest_cancel command'>Cancel</button>
         </div>
-        <div class='label_value'>
-          <label for='new_subtest_name'>Name</label>
-          <input type='text' id='new_subtest_name'>
-        </div>
-        <button class='new_subtest_save command'>Save</button><button class='new_subtest_cancel command'>cancel</button>
       </div>
     "
 
@@ -133,6 +134,8 @@ class AssessmentEditView extends Backbone.View
     # make it sortable
     @$el.find("#subtest_list").sortable
       handle : '.sortable_handle'
+      start: (event, ui) -> ui.item.addClass "drag_shadow"
+      stop:  (event, ui) -> ui.item.removeClass "drag_shadow"
       update : (event, ui) =>
         for id, i in ($(li).attr("data-id") for li in @$el.find("#subtest_list li"))
           @model.subtests.get(id).set({"order":i},{silent:true}).save(null,{silent:true})
