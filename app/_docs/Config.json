@@ -7,12 +7,12 @@
   "user_with_database_create_permission": "tangerine",
   "password_with_database_create_permission": "tangytangerine",
   "prototypeViews": {
-      "consent": "PrototypeConsentView",
-      "datetime": "PrototypeDatetimeView",
-      "location": "PrototypeLocationView",
-      "survey": "PrototypeSurveyView",
-      "grid": "PrototypeGridView",
-      "id": "PrototypeIdView"
+      "consent": {"run" : "ConsentRunView", "edit" : "ConsentEditView" },
+      "datetime": {"run" : "DatetimeRunView", "edit" : "DatetimeEditView" },
+      "location": {"run" : "LocationRunView", "edit" : "LocationEditView" },
+      "survey": {"run" : "SurveyRunView", "edit" : "SurveyEditView" },
+      "grid": {"run" : "GridRunView", "edit" : "GridEditView" },
+      "id": {"run" : "IdRunView", "edit" : "IdEditView" }
   },
   "subtestTemplate": {
       "enumeratorHelp" : "",
