@@ -29,7 +29,7 @@ class Router extends Backbone.Router
     
     'question/:id' : 'editQuestion'
     
-    'report/:name' : 'report'
+    'report/:id' : 'report'
 
   transfer: ->
     getVars = Utils.$_GET()
@@ -212,6 +212,10 @@ class Router extends Backbone.Router
         vm.show errView
 
   # Taylor's addition - class summary for single assessment
+  # Note that currently reports can only be accessed by URL
+  # Example URL: http://localhost:5984/tangerine/_design/tangerine/index.html#report/3893245d0c5104822af8e6855e0000df
+  # Add "-0" or "-1" to the end to specify which report to use, where 0 
+  # corresponds to first report, 1 to the second, etc.
   report: (id) ->
     Tangerine.user.verify
       isRegistered: ->
