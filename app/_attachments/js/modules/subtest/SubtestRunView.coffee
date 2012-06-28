@@ -1,8 +1,9 @@
 class SubtestRunView extends Backbone.View
   
   events:
-    "click .next"         : "next"
-    "click .subtest_help" : "toggleHelp"
+    'click .next'         : 'next'
+    'click .subtest_help' : 'toggleHelp'
+    'click .skip'         : 'skip'
 
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
@@ -20,6 +21,7 @@ class SubtestRunView extends Backbone.View
 
     enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help'>#{@model.get 'enumeratorHelp'}</div>" else ""
     studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog command'>#{@model.get 'studentDialog'}</div>" else ""
+    skipButton = "<button class='skip navigation'>Skip</button>"
 
     @$el.html "
       <h2>#{@model.get 'name'}</h2>
@@ -28,14 +30,14 @@ class SubtestRunView extends Backbone.View
     "
 
     # Use prototype specific views here
-    @prototypeView = new window[@protoViews[@model.get 'prototype']]
+    @prototypeView = new window[@protoViews[@model.get 'prototype']['run']]
       model: @model
       parent: @
     @prototypeView.render()
     @$el.append @prototypeView.el
     @prototypeRendered = true
 
-    @$el.append "<button class='next navigation'>Next</button>"
+    @$el.append "<button class='next navigation'>Next</button>#{if @model.get('skippable') then skipButton else "" }"
 
     @trigger "rendered"
 
@@ -51,8 +53,6 @@ class SubtestRunView extends Backbone.View
 
   isValid: ->
     if not @prototypeRendered then return false
-    if @model.get("skippable") == true || @model.get("skippable") == "true"
-      return true
     if @prototypeView.isValid?
       return @prototypeView.isValid()
     else
@@ -73,11 +73,16 @@ class SubtestRunView extends Backbone.View
     @parent.abort()
 
   getResult: ->
-    if @prototypeView.getResult?
-      return @prototypeView.getResult()
+    return @prototypeView.getResult()
+
+  getSkipped: ->
+    if @prototypeView.getSkipped?
+      return @prototypeView.getSkipped()
     else
-      return @$el.find("form").serializeSubtest()
+      throw "Prototype skipping not implemented"
 
   next: ->
     @parent.next()
   
+  skip: ->
+    @parent.skip()

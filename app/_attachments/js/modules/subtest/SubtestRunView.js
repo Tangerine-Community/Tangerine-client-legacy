@@ -11,8 +11,9 @@ SubtestRunView = (function(_super) {
   }
 
   SubtestRunView.prototype.events = {
-    "click .next": "next",
-    "click .subtest_help": "toggleHelp"
+    'click .next': 'next',
+    'click .subtest_help': 'toggleHelp',
+    'click .skip': 'skip'
   };
 
   SubtestRunView.prototype.toggleHelp = function() {
@@ -27,18 +28,19 @@ SubtestRunView = (function(_super) {
   };
 
   SubtestRunView.prototype.render = function() {
-    var enumeratorHelp, studentDialog;
+    var enumeratorHelp, skipButton, studentDialog;
     enumeratorHelp = (this.model.get("enumeratorHelp") || "") !== "" ? "<button class='subtest_help command'>help</button><div class='enumerator_help'>" + (this.model.get('enumeratorHelp')) + "</div>" : "";
     studentDialog = (this.model.get("studentDialog") || "") !== "" ? "<div class='student_dialog command'>" + (this.model.get('studentDialog')) + "</div>" : "";
+    skipButton = "<button class='skip navigation'>Skip</button>";
     this.$el.html("      <h2>" + (this.model.get('name')) + "</h2>      " + enumeratorHelp + "      " + studentDialog + "    ");
-    this.prototypeView = new window[this.protoViews[this.model.get('prototype')]]({
+    this.prototypeView = new window[this.protoViews[this.model.get('prototype')]['run']]({
       model: this.model,
       parent: this
     });
     this.prototypeView.render();
     this.$el.append(this.prototypeView.el);
     this.prototypeRendered = true;
-    this.$el.append("<button class='next navigation'>Next</button>");
+    this.$el.append("<button class='next navigation'>Next</button>" + (this.model.get('skippable') ? skipButton : ""));
     return this.trigger("rendered");
   };
 
@@ -61,9 +63,6 @@ SubtestRunView = (function(_super) {
 
   SubtestRunView.prototype.isValid = function() {
     if (!this.prototypeRendered) return false;
-    if (this.model.get("skippable") === true || this.model.get("skippable") === "true") {
-      return true;
-    }
     if (this.prototypeView.isValid != null) {
       return this.prototypeView.isValid();
     } else {
@@ -94,15 +93,23 @@ SubtestRunView = (function(_super) {
   };
 
   SubtestRunView.prototype.getResult = function() {
-    if (this.prototypeView.getResult != null) {
-      return this.prototypeView.getResult();
+    return this.prototypeView.getResult();
+  };
+
+  SubtestRunView.prototype.getSkipped = function() {
+    if (this.prototypeView.getSkipped != null) {
+      return this.prototypeView.getSkipped();
     } else {
-      return this.$el.find("form").serializeSubtest();
+      throw "Prototype skipping not implemented";
     }
   };
 
   SubtestRunView.prototype.next = function() {
     return this.parent.next();
+  };
+
+  SubtestRunView.prototype.skip = function() {
+    return this.parent.skip();
   };
 
   return SubtestRunView;
