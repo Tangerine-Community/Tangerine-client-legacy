@@ -34,7 +34,6 @@ GroupsView = (function(_super) {
     } else {
       for (i = 0, _len = groups.length; i < _len; i++) {
         group = groups[i];
-        console.log(group);
         html += "<button class='command goto' data-group='" + group + "'>" + group + "</button>";
       }
     }

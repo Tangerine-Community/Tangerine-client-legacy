@@ -24,7 +24,6 @@ class GroupsView extends Backbone.View
       html += "You are not yet a member of a group. Go to Account to join a group."
     else 
       for group, i in groups
-        console.log group
         html += "<button class='command goto' data-group='#{group}'>#{group}</button>"
 
 
