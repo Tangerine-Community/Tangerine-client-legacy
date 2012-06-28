@@ -17,7 +17,7 @@
       <span class="nv">assessmentId   : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span>
       <span class="nv">assessmentName : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
       <span class="nv">blank          : </span><span class="kc">true</span>
-      <span class="nv">starttime      : </span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">()</span>
+      <span class="nv">starttime     : </span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">()</span>
     <span class="nv">resultView = </span><span class="k">new</span> <span class="nx">ResultView</span>
         <span class="nv">model          : </span><span class="nx">@result</span>
         <span class="nv">assessment     : </span><span class="nx">@model</span>
@@ -37,7 +37,7 @@ the inefficiency is that it gets called twice the first time</p>             </t
 <span class="s">        &lt;h1&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;name&#39;</span><span class="si">}</span><span class="s">&lt;/h1&gt;</span>
 <span class="s">        &lt;div id=&#39;progress&#39;&gt;&lt;/div&gt;</span>
 <span class="s">      &quot;</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#progress&#39;</span><span class="p">).</span><span class="nx">progressbar</span> <span class="nv">value : </span><span class="p">((</span><span class="nx">@index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">subtests</span><span class="p">.</span><span class="nx">length</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#progress&#39;</span><span class="p">).</span><span class="nx">progressbar</span> <span class="nv">value : </span><span class="p">(</span> <span class="p">(</span> <span class="nx">@index</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">subtests</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">)</span> <span class="o">*</span> <span class="mi">100</span> <span class="p">)</span>
       <span class="nx">currentView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">currentView</span><span class="p">.</span><span class="nx">el</span>
 
@@ -47,21 +47,35 @@ the inefficiency is that it gets called twice the first time</p>             </t
     <span class="k">for</span> <span class="nx">view</span> <span class="k">in</span> <span class="nx">@subtestViews</span>
       <span class="nx">view</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
     <span class="nx">@result</span><span class="p">.</span><span class="nx">clear</span><span class="p">()</span>
-    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current_student_id&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="nx">@</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">))</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current_student_id&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="nx">@</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">())</span>
     <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current_student&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
     
   <span class="nv">abort: </span><span class="o">-&gt;</span>
     <span class="vi">@abortAssessment = </span><span class="kc">true</span>
     <span class="nx">@next</span><span class="p">()</span>
 
-  <span class="nx">next</span><span class="o">:-&gt;</span>
+  <span class="nv">skip: </span><span class="o">-&gt;</span>
+    <span class="nv">currentView = </span><span class="nx">@subtestViews</span><span class="p">[</span><span class="nx">@index</span><span class="p">]</span>
+    <span class="nx">@result</span><span class="p">.</span><span class="nx">add</span>
+      <span class="nv">name      : </span><span class="nx">currentView</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
+      <span class="nv">data      : </span><span class="nx">currentView</span><span class="p">.</span><span class="nx">getSkipped</span><span class="p">()</span>
+      <span class="nv">subtestId : </span><span class="nx">currentView</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span>
+      <span class="nv">sum       : </span><span class="nx">currentView</span><span class="p">.</span><span class="nx">getSum</span><span class="p">()</span>
+    <span class="nx">currentView</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
+    <span class="nx">@index</span><span class="o">++</span> <span class="nx">unless</span> <span class="nx">@abortAssessment</span> <span class="o">==</span> <span class="kc">true</span>
+    <span class="vi">@index = </span><span class="nx">@subtestViews</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="nx">@abortAssessment</span> <span class="o">==</span> <span class="kc">true</span>
+    <span class="nx">@render</span><span class="p">()</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">scrollTo</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+  <span class="nv">next: </span><span class="o">-&gt;</span>
     <span class="nv">currentView = </span><span class="nx">@subtestViews</span><span class="p">[</span><span class="nx">@index</span><span class="p">]</span>
     <span class="k">if</span> <span class="nx">currentView</span><span class="p">.</span><span class="nx">isValid</span><span class="p">()</span>
       <span class="nx">@result</span><span class="p">.</span><span class="nx">add</span>
-        <span class="nv">name : </span><span class="nx">currentView</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
-        <span class="nv">data : </span><span class="nx">currentView</span><span class="p">.</span><span class="nx">getResult</span><span class="p">()</span>
+        <span class="nv">name      : </span><span class="nx">currentView</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span>
+        <span class="nv">data      : </span><span class="nx">currentView</span><span class="p">.</span><span class="nx">getResult</span><span class="p">()</span>
         <span class="nv">subtestId : </span><span class="nx">currentView</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span>
-        <span class="nv">sum : </span><span class="nx">currentView</span><span class="p">.</span><span class="nx">getSum</span><span class="p">()</span>
+        <span class="nv">prototype : </span><span class="nx">currentView</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;prototype&quot;</span>
+        <span class="nv">sum       : </span><span class="nx">currentView</span><span class="p">.</span><span class="nx">getSum</span><span class="p">()</span>
       <span class="nx">currentView</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
       <span class="nx">@index</span><span class="o">++</span> <span class="nx">unless</span> <span class="nx">@abortAssessment</span> <span class="o">==</span> <span class="kc">true</span>
       <span class="vi">@index = </span><span class="nx">@subtestViews</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="nx">@abortAssessment</span> <span class="o">==</span> <span class="kc">true</span>

@@ -6,29 +6,28 @@
     <span class="s">&#39;click .save&#39;</span>    <span class="o">:</span> <span class="s">&#39;save&#39;</span>
     <span class="s">&#39;click .another&#39;</span> <span class="o">:</span> <span class="s">&#39;another&#39;</span>
 
-
   <span class="nv">another: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;restart/</span><span class="si">#{</span><span class="nx">@assessment</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">save: </span><span class="o">-&gt;</span>
-    <span class="k">if</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#additional_comments&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span>
-      <span class="nx">@model</span><span class="p">.</span><span class="nx">add</span>
-        <span class="nv">name : </span><span class="s">&quot;Assessment complete&quot;</span>
-        <span class="nv">data :</span>
-          <span class="s">&quot;comment&quot;</span> <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#additional_comments&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
-        <span class="nv">subtestId : </span><span class="s">&quot;result&quot;</span>
-        <span class="nv">sum :</span>
-          <span class="nv">correct : </span><span class="mi">1</span>
-          <span class="nv">incorrect : </span><span class="mi">0</span>
-          <span class="nv">missing : </span><span class="mi">0</span>
-          <span class="nv">total : </span><span class="mi">1</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">add</span>
+      <span class="nv">name : </span><span class="s">&quot;Assessment complete&quot;</span>
+      <span class="nv">prototype: </span><span class="s">&quot;complete&quot;</span>
+      <span class="nv">data :</span>
+        <span class="s">&quot;comment&quot;</span> <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#additional_comments&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
+      <span class="nv">subtestId : </span><span class="s">&quot;result&quot;</span>
+      <span class="nv">sum :</span>
+        <span class="nv">correct : </span><span class="mi">1</span>
+        <span class="nv">incorrect : </span><span class="mi">0</span>
+        <span class="nv">missing : </span><span class="mi">0</span>
+        <span class="nv">total : </span><span class="mi">1</span>
+
     <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
       <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Result saved&quot;</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.save_status&#39;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;saved&quot;</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.save_status&#39;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&#39;not_saved&#39;</span><span class="p">)</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;button.save&#39;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;button.save, .question&#39;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.confirmation&#39;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&#39;confirmation&#39;</span><span class="p">)</span>
-      
     <span class="k">else</span>
       <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Save error&quot;</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.save_status&#39;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;Results may not have saved&quot;</span>
@@ -39,7 +38,7 @@
     <span class="vi">@saved = </span><span class="kc">false</span>
     <span class="vi">@resultSumView = </span><span class="k">new</span> <span class="nx">ResultSumView</span>
       <span class="nv">model : </span><span class="nx">@model</span>
-    
+
   <span class="nv">render: </span><span class="o">-&gt;</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;h2&gt;Assessment complete&lt;/h2&gt;</span>
 <span class="s">    &lt;div class=&#39;label_value&#39;&gt;</span>
@@ -55,7 +54,7 @@
 
 <span class="s">      &lt;div class=&#39;question&#39;&gt;</span>
 <span class="s">      &lt;div class=&#39;prompt&#39;&gt;Additional comments (optional)&lt;/div&gt;</span>
-<span class="s">      &lt;textarea id=&#39;additional_comments full_width&#39;&gt;&lt;/textarea&gt;</span>
+<span class="s">      &lt;textarea id=&#39;additional_comments&#39; class=&#39;full_width&#39;&gt;&lt;/textarea&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;button class=&#39;save command&#39;&gt;Save result&lt;/button&gt;&lt;br&gt;</span>
 <span class="s">      &lt;div class=&#39;confirmation&#39;&gt;&lt;button class=&#39;another command&#39;&gt;Perform another assessment&lt;/button&gt;&lt;/div&gt;</span>

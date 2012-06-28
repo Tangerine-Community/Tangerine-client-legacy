@@ -3,12 +3,17 @@
   <span class="nv">className : </span><span class="s">&quot;question_list_element&quot;</span>
 
   <span class="nv">events:</span>
-    <span class="s">&#39;click .edit&#39;</span>   <span class="o">:</span> <span class="s">&#39;edit&#39;</span>
-    <span class="s">&#39;click .delete&#39;</span> <span class="o">:</span> <span class="s">&#39;delete&#39;</span>
+    <span class="s">&#39;click .edit&#39;</span>          <span class="o">:</span> <span class="s">&#39;edit&#39;</span>
+    <span class="s">&#39;click .delete&#39;</span>        <span class="o">:</span> <span class="s">&#39;toggleDelete&#39;</span>
+    <span class="s">&#39;click .delete_cancel&#39;</span> <span class="o">:</span> <span class="s">&#39;toggleDelete&#39;</span>
+    <span class="s">&#39;click .delete_delete&#39;</span> <span class="o">:</span> <span class="s">&#39;delete&#39;</span>
 
   <span class="nv">edit: </span><span class="nf">(event) -&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;question/</span><span class="si">#{</span><span class="nx">@question</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
     <span class="k">return</span> <span class="kc">false</span>
+
+  <span class="nv">toggleDelete: </span><span class="o">-&gt;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.delete_confirm&quot;</span><span class="p">).</span><span class="nx">fadeToggle</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
 
   <span class="k">delete</span><span class="o">:</span> <span class="nf">(event) -&gt;</span>
     <span class="nx">@question</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">@question</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
@@ -22,10 +27,21 @@
 
   <span class="nv">render: </span><span class="o">-&gt;</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
-<span class="s">      &lt;img src=&#39;images/icon_drag.png&#39; class=&#39;sortable_handle&#39;&gt;</span>
-<span class="s">      &lt;span&gt;</span><span class="si">#{</span><span class="nx">@question</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;prompt&#39;</span><span class="si">}</span><span class="s">&lt;/span&gt; &lt;span&gt;[&lt;small&gt;</span><span class="si">#{</span><span class="nx">@question</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;name&#39;</span><span class="si">}</span><span class="s">, </span><span class="si">#{</span><span class="nx">@question</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;type&#39;</span><span class="si">}</span><span class="s">&lt;/small&gt;]&lt;/span&gt;</span>
-<span class="s">      &lt;button class=&#39;edit command&#39;&gt;Edit&lt;/button&gt;</span>
-<span class="s">      &lt;button class=&#39;delete command&#39;&gt;Delete&lt;/button&gt;</span>
+<span class="s">      &lt;table&gt;</span>
+<span class="s">        &lt;tr&gt;</span>
+<span class="s">          &lt;td&gt;</span>
+<span class="s">            &lt;img src=&#39;images/icon_drag.png&#39; class=&#39;sortable_handle&#39;&gt;</span>
+<span class="s">          &lt;/td&gt;</span>
+<span class="s">          &lt;td&gt;</span>
+<span class="s">            &lt;span&gt;</span><span class="si">#{</span><span class="nx">@question</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;prompt&#39;</span><span class="si">}</span><span class="s">&lt;/span&gt; &lt;span&gt;[&lt;small&gt;</span><span class="si">#{</span><span class="nx">@question</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;name&#39;</span><span class="si">}</span><span class="s">, </span><span class="si">#{</span><span class="nx">@question</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;type&#39;</span><span class="si">}</span><span class="s">&lt;/small&gt;]&lt;/span&gt;</span>
+<span class="s">            &lt;button class=&#39;edit command&#39;&gt;Edit&lt;/button&gt;</span>
+<span class="s">            &lt;button class=&#39;delete command&#39;&gt;Delete&lt;/button&gt;</span>
+<span class="s">            &lt;div class=&#39;confirmation delete_confirm&#39;&gt;</span>
+<span class="s">            Are you sure? &lt;button class=&#39;delete_delete&#39;&gt;Delete&lt;/button&gt;&lt;button class=&#39;delete_cancel&#39;&gt;Cancel&lt;/button&gt;</span>
+<span class="s">            &lt;/div&gt;</span>
+<span class="s">          &lt;/td&gt;</span>
+<span class="s">        &lt;/tr&gt;</span>
+<span class="s">      &lt;/table&gt;</span>
 <span class="s">      &quot;</span>
     <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
 

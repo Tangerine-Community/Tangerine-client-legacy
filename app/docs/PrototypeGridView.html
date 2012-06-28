@@ -249,21 +249,23 @@
     <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Time still running.&quot;</span> <span class="k">if</span> <span class="nx">@timeRuning</span> <span class="o">==</span> <span class="kc">true</span>
   
   <span class="nv">getResult: </span><span class="o">-&gt;</span>
-    <span class="nv">letterResults = </span><span class="p">[]</span>
+    <span class="nv">itemResults = </span><span class="p">[]</span>
     <span class="k">for</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@items</span>
-      <span class="nx">letterResults</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span> 
-      <span class="k">if</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nx">@lastAttempted</span><span class="p">)</span>
-        <span class="nx">letterResults</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">item</span><span class="p">]</span> <span class="o">=</span> <span class="nx">@gridOutput</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+      <span class="k">if</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">@lastAttempted</span>
+        <span class="nx">itemResults</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">@gridOutput</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
       <span class="k">else</span>
-        <span class="nx">letterResults</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">item</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;missing&quot;</span>
+        <span class="nx">itemResults</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;missing&quot;</span>
 
     <span class="nv">result =</span>
       <span class="s">&quot;autostopped&quot;</span>     <span class="o">:</span> <span class="nx">@autostopped</span>
       <span class="s">&quot;last_attempted&quot;</span>  <span class="o">:</span> <span class="nx">@lastAttempted</span>
-      <span class="s">&quot;letters_results&quot;</span> <span class="o">:</span> <span class="nx">letterResults</span>
+      <span class="s">&quot;items&quot;</span>           <span class="o">:</span> <span class="nx">itemResults</span>
       <span class="s">&quot;time_remaining&quot;</span>  <span class="o">:</span> <span class="nx">@timeRemaining</span>
       <span class="s">&quot;time_elapsed&quot;</span>    <span class="o">:</span> <span class="nx">@timeElapsed</span>
       <span class="s">&quot;mark_record&quot;</span>     <span class="o">:</span> <span class="nx">@markRecord</span>
+
+  <span class="nv">getSkippedResult: </span><span class="o">-&gt;</span>
+    
 
   <span class="nv">onClose: </span><span class="o">-&gt;</span>
     <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">@interval</span><span class="p">)</span>

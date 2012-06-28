@@ -19,6 +19,7 @@
 
     <span class="s">&#39;edit-id/:id&#39;</span>   <span class="o">:</span> <span class="s">&#39;editId&#39;</span>
     <span class="s">&#39;run/:name&#39;</span>     <span class="o">:</span> <span class="s">&#39;run&#39;</span>
+    <span class="s">&#39;restart/:name&#39;</span> <span class="o">:</span> <span class="s">&#39;restart&#39;</span>
     <span class="s">&#39;edit/:name&#39;</span>    <span class="o">:</span> <span class="s">&#39;edit&#39;</span>
     <span class="s">&#39;csv/:id&#39;</span>       <span class="o">:</span> <span class="s">&#39;csv&#39;</span>
     <span class="s">&#39;results/:name&#39;</span> <span class="o">:</span> <span class="s">&#39;results&#39;</span>
@@ -153,7 +154,7 @@ uses nested views</p>             </td>             <td class="code">           
 
 
   <span class="nv">restart: </span><span class="nf">(name) -&gt;</span>
-    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navgate</span> <span class="s">&quot;run/</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;run/</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">run: </span><span class="nf">(name) -&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
@@ -190,9 +191,6 @@ since it doesn't use the assessment</p>             </td>             <td class=
         <span class="nv">errView = </span><span class="k">new</span> <span class="nx">ErrorView</span>
           <span class="nv">message : </span><span class="s">&quot;You&#39;re not an admin user&quot;</span>
           <span class="nv">details : </span><span class="s">&quot;How did you get here?&quot;</span>
-<<<<<<< HEAD
-        <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">errView</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Subtests</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">editSubtest: </span><span class="nf">(id) -&gt;</span>
-=======
         <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">errView</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Taylor's addition - class summary for single assessment</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">report: </span><span class="nf">(id) -&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
@@ -201,7 +199,6 @@ since it doesn't use the assessment</p>             </td>             <td class=
         <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
       <span class="nv">isUnregistered: </span><span class="nf">(options) -&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Subtests</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">editSubtest: </span><span class="nf">(id) -&gt;</span>
->>>>>>> Added infrastructure for new single assessments report feature
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
         <span class="nv">id = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">cleanURL</span> <span class="nx">id</span>
