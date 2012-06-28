@@ -17,7 +17,7 @@ class AssessmentRunView extends Backbone.View
       assessmentId   : @model.id
       assessmentName : @model.get "name"
       blank          : true
-      starttime      : (new Date()).getTime()
+      starttime     : (new Date()).getTime()
     resultView = new ResultView
         model          : @result
         assessment     : @model
@@ -39,7 +39,7 @@ class AssessmentRunView extends Backbone.View
         <h1>#{@model.get 'name'}</h1>
         <div id='progress'></div>
       "
-      @$el.find('#progress').progressbar value : ((@index+1)/(@model.subtests.length+1)*100)
+      @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
       currentView.render()
       @$el.append currentView.el
 
@@ -49,21 +49,35 @@ class AssessmentRunView extends Backbone.View
     for view in @subtestViews
       view.close()
     @result.clear()
-    $("#current_student_id").fadeOut(250, -> $(@).html(""))
+    $("#current_student_id").fadeOut(250, -> $(@).html("").show())
     $("#current_student").fadeOut(250)
     
   abort: ->
     @abortAssessment = true
     @next()
 
-  next:->
+  skip: ->
+    currentView = @subtestViews[@index]
+    @result.add
+      name      : currentView.model.get "name"
+      data      : currentView.getSkipped()
+      subtestId : currentView.model.id
+      sum       : currentView.getSum()
+    currentView.close()
+    @index++ unless @abortAssessment == true
+    @index = @subtestViews.length-1 if @abortAssessment == true
+    @render()
+    window.scrollTo 0, 0
+
+  next: ->
     currentView = @subtestViews[@index]
     if currentView.isValid()
       @result.add
-        name : currentView.model.get "name"
-        data : currentView.getResult()
+        name      : currentView.model.get "name"
+        data      : currentView.getResult()
         subtestId : currentView.model.id
-        sum : currentView.getSum()
+        prototype : currentView.model.get "prototype"
+        sum       : currentView.getSum()
       currentView.close()
       @index++ unless @abortAssessment == true
       @index = @subtestViews.length-1 if @abortAssessment == true

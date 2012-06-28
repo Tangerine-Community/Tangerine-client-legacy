@@ -68,7 +68,7 @@ AssessmentRunView = (function(_super) {
     }
     this.result.clear();
     $("#current_student_id").fadeOut(250, function() {
-      return $(this).html("");
+      return $(this).html("").show();
     });
     return $("#current_student").fadeOut(250);
   };
@@ -76,6 +76,22 @@ AssessmentRunView = (function(_super) {
   AssessmentRunView.prototype.abort = function() {
     this.abortAssessment = true;
     return this.next();
+  };
+
+  AssessmentRunView.prototype.skip = function() {
+    var currentView;
+    currentView = this.subtestViews[this.index];
+    this.result.add({
+      name: currentView.model.get("name"),
+      data: currentView.getSkipped(),
+      subtestId: currentView.model.id,
+      sum: currentView.getSum()
+    });
+    currentView.close();
+    if (this.abortAssessment !== true) this.index++;
+    if (this.abortAssessment === true) this.index = this.subtestViews.length - 1;
+    this.render();
+    return window.scrollTo(0, 0);
   };
 
   AssessmentRunView.prototype.next = function() {
@@ -86,6 +102,7 @@ AssessmentRunView = (function(_super) {
         name: currentView.model.get("name"),
         data: currentView.getResult(),
         subtestId: currentView.model.id,
+        prototype: currentView.model.get("prototype"),
         sum: currentView.getSum()
       });
       currentView.close();
