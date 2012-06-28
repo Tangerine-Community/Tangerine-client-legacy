@@ -2,6 +2,7 @@
   "collection": "subtest",
   "prototype": "grid",
   "name" : "Familiar Words",
+  "variableName" : "familiar_words",
   "order" : 7,
   "timer" : 60,
   "autostop" : 5,

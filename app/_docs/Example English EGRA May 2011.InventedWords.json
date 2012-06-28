@@ -2,6 +2,7 @@
   "collection": "subtest",
   "prototype": "grid",
   "name" : "Invented Words",
+  "variableName" : "invented_words",
   "order" : 8,
   "assessmentId" : "Example English EGRA May 2011.Assessment",
   "timer" : 60,

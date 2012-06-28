@@ -3,6 +3,7 @@
   "collection": "subtest",
   "prototype": "grid",
   "name" : "Letters",
+  "variableName" : "letters",
   "order" : 5,
   "timer" : 60,
   "autostop" : 10,

@@ -3,6 +3,7 @@
   "collection": "subtest",
   "prototype": "grid",
   "name" : "Oral Passage Reading",
+  "variableName" : "oral_passage_reading",
   "order" : 9,
   "columns" : 5,
   "timer" : 60,
