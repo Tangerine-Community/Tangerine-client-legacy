@@ -7,7 +7,7 @@ class QuestionView extends Backbone.View
 
   initialize: (options) ->
     @model = options.model
-    @result = {}
+    @answer = {}
     @name    = Utils.decode @model.get "name"
     @type    = @model.get "type"
     @options = @model.get "options"
@@ -29,28 +29,32 @@ class QuestionView extends Backbone.View
   updateResult: ->
     if @type == "open"
       if @notAsked == true
-        @result[@name] = "not_asked"
+        @answer = "not_asked"
       else
-        @result[@name] = @$el.find("##{@cid}_#{@name}").val()
+        @answer = Utils.encode( @$el.find("##{@cid}_#{@name}").val() )
     else if @type == "single"
       if @notAsked == true
-        @result[@name] = "not_asked"
+        @answer = "not_asked"
       else
-        @result[@name] = if @$el.find("##{@cid}_#{@name}_#{i}").is(":checked") then "checked" else "unchecked"
-
+        @answer = @$el.find(".#{@cid}_#{@name}:checked").val()
     else if @type == "multiple"
       if @notAsked == true
         for option, i in @options
-          @result[@options[i].value] = "not_asked"
+          @answer[@options[i].value] = "not_asked"
       else
         for option, i in @options
-          @result[@options[i].value] = if @$el.find("##{@cid}_#{@name}_#{i}").is(":checked") then "checked" else "unchecked"
+          @answer[@options[i].value] = if @$el.find("##{@cid}_#{@name}_#{i}").is(":checked") then "checked" else "unchecked"
 
   updateValidity: ->
     if @model.has("skippable") == "true" || @model.get("skippable") == true
       @isValid = true
     else
-      @isValid = false if _.values(@result).indexOf("checked") < @options.length
+      if @type == "multiple"
+         @isValid = false if _.values(@answer).indexOf("checked") < @options.length
+      else if @type == "single"
+        @isValid = false if @$el.find(".#{@cid}_#{@name}:checked").length == 0
+      else if @type == "open"
+        @isValid = $.trim(@$el.find(".#{@cid}_#{@name}:checked")) == ""
       @isValid = true
     
 
@@ -75,7 +79,7 @@ class QuestionView extends Backbone.View
         for option, i in @options
           html += "
             <label for='#{@cid}_#{@name}_#{i}'>#{option.label}</label>
-            <input id='#{@cid}_#{@name}_#{i}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}'>
+            <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}'>
           "
         @$el.html html
         @$el.buttonset()

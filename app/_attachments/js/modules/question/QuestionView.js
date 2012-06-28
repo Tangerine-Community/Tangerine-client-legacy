@@ -21,7 +21,7 @@ QuestionView = (function(_super) {
 
   QuestionView.prototype.initialize = function(options) {
     this.model = options.model;
-    this.result = {};
+    this.answer = {};
     this.name = Utils.decode(this.model.get("name"));
     this.type = this.model.get("type");
     this.options = this.model.get("options");
@@ -46,15 +46,15 @@ QuestionView = (function(_super) {
     var i, option, _len, _len2, _ref, _ref2, _results, _results2;
     if (this.type === "open") {
       if (this.notAsked === true) {
-        return this.result[this.name] = "not_asked";
+        return this.answer = "not_asked";
       } else {
-        return this.result[this.name] = this.$el.find("#" + this.cid + "_" + this.name).val();
+        return this.answer = Utils.encode(this.$el.find("#" + this.cid + "_" + this.name).val());
       }
     } else if (this.type === "single") {
       if (this.notAsked === true) {
-        return this.result[this.name] = "not_asked";
+        return this.answer = "not_asked";
       } else {
-        return this.result[this.name] = this.$el.find("#" + this.cid + "_" + this.name + "_" + i).is(":checked") ? "checked" : "unchecked";
+        return this.answer = this.$el.find("." + this.cid + "_" + this.name + ":checked").val();
       }
     } else if (this.type === "multiple") {
       if (this.notAsked === true) {
@@ -62,7 +62,7 @@ QuestionView = (function(_super) {
         _results = [];
         for (i = 0, _len = _ref.length; i < _len; i++) {
           option = _ref[i];
-          _results.push(this.result[this.options[i].value] = "not_asked");
+          _results.push(this.answer[this.options[i].value] = "not_asked");
         }
         return _results;
       } else {
@@ -70,7 +70,7 @@ QuestionView = (function(_super) {
         _results2 = [];
         for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
           option = _ref2[i];
-          _results2.push(this.result[this.options[i].value] = this.$el.find("#" + this.cid + "_" + this.name + "_" + i).is(":checked") ? "checked" : "unchecked");
+          _results2.push(this.answer[this.options[i].value] = this.$el.find("#" + this.cid + "_" + this.name + "_" + i).is(":checked") ? "checked" : "unchecked");
         }
         return _results2;
       }
@@ -81,8 +81,16 @@ QuestionView = (function(_super) {
     if (this.model.has("skippable") === "true" || this.model.get("skippable") === true) {
       return this.isValid = true;
     } else {
-      if (_.values(this.result).indexOf("checked") < this.options.length) {
-        this.isValid = false;
+      if (this.type === "multiple") {
+        if (_.values(this.answer).indexOf("checked") < this.options.length) {
+          this.isValid = false;
+        }
+      } else if (this.type === "single") {
+        if (this.$el.find("." + this.cid + "_" + this.name + ":checked").length === 0) {
+          this.isValid = false;
+        }
+      } else if (this.type === "open") {
+        this.isValid = $.trim(this.$el.find("." + this.cid + "_" + this.name + ":checked")) === "";
       }
       return this.isValid = true;
     }
@@ -108,7 +116,7 @@ QuestionView = (function(_super) {
         _ref = this.options;
         for (i = 0, _len = _ref.length; i < _len; i++) {
           option = _ref[i];
-          html += "            <label for='" + this.cid + "_" + this.name + "_" + i + "'>" + option.label + "</label>            <input id='" + this.cid + "_" + this.name + "_" + i + "' name='" + this.name + "' value='" + option.value + "' type='" + checkOrRadio + "'>          ";
+          html += "            <label for='" + this.cid + "_" + this.name + "_" + i + "'>" + option.label + "</label>            <input id='" + this.cid + "_" + this.name + "_" + i + "' class='" + this.cid + "_" + this.name + "' name='" + this.name + "' value='" + option.value + "' type='" + checkOrRadio + "'>          ";
         }
         this.$el.html(html);
         this.$el.buttonset();
