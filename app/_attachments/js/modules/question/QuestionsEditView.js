@@ -53,6 +53,12 @@ QuestionsEditView = (function(_super) {
     }
     return this.$el.sortable({
       handle: '.sortable_handle',
+      start: function(event, ui) {
+        return ui.item.addClass("drag_shadow");
+      },
+      stop: function(event, ui) {
+        return ui.item.removeClass("drag_shadow");
+      },
       update: function(event, ui) {
         var i, id, li, oneQuestion, _len2, _ref2, _results;
         _ref2 = (function() {
@@ -69,7 +75,6 @@ QuestionsEditView = (function(_super) {
         for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
           id = _ref2[i];
           oneQuestion = _this.questions.get(id);
-          console.log(_this.questions.get(id).get("prompt"));
           _results.push(_this.questions.get(id).set({
             "order": i
           }, {
