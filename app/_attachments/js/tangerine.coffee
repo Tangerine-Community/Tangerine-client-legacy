@@ -19,6 +19,7 @@ class Router extends Backbone.Router
 
     'edit-id/:id'   : 'editId'
     'run/:name'     : 'run'
+    'restart/:name' : 'restart'
     'edit/:name'    : 'edit'
     'csv/:id'       : 'csv'
     'results/:name' : 'results'
@@ -168,7 +169,7 @@ class Router extends Backbone.Router
 
 
   restart: (name) ->
-    Tangerine.router.navgate "run/#{name}", true
+    Tangerine.router.navigate "run/#{name}", true
 
   run: (name) ->
     Tangerine.user.verify

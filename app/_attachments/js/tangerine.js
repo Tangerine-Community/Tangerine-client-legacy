@@ -23,6 +23,7 @@ Router = (function(_super) {
     'dashboard': 'dashboard',
     'edit-id/:id': 'editId',
     'run/:name': 'run',
+    'restart/:name': 'restart',
     'edit/:name': 'edit',
     'csv/:id': 'csv',
     'results/:name': 'results',
@@ -138,9 +139,7 @@ Router = (function(_super) {
   };
 
   Router.prototype.assessments = function(group) {
-    if (group == null) {
-      group = null;
-    }
+    if (group == null) group = null;
     console.log("testing");
     if (group === null && Tangerine.context.server) {
       return Tangerine.router.navigate("groups", true);
@@ -231,7 +230,7 @@ Router = (function(_super) {
   };
 
   Router.prototype.restart = function(name) {
-    return Tangerine.router.navgate("run/" + name, true);
+    return Tangerine.router.navigate("run/" + name, true);
   };
 
   Router.prototype.run = function(name) {
