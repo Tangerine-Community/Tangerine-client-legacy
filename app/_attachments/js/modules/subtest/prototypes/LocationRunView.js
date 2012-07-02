@@ -89,6 +89,15 @@ LocationRunView = (function(_super) {
     return this.trigger("rendered");
   };
 
+  LocationRunView.prototype.getResults = function() {
+    return {
+      "province": this.$el.find("#province").val(),
+      "district": this.$el.find("#district").val(),
+      "school_name": this.$el.find("#name").val(),
+      "school_id": this.$el.find("#school_id").val()
+    };
+  };
+
   LocationRunView.prototype.isValid = function() {
     var input, _i, _len, _ref;
     this.$el.find(".message").remove();

@@ -89,6 +89,14 @@ class LocationRunView extends Backbone.View
 
     @trigger "rendered"
 
+  getResults: ->
+    return {
+      "province" : @$el.find("#province").val()
+      "district" : @$el.find("#district").val()
+      "school_name" : @$el.find("#name").val()
+      "school_id" : @$el.find("#school_id").val()
+    }
+
   isValid: ->
     @$el.find(".message").remove()
     for input in @$el.find("input")
