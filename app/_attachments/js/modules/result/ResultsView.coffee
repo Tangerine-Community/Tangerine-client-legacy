@@ -86,7 +86,7 @@ class ResultsView extends Backbone.View
     allResults.fetch
       key: @assessment.id
       success: (collection) =>
-        @results = collection
+        @results = collection.models
         @render()
 
   render: ->
@@ -124,7 +124,7 @@ class ResultsView extends Backbone.View
     if @results?.length == 0
       @$el.append "No results yet!"
     else
-      for result in @results.models
+      for result in @results
         view = new ResultSumView model: result
         view.render()
         @$el.append view.el

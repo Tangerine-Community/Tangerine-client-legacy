@@ -107,7 +107,7 @@ ResultsView = (function(_super) {
     return allResults.fetch({
       key: this.assessment.id,
       success: function(collection) {
-        _this.results = collection;
+        _this.results = collection.models;
         return _this.render();
       }
     });
@@ -128,7 +128,7 @@ ResultsView = (function(_super) {
     if (((_ref = this.results) != null ? _ref.length : void 0) === 0) {
       this.$el.append("No results yet!");
     } else {
-      _ref2 = this.results.models;
+      _ref2 = this.results;
       for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
         result = _ref2[_i];
         view = new ResultSumView({
