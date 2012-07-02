@@ -86,8 +86,9 @@ class CSVView extends Backbone.View
     
     allResults = new Results
     allResults.fetch
+      key: @assessmentId
       success: (collection) =>
-        @results = collection.where {assessmentId : @assessmentId}
+        @results = collection
         @render()
     
     @disallowedKeys = ["mark_record"]

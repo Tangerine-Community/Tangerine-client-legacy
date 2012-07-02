@@ -69,8 +69,9 @@ class ReportView extends Backbone.View
     
     allResults = new Results
     allResults.fetch
+      key: @assessmentId
       success: (collection) =>
-        @results = collection.where {assessmentId : @assessmentId}
+        @results = collection
         console.log @results
         @assessmentName = @results[0].attributes.assessmentName if @results[0].attributes.assessmentName?
         ids = []

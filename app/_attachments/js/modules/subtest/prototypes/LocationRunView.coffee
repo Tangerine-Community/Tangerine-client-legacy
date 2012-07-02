@@ -89,7 +89,7 @@ class LocationRunView extends Backbone.View
 
     @trigger "rendered"
 
-  getResults: ->
+  getResult: ->
     return {
       "province" : @$el.find("#province").val()
       "district" : @$el.find("#district").val()

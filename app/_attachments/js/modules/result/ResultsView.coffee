@@ -84,9 +84,9 @@ class ResultsView extends Backbone.View
     @assessment = options.assessment
     allResults = new Results
     allResults.fetch
+      key: @assessment.id
       success: (collection) =>
-        @results = collection.where
-          assessmentId : @assessment.id
+        @results = collection
         @render()
 
   render: ->
