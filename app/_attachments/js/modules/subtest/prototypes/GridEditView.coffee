@@ -24,7 +24,7 @@ class GridEditView extends Backbone.View
 
     @$el.html "
       <div class='label_value'>
-        <label for='subtest_items'>Variable name</label>
+        <label for='subtest_variable_name'>Variable name</label>
         <input id='subtest_variable_name' value='#{variableName}'>
       </div>
       <div class='label_value'>
