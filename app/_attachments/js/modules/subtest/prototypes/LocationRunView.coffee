@@ -61,6 +61,7 @@ class LocationRunView extends Backbone.View
 
     @$el.html "
     <form>
+      <button class='clear command'>Clear</button>
       <div class='label_value'>
         <label for='province'>#{provinceText}</label>
         <input id='province' name='province' value=''>
@@ -77,7 +78,6 @@ class LocationRunView extends Backbone.View
         <label for='school_id'>#{schoolIdText}</label>
         <input id='school_id' name='school_id' value=''>
       </div>
-      <button class='clear command'>Clear</button>
     <form>
     <div id='autofill' style='display:none'>
       <h2>Select one from autofill list</h2>
