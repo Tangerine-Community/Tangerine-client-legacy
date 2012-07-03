@@ -112,7 +112,7 @@ ResultsView = (function(_super) {
     return allResults.fetch({
       key: this.assessment.id,
       success: function(collection) {
-        _this.results = collection;
+        _this.results = collection.models;
         return _this.render();
       }
     });

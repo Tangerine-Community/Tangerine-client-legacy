@@ -92,7 +92,7 @@ CSVView = (function(_super) {
     allResults.fetch({
       key: this.assessmentId,
       success: function(collection) {
-        _this.results = collection;
+        _this.results = collection.models;
         return _this.render();
       }
     });

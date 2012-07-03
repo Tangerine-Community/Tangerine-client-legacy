@@ -39,7 +39,7 @@ ReportView = (function(_super) {
       key: this.assessmentId,
       success: function(collection) {
         var correct, dev, id, ids, incorrect, index, missing, person, result, subtestKey, subtestValue, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
-        _this.results = collection;
+        _this.results = collection.models;
         console.log(_this.results);
         if (_this.results[0].attributes.assessmentName != null) {
           _this.assessmentName = _this.results[0].attributes.assessmentName;
