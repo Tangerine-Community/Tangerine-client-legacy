@@ -105,7 +105,7 @@ class LocationRunView extends Backbone.View
     
     return {
       "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
-      "location" : (@$el.find("#level_#{i}").val() for level, i in @levels)
+      "location" : ($.trim(@$el.find("#level_#{i}").val()) for level, i in @levels)
     }
 
   isValid: ->

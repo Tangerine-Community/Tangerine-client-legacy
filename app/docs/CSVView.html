@@ -75,7 +75,7 @@ renamed both with a number and letter, for instance 4a</p>             </td>    
     <span class="nx">allResults</span><span class="p">.</span><span class="nx">fetch</span>
       <span class="nv">key: </span><span class="nx">@assessmentId</span>
       <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">=&gt;</span>
-        <span class="vi">@results = </span><span class="nx">collection</span>
+        <span class="vi">@results = </span><span class="nx">collection</span><span class="p">.</span><span class="nx">models</span>
         <span class="nx">@render</span><span class="p">()</span>
     
     <span class="vi">@disallowedKeys = </span><span class="p">[</span><span class="s">&quot;mark_record&quot;</span><span class="p">]</span>

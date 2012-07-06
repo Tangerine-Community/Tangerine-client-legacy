@@ -144,7 +144,7 @@ LocationRunView = (function(_super) {
         _results = [];
         for (i = 0, _len = _ref.length; i < _len; i++) {
           level = _ref[i];
-          _results.push(this.$el.find("#level_" + i).val());
+          _results.push($.trim(this.$el.find("#level_" + i).val()));
         }
         return _results;
       }).call(this)
