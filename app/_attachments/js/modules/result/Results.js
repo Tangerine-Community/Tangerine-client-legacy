@@ -15,7 +15,7 @@ Results = (function(_super) {
   Results.prototype.model = Result;
 
   Results.prototype.db = {
-    view: "resultsByAssessmentID"
+    view: "resultsByAssessmentId"
   };
 
   Results.prototype.comparator = function(model) {
