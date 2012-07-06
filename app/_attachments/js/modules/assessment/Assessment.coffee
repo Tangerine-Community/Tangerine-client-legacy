@@ -32,7 +32,7 @@ class Assessment extends Backbone.Model
         allSubtests.fetch
           key: @id
           success: (collection) =>
-            @subtests = collection.models
+            @subtests = collection
             @subtests.maintainOrder()
             options.success @
 
@@ -45,7 +45,7 @@ class Assessment extends Backbone.Model
         allSubtests.fetch
           key: @id
           success: (collection) =>
-            @subtests = collection.models
+            @subtests = collection
             @subtests.maintainOrder()
             options.success @
   
