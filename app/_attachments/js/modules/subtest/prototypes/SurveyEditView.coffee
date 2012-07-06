@@ -106,9 +106,9 @@ class SurveyEditView extends Backbone.View
     # get linked grid options
     subtests = new Subtests
     subtests.fetch
+      key: @model.get "assessmentId"
       success: (collection) =>
         collection = collection.where
-          assessmentId : @model.get "assessmentId"
           prototype    : 'grid' # only grids can provide scores
 
         linkSelect = "

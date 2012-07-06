@@ -2,6 +2,8 @@ class Subtests extends Backbone.Collection
   
   url: "subtest"
   model: Subtest
+  db:
+    view: "subtestsByAssessmentId"
 
   comparator: (subtest) ->
     subtest.get "order"

@@ -50,8 +50,9 @@ class AssessmentListElementView extends Backbone.View
       
       subtests = new Subtests
       subtests.fetch
+        key: assessmentId
         success: (collection) =>
-          for model in collection.where { "assessmentId" : assessmentId }
+          for model in collection.models
             model.destroy()
       questions = new Questions
       questions.fetch

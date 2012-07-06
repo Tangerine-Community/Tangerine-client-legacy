@@ -30,8 +30,9 @@ class Assessment extends Backbone.Model
             
         allSubtests = new Subtests
         allSubtests.fetch
+          key: @id
           success: (collection) =>
-            @subtests = new Subtests(collection.where { 'assessmentId' : @id } )
+            @subtests = collection.models
             @subtests.maintainOrder()
             options.success @
 
@@ -42,8 +43,9 @@ class Assessment extends Backbone.Model
       success: (model) =>
         allSubtests = new Subtests
         allSubtests.fetch
+          key: @id
           success: (collection) =>
-            @subtests = new Subtests(collection.where { 'assessmentId' : @id } )
+            @subtests = collection.models
             @subtests.maintainOrder()
             options.success @
   
@@ -64,9 +66,10 @@ class Assessment extends Backbone.Model
       
         subtests = new Subtests
         subtests.fetch
+          key: originalId
           success: ( subtests ) =>
         
-            filteredSubtests = subtests.where { "assessmentId" : originalId }
+            filteredSubtests = subtests.models
             subtestIdMap = {}
             newSubtests = []
             # link new subtests to new assessment
