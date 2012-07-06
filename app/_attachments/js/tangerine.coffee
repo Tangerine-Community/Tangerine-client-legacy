@@ -17,6 +17,8 @@ class Router extends Backbone.Router
 
     'dashboard' : 'dashboard' 
 
+    'codebook/:id' : 'codebook'
+
     'edit-id/:id'   : 'editId'
     'run/:name'     : 'run'
     'restart/:name' : 'restart'
@@ -77,6 +79,10 @@ class Router extends Backbone.Router
             vm.show view
         isUnregistered: ->
           Tangerine.router.navigate "login", true
+    
+
+  codebook: (id) ->
+    id = Utils.cleanURL(id)
     
 
 

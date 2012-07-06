@@ -1,37 +1,62 @@
 <!DOCTYPE html>  <html> <head>   <title>LocationEditView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               LocationEditView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">LocationEditView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
 
+  <span class="nv">events: </span>
+    <span class="s">&#39;click .level_comma_to_tab&#39;</span> <span class="o">:</span> <span class="s">&#39;levelCommaToTab&#39;</span>
+    <span class="s">&#39;click .level_tab_to_comma&#39;</span> <span class="o">:</span> <span class="s">&#39;levelTabToComma&#39;</span>
+    <span class="s">&#39;click .location_comma_to_tab&#39;</span> <span class="o">:</span> <span class="s">&#39;locationCommaToTab&#39;</span>
+    <span class="s">&#39;click .location_tab_to_comma&#39;</span> <span class="o">:</span> <span class="s">&#39;locationTabToComma&#39;</span>
+
+
   <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
     <span class="vi">@model = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
+    
+  <span class="nv">locationTabToComma: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">location_data&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nb">String</span><span class="p">(</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">location_data&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\t/g</span><span class="p">,</span><span class="s">&quot;,&quot;</span><span class="p">))</span>
+  <span class="nv">locationCommaToTab: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">location_data&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">location_data&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/,/g</span><span class="p">,</span> <span class="s">&quot;\t&quot;</span><span class="p">))</span>
+  <span class="nv">levelTabToComma: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">location_levels&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nb">String</span><span class="p">(</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">location_levels&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\t/g</span><span class="p">,</span><span class="s">&quot;,&quot;</span><span class="p">))</span>
+  <span class="nv">levelCommaToTab: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">location_levels&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">location_levels&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/,/g</span><span class="p">,</span> <span class="s">&quot;\t&quot;</span><span class="p">))</span>
 
   <span class="nv">save: </span><span class="o">-&gt;</span>
+    <span class="nv">levels = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">location_levels&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nx">level</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">levels</span>
+      <span class="nx">levels</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="nx">level</span><span class="p">)</span>
+    
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;before&quot;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">locations</span>
+    <span class="nv">locations = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">location_data&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">split</span><span class="p">(</span><span class="s">&quot;\n&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nx">location</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">locations</span>
+      <span class="nx">locations</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">)</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;after&quot;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">locations</span>
     <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
-      <span class="s">&quot;provinceText&quot;</span> <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_province_text&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
-      <span class="s">&quot;districtText&quot;</span> <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_district_text&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
-      <span class="s">&quot;nameText&quot;</span>     <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_name_text&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
-      <span class="s">&quot;schoolIdText&quot;</span> <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_school_id_text&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="s">&quot;levels&quot;</span>    <span class="o">:</span> <span class="nx">levels</span>
+      <span class="s">&quot;locations&quot;</span> <span class="o">:</span> <span class="nx">locations</span>
 
   <span class="nv">render: </span><span class="o">-&gt;</span>
-    <span class="nv">provinceText = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;provinceText&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
-    <span class="nv">districtText = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;districtText&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
-    <span class="nv">nameText     = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;nameText&quot;</span><span class="p">)</span>     <span class="o">||</span> <span class="s">&quot;&quot;</span>
-    <span class="nv">schoolIdText = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;schoolIdText&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
+    <span class="nv">levels    = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;levels&quot;</span><span class="p">)</span>    <span class="o">||</span> <span class="p">[]</span>
+    <span class="nv">locations = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;locations&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="p">[]</span>
 
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+    <span class="nv">levels = </span><span class="nx">levels</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">)</span>
+
+    <span class="nv">locations = </span><span class="nx">locations</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;\n&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">locations</span><span class="p">)</span>
+      <span class="k">for</span> <span class="nx">location</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">locations</span> 
+        <span class="nx">locations</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">)</span>
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span>  <span class="s">&quot;</span>
 <span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;subtest_province_text&#39;&gt;&amp;quot;Province&amp;quot; label&lt;/label&gt;</span>
-<span class="s">        &lt;input id=&#39;subtest_province_text&#39; value=&#39;</span><span class="si">#{</span><span class="nx">provinceText</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;location_levels&#39;&gt;Geographic Levels &lt;small&gt;(CSV)&lt;/small&gt;&lt;/label&gt;</span>
+<span class="s">        &lt;textarea id=&#39;location_levels&#39;&gt;</span><span class="si">#{</span><span class="nx">levels</span><span class="si">}</span><span class="s">&lt;/textarea&gt;</span>
+<span class="s">        &lt;button class=&#39;command level_tab_to_comma&#39;&gt;Tabs to Commas&lt;/button&gt;</span>
+<span class="s">        &lt;button class=&#39;command level_tab_to_comma&#39;&gt;Commas to tabs&lt;/button&gt;</span>
+
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;subtest_district_text&#39;&gt;&amp;quot;District&amp;quot; label&lt;/label&gt;</span>
-<span class="s">        &lt;input id=&#39;subtest_district_text&#39; value=&#39;</span><span class="si">#{</span><span class="nx">districtText</span><span class="si">}</span><span class="s">&#39;&gt;</span>
-<span class="s">      &lt;/div&gt;</span>
-<span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;subtest_name_text&#39;&gt;&amp;quot;School Name&amp;quot; label&lt;/label&gt;</span>
-<span class="s">        &lt;input id=&#39;subtest_name_text&#39; value=&#39;</span><span class="si">#{</span><span class="nx">nameText</span><span class="si">}</span><span class="s">&#39;&gt;</span>
-<span class="s">      &lt;/div&gt;</span>
-<span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;subtest_school_id_text&#39;&gt;&amp;quot;School ID&amp;quot; label&lt;/label&gt;</span>
-<span class="s">        &lt;input id=&#39;subtest_school_id_text&#39; value=&#39;</span><span class="si">#{</span><span class="nx">schoolIdText</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;location_data&#39;&gt;Location data &lt;small&gt;(CSV)&lt;/small&gt;&lt;/label&gt;</span>
+<span class="s">        &lt;textarea id=&#39;location_data&#39;&gt;</span><span class="si">#{</span><span class="nx">locations</span><span class="si">}</span><span class="s">&lt;/textarea&gt;&lt;br&gt;</span>
+<span class="s">        &lt;button class=&#39;command location_tab_to_comma&#39;&gt;Tabs to Commas&lt;/button&gt;</span>
+<span class="s">        &lt;button class=&#39;command location_tab_to_comma&#39;&gt;Commas to tabs&lt;/button&gt;</span>
+
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">    &quot;</span> 
 
