@@ -38,6 +38,7 @@ User = (function(_super) {
         } else {
           _this.addMessage("New user " + temp['name'] + " created. Welcome to Tangerine.");
         }
+        _this.unset("messages");
         return _this.save();
       },
       error: function(status, error, message) {
@@ -121,6 +122,7 @@ User = (function(_super) {
               return typeof options.success === "function" ? options.success() : void 0;
             },
             error: function(a, b, c) {
+              _this.unset("messages");
               _this.save({
                 "_id": _this.id,
                 "groups": []
@@ -132,7 +134,7 @@ User = (function(_super) {
                   return typeof options.success === "function" ? options.success() : void 0;
                 },
                 error: function() {
-                  throw "User model fetch error";
+                  return location.reload();
                 }
               });
             }
@@ -175,6 +177,7 @@ User = (function(_super) {
     groups = this.get("groups");
     if (!~groups.indexOf(group)) {
       groups.push(group);
+      this.unset("messages");
       return this.save({
         "groups": groups
       });

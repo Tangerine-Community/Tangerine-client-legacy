@@ -28,6 +28,7 @@ class User extends Backbone.Model
           @login @temp.name, @temp.pass
         else
           @addMessage "New user #{temp['name']} created. Welcome to Tangerine."
+        @unset "messages"
         @save()
       error: ( status, error, message ) =>
         if @temp.intent? && @temp.intent == "login"
@@ -89,6 +90,7 @@ class User extends Backbone.Model
             success: (a,b,c) =>
               options.success?()
             error: (a,b,c) =>
+              @unset "messages"
               @save
                 "_id"    : @id
                 "groups" : []
@@ -98,7 +100,7 @@ class User extends Backbone.Model
                 success: =>
                   options.success?()
                 error: =>
-                  throw "User model fetch error"
+                  location.reload()
               )
           )
         else
@@ -134,6 +136,7 @@ class User extends Backbone.Model
     groups = @get "groups"
     if !~groups.indexOf(group)
       groups.push group
+      @unset "messages"
       @save "groups" : groups
   
   leaveGroup: (group) ->

@@ -50,18 +50,30 @@ class Router extends Backbone.Router
               "name" :  name
               "roles" : ["_admin"]
             , name,
-              success: ->
-                $.couch.login
-                  "name"     : name
-                  "password" : name
-                  success : ->
-                    Tangerine.router.navigate ""
-                    window.location.reload()
-                  error : ->
-                    view = new ErrorView
-                      message : "There was a username collision"
-                      details : ""
-                    vm.show view
+            success: ->
+              console.log "making a new user"
+              user = new User
+              user.save 
+                "name"  : name
+                "id"    : "tangerine.user:"+name
+                "roles" : []
+              ,
+                wait: true
+                success: ->
+                  console.log "trying to log in"
+                  $.couch.login
+                    "name"     : name
+                    "password" : name
+                    success : ->
+                      Tangerine.router.navigate ""
+                      window.location.reload()
+                    error : ->
+                      view = new ErrorView
+                        message : "There was a username collision"
+                        details : ""
+                      vm.show view
+                error: ->
+                  console.log "could not save that user"
 
         
 

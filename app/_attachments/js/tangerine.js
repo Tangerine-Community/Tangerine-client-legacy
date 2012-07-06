@@ -21,6 +21,7 @@ Router = (function(_super) {
     'assessments': 'assessments',
     'assessments/:group': 'assessments',
     'dashboard': 'dashboard',
+    'codebook/:id': 'codebook',
     'edit-id/:id': 'editId',
     'run/:name': 'run',
     'restart/:name': 'restart',
@@ -54,20 +55,36 @@ Router = (function(_super) {
               "roles": ["_admin"]
             }, name, {
               success: function() {
-                return $.couch.login({
+                var user;
+                console.log("making a new user");
+                user = new User;
+                return user.save({
                   "name": name,
-                  "password": name,
+                  "id": "tangerine.user:" + name,
+                  "roles": []
+                }, {
+                  wait: true,
                   success: function() {
-                    Tangerine.router.navigate("");
-                    return window.location.reload();
+                    console.log("trying to log in");
+                    return $.couch.login({
+                      "name": name,
+                      "password": name,
+                      success: function() {
+                        Tangerine.router.navigate("");
+                        return window.location.reload();
+                      },
+                      error: function() {
+                        var view;
+                        view = new ErrorView({
+                          message: "There was a username collision",
+                          details: ""
+                        });
+                        return vm.show(view);
+                      }
+                    });
                   },
                   error: function() {
-                    var view;
-                    view = new ErrorView({
-                      message: "There was a username collision",
-                      details: ""
-                    });
-                    return vm.show(view);
+                    return console.log("could not save that user");
                   }
                 });
               }
@@ -98,6 +115,10 @@ Router = (function(_super) {
         }
       });
     }
+  };
+
+  Router.prototype.codebook = function(id) {
+    return id = Utils.cleanURL(id);
   };
 
   Router.prototype.setup = function() {
