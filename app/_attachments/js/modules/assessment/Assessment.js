@@ -47,10 +47,9 @@ Assessment = (function(_super) {
         }
         allSubtests = new Subtests;
         return allSubtests.fetch({
+          key: _this.id,
           success: function(collection) {
-            _this.subtests = new Subtests(collection.where({
-              'assessmentId': _this.id
-            }));
+            _this.subtests = collection.models;
             _this.subtests.maintainOrder();
             return options.success(_this);
           }
@@ -66,10 +65,9 @@ Assessment = (function(_super) {
         var allSubtests;
         allSubtests = new Subtests;
         return allSubtests.fetch({
+          key: _this.id,
           success: function(collection) {
-            _this.subtests = new Subtests(collection.where({
-              'assessmentId': _this.id
-            }));
+            _this.subtests = collection.models;
             _this.subtests.maintainOrder();
             return options.success(_this);
           }
@@ -95,11 +93,10 @@ Assessment = (function(_super) {
         });
         subtests = new Subtests;
         return subtests.fetch({
+          key: originalId,
           success: function(subtests) {
             var filteredSubtests, gridId, i, model, newQuestion, newSubtest, newSubtestId, newSubtests, oldId, question, subtestIdMap, _i, _len, _len2, _len3;
-            filteredSubtests = subtests.where({
-              "assessmentId": originalId
-            });
+            filteredSubtests = subtests.models;
             subtestIdMap = {};
             newSubtests = [];
             for (i = 0, _len = filteredSubtests.length; i < _len; i++) {
