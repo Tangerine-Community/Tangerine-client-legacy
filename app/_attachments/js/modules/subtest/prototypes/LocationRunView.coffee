@@ -6,12 +6,29 @@ class LocationRunView extends Backbone.View
     "click clear" : "clearInputs"
 
   initialize: (options) ->
+    
     @model  = @options.model
     @parent = @options.parent
+    
+    @levels = @model.get("levels") || []
+    
+    @locations = @model.get("locations") || []
+
     @haystack = []
-    @li = _.template "<li style='display:none;' data-index='{{i}}'>{{province}} - {{name}} - {{district}} - {{id}}</li>"
-    for school, i in @model.get "schools"
-      @haystack[i] = school.join("").toLowerCase()
+
+    for location, i in @locations
+      @haystack[i] = []
+      for locationData in location
+        @haystack[i].push locationData.toLowerCase()
+
+    
+    template = "<li data-index='{{i}}'>"
+    for level, i in @levels
+      template += "{{level_#{i}}}"
+      template += " - " unless i == @levels.length-1
+    template += "</li>"
+    
+    @li = _.template(template)
 
   clearInputs: ->
     @$el.find("#school_id, #district, #province, #name").val("")
@@ -19,82 +36,76 @@ class LocationRunView extends Backbone.View
   autofill: (event) ->
     @$el.find("#autofill").fadeOut(250)
     index = $(event.target).attr("data-index")
-    school = @model.get("schools")[index]
-    name     = school[2]
-    district = school[1]
-    id       = school[3]
-    province = school[0]
-    @$el.find("#school_id").val(id)
-    @$el.find("#district").val(district)
-    @$el.find("#province").val(province)
-    @$el.find("#name").val(name)
+    location = @locations[index]
+    for level, i in @levels
+      @$el.find("#level_#{i}").val(location[i])
+
 
   showOptions: (event) ->
     needle = $(event.target).val().toLowerCase()
+    field = parseInt($(event.target).attr('data-level'))
     atLeastOne = false
-    for li, i in $("#school_list li")
-      isThere = ~@haystack[i].indexOf(needle)
-      $(li).css("display", "block") if     isThere
-      $(li).css("display", "none")  if not isThere
+    results = []
+    for stack, i in @haystack
+      isThere = ~@haystack[i][field].indexOf(needle)
+      results.push i if isThere
       atLeastOne = true if isThere
     
-    @$el.find("#autofill").fadeIn(250)  if     atLeastOne
-    @$el.find("#autofill").fadeOut(250) if not atLeastOne
+    for stack, i in @haystack
+      for otherField, j in stack
+        if j == field
+          continue
+        isThere = ~@haystack[i][j].indexOf(needle)
+        results.push i if isThere && !~results.indexOf(i)
+        atLeastOne = true if isThere
     
-    return true
+    if atLeastOne
+      html = ""
+      for result in results
+        html += @getLocationLi result
+      @$el.find("#autofill").fadeIn(250)  
+      @$el.find("#school_list").html html
+
+    else
+      @$el.find("#autofill").fadeOut(250)
+
+  getLocationLi: (i) ->
+    templateInfo = "i" : i
+    for location, j in @locations[i]
+      templateInfo["level_" + j] = location
+    return @li templateInfo
 
   render: ->
-    provinceText = @model.get "provinceText"
-    districtText = @model.get "districtText"
-    nameText     = @model.get "nameText"
-    schoolIdText = @model.get "schoolIdText"
-
     schoolListElements = ""
 
-    for school, i in @model.get "schools"
-      schoolListElements += @li
-        i        : i
-        province : school[0]
-        district : school[1]
-        name     : school[2]
-        id       : school[3]
-
-    @$el.html "
-    <form>
+    html = "
       <button class='clear command'>Clear</button>
-      <div class='label_value'>
-        <label for='province'>#{provinceText}</label>
-        <input id='province' name='province' value=''>
+      ";
+    for level, i in @levels
+      html += "
+        <div class='label_value'>
+          <label for='level_#{i}'>#{level}</label>
+          <input data-level='#{i}' id='level_#{i}' value=''>
+        </div>
+      "
+
+    html += "
+      <div id='autofill' style='display:none'>
+        <h2>Select one from autofill list</h2>
+        <ul id='school_list'>
+        </ul>
       </div>
-      <div class='label_value'>
-        <label for='district'>#{districtText}</label>
-        <input id='district' name='district' value=''>
-      </div>
-      <div class='label_value'>
-        <label for='name'>#{nameText}</label>
-        <input id='name' name='name' value=''>
-      </div>
-      <div class='label_value'>
-        <label for='school_id'>#{schoolIdText}</label>
-        <input id='school_id' name='school_id' value=''>
-      </div>
-    <form>
-    <div id='autofill' style='display:none'>
-      <h2>Select one from autofill list</h2>
-      <ul id='school_list'>
-        #{schoolListElements}
-      </ul>
-    </div>
     "
+
+    @$el.html html
 
     @trigger "rendered"
 
   getResult: ->
+    
     return {
-      "province" : @$el.find("#province").val()
-      "district" : @$el.find("#district").val()
-      "school_name" : @$el.find("#name").val()
-      "school_id" : @$el.find("#school_id").val()
+      "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
+      "location" : (@$el.find("#level_#{i}").val() for level, i in @levels)
     }
 
   isValid: ->

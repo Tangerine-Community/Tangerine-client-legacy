@@ -118,6 +118,9 @@ class CSVView extends Backbone.View
           keys.push "id"
         else if prototype == "datetime"
           keys.push "year", "month", "date", "assess_time"
+        else if prototype == "location"
+          for label in subtest.data.labels
+            keys.push label
         else if prototype == "consent"
           keys.push "consent"
         else if prototype == "grid"
@@ -152,7 +155,9 @@ class CSVView extends Backbone.View
 
           if prototype == "id"
             values[keys.indexOf("id")] = subtest.data.participant_id
-          
+          else if prototype == "location"
+            for label, i in subtest.data.labels
+              values[keys.indexOf(label)] = subtest.data.location[i]
           else if prototype == "datetime"
             values[keys.indexOf("year")]        = subtest.data.year
             values[keys.indexOf("month")]       = ["","Jan","Feb","Mar","Apr","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(subtest.data.month)

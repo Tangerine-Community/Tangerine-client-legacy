@@ -17,18 +17,30 @@ LocationRunView = (function(_super) {
   };
 
   LocationRunView.prototype.initialize = function(options) {
-    var i, school, _len, _ref, _results;
+    var i, level, location, locationData, template, _i, _len, _len2, _len3, _ref, _ref2;
     this.model = this.options.model;
     this.parent = this.options.parent;
+    this.levels = this.model.get("levels") || [];
+    this.locations = this.model.get("locations") || [];
     this.haystack = [];
-    this.li = _.template("<li style='display:none;' data-index='{{i}}'>{{province}} - {{name}} - {{district}} - {{id}}</li>");
-    _ref = this.model.get("schools");
-    _results = [];
+    _ref = this.locations;
     for (i = 0, _len = _ref.length; i < _len; i++) {
-      school = _ref[i];
-      _results.push(this.haystack[i] = school.join("").toLowerCase());
+      location = _ref[i];
+      this.haystack[i] = [];
+      for (_i = 0, _len2 = location.length; _i < _len2; _i++) {
+        locationData = location[_i];
+        this.haystack[i].push(locationData.toLowerCase());
+      }
     }
-    return _results;
+    template = "<li data-index='{{i}}'>";
+    _ref2 = this.levels;
+    for (i = 0, _len3 = _ref2.length; i < _len3; i++) {
+      level = _ref2[i];
+      template += "{{level_" + i + "}}";
+      if (i !== this.levels.length - 1) template += " - ";
+    }
+    template += "</li>";
+    return this.li = _.template(template);
   };
 
   LocationRunView.prototype.clearInputs = function() {
@@ -36,65 +48,106 @@ LocationRunView = (function(_super) {
   };
 
   LocationRunView.prototype.autofill = function(event) {
-    var district, id, index, name, province, school;
+    var i, index, level, location, _len, _ref, _results;
     this.$el.find("#autofill").fadeOut(250);
     index = $(event.target).attr("data-index");
-    school = this.model.get("schools")[index];
-    name = school[2];
-    district = school[1];
-    id = school[3];
-    province = school[0];
-    this.$el.find("#school_id").val(id);
-    this.$el.find("#district").val(district);
-    this.$el.find("#province").val(province);
-    return this.$el.find("#name").val(name);
+    location = this.locations[index];
+    _ref = this.levels;
+    _results = [];
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      level = _ref[i];
+      _results.push(this.$el.find("#level_" + i).val(location[i]));
+    }
+    return _results;
   };
 
   LocationRunView.prototype.showOptions = function(event) {
-    var atLeastOne, i, isThere, li, needle, _len, _ref;
+    var atLeastOne, field, html, i, isThere, j, needle, otherField, result, results, stack, _i, _len, _len2, _len3, _len4, _ref, _ref2;
     needle = $(event.target).val().toLowerCase();
+    field = parseInt($(event.target).attr('data-level'));
     atLeastOne = false;
-    _ref = $("#school_list li");
+    results = [];
+    _ref = this.haystack;
     for (i = 0, _len = _ref.length; i < _len; i++) {
-      li = _ref[i];
-      isThere = ~this.haystack[i].indexOf(needle);
-      if (isThere) $(li).css("display", "block");
-      if (!isThere) $(li).css("display", "none");
+      stack = _ref[i];
+      isThere = ~this.haystack[i][field].indexOf(needle);
+      if (isThere) results.push(i);
       if (isThere) atLeastOne = true;
     }
-    if (atLeastOne) this.$el.find("#autofill").fadeIn(250);
-    if (!atLeastOne) this.$el.find("#autofill").fadeOut(250);
-    return true;
+    _ref2 = this.haystack;
+    for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
+      stack = _ref2[i];
+      for (j = 0, _len3 = stack.length; j < _len3; j++) {
+        otherField = stack[j];
+        if (j === field) continue;
+        isThere = ~this.haystack[i][j].indexOf(needle);
+        if (isThere && !~results.indexOf(i)) results.push(i);
+        if (isThere) atLeastOne = true;
+      }
+    }
+    if (atLeastOne) {
+      html = "";
+      for (_i = 0, _len4 = results.length; _i < _len4; _i++) {
+        result = results[_i];
+        html += this.getLocationLi(result);
+      }
+      this.$el.find("#autofill").fadeIn(250);
+      return this.$el.find("#school_list").html(html);
+    } else {
+      return this.$el.find("#autofill").fadeOut(250);
+    }
+  };
+
+  LocationRunView.prototype.getLocationLi = function(i) {
+    var j, location, templateInfo, _len, _ref;
+    templateInfo = {
+      "i": i
+    };
+    _ref = this.locations[i];
+    for (j = 0, _len = _ref.length; j < _len; j++) {
+      location = _ref[j];
+      templateInfo["level_" + j] = location;
+    }
+    return this.li(templateInfo);
   };
 
   LocationRunView.prototype.render = function() {
-    var districtText, i, nameText, provinceText, school, schoolIdText, schoolListElements, _len, _ref;
-    provinceText = this.model.get("provinceText");
-    districtText = this.model.get("districtText");
-    nameText = this.model.get("nameText");
-    schoolIdText = this.model.get("schoolIdText");
+    var html, i, level, schoolListElements, _len, _ref;
     schoolListElements = "";
-    _ref = this.model.get("schools");
+    html = "      <button class='clear command'>Clear</button>      ";
+    _ref = this.levels;
     for (i = 0, _len = _ref.length; i < _len; i++) {
-      school = _ref[i];
-      schoolListElements += this.li({
-        i: i,
-        province: school[0],
-        district: school[1],
-        name: school[2],
-        id: school[3]
-      });
+      level = _ref[i];
+      html += "        <div class='label_value'>          <label for='level_" + i + "'>" + level + "</label>          <input data-level='" + i + "' id='level_" + i + "' value=''>        </div>      ";
     }
-    this.$el.html("    <form>      <button class='clear command'>Clear</button>      <div class='label_value'>        <label for='province'>" + provinceText + "</label>        <input id='province' name='province' value=''>      </div>      <div class='label_value'>        <label for='district'>" + districtText + "</label>        <input id='district' name='district' value=''>      </div>      <div class='label_value'>        <label for='name'>" + nameText + "</label>        <input id='name' name='name' value=''>      </div>      <div class='label_value'>        <label for='school_id'>" + schoolIdText + "</label>        <input id='school_id' name='school_id' value=''>      </div>    <form>    <div id='autofill' style='display:none'>      <h2>Select one from autofill list</h2>      <ul id='school_list'>        " + schoolListElements + "      </ul>    </div>    ");
+    html += "      <div id='autofill' style='display:none'>        <h2>Select one from autofill list</h2>        <ul id='school_list'>        </ul>      </div>    ";
+    this.$el.html(html);
     return this.trigger("rendered");
   };
 
   LocationRunView.prototype.getResult = function() {
+    var i, level;
     return {
-      "province": this.$el.find("#province").val(),
-      "district": this.$el.find("#district").val(),
-      "school_name": this.$el.find("#name").val(),
-      "school_id": this.$el.find("#school_id").val()
+      "labels": (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.levels;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          level = _ref[_i];
+          _results.push(level.replace(/[\s-]/g, "_"));
+        }
+        return _results;
+      }).call(this),
+      "location": (function() {
+        var _len, _ref, _results;
+        _ref = this.levels;
+        _results = [];
+        for (i = 0, _len = _ref.length; i < _len; i++) {
+          level = _ref[i];
+          _results.push(this.$el.find("#level_" + i).val());
+        }
+        return _results;
+      }).call(this)
     };
   };
 
