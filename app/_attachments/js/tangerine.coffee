@@ -56,6 +56,7 @@ class Router extends Backbone.Router
                 "name"  : name
                 "id"    : "tangerine.user:"+name
                 "roles" : []
+                "from"  : "tc"
               ,
                 wait: true
                 success: ->

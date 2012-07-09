@@ -60,7 +60,8 @@ Router = (function(_super) {
                 return user.save({
                   "name": name,
                   "id": "tangerine.user:" + name,
-                  "roles": []
+                  "roles": [],
+                  "from": "tc"
                 }, {
                   wait: true,
                   success: function() {
