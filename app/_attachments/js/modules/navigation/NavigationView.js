@@ -74,6 +74,11 @@ NavigationView = (function(_super) {
 
   NavigationView.prototype.handleMenu = function(event) {
     $('#enumerator').html(this.user.name);
+    if (~window.location.toString().indexOf("name=")) {
+      this.$el.find("#logout_link").hide();
+    } else {
+      this.$el.find("#logout_link").show();
+    }
     return this.user.verify({
       isRegistered: function() {
         return $('#navigation').fadeIn(250);

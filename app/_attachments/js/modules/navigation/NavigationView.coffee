@@ -62,7 +62,10 @@ class NavigationView extends Backbone.View
     $('#enumerator').html @user.name
     # @todo put version number someplace
     #$.ajax {method: 'GET', dataType: 'text', url: 'version', success: (a, b, c) -> $("#corner_logo").attr("title", c.responseText)
-
+    
+    # @TODO This needs fixing
+    if ~window.location.toString().indexOf("name=") then @$el.find("#logout_link").hide() else  @$el.find("#logout_link").show()
+    
     @user.verify
       isRegistered: ->
         $( '#navigation' ).fadeIn(250)
