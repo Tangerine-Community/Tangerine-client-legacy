@@ -51,7 +51,6 @@
               <span class="s">&quot;roles&quot;</span> <span class="o">:</span> <span class="p">[</span><span class="s">&quot;_admin&quot;</span><span class="p">]</span>
             <span class="p">,</span> <span class="nx">name</span><span class="p">,</span>
             <span class="nv">success: </span><span class="o">-&gt;</span>
-              <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;making a new user&quot;</span>
               <span class="nv">user = </span><span class="k">new</span> <span class="nx">User</span>
               <span class="nx">user</span><span class="p">.</span><span class="nx">save</span> 
                 <span class="s">&quot;name&quot;</span>  <span class="o">:</span> <span class="nx">name</span>
@@ -60,7 +59,6 @@
               <span class="p">,</span>
                 <span class="nv">wait: </span><span class="kc">true</span>
                 <span class="nv">success: </span><span class="o">-&gt;</span>
-                  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;trying to log in&quot;</span>
                   <span class="nx">$</span><span class="p">.</span><span class="nx">couch</span><span class="p">.</span><span class="nx">login</span>
                     <span class="s">&quot;name&quot;</span>     <span class="o">:</span> <span class="nx">name</span>
                     <span class="s">&quot;password&quot;</span> <span class="o">:</span> <span class="nx">name</span>
@@ -72,8 +70,6 @@
                         <span class="nv">message : </span><span class="s">&quot;There was a username collision&quot;</span>
                         <span class="nv">details : </span><span class="s">&quot;&quot;</span>
                       <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
-                <span class="nv">error: </span><span class="o">-&gt;</span>
-                  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;could not save that user&quot;</span>
 
         
 

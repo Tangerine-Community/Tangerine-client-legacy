@@ -51,7 +51,6 @@ class Router extends Backbone.Router
               "roles" : ["_admin"]
             , name,
             success: ->
-              console.log "making a new user"
               user = new User
               user.save 
                 "name"  : name
@@ -60,7 +59,6 @@ class Router extends Backbone.Router
               ,
                 wait: true
                 success: ->
-                  console.log "trying to log in"
                   $.couch.login
                     "name"     : name
                     "password" : name
@@ -72,8 +70,6 @@ class Router extends Backbone.Router
                         message : "There was a username collision"
                         details : ""
                       vm.show view
-                error: ->
-                  console.log "could not save that user"
 
         
 

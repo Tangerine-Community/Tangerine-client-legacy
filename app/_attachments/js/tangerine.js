@@ -56,7 +56,6 @@ Router = (function(_super) {
             }, name, {
               success: function() {
                 var user;
-                console.log("making a new user");
                 user = new User;
                 return user.save({
                   "name": name,
@@ -65,7 +64,6 @@ Router = (function(_super) {
                 }, {
                   wait: true,
                   success: function() {
-                    console.log("trying to log in");
                     return $.couch.login({
                       "name": name,
                       "password": name,
@@ -82,9 +80,6 @@ Router = (function(_super) {
                         return vm.show(view);
                       }
                     });
-                  },
-                  error: function() {
-                    return console.log("could not save that user");
                   }
                 });
               }

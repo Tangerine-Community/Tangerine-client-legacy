@@ -27,7 +27,7 @@ fetchs all subtests for the assessment</p>             </td>             <td cla
         <span class="nx">allSubtests</span><span class="p">.</span><span class="nx">fetch</span>
           <span class="nv">key: </span><span class="nx">@id</span>
           <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">=&gt;</span>
-            <span class="vi">@subtests = </span><span class="nx">collection</span><span class="p">.</span><span class="nx">models</span>
+            <span class="vi">@subtests = </span><span class="nx">collection</span>
             <span class="nx">@subtests</span><span class="p">.</span><span class="nx">maintainOrder</span><span class="p">()</span>
             <span class="nx">options</span><span class="p">.</span><span class="nx">success</span> <span class="nx">@</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>this is for the subtest edit back button, probably a better way</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">superFetch: </span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="o">=&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>point of failure: this could break if coffeescript changes it's conventions</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">Assessment</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">fetch</span><span class="p">.</span><span class="nx">call</span> <span class="nx">@</span><span class="p">,</span>
       <span class="nv">success: </span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="o">=&gt;</span>
@@ -35,7 +35,7 @@ fetchs all subtests for the assessment</p>             </td>             <td cla
         <span class="nx">allSubtests</span><span class="p">.</span><span class="nx">fetch</span>
           <span class="nv">key: </span><span class="nx">@id</span>
           <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">=&gt;</span>
-            <span class="vi">@subtests = </span><span class="nx">collection</span><span class="p">.</span><span class="nx">models</span>
+            <span class="vi">@subtests = </span><span class="nx">collection</span>
             <span class="nx">@subtests</span><span class="p">.</span><span class="nx">maintainOrder</span><span class="p">()</span>
             <span class="nx">options</span><span class="p">.</span><span class="nx">success</span> <span class="nx">@</span>
   
