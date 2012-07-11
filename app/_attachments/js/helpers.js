@@ -113,9 +113,41 @@ MapReduce = (function() {
 
 })();
 
+String.prototype.safeToSave = function() {
+  return this.replace(/\s|-/g, "_").replace(/[^a-zA-Z0-9_'""]/g, "");
+};
+
+String.prototype.htmlSafe = function() {
+  return $("<div/>").text(this).html().replace(/'/g, "&#39;").replace(/"/g, "&#34;");
+};
+
 Utils = (function() {
 
   function Utils() {}
+
+  Utils.confirm = function(message, options) {
+    var _ref;
+    if (((_ref = navigator.notification) != null ? _ref.confirm : void 0) != null) {
+      navigator.notification.confirm(message, function(input) {
+        if (input === 1) {
+          return options.callback(true);
+        } else if (input === 2) {
+          return options.callback(false);
+        } else {
+          return options.callback(input);
+        }
+      }, options.title, options.action + ",Cancel");
+    } else {
+      if (window.confirm(message)) {
+        options.callback(true);
+        return true;
+      } else {
+        options.callback(false);
+        return false;
+      }
+    }
+    return 0;
+  };
 
   Utils.getValues = function(selector) {
     var values;
@@ -170,25 +202,6 @@ Utils = (function() {
     return this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4();
   };
 
-  Utils.entities = function(input) {
-    var e;
-    e = document.createElement('div');
-    e.innerHTML = input;
-    if (e.childNodes.length === 0) {
-      return "";
-    } else {
-      return e.childNodes[0].nodeValue;
-    }
-  };
-
-  Utils.encode = function(s) {
-    return $("<div/>").text(s).html().replace("'", "&#39;").replace('"', "&#34;");
-  };
-
-  Utils.decode = function(s) {
-    return $("<div/>").html(s).text();
-  };
-
   Utils.flash = function() {
     $("body").css({
       "backgroundColor": "red"
@@ -210,6 +223,10 @@ Utils = (function() {
     return vars;
   };
 
+  Utils.resizeScrollPane = function() {
+    return $(".scroll_pane").height($(window).height() - ($("#navigation").height() + $("#footer").height() + 100));
+  };
+
   return Utils;
 
 })();
@@ -219,7 +236,9 @@ Context = (function() {
   function Context() {
     this.mobile = !~(String(window.location).indexOf("iriscouch"));
     this.kindle = /kindle/.test(navigator.userAgent.toLowerCase());
-    this.server = !!~(String(window.location).indexOf("iriscouch"));
+    this.server = ~(String(window.location).indexOf("iriscouch"));
+    this.server = true;
+    this.mobile = !this.server;
   }
 
   return Context;

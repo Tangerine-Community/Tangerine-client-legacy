@@ -89,7 +89,35 @@ class MapReduce
     return rv
 
 
+String.prototype.safeToSave = ->
+  this.replace(/\s|-/g, "_").replace(/[^a-zA-Z0-9_'""]/g,"")
+
+String.prototype.htmlSafe = ->
+  $("<div/>").text(this).html().replace(/'/g, "&#39;").replace(/"/g, "&#34;")
+
+
 class Utils
+
+  # asks for confirmation in the browser, and uses phonegap for cool confirmation
+  @confirm: (message, options) ->
+    if navigator.notification?.confirm?
+      navigator.notification.confirm message, 
+        (input) ->
+          if input == 1
+            options.callback true
+          else if input == 2
+            options.callback false
+          else
+            options.callback input
+      , options.title, options.action+",Cancel"
+    else
+      if window.confirm message
+        options.callback true
+        return true
+      else
+        options.callback false
+        return false
+    return 0
 
   # this function is a lot like jQuery.serializeArray, except that it returns useful output
   @getValues: ( selector ) ->
@@ -127,16 +155,6 @@ class Utils
   @guid: ->
    return @S4()+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+@S4()+@S4()
 
-  @entities: (input) ->
-    e = document.createElement 'div'
-    e.innerHTML = input
-    return if e.childNodes.length == 0 then "" else e.childNodes[0].nodeValue
-
-  # Handle html entities
-  @encode: (s) -> $("<div/>").text(s).html().replace("'", "&#39;").replace('"', "&#34;")
-  @decode: (s) -> $("<div/>").html(s).text()
-
-
   @flash: ->
     $("body").css "backgroundColor" : "red"
     setTimeout ->
@@ -151,6 +169,11 @@ class Utils
     )
     vars
 
+  @resizeScrollPane: ->
+    $(".scroll_pane").height( $(window).height() - ( $("#navigation").height() + $("#footer").height() + 100) ) 
+
+
+
 
 class Context
   constructor: ->
@@ -159,7 +182,10 @@ class Context
     # true if "kindle" is in userAgent
     @kindle = /kindle/.test(navigator.userAgent.toLowerCase())
     # true if it finds "iriscouch" in url
-    @server = !!~(String(window.location).indexOf("iriscouch"))
+    @server = ~(String(window.location).indexOf("iriscouch"))
+
+    @server = true
+    @mobile = !@server
 
 ##UI helpers
 $ ->
@@ -176,3 +202,7 @@ $ ->
   $("#content").on "click", ".disposable_alert", ->
     $(this).stop().fadeOut 250, ->
       $(this).remove()
+  
+  # $(window).resize Utils.resizeScrollPane
+
+  # Utils.resizeScrollPane()
