@@ -127,10 +127,15 @@ class ResultsView extends Backbone.View
       for result in @results
         view = new ResultSumView model: result
         view.render()
+        @subViews.push view
         @$el.append view.el
       
     @trigger "rendered"
   
+  afterRender: =>
+    for view in @subViews
+      view.afterRender?()
+      
   clearSubViews:->
     for view in @subViews
       view.close()

@@ -1,4 +1,5 @@
 var ResultsView,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -7,6 +8,7 @@ ResultsView = (function(_super) {
   __extends(ResultsView, _super);
 
   function ResultsView() {
+    this.afterRender = __bind(this.afterRender, this);
     ResultsView.__super__.constructor.apply(this, arguments);
   }
 
@@ -135,10 +137,22 @@ ResultsView = (function(_super) {
           model: result
         });
         view.render();
+        this.subViews.push(view);
         this.$el.append(view.el);
       }
     }
     return this.trigger("rendered");
+  };
+
+  ResultsView.prototype.afterRender = function() {
+    var view, _i, _len, _ref, _results;
+    _ref = this.subViews;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      view = _ref[_i];
+      _results.push(typeof view.afterRender === "function" ? view.afterRender() : void 0);
+    }
+    return _results;
   };
 
   ResultsView.prototype.clearSubViews = function() {

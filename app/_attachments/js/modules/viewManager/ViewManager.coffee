@@ -11,6 +11,7 @@ class ViewManager extends Backbone.View
     @currentView = view
     @currentView.on "rendered", => 
       $("#content").append @currentView.el
+      # @currentView.afterRender?()
       # Utils.resizeScrollPane()
 
     @currentView.on "start_work", =>
