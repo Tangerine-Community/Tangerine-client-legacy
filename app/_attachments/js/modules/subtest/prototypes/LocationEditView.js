@@ -38,13 +38,14 @@ LocationEditView = (function(_super) {
   };
 
   LocationEditView.prototype.save = function() {
-    var i, level, levels, location, locations, _len, _len2;
+    var i, level, levels, location, locations, locationsValue, _len, _len2;
     levels = this.$el.find("#location_levels").val().split(",");
     for (i = 0, _len = levels.length; i < _len; i++) {
       level = levels[i];
       levels[i] = $.trim(level).replace(/[^a-zA-Z0-9']/g, "");
     }
-    locations = this.$el.find("#location_data").val().split("\n");
+    locationsValue = $.trim(this.$el.find("#location_data").val());
+    locations = locationsValue.split("\n");
     for (i = 0, _len2 = locations.length; i < _len2; i++) {
       location = locations[i];
       locations[i] = location.split(",");

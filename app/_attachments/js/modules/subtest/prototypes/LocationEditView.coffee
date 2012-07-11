@@ -19,10 +19,15 @@ class LocationEditView extends Backbone.View
     levels = @$el.find("#location_levels").val().split(",")
     for level, i in levels
       levels[i] = $.trim(level).replace(/[^a-zA-Z0-9']/g,"")
-    
-    locations = @$el.find("#location_data").val().split("\n")
+
+    # removes /\s/
+    locationsValue = $.trim(@$el.find("#location_data").val())
+
+    locations = locationsValue.split("\n")
+
     for location, i in locations
       locations[i] = location.split(",")
+
     @model.set
       "levels"    : levels
       "locations" : locations
@@ -34,6 +39,7 @@ class LocationEditView extends Backbone.View
     levels = levels.join(", ")
 
     locations = locations.join("\n")
+    
 
     if _.isArray(locations)
       for location, i in locations 
