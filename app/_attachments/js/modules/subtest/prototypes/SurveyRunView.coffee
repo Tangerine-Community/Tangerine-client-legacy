@@ -85,7 +85,7 @@ class SurveyRunView extends Backbone.View
         required = parseInt(question.get("linkedGridScore")) || 0
 
         isNotAsked = (required != 0 && @parent.getGridScore() < required)
-        oneView = new QuestionView 
+        oneView = new QuestionRunView 
           model  : question
           parent : @
           notAsked : isNotAsked

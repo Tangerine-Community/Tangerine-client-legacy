@@ -134,7 +134,7 @@ SurveyRunView = (function(_super) {
         question = _ref[i];
         required = parseInt(question.get("linkedGridScore")) || 0;
         isNotAsked = required !== 0 && this.parent.getGridScore() < required;
-        oneView = new QuestionView({
+        oneView = new QuestionRunView({
           model: question,
           parent: this,
           notAsked: isNotAsked

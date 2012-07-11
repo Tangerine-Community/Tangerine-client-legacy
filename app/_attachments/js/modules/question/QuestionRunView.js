@@ -1,28 +1,28 @@
-var QuestionView,
+var QuestionRunView,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-QuestionView = (function(_super) {
+QuestionRunView = (function(_super) {
 
-  __extends(QuestionView, _super);
+  __extends(QuestionRunView, _super);
 
-  function QuestionView() {
+  function QuestionRunView() {
     this.setMessage = __bind(this.setMessage, this);
-    QuestionView.__super__.constructor.apply(this, arguments);
+    QuestionRunView.__super__.constructor.apply(this, arguments);
   }
 
-  QuestionView.prototype.className = "question";
+  QuestionRunView.prototype.className = "question";
 
-  QuestionView.prototype.events = {
+  QuestionRunView.prototype.events = {
     'change input': 'update',
     'change textarea': 'update'
   };
 
-  QuestionView.prototype.initialize = function(options) {
+  QuestionRunView.prototype.initialize = function(options) {
     this.model = options.model;
     this.answer = {};
-    this.name = Utils.decode(this.model.get("name"));
+    this.name = this.model.escape("name");
     this.type = this.model.get("type");
     this.options = this.model.get("options");
     this.notAsked = options.notAsked;
@@ -37,18 +37,18 @@ QuestionView = (function(_super) {
     }
   };
 
-  QuestionView.prototype.update = function() {
+  QuestionRunView.prototype.update = function() {
     this.updateResult();
     return this.updateValidity();
   };
 
-  QuestionView.prototype.updateResult = function() {
+  QuestionRunView.prototype.updateResult = function() {
     var i, option, _len, _len2, _ref, _ref2, _results, _results2;
     if (this.type === "open") {
       if (this.notAsked === true) {
         return this.answer = "not_asked";
       } else {
-        return this.answer = Utils.encode(this.$el.find("#" + this.cid + "_" + this.name).val());
+        return this.answer = this.$el.find("#" + this.cid + "_" + this.name).val();
       }
     } else if (this.type === "single") {
       if (this.notAsked === true) {
@@ -77,7 +77,7 @@ QuestionView = (function(_super) {
     }
   };
 
-  QuestionView.prototype.updateValidity = function() {
+  QuestionRunView.prototype.updateValidity = function() {
     if (this.model.has("skippable") === "true" || this.model.get("skippable") === true) {
       return this.isValid = true;
     } else {
@@ -96,11 +96,11 @@ QuestionView = (function(_super) {
     }
   };
 
-  QuestionView.prototype.setMessage = function(message) {
+  QuestionRunView.prototype.setMessage = function(message) {
     return this.$el.find(".error_message").html(message);
   };
 
-  QuestionView.prototype.render = function() {
+  QuestionRunView.prototype.render = function() {
     var checkOrRadio, html, i, option, _len, _ref;
     if (!this.notAsked) {
       html = "<div class='error_message'></div><div class='prompt'>" + (this.model.get('prompt')) + "</div>      <div class='hint'>" + (this.model.get('hint') || "") + "</div>";
@@ -127,6 +127,6 @@ QuestionView = (function(_super) {
     return this.trigger("rendered");
   };
 
-  return QuestionView;
+  return QuestionRunView;
 
 })(Backbone.View);

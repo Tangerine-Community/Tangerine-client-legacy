@@ -1,4 +1,4 @@
-class QuestionView extends Backbone.View
+class QuestionRunView extends Backbone.View
 
   className: "question"
   events:
@@ -8,7 +8,7 @@ class QuestionView extends Backbone.View
   initialize: (options) ->
     @model = options.model
     @answer = {}
-    @name    = Utils.decode @model.get "name"
+    @name    = @model.escape "name"
     @type    = @model.get "type"
     @options = @model.get "options"
     @notAsked = options.notAsked
@@ -31,7 +31,7 @@ class QuestionView extends Backbone.View
       if @notAsked == true
         @answer = "not_asked"
       else
-        @answer = Utils.encode( @$el.find("##{@cid}_#{@name}").val() )
+        @answer = @$el.find("##{@cid}_#{@name}").val()
     else if @type == "single"
       if @notAsked == true
         @answer = "not_asked"
