@@ -4,6 +4,9 @@ class AssessmentListElementView extends Backbone.View
 
   events:
     'click .link_icon'                 : 'navigate'
+    'click .edit'                      : 'gotoEdit'
+    'click .results'                   : 'gotoResults'
+    'click .run'                       : 'gotoRun'
     'click .assessment_menu_toggle'    : 'assessmentMenuToggle'
     'click .admin_name'                : 'assessmentMenuToggle'
     'click .assessment_delete'         : 'assessmentDeleteToggle'
@@ -18,6 +21,10 @@ class AssessmentListElementView extends Backbone.View
     @isPublic = options.isPublic
     @model = options.model
 
+  gotoEdit: -> Tangerine.router.navigate "edit/#{@model.id}", true
+  gotoResults: -> Tangerine.router.navigate "results/#{@model.id}", true
+  gotoRun: -> Tangerine.router.navigate "run/#{@model.id}", true
+  
   navigate: (event) ->
     whereTo = @$el.find(event.target).attr 'data-href'
     Tangerine.router.navigate whereTo, true
@@ -44,36 +51,18 @@ class AssessmentListElementView extends Backbone.View
     # remove from collection
     @$el.fadeOut 250, => 
       @parent.collection.remove @model
-
-      # remove children
-      assessmentId = @model.id
-      
-      subtests = new Subtests
-      subtests.fetch
-        key: assessmentId
-        success: (collection) =>
-          for model in collection.models
-            model.destroy()
-      questions = new Questions
-      questions.fetch
-        success: (collection) =>
-          for model in collection.where { "assessmentId" : assessmentId }
-            model.destroy()
-    
-      # remove model
       @model.destroy()
-      false
 
           
   render: ->
     archiveClass    = if (@model.get('archived') == true or @model.get('archived') == 'true') then " archived_assessment" else ""
     copyButton      = "<button class='copy command'>Copy to group</button>"
     toggleButton    = "<span class='assessment_menu_toggle icon_ryte'> </span>"
-    deleteButton    = "<img class='assessment_delete' src='images/icon_delete.png'> <span class='assessment_delete_confirm'>Confirm <button class='assessment_delete_yes'>Delete</button> <button class='assessment_delete_cancel'>Cancel</button></span>"
+    deleteButton    = "<img class='assessment_delete' title='Delete' src='images/icon_delete.png'> <span class='assessment_delete_confirm'>Confirm <button class='assessment_delete_yes'>Delete</button> <button class='assessment_delete_cancel'>Cancel</button></span>"
     duplicateButton = "<button class='duplicate command'>Duplicate</button>"
-    editButton      = "<img class='link_icon' data-href='edit/#{@model.get('name')}' src='images/icon_edit.png'>"
-    resultsButton   = "<img class='link_icon' data-href='results/#{@model.get('name')}' src='images/icon_result.png'>"
-    runButton       = "<img class='link_icon' data-href='run/#{@model.get('name')}' src='images/icon_run.png'>"
+    editButton      = "<img class='link_icon edit' title='Edit' src='images/icon_edit.png'>"
+    resultsButton   = "<img class='link_icon results' title='Results' src='images/icon_result.png'>"
+    runButton       = "<img class='link_icon run' title='Run' src='images/icon_run.png'>"
     name            = "<span class='name clickable '>#{@model.get('name')}</span>"
     adminName       = "<span class='admin_name clickable #{archiveClass}'>#{@model.get('name')}</span>"
     resultCount     = "<span class='resultCount'>#{@model.get('resultCount') || '0'} results</span>"
