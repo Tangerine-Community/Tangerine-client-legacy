@@ -18,7 +18,7 @@ ResultView = (function(_super) {
   };
 
   ResultView.prototype.another = function() {
-    return Tangerine.router.navigate("restart/" + (this.assessment.get('name')), true);
+    return Tangerine.router.navigate("restart/" + this.assessment.id, true);
   };
 
   ResultView.prototype.save = function() {
