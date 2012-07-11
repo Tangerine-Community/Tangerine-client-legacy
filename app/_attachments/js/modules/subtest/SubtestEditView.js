@@ -17,11 +17,68 @@ SubtestEditView = (function(_super) {
   SubtestEditView.prototype.events = {
     'click .back_button': 'goBack',
     'click .save_subtest': 'save',
-    'keydown input': 'hijackEnter'
+    'click .edit_enumerator': 'editEnumerator',
+    'click .enumerator_done': 'doneEnumerator',
+    'click .enumerator_cancel': 'cancelEnumerator',
+    'click .edit_student': 'editStudent',
+    'click .student_done': 'doneStudent',
+    'click .student_cancel': 'cancelStudent'
   };
 
-  SubtestEditView.prototype.hijackEnter = function(event) {
-    if (event.which === 13) return this.save();
+  SubtestEditView.prototype.editEnumerator = function() {
+    this.$el.find(".enumerator_help_preview, .edit_enumerator, .enumerator_save_buttons").fadeToggle(250);
+    return this.$el.find("textarea#enumerator_help").html(this.model.escape("enumeratorHelp") || "").cleditor();
+  };
+
+  SubtestEditView.prototype.doneEnumerator = function() {
+    if (this.model.save({
+      "enumeratorHelp": this.$el.find("textarea#enumerator_help").val(),
+      wait: true
+    })) {
+      return this.cancelEnumerator();
+    } else {
+      return console.log("save error");
+    }
+  };
+
+  SubtestEditView.prototype.cancelEnumerator = function() {
+    var $preview, cleditor;
+    $preview = $("div.enumerator_help_preview");
+    $preview.html(this.model.get("enumeratorHelp") || "");
+    $preview.fadeIn(250);
+    this.$el.find("button.edit_enumerator, .enumerator_save_buttons").fadeToggle(250);
+    cleditor = this.$el.find("#enumerator_help").cleditor()[0];
+    cleditor.$area.insertBefore(cleditor.$main);
+    cleditor.$area.removeData("cleditor");
+    return cleditor.$main.remove();
+  };
+
+  SubtestEditView.prototype.editStudent = function() {
+    this.$el.find(".student_dialog_preview, .edit_student, .student_save_buttons").fadeToggle(250);
+    return this.$el.find("textarea#student_dialog").html(this.model.escape("studentDialog") || "").cleditor();
+  };
+
+  SubtestEditView.prototype.doneStudent = function() {
+    if (this.model.save({
+      "studentDialog": this.$el.find("textarea#student_dialog").val(),
+      wait: true
+    })) {
+      return this.cancelStudent();
+    } else {
+      return console.log("save error");
+    }
+  };
+
+  SubtestEditView.prototype.cancelStudent = function() {
+    var $preview, cleditor;
+    $preview = $("div.student_dialog_preview");
+    $preview.html(this.model.get("studentDialog") || "");
+    $preview.fadeIn(250);
+    this.$el.find("button.edit_student, .student_save_buttons").fadeToggle(250);
+    cleditor = this.$el.find("#student_dialog").cleditor()[0];
+    cleditor.$area.insertBefore(cleditor.$main);
+    cleditor.$area.removeData("cleditor");
+    return cleditor.$main.remove();
   };
 
   SubtestEditView.prototype.onClose = function() {
@@ -40,16 +97,17 @@ SubtestEditView = (function(_super) {
   };
 
   SubtestEditView.prototype.goBack = function() {
-    return Tangerine.router.navigate("edit-id/" + this.model.get("assessmentId"), true);
+    return Tangerine.router.navigate("edit/" + this.model.get("assessmentId"), true);
   };
 
-  SubtestEditView.prototype.save = function() {
+  SubtestEditView.prototype.save = function(event) {
     var prototype, _base;
+    console.log(event);
     prototype = this.model.get("prototype");
     this.model.set({
       name: this.$el.find("#subtest_name").val(),
-      enumeratorHelp: this.$el.find("#subtest_help").val(),
-      studentDialog: this.$el.find("#subtest_dialog").val(),
+      enumeratorHelp: this.$el.find("#enumerator_help").val(),
+      studentDialog: this.$el.find("#student_dialog").val(),
       skippable: this.$el.find("#skip_radio input:radio[name=skippable]:checked").val() === "true"
     });
     if (typeof (_base = this.prototypeEditor).save === "function") _base.save();
@@ -64,12 +122,12 @@ SubtestEditView = (function(_super) {
 
   SubtestEditView.prototype.render = function() {
     var dialog, help, name, prototype, skippable, _base;
-    name = Utils.encode(this.model.get("name"));
+    name = this.model.escape("name");
     prototype = this.model.get("prototype");
     help = this.model.get("enumeratorHelp") || "";
     dialog = this.model.get("studentDialog") || "";
     skippable = this.model.get("skippable") === true || this.model.get("skippable") === "true";
-    this.$el.html("      <button class='back_button navigation'>Back</button><br>      <h1>Subtest Editor</h1>      <button class='save_subtest command'>Done</button>      <div id='subtest_edit_form'>        <div class='label_value'>          <label for='subtest_name'>Name</label>          <input id='subtest_name' value='" + name + "'>        </div>        <div class='label_value'>          <label for='subtest_prototype' title='This is a basic type of subtest. (e.g. Survey, Grid, Location, Id, Consent)'>Prototype</label>" + prototype + "        </div>        <div class='label_value'>          <label>Skippable</label>          <div id='skip_radio'>            <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' " + (skippable ? 'checked' : void 0) + ">            <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' " + (!skippable ? 'checked' : void 0) + ">          </div>        </div>        <div class='label_value'>          <label for='subtest_help'>Enumerator help</label>          <textarea id='subtest_help' class='richtext'>" + help + "</textarea>        </div>        <div class='label_value'>          <label for='subtest_dialog'>Student Dialog</label>          <textarea id='subtest_dialog' class='richtext'>" + dialog + "</textarea>        </div>        <div id='prototype_attributes'></div>      </div>      <button class='save_subtest command'>Done</button>");
+    this.$el.html("      <button class='back_button navigation'>Back</button><br>      <h1>Subtest Editor</h1>      <button class='save_subtest command'>Done</button>      <div id='subtest_edit_form'>        <div class='label_value'>          <label for='subtest_name'>Name</label>          <input id='subtest_name' value='" + name + "'>        </div>        <div class='label_value'>          <label for='subtest_prototype' title='This is a basic type of subtest. (e.g. Survey, Grid, Location, Id, Consent)'>Prototype</label>" + prototype + "        </div>        <div class='label_value'>          <label>Skippable</label>          <div id='skip_radio'>            <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' " + (skippable ? 'checked' : void 0) + ">            <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' " + (!skippable ? 'checked' : void 0) + ">          </div>        </div>        <div class='label_value'>          <label for='enumerator_help'>Enumerator help <button class='edit_enumerator command'>Edit</button></label>          <div class='info_box_wide enumerator_help_preview'>" + help + "</div>          <textarea id='enumerator_help' class='confirmation'>" + help + "</textarea>          <div class='enumerator_save_buttons confirmation'>            <button class='enumerator_done command'>Save</button> <button class='enumerator_cancel command'>Cancel</button>          </div>        </div>        <div class='label_value'>          <label for='student_dialog'>Student Dialog <button class='edit_student command'>Edit</button></label>          <div class='info_box_wide student_dialog_preview'>" + dialog + "</div>          <textarea id='student_dialog' class='confirmation'>" + dialog + "</textarea>          <div class='student_save_buttons confirmation'>            <button class='student_done command'>Save</button> <button class='student_cancel command'>Cancel</button>          </div>        </div>        <div id='prototype_attributes'></div>      </div>      <button class='save_subtest command'>Done</button>      ");
     this.prototypeEditor.setElement(this.$el.find('#prototype_attributes'));
     if (typeof (_base = this.prototypeEditor).render === "function") {
       _base.render();

@@ -5,17 +5,59 @@ class SubtestEditView extends Backbone.View
   events:
     'click .back_button'         : 'goBack'
     'click .save_subtest'        : 'save'
-    'keydown input'              : 'hijackEnter'
 
-  hijackEnter: (event) ->
-    if event.which == 13
-      @save()
+    'click .edit_enumerator'     : 'editEnumerator'
+    'click .enumerator_done'     : 'doneEnumerator'
+    'click .enumerator_cancel'   : 'cancelEnumerator'
+
+    'click .edit_student'        : 'editStudent'
+    'click .student_done'        : 'doneStudent'
+    'click .student_cancel'      : 'cancelStudent'
+
+  editEnumerator: ->
+    @$el.find(".enumerator_help_preview, .edit_enumerator, .enumerator_save_buttons").fadeToggle(250)
+    @$el.find("textarea#enumerator_help").html(@model.escape("enumeratorHelp") || "").cleditor()
+
+  doneEnumerator: ->
+    if @model.save( "enumeratorHelp" : @$el.find("textarea#enumerator_help").val(), wait : true )
+      @cancelEnumerator()
+    else
+      console.log ("save error")
+
+  cancelEnumerator: ->
+    $preview = $("div.enumerator_help_preview")
+    $preview.html @model.get("enumeratorHelp") || ""
+    $preview.fadeIn(250)
+    @$el.find("button.edit_enumerator, .enumerator_save_buttons").fadeToggle(250)
+    cleditor = @$el.find("#enumerator_help").cleditor()[0]
+    cleditor.$area.insertBefore(cleditor.$main)
+    cleditor.$area.removeData("cleditor")
+    cleditor.$main.remove()
+
+  editStudent: ->
+    @$el.find(".student_dialog_preview, .edit_student, .student_save_buttons").fadeToggle(250)
+    @$el.find("textarea#student_dialog").html(@model.escape("studentDialog") || "").cleditor()
+
+  doneStudent: ->
+    if @model.save( "studentDialog" : @$el.find("textarea#student_dialog").val(), wait : true )
+      @cancelStudent()
+    else
+      console.log ("save error")
+
+  cancelStudent: ->
+    $preview = $("div.student_dialog_preview")
+    $preview.html @model.get("studentDialog") || ""
+    $preview.fadeIn(250)
+    @$el.find("button.edit_student, .student_save_buttons").fadeToggle(250)
+    cleditor = @$el.find("#student_dialog").cleditor()[0]
+    cleditor.$area.insertBefore(cleditor.$main)
+    cleditor.$area.removeData("cleditor")
+    cleditor.$main.remove()
 
   onClose: ->
     @prototypeEditor.close?()
 
   initialize: ( options ) ->
-    
     @model = options.model
     @config = Tangerine.config.subtest
     
@@ -25,14 +67,15 @@ class SubtestEditView extends Backbone.View
       parent: @
 
   goBack: =>
-    Tangerine.router.navigate "edit-id/"+@model.get("assessmentId"), true
+    Tangerine.router.navigate "edit/"+@model.get("assessmentId"), true
 
-  save: ->
+  save: (event) ->
+    console.log event
     prototype = @model.get("prototype")
     @model.set
       name           : @$el.find("#subtest_name").val()
-      enumeratorHelp : @$el.find("#subtest_help").val()
-      studentDialog  : @$el.find("#subtest_dialog").val()
+      enumeratorHelp : @$el.find("#enumerator_help").val()
+      studentDialog  : @$el.find("#student_dialog").val()
       skippable      : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
 
     @prototypeEditor.save?()
@@ -46,7 +89,7 @@ class SubtestEditView extends Backbone.View
       
   # Wow I'm bad at using templates
   render: ->
-    name      = Utils.encode @model.get "name"
+    name      = @model.escape "name"
     prototype = @model.get "prototype"
     help      = @model.get("enumeratorHelp") || ""
     dialog    = @model.get("studentDialog")  || ""
@@ -72,16 +115,25 @@ class SubtestEditView extends Backbone.View
           </div>
         </div>
         <div class='label_value'>
-          <label for='subtest_help'>Enumerator help</label>
-          <textarea id='subtest_help' class='richtext'>#{help}</textarea>
+          <label for='enumerator_help'>Enumerator help <button class='edit_enumerator command'>Edit</button></label>
+          <div class='info_box_wide enumerator_help_preview'>#{help}</div>
+          <textarea id='enumerator_help' class='confirmation'>#{help}</textarea>
+          <div class='enumerator_save_buttons confirmation'>
+            <button class='enumerator_done command'>Save</button> <button class='enumerator_cancel command'>Cancel</button>
+          </div>
         </div>
         <div class='label_value'>
-          <label for='subtest_dialog'>Student Dialog</label>
-          <textarea id='subtest_dialog' class='richtext'>#{dialog}</textarea>
+          <label for='student_dialog'>Student Dialog <button class='edit_student command'>Edit</button></label>
+          <div class='info_box_wide student_dialog_preview'>#{dialog}</div>
+          <textarea id='student_dialog' class='confirmation'>#{dialog}</textarea>
+          <div class='student_save_buttons confirmation'>
+            <button class='student_done command'>Save</button> <button class='student_cancel command'>Cancel</button>
+          </div>
         </div>
         <div id='prototype_attributes'></div>
       </div>
-      <button class='save_subtest command'>Done</button>"
+      <button class='save_subtest command'>Done</button>
+      "
 
     @prototypeEditor.setElement @$el.find('#prototype_attributes')
     @prototypeEditor.render?()
