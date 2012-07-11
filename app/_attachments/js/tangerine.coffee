@@ -19,10 +19,9 @@ class Router extends Backbone.Router
 
     'codebook/:id' : 'codebook'
 
-    'edit-id/:id'   : 'editId'
-    'run/:name'     : 'run'
-    'restart/:name' : 'restart'
-    'edit/:name'    : 'edit'
+    'run/:id'       : 'run'
+    'restart/:id'   : 'restart'
+    'edit/:id'      : 'edit'
     'csv/:id'       : 'csv'
     'results/:name' : 'results'
     'import'        : 'import'
@@ -33,46 +32,6 @@ class Router extends Backbone.Router
     
     'report/:id' : 'report'
 
-  transfer: ->
-    getVars = Utils.$_GET()
-    name = getVars.name
-    $.couch.logout
-      success: =>
-        $.cookie "AuthSession", null
-        $.couch.login
-          "name"     : name
-          "password" : name
-          success: ->
-            Tangerine.router.navigate ""
-            window.location.reload()
-          error: ->
-            $.couch.signup
-              "name" :  name
-              "roles" : ["_admin"]
-            , name,
-            success: ->
-              user = new User
-              user.save 
-                "name"  : name
-                "id"    : "tangerine.user:"+name
-                "roles" : []
-                "from"  : "tc"
-              ,
-                wait: true
-                success: ->
-                  $.couch.login
-                    "name"     : name
-                    "password" : name
-                    success : ->
-                      Tangerine.router.navigate ""
-                      window.location.reload()
-                    error : ->
-                      view = new ErrorView
-                        message : "There was a username collision"
-                        details : ""
-                      vm.show view
-
-        
 
   groups: (a,b, c) ->
     if not Tangerine.context.server
@@ -162,12 +121,12 @@ class Router extends Backbone.Router
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
 
-  edit: (name) ->
+  edit: (id) ->
     Tangerine.user.verify
       isAdmin: ->    
         assessment = new Assessment
+          "_id" : id
         assessment.fetch
-          name : name
           success : ( model ) ->
             view = new AssessmentEditView model: model
             vm.show view
@@ -186,26 +145,24 @@ class Router extends Backbone.Router
   restart: (name) ->
     Tangerine.router.navigate "run/#{name}", true
 
-  run: (name) ->
+  run: (id) ->
     Tangerine.user.verify
       isRegistered: ->
         assessment = new Assessment
+          "_id" : id
         assessment.fetch
-          name : name
           success : ( model ) ->
             view = new AssessmentRunView model: model
             vm.show view
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
 
-  # maybe this one can take the id instead
-  # since it doesn't use the assessment
-  results: (name) ->
+  results: (id) ->
     Tangerine.user.verify
       isRegistered: ->
         assessment = new Assessment
+          "_id" : id
         assessment.fetch
-          name : name
           success : ( model ) ->
             view = new ResultsView 
               assessment : model
@@ -218,7 +175,6 @@ class Router extends Backbone.Router
       isAdmin: ->
         view = new CSVView
           assessmentId : id
-          reduceExclusive : true
         vm.show view
       isUser: ->
         errView = new ErrorView
@@ -303,6 +259,47 @@ class Router extends Backbone.Router
   logs: ->
     view = new LogView
     vm.show view
+
+  # Transfer a new user from tangerine-central into tangerine
+  transfer: ->
+    getVars = Utils.$_GET()
+    name = getVars.name
+    $.couch.logout
+      success: =>
+        $.cookie "AuthSession", null
+        $.couch.login
+          "name"     : name
+          "password" : name
+          success: ->
+            Tangerine.router.navigate ""
+            window.location.reload()
+          error: ->
+            $.couch.signup
+              "name" :  name
+              "roles" : ["_admin"]
+            , name,
+            success: ->
+              user = new User
+              user.save 
+                "name"  : name
+                "id"    : "tangerine.user:"+name
+                "roles" : []
+                "from"  : "tc"
+              ,
+                wait: true
+                success: ->
+                  $.couch.login
+                    "name"     : name
+                    "password" : name
+                    success : ->
+                      Tangerine.router.navigate ""
+                      window.location.reload()
+                    error : ->
+                      view = new ErrorView
+                        message : "There was a username collision"
+                        details : ""
+                      vm.show view
+
 
 $ ->
   #

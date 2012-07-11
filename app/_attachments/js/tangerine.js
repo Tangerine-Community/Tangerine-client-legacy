@@ -22,73 +22,15 @@ Router = (function(_super) {
     'assessments/:group': 'assessments',
     'dashboard': 'dashboard',
     'codebook/:id': 'codebook',
-    'edit-id/:id': 'editId',
-    'run/:name': 'run',
-    'restart/:name': 'restart',
-    'edit/:name': 'edit',
+    'run/:id': 'run',
+    'restart/:id': 'restart',
+    'edit/:id': 'edit',
     'csv/:id': 'csv',
     'results/:name': 'results',
     'import': 'import',
     'subtest/:id': 'editSubtest',
     'question/:id': 'editQuestion',
     'report/:id': 'report'
-  };
-
-  Router.prototype.transfer = function() {
-    var getVars, name,
-      _this = this;
-    getVars = Utils.$_GET();
-    name = getVars.name;
-    return $.couch.logout({
-      success: function() {
-        $.cookie("AuthSession", null);
-        return $.couch.login({
-          "name": name,
-          "password": name,
-          success: function() {
-            Tangerine.router.navigate("");
-            return window.location.reload();
-          },
-          error: function() {
-            return $.couch.signup({
-              "name": name,
-              "roles": ["_admin"]
-            }, name, {
-              success: function() {
-                var user;
-                user = new User;
-                return user.save({
-                  "name": name,
-                  "id": "tangerine.user:" + name,
-                  "roles": [],
-                  "from": "tc"
-                }, {
-                  wait: true,
-                  success: function() {
-                    return $.couch.login({
-                      "name": name,
-                      "password": name,
-                      success: function() {
-                        Tangerine.router.navigate("");
-                        return window.location.reload();
-                      },
-                      error: function() {
-                        var view;
-                        view = new ErrorView({
-                          message: "There was a username collision",
-                          details: ""
-                        });
-                        return vm.show(view);
-                      }
-                    });
-                  }
-                });
-              }
-            });
-          }
-        });
-      }
-    });
   };
 
   Router.prototype.groups = function(a, b, c) {
@@ -212,13 +154,14 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.edit = function(name) {
+  Router.prototype.edit = function(id) {
     return Tangerine.user.verify({
       isAdmin: function() {
         var assessment;
-        assessment = new Assessment;
+        assessment = new Assessment({
+          "_id": id
+        });
         return assessment.fetch({
-          name: name,
           success: function(model) {
             var view;
             view = new AssessmentEditView({
@@ -227,7 +170,7 @@ Router = (function(_super) {
             return vm.show(view);
           },
           error: function(details) {
-            var view;
+            var name, view;
             name = Utils.cleanURL(name);
             view = new ErrorView({
               message: "There was an error loading the assessment '" + name + "'",
@@ -250,13 +193,14 @@ Router = (function(_super) {
     return Tangerine.router.navigate("run/" + name, true);
   };
 
-  Router.prototype.run = function(name) {
+  Router.prototype.run = function(id) {
     return Tangerine.user.verify({
       isRegistered: function() {
         var assessment;
-        assessment = new Assessment;
+        assessment = new Assessment({
+          "_id": id
+        });
         return assessment.fetch({
-          name: name,
           success: function(model) {
             var view;
             view = new AssessmentRunView({
@@ -272,13 +216,14 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.results = function(name) {
+  Router.prototype.results = function(id) {
     return Tangerine.user.verify({
       isRegistered: function() {
         var assessment;
-        assessment = new Assessment;
+        assessment = new Assessment({
+          "_id": id
+        });
         return assessment.fetch({
-          name: name,
           success: function(model) {
             var view;
             view = new ResultsView({
@@ -299,8 +244,7 @@ Router = (function(_super) {
       isAdmin: function() {
         var view;
         view = new CSVView({
-          assessmentId: id,
-          reduceExclusive: true
+          assessmentId: id
         });
         return vm.show(view);
       },
@@ -421,6 +365,63 @@ Router = (function(_super) {
     var view;
     view = new LogView;
     return vm.show(view);
+  };
+
+  Router.prototype.transfer = function() {
+    var getVars, name,
+      _this = this;
+    getVars = Utils.$_GET();
+    name = getVars.name;
+    return $.couch.logout({
+      success: function() {
+        $.cookie("AuthSession", null);
+        return $.couch.login({
+          "name": name,
+          "password": name,
+          success: function() {
+            Tangerine.router.navigate("");
+            return window.location.reload();
+          },
+          error: function() {
+            return $.couch.signup({
+              "name": name,
+              "roles": ["_admin"]
+            }, name, {
+              success: function() {
+                var user;
+                user = new User;
+                return user.save({
+                  "name": name,
+                  "id": "tangerine.user:" + name,
+                  "roles": [],
+                  "from": "tc"
+                }, {
+                  wait: true,
+                  success: function() {
+                    return $.couch.login({
+                      "name": name,
+                      "password": name,
+                      success: function() {
+                        Tangerine.router.navigate("");
+                        return window.location.reload();
+                      },
+                      error: function() {
+                        var view;
+                        view = new ErrorView({
+                          message: "There was a username collision",
+                          details: ""
+                        });
+                        return vm.show(view);
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+    });
   };
 
   return Router;

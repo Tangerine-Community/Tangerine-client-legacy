@@ -4,18 +4,19 @@ class AssessmentEditView extends Backbone.View
 
   events :
     'click #archive_buttons input' : 'save'
-    'click .back'               : 'back'
-    'click .new_subtest_button' : 'toggleNewSubtestForm'
-    'click .new_subtest_cancel' : 'toggleNewSubtestForm'
-    'click .new_subtest_save'   : 'saveNewSubtest'
-    'change #basic input' : 'showSave'
-    'click .assessment_save' : 'save'
+    'click .back'                  : 'back'
+    'click .new_subtest_button'    : 'toggleNewSubtestForm'
+    'click .new_subtest_cancel'    : 'toggleNewSubtestForm'
+    'click .new_subtest_save'      : 'saveNewSubtest'
+    'submit .new_subtest_form'     : 'saveNewSubtest'
+    'keypress #basic input'        : 'showSave'
+    'click .assessment_save'       : 'save'
 
   save: =>
     @updateModel()
     if @model.save({wait:true}) 
       Utils.midAlert "Assessment saved" 
-      Tangerine.router.navigate "edit/"+@model.get("name"), true
+      Tangerine.router.navigate "edit/"+@model.id, true
       @render()
 
   showSave: -> @$el.find('.assessment_save').fadeIn(250)
@@ -33,7 +34,7 @@ class AssessmentEditView extends Backbone.View
 
 
   toggleNewSubtestForm: -> @$el.find(".new_subtest_form, .new_subtest_button").fadeToggle(250)
-  saveNewSubtest: ->
+  saveNewSubtest: (event) ->
     # general template
     newAttributes = Tangerine.config.subtestTemplate
     
@@ -51,6 +52,8 @@ class AssessmentEditView extends Backbone.View
       assessmentId : @model.id
       order        : @model.subtests.length
     newSubtest = @model.subtests.create newAttributes
+    
+    return false
   
   deleteSubtest: (model) =>
     @model.subtests.remove model
@@ -70,10 +73,10 @@ class AssessmentEditView extends Backbone.View
         <h1>Assessment Builder</h1>
       <div id='basic'>
         <label for='assessment_name'>Name</label>
-        <input id='assessment_name' value='#{Utils.encode(@model.get("name"))}'>
+        <input id='assessment_name' value='#{@model.escape("name")}'>
 
         <label for='assessment_group'>Group</label>
-        <input id='assessment_group' value='#{Utils.encode(@model.get("group"))}'>
+        <input id='assessment_group' value='#{@model.escape("group")}'>
 
         <button class='assessment_save confirmation'>Save</button>
 
@@ -87,7 +90,7 @@ class AssessmentEditView extends Backbone.View
       </div>
       <h2>Subtests</h2>
       <button class='new_subtest_button command'>New</button>
-      <div class='new_subtest_form confirmation'>
+      <form class='new_subtest_form confirmation'>
         <div class='menu_box clearfix'>
           <div class='label_value'>
             <label for='new_subtest_type'>Type</label>
@@ -99,7 +102,7 @@ class AssessmentEditView extends Backbone.View
           </div>
           <button class='new_subtest_save command'>Save</button><button class='new_subtest_cancel command'>Cancel</button>
         </div>
-      </div>
+      </form>
     "
 
     # insert a list of templates

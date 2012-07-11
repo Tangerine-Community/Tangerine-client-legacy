@@ -23,7 +23,8 @@ AssessmentEditView = (function(_super) {
     'click .new_subtest_button': 'toggleNewSubtestForm',
     'click .new_subtest_cancel': 'toggleNewSubtestForm',
     'click .new_subtest_save': 'saveNewSubtest',
-    'change #basic input': 'showSave',
+    'submit .new_subtest_form': 'saveNewSubtest',
+    'keypress #basic input': 'showSave',
     'click .assessment_save': 'save'
   };
 
@@ -33,7 +34,7 @@ AssessmentEditView = (function(_super) {
       wait: true
     })) {
       Utils.midAlert("Assessment saved");
-      Tangerine.router.navigate("edit/" + this.model.get("name"), true);
+      Tangerine.router.navigate("edit/" + this.model.id, true);
       return this.render();
     }
   };
@@ -60,7 +61,7 @@ AssessmentEditView = (function(_super) {
     return this.$el.find(".new_subtest_form, .new_subtest_button").fadeToggle(250);
   };
 
-  AssessmentEditView.prototype.saveNewSubtest = function() {
+  AssessmentEditView.prototype.saveNewSubtest = function(event) {
     var newAttributes, newSubtest, prototypeTemplate, useType, useTypeTemplate;
     newAttributes = Tangerine.config.subtestTemplate;
     prototypeTemplate = Tangerine.config.prototypeTemplates[this.$el.find("#subtest_type_select").val()];
@@ -73,7 +74,8 @@ AssessmentEditView = (function(_super) {
       assessmentId: this.model.id,
       order: this.model.subtests.length
     });
-    return newSubtest = this.model.subtests.create(newAttributes);
+    newSubtest = this.model.subtests.create(newAttributes);
+    return false;
   };
 
   AssessmentEditView.prototype.deleteSubtest = function(model) {
@@ -93,7 +95,7 @@ AssessmentEditView = (function(_super) {
     arch = this.model.get('archived');
     archiveChecked = arch === true || arch === 'true' ? "checked" : "";
     notArchiveChecked = archiveChecked ? "" : "checked";
-    this.$el.html("      <button class='back navigation'>Back</button>        <h1>Assessment Builder</h1>      <div id='basic'>        <label for='assessment_name'>Name</label>        <input id='assessment_name' value='" + (Utils.encode(this.model.get("name"))) + "'>        <label for='assessment_group'>Group</label>        <input id='assessment_group' value='" + (Utils.encode(this.model.get("group"))) + "'>        <button class='assessment_save confirmation'>Save</button>        <label for='assessment_d_key'>Download Key</label>        <div class='info_box'>" + (this.model.id.substr(-5, 5)) + "</div>      </div>      <div id='archive_buttons'>        <input type='radio' id='archive_false' name='archive' value='false' " + notArchiveChecked + "><label for='archive_false'>Active</label>        <input type='radio' id='archive_true'  name='archive' value='true'  " + archiveChecked + "><label for='archive_true'>Archived</label>      </div>      <h2>Subtests</h2>      <button class='new_subtest_button command'>New</button>      <div class='new_subtest_form confirmation'>        <div class='menu_box clearfix'>          <div class='label_value'>            <label for='new_subtest_type'>Type</label>            <div id='subtest_type'></div>          </div>          <div class='label_value'>            <label for='new_subtest_name'>Name</label>            <input type='text' id='new_subtest_name'>          </div>          <button class='new_subtest_save command'>Save</button><button class='new_subtest_cancel command'>Cancel</button>        </div>      </div>    ");
+    this.$el.html("      <button class='back navigation'>Back</button>        <h1>Assessment Builder</h1>      <div id='basic'>        <label for='assessment_name'>Name</label>        <input id='assessment_name' value='" + (this.model.escape("name")) + "'>        <label for='assessment_group'>Group</label>        <input id='assessment_group' value='" + (this.model.escape("group")) + "'>        <button class='assessment_save confirmation'>Save</button>        <label for='assessment_d_key'>Download Key</label>        <div class='info_box'>" + (this.model.id.substr(-5, 5)) + "</div>      </div>      <div id='archive_buttons'>        <input type='radio' id='archive_false' name='archive' value='false' " + notArchiveChecked + "><label for='archive_false'>Active</label>        <input type='radio' id='archive_true'  name='archive' value='true'  " + archiveChecked + "><label for='archive_true'>Archived</label>      </div>      <h2>Subtests</h2>      <button class='new_subtest_button command'>New</button>      <form class='new_subtest_form confirmation'>        <div class='menu_box clearfix'>          <div class='label_value'>            <label for='new_subtest_type'>Type</label>            <div id='subtest_type'></div>          </div>          <div class='label_value'>            <label for='new_subtest_name'>Name</label>            <input type='text' id='new_subtest_name'>          </div>          <button class='new_subtest_save command'>Save</button><button class='new_subtest_cancel command'>Cancel</button>        </div>      </form>    ");
     subtestTypeSelect = "<select id='subtest_type_select'>      <option value='' disabled='disabled' selected='selected'>Please select a subtest type</option>";
     _ref = Tangerine.config.subtestTemplates;
     for (key in _ref) {
