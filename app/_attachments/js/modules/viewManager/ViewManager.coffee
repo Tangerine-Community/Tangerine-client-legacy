@@ -11,7 +11,7 @@ class ViewManager extends Backbone.View
     @currentView = view
     @currentView.on "rendered", => 
       $("#content").append @currentView.el
-      $("#content .richtext").cleditor()
+      # Utils.resizeScrollPane()
 
     @currentView.on "start_work", =>
       console.log "Loading bar created"

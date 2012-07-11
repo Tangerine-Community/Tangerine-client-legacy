@@ -17,8 +17,7 @@ ViewManager = (function(_super) {
     if ((_ref = this.currentView) != null) _ref.close();
     this.currentView = view;
     this.currentView.on("rendered", function() {
-      $("#content").append(_this.currentView.el);
-      return $("#content .richtext").cleditor();
+      return $("#content").append(_this.currentView.el);
     });
     this.currentView.on("start_work", function() {
       console.log("Loading bar created");
