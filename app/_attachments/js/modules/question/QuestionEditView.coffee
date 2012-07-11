@@ -43,9 +43,9 @@ class QuestionEditView extends Backbone.View
           <div style='display: block;'>
             <div class='option_label_value'>
               <label class='edit' for='options.#{i}.label'>Label</label>
-              <input id='options.#{i}.label' value='#{Utils.encode(option.label)}' placeholder='Option label' class='option_label'><br>
+              <input id='options.#{i}.label' value='#{_.escape(option.label)}' placeholder='Option label' class='option_label'><br>
               <label class='edit' for='options.#{i}.value'>Value</label>
-              <input id='options.#{i}.value' value='#{Utils.encode(option.value)}' placeholder='Option value' class='option_value'><br>
+              <input id='options.#{i}.value' value='#{_.escape(option.value)}' placeholder='Option value' class='option_value'><br>
             <small>Allowed characters: A-Z, a-z, 0-9, and underscores.</small><br>
             </div>
             <img src='images/icon_delete.png' class='delete_option' data-index='#{i}'>
@@ -76,9 +76,9 @@ class QuestionEditView extends Backbone.View
 
 
   render: ->
-    name            = Utils.encode(@model.get("name") || "")
-    prompt          = Utils.encode(@model.get("prompt") || "")
-    hint            = Utils.encode(@model.get("hint") || "")
+    name            = @model.escape("name") || ""
+    prompt          = @model.escape("prompt") || ""
+    hint            = @model.escape("hint") || ""
     type            = @model.get "type"
     options         = @model.get "options"
     linkedGridScore = @model.get("linkedGridScore") || 0
@@ -194,7 +194,7 @@ class QuestionEditView extends Backbone.View
     # basics
     @model.set 
       "prompt"          : @$el.find("#prompt").val() 
-      "name"            : Utils.encode @$el.find("#name").val()
+      "name"            : @$el.find("#name").val()
       "hint"            : @$el.find("#hint").val()
       "linkedGridScore" : @$el.find("#linked_grid_score").val()
       "type"            : @$el.find("#question_type input:checked").val()

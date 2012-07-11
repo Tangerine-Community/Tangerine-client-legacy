@@ -6,11 +6,7 @@ class AccountView extends Backbone.View
     'click .join'        : 'joinToggle'
     'click .join_group'  : 'join'
     'click .back'        : 'goBack'
-    'keypress input'     : 'noSpace'
 
-  noSpace: (event) ->
-    if event.which == 32
-      return false
 
   goBack: ->
     window.history.back()
@@ -20,7 +16,7 @@ class AccountView extends Backbone.View
     @$el.find("#group_name").val ""
 
   join: ->
-    group = @$el.find("#group_name").val()
+    group = @$el.find("#group_name").val().replace(/\s|-/g, "_").replace(/[^a-zA-Z0-9_'"]/g,"")
     return if group.length == 0
     
     @user.joinGroup group

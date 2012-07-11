@@ -15,12 +15,7 @@ AccountView = (function(_super) {
     'click .join_cancel': 'joinToggle',
     'click .join': 'joinToggle',
     'click .join_group': 'join',
-    'click .back': 'goBack',
-    'keypress input': 'noSpace'
-  };
-
-  AccountView.prototype.noSpace = function(event) {
-    if (event.which === 32) return false;
+    'click .back': 'goBack'
   };
 
   AccountView.prototype.goBack = function() {
@@ -34,7 +29,7 @@ AccountView = (function(_super) {
 
   AccountView.prototype.join = function() {
     var group;
-    group = this.$el.find("#group_name").val();
+    group = this.$el.find("#group_name").val().replace(/\s|-/g, "_").replace(/[^a-zA-Z0-9_'"]/g, "");
     if (group.length === 0) return;
     this.user.joinGroup(group);
     this.joinToggle();

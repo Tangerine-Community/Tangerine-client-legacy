@@ -52,7 +52,7 @@ QuestionEditView = (function(_super) {
     html = "<div id='option_list_wrapper'>      <h2>Options</h2><ul class='option_list'>";
     for (i = 0, _len = options.length; i < _len; i++) {
       option = options[i];
-      html += "      <li class='question'>        <table><tr><td>          <img src='images/icon_drag.png' class='sortable_handle'>        </td>        <td>          <div style='display: block;'>            <div class='option_label_value'>              <label class='edit' for='options." + i + ".label'>Label</label>              <input id='options." + i + ".label' value='" + (Utils.encode(option.label)) + "' placeholder='Option label' class='option_label'><br>              <label class='edit' for='options." + i + ".value'>Value</label>              <input id='options." + i + ".value' value='" + (Utils.encode(option.value)) + "' placeholder='Option value' class='option_value'><br>            <small>Allowed characters: A-Z, a-z, 0-9, and underscores.</small><br>            </div>            <img src='images/icon_delete.png' class='delete_option' data-index='" + i + "'>            <div class='confirmation delete_confirm_" + i + "'>              <button class='delete_delete' data-index='" + i + "'>Delete</button>              <button data-index='" + i + "' class='delete_cancel'>Cancel</button>            </div>          </div>        </td></tr></table>      </li>      ";
+      html += "      <li class='question'>        <table><tr><td>          <img src='images/icon_drag.png' class='sortable_handle'>        </td>        <td>          <div style='display: block;'>            <div class='option_label_value'>              <label class='edit' for='options." + i + ".label'>Label</label>              <input id='options." + i + ".label' value='" + (_.escape(option.label)) + "' placeholder='Option label' class='option_label'><br>              <label class='edit' for='options." + i + ".value'>Value</label>              <input id='options." + i + ".value' value='" + (_.escape(option.value)) + "' placeholder='Option value' class='option_value'><br>            <small>Allowed characters: A-Z, a-z, 0-9, and underscores.</small><br>            </div>            <img src='images/icon_delete.png' class='delete_option' data-index='" + i + "'>            <div class='confirmation delete_confirm_" + i + "'>              <button class='delete_delete' data-index='" + i + "'>Delete</button>              <button data-index='" + i + "' class='delete_cancel'>Cancel</button>            </div>          </div>        </td></tr></table>      </li>      ";
     }
     return html += "</ul>      <button class='add_option command'>Add option</button>          </div>";
   };
@@ -72,9 +72,9 @@ QuestionEditView = (function(_super) {
   QuestionEditView.prototype.render = function() {
     var checkOrRadio, hint, i, linkedGridScore, name, option, optionHTML, options, prompt, skippable, type, _len, _ref,
       _this = this;
-    name = Utils.encode(this.model.get("name") || "");
-    prompt = Utils.encode(this.model.get("prompt") || "");
-    hint = Utils.encode(this.model.get("hint") || "");
+    name = this.model.escape("name") || "";
+    prompt = this.model.escape("prompt") || "";
+    hint = this.model.escape("hint") || "";
     type = this.model.get("type");
     options = this.model.get("options");
     linkedGridScore = this.model.get("linkedGridScore") || 0;
@@ -148,7 +148,7 @@ QuestionEditView = (function(_super) {
     var i, label, li, optionListElements, options, value, _i, _len;
     this.model.set({
       "prompt": this.$el.find("#prompt").val(),
-      "name": Utils.encode(this.$el.find("#name").val()),
+      "name": this.$el.find("#name").val(),
       "hint": this.$el.find("#hint").val(),
       "linkedGridScore": this.$el.find("#linked_grid_score").val(),
       "type": this.$el.find("#question_type input:checked").val(),

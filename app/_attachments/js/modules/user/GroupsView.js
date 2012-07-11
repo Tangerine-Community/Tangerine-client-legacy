@@ -34,7 +34,7 @@ GroupsView = (function(_super) {
     } else {
       for (i = 0, _len = groups.length; i < _len; i++) {
         group = groups[i];
-        html += "<button class='command goto' data-group='" + group + "'>" + group + "</button>";
+        html += "<button class='command goto' data-group='" + (_.escape(group)) + "'>" + group + "</button>";
       }
     }
     this.$el.html(html);
