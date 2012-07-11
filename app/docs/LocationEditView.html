@@ -18,11 +18,13 @@
   <span class="nv">save: </span><span class="o">-&gt;</span>
     <span class="nv">levels = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">location_levels&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="nx">level</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">levels</span>
-      <span class="nx">levels</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="nx">level</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^a-zA-Z0-9&#39;]/g</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span>
-    
-    <span class="nv">locations = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">location_data&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">split</span><span class="p">(</span><span class="s">&quot;\n&quot;</span><span class="p">)</span>
+      <span class="nx">levels</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="nx">level</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^a-zA-Z0-9&#39;]/g</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>removes /\s/</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">locationsValue = </span><span class="nx">$</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">location_data&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">())</span>
+
+    <span class="nv">locations = </span><span class="nx">locationsValue</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s">&quot;\n&quot;</span><span class="p">)</span>
+
     <span class="k">for</span> <span class="nx">location</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">locations</span>
       <span class="nx">locations</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">)</span>
+
     <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
       <span class="s">&quot;levels&quot;</span>    <span class="o">:</span> <span class="nx">levels</span>
       <span class="s">&quot;locations&quot;</span> <span class="o">:</span> <span class="nx">locations</span>
@@ -34,6 +36,7 @@
     <span class="nv">levels = </span><span class="nx">levels</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">)</span>
 
     <span class="nv">locations = </span><span class="nx">locations</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;\n&quot;</span><span class="p">)</span>
+    
 
     <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">locations</span><span class="p">)</span>
       <span class="k">for</span> <span class="nx">location</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">locations</span> 

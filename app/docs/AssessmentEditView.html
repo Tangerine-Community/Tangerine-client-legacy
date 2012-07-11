@@ -4,18 +4,19 @@
 
   <span class="nv">events :</span>
     <span class="s">&#39;click #archive_buttons input&#39;</span> <span class="o">:</span> <span class="s">&#39;save&#39;</span>
-    <span class="s">&#39;click .back&#39;</span>               <span class="o">:</span> <span class="s">&#39;back&#39;</span>
-    <span class="s">&#39;click .new_subtest_button&#39;</span> <span class="o">:</span> <span class="s">&#39;toggleNewSubtestForm&#39;</span>
-    <span class="s">&#39;click .new_subtest_cancel&#39;</span> <span class="o">:</span> <span class="s">&#39;toggleNewSubtestForm&#39;</span>
-    <span class="s">&#39;click .new_subtest_save&#39;</span>   <span class="o">:</span> <span class="s">&#39;saveNewSubtest&#39;</span>
-    <span class="s">&#39;change #basic input&#39;</span> <span class="o">:</span> <span class="s">&#39;showSave&#39;</span>
-    <span class="s">&#39;click .assessment_save&#39;</span> <span class="o">:</span> <span class="s">&#39;save&#39;</span>
+    <span class="s">&#39;click .back&#39;</span>                  <span class="o">:</span> <span class="s">&#39;back&#39;</span>
+    <span class="s">&#39;click .new_subtest_button&#39;</span>    <span class="o">:</span> <span class="s">&#39;toggleNewSubtestForm&#39;</span>
+    <span class="s">&#39;click .new_subtest_cancel&#39;</span>    <span class="o">:</span> <span class="s">&#39;toggleNewSubtestForm&#39;</span>
+    <span class="s">&#39;click .new_subtest_save&#39;</span>      <span class="o">:</span> <span class="s">&#39;saveNewSubtest&#39;</span>
+    <span class="s">&#39;submit .new_subtest_form&#39;</span>     <span class="o">:</span> <span class="s">&#39;saveNewSubtest&#39;</span>
+    <span class="s">&#39;keypress #basic input&#39;</span>        <span class="o">:</span> <span class="s">&#39;showSave&#39;</span>
+    <span class="s">&#39;click .assessment_save&#39;</span>       <span class="o">:</span> <span class="s">&#39;save&#39;</span>
 
   <span class="nv">save: </span><span class="o">=&gt;</span>
     <span class="nx">@updateModel</span><span class="p">()</span>
     <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span><span class="p">({</span><span class="nx">wait</span><span class="o">:</span><span class="kc">true</span><span class="p">})</span> 
       <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Assessment saved&quot;</span> 
-      <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;edit/&quot;</span><span class="o">+</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">),</span> <span class="kc">true</span>
+      <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;edit/&quot;</span><span class="o">+</span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="kc">true</span>
       <span class="nx">@render</span><span class="p">()</span>
 
   <span class="nv">showSave: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.assessment_save&#39;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
@@ -33,7 +34,7 @@
 
 
   <span class="nv">toggleNewSubtestForm: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.new_subtest_form, .new_subtest_button&quot;</span><span class="p">).</span><span class="nx">fadeToggle</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
-  <span class="nv">saveNewSubtest: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>general template</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">newAttributes = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">subtestTemplate</span>
+  <span class="nv">saveNewSubtest: </span><span class="nf">(event) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>general template</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">newAttributes = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">subtestTemplate</span>
     </pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>prototype template</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">prototypeTemplate = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prototypeTemplates</span><span class="p">[</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_type_select&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()]</span>
     </pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>bit more specific template</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">useType = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_type_select :selected&quot;</span><span class="p">).</span><span class="nx">attr</span> <span class="s">&#39;data-template&#39;</span>
     <span class="nv">useTypeTemplate = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">subtestTemplates</span><span class="p">[</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_type_select&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()][</span><span class="nx">useType</span><span class="p">]</span>
@@ -45,6 +46,8 @@
       <span class="nv">assessmentId : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span>
       <span class="nv">order        : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">subtests</span><span class="p">.</span><span class="nx">length</span>
     <span class="nv">newSubtest = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">subtests</span><span class="p">.</span><span class="nx">create</span> <span class="nx">newAttributes</span>
+    
+    <span class="k">return</span> <span class="kc">false</span>
   
   <span class="nv">deleteSubtest: </span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="o">=&gt;</span>
     <span class="nx">@model</span><span class="p">.</span><span class="nx">subtests</span><span class="p">.</span><span class="nx">remove</span> <span class="nx">model</span>
@@ -64,10 +67,10 @@
 <span class="s">        &lt;h1&gt;Assessment Builder&lt;/h1&gt;</span>
 <span class="s">      &lt;div id=&#39;basic&#39;&gt;</span>
 <span class="s">        &lt;label for=&#39;assessment_name&#39;&gt;Name&lt;/label&gt;</span>
-<span class="s">        &lt;input id=&#39;assessment_name&#39; value=&#39;</span><span class="si">#{</span><span class="nx">Utils</span><span class="p">.</span><span class="nx">encode</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">))</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;input id=&#39;assessment_name&#39; value=&#39;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&#39;&gt;</span>
 
 <span class="s">        &lt;label for=&#39;assessment_group&#39;&gt;Group&lt;/label&gt;</span>
-<span class="s">        &lt;input id=&#39;assessment_group&#39; value=&#39;</span><span class="si">#{</span><span class="nx">Utils</span><span class="p">.</span><span class="nx">encode</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;group&quot;</span><span class="p">))</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;input id=&#39;assessment_group&#39; value=&#39;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="s">&quot;group&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&#39;&gt;</span>
 
 <span class="s">        &lt;button class=&#39;assessment_save confirmation&#39;&gt;Save&lt;/button&gt;</span>
 
@@ -81,7 +84,7 @@
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;h2&gt;Subtests&lt;/h2&gt;</span>
 <span class="s">      &lt;button class=&#39;new_subtest_button command&#39;&gt;New&lt;/button&gt;</span>
-<span class="s">      &lt;div class=&#39;new_subtest_form confirmation&#39;&gt;</span>
+<span class="s">      &lt;form class=&#39;new_subtest_form confirmation&#39;&gt;</span>
 <span class="s">        &lt;div class=&#39;menu_box clearfix&#39;&gt;</span>
 <span class="s">          &lt;div class=&#39;label_value&#39;&gt;</span>
 <span class="s">            &lt;label for=&#39;new_subtest_type&#39;&gt;Type&lt;/label&gt;</span>
@@ -93,7 +96,7 @@
 <span class="s">          &lt;/div&gt;</span>
 <span class="s">          &lt;button class=&#39;new_subtest_save command&#39;&gt;Save&lt;/button&gt;&lt;button class=&#39;new_subtest_cancel command&#39;&gt;Cancel&lt;/button&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
-<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;/form&gt;</span>
 <span class="s">    &quot;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>insert a list of templates</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">subtestTypeSelect = </span><span class="s">&quot;&lt;select id=&#39;subtest_type_select&#39;&gt;</span>
 <span class="s">      &lt;option value=&#39;&#39; disabled=&#39;disabled&#39; selected=&#39;selected&#39;&gt;Please select a subtest type&lt;/option&gt;&quot;</span>
     <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">subtestTemplates</span>

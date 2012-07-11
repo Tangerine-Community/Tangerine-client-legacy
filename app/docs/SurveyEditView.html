@@ -92,9 +92,9 @@
 
     <span class="nx">@renderQuestions</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>get linked grid options</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">subtests = </span><span class="k">new</span> <span class="nx">Subtests</span>
     <span class="nx">subtests</span><span class="p">.</span><span class="nx">fetch</span>
+      <span class="nv">key: </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;assessmentId&quot;</span>
       <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">=&gt;</span>
         <span class="nv">collection = </span><span class="nx">collection</span><span class="p">.</span><span class="nx">where</span>
-          <span class="nv">assessmentId : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;assessmentId&quot;</span>
           <span class="nv">prototype    : </span><span class="s">&#39;grid&#39;</span> <span class="c1"># only grids can provide scores</span>
 
         <span class="nv">linkSelect = </span><span class="s">&quot;</span>

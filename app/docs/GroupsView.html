@@ -14,7 +14,6 @@
 
   <span class="nv">render: </span><span class="o">-&gt;</span>
     <span class="nv">groups = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;groups&quot;</span><span class="p">)</span>
-    
     <span class="nv">html = </span><span class="s">&quot;</span>
 <span class="s">      &lt;button class=&#39;account navigation&#39;&gt;Account&lt;/button&gt;</span>
 <span class="s">      &lt;h1&gt;Groups&lt;/h1&gt;</span>
@@ -24,7 +23,7 @@
       <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;You are not yet a member of a group. Go to Account to join a group.&quot;</span>
     <span class="k">else</span> 
       <span class="k">for</span> <span class="nx">group</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">groups</span>
-        <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;button class=&#39;command goto&#39; data-group=&#39;</span><span class="si">#{</span><span class="nx">group</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">group</span><span class="si">}</span><span class="s">&lt;/button&gt;&quot;</span>
+        <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;button class=&#39;command goto&#39; data-group=&#39;</span><span class="si">#{</span><span class="nx">_</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">group</span><span class="p">)</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">group</span><span class="si">}</span><span class="s">&lt;/button&gt;&quot;</span>
 
 
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="nx">html</span>

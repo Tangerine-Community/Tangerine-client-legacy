@@ -6,11 +6,7 @@
     <span class="s">&#39;click .join&#39;</span>        <span class="o">:</span> <span class="s">&#39;joinToggle&#39;</span>
     <span class="s">&#39;click .join_group&#39;</span>  <span class="o">:</span> <span class="s">&#39;join&#39;</span>
     <span class="s">&#39;click .back&#39;</span>        <span class="o">:</span> <span class="s">&#39;goBack&#39;</span>
-    <span class="s">&#39;keypress input&#39;</span>     <span class="o">:</span> <span class="s">&#39;noSpace&#39;</span>
 
-  <span class="nv">noSpace: </span><span class="nf">(event) -&gt;</span>
-    <span class="k">if</span> <span class="nx">event</span><span class="p">.</span><span class="nx">which</span> <span class="o">==</span> <span class="mi">32</span>
-      <span class="k">return</span> <span class="kc">false</span>
 
   <span class="nv">goBack: </span><span class="o">-&gt;</span>
     <span class="nb">window</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">back</span><span class="p">()</span>
@@ -20,7 +16,7 @@
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">group_name&quot;</span><span class="p">).</span><span class="nx">val</span> <span class="s">&quot;&quot;</span>
 
   <span class="nv">join: </span><span class="o">-&gt;</span>
-    <span class="nv">group = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">group_name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+    <span class="nv">group = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">group_name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\s|-/g</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^a-zA-Z0-9_&#39;&quot;]/g</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="k">if</span> <span class="nx">group</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">0</span>
     
     <span class="nx">@user</span><span class="p">.</span><span class="nx">joinGroup</span> <span class="nx">group</span>
