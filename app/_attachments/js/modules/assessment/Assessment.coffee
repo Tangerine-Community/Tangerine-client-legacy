@@ -2,10 +2,6 @@ class Assessment extends Backbone.Model
 
   url: 'assessment'
 
-  defaults:
-    name       : "Untitled"
-    group      : "default"
-    
   initialize: (options={}) ->
     # this collection doesn't get saved
     # changes update the subtest view, it keeps order
@@ -13,50 +9,25 @@ class Assessment extends Backbone.Model
 
   # Hijacked success() for later
   # fetchs all subtests for the assessment
-  fetch: (options) ->
-    options.name = Utils.cleanURL options.name if options.name?
-    allAssessments = new Assessments  
-    allAssessments.fetch
-      success: (collection) =>
-        results = collection.where
-          "name"  : options.name
-
-        for assessment in results
-          if Tangerine.context.server
-            if (~Tangerine.user.get("groups").indexOf(assessment.get("group")) )
-              @constructor assessment.attributes
-          else
-            @constructor assessment.attributes
-            
+  fetch: (options) =>
+    oldSuccess = options.success
+    options.success = (model) =>
         allSubtests = new Subtests
         allSubtests.fetch
           key: @id
           success: (collection) =>
             @subtests = collection
             @subtests.maintainOrder()
-            options.success @
+            oldSuccess? @
+    Assessment.__super__.fetch.call @, options
 
-  # this is for the subtest edit back button, probably a better way
-  superFetch: (options) =>
-    # point of failure: this could break if coffeescript changes it's conventions
-    Assessment.__super__.fetch.call @,
-      success: (model) =>
-        allSubtests = new Subtests
-        allSubtests.fetch
-          key: @id
-          success: (collection) =>
-            @subtests = collection
-            @subtests.maintainOrder()
-            options.success @
-  
   duplicate: (assessmentAttributes, subtestAttributes, questionAttributes, callback) ->
+
     originalId = @id
+
     newModel = @clone()
-
     newModel.set assessmentAttributes
-
     newModel.set "_id", Utils.guid()
-
     newModel.save()
 
     questions = new Questions
@@ -99,5 +70,22 @@ class Assessment extends Backbone.Model
 
             callback()
 
+  destroy: ->
 
+    # remove children
+    assessmentId = @id
+    subtests = new Subtests
+    subtests.fetch
+      key: assessmentId
+      success: (collection) =>
+        for model in collection.models
+          model.destroy()
+    questions = new Questions
+    questions.fetch
+      success: (collection) =>
+        for model in collection.where { "assessmentId" : assessmentId }
+          model.destroy()
+
+    # remove model
+    super()
 

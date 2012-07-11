@@ -8,16 +8,11 @@ Assessment = (function(_super) {
   __extends(Assessment, _super);
 
   function Assessment() {
-    this.superFetch = __bind(this.superFetch, this);
+    this.fetch = __bind(this.fetch, this);
     Assessment.__super__.constructor.apply(this, arguments);
   }
 
   Assessment.prototype.url = 'assessment';
-
-  Assessment.prototype.defaults = {
-    name: "Untitled",
-    group: "default"
-  };
 
   Assessment.prototype.initialize = function(options) {
     if (options == null) options = {};
@@ -25,55 +20,22 @@ Assessment = (function(_super) {
   };
 
   Assessment.prototype.fetch = function(options) {
-    var allAssessments,
+    var oldSuccess,
       _this = this;
-    if (options.name != null) options.name = Utils.cleanURL(options.name);
-    allAssessments = new Assessments;
-    return allAssessments.fetch({
-      success: function(collection) {
-        var allSubtests, assessment, results, _i, _len;
-        results = collection.where({
-          "name": options.name
-        });
-        for (_i = 0, _len = results.length; _i < _len; _i++) {
-          assessment = results[_i];
-          if (Tangerine.context.server) {
-            if (~Tangerine.user.get("groups").indexOf(assessment.get("group"))) {
-              _this.constructor(assessment.attributes);
-            }
-          } else {
-            _this.constructor(assessment.attributes);
-          }
+    oldSuccess = options.success;
+    options.success = function(model) {
+      var allSubtests;
+      allSubtests = new Subtests;
+      return allSubtests.fetch({
+        key: _this.id,
+        success: function(collection) {
+          _this.subtests = collection;
+          _this.subtests.maintainOrder();
+          return typeof oldSuccess === "function" ? oldSuccess(_this) : void 0;
         }
-        allSubtests = new Subtests;
-        return allSubtests.fetch({
-          key: _this.id,
-          success: function(collection) {
-            _this.subtests = collection;
-            _this.subtests.maintainOrder();
-            return options.success(_this);
-          }
-        });
-      }
-    });
-  };
-
-  Assessment.prototype.superFetch = function(options) {
-    var _this = this;
-    return Assessment.__super__.fetch.call(this, {
-      success: function(model) {
-        var allSubtests;
-        allSubtests = new Subtests;
-        return allSubtests.fetch({
-          key: _this.id,
-          success: function(collection) {
-            _this.subtests = collection;
-            _this.subtests.maintainOrder();
-            return options.success(_this);
-          }
-        });
-      }
-    });
+      });
+    };
+    return Assessment.__super__.fetch.call(this, options);
   };
 
   Assessment.prototype.duplicate = function(assessmentAttributes, subtestAttributes, questionAttributes, callback) {
@@ -130,6 +92,42 @@ Assessment = (function(_super) {
         });
       }
     });
+  };
+
+  Assessment.prototype.destroy = function() {
+    var assessmentId, questions, subtests,
+      _this = this;
+    assessmentId = this.id;
+    subtests = new Subtests;
+    subtests.fetch({
+      key: assessmentId,
+      success: function(collection) {
+        var model, _i, _len, _ref, _results;
+        _ref = collection.models;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          model = _ref[_i];
+          _results.push(model.destroy());
+        }
+        return _results;
+      }
+    });
+    questions = new Questions;
+    questions.fetch({
+      success: function(collection) {
+        var model, _i, _len, _ref, _results;
+        _ref = collection.where({
+          "assessmentId": assessmentId
+        });
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          model = _ref[_i];
+          _results.push(model.destroy());
+        }
+        return _results;
+      }
+    });
+    return Assessment.__super__.destroy.call(this);
   };
 
   return Assessment;
