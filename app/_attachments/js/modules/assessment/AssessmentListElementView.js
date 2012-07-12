@@ -13,7 +13,6 @@ AssessmentListElementView = (function(_super) {
   AssessmentListElementView.prototype.tagName = "li";
 
   AssessmentListElementView.prototype.events = {
-    'click .link_icon': 'navigate',
     'click .edit': 'gotoEdit',
     'click .results': 'gotoResults',
     'click .run': 'gotoRun',
@@ -43,12 +42,6 @@ AssessmentListElementView = (function(_super) {
 
   AssessmentListElementView.prototype.gotoRun = function() {
     return Tangerine.router.navigate("run/" + this.model.id, true);
-  };
-
-  AssessmentListElementView.prototype.navigate = function(event) {
-    var whereTo;
-    whereTo = this.$el.find(event.target).attr('data-href');
-    return Tangerine.router.navigate(whereTo, true);
   };
 
   AssessmentListElementView.prototype.duplicate = function() {
@@ -96,10 +89,10 @@ AssessmentListElementView = (function(_super) {
     archiveClass = this.model.get('archived') === true || this.model.get('archived') === 'true' ? " archived_assessment" : "";
     copyButton = "<button class='copy command'>Copy to group</button>";
     toggleButton = "<span class='assessment_menu_toggle icon_ryte'> </span>";
-    deleteButton = "<img class='assessment_delete' title='Delete' src='images/icon_delete.png'> <span class='assessment_delete_confirm'>Confirm <button class='assessment_delete_yes'>Delete</button> <button class='assessment_delete_cancel'>Cancel</button></span>";
-    duplicateButton = "<button class='duplicate command'>Duplicate</button>";
+    deleteButton = "<img class='assessment_delete link_icon' title='Delete' src='images/icon_delete.png'><br><span class='assessment_delete_confirm'><div class='menu_box'>Confirm <button class='assessment_delete_yes command_red'>Delete</button> <button class='assessment_delete_cancel command'>Cancel</button></div></span>";
+    duplicateButton = "<img class='link_icon duplicate' title='Duplicate' src='images/icon_duplicate.png'>";
     editButton = "<img class='link_icon edit' title='Edit' src='images/icon_edit.png'>";
-    resultsButton = "<img class='link_icon results' title='Results' src='images/icon_result.png'>";
+    resultsButton = "<img class='link_icon results' title='Results' src='images/icon_results.png'>";
     runButton = "<img class='link_icon run' title='Run' src='images/icon_run.png'>";
     name = "<span class='name clickable '>" + (this.model.get('name')) + "</span>";
     adminName = "<span class='admin_name clickable " + archiveClass + "'>" + (this.model.get('name')) + "</span>";

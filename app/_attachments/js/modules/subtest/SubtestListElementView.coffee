@@ -1,15 +1,14 @@
 class SubtestListElementView extends Backbone.View
 
   tagName : "li"
-  className : "subtestElement"
+  className : "subtest_element"
   events: 
     'click .icon_edit'     : 'edit'
-    "click .icon_delete"   : "showDeleteConfirm"
-    "click .delete_cancel" : "hideDeleteConfirm"
+    "click .icon_delete"   : "toggleDeleteConfirm"
+    "click .delete_cancel" : "toggleDeleteConfirm"
     "click .delete_delete" : "delete"
 
-  showDeleteConfirm: (event) -> @$el.find(".delete_confirm").show(250); false
-  hideDeleteConfirm: (event) -> @$el.find(".delete_confirm").hide(250); false
+  toggleDeleteConfirm: -> @$el.find(".delete_confirm").fadeToggle(250); false
   delete: -> @trigger "subtest:delete", @model; false
 
   edit: ->
@@ -17,7 +16,8 @@ class SubtestListElementView extends Backbone.View
 
   initialize: (options) ->
     @model = options.model
-    # this is for sortable
+
+    # This is for $.sortable. Don't remove.
     @$el.attr "data-id", @model.id
 
   render: ->
@@ -26,15 +26,18 @@ class SubtestListElementView extends Backbone.View
     iconDrag      = "<img src='images/icon_drag.png' class='sortable_handle'>"
     iconEdit      = "<img src='images/icon_edit.png' class='icon_edit'>"
     iconDelete    = "<img src='images/icon_delete.png' class='icon_delete'>"
-    deleteConfirm = "<span class='delete_confirm'><button data-subtest='#{@model.id}' class='delete_delete command'>Delete</button><button class='delete_cancel command'>Cancel</button></span>"
-
+    deleteConfirm = "<br><span class='delete_confirm'><div class='menu_box'>Confirm <button class='delete_delete command_red'>Delete</button> <button class='delete_cancel command'>Cancel</button></div></span>"
     @$el.html "
-      #{iconDrag}
-      #{subtestName}
-      #{prototype}
-      #{iconEdit}
-      #{iconDelete}
-      #{deleteConfirm}
+      <table><tr>
+      <td>#{iconDrag}</td>
+      <td>
+        #{subtestName}
+        #{prototype}
+        #{iconEdit}
+        #{iconDelete}
+        #{deleteConfirm}
+      </td>
+      </tr></table>
     "
 
     @trigger "rendered"

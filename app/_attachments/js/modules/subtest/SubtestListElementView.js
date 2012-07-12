@@ -12,22 +12,17 @@ SubtestListElementView = (function(_super) {
 
   SubtestListElementView.prototype.tagName = "li";
 
-  SubtestListElementView.prototype.className = "subtestElement";
+  SubtestListElementView.prototype.className = "subtest_element";
 
   SubtestListElementView.prototype.events = {
     'click .icon_edit': 'edit',
-    "click .icon_delete": "showDeleteConfirm",
-    "click .delete_cancel": "hideDeleteConfirm",
+    "click .icon_delete": "toggleDeleteConfirm",
+    "click .delete_cancel": "toggleDeleteConfirm",
     "click .delete_delete": "delete"
   };
 
-  SubtestListElementView.prototype.showDeleteConfirm = function(event) {
-    this.$el.find(".delete_confirm").show(250);
-    return false;
-  };
-
-  SubtestListElementView.prototype.hideDeleteConfirm = function(event) {
-    this.$el.find(".delete_confirm").hide(250);
+  SubtestListElementView.prototype.toggleDeleteConfirm = function() {
+    this.$el.find(".delete_confirm").fadeToggle(250);
     return false;
   };
 
@@ -52,8 +47,8 @@ SubtestListElementView = (function(_super) {
     iconDrag = "<img src='images/icon_drag.png' class='sortable_handle'>";
     iconEdit = "<img src='images/icon_edit.png' class='icon_edit'>";
     iconDelete = "<img src='images/icon_delete.png' class='icon_delete'>";
-    deleteConfirm = "<span class='delete_confirm'><button data-subtest='" + this.model.id + "' class='delete_delete command'>Delete</button><button class='delete_cancel command'>Cancel</button></span>";
-    this.$el.html("      " + iconDrag + "      " + subtestName + "      " + prototype + "      " + iconEdit + "      " + iconDelete + "      " + deleteConfirm + "    ");
+    deleteConfirm = "<br><span class='delete_confirm'><div class='menu_box'>Confirm <button class='delete_delete command_red'>Delete</button> <button class='delete_cancel command'>Cancel</button></div></span>";
+    this.$el.html("      <table><tr>      <td>" + iconDrag + "</td>      <td>        " + subtestName + "        " + prototype + "        " + iconEdit + "        " + iconDelete + "        " + deleteConfirm + "      </td>      </tr></table>    ");
     return this.trigger("rendered");
   };
 

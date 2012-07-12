@@ -43,7 +43,7 @@ QuestionsEditListElementView = (function(_super) {
   };
 
   QuestionsEditListElementView.prototype.render = function() {
-    this.$el.html("      <table>        <tr>          <td>            <img src='images/icon_drag.png' class='sortable_handle'>          </td>          <td>            <span>" + (this.question.get('prompt')) + "</span> <span>[<small>" + (this.question.get('name')) + ", " + (this.question.get('type')) + "</small>]</span>            <button class='edit command'>Edit</button>            <button class='delete command'>Delete</button>            <div class='confirmation delete_confirm'>            Are you sure? <button class='delete_delete'>Delete</button><button class='delete_cancel'>Cancel</button>            </div>          </td>        </tr>      </table>      ");
+    this.$el.html("      <table>        <tr>          <td>            <img src='images/icon_drag.png' class='sortable_handle'>          </td>          <td>            <span>" + (this.question.get('prompt')) + "</span> <span>[<small>" + (this.question.get('name')) + ", " + (this.question.get('type')) + "</small>]</span>            <img src='images/icon_edit.png' class='link_icon edit'>            <img src='images/icon_delete.png' class='link_icon delete'><br>            <div class='confirmation delete_confirm'>            <div class='menu_box'>Confirm<br><button class='delete_delete command_red'>Delete</button><button class='delete_cancel command'>Cancel</button>            </div>          </td>        </tr>      </table>      ");
     return this.trigger("rendered");
   };
 

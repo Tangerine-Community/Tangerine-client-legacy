@@ -35,10 +35,10 @@ class QuestionsEditListElementView extends Backbone.View
           </td>
           <td>
             <span>#{@question.get 'prompt'}</span> <span>[<small>#{@question.get 'name'}, #{@question.get 'type'}</small>]</span>
-            <button class='edit command'>Edit</button>
-            <button class='delete command'>Delete</button>
+            <img src='images/icon_edit.png' class='link_icon edit'>
+            <img src='images/icon_delete.png' class='link_icon delete'><br>
             <div class='confirmation delete_confirm'>
-            Are you sure? <button class='delete_delete'>Delete</button><button class='delete_cancel'>Cancel</button>
+            <div class='menu_box'>Confirm<br><button class='delete_delete command_red'>Delete</button><button class='delete_cancel command'>Cancel</button>
             </div>
           </td>
         </tr>
