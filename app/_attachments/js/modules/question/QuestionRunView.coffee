@@ -1,6 +1,6 @@
 class QuestionRunView extends Backbone.View
 
-  className: "question"
+  className: "question buttonset"
   events:
     'change input'    : 'update'
     'change textarea' : 'update'
@@ -82,7 +82,6 @@ class QuestionRunView extends Backbone.View
             <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}'>
           "
         @$el.html html
-        @$el.buttonset()
 
     else
       @$el.hide()

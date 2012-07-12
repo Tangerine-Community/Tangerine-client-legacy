@@ -273,9 +273,8 @@ GridRunView = (function(_super) {
       }
       html += "</tr>";
     }
-    html += "</table>        <div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>    <div>          <button class='restart command'>Restart</button>          <br>    </div>        <div id='grid_mode' class='question clearfix'>      <label>Input mode</label>      <label for='mark'>Mark</label>      <input name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>      <label for='last_attempted'>Last attempted</label>      <input name='grid_mode' id='last_attempted' type='radio' value='last'>    </div>    ";
+    html += "</table>        <div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>    <div>          <button class='restart command'>Restart</button>          <br>    </div>        <div id='grid_mode' class='question buttonset clearfix'>      <label>Input mode</label><br>      <label for='mark'>Mark</label>      <input name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>      <label for='last_attempted'>Last attempted</label>      <input name='grid_mode' id='last_attempted' type='radio' value='last'>    </div>    ";
     this.$el.html(html);
-    this.$el.find("#grid_mode").buttonset();
     return this.trigger("rendered");
   };
 

@@ -32,8 +32,7 @@ DeviceView = (function(_super) {
   };
 
   DeviceView.prototype.render = function() {
-    this.$el.html("      <h1>Tangerine Setup</h1>      <p>Please select your configuration:</p>      <div class='label_value' id='context'>        <label for='context_cloud'>cloud</label><input id='context_cloud' name='context' type='radio' value='cloud' " + (this.model.get('context') === 'cloud' ? 'checked' : void 0) + ">        <label for='context_mobile'>mobile</label><input id='context_mobile' name='context' type='radio' value='mobile' " + (this.model.get('context') === 'mobile' ? 'checked' : void 0) + ">      </div>      <button id='continue'>continue</button>    ");
-    this.$el.find("#context").buttonset();
+    this.$el.html("      <h1>Tangerine Setup</h1>      <p>Please select your configuration:</p>      <div class='label_value buttonset' id='context'>        <label for='context_cloud'>cloud</label><input id='context_cloud' name='context' type='radio' value='cloud' " + (this.model.get('context') === 'cloud' ? 'checked' : void 0) + ">        <label for='context_mobile'>mobile</label><input id='context_mobile' name='context' type='radio' value='mobile' " + (this.model.get('context') === 'mobile' ? 'checked' : void 0) + ">      </div>      <button id='continue'>continue</button>    ");
     return this.trigger("rendered");
   };
 

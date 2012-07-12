@@ -229,8 +229,8 @@ class GridRunView extends Backbone.View
           <br>
     </div>
     
-    <div id='grid_mode' class='question clearfix'>
-      <label>Input mode</label>
+    <div id='grid_mode' class='question buttonset clearfix'>
+      <label>Input mode</label><br>
       <label for='mark'>Mark</label>
       <input name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>
       <label for='last_attempted'>Last attempted</label>
@@ -240,8 +240,6 @@ class GridRunView extends Backbone.View
     "
 
     @$el.html html
-
-    @$el.find("#grid_mode").buttonset()
 
     @trigger "rendered"
     

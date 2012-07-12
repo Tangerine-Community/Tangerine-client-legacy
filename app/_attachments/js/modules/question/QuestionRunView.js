@@ -12,7 +12,7 @@ QuestionRunView = (function(_super) {
     QuestionRunView.__super__.constructor.apply(this, arguments);
   }
 
-  QuestionRunView.prototype.className = "question";
+  QuestionRunView.prototype.className = "question buttonset";
 
   QuestionRunView.prototype.events = {
     'change input': 'update',
@@ -119,7 +119,6 @@ QuestionRunView = (function(_super) {
           html += "            <label for='" + this.cid + "_" + this.name + "_" + i + "'>" + option.label + "</label>            <input id='" + this.cid + "_" + this.name + "_" + i + "' class='" + this.cid + "_" + this.name + "' name='" + this.name + "' value='" + option.value + "' type='" + checkOrRadio + "'>          ";
         }
         this.$el.html(html);
-        this.$el.buttonset();
       }
     } else {
       this.$el.hide();
