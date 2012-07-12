@@ -99,7 +99,6 @@ Router = (function(_super) {
 
   Router.prototype.assessments = function(group) {
     if (group == null) group = null;
-    console.log("testing");
     if (group === null && Tangerine.context.server) {
       return Tangerine.router.navigate("groups", true);
     } else {

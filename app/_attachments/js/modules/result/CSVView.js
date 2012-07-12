@@ -298,8 +298,7 @@ CSVView = (function(_super) {
         delivery: "value"
       });
       checkedString = "checked='checked'";
-      this.$el.html("        <div id='csv_view'>        <h1>Result CSV</h1>        <!--h2>Options</h2>        <div class='menu_box'>          <label>Reduce exclusive</label>          <div id='output_options'>            <label for='reduce_on'>On</label>            <input class='option_reduce' name='reduce' type='radio' value='true' id='reduce_on' " + (this.reduceExclusive ? checkedString : void 0) + ">            <label for='reduce_off'>Off</label>            <input class='option_reduce' name='reduce' type='radio' value='false' id='reduce_off' " + (!this.reduceExclusive ? checkedString : void 0) + ">          </div>        </div-->        <textarea>" + this.csv + "</textarea><br>        <a href='data:text/octet-stream;base64," + (Base64.encode(this.csv)) + "' download='" + this.assessmentId + ".csv'>Download file</a>        (Right click and click <i>Save Link As...</i>)        </div>        ");
-      this.$el.find("#output_options").buttonset();
+      this.$el.html("        <div id='csv_view'>        <h1>Result CSV</h1>        <textarea>" + this.csv + "</textarea><br>        <a href='data:text/octet-stream;base64," + (Base64.encode(this.csv)) + "' download='" + this.assessmentId + ".csv'>Download file</a>        (Right click and click <i>Save Link As...</i>)        </div>        ");
     }
     return this.trigger("rendered");
   };

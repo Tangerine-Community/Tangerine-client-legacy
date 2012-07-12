@@ -276,22 +276,11 @@ class CSVView extends Backbone.View
       @$el.html "
         <div id='csv_view'>
         <h1>Result CSV</h1>
-        <!--h2>Options</h2>
-        <div class='menu_box'>
-          <label>Reduce exclusive</label>
-          <div id='output_options'>
-            <label for='reduce_on'>On</label>
-            <input class='option_reduce' name='reduce' type='radio' value='true' id='reduce_on' #{checkedString if @reduceExclusive}>
-            <label for='reduce_off'>Off</label>
-            <input class='option_reduce' name='reduce' type='radio' value='false' id='reduce_off' #{checkedString if !@reduceExclusive}>
-          </div>
-        </div-->
         <textarea>#{@csv}</textarea><br>
         <a href='data:text/octet-stream;base64,#{Base64.encode(@csv)}' download='#{@assessmentId}.csv'>Download file</a>
         (Right click and click <i>Save Link As...</i>)
         </div>
         "
-      @$el.find("#output_options").buttonset()
 
 
     @trigger "rendered"

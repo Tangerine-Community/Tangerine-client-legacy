@@ -86,9 +86,7 @@ class Router extends Backbone.Router
       isUnregistered: ->
         Tangerine.router.navigate "login", true
 
-  assessments:(group=null) ->
-
-    console.log "testing"
+  assessments: (group = null) ->
     if group == null && Tangerine.context.server
       Tangerine.router.navigate "groups", true
     else
