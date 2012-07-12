@@ -1,4 +1,5 @@
 var AssessmentRunView,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -7,6 +8,7 @@ AssessmentRunView = (function(_super) {
   __extends(AssessmentRunView, _super);
 
   function AssessmentRunView() {
+    this.onSubtestRendered = __bind(this.onSubtestRendered, this);
     AssessmentRunView.__super__.constructor.apply(this, arguments);
   }
 
@@ -53,9 +55,14 @@ AssessmentRunView = (function(_super) {
       this.$el.find('#progress').progressbar({
         value: (this.index + 1) / (this.model.subtests.length + 1) * 100
       });
+      currentView.on("rendered", this.onSubtestRendered);
       currentView.render();
       this.$el.append(currentView.el);
     }
+    return this.trigger("rendered");
+  };
+
+  AssessmentRunView.prototype.onSubtestRendered = function() {
     return this.trigger("rendered");
   };
 

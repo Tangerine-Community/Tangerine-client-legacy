@@ -40,9 +40,13 @@ class AssessmentRunView extends Backbone.View
         <div id='progress'></div>
       "
       @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
+      currentView.on "rendered", @onSubtestRendered
       currentView.render()
       @$el.append currentView.el
 
+    @trigger "rendered"
+
+  onSubtestRendered: =>
     @trigger "rendered"
 
   onClose: ->

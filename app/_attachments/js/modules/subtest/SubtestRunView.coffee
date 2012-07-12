@@ -20,7 +20,7 @@ class SubtestRunView extends Backbone.View
     # window.onbeforeunload = => "Assessment is still running"
 
     enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help'>#{@model.get 'enumeratorHelp'}</div>" else ""
-    studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog command'>#{@model.get 'studentDialog'}</div>" else ""
+    studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog'>#{@model.get 'studentDialog'}</div>" else ""
     skipButton = "<button class='skip navigation'>Skip</button>"
     skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
 
@@ -34,12 +34,16 @@ class SubtestRunView extends Backbone.View
     @prototypeView = new window[@protoViews[@model.get 'prototype']['run']]
       model: @model
       parent: @
+    @prototypeView.on "rendered", @onPrototypeRendered
     @prototypeView.render()
     @$el.append @prototypeView.el
     @prototypeRendered = true
 
     @$el.append "<button class='next navigation'>Next</button>#{if skippable then skipButton else "" }"
 
+    @trigger "rendered"
+
+  onPrototypeRendered: =>
     @trigger "rendered"
 
   getGridScore: ->

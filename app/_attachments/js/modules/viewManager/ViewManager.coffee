@@ -9,8 +9,11 @@ class ViewManager extends Backbone.View
     window.scrollTo 0, 0
     @currentView?.close()
     @currentView = view
-    @currentView.on "rendered", => 
+
+    @currentView.on "rendered", =>
       $("#content").append @currentView.el
+      @currentView.$el.find(".buttonset").buttonset()
+
       # @currentView.afterRender?()
       # Utils.resizeScrollPane()
 
@@ -22,4 +25,5 @@ class ViewManager extends Backbone.View
       console.log "Loading bar destroyed"
       $("#loading_bar").remove()
 
-    @currentView.render()	
+    @currentView.render()
+    

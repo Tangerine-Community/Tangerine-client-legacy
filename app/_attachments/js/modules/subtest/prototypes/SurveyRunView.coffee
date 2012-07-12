@@ -89,10 +89,14 @@ class SurveyRunView extends Backbone.View
           model  : question
           parent : @
           notAsked : isNotAsked
+        oneView.on "rendered", @onQuestionRendered
         oneView.render()
         @questionViews[i] = oneView
         @$el.append oneView.el
 
+    @trigger "rendered"
+
+  onQuestionRendered: =>
     @trigger "rendered"
 
   onClose:->

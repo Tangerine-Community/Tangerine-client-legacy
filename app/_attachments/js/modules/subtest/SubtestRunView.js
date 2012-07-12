@@ -1,4 +1,5 @@
 var SubtestRunView,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -7,6 +8,7 @@ SubtestRunView = (function(_super) {
   __extends(SubtestRunView, _super);
 
   function SubtestRunView() {
+    this.onPrototypeRendered = __bind(this.onPrototypeRendered, this);
     SubtestRunView.__super__.constructor.apply(this, arguments);
   }
 
@@ -28,19 +30,25 @@ SubtestRunView = (function(_super) {
   };
 
   SubtestRunView.prototype.render = function() {
-    var enumeratorHelp, skipButton, studentDialog;
+    var enumeratorHelp, skipButton, skippable, studentDialog;
     enumeratorHelp = (this.model.get("enumeratorHelp") || "") !== "" ? "<button class='subtest_help command'>help</button><div class='enumerator_help'>" + (this.model.get('enumeratorHelp')) + "</div>" : "";
-    studentDialog = (this.model.get("studentDialog") || "") !== "" ? "<div class='student_dialog command'>" + (this.model.get('studentDialog')) + "</div>" : "";
+    studentDialog = (this.model.get("studentDialog") || "") !== "" ? "<div class='student_dialog'>" + (this.model.get('studentDialog')) + "</div>" : "";
     skipButton = "<button class='skip navigation'>Skip</button>";
+    skippable = this.model.get("skippable") === true || this.model.get("skippable") === "true";
     this.$el.html("      <h2>" + (this.model.get('name')) + "</h2>      " + enumeratorHelp + "      " + studentDialog + "    ");
     this.prototypeView = new window[this.protoViews[this.model.get('prototype')]['run']]({
       model: this.model,
       parent: this
     });
+    this.prototypeView.on("rendered", this.onPrototypeRendered);
     this.prototypeView.render();
     this.$el.append(this.prototypeView.el);
     this.prototypeRendered = true;
-    this.$el.append("<button class='next navigation'>Next</button>" + (this.model.get('skippable') ? skipButton : ""));
+    this.$el.append("<button class='next navigation'>Next</button>" + (skippable ? skipButton : ""));
+    return this.trigger("rendered");
+  };
+
+  SubtestRunView.prototype.onPrototypeRendered = function() {
     return this.trigger("rendered");
   };
 

@@ -1,4 +1,5 @@
 var SurveyRunView,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -7,6 +8,7 @@ SurveyRunView = (function(_super) {
   __extends(SurveyRunView, _super);
 
   function SurveyRunView() {
+    this.onQuestionRendered = __bind(this.onQuestionRendered, this);
     SurveyRunView.__super__.constructor.apply(this, arguments);
   }
 
@@ -139,11 +141,16 @@ SurveyRunView = (function(_super) {
           parent: this,
           notAsked: isNotAsked
         });
+        oneView.on("rendered", this.onQuestionRendered);
         oneView.render();
         this.questionViews[i] = oneView;
         this.$el.append(oneView.el);
       }
     }
+    return this.trigger("rendered");
+  };
+
+  SurveyRunView.prototype.onQuestionRendered = function() {
     return this.trigger("rendered");
   };
 
