@@ -646,7 +646,7 @@ button {
 }
 #content {
   width: 80%;
-  padding: 5px;
+  padding: 10px 5px;
 }
 .clickable {
   cursor: pointer;
