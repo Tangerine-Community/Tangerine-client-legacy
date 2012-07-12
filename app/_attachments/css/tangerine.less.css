@@ -260,7 +260,6 @@ input[type="reset"],
 input[type="submit"],
 [role="button"] {
   cursor: pointer;
-  -webkit-appearance: button;
 }
 /*
  * Consistent box sizing and appearance
@@ -590,7 +589,6 @@ nav#submenu {
   width: 45px;
   height: 45px;
 }
-.new_assessment_form,
 .assessment_menu {
   display: none;
 }
@@ -602,10 +600,10 @@ nav#submenu {
 .run_icon,
 .delete_icon,
 .link_icon {
-  height: 44px;
-  width: 44px;
+  height: 36px;
+  width: 36px;
   cursor: pointer !important;
-  margin-right: 10px;
+  margin-right: 6px;
 }
 #save_all_new_subtests {
   display: none;
@@ -675,8 +673,8 @@ ul.assessment_list .icon_ryte {
   cursor: pointer;
   vertical-align: middle;
   display: inline-block;
-  width: 44px;
-  height: 50px;
+  width: 35px;
+  height: 37px;
   background: url('../images/icon_ryte.png');
 }
 ul.assessment_list .icon_down {
@@ -811,6 +809,10 @@ label.ui-button {
   color: #999999;
   font-weight: bold;
 }
+.subtest_element td {
+  padding-right: 10px;
+  vertical-align: middle;
+}
 .question_list_element {
   border-bottom: 1px solid #cccccc;
   background: white;
@@ -868,6 +870,11 @@ input {
   width: 95%;
   padding: 5px !important;
 }
+input[type=submit],
+input[type=button] {
+  display: inline-block;
+  width: auto;
+}
 textarea {
   height: 1.25  em;
   padding: 5px;
@@ -888,8 +895,7 @@ img.loading {
 }
 button.navigation {
   display: inline-block;
-  font-size: 25px;
-  font-size: 25px;
+  font-size: 22px;
   color: white;
   background-color: #f49b00;
   border: 0 !important;
@@ -906,7 +912,7 @@ button.navigation:active {
 button.navigation:hover {
   background-color: #f26f10;
 }
-button.command {
+.command {
   display: inline-block;
   font-size: 20px;
   color: black;
@@ -919,18 +925,44 @@ button.command {
   -webkit-border-radius: 10px;
   font-weight: normal;
 }
-button.command:active {
+.command:active {
   background-color: #f6c637;
 }
-button.command:hover {
+.command:hover {
+  background-color: #f6ef9a;
+}
+.command_red {
+  display: inline-block;
+  font-size: 20px;
+  color: black;
+  background-color: #cccccc;
+  border: 0 !important;
+  margin: 10px 10px 5px 0px;
+  padding: 7px 25px !important;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  font-weight: normal;
+  background-color: #c33;
+  color: #fff;
+}
+.command_red:active {
+  background-color: #f6c637;
+}
+.command_red:hover {
   background-color: #f6ef9a;
 }
 label {
   color: black;
   font-weight: bold;
-  display: block;
+  display: inline-block;
   clear: both;
   margin: 20px 0 0px;
+}
+label[title] {
+  clear: right;
+  padding: 0 30px 0 0;
+  background: url("../images/icon_help.png") center right no-repeat;
 }
 /*
  * Prototypes
@@ -1491,7 +1523,7 @@ button.ui-button-icons-only {
 .ui-button .ui-button-text {
   display: block;
   line-height: 1;
-  font-size: 25px;
+  font-size: 22px;
   border: 2px solid #ffffff;
 }
 .ui-button-text-only .ui-button-text {

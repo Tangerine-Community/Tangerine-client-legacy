@@ -162,7 +162,7 @@ table button, table input { *overflow: auto; }
  * 2. Allow styling of clickable form elements in iOS
  */
 
-button, input[type="button"], input[type="reset"], input[type="submit"], [role="button"] { cursor: pointer; -webkit-appearance: button; }
+button, input[type="button"], input[type="reset"], input[type="submit"], [role="button"] { cursor: pointer; }
 
 /*
  * Consistent box sizing and appearance
@@ -552,7 +552,6 @@ nav#submenu
 }
 
 // Things that start out hidden
-.new_assessment_form,
 .assessment_menu
 {
   display: none;
@@ -569,10 +568,10 @@ nav#submenu
 .delete_icon,
 .link_icon
 {
-  height: 44px;
-  width: 44px;
+  height: 36px;
+  width: 36px;
   cursor: pointer !important;
-  margin-right: 10px;
+  margin-right: 6px;
 }
 
 
@@ -667,8 +666,8 @@ ul.assessment_list
     cursor: pointer;
     vertical-align: middle;
     display: inline-block;
-    width: 44px;
-    height: 50px;
+    width: 35px;
+    height: 37px;
     background: url('../images/icon_ryte.png');
   }
 
@@ -898,6 +897,15 @@ label.ui-button
 
 }
 
+.subtest_element
+{
+  td
+  {
+    padding-right: 10px;
+    vertical-align: middle;
+  }
+}
+
 .question_list_element
 {
 
@@ -988,6 +996,13 @@ input
   padding: 5px !important;
 }
 
+input[type=submit],
+input[type=button]
+{
+  display: inline-block;
+  width: auto;
+}
+
 textarea
 {
   height: 1.25  em;
@@ -1021,8 +1036,7 @@ img.loading
 button.navigation
 {
   display:inline-block;
-  font-size: @h1;
-  font-size: 25px;
+  font-size: 22px;
   color: white;
   background-color: @orange-2;
   border: 0 !important;
@@ -1042,7 +1056,7 @@ button.navigation
 }
 
 
-button.command
+.command
 {
   display:inline-block;
   font-size: @h2;
@@ -1064,16 +1078,29 @@ button.command
   }
 }
 
+.command_red
+{
+  .command;
+  background-color: #c33;
+  color: #fff;
+}
+
 
 label
 {
   color: black;
   font-weight: bold;
-  display: block;
+  display: inline-block;
   clear: both;
   margin: 20px 0 0px;
 }
 
+label[title]
+{
+  clear: right;
+  padding: 0 30px 0 0;
+  background: url("../images/icon_help.png") center right no-repeat;
+}
 
 /*
  * Prototypes
@@ -1391,7 +1418,7 @@ button.ui-button-icon-only { width: 2.4em; } /* button elements seem to need a l
 button.ui-button-icons-only { width: 3.7em; } 
 
 /*button text element */
-.ui-button .ui-button-text { display: block; line-height: 1;font-size:25px; border:2px solid white}
+.ui-button .ui-button-text { display: block; line-height: 1;font-size:22px; border:2px solid white}
 .ui-button-text-only .ui-button-text { padding: 10px; margin: 0 -2px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: .4em; text-indent: -9999999px; }
 .ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: .4em 1em .4em 2.1em; }
