@@ -1,0 +1,10 @@
+{
+  "_id": "TangerineClassExample-w01",
+  "name": "Tangerine Class Example week-1",
+  "assessmentId" : "TangerineClassExample-w01",
+  "klassId" : "fffffffffffffffffffffffffffffffe",
+  "group" : "class",
+  "collection" : "assessment",
+  "couchapp": {
+  }
+}

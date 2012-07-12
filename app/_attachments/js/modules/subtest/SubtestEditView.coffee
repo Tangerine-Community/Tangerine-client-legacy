@@ -65,7 +65,7 @@ class SubtestEditView extends Backbone.View
     @prototypeEditor = new window[@prototypeViews[@model.get 'prototype']['edit']]
       model: @model
       parent: @
-
+      
   goBack: =>
     Tangerine.router.navigate "edit/"+@model.get("assessmentId"), true
 
@@ -87,7 +87,6 @@ class SubtestEditView extends Backbone.View
       console.log "save error"
       Utils.midAlert "Save error"
       
-  # Wow I'm bad at using templates
   render: ->
     name      = @model.escape "name"
     prototype = @model.get "prototype"

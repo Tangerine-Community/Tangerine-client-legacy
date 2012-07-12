@@ -12,9 +12,15 @@ Router = (function(_super) {
 
   Router.prototype.routes = {
     'login': 'login',
+    'register': 'register',
     'logout': 'logout',
     'account': 'account',
     'transfer': 'transfer',
+    'class': 'klass',
+    'classes': 'klasses',
+    'class/register': 'klassRegister',
+    'class/edit/:id': 'klassEdit',
+    'student/edit/:id': 'studentEdit',
     'setup': 'setup',
     '': 'groups',
     'groups': 'groups',
@@ -57,6 +63,128 @@ Router = (function(_super) {
 
   Router.prototype.codebook = function(id) {
     return id = Utils.cleanURL(id);
+  };
+
+  Router.prototype.klass = function() {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var view;
+        view = new KlassMenuView;
+        return vm.show(view);
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.klasses = function() {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var allKlasses;
+        console.log("is registered");
+        allKlasses = new Klasses;
+        return allKlasses.fetch({
+          success: function(collection) {
+            var view;
+            console.log("fetched");
+            console.log(collection);
+            view = new KlassesView({
+              klasses: collection
+            });
+            return vm.show(view);
+          }
+        });
+      }
+    });
+  };
+
+  Router.prototype.klassRegister = function() {
+    return Tangerine.user.verify({
+      isRegistered: function() {},
+      isUnregistered: function() {
+        return Tangerine.router.navigate("", true);
+      }
+    });
+  };
+
+  Router.prototype.klassEdit = function(id) {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var klass;
+        klass = new Klass({
+          _id: id
+        });
+        return klass.fetch({
+          success: function(model) {
+            var allStudents;
+            allStudents = new Students;
+            return allStudents.fetch({
+              success: function(allStudents) {
+                var klassStudents, view;
+                klassStudents = new Students(allStudents.where({
+                  klassId: id
+                }));
+                view = new KlassEditView({
+                  klass: model,
+                  students: klassStudents,
+                  allStudents: allStudents
+                });
+                return vm.show(view);
+              }
+            });
+          }
+        });
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("", true);
+      }
+    });
+  };
+
+  Router.prototype.register = function() {
+    return Tangerine.user.verify({
+      isUnregistered: function() {
+        var view;
+        view = new RegisterTeacherView({
+          user: new User
+        });
+        return vm.show(view);
+      },
+      isRegistered: function() {
+        return Tangerine.router.navigate("", true);
+      }
+    });
+  };
+
+  Router.prototype.studentEdit = function(id) {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var student;
+        student = new Student({
+          _id: id
+        });
+        return student.fetch({
+          success: function(model) {
+            var allKlasses;
+            allKlasses = new Klasses;
+            return allKlasses.fetch({
+              success: function(klassCollection) {
+                var view;
+                view = new StudentEditView({
+                  student: model,
+                  klasses: klassCollection
+                });
+                return vm.show(view);
+              }
+            });
+          }
+        });
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("", true);
+      }
+    });
   };
 
   Router.prototype.setup = function() {

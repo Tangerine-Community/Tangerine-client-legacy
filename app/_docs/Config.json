@@ -14,6 +14,14 @@
       "grid": {"run" : "GridRunView", "edit" : "GridEditView" },
       "id": {"run" : "IdRunView", "edit" : "IdEditView" }
   },
+  "prototypeEditViews": {
+      "consent": "PrototypeConsentEditView",
+      "datetime": "PrototypeDatetimeEditView",
+      "location": "PrototypeLocationEditView",
+      "survey": "PrototypeSurveyEditView",
+      "grid": "PrototypeGridEditView",
+      "id": "PrototypeIdEditView"
+  },
   "subtestTemplate": {
       "enumeratorHelp" : "",
       "studentDialog" : "",
