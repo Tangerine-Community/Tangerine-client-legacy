@@ -49,12 +49,12 @@ QuestionEditView = (function(_super) {
   QuestionEditView.prototype.getOptionList = function() {
     var html, i, option, options, _len;
     options = this.model.get("options");
-    html = "<div id='option_list_wrapper'>      <h2>Options</h2><ul class='option_list'>";
+    html = "<div id='option_list_wrapper'>      <h2>Options</h2>      <div class='menu_box'>        <ul class='option_list'>";
     for (i = 0, _len = options.length; i < _len; i++) {
       option = options[i];
-      html += "      <li class='question'>        <table><tr><td>          <img src='images/icon_drag.png' class='sortable_handle'>        </td>        <td>          <div style='display: block;'>            <div class='option_label_value'>              <label class='edit' for='options." + i + ".label'>Label</label>              <input id='options." + i + ".label' value='" + (_.escape(option.label)) + "' placeholder='Option label' class='option_label'><br>              <label class='edit' for='options." + i + ".value'>Value</label>              <input id='options." + i + ".value' value='" + (_.escape(option.value)) + "' placeholder='Option value' class='option_value'><br>            <small>Allowed characters: A-Z, a-z, 0-9, and underscores.</small><br>            </div>            <img src='images/icon_delete.png' class='delete_option' data-index='" + i + "'>            <div class='confirmation delete_confirm_" + i + "'>              <button class='delete_delete' data-index='" + i + "'>Delete</button>              <button data-index='" + i + "' class='delete_cancel'>Cancel</button>            </div>          </div>        </td></tr></table>      </li>      ";
+      html += "      <li class='question'>        <table><tr><td>          <img src='images/icon_drag.png' class='sortable_handle'>        </td>        <td>          <div style='display: block;'>            <div class='option_label_value'>              <label class='edit' for='options." + i + ".label'>Label</label>              <input id='options." + i + ".label' value='" + (_.escape(option.label)) + "' placeholder='Option label' class='option_label'><br>              <label class='edit' for='options." + i + ".value' title='Allowed characters&#58; A-Z, a-z, 0-9, and underscores.'>Value</label>              <input id='options." + i + ".value' value='" + (_.escape(option.value)) + "' placeholder='Option value' class='option_value'><br>            </div>            <img src='images/icon_delete.png' class='delete_option' data-index='" + i + "'>            <div class='confirmation delete_confirm_" + i + "'>              <button class='delete_delete' data-index='" + i + "'>Delete</button>              <button data-index='" + i + "' class='delete_cancel'>Cancel</button>            </div>          </div>        </td></tr></table>      </li>      ";
     }
-    return html += "</ul>      <button class='add_option command'>Add option</button>          </div>";
+    return html += "</ul>      <button class='add_option command'>Add option</button>      </div>    </div>";
   };
 
   QuestionEditView.prototype.addOption = function() {
@@ -80,17 +80,16 @@ QuestionEditView = (function(_super) {
     linkedGridScore = this.model.get("linkedGridScore") || 0;
     skippable = this.model.get("skippable") === true || this.model.get("skippable") === "true";
     checkOrRadio = type === "multiple" ? "checkbox" : "radio";
-    this.$el.html("      <button class='back navigation'>Back</button>      <h1>Question Editor</h1>      <button class='done command'>Done</button>      <div class='edit_form question'>        <div class='label_value'>          <label for='name'>Variable name</label>          <input id='name' type='text' value='" + name + "'>        </div>        <div class='label_value'>          <label for='prompt'>Prompt</label>          <input id='prompt' type='text' value='" + prompt + "'>        </div>        <div class='label_value'>          <label for='hint'>Hint</label>          <input id='hint' type='text' value='" + hint + "'>        </div>        <div class='label_value'>          <label>Skippable</label>          <div id='skip_radio'>            <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' " + (skippable ? 'checked' : void 0) + ">            <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' " + (!skippable ? 'checked' : void 0) + ">          </div>        </div>        <div class='label_value'>          <label for='linked_grid_score'>Linked grid score</label>          <input id='linked_grid_score' type='number' value='" + linkedGridScore + "'>        </div>        <div class='label_value' id='question_type' class='question_type'>          <label>Question Type</label>          <label for='single'>single</label>          <input id='single' name='type' type='radio' value='single' " + (type === 'single' ? 'checked' : void 0) + ">          <label for='multiple'>multiple</label>          <input id='multiple' name='type'  type='radio' value='multiple' " + (type === 'multiple' ? 'checked' : void 0) + ">          <label for='open'>open</label>          <input id='open' name='type'  type='radio' value='open' " + (type === 'open' ? 'checked' : void 0) + ">        </div>        ");
+    this.$el.html("      <button class='back navigation'>Back</button>      <h1>Question Editor</h1>      <button class='done command'>Done</button>      <div class='edit_form question'>        <div class='label_value'>          <label for='name'>Variable name</label>          <input id='name' type='text' value='" + name + "'>        </div>        <div class='label_value'>          <label for='prompt'>Prompt</label>          <input id='prompt' type='text' value='" + prompt + "'>        </div>        <div class='label_value'>          <label for='hint'>Hint</label>          <input id='hint' type='text' value='" + hint + "'>        </div>        <div class='label_value'>          <label>Skippable</label>          <div id='skip_radio' class='buttonset'>            <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' " + (skippable ? 'checked' : void 0) + ">            <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' " + (!skippable ? 'checked' : void 0) + ">          </div>        </div>        <div class='label_value'>          <label for='linked_grid_score'>Linked grid score</label>          <input id='linked_grid_score' type='number' value='" + linkedGridScore + "'>        </div>        <div class='label_value' id='question_type' class='question_type'>          <label>Question Type</label>          <div class='buttonset'>            <label for='single'>single</label>            <input id='single' name='type' type='radio' value='single' " + (type === 'single' ? 'checked' : void 0) + ">            <label for='multiple'>multiple</label>            <input id='multiple' name='type'  type='radio' value='multiple' " + (type === 'multiple' ? 'checked' : void 0) + ">            <label for='open'>open</label>            <input id='open' name='type'  type='radio' value='open' " + (type === 'open' ? 'checked' : void 0) + ">          </div>        </div>        ");
     if (type !== "open") {
-      optionHTML = "        <div class='label_value'>        <label for='question_template_select'>Fill from template</label>        <select id='question_template_select' class='option_select'>          <option disabled selected>Select template</option>        ";
+      optionHTML = "        <div class='label_value'>        <label for='question_template_select'>Fill from template</label><br>        <div class='menu_box'>          <select id='question_template_select' class='option_select'>            <option disabled selected>Select template</option>        ";
       _ref = Tangerine.config.optionTemplates;
       for (i = 0, _len = _ref.length; i < _len; i++) {
         option = _ref[i];
         optionHTML += "<option data-index='" + i + "' class='template_option'>" + option.name + "</option>";
       }
-      optionHTML += "</select>        <div id='option_list_wrapper'></div>        ";
+      optionHTML += "</select>        </div>        <div id='option_list_wrapper'>" + (this.getOptionList()) + "</div>        ";
       this.$el.append(optionHTML);
-      this.$el.find("#option_list_wrapper").html(this.getOptionList());
       this.$el.find(".option_list").sortable({
         handle: '.sortable_handle',
         start: function(event, ui) {
@@ -105,7 +104,6 @@ QuestionEditView = (function(_super) {
       });
     }
     this.$el.append("<button class='done command'>Done</button>      </div>      ");
-    this.$el.find("#question_type, #skip_radio").buttonset();
     return this.trigger("rendered");
   };
 

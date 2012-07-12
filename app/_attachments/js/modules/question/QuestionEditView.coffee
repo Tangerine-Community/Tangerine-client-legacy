@@ -31,7 +31,9 @@ class QuestionEditView extends Backbone.View
   getOptionList: ->
     options = @model.get "options" 
     html = "<div id='option_list_wrapper'>
-      <h2>Options</h2><ul class='option_list'>"
+      <h2>Options</h2>
+      <div class='menu_box'>
+        <ul class='option_list'>"
     for option, i in options
       
       html += "
@@ -44,9 +46,8 @@ class QuestionEditView extends Backbone.View
             <div class='option_label_value'>
               <label class='edit' for='options.#{i}.label'>Label</label>
               <input id='options.#{i}.label' value='#{_.escape(option.label)}' placeholder='Option label' class='option_label'><br>
-              <label class='edit' for='options.#{i}.value'>Value</label>
+              <label class='edit' for='options.#{i}.value' title='Allowed characters&#58; A-Z, a-z, 0-9, and underscores.'>Value</label>
               <input id='options.#{i}.value' value='#{_.escape(option.value)}' placeholder='Option value' class='option_value'><br>
-            <small>Allowed characters: A-Z, a-z, 0-9, and underscores.</small><br>
             </div>
             <img src='images/icon_delete.png' class='delete_option' data-index='#{i}'>
             <div class='confirmation delete_confirm_#{i}'>
@@ -58,8 +59,9 @@ class QuestionEditView extends Backbone.View
       </li>
       "
     html += "</ul>
+
       <button class='add_option command'>Add option</button>
-      
+      </div>
     </div>"
 
   #
@@ -105,7 +107,7 @@ class QuestionEditView extends Backbone.View
         </div>
         <div class='label_value'>
           <label>Skippable</label>
-          <div id='skip_radio'>
+          <div id='skip_radio' class='buttonset'>
             <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' #{'checked' if skippable}>
             <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' #{'checked' if not skippable}>
           </div>
@@ -116,31 +118,34 @@ class QuestionEditView extends Backbone.View
         </div>
         <div class='label_value' id='question_type' class='question_type'>
           <label>Question Type</label>
-          <label for='single'>single</label>
-          <input id='single' name='type' type='radio' value='single' #{'checked' if type == 'single'}>
-          <label for='multiple'>multiple</label>
-          <input id='multiple' name='type'  type='radio' value='multiple' #{'checked' if type == 'multiple'}>
-          <label for='open'>open</label>
-          <input id='open' name='type'  type='radio' value='open' #{'checked' if type == 'open'}>
+          <div class='buttonset'>
+            <label for='single'>single</label>
+            <input id='single' name='type' type='radio' value='single' #{'checked' if type == 'single'}>
+            <label for='multiple'>multiple</label>
+            <input id='multiple' name='type'  type='radio' value='multiple' #{'checked' if type == 'multiple'}>
+            <label for='open'>open</label>
+            <input id='open' name='type'  type='radio' value='open' #{'checked' if type == 'open'}>
+          </div>
         </div>
         "
 
     if type != "open"
       optionHTML = "
         <div class='label_value'>
-        <label for='question_template_select'>Fill from template</label>
-        <select id='question_template_select' class='option_select'>
-          <option disabled selected>Select template</option>
+        <label for='question_template_select'>Fill from template</label><br>
+        <div class='menu_box'>
+          <select id='question_template_select' class='option_select'>
+            <option disabled selected>Select template</option>
         "
       # ok to refernce things by index if not an object
       for option, i in Tangerine.config.optionTemplates
         optionHTML += "<option data-index='#{i}' class='template_option'>#{option.name}</option>"
 
       optionHTML += "</select>
-        <div id='option_list_wrapper'></div>
+        </div>
+        <div id='option_list_wrapper'>#{@getOptionList()}</div>
         "
       @$el.append optionHTML
-      @$el.find("#option_list_wrapper").html @getOptionList()
 
       @$el.find(".option_list").sortable
         handle : '.sortable_handle'
@@ -152,8 +157,6 @@ class QuestionEditView extends Backbone.View
     @$el.append "<button class='done command'>Done</button>
       </div>
       "
-    @$el.find("#question_type, #skip_radio").buttonset()
-
     @trigger "rendered"
 
 
