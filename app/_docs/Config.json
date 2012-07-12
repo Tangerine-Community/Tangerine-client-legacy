@@ -34,14 +34,11 @@
     },
     "location": {
       "prototype" : "location",
-      "provinceText" : "Province",
-      "districtText" : "District",
-      "nameText" : "Name",
-      "schoolIdText" : "School ID",
-      "schools" : []
+      "locations" : []
     },
     "consent" : {
-      "prototype" : "consent"
+      "prototype" : "consent",
+      "prompt" : ""
     },
     "id" : {
       "prototype" : "id"
@@ -51,6 +48,18 @@
     }
   },
   "subtestTemplates" : {
+    "consent" : {
+      "Consent Page": {}
+    },
+    "id" : {
+      "Student ID": {}
+    },
+    "location" : {
+      "School Location": {}
+    },
+    "datetime" : {
+      "Date and Time": {}
+    },
     "grid": {
       "Empty Grid": {},
       "Letter Name Knowledge" : {
@@ -104,18 +113,6 @@
       "Student Information":{},
       "Pupil Context Interview":{},
       "Dictation":{}
-    },
-    "consent" : {
-      "Consent Page":{}
-    },
-    "id" : {
-      "Student ID":{}
-    },
-    "location" : {
-      "School Location":{}
-    },
-    "datetime" : {
-      "Date and Time":{}
     }
   },
   "questionTemplate" : {

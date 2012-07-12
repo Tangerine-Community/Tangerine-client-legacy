@@ -5,7 +5,7 @@
   "name" : "School ID",
   "order" : 2,
   "assessmentId" : "Example English EGRA May 2011.Assessment",
-  "schools": [
+  "locations": [
     [
       "Central",
       "Lilongwe",
@@ -79,10 +79,9 @@
       "242"
     ]
   ],
-  "nameText": "Name",
-  "schoolIdText": "ID",
-  "districtText": "District",
-  "provinceText": "Province",
+  "levels" : [
+    "Province", "District", "Name", "ID"
+  ],
   "couchapp": {
   }
 }
