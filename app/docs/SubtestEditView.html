@@ -103,13 +103,16 @@
 <span class="s">          &lt;input id=&#39;subtest_name&#39; value=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&#39;&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
 <span class="s">        &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">          &lt;label for=&#39;subtest_prototype&#39; title=&#39;This is a basic type of subtest. (e.g. Survey, Grid, Location, Id, Consent)&#39;&gt;Prototype&lt;/label&gt;</span><span class="si">#{</span><span class="nx">prototype</span><span class="si">}</span><span class="s"></span>
+<span class="s">          &lt;label for=&#39;subtest_prototype&#39; title=&#39;This is a basic type of subtest. (e.g. Survey, Grid, Location, Id, Consent). This property is set in assessment builder when you add a subtest. It is unchangeable.&#39;&gt;Prototype&lt;/label&gt;&lt;br&gt;</span>
+<span class="s">          &lt;div class=&#39;info_box&#39;&gt;</span><span class="si">#{</span><span class="nx">prototype</span><span class="si">}</span><span class="s">&lt;/div&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
 <span class="s">        &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">          &lt;label&gt;Skippable&lt;/label&gt;</span>
-<span class="s">          &lt;div id=&#39;skip_radio&#39;&gt;</span>
-<span class="s">            &lt;label for=&#39;skip_true&#39;&gt;Yes&lt;/label&gt;&lt;input name=&#39;skippable&#39; type=&#39;radio&#39; value=&#39;true&#39; id=&#39;skip_true&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">skippable</span><span class="si">}</span><span class="s">&gt;</span>
-<span class="s">            &lt;label for=&#39;skip_false&#39;&gt;No&lt;/label&gt;&lt;input name=&#39;skippable&#39; type=&#39;radio&#39; value=&#39;false&#39; id=&#39;skip_false&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">skippable</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">          &lt;label&gt;Skippable&lt;/label&gt;&lt;br&gt;</span>
+<span class="s">          &lt;div class=&#39;menu_box&#39;&gt;</span>
+<span class="s">            &lt;div id=&#39;skip_radio&#39; class=&#39;buttonset&#39;&gt;</span>
+<span class="s">              &lt;label for=&#39;skip_true&#39;&gt;Yes&lt;/label&gt;&lt;input name=&#39;skippable&#39; type=&#39;radio&#39; value=&#39;true&#39; id=&#39;skip_true&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">skippable</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">              &lt;label for=&#39;skip_false&#39;&gt;No&lt;/label&gt;&lt;input name=&#39;skippable&#39; type=&#39;radio&#39; value=&#39;false&#39; id=&#39;skip_false&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">skippable</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">            &lt;/div&gt;</span>
 <span class="s">          &lt;/div&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
 <span class="s">        &lt;div class=&#39;label_value&#39;&gt;</span>
@@ -136,7 +139,6 @@
     <span class="nx">@prototypeEditor</span><span class="p">.</span><span class="nx">setElement</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#prototype_attributes&#39;</span><span class="p">)</span>
     <span class="nx">@prototypeEditor</span><span class="p">.</span><span class="nx">render</span><span class="o">?</span><span class="p">()</span>
     
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">skip_radio&quot;</span><span class="p">).</span><span class="nx">buttonset</span><span class="p">()</span>
     <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

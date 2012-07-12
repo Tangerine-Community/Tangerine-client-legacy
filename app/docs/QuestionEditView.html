@@ -31,7 +31,9 @@
   <span class="nv">getOptionList: </span><span class="o">-&gt;</span>
     <span class="nv">options = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;options&quot;</span> 
     <span class="nv">html = </span><span class="s">&quot;&lt;div id=&#39;option_list_wrapper&#39;&gt;</span>
-<span class="s">      &lt;h2&gt;Options&lt;/h2&gt;&lt;ul class=&#39;option_list&#39;&gt;&quot;</span>
+<span class="s">      &lt;h2&gt;Options&lt;/h2&gt;</span>
+<span class="s">      &lt;div class=&#39;menu_box&#39;&gt;</span>
+<span class="s">        &lt;ul class=&#39;option_list&#39;&gt;&quot;</span>
     <span class="k">for</span> <span class="nx">option</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">options</span>
       
       <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
@@ -44,9 +46,8 @@
 <span class="s">            &lt;div class=&#39;option_label_value&#39;&gt;</span>
 <span class="s">              &lt;label class=&#39;edit&#39; for=&#39;options.</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">.label&#39;&gt;Label&lt;/label&gt;</span>
 <span class="s">              &lt;input id=&#39;options.</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">.label&#39; value=&#39;</span><span class="si">#{</span><span class="nx">_</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">option</span><span class="p">.</span><span class="nx">label</span><span class="p">)</span><span class="si">}</span><span class="s">&#39; placeholder=&#39;Option label&#39; class=&#39;option_label&#39;&gt;&lt;br&gt;</span>
-<span class="s">              &lt;label class=&#39;edit&#39; for=&#39;options.</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">.value&#39;&gt;Value&lt;/label&gt;</span>
+<span class="s">              &lt;label class=&#39;edit&#39; for=&#39;options.</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">.value&#39; title=&#39;Allowed characters&amp;</span><span class="err">#</span><span class="s">58; A-Z, a-z, 0-9, and underscores.&#39;&gt;Value&lt;/label&gt;</span>
 <span class="s">              &lt;input id=&#39;options.</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">.value&#39; value=&#39;</span><span class="si">#{</span><span class="nx">_</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">option</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span><span class="si">}</span><span class="s">&#39; placeholder=&#39;Option value&#39; class=&#39;option_value&#39;&gt;&lt;br&gt;</span>
-<span class="s">            &lt;small&gt;Allowed characters: A-Z, a-z, 0-9, and underscores.&lt;/small&gt;&lt;br&gt;</span>
 <span class="s">            &lt;/div&gt;</span>
 <span class="s">            &lt;img src=&#39;images/icon_delete.png&#39; class=&#39;delete_option&#39; data-index=&#39;</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;</span>
 <span class="s">            &lt;div class=&#39;confirmation delete_confirm_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;</span>
@@ -58,8 +59,9 @@
 <span class="s">      &lt;/li&gt;</span>
 <span class="s">      &quot;</span>
     <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;/ul&gt;</span>
+
 <span class="s">      &lt;button class=&#39;add_option command&#39;&gt;Add option&lt;/button&gt;</span>
-<span class="s">      </span>
+<span class="s">      &lt;/div&gt;</span>
 <span class="s">    &lt;/div&gt;&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Adding an option</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">addOption: </span><span class="o">-&gt;</span>
     <span class="nx">@updateModel</span><span class="p">()</span>
     <span class="nv">options = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;options&quot;</span>
@@ -100,7 +102,7 @@
 <span class="s">        &lt;/div&gt;</span>
 <span class="s">        &lt;div class=&#39;label_value&#39;&gt;</span>
 <span class="s">          &lt;label&gt;Skippable&lt;/label&gt;</span>
-<span class="s">          &lt;div id=&#39;skip_radio&#39;&gt;</span>
+<span class="s">          &lt;div id=&#39;skip_radio&#39; class=&#39;buttonset&#39;&gt;</span>
 <span class="s">            &lt;label for=&#39;skip_true&#39;&gt;Yes&lt;/label&gt;&lt;input name=&#39;skippable&#39; type=&#39;radio&#39; value=&#39;true&#39; id=&#39;skip_true&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">skippable</span><span class="si">}</span><span class="s">&gt;</span>
 <span class="s">            &lt;label for=&#39;skip_false&#39;&gt;No&lt;/label&gt;&lt;input name=&#39;skippable&#39; type=&#39;radio&#39; value=&#39;false&#39; id=&#39;skip_false&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">skippable</span><span class="si">}</span><span class="s">&gt;</span>
 <span class="s">          &lt;/div&gt;</span>
@@ -111,29 +113,32 @@
 <span class="s">        &lt;/div&gt;</span>
 <span class="s">        &lt;div class=&#39;label_value&#39; id=&#39;question_type&#39; class=&#39;question_type&#39;&gt;</span>
 <span class="s">          &lt;label&gt;Question Type&lt;/label&gt;</span>
-<span class="s">          &lt;label for=&#39;single&#39;&gt;single&lt;/label&gt;</span>
-<span class="s">          &lt;input id=&#39;single&#39; name=&#39;type&#39; type=&#39;radio&#39; value=&#39;single&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&#39;single&#39;</span><span class="si">}</span><span class="s">&gt;</span>
-<span class="s">          &lt;label for=&#39;multiple&#39;&gt;multiple&lt;/label&gt;</span>
-<span class="s">          &lt;input id=&#39;multiple&#39; name=&#39;type&#39;  type=&#39;radio&#39; value=&#39;multiple&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&#39;multiple&#39;</span><span class="si">}</span><span class="s">&gt;</span>
-<span class="s">          &lt;label for=&#39;open&#39;&gt;open&lt;/label&gt;</span>
-<span class="s">          &lt;input id=&#39;open&#39; name=&#39;type&#39;  type=&#39;radio&#39; value=&#39;open&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&#39;open&#39;</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">          &lt;div class=&#39;buttonset&#39;&gt;</span>
+<span class="s">            &lt;label for=&#39;single&#39;&gt;single&lt;/label&gt;</span>
+<span class="s">            &lt;input id=&#39;single&#39; name=&#39;type&#39; type=&#39;radio&#39; value=&#39;single&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&#39;single&#39;</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">            &lt;label for=&#39;multiple&#39;&gt;multiple&lt;/label&gt;</span>
+<span class="s">            &lt;input id=&#39;multiple&#39; name=&#39;type&#39;  type=&#39;radio&#39; value=&#39;multiple&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&#39;multiple&#39;</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">            &lt;label for=&#39;open&#39;&gt;open&lt;/label&gt;</span>
+<span class="s">            &lt;input id=&#39;open&#39; name=&#39;type&#39;  type=&#39;radio&#39; value=&#39;open&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">==</span> <span class="s">&#39;open&#39;</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">          &lt;/div&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
 <span class="s">        &quot;</span>
 
     <span class="k">if</span> <span class="nx">type</span> <span class="o">!=</span> <span class="s">&quot;open&quot;</span>
       <span class="nv">optionHTML = </span><span class="s">&quot;</span>
 <span class="s">        &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;question_template_select&#39;&gt;Fill from template&lt;/label&gt;</span>
-<span class="s">        &lt;select id=&#39;question_template_select&#39; class=&#39;option_select&#39;&gt;</span>
-<span class="s">          &lt;option disabled selected&gt;Select template&lt;/option&gt;</span>
+<span class="s">        &lt;label for=&#39;question_template_select&#39;&gt;Fill from template&lt;/label&gt;&lt;br&gt;</span>
+<span class="s">        &lt;div class=&#39;menu_box&#39;&gt;</span>
+<span class="s">          &lt;select id=&#39;question_template_select&#39; class=&#39;option_select&#39;&gt;</span>
+<span class="s">            &lt;option disabled selected&gt;Select template&lt;/option&gt;</span>
 <span class="s">        &quot;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>ok to refernce things by index if not an object</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span> <span class="nx">option</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">optionTemplates</span>
         <span class="nx">optionHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;option data-index=&#39;</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39; class=&#39;template_option&#39;&gt;</span><span class="si">#{</span><span class="nx">option</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="s">&lt;/option&gt;&quot;</span>
 
       <span class="nx">optionHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;/select&gt;</span>
-<span class="s">        &lt;div id=&#39;option_list_wrapper&#39;&gt;&lt;/div&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div id=&#39;option_list_wrapper&#39;&gt;</span><span class="si">#{</span><span class="nx">@getOptionList</span><span class="p">()</span><span class="si">}</span><span class="s">&lt;/div&gt;</span>
 <span class="s">        &quot;</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">optionHTML</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">option_list_wrapper&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">@getOptionList</span><span class="p">()</span>
 
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.option_list&quot;</span><span class="p">).</span><span class="nx">sortable</span>
         <span class="nv">handle : </span><span class="s">&#39;.sortable_handle&#39;</span>
@@ -145,8 +150,6 @@
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;button class=&#39;done command&#39;&gt;Done&lt;/button&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &quot;</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">question_type, </span><span class="err">#</span><span class="s">skip_radio&quot;</span><span class="p">).</span><span class="nx">buttonset</span><span class="p">()</span>
-
     <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
 
 

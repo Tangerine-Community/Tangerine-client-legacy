@@ -229,8 +229,8 @@
 <span class="s">          &lt;br&gt;</span>
 <span class="s">    &lt;/div&gt;</span>
 <span class="s">    </span>
-<span class="s">    &lt;div id=&#39;grid_mode&#39; class=&#39;question clearfix&#39;&gt;</span>
-<span class="s">      &lt;label&gt;Input mode&lt;/label&gt;</span>
+<span class="s">    &lt;div id=&#39;grid_mode&#39; class=&#39;question buttonset clearfix&#39;&gt;</span>
+<span class="s">      &lt;label&gt;Input mode&lt;/label&gt;&lt;br&gt;</span>
 <span class="s">      &lt;label for=&#39;mark&#39;&gt;Mark&lt;/label&gt;</span>
 <span class="s">      &lt;input name=&#39;grid_mode&#39; id=&#39;mark&#39; type=&#39;radio&#39; value=&#39;mark&#39; checked=&#39;checked&#39;&gt;</span>
 <span class="s">      &lt;label for=&#39;last_attempted&#39;&gt;Last attempted&lt;/label&gt;</span>
@@ -240,8 +240,6 @@
 <span class="s">    &quot;</span>
 
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="nx">html</span>
-
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">grid_mode&quot;</span><span class="p">).</span><span class="nx">buttonset</span><span class="p">()</span>
 
     <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
     

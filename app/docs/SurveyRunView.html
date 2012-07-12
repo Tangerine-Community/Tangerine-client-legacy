@@ -78,10 +78,14 @@
           <span class="nv">model  : </span><span class="nx">question</span>
           <span class="nv">parent : </span><span class="nx">@</span>
           <span class="nv">notAsked : </span><span class="nx">isNotAsked</span>
+        <span class="nx">oneView</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;rendered&quot;</span><span class="p">,</span> <span class="nx">@onQuestionRendered</span>
         <span class="nx">oneView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
         <span class="nx">@questionViews</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">oneView</span>
         <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">oneView</span><span class="p">.</span><span class="nx">el</span>
 
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+
+  <span class="nv">onQuestionRendered: </span><span class="o">=&gt;</span>
     <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
 
   <span class="nx">onClose</span><span class="o">:-&gt;</span>

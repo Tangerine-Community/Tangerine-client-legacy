@@ -20,7 +20,7 @@
 <span class="s">          &lt;div&gt;Click to confirm consent not obtained.&lt;/div&gt;</span>
 <span class="s">          &lt;button id=&#39;non_consent_confirm&#39;&gt;Confirm&lt;/button&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
-<span class="s">        &lt;div id=&#39;consent_options&#39;&gt;</span>
+<span class="s">        &lt;div id=&#39;consent_options&#39; class=&#39;buttonset&#39;&gt;</span>
 <span class="s">          &lt;label for=&#39;consent_yes&#39;&gt;Yes, continue&lt;/label&gt;</span>
 <span class="s">          &lt;input id=&#39;consent_yes&#39; type=&#39;radio&#39; name=&#39;participant_consents&#39; value=&#39;yes&#39;&gt;</span>
 <span class="s">          &lt;label for=&#39;consent_no&#39;&gt;No, stop&lt;/label&gt;</span>
@@ -29,7 +29,7 @@
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">    &lt;/form&gt;</span>
 <span class="s">    &quot;</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#consent_options&#39;</span><span class="p">).</span><span class="nx">buttonset</span><span class="p">()</span>
+
     <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
   
   <span class="nv">isValid: </span><span class="o">-&gt;</span>

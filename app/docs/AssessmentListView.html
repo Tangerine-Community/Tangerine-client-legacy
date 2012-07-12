@@ -1,12 +1,12 @@
 <!DOCTYPE html>  <html> <head>   <title>AssessmentListView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               AssessmentListView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">AssessmentListView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
 
   <span class="nv">events:</span>
-    <span class="s">&#39;submit form&#39;</span>                  <span class="o">:</span> <span class="s">&#39;newAssessmentSave&#39;</span>
-    <span class="s">&#39;click .new_assessment_save&#39;</span>   <span class="o">:</span> <span class="s">&#39;newAssessmentSave&#39;</span>
-    <span class="s">&#39;click .new_assessment_cancel&#39;</span> <span class="o">:</span> <span class="s">&#39;newAssessmentHide&#39;</span>
-    <span class="s">&#39;click .new_assessment&#39;</span>        <span class="o">:</span> <span class="s">&#39;newAssessmentShow&#39;</span>
-    <span class="s">&#39;click .import&#39;</span>                <span class="o">:</span> <span class="s">&#39;import&#39;</span>
-    <span class="s">&#39;click .groups&#39;</span>                <span class="o">:</span> <span class="s">&#39;gotoGroups&#39;</span>
+    <span class="s">&#39;keypress .new_assessment_name&#39;</span> <span class="o">:</span> <span class="s">&#39;newAssessmentSave&#39;</span>
+    <span class="s">&#39;click .new_assessment_save&#39;</span>    <span class="o">:</span> <span class="s">&#39;newAssessmentSave&#39;</span>
+    <span class="s">&#39;click .new_assessment_cancel&#39;</span>  <span class="o">:</span> <span class="s">&#39;newAssessmentToggle&#39;</span>
+    <span class="s">&#39;click .new_assessment&#39;</span>         <span class="o">:</span> <span class="s">&#39;newAssessmentToggle&#39;</span>
+    <span class="s">&#39;click .import&#39;</span>                 <span class="o">:</span> <span class="s">&#39;import&#39;</span>
+    <span class="s">&#39;click .groups&#39;</span>                 <span class="o">:</span> <span class="s">&#39;gotoGroups&#39;</span>
 
   <span class="nv">gotoGroups: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;groups&quot;</span><span class="p">,</span> <span class="kc">true</span>
@@ -57,11 +57,12 @@ only applies to this list</p>             </td>             <td class="code">   
       <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
 <span class="s">        </span><span class="si">#{</span><span class="nx">newButton</span><span class="si">}</span><span class="s"></span>
 <span class="s">        </span><span class="si">#{</span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">mobile</span> <span class="k">then</span> <span class="nx">importButton</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s"></span>
-<span class="s">        &lt;form class=&#39;new_assessment_form&#39;&gt;</span>
-<span class="s">          &lt;input type=&#39;text&#39; class=&#39;new_assessment_name&#39; placeholder=&#39;Assessment Name&#39;&gt;</span>
-<span class="s">          &lt;button class=&#39;new_assessment_save&#39;&gt;Save&lt;/button&gt;</span>
-<span class="s">          &lt;button class=&#39;new_assessment_cancel&#39;&gt;Cancel&lt;/button&gt;</span>
-<span class="s">        &lt;/form&gt;</span>
+<span class="s">        &lt;div class=&#39;new_assessment_form confirmation&#39;&gt;</span>
+<span class="s">          &lt;div class=&#39;menu_box_wide&#39;&gt;</span>
+<span class="s">            &lt;input type=&#39;text&#39; class=&#39;new_assessment_name&#39; placeholder=&#39;Assessment Name&#39;&gt;</span>
+<span class="s">            &lt;button class=&#39;new_assessment_save command&#39;&gt;Save&lt;/button&gt; &lt;button class=&#39;new_assessment_cancel command&#39;&gt;Cancel&lt;/button&gt;</span>
+<span class="s">          &lt;/div&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
 <span class="s">        &lt;h2&gt;Group assessments&lt;/h2&gt;</span>
 <span class="s">      &quot;</span>
     
@@ -100,26 +101,32 @@ only applies to this list</p>             </td>             <td class="code">   
 
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">publicList</span>
 
-    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Making a new assessment</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">newAssessmentShow: </span> <span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_form&#39;</span><span class="p">).</span><span class="nx">show</span><span class="p">(</span><span class="mi">250</span><span class="p">);</span> <span class="kc">false</span>
-  <span class="nv">newAssessmentHide: </span> <span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_form&#39;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">);</span> <span class="kc">false</span>
-  <span class="nv">newAssessmentValid: </span><span class="o">-&gt;</span> 
-    <span class="k">return</span> <span class="kc">false</span> <span class="k">if</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_name&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span>
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Making a new assessment</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">newAssessmentToggle: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_form, .new_assessment&#39;</span><span class="p">).</span><span class="nx">fadeToggle</span><span class="p">(</span><span class="mi">250</span><span class="p">);</span> <span class="kc">false</span>
 
-  <span class="nv">newAssessmentSave: </span><span class="o">=&gt;</span>
-    <span class="k">if</span> <span class="nx">@newAssessmentValid</span>
+  <span class="nv">newAssessmentSave: </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>this handles ambiguous events
+the idea is to support clicks and the enter key
+logic:
+it it's a keystroke and it's not enter, act normally, just a key stroke
+if it's a click or enter, process the form</p>             </td>             <td class="code">               <div class="highlight"><pre>    
+    <span class="k">if</span> <span class="nx">event</span><span class="p">.</span><span class="nx">type</span> <span class="o">!=</span> <span class="s">&quot;click&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">which</span> <span class="o">!=</span> <span class="mi">13</span>
+      <span class="k">return</span> <span class="kc">true</span>
+    
+    <span class="nv">name = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_name&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+  
+    <span class="k">if</span> <span class="nx">name</span><span class="p">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="mi">0</span>
       <span class="nv">newId = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">guid</span><span class="p">()</span>
       <span class="nv">newAssessment = </span><span class="k">new</span> <span class="nx">Assessment</span>
-        <span class="s">&#39;name&#39;</span>         <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_name&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+        <span class="s">&#39;name&#39;</span>         <span class="o">:</span> <span class="nx">name</span>
         <span class="s">&#39;group&#39;</span>        <span class="o">:</span> <span class="nx">@group</span>
         <span class="s">&#39;_id&#39;</span>          <span class="o">:</span> <span class="nx">newId</span>
         <span class="s">&#39;assessmentId&#39;</span> <span class="o">:</span> <span class="nx">newId</span>
-        
+      
       <span class="nx">newAssessment</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
       <span class="nx">@collection</span><span class="p">.</span><span class="nx">add</span> <span class="nx">newAssessment</span>
-      <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.new_assessment_name&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span><span class="si">}</span><span class="s"> saved&quot;</span>
+      <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s"> saved&quot;</span>
     <span class="k">else</span>
-      <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;&lt;span class=&#39;error&#39;&gt;Error saving changes &lt;img src=&#39;images/icon_close.png&#39; class=&#39;clear_message&#39;&gt;&lt;/span&gt;&quot;</span>
-    <span class="k">return</span> <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>ViewManager</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">closeViews: </span><span class="o">-&gt;</span>
+      <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;&lt;span class=&#39;error&#39;&gt;Could not save &lt;img src=&#39;images/icon_close.png&#39; class=&#39;clear_message&#39;&gt;&lt;/span&gt;&quot;</span>
+    <span class="k">return</span> <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>ViewManager</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">closeViews: </span><span class="o">-&gt;</span>
     <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">@views</span><span class="p">,</span> <span class="nf">(view) -&gt;</span> <span class="nx">view</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
 
   <span class="nv">onClose: </span><span class="o">-&gt;</span>

@@ -8,14 +8,13 @@
   <span class="nv">render: </span><span class="o">-&gt;</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
 <span class="s">      &lt;h1&gt;Dashboard&lt;/h1&gt;</span>
-<span class="s">      &lt;div id=&#39;dash_buttons&#39;&gt;</span>
+<span class="s">      &lt;div id=&#39;dash_buttons&#39; class=&#39;buttonset&#39;&gt;</span>
 <span class="s">        &lt;input type=&#39;radio&#39; id=&#39;assessment&#39; name=&#39;dash_nav&#39; checked&gt;&lt;label for=&#39;assessment&#39;&gt;assessments&lt;/label&gt;</span>
 <span class="s">        &lt;input type=&#39;radio&#39; id=&#39;account&#39; name=&#39;dash_nav&#39;&gt;&lt;label for=&#39;account&#39;&gt;account&lt;/label&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;div id=&#39;dash_assessments&#39; class=&#39;column&#39;&gt;&lt;/div&gt;</span>
 <span class="s">      &lt;div id=&#39;dash_account&#39; class=&#39;column&#39;&gt;&lt;/div&gt;</span>
 <span class="s">      &quot;</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#dash_buttons&#39;</span><span class="p">).</span><span class="nx">buttonset</span><span class="p">()</span>
 
     <span class="nx">@assessments</span><span class="p">.</span><span class="nx">setElement</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span> <span class="s">&quot;</span><span class="err">#</span><span class="s">dash_assessments&quot;</span>
 

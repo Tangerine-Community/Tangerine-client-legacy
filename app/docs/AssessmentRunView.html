@@ -38,9 +38,13 @@ the inefficiency is that it gets called twice the first time</p>             </t
 <span class="s">        &lt;div id=&#39;progress&#39;&gt;&lt;/div&gt;</span>
 <span class="s">      &quot;</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#progress&#39;</span><span class="p">).</span><span class="nx">progressbar</span> <span class="nv">value : </span><span class="p">(</span> <span class="p">(</span> <span class="nx">@index</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">subtests</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">)</span> <span class="o">*</span> <span class="mi">100</span> <span class="p">)</span>
+      <span class="nx">currentView</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;rendered&quot;</span><span class="p">,</span> <span class="nx">@onSubtestRendered</span>
       <span class="nx">currentView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">currentView</span><span class="p">.</span><span class="nx">el</span>
 
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+
+  <span class="nv">onSubtestRendered: </span><span class="o">=&gt;</span>
     <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
 
   <span class="nv">onClose: </span><span class="o">-&gt;</span>

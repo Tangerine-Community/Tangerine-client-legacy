@@ -244,22 +244,11 @@ renamed both with a number and letter, for instance 4a</p>             </td>    
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
 <span class="s">        &lt;div id=&#39;csv_view&#39;&gt;</span>
 <span class="s">        &lt;h1&gt;Result CSV&lt;/h1&gt;</span>
-<span class="s">        &lt;!--h2&gt;Options&lt;/h2&gt;</span>
-<span class="s">        &lt;div class=&#39;menu_box&#39;&gt;</span>
-<span class="s">          &lt;label&gt;Reduce exclusive&lt;/label&gt;</span>
-<span class="s">          &lt;div id=&#39;output_options&#39;&gt;</span>
-<span class="s">            &lt;label for=&#39;reduce_on&#39;&gt;On&lt;/label&gt;</span>
-<span class="s">            &lt;input class=&#39;option_reduce&#39; name=&#39;reduce&#39; type=&#39;radio&#39; value=&#39;true&#39; id=&#39;reduce_on&#39; </span><span class="si">#{</span><span class="nx">checkedString</span> <span class="k">if</span> <span class="nx">@reduceExclusive</span><span class="si">}</span><span class="s">&gt;</span>
-<span class="s">            &lt;label for=&#39;reduce_off&#39;&gt;Off&lt;/label&gt;</span>
-<span class="s">            &lt;input class=&#39;option_reduce&#39; name=&#39;reduce&#39; type=&#39;radio&#39; value=&#39;false&#39; id=&#39;reduce_off&#39; </span><span class="si">#{</span><span class="nx">checkedString</span> <span class="k">if</span> <span class="o">!</span><span class="nx">@reduceExclusive</span><span class="si">}</span><span class="s">&gt;</span>
-<span class="s">          &lt;/div&gt;</span>
-<span class="s">        &lt;/div--&gt;</span>
 <span class="s">        &lt;textarea&gt;</span><span class="si">#{</span><span class="nx">@csv</span><span class="si">}</span><span class="s">&lt;/textarea&gt;&lt;br&gt;</span>
 <span class="s">        &lt;a href=&#39;data:text/octet-stream;base64,</span><span class="si">#{</span><span class="nx">Base64</span><span class="p">.</span><span class="nx">encode</span><span class="p">(</span><span class="nx">@csv</span><span class="p">)</span><span class="si">}</span><span class="s">&#39; download=&#39;</span><span class="si">#{</span><span class="nx">@assessmentId</span><span class="si">}</span><span class="s">.csv&#39;&gt;Download file&lt;/a&gt;</span>
 <span class="s">        (Right click and click &lt;i&gt;Save Link As...&lt;/i&gt;)</span>
 <span class="s">        &lt;/div&gt;</span>
 <span class="s">        &quot;</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">output_options&quot;</span><span class="p">).</span><span class="nx">buttonset</span><span class="p">()</span>
 
 
     <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
