@@ -24,15 +24,12 @@ class Assessment extends Backbone.Model
   duplicate: (assessmentAttributes, subtestAttributes, questionAttributes, callback) ->
 
     originalId = @id
-    console.log "original id: #{originalId}"
 
     newModel = @clone()
     newModel.set assessmentAttributes
     newModel.set "_id", Utils.guid()
     newModel.save(null, {"wait":true})
     
-    console.log newModel
-
     questions = new Questions
     questions.fetch
       success: ( questions ) =>

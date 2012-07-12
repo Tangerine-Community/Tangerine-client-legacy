@@ -42,14 +42,12 @@ Assessment = (function(_super) {
     var newModel, originalId, questions,
       _this = this;
     originalId = this.id;
-    console.log("original id: " + originalId);
     newModel = this.clone();
     newModel.set(assessmentAttributes);
     newModel.set("_id", Utils.guid());
     newModel.save(null, {
       "wait": true
     });
-    console.log(newModel);
     questions = new Questions;
     return questions.fetch({
       success: function(questions) {
