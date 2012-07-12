@@ -14,10 +14,10 @@ AssessmentListView = (function(_super) {
   }
 
   AssessmentListView.prototype.events = {
-    'submit form': 'newAssessmentSave',
+    'keypress .new_assessment_name': 'newAssessmentSave',
     'click .new_assessment_save': 'newAssessmentSave',
-    'click .new_assessment_cancel': 'newAssessmentHide',
-    'click .new_assessment': 'newAssessmentShow',
+    'click .new_assessment_cancel': 'newAssessmentToggle',
+    'click .new_assessment': 'newAssessmentToggle',
     'click .import': 'import',
     'click .groups': 'gotoGroups'
   };
@@ -78,7 +78,7 @@ AssessmentListView = (function(_super) {
     groupsButton = "<button class='navigation groups'>Groups</button>";
     html = "      " + (Tangerine.context.server ? groupsButton : "") + "      <h1>Assessments</h1>      ";
     if (this.isAdmin) {
-      html += "        " + newButton + "        " + (Tangerine.context.mobile ? importButton : "") + "        <form class='new_assessment_form'>          <input type='text' class='new_assessment_name' placeholder='Assessment Name'>          <button class='new_assessment_save'>Save</button>          <button class='new_assessment_cancel'>Cancel</button>        </form>        <h2>Group assessments</h2>      ";
+      html += "        " + newButton + "        " + (Tangerine.context.mobile ? importButton : "") + "        <div class='new_assessment_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_assessment_name' placeholder='Assessment Name'>            <button class='new_assessment_save command'>Save</button> <button class='new_assessment_cancel command'>Cancel</button>          </div>        </div>        <h2>Group assessments</h2>      ";
     }
     this.$el.html(html);
     if (((_ref = this.collection) != null ? (_ref2 = _ref.models) != null ? _ref2.length : void 0 : void 0) > 0) {
@@ -122,35 +122,28 @@ AssessmentListView = (function(_super) {
     return this.trigger("rendered");
   };
 
-  AssessmentListView.prototype.newAssessmentShow = function() {
-    this.$el.find('.new_assessment_form').show(250);
+  AssessmentListView.prototype.newAssessmentToggle = function() {
+    this.$el.find('.new_assessment_form, .new_assessment').fadeToggle(250);
     return false;
   };
 
-  AssessmentListView.prototype.newAssessmentHide = function() {
-    this.$el.find('.new_assessment_form').fadeOut(250);
-    return false;
-  };
-
-  AssessmentListView.prototype.newAssessmentValid = function() {
-    if (this.$el.find('.new_assessment_name').val() !== "") return false;
-  };
-
-  AssessmentListView.prototype.newAssessmentSave = function() {
-    var newAssessment, newId;
-    if (this.newAssessmentValid) {
+  AssessmentListView.prototype.newAssessmentSave = function(event) {
+    var name, newAssessment, newId;
+    if (event.type !== "click" && event.which !== 13) return true;
+    name = this.$el.find('.new_assessment_name').val();
+    if (name.length !== 0) {
       newId = Utils.guid();
       newAssessment = new Assessment({
-        'name': this.$el.find('.new_assessment_name').val(),
+        'name': name,
         'group': this.group,
         '_id': newId,
         'assessmentId': newId
       });
       newAssessment.save();
       this.collection.add(newAssessment);
-      Utils.midAlert("" + (this.$el.find('.new_assessment_name').val()) + " saved");
+      Utils.midAlert("" + name + " saved");
     } else {
-      Utils.midAlert("<span class='error'>Error saving changes <img src='images/icon_close.png' class='clear_message'></span>");
+      Utils.midAlert("<span class='error'>Could not save <img src='images/icon_close.png' class='clear_message'></span>");
     }
     return false;
   };

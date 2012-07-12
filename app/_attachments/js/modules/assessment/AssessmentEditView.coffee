@@ -7,34 +7,55 @@ class AssessmentEditView extends Backbone.View
     'click .back'                  : 'back'
     'click .new_subtest_button'    : 'toggleNewSubtestForm'
     'click .new_subtest_cancel'    : 'toggleNewSubtestForm'
+
+    'keypress #new_subtest_name'   : 'saveNewSubtest'
     'click .new_subtest_save'      : 'saveNewSubtest'
-    'submit .new_subtest_form'     : 'saveNewSubtest'
+
     'keypress #basic input'        : 'showSave'
     'click .assessment_save'       : 'save'
-
+  
   save: =>
-    @updateModel()
-    if @model.save({wait:true}) 
-      Utils.midAlert "Assessment saved" 
-      Tangerine.router.navigate "edit/"+@model.id, true
-      @render()
+    if @updateModel()
+      if @model.save({wait:true}) 
+        Utils.midAlert "Assessment saved" 
+        Tangerine.router.navigate "edit/"+@model.id, true
+        @hideSave()
 
   showSave: -> @$el.find('.assessment_save').fadeIn(250)
-
+  
+  hideSave: -> @$el.find('.assessment_save').fadeToggle(250)
+  
   back: ->
-    Tangerine.router.navigate "assessments", true
+    Tangerine.router.navigate "assessments/#{@model.get("group")}", true
 
   updateModel: =>
-    @model.set
-      archived : @$el.find("#archive_buttons input:checked").val()
-      name     : @$el.find("#assessment_name").val()
-      group    : @$el.find("#assessment_group").val()
-      dKey     : @$el.find("#assessment_d_key").val()
-      assessmentId : @model.id
+    groups = Tangerine.user.get("groups")
+    if not ~groups.indexOf(@$el.find("#assessment_group").val())
+      alert "Warning\n\nYou cannot join a group unless you are a member of that group."
+      @$el.find("#assessment_group").val @model.escape "group"
+      @hideSave()
+      return false
+    else
+      @model.set
+        archived : @$el.find("#archive_buttons input:checked").val()
+        name     : @$el.find("#assessment_name").val()
+        group    : @$el.find("#assessment_group").val()
+        dKey     : @$el.find("#assessment_d_key").val()
+        assessmentId : @model.id
+      return true
 
+  toggleNewSubtestForm: (event) ->
+    @$el.find(".new_subtest_form, .new_subtest_button").fadeToggle(250, => 
+      @$el.find("#new_subtest_name").val("")
+      @$el.find("#subtest_type_select").val("none")
+    )
+    false
 
-  toggleNewSubtestForm: -> @$el.find(".new_subtest_form, .new_subtest_button").fadeToggle(250)
-  saveNewSubtest: (event) ->
+  saveNewSubtest: (event) =>
+    
+    if event.type != "click" && event.which != 13
+      return true
+    
     # general template
     newAttributes = Tangerine.config.subtestTemplate
     
@@ -52,22 +73,33 @@ class AssessmentEditView extends Backbone.View
       assessmentId : @model.id
       order        : @model.subtests.length
     newSubtest = @model.subtests.create newAttributes
-    
+    @toggleNewSubtestForm()
     return false
   
-  deleteSubtest: (model) =>
-    @model.subtests.remove model
-    model.destroy()
   
   initialize: (options) ->
-    @views = []
     @model = options.model
-    @model.subtests.on "change remove", @render
+    @subtestListEditView = new SubtestListEditView
+      model : @model
+
+    @model.subtests.on "change remove", @subtestListEditView.render
 
   render: =>
     arch = @model.get('archived')
     archiveChecked    = if (arch == true or arch == 'true') then "checked" else ""
     notArchiveChecked = if archiveChecked then "" else "checked"
+    
+    # list of "templates"
+    subtestTypeSelect = "<select id='subtest_type_select'>
+      <option value='none' disabled='disabled' selected='selected'>Please select a subtest type</option>"
+    for key, value of Tangerine.config.subtestTemplates
+      subtestTypeSelect += "<optgroup label='#{key}'>"
+      for subKey, subValue of value
+        subtestTypeSelect += "<option value='#{key}' data-template='#{subKey}'>#{subKey}</option>"
+      subtestTypeSelect += "</optgroup>"
+    subtestTypeSelect += "</select>"
+
+    
     @$el.html "
       <button class='back navigation'>Back</button>
         <h1>Assessment Builder</h1>
@@ -78,61 +110,39 @@ class AssessmentEditView extends Backbone.View
         <label for='assessment_group'>Group</label>
         <input id='assessment_group' value='#{@model.escape("group")}'>
 
-        <button class='assessment_save confirmation'>Save</button>
+        <button class='assessment_save confirmation'>Save</button><br>
 
-        <label for='assessment_d_key'>Download Key</label>
+        <label for='assessment_d_key' title='This key is used to import the assessment from a tablet'>Download Key</label><br>
         <div class='info_box'>#{@model.id.substr(-5,5)}</div>
       </div>
 
-      <div id='archive_buttons'>
+      <label title='Only active assessments will be displayed in the main assessment list.'>Status</label><br>
+      <div id='archive_buttons' class='buttonset'>
         <input type='radio' id='archive_false' name='archive' value='false' #{notArchiveChecked}><label for='archive_false'>Active</label>
         <input type='radio' id='archive_true'  name='archive' value='true'  #{archiveChecked}><label for='archive_true'>Archived</label>
       </div>
       <h2>Subtests</h2>
-      <button class='new_subtest_button command'>New</button>
-      <form class='new_subtest_form confirmation'>
-        <div class='menu_box clearfix'>
-          <div class='label_value'>
-            <label for='new_subtest_type'>Type</label>
-            <div id='subtest_type'></div>
-          </div>
-          <div class='label_value'>
-            <label for='new_subtest_name'>Name</label>
-            <input type='text' id='new_subtest_name'>
-          </div>
-          <button class='new_subtest_save command'>Save</button><button class='new_subtest_cancel command'>Cancel</button>
+      <div class='menu_box'>
+        <div>
+        <ul id='subtest_list'>
+        </ul>
         </div>
-      </form>
-    "
+        <button class='new_subtest_button command'>Add Subtest</button>
+        <div class='new_subtest_form confirmation'>
+          <div class='menu_box'>
+            <h2>New Subtest</h2>
+            <label for='subtest_type_select'>Type</label><br>
+            #{subtestTypeSelect}<br>
+            <label for='new_subtest_name'>Name</label><br>
+            <input type='text' id='new_subtest_name'>
+            <button class='new_subtest_save command'>Add</button> <button class='new_subtest_cancel command'>Cancel</button>
+          </div>
+        </div>
+      </div>"
 
-    # insert a list of templates
-    subtestTypeSelect = "<select id='subtest_type_select'>
-      <option value='' disabled='disabled' selected='selected'>Please select a subtest type</option>"
-    for key, value of Tangerine.config.subtestTemplates
-      subtestTypeSelect += "<optgroup label='#{key}'>"
-      for subKey, subValue of value
-        subtestTypeSelect += "<option value='#{key}' data-template='#{subKey}'>#{subKey}</option>"
-      subtestTypeSelect += "</optgroup>"
-    subtestTypeSelect += "</select>"
-    @$el.find("#subtest_type").html subtestTypeSelect
-
-    # buttonset archive buttons
-    @$el.find("#archive_buttons").buttonset()
-
-    
     # render new subtest views
-    unorderedList = $('<ul>').attr('id', 'subtest_list')
-    @closeViews()
-    @views = []
-    @model.subtests.sort()
-    @model.subtests.each (subtest) =>
-      oneView = new SubtestListElementView
-        model : subtest
-      @views.push oneView
-      oneView.render()
-      oneView.on "subtest:delete", @deleteSubtest
-      unorderedList.append oneView.el
-    @$el.append unorderedList
+    @subtestListEditView.setElement(@$el.find("#subtest_list"))
+    @subtestListEditView.render()
     
     # make it sortable
     @$el.find("#subtest_list").sortable
@@ -146,8 +156,5 @@ class AssessmentEditView extends Backbone.View
     @trigger "rendered"
 
   onClose: ->
-    @closeViews()
+    @subtestListEditView.close()
     
-  closeViews: ->
-    for view in @views
-      view.close()

@@ -1,12 +1,12 @@
 class AssessmentListView extends Backbone.View
 
   events:
-    'submit form'                  : 'newAssessmentSave'
-    'click .new_assessment_save'   : 'newAssessmentSave'
-    'click .new_assessment_cancel' : 'newAssessmentHide'
-    'click .new_assessment'        : 'newAssessmentShow'
-    'click .import'                : 'import'
-    'click .groups'                : 'gotoGroups'
+    'keypress .new_assessment_name' : 'newAssessmentSave'
+    'click .new_assessment_save'    : 'newAssessmentSave'
+    'click .new_assessment_cancel'  : 'newAssessmentToggle'
+    'click .new_assessment'         : 'newAssessmentToggle'
+    'click .import'                 : 'import'
+    'click .groups'                 : 'gotoGroups'
 
   gotoGroups: ->
     Tangerine.router.navigate "groups", true
@@ -61,11 +61,12 @@ class AssessmentListView extends Backbone.View
       html += "
         #{newButton}
         #{if Tangerine.context.mobile then importButton else ""}
-        <form class='new_assessment_form'>
-          <input type='text' class='new_assessment_name' placeholder='Assessment Name'>
-          <button class='new_assessment_save'>Save</button>
-          <button class='new_assessment_cancel'>Cancel</button>
-        </form>
+        <div class='new_assessment_form confirmation'>
+          <div class='menu_box_wide'>
+            <input type='text' class='new_assessment_name' placeholder='Assessment Name'>
+            <button class='new_assessment_save command'>Save</button> <button class='new_assessment_cancel command'>Cancel</button>
+          </div>
+        </div>
         <h2>Group assessments</h2>
       "
     
@@ -107,25 +108,34 @@ class AssessmentListView extends Backbone.View
     @trigger "rendered"
 
   # Making a new assessment
-  newAssessmentShow:  -> @$el.find('.new_assessment_form').show(250); false
-  newAssessmentHide:  -> @$el.find('.new_assessment_form').fadeOut(250); false
-  newAssessmentValid: -> 
-    return false if @$el.find('.new_assessment_name').val() != ""
+  newAssessmentToggle: -> @$el.find('.new_assessment_form, .new_assessment').fadeToggle(250); false
 
-  newAssessmentSave: =>
-    if @newAssessmentValid
+  newAssessmentSave: (event) =>
+
+    # this handles ambiguous events
+    # the idea is to support clicks and the enter key
+    # logic:
+    # it it's a keystroke and it's not enter, act normally, just a key stroke
+    # if it's a click or enter, process the form
+    
+    if event.type != "click" && event.which != 13
+      return true
+    
+    name = @$el.find('.new_assessment_name').val()
+  
+    if name.length != 0
       newId = Utils.guid()
       newAssessment = new Assessment
-        'name'         : @$el.find('.new_assessment_name').val()
+        'name'         : name
         'group'        : @group
         '_id'          : newId
         'assessmentId' : newId
-        
+      
       newAssessment.save()
       @collection.add newAssessment
-      Utils.midAlert "#{@$el.find('.new_assessment_name').val()} saved"
+      Utils.midAlert "#{name} saved"
     else
-      Utils.midAlert "<span class='error'>Error saving changes <img src='images/icon_close.png' class='clear_message'></span>"
+      Utils.midAlert "<span class='error'>Could not save <img src='images/icon_close.png' class='clear_message'></span>"
     return false
 
   # ViewManager

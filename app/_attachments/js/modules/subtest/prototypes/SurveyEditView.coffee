@@ -4,6 +4,7 @@ class SurveyEditView extends Backbone.View
     'click .add_question'        : 'toggleAddQuestion'
     'click .add_question_cancel' : 'toggleAddQuestion'
     'click .add_question_add'    : 'addQuestion'
+    'keypress #question_name'    : 'addQuestion'
 
   initialize: ( options ) ->
     @model = options.model
@@ -19,12 +20,16 @@ class SurveyEditView extends Backbone.View
         @renderQuestions()
 
   toggleAddQuestion: =>
-    @$el.find("#add_question_form").fadeToggle 250, =>
+    @$el.find("#add_question_form, .add_question").fadeToggle 250, =>
       if @$el.find("#add_question_form").is(":visible")
         @$el.find("#question_prompt").focus()
     return false
 
-  addQuestion: -> 
+  addQuestion: (event) ->
+    
+    if event.type != "click" && event.which != 13
+      return true
+    
     newAttributes = $.extend Tangerine.config.questionTemplate,
       subtestId    : @model.id
       assessmentId : @model.get "assessmentId"
@@ -36,9 +41,12 @@ class SurveyEditView extends Backbone.View
     nq = @model.questions.create newAttributes
     @renderQuestions()
     @$el.find("#add_question_form input").val ''
+    @$el.find("#question_prompt").focus()
+
     return false
 
   save: ->
+
     @model.set
       gridLinkId : @$el.find("#link_select option:selected").val()
 
@@ -60,9 +68,15 @@ class SurveyEditView extends Backbone.View
     if notSaved.length != 0
       Utils.midAlert "Error<br><br>Questions: <br>#{notSaved.join(', ')}<br>not saved"
     if emptyOptions.length != 0
-      alert "Warning\n\n#{if emptyOptions.length > 1 then "Questions" else "Question" } #{emptyOptions.join(' ,')} has no options."
+      plural = emptyOptions.length > 1
+      _question = if plural then "Questions" else "Question"
+      _has      = if plural then "have" else "has"
+      alert "Warning\n\n#{_question} #{emptyOptions.join(' ,')} #{ _has } no options."
     if requiresGrid.length != 0
-      alert "Warning\n\n#{if requiresGrid.length > 1 then "Questions" else "Question" } #{requiresGrid.join(' ,')} requires a grid to be linked to this test."
+      plural = emptyOptions.length > 1
+      _question = if plural then "Questions" else "Question"
+      _require  = if plural then "require" else "requires"
+      alert "Warning\n\n#{ _question } #{requiresGrid.join(' ,')} #{ _require } a grid to be linked to this test."
 
 
   onClose: ->
@@ -86,19 +100,20 @@ class SurveyEditView extends Backbone.View
       <div id='grid_link'></div>
       <div id='questions'>
         <h2>Questions</h2>
-        <div id='question_list_wrapper'><img class='loading' src='images/loading.gif'></div>
-        <button class='add_question command'>Add Question</button>
-        <div id='add_question_form' class='confirmation'>
-          <div class='menu_box'>
-            <h2>New Question</h2>
-            <label for='question_prompt'>Prompt</label>
-            <input id='question_prompt'>
-            <label for='question_name'>Variable name</label>
-            <input id='question_name'><br>
-            <small>Allowed characters: A-Z, a-z, 0-9, and underscores.</small><br>
-            <button class='add_question_add command'>Add</button><button class='add_question_cancel command'>Cancel</button>
-          </div>
-        </div> 
+        <div class='menu_box'>
+          <div id='question_list_wrapper'><img class='loading' src='images/loading.gif'></div>
+          <button class='add_question command'>Add Question</button>
+          <div id='add_question_form' class='confirmation'>
+            <div class='menu_box'>
+              <h2>New Question</h2>
+              <label for='question_prompt'>Prompt</label>
+              <input id='question_prompt'>
+              <label for='question_name'>Variable name</label>
+              <input id='question_name' title='Allowed characters: A-Z, a-z, 0-9, and underscores.'><br>
+              <button class='add_question_add command'>Add</button><button class='add_question_cancel command'>Cancel</button>
+            </div>
+          </div> 
+        </div>
       </div>"
 
     @renderQuestions()
@@ -113,11 +128,12 @@ class SurveyEditView extends Backbone.View
 
         linkSelect = "
           <div class='label_value'>
-            <label for='link_select'>Linked to grid</label>
-            <select id='link_select'>
-            <option value=''>None</option>"
+            <label for='link_select'>Linked to grid</label><br>
+            <div class='menu_box'>
+              <select id='link_select'>
+              <option value=''>None</option>"
         for subtest in collection
           linkSelect += "<option value='#{subtest.id}' #{if (gridLinkId == subtest.id) then 'selected' else ''}>#{subtest.get 'name'}</option>"
-        linkSelect += "</select></div>"
+        linkSelect += "</select></div></div>"
         @$el.find('#grid_link').html linkSelect
 

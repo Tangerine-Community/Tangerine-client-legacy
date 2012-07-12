@@ -105,13 +105,16 @@ class SubtestEditView extends Backbone.View
           <input id='subtest_name' value='#{name}'>
         </div>
         <div class='label_value'>
-          <label for='subtest_prototype' title='This is a basic type of subtest. (e.g. Survey, Grid, Location, Id, Consent)'>Prototype</label>#{prototype}
+          <label for='subtest_prototype' title='This is a basic type of subtest. (e.g. Survey, Grid, Location, Id, Consent). This property is set in assessment builder when you add a subtest. It is unchangeable.'>Prototype</label><br>
+          <div class='info_box'>#{prototype}</div>
         </div>
         <div class='label_value'>
-          <label>Skippable</label>
-          <div id='skip_radio'>
-            <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' #{'checked' if skippable}>
-            <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' #{'checked' if not skippable}>
+          <label>Skippable</label><br>
+          <div class='menu_box'>
+            <div id='skip_radio' class='buttonset'>
+              <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' #{'checked' if skippable}>
+              <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' #{'checked' if not skippable}>
+            </div>
           </div>
         </div>
         <div class='label_value'>
@@ -138,7 +141,6 @@ class SubtestEditView extends Backbone.View
     @prototypeEditor.setElement @$el.find('#prototype_attributes')
     @prototypeEditor.render?()
     
-    @$el.find("#skip_radio").buttonset()
     @trigger "rendered"
 
 
