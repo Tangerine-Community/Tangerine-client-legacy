@@ -24,17 +24,19 @@ class Assessment extends Backbone.Model
   duplicate: (assessmentAttributes, subtestAttributes, questionAttributes, callback) ->
 
     originalId = @id
+    console.log "original id: #{originalId}"
 
     newModel = @clone()
     newModel.set assessmentAttributes
     newModel.set "_id", Utils.guid()
-    newModel.save()
+    newModel.save(null, {"wait":true})
+    
+    console.log newModel
 
     questions = new Questions
     questions.fetch
       success: ( questions ) =>
         filteredQuestions = questions.where { "assessmentId" : originalId }
-      
         subtests = new Subtests
         subtests.fetch
           key: originalId
@@ -48,9 +50,10 @@ class Assessment extends Backbone.Model
               newSubtest = model.clone()
               newSubtest.set "assessmentId", newModel.id
               newSubtestId = Utils.guid()
-              subtestIdMap[newSubtest.get("_id")] = newSubtestId
+              subtestIdMap[newSubtest.id] = newSubtestId
               newSubtest.set "_id", newSubtestId
               newSubtests.push newSubtest
+
 
             # update the links to other subtests
             for model, i in newSubtests
@@ -59,6 +62,7 @@ class Assessment extends Backbone.Model
                 model.set "gridLinkId", subtestIdMap[gridId]
               model.save()
 
+            newQuestions = []
             # link questions to new subtest
             for question in filteredQuestions
               newQuestion = question.clone()
@@ -66,8 +70,9 @@ class Assessment extends Backbone.Model
               newQuestion.set "assessmentId", newModel.id
               newQuestion.set "_id", Utils.guid() 
               newQuestion.set "subtestId", subtestIdMap[oldId]
+              newQuestions.push newQuestion
               newQuestion.save()
-
+            
             callback()
 
   destroy: ->
@@ -77,12 +82,10 @@ class Assessment extends Backbone.Model
     subtests = new Subtests
     subtests.fetch
       key: assessmentId
-      success: (collection) =>
-        for model in collection.models
-          model.destroy()
+      success: (collection) -> collection.pop().destroy() while collection.length != 0
     questions = new Questions
     questions.fetch
-      success: (collection) =>
+      success: (collection) ->
         for model in collection.where { "assessmentId" : assessmentId }
           model.destroy()
 

@@ -42,10 +42,14 @@ Assessment = (function(_super) {
     var newModel, originalId, questions,
       _this = this;
     originalId = this.id;
+    console.log("original id: " + originalId);
     newModel = this.clone();
     newModel.set(assessmentAttributes);
     newModel.set("_id", Utils.guid());
-    newModel.save();
+    newModel.save(null, {
+      "wait": true
+    });
+    console.log(newModel);
     questions = new Questions;
     return questions.fetch({
       success: function(questions) {
@@ -57,7 +61,7 @@ Assessment = (function(_super) {
         return subtests.fetch({
           key: originalId,
           success: function(subtests) {
-            var filteredSubtests, gridId, i, model, newQuestion, newSubtest, newSubtestId, newSubtests, oldId, question, subtestIdMap, _i, _len, _len2, _len3;
+            var filteredSubtests, gridId, i, model, newQuestion, newQuestions, newSubtest, newSubtestId, newSubtests, oldId, question, subtestIdMap, _i, _len, _len2, _len3;
             filteredSubtests = subtests.models;
             subtestIdMap = {};
             newSubtests = [];
@@ -66,7 +70,7 @@ Assessment = (function(_super) {
               newSubtest = model.clone();
               newSubtest.set("assessmentId", newModel.id);
               newSubtestId = Utils.guid();
-              subtestIdMap[newSubtest.get("_id")] = newSubtestId;
+              subtestIdMap[newSubtest.id] = newSubtestId;
               newSubtest.set("_id", newSubtestId);
               newSubtests.push(newSubtest);
             }
@@ -78,6 +82,7 @@ Assessment = (function(_super) {
               }
               model.save();
             }
+            newQuestions = [];
             for (_i = 0, _len3 = filteredQuestions.length; _i < _len3; _i++) {
               question = filteredQuestions[_i];
               newQuestion = question.clone();
@@ -85,6 +90,7 @@ Assessment = (function(_super) {
               newQuestion.set("assessmentId", newModel.id);
               newQuestion.set("_id", Utils.guid());
               newQuestion.set("subtestId", subtestIdMap[oldId]);
+              newQuestions.push(newQuestion);
               newQuestion.save();
             }
             return callback();
@@ -95,19 +101,16 @@ Assessment = (function(_super) {
   };
 
   Assessment.prototype.destroy = function() {
-    var assessmentId, questions, subtests,
-      _this = this;
+    var assessmentId, questions, subtests;
     assessmentId = this.id;
     subtests = new Subtests;
     subtests.fetch({
       key: assessmentId,
       success: function(collection) {
-        var model, _i, _len, _ref, _results;
-        _ref = collection.models;
+        var _results;
         _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          model = _ref[_i];
-          _results.push(model.destroy());
+        while (collection.length !== 0) {
+          _results.push(collection.pop().destroy());
         }
         return _results;
       }
