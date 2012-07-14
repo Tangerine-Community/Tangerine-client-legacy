@@ -70,7 +70,6 @@ class SubtestEditView extends Backbone.View
     Tangerine.router.navigate "edit/"+@model.get("assessmentId"), true
 
   save: (event) ->
-    console.log event
     prototype = @model.get("prototype")
     @model.set
       name           : @$el.find("#subtest_name").val()
@@ -80,12 +79,16 @@ class SubtestEditView extends Backbone.View
 
     @prototypeEditor.save?()
 
-    if @model.save()
-      Utils.midAlert "Subtest Saved"
-      setTimeout @goBack, 1000
+    if @prototypeEditor.isValid?() == true
+      if @model.save(null, {wait:true})
+        Utils.midAlert "Subtest Saved"
+        setTimeout @goBack, 1000
+      else
+        console.log "save error"
+        Utils.midAlert "Save error"
     else
-      console.log "save error"
-      Utils.midAlert "Save error"
+      Utils.midAlert "There are errors on this page"
+      @prototypeEditor.showErrors?()
       
   # Wow I'm bad at using templates
   render: ->
