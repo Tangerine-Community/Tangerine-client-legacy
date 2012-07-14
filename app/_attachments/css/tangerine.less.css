@@ -1527,7 +1527,7 @@ button.ui-button-icons-only {
   border: 2px solid #ffffff;
 }
 .ui-button-text-only .ui-button-text {
-  padding: 10px;
+  padding: 8px;
   margin: 0 -2px;
 }
 .ui-button-icon-only .ui-button-text,
@@ -1585,7 +1585,7 @@ input.ui-button {
 }
 .ui-buttonset .ui-button {
   margin-left: 0;
-  margin-right: -0.3em;
+  margin-right: -10px;
 }
 /* workarounds */
 button.ui-button::-moz-focus-inner {
