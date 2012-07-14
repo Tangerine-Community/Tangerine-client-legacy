@@ -869,6 +869,7 @@ input {
   border: 1px solid #888;
   width: 95%;
   padding: 5px !important;
+  margin: 0 0 10px;
 }
 input[type=submit],
 input[type=button] {
@@ -957,7 +958,7 @@ label {
   font-weight: bold;
   display: inline-block;
   clear: both;
-  margin: 20px 0 0px;
+  margin: 5px 0;
 }
 label[title] {
   clear: right;
