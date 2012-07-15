@@ -13,7 +13,7 @@ Tangerine =
     start  : 100
     finish : 200
   port : "5985"
-  database_name: "tangerine"
+  database_name: "class"
   design_doc_name: "tangerine"
 
 Tangerine.context = new Context()
