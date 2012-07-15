@@ -1,0 +1,64 @@
+<!DOCTYPE html>  <html> <head>   <title>StudentEditView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               StudentEditView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">StudentEditView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">events:</span>
+    <span class="s">&#39;click .done&#39;</span> <span class="o">:</span> <span class="s">&#39;done&#39;</span>
+    <span class="s">&#39;click .back&#39;</span> <span class="o">:</span> <span class="s">&#39;back&#39;</span>
+
+  <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
+    <span class="vi">@student = </span><span class="nx">options</span><span class="p">.</span><span class="nx">student</span>
+    <span class="vi">@klasses = </span><span class="nx">options</span><span class="p">.</span><span class="nx">klasses</span>
+
+  <span class="nv">done: </span><span class="o">-&gt;</span>
+    <span class="nv">klassId = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">klass_select option:selected&quot;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-id&quot;</span><span class="p">)</span>
+    <span class="nv">klassId = </span><span class="kc">null</span> <span class="k">if</span> <span class="nx">klassId</span> <span class="o">==</span> <span class="s">&quot;null&quot;</span>
+    <span class="nx">@student</span><span class="p">.</span><span class="nx">set</span>
+      <span class="nv">name    : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="nv">gender  : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">gender&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="nv">age     : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">age&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="nv">klassId : </span><span class="nx">klassId</span>
+    <span class="nx">@student</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
+    <span class="nx">@back</span><span class="p">()</span>
+
+  <span class="nv">back: </span><span class="o">-&gt;</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">back</span><span class="p">()</span>
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="nv">name   = </span><span class="nx">@student</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span>   <span class="o">||</span> <span class="s">&quot;&quot;</span>
+    <span class="nv">gender = </span><span class="nx">@student</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;gender&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
+    <span class="nv">age    = </span><span class="nx">@student</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;age&quot;</span><span class="p">)</span>    <span class="o">||</span> <span class="s">&quot;&quot;</span>
+
+    <span class="nv">klassId = </span><span class="nx">@student</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;klassId&quot;</span><span class="p">)</span>
+    <span class="nv">html = </span><span class="s">&quot;</span>
+<span class="s">    &lt;h1&gt;Edit Student&lt;/h1&gt;</span>
+<span class="s">    &lt;button class=&#39;back navigation&#39;&gt;Back&lt;/button&gt;&lt;br&gt;</span>
+<span class="s">    &lt;div class=&#39;info_box&#39;&gt;</span>
+<span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;name&#39;&gt;Name&lt;/label&gt;</span>
+<span class="s">        &lt;input id=&#39;name&#39; value=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;gender&#39;&gt;Gender&lt;/label&gt;</span>
+<span class="s">        &lt;input id=&#39;gender&#39; value=&#39;</span><span class="si">#{</span><span class="nx">gender</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;age&#39;&gt;Age&lt;/label&gt;</span>
+<span class="s">        &lt;input id=&#39;age&#39; value=&#39;</span><span class="si">#{</span><span class="nx">age</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;klass_select&#39;&gt;Class&lt;/label&gt;</span>
+<span class="s">        &lt;select id=&#39;klass_select&#39;&gt;&quot;</span>
+    <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;option data-id=&#39;null&#39; </span><span class="si">#{</span><span class="k">if</span> <span class="nx">klassId</span> <span class="o">==</span> <span class="kc">null</span> <span class="k">then</span> <span class="s">&quot;selected=&#39;selected&#39;&quot;</span><span class="si">}</span><span class="s">&gt;None&lt;/option&gt;&quot;</span>
+    <span class="k">for</span> <span class="nx">klass</span> <span class="k">in</span> <span class="nx">@klasses</span><span class="p">.</span><span class="nx">models</span>
+      <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;option data-id=&#39;</span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">&#39; </span><span class="si">#{</span><span class="k">if</span> <span class="nx">klass</span><span class="p">.</span><span class="nx">id</span> <span class="o">==</span> <span class="nx">klassId</span> <span class="k">then</span> <span class="s">&quot;selected=&#39;selected&#39;&quot;</span><span class="si">}</span><span class="s">&gt;</span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;year&#39;</span><span class="si">}</span><span class="s"> - </span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;grade&#39;</span><span class="si">}</span><span class="s"> - </span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;stream&#39;</span><span class="si">}</span><span class="s">&lt;/option&gt;&quot;</span>
+
+    <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
+<span class="s">        &lt;/select&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;button class=&#39;done command&#39;&gt;Done&lt;/button&gt;</span>
+<span class="s">    &lt;/div&gt;</span>
+<span class="s">    &quot;</span>
+    
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="nx">html</span>
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

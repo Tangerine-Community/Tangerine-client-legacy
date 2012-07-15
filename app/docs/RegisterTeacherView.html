@@ -1,0 +1,46 @@
+<!DOCTYPE html>  <html> <head>   <title>RegisterTeacherView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               RegisterTeacherView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">RegisterTeacherView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">events :</span>
+    <span class="s">&#39;click .register&#39;</span> <span class="o">:</span> <span class="s">&#39;register&#39;</span>
+
+  <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
+    <span class="vi">@model = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
+
+  <span class="nv">register: </span><span class="o">-&gt;</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
+      <span class="nv">name     : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="nv">school   : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">school&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="nv">village  : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">village&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="nv">district : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">district&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="nv">region   : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">region&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
+    
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">    &lt;h1&gt;Register&lt;/h1&gt;</span>
+<span class="s">    &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">      &lt;label for=&#39;name&#39;&gt;Name&lt;/label&gt;</span>
+<span class="s">      &lt;input id=&#39;name&#39;&gt;</span>
+<span class="s">    &lt;/div&gt;</span>
+<span class="s">    &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">      &lt;label for=&#39;school&#39;&gt;School&lt;/label&gt;</span>
+<span class="s">      &lt;input id=&#39;school&#39;&gt;</span>
+<span class="s">    &lt;/div&gt;</span>
+<span class="s">    &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">      &lt;label for=&#39;school&#39;&gt;Village&lt;/label&gt;</span>
+<span class="s">      &lt;input id=&#39;school&#39;&gt;</span>
+<span class="s">    &lt;/div&gt;</span>
+<span class="s">    &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">      &lt;label for=&#39;district&#39;&gt;District&lt;/label&gt;</span>
+<span class="s">      &lt;input id=&#39;district&#39;&gt;</span>
+<span class="s">    &lt;/div&gt;</span>
+<span class="s">    &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">      &lt;label for=&#39;region&#39;&gt;Region&lt;/label&gt;</span>
+<span class="s">      &lt;input id=&#39;region&#39;&gt;</span>
+<span class="s">    &lt;/div&gt;</span>
+<span class="s">    &lt;button class=&#39;register&#39;&gt;Register&lt;/button&gt;</span>
+<span class="s">    &quot;</span>
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

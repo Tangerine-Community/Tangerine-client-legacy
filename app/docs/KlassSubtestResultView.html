@@ -1,0 +1,65 @@
+<!DOCTYPE html>  <html> <head>   <title>KlassSubtestResultView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               KlassSubtestResultView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">KlassSubtestResultView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">events: </span>
+    <span class="s">&quot;click .run&quot;</span>  <span class="o">:</span> <span class="s">&quot;gotoRun&quot;</span>
+    <span class="s">&quot;click .back&quot;</span> <span class="o">:</span> <span class="s">&quot;back&quot;</span>
+
+  <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>do nothing?</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">gotoRun: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;class/run/</span><span class="si">#{</span><span class="nx">@options</span><span class="p">.</span><span class="nx">student</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">/</span><span class="si">#{</span><span class="nx">@options</span><span class="p">.</span><span class="nx">subtest</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
+  <span class="nv">back: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;class/</span><span class="si">#{</span><span class="nx">@options</span><span class="p">.</span><span class="nx">student</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;klassId&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">/</span><span class="si">#{</span><span class="nx">@options</span><span class="p">.</span><span class="nx">subtest</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;week&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="nv">subtestItems = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">subtest</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">)</span>
+
+    <span class="nv">resultHTML = </span><span class="s">&quot;&lt;br&gt;&quot;</span>
+    <span class="nv">taken      = </span><span class="s">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="mi">0</span>
+      <span class="nx">resultHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;th&gt;Item&lt;/th&gt;&lt;th&gt;Result&lt;/th&gt;&lt;/tr&gt;&quot;</span>
+      <span class="k">for</span> <span class="nx">datum</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">result</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;subtestData&quot;</span><span class="p">).</span><span class="nx">items</span>
+        <span class="nx">resultHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;tr&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">subtestItems</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">datum</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;/tr&gt;&quot;</span>
+      <span class="nx">resultHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;/tbody&gt;&lt;/table&gt;&quot;</span>
+
+      <span class="nv">timestamp = </span><span class="k">new</span> <span class="nb">Date</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">result</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;timestamp&quot;</span><span class="p">)</span>
+
+      <span class="nx">taken</span> <span class="o">+=</span> <span class="s">&quot;</span>
+<span class="s">        &lt;tr&gt;</span>
+<span class="s">          &lt;td&gt;&lt;label&gt;Taken&lt;/label&gt;&lt;/td&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">timestamp</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span><span class="si">}</span><span class="s">/</span><span class="si">#{</span><span class="nx">timestamp</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s">/</span><span class="si">#{</span><span class="nx">timestamp</span><span class="p">.</span><span class="nx">getDate</span><span class="p">()</span><span class="si">}</span><span class="s">&lt;/td&gt;</span>
+<span class="s">        &lt;/tr&gt;</span>
+<span class="s">      &quot;</span>
+
+
+    <span class="nv">html = </span><span class="s">&quot;</span>
+<span class="s">      &lt;h1&gt;Result&lt;/h1&gt;</span>
+<span class="s">      &lt;table class=&#39;info_box&#39;&gt;&lt;tbody&gt;</span>
+<span class="s">        &lt;tr&gt;</span>
+<span class="s">          &lt;td&gt;&lt;label&gt;Week&lt;/label&gt;&lt;/td&gt;</span>
+<span class="s">          &lt;td&gt;</span><span class="si">#{</span><span class="nx">@options</span><span class="p">.</span><span class="nx">subtest</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;week&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/td&gt;</span>
+<span class="s">        &lt;/tr&gt;</span>
+<span class="s">        &lt;tr&gt;</span>
+<span class="s">          &lt;td&gt;&lt;label&gt;Student&lt;/label&gt;&lt;/td&gt;</span>
+<span class="s">          &lt;td&gt;</span><span class="si">#{</span><span class="nx">@options</span><span class="p">.</span><span class="nx">student</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/td&gt;</span>
+<span class="s">        &lt;/tr&gt;</span>
+<span class="s">        &lt;tr&gt;</span>
+<span class="s">          &lt;td&gt;&lt;label&gt;Subtest&lt;/label&gt;&lt;/td&gt;</span>
+<span class="s">          &lt;td&gt;</span><span class="si">#{</span><span class="nx">@options</span><span class="p">.</span><span class="nx">subtest</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/td&gt;</span>
+<span class="s">        &lt;/tr&gt;</span>
+<span class="s">        </span><span class="si">#{</span><span class="nx">taken</span><span class="si">}</span><span class="s"></span>
+<span class="s">      &lt;/tbody&gt;&lt;/table&gt;</span>
+<span class="s">      </span><span class="si">#{</span><span class="nx">resultHTML</span><span class="si">}</span><span class="s"></span>
+<span class="s">      &lt;div class=&#39;menu_box&#39;&gt;</span>
+<span class="s">        &lt;img src=&#39;images/icon_run.png&#39; class=&#39;run&#39;&gt;</span>
+<span class="s">      &lt;/div&gt;&lt;br&gt;</span>
+<span class="s">      &lt;button class=&#39;navigation back&#39;&gt;Back&lt;/button&gt;</span>
+<span class="s">    &quot;</span>
+
+
+
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="nx">html</span>
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
