@@ -16,19 +16,22 @@ Router = (function(_super) {
     'logout': 'logout',
     'account': 'account',
     'transfer': 'transfer',
-    'class': 'klass',
+    '': 'klasses',
     'classes': 'klasses',
-    'class/register': 'klassRegister',
+    'class': 'klass',
     'class/edit/:id': 'klassEdit',
-    'student/edit/:id': 'studentEdit',
+    'class/student/:studentId': 'studentEdit',
+    'class/student/report/:studentId': 'studentReport',
+    'class/:id/:week': 'klassWeekly',
+    'class/:id': 'klassWeekly',
+    'class/run/:studentId/:subtestId': 'runSubtest',
+    'class/result/student/subtest/:studentId/:subtestId': 'studentSubtest',
     'setup': 'setup',
-    '': 'groups',
     'groups': 'groups',
     'assessments': 'assessments',
     'assessments/:group': 'assessments',
     'dashboard': 'dashboard',
     'codebook/:id': 'codebook',
-    'run/:id': 'run',
     'restart/:id': 'restart',
     'edit/:id': 'edit',
     'csv/:id': 'csv',
@@ -39,7 +42,7 @@ Router = (function(_super) {
     'report/:id': 'report'
   };
 
-  Router.prototype.groups = function(a, b, c) {
+  Router.prototype.groups = function() {
     if (!Tangerine.context.server) {
       return Tangerine.router.navigate("assessments", true);
     } else {
@@ -82,28 +85,23 @@ Router = (function(_super) {
     return Tangerine.user.verify({
       isRegistered: function() {
         var allKlasses;
-        console.log("is registered");
         allKlasses = new Klasses;
         return allKlasses.fetch({
-          success: function(collection) {
-            var view;
-            console.log("fetched");
-            console.log(collection);
-            view = new KlassesView({
-              klasses: collection
+          success: function(klassCollection) {
+            var allCurricula;
+            allCurricula = new Curricula;
+            return allCurricula.fetch({
+              success: function(curriculaCollection) {
+                var view;
+                view = new KlassesView({
+                  klasses: klassCollection,
+                  curricula: curriculaCollection
+                });
+                return vm.show(view);
+              }
             });
-            return vm.show(view);
           }
         });
-      }
-    });
-  };
-
-  Router.prototype.klassRegister = function() {
-    return Tangerine.user.verify({
-      isRegistered: function() {},
-      isUnregistered: function() {
-        return Tangerine.router.navigate("", true);
       }
     });
   };
@@ -142,6 +140,139 @@ Router = (function(_super) {
     });
   };
 
+  Router.prototype.klassWeekly = function(id, week) {
+    if (week == null) week = null;
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var klass;
+        klass = new Klass({
+          "_id": id
+        });
+        return klass.fetch({
+          success: function() {
+            var curriculum;
+            curriculum = new Curriculum({
+              "_id": klass.get("curriculumId")
+            });
+            return curriculum.fetch({
+              success: function() {
+                var allStudents;
+                allStudents = new Students;
+                return allStudents.fetch({
+                  success: function(collection) {
+                    var allResults, students;
+                    students = new Students(collection.where({
+                      "klassId": id
+                    }));
+                    allResults = new KlassResults;
+                    return allResults.fetch({
+                      success: function(collection) {
+                        var allSubtests, results;
+                        results = new KlassResults(collection.where({
+                          "klassId": id
+                        }));
+                        allSubtests = new Subtests;
+                        return allSubtests.fetch({
+                          success: function(collection) {
+                            var subtests, view;
+                            subtests = new Subtests(collection.where({
+                              "curriculumId": klass.get("curriculumId")
+                            }));
+                            view = new KlassWeeklyView({
+                              "week": week,
+                              "subtests": subtests,
+                              "results": results,
+                              "students": students,
+                              "curriculum": curriculum,
+                              "klass": klass
+                            });
+                            return vm.show(view);
+                          }
+                        });
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          }
+        });
+      },
+      isUnregistered: function(options) {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.studentSubtest = function(studentId, subtestId) {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var allResults;
+        allResults = new Results;
+        return allResults.fetch({
+          success: function(collection) {
+            var result, subtest;
+            result = collection.where({
+              "subtestId": subtestId,
+              "studentId": studentId
+            });
+            subtest = new Subtest({
+              "_id": subtestId
+            });
+            return subtest.fetch({
+              success: function() {
+                var student;
+                student = new Student({
+                  "_id": studentId
+                });
+                return student.fetch({
+                  success: function() {
+                    var view;
+                    view = new KlassSubtestResultView({
+                      "result": result,
+                      "subtest": subtest,
+                      "student": student
+                    });
+                    return vm.show(view);
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+  };
+
+  Router.prototype.runSubtest = function(studentId, subtestId) {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var subtest;
+        subtest = new Subtest({
+          "_id": subtestId
+        });
+        return subtest.fetch({
+          success: function() {
+            var student;
+            student = new Student({
+              "_id": studentId
+            });
+            return student.fetch({
+              success: function() {
+                var view;
+                view = new KlassSubtestRunView({
+                  "student": student,
+                  "subtest": subtest
+                });
+                return vm.show(view);
+              }
+            });
+          }
+        });
+      }
+    });
+  };
+
   Router.prototype.register = function() {
     return Tangerine.user.verify({
       isUnregistered: function() {
@@ -157,12 +288,12 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.studentEdit = function(id) {
+  Router.prototype.studentEdit = function(studentId) {
     return Tangerine.user.verify({
       isRegistered: function() {
         var student;
         student = new Student({
-          _id: id
+          _id: studentId
         });
         return student.fetch({
           success: function(model) {
@@ -320,29 +451,6 @@ Router = (function(_super) {
     return Tangerine.router.navigate("run/" + name, true);
   };
 
-  Router.prototype.run = function(id) {
-    return Tangerine.user.verify({
-      isRegistered: function() {
-        var assessment;
-        assessment = new Assessment({
-          "_id": id
-        });
-        return assessment.fetch({
-          success: function(model) {
-            var view;
-            view = new AssessmentRunView({
-              model: model
-            });
-            return vm.show(view);
-          }
-        });
-      },
-      isUnregistered: function(options) {
-        return Tangerine.router.navigate("login", true);
-      }
-    });
-  };
-
   Router.prototype.results = function(id) {
     return Tangerine.user.verify({
       isRegistered: function() {
@@ -389,11 +497,37 @@ Router = (function(_super) {
   Router.prototype.report = function(id) {
     return Tangerine.user.verify({
       isRegistered: function() {
-        var view;
-        view = new ReportView({
-          assessmentId: id
+        var subtest;
+        subtest = new Subtest({
+          "_id": id
         });
-        return vm.show(view);
+        return subtest.fetch({
+          success: function() {
+            var allResults;
+            allResults = new Results;
+            return allResults.fetch({
+              success: function(collection) {
+                var results, students;
+                results = collection.where({
+                  "subtestId": subtest.id
+                });
+                students = new Students;
+                return students.fetch({
+                  success: function() {
+                    var view;
+                    view = new ReportView({
+                      "students": students,
+                      "subtest": subtest,
+                      "results": results,
+                      assessmentId: id
+                    });
+                    return vm.show(view);
+                  }
+                });
+              }
+            });
+          }
+        });
       },
       isUnregistered: function(options) {
         return Tangerine.router.navigate("login", true);

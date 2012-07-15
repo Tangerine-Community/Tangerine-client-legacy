@@ -7,20 +7,25 @@ class Router extends Backbone.Router
 
     'transfer' : 'transfer'
 
-    'class'          : 'klass'
+    ''               : 'klasses'
     'classes'        : 'klasses'
-    'class/register' : 'klassRegister'
+    'class'          : 'klass'
     'class/edit/:id' : 'klassEdit'
+    'class/student/:studentId'        : 'studentEdit'
+    'class/student/report/:studentId' : 'studentReport'
 
-    'student/edit/:id' : 'studentEdit'
+    'class/:id/:week' : 'klassWeekly'
+    'class/:id'       : 'klassWeekly'
 
+    'class/run/:studentId/:subtestId' : 'runSubtest'
+
+    'class/result/student/subtest/:studentId/:subtestId' : 'studentSubtest'
 
     'setup' : 'setup'
 
-    ''            : 'groups'
-    'groups'      : 'groups'
-    
-    'assessments'       : 'assessments'
+    'groups' : 'groups'
+
+    'assessments'        : 'assessments'
     'assessments/:group' : 'assessments'
 
 
@@ -28,7 +33,6 @@ class Router extends Backbone.Router
 
     'codebook/:id' : 'codebook'
 
-    'run/:id'       : 'run'
     'restart/:id'   : 'restart'
     'edit/:id'      : 'edit'
     'csv/:id'       : 'csv'
@@ -42,7 +46,7 @@ class Router extends Backbone.Router
     'report/:id' : 'report'
 
 
-  groups: (a,b, c) ->
+  groups: ->
     if not Tangerine.context.server
       Tangerine.router.navigate "assessments", true
     else 
@@ -72,22 +76,16 @@ class Router extends Backbone.Router
   klasses: ->
     Tangerine.user.verify
       isRegistered: ->
-        console.log "is registered"
         allKlasses = new Klasses
         allKlasses.fetch
-          success: (collection) ->
-            console.log "fetched"
-            console.log collection
-            view = new KlassesView
-              klasses : collection
-            vm.show view
-
-  klassRegister: ->
-    Tangerine.user.verify
-      isRegistered: ->
-      
-      isUnregistered: ->
-        Tangerine.router.navigate "", true
+          success: ( klassCollection ) ->
+            allCurricula = new Curricula
+            allCurricula.fetch
+              success: ( curriculaCollection ) ->
+                view = new KlassesView
+                  klasses   : klassCollection
+                  curricula : curriculaCollection
+                vm.show view
 
   klassEdit: (id) ->
     Tangerine.user.verify
@@ -108,6 +106,77 @@ class Router extends Backbone.Router
       isUnregistered: ->
         Tangerine.router.navigate "", true
 
+  klassWeekly: (id, week=null) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        klass = new Klass "_id" : id
+        klass.fetch
+          success: ->
+            curriculum = new Curriculum "_id" : klass.get("curriculumId")
+            curriculum.fetch
+              success: ->
+                allStudents = new Students
+                allStudents.fetch
+                  success: (collection) ->
+                    students = new Students ( collection.where( "klassId" : id ) )
+
+                    allResults = new KlassResults
+                    allResults.fetch
+                      success: (collection) ->
+                        results = new KlassResults ( collection.where( "klassId" : id ) )
+
+                        allSubtests = new Subtests
+                        allSubtests.fetch
+                          success: (collection ) ->
+                            subtests = new Subtests ( collection.where( "curriculumId" : klass.get("curriculumId") ) )
+
+                            view = new KlassWeeklyView
+                              "week"       : week
+                              "subtests"   : subtests
+                              "results"    : results
+                              "students"   : students
+                              "curriculum" : curriculum
+                              "klass"      : klass
+
+                            vm.show view
+
+      isUnregistered: (options) ->
+        Tangerine.router.navigate "login", true
+
+  studentSubtest: (studentId, subtestId) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        allResults = new Results 
+        allResults.fetch
+          success: (collection) ->
+            result = collection.where 
+              "subtestId" : subtestId
+              "studentId" : studentId
+            subtest = new Subtest "_id" : subtestId
+            subtest.fetch
+              success: ->
+                student = new Student "_id" : studentId
+                student.fetch
+                  success: ->
+                    view = new KlassSubtestResultView
+                      "result"  : result
+                      "subtest" : subtest
+                      "student" : student
+                    vm.show view
+
+  runSubtest: (studentId, subtestId) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        subtest = new Subtest "_id" : subtestId
+        subtest.fetch
+          success: ->
+            student = new Student "_id" : studentId
+            student.fetch
+              success: ->
+                view = new KlassSubtestRunView
+                  "student" : student
+                  "subtest" : subtest
+                vm.show view
 
   register: ->
     Tangerine.user.verify
@@ -123,10 +192,10 @@ class Router extends Backbone.Router
   # Student
   #
 
-  studentEdit: (id) ->
+  studentEdit: ( studentId ) ->
     Tangerine.user.verify
       isRegistered: ->
-        student = new Student _id : id
+        student = new Student _id : studentId
         student.fetch
           success: (model) ->
             allKlasses = new Klasses
@@ -229,18 +298,6 @@ class Router extends Backbone.Router
   restart: (name) ->
     Tangerine.router.navigate "run/#{name}", true
 
-  run: (id) ->
-    Tangerine.user.verify
-      isRegistered: ->
-        assessment = new Assessment
-          "_id" : id
-        assessment.fetch
-          success : ( model ) ->
-            view = new AssessmentRunView model: model
-            vm.show view
-      isUnregistered: (options) ->
-        Tangerine.router.navigate "login", true
-
   results: (id) ->
     Tangerine.user.verify
       isRegistered: ->
@@ -274,9 +331,23 @@ class Router extends Backbone.Router
   report: (id) ->
     Tangerine.user.verify
       isRegistered: ->
-        view = new ReportView
-          assessmentId : id
-        vm.show view
+        subtest = new Subtest "_id" : id
+        subtest.fetch
+          success: ->
+            allResults = new Results
+            allResults.fetch
+              success: (collection) ->
+                results = collection.where "subtestId" : subtest.id
+                
+                students = new Students
+                students.fetch
+                  success: ->
+                    view = new ReportView
+                      "students"   : students
+                      "subtest"    : subtest
+                      "results"    : results
+                      assessmentId : id
+                    vm.show view
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
 
