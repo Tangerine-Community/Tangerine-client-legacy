@@ -98,6 +98,8 @@ String.prototype.htmlSafe = ->
 
 class Utils
 
+
+  @round: (num, decimals) -> Math.round( num * Math.pow( 10, decimals ) ) / Math.pow( 10, decimals)
   # asks for confirmation in the browser, and uses phonegap for cool confirmation
   @confirm: (message, options) ->
     if navigator.notification?.confirm?

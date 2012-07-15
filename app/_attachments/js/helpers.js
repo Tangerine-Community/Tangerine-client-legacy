@@ -125,6 +125,10 @@ Utils = (function() {
 
   function Utils() {}
 
+  Utils.round = function(num, decimals) {
+    return Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals);
+  };
+
   Utils.confirm = function(message, options) {
     var _ref;
     if (((_ref = navigator.notification) != null ? _ref.confirm : void 0) != null) {
