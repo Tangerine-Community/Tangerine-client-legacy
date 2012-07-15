@@ -13,6 +13,7 @@ GridRunView = (function(_super) {
     this.removeUndo = __bind(this.removeUndo, this);
     this.lastHandler = __bind(this.lastHandler, this);
     this.markHandler = __bind(this.markHandler, this);
+    this.gridClick = __bind(this.gridClick, this);
     GridRunView.__super__.constructor.apply(this, arguments);
   }
 
@@ -21,14 +22,14 @@ GridRunView = (function(_super) {
   GridRunView.prototype.events = Tangerine.context.kindle ? {
     'touchstart .grid_element': 'gridClick',
     'touchstart .end_of_grid_line': 'endOfGridLineClick',
-    'click .grid_mode input': 'updateMode',
+    'click .grid_mode': 'updateMode',
     'click .start_time': 'startTimer',
     'click .stop_time': 'stopTimer',
     'click .restart': 'restartTimer'
   } : {
     'click .end_of_grid_line': 'endOfGridLineClick',
     'click .grid_element': 'gridClick',
-    'click .grid_mode input': 'updateMode',
+    'click .grid_mode': 'updateMode',
     'click .start_time': 'startTimer',
     'click .stop_time': 'stopTimer',
     'click .restart': 'restartTimer'
@@ -130,9 +131,13 @@ GridRunView = (function(_super) {
       this.interval = setInterval(this.updateCountdown, 1000);
       this.startTime = this.getTime();
       this.timeRunning = true;
-      this.$el.find("table.disabled").removeClass("disabled");
+      this.enableGrid();
       return this.updateCountdown();
     }
+  };
+
+  GridRunView.prototype.enableGrid = function() {
+    return this.$el.find("table.disabled").removeClass("disabled");
   };
 
   GridRunView.prototype.stopTimer = function(event, message) {
@@ -193,6 +198,7 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.updateMode = function(event, mode) {
+    if (mode == null) mode = null;
     if (mode != null) {
       this.mode = mode;
       this.$el.find("#grid_mode :radio[value=" + mode + "]").attr("checked", "checked");
@@ -219,8 +225,9 @@ GridRunView = (function(_super) {
     this.undoable = true;
     this.timeRunning = false;
     this.timer = parseInt(this.model.get("timer")) || 0;
+    this.untimed = this.timer === 0;
     this.items = _.compact(this.model.get("items"));
-    this.mode = "disabled";
+    this.mode = this.untimed ? "mark" : "disabled";
     this.gridOutput = [];
     _ref = this.items;
     for (i = 0, _len = _ref.length; i < _len; i++) {
@@ -228,12 +235,12 @@ GridRunView = (function(_super) {
       this.gridOutput[i] = 'correct';
     }
     this.columns = parseInt(this.model.get("columns")) || 0;
-    this.autostop = parseInt(this.model.get("autostop")) || 0;
+    this.autostop = this.untimed ? 0 : parseInt(this.model.get("autostop")) || 0;
     this.autostopped = false;
     this.$el.find(".grid_element").removeClass("element_wrong").removeClass("element_last").addClass("disabled");
     this.$el.find("table").addClass("disabled");
     this.$el.find(".timer").html(this.timer);
-    return this.updateMode(this.mode);
+    return this.updateMode(null, this.mode);
   };
 
   GridRunView.prototype.initialize = function(options) {
@@ -251,9 +258,11 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.render = function() {
-    var done, html, i, _ref;
+    var disabling, done, html, i, resetButton, startTimerHTML, stopTimerHTML, _ref;
     done = 0;
-    html = "        <div class='timer_wrapper'><button class='start_time time'>Start</button><div class='timer'>" + this.timer + "</div></div>    <table class='grid disabled'>";
+    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>Start</button><div class='timer'>" + this.timer + "</div></div>";
+    disabling = this.untimed ? "" : "disabled";
+    html = "    " + (!this.untimed ? startTimerHTML : "") + "    <table class='grid " + disabling + "'>";
     while (true) {
       if (done > this.items.length) break;
       html += "<tr>";
@@ -273,7 +282,10 @@ GridRunView = (function(_super) {
       }
       html += "</tr>";
     }
-    html += "</table>        <div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>    <div>          <button class='restart command'>Restart</button>          <br>    </div>        <div id='grid_mode' class='question buttonset clearfix'>      <label>Input mode</label><br>      <label for='mark'>Mark</label>      <input name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>      <label for='last_attempted'>Last attempted</label>      <input name='grid_mode' id='last_attempted' type='radio' value='last'>    </div>    ";
+    html += "</table>";
+    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>";
+    resetButton = "    <div>      <button class='restart command'>Restart</button>      <br>    </div>";
+    html += "    " + (!this.untimed ? stopTimerHTML : "") + "    " + (!this.untimed ? resetButton : "") + "    <div id='grid_mode' class='question buttonset clearfix'>      <label>Input mode</label><br>      <label for='mark'>Mark</label>      <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>      <label for='last_attempted'>Last attempted</label>      <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>    </div>    ";
     this.$el.html(html);
     return this.trigger("rendered");
   };
@@ -287,6 +299,7 @@ GridRunView = (function(_super) {
   GridRunView.prototype.showErrors = function() {
     if (this.lastAttempted === 0) {
       Utils.midAlert("Please touch<br>last item read.");
+      this.updateMode(null, "last");
     }
     if (this.timeRuning === true) return Utils.midAlert("Time still running.");
   };

@@ -5,25 +5,24 @@ class GridRunView extends Backbone.View
   events: if Tangerine.context.kindle then {
     'touchstart .grid_element' : 'gridClick'
     'touchstart .end_of_grid_line' : 'endOfGridLineClick'
-    'click .grid_mode input'   : 'updateMode'
-    'click .start_time'        : 'startTimer'
-    'click .stop_time'         : 'stopTimer'
-    'click .restart'         : 'restartTimer'
+    'click .grid_mode'   : 'updateMode'
+    'click .start_time'  : 'startTimer'
+    'click .stop_time'   : 'stopTimer'
+    'click .restart'     : 'restartTimer'
   } else {
     'click .end_of_grid_line' : 'endOfGridLineClick'
-    'click .grid_element'    : 'gridClick'
-    'click .grid_mode input' : 'updateMode'
-    'click .start_time'      : 'startTimer'
-    'click .stop_time'       : 'stopTimer'
-    'click .restart'         : 'restartTimer'
+    'click .grid_element'     : 'gridClick'
+    'click .grid_mode'        : 'updateMode'
+    'click .start_time'       : 'startTimer'
+    'click .stop_time'        : 'stopTimer'
+    'click .restart'          : 'restartTimer'
   }
   
   restartTimer: ->
     @resetVariables()
     @$el.find(".element_wrong").removeClass "element_wrong"
 
-
-  gridClick: (event) ->
+  gridClick: (event) =>
     @modeHandlers[@mode]?(event)
 
   markHandler: (event) =>
@@ -88,11 +87,14 @@ class GridRunView extends Backbone.View
   startTimer: ->
     if @timerStopped == false && @timeRunning == false
       @updateMode null, "mark"
-      @interval = setInterval(@updateCountdown,1000 )
+      @interval = setInterval( @updateCountdown,1000 )
       @startTime = @getTime()
       @timeRunning = true
-      @$el.find("table.disabled").removeClass("disabled")
+      @enableGrid()
       @updateCountdown()
+
+  enableGrid: ->
+    @$el.find("table.disabled").removeClass("disabled")
 
   stopTimer: (event, message = false) ->
     if @timeRunning == true
@@ -142,7 +144,7 @@ class GridRunView extends Backbone.View
     @$el.find(".timer").html @timeRemaining
     if @timeRemaining <= 0 && @timeRunning == true then @stopTimer null, "Time<br><br>Please mark<br>last item attempted"
 
-  updateMode: (event, mode) =>
+  updateMode: (event, mode = null) =>
     if mode?
       @mode = mode
       @$el.find("#grid_mode :radio[value=#{mode}]").attr("checked", "checked")
@@ -172,14 +174,17 @@ class GridRunView extends Backbone.View
     @timeRunning = false
 
     @timer    = parseInt(@model.get("timer")) || 0
+    @untimed  = @timer == 0
+
     @items    = _.compact(@model.get("items")) # mild sanitization, happens at save too
-    @mode     = "disabled"
+    @mode     = if @untimed then "mark" else "disabled"
+
     @gridOutput = []
     for item, i in @items
       @gridOutput[i] = 'correct'
     @columns  = parseInt(@model.get("columns")) || 0
-
-    @autostop = parseInt(@model.get("autostop")) || 0
+    
+    @autostop = if @untimed then 0 else (parseInt(@model.get("autostop")) || 0)
     @autostopped = false
 
     @$el.find(".grid_element").removeClass("element_wrong").removeClass("element_last").addClass("disabled")
@@ -187,7 +192,7 @@ class GridRunView extends Backbone.View
     
     @$el.find(".timer").html @timer
     
-    @updateMode(@mode)
+    @updateMode( null, @mode )
 
   initialize: (options) ->
 
@@ -197,7 +202,7 @@ class GridRunView extends Backbone.View
       mark : @markHandler
       last : @lastHandler
       disabled : $.noop
-      
+
     @model  = @options.model
     @parent = @options.parent
 
@@ -208,10 +213,14 @@ class GridRunView extends Backbone.View
 
   render: ->
     done = 0
+
+    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>Start</button><div class='timer'>#{@timer}</div></div>"
+
+    disabling = if @untimed then "" else "disabled"
+
     html = "
-    
-    <div class='timer_wrapper'><button class='start_time time'>Start</button><div class='timer'>#{@timer}</div></div>
-    <table class='grid disabled'>"
+    #{if not @untimed then startTimerHTML else ""}
+    <table class='grid #{disabling}'>"
     loop
       break if done > @items.length
       html += "<tr>"
@@ -221,20 +230,25 @@ class GridRunView extends Backbone.View
         done++
       html += @endOfGridLine({i:done}) if done < ( @items.length + 1 )
       html += "</tr>"
-    html += "</table>
+    html += "</table>"
     
-    <div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>#{@timer}</div></div>
+    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>#{@timer}</div></div>"
+
+    resetButton = "
     <div>
-          <button class='restart command'>Restart</button>
-          <br>
-    </div>
-    
+      <button class='restart command'>Restart</button>
+      <br>
+    </div>"
+
+    html += "
+    #{if not @untimed then stopTimerHTML else ""}
+    #{if not @untimed then resetButton else ""}
     <div id='grid_mode' class='question buttonset clearfix'>
       <label>Input mode</label><br>
       <label for='mark'>Mark</label>
-      <input name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>
+      <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>
       <label for='last_attempted'>Last attempted</label>
-      <input name='grid_mode' id='last_attempted' type='radio' value='last'>
+      <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>
     </div>
 
     "
@@ -249,7 +263,9 @@ class GridRunView extends Backbone.View
     true
     
   showErrors: ->
-    Utils.midAlert "Please touch<br>last item read." if @lastAttempted == 0
+    if @lastAttempted == 0
+      Utils.midAlert "Please touch<br>last item read."
+      @updateMode null, "last"
     Utils.midAlert "Time still running." if @timeRuning == true
   
   getResult: ->
