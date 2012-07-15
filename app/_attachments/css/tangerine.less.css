@@ -536,6 +536,10 @@ div.timer {
   margin: 0px 0 10px;
   width: 100%;
 }
+.info_box_wide td {
+  vertical-align: bottom;
+  padding: 0 10px 0 0;
+}
 .menu_box {
   font-size: 20px;
   padding: 10px;
@@ -957,7 +961,7 @@ label {
   font-weight: bold;
   display: inline-block;
   clear: both;
-  margin: 20px 0 0px;
+  margin: 5px 0 0px;
 }
 label[title] {
   clear: right;
@@ -1044,6 +1048,10 @@ ul.klass_list li {
 .student_list_element {
   padding: 5px 0;
   border-bottom: 1px solid #cccccc;
+}
+.info_box td {
+  vertical-align: bottom;
+  padding: 0 10px 0 0;
 }
 /*
  * cleditor
