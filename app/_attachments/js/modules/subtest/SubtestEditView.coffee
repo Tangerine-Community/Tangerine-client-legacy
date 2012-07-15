@@ -70,7 +70,6 @@ class SubtestEditView extends Backbone.View
     Tangerine.router.navigate "edit/"+@model.get("assessmentId"), true
 
   save: (event) ->
-    console.log event
     prototype = @model.get("prototype")
     @model.set
       name           : @$el.find("#subtest_name").val()

@@ -21,11 +21,9 @@ ViewManager = (function(_super) {
       return _this.currentView.$el.find(".buttonset").buttonset();
     });
     this.currentView.on("start_work", function() {
-      console.log("Loading bar created");
       return $("#content").prepend("<div id='loading_bar'><img class='loading' src='images/loading.gif'></div>");
     });
     this.currentView.on("end_work", function() {
-      console.log("Loading bar destroyed");
       return $("#loading_bar").remove();
     });
     return this.currentView.render();

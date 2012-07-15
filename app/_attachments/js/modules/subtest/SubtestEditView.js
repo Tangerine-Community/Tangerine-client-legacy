@@ -102,7 +102,6 @@ SubtestEditView = (function(_super) {
 
   SubtestEditView.prototype.save = function(event) {
     var prototype, _base;
-    console.log(event);
     prototype = this.model.get("prototype");
     this.model.set({
       name: this.$el.find("#subtest_name").val(),

@@ -10,7 +10,6 @@ class DeviceView extends Backbone.View
     Tangerine.router.navigate "", true
 
   set: ->
-    console.log @$el.find('input:radio[name=context]:checked').val()
     @model.set
       'context': @$el.find('input:radio[name=context]:checked').val()
     
@@ -21,7 +20,7 @@ class DeviceView extends Backbone.View
   render: ->
     @$el.html "
       <h1>Tangerine Setup</h1>
-      <p>Please select your configuration:</p>
+      <p>Please select your configuration</p>
       <div class='label_value buttonset' id='context'>
         <label for='context_cloud'>cloud</label><input id='context_cloud' name='context' type='radio' value='cloud' #{'checked' if @model.get('context') == 'cloud'}>
         <label for='context_mobile'>mobile</label><input id='context_mobile' name='context' type='radio' value='mobile' #{'checked' if @model.get('context') == 'mobile'}>
