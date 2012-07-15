@@ -1,0 +1,26 @@
+{
+  "_id" : "example_swahili_subtest_w13_i",
+  "collection": "subtest",
+  "curriculumId" : "example_swahili_curriculum",
+  "prototype": "grid",
+  "week": 13,
+  "variableName": "inventedWords",
+  "name": "Invented words",
+  "items": [
+    "cewa",
+    "puda",
+    "cubo",
+    "tope",
+    "doqe",
+    "zeru",
+    "ceca",
+    "zote",
+    "pumo",
+    "lada",
+    "noru",
+    "pitu",
+    "foji",
+    "tewu",
+    "mure"
+  ]
+}

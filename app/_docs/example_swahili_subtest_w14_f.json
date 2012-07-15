@@ -1,0 +1,26 @@
+{
+  "_id" : "example_swahili_subtest_w14_f",
+  "collection": "subtest",
+  "curriculumId" : "example_swahili_curriculum",
+  "prototype": "grid",
+  "week": 14,
+  "variableName": "familiarWords",
+  "name": "Familiar words",
+  "items": [
+    "mlafi",
+    "vita",
+    "naye",
+    "miye",
+    "jasho",
+    "mfalme",
+    "tunza",
+    "mjenzi",
+    "fungu",
+    "yu",
+    "shtaka",
+    "mpenzi",
+    "wivu",
+    "shiba",
+    "kavu"
+  ]
+}

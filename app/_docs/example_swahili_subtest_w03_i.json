@@ -1,0 +1,17 @@
+{
+  "_id" : "example_swahili_subtest_w03_i",
+  "collection": "subtest",
+  "curriculumId" : "example_swahili_curriculum",
+  "prototype": "grid",
+  "week": 3,
+  "variableName": "inventedWords",
+  "name": "Invented words",
+  "items": [
+    "taqo",
+    "wuxo",
+    "nova",
+    "vora",
+    "qopu",
+    "luso"
+  ]
+}

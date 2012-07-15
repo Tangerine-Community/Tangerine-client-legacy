@@ -1,0 +1,26 @@
+{
+  "_id" : "example_swahili_subtest_w06_i",
+  "collection": "subtest",
+  "curriculumId" : "example_swahili_curriculum",
+  "prototype": "grid",
+  "week": 6,
+  "variableName": "inventedWords",
+  "name": "Invented words",
+  "items": [
+    "vico",
+    "roca",
+    "dule",
+    "zimi",
+    "xixa",
+    "kezi",
+    "pezu",
+    "pufu",
+    "jage",
+    "tiha",
+    "xede",
+    "weti",
+    "cede",
+    "nede",
+    "jiwa"
+  ]
+}

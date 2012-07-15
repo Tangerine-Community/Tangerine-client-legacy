@@ -1,0 +1,26 @@
+{
+  "_id" : "example_swahili_subtest_w09_f",
+  "collection": "subtest",
+  "curriculumId" : "example_swahili_curriculum",
+  "prototype": "grid",
+  "week": 9,
+  "variableName": "familiarWords",
+  "name": "Familiar words",
+  "items": [
+    "ale",
+    "chongo",
+    "ili",
+    "mtumwa",
+    "wekwa",
+    "wake",
+    "wapya",
+    "paa",
+    "pata",
+    "yangu",
+    "nchini",
+    "chenu",
+    "yenu",
+    "papa",
+    "lako"
+  ]
+}

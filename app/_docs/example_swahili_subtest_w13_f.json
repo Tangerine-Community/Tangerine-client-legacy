@@ -1,0 +1,26 @@
+{
+  "_id" : "example_swahili_subtest_w13_f",
+  "collection": "subtest",
+  "curriculumId" : "example_swahili_curriculum",
+  "prototype": "grid",
+  "week": 13,
+  "variableName": "familiarWords",
+  "name": "Familiar words",
+  "items": [
+    "nchi",
+    "kabla",
+    "fursa",
+    "sura",
+    "robo",
+    "karne",
+    "chema",
+    "pingu",
+    "jina",
+    "uchu",
+    "bonge",
+    "lango",
+    "tanga",
+    "ije",
+    "mjazwe"
+  ]
+}

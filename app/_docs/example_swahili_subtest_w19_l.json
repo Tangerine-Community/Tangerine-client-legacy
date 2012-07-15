@@ -1,0 +1,25 @@
+{
+  "_id" : "example_swahili_subtest_w19_l",
+  "collection": "subtest",
+  "curriculumId" : "example_swahili_curriculum",
+  "prototype": "grid",
+  "week": 19,
+  "variableName": "letters",
+  "name": "Letters",
+  "items": [
+    "h",
+    "'",
+    "G",
+    "'",
+    "N",
+    "v",
+    "m",
+    "M",
+    "H",
+    "t",
+    "n",
+    "T",
+    "V",
+    "g"
+  ]
+}

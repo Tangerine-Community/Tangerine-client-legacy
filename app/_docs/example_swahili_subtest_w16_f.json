@@ -1,0 +1,26 @@
+{
+  "_id" : "example_swahili_subtest_w16_f",
+  "collection": "subtest",
+  "curriculumId" : "example_swahili_curriculum",
+  "prototype": "grid",
+  "week": 16,
+  "variableName": "familiarWords",
+  "name": "Familiar words",
+  "items": [
+    "wingu",
+    "pango",
+    "vinne",
+    "hizo",
+    "hata",
+    "nne",
+    "dhiki",
+    "manne",
+    "nywele",
+    "hima",
+    "ardhi",
+    "lenye",
+    "dhidi",
+    "zangu",
+    "kinywa"
+  ]
+}
