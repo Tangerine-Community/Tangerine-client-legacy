@@ -1,46 +1,46 @@
-var KlassStatusView,
+var KlassWeeklyView,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-KlassStatusView = (function(_super) {
+KlassWeeklyView = (function(_super) {
 
-  __extends(KlassStatusView, _super);
+  __extends(KlassWeeklyView, _super);
 
-  function KlassStatusView() {
-    KlassStatusView.__super__.constructor.apply(this, arguments);
+  function KlassWeeklyView() {
+    KlassWeeklyView.__super__.constructor.apply(this, arguments);
   }
 
-  KlassStatusView.prototype.events = {
+  KlassWeeklyView.prototype.events = {
     "click .student_subtest": 'gotoStudentSubtest',
     "click .next_week": "nextWeek",
     "click .prev_week": "prevWeek",
     "click .subtest": "subtest"
   };
 
-  KlassStatusView.prototype.subtest = function(event) {
+  KlassWeeklyView.prototype.subtest = function(event) {
     var id;
     id = $(event.target).attr("data-id");
     return Tangerine.router.navigate("report/" + id, true);
   };
 
-  KlassStatusView.prototype.gotoStudentSubtest = function(event) {
+  KlassWeeklyView.prototype.gotoStudentSubtest = function(event) {
     var studentId, subtestId;
     studentId = $(event.target).attr("data-studentId");
     subtestId = $(event.target).attr("data-subtestId");
     return Tangerine.router.navigate("class/result/student/subtest/" + studentId + "/" + subtestId, true);
   };
 
-  KlassStatusView.prototype.nextWeek = function() {
+  KlassWeeklyView.prototype.nextWeek = function() {
     this.currentWeek++;
     return this.render();
   };
 
-  KlassStatusView.prototype.prevWeek = function() {
+  KlassWeeklyView.prototype.prevWeek = function() {
     this.currentWeek--;
     return this.render();
   };
 
-  KlassStatusView.prototype.initialize = function(options) {
+  KlassWeeklyView.prototype.initialize = function(options) {
     var byWeek, week;
     this.currentWeek = options.week || 1;
     this.subtestsByWeek = [];
@@ -54,7 +54,7 @@ KlassStatusView = (function(_super) {
     return this.totalWeeks = week - 1;
   };
 
-  KlassStatusView.prototype.render = function() {
+  KlassWeeklyView.prototype.render = function() {
     var gridPage, html, i, resultsForThisSubtest, subtest, subtestsThisWeek, _len;
     gridPage = "<table class='info_box_wide '><tbody><tr><th></th>";
     this.options.students.each(function(student) {
@@ -85,6 +85,6 @@ KlassStatusView = (function(_super) {
     return this.trigger("rendered");
   };
 
-  return KlassStatusView;
+  return KlassWeeklyView;
 
 })(Backbone.View);

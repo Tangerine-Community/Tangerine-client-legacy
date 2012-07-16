@@ -1,4 +1,4 @@
-class KlassStatusView extends Backbone.View
+class KlassWeeklyView extends Backbone.View
 
   events:
     "click .student_subtest" : 'gotoStudentSubtest'
