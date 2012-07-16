@@ -21,7 +21,8 @@ ReportView = (function(_super) {
   ReportView.prototype.status = ["Concerning", "Average", "Great"];
 
   ReportView.prototype.back = function() {
-    return Tangerine.router.navigate("");
+    console.log(this.options.subtest.get("week"));
+    return Tangerine.router.navigate("class/" + (this.options.subtest.get('klassId')) + "/" + (this.options.subtest.get('week')), true);
   };
 
   ReportView.prototype.initialize = function(options) {

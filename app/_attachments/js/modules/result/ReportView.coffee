@@ -12,7 +12,8 @@ class ReportView extends Backbone.View
   status      : ["Concerning","Average", "Great"]
 
   back: ->
-    Tangerine.router.navigate ""
+    console.log @options.subtest.get("week")
+    Tangerine.router.navigate "class/#{@options.subtest.get('klassId')}/#{@options.subtest.get('week')}", true
 
   initialize: ( options ) -> 
 
