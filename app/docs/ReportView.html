@@ -50,7 +50,8 @@ Use indices where Index = Standard Deviation * 100 for negative deviations</p>  
         <span class="s">&#39;percentile&#39;</span> <span class="o">:</span> <span class="mi">0</span>
         <span class="s">&#39;status&#39;</span>     <span class="o">:</span> <span class="s">&quot;&quot;</span>
 
-      <span class="nv">person.pCorrect = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">nCorrect</span> <span class="o">/</span> <span class="nx">person</span><span class="p">.</span><span class="nx">attempted</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+      <span class="nv">person.pCorrect = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">nCorrect</span> <span class="o">/</span> <span class="nx">person</span><span class="p">.</span><span class="nx">attempted</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
       <span class="nx">@summary</span><span class="p">.</span><span class="nx">aCorrect</span> <span class="o">+=</span> <span class="nx">person</span><span class="p">.</span><span class="nx">pCorrect</span>
       <span class="nx">@table</span><span class="p">.</span><span class="nx">push</span> <span class="nx">person</span>
 
