@@ -104,11 +104,11 @@ class GridRunView extends Backbone.View
       @timeRunning = false
       @timerStopped = true
       @updateCountdown()
-      @updateMode null, "last"
+      @updateMode null, "last" if @captureLastAttempted
       if message
         Utils.topAlert message
       else
-        Utils.midAlert "Please mark <br>last item attempted"
+        Utils.midAlert "Please mark <br>last item attempted" if @captureLastAttempted
 
   autostopTest: ->
     Utils.flash()
@@ -142,7 +142,7 @@ class GridRunView extends Backbone.View
     @timeRemaining = @timer - @timeElapsed
     
     @$el.find(".timer").html @timeRemaining
-    if @timeRemaining <= 0 && @timeRunning == true then @stopTimer null, "Time<br><br>Please mark<br>last item attempted"
+    if @timeRemaining <= 0 && @timeRunning == true && @captureLastAttempted then @stopTimer null, "Time<br><br>Please mark<br>last item attempted"
 
   updateMode: (event, mode = null) =>
     if mode?
@@ -182,7 +182,7 @@ class GridRunView extends Backbone.View
     @gridOutput = []
     for item, i in @items
       @gridOutput[i] = 'correct'
-    @columns  = parseInt(@model.get("columns")) || 0
+    @columns  = parseInt(@model.get("columns")) || 3
     
     @autostop = if @untimed then 0 else (parseInt(@model.get("autostop")) || 0)
     @autostopped = false
@@ -195,6 +195,9 @@ class GridRunView extends Backbone.View
     @updateMode( null, @mode )
 
   initialize: (options) ->
+
+    @captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted") else true
+    @endOfLine            = if @model.has("endOfLine")            then @model.get("endOfLine")            else true
 
     @totalTime = @model.get("timer") || 0
 
@@ -226,9 +229,9 @@ class GridRunView extends Backbone.View
       html += "<tr>"
       for i in [1..@columns]
         if done < @items.length
-          html += @gridElement { label : @items[done], i: done+1 }
+          html += @gridElement { label : _.escape(@items[done]), i: done+1 }
         done++
-      html += @endOfGridLine({i:done}) if done < ( @items.length + 1 )
+      html += @endOfGridLine({i:done}) if done < ( @items.length + 1 ) && @endOfLine
       html += "</tr>"
     html += "</table>"
     
@@ -240,9 +243,7 @@ class GridRunView extends Backbone.View
       <br>
     </div>"
 
-    html += "
-    #{if not @untimed then stopTimerHTML else ""}
-    #{if not @untimed then resetButton else ""}
+    modeSelector = "
     <div id='grid_mode' class='question buttonset clearfix'>
       <label>Input mode</label><br>
       <label for='mark'>Mark</label>
@@ -250,7 +251,12 @@ class GridRunView extends Backbone.View
       <label for='last_attempted'>Last attempted</label>
       <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>
     </div>
+    "
 
+    html += "
+      #{if not @untimed then stopTimerHTML else ""}
+      #{if not @untimed then resetButton else ""}
+      #{if @captureLastAttempted then modeSelector else ""}
     "
 
     @$el.html html
@@ -258,25 +264,31 @@ class GridRunView extends Backbone.View
     @trigger "rendered"
     
   isValid: ->
-    if @lastAttempted == 0 then return false
+    if @captureLastAttempted && @lastAttempted == 0 then return false
+    # might need to let it know if it's timed or untimed too ::shrug::
     if @timeRunning == true then return false
     true
     
   showErrors: ->
-    if @lastAttempted == 0
+    if @captureLastAttempted && @lastAttempted == 0
       Utils.midAlert "Please touch<br>last item read."
       @updateMode null, "last"
     Utils.midAlert "Time still running." if @timeRuning == true
   
   getResult: ->
     itemResults = []
+    @lastAttempted = @items.length if not @captureLastAttempted
+
     for item, i in @items
       if i < @lastAttempted
         itemResults[i] = @gridOutput[i]
       else
         itemResults[i] = "missing"
 
+    @lastAttempted = false if not @captureLastAttempted
+
     result =
+      "capture_last_attempted" : @captureLastAttempted
       "auto_stop"     : @autostopped
       "attempted"     : @lastAttempted
       "items"         : itemResults
