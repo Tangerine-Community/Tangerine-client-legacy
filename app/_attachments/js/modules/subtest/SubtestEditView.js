@@ -101,7 +101,7 @@ SubtestEditView = (function(_super) {
   };
 
   SubtestEditView.prototype.save = function(event) {
-    var prototype, _base, _base2, _base3;
+    var prototype, _base, _base2;
     prototype = this.model.get("prototype");
     this.model.set({
       name: this.$el.find("#subtest_name").val(),
@@ -110,7 +110,10 @@ SubtestEditView = (function(_super) {
       skippable: this.$el.find("#skip_radio input:radio[name=skippable]:checked").val() === "true"
     });
     if (typeof (_base = this.prototypeEditor).save === "function") _base.save();
-    if ((typeof (_base2 = this.prototypeEditor).isValid === "function" ? _base2.isValid() : void 0) === true) {
+    if ((this.prototypeEditor.isValid != null) && this.prototypeEditor.isValid() === false) {
+      Utils.midAlert("There are errors on this page");
+      return typeof (_base2 = this.prototypeEditor).showErrors === "function" ? _base2.showErrors() : void 0;
+    } else {
       if (this.model.save(null, {
         wait: true
       })) {
@@ -120,9 +123,6 @@ SubtestEditView = (function(_super) {
         console.log("save error");
         return Utils.midAlert("Save error");
       }
-    } else {
-      Utils.midAlert("There are errors on this page");
-      return typeof (_base3 = this.prototypeEditor).showErrors === "function" ? _base3.showErrors() : void 0;
     }
   };
 

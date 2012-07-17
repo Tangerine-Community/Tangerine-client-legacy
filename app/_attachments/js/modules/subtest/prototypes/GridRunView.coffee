@@ -217,7 +217,7 @@ class GridRunView extends Backbone.View
       html += "<tr>"
       for i in [1..@columns]
         if done < @items.length
-          html += @gridElement { label : @items[done], i: done+1 }
+          html += @gridElement { label : _.escape(@items[done]), i: done+1 }
         done++
       html += @endOfGridLine({i:done}) if done < ( @items.length + 1 )
       html += "</tr>"

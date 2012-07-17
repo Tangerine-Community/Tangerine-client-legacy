@@ -260,7 +260,7 @@ GridRunView = (function(_super) {
       for (i = 1, _ref = this.columns; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
         if (done < this.items.length) {
           html += this.gridElement({
-            label: this.items[done],
+            label: _.escape(this.items[done]),
             i: done + 1
           });
         }

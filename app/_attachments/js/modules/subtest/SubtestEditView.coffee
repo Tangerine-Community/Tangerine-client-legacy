@@ -79,16 +79,16 @@ class SubtestEditView extends Backbone.View
 
     @prototypeEditor.save?()
 
-    if @prototypeEditor.isValid?() == true
+    if @prototypeEditor.isValid? && @prototypeEditor.isValid() == false
+      Utils.midAlert "There are errors on this page"
+      @prototypeEditor.showErrors?()
+    else
       if @model.save(null, {wait:true})
         Utils.midAlert "Subtest Saved"
         setTimeout @goBack, 1000
       else
         console.log "save error"
         Utils.midAlert "Save error"
-    else
-      Utils.midAlert "There are errors on this page"
-      @prototypeEditor.showErrors?()
       
   # Wow I'm bad at using templates
   render: ->
