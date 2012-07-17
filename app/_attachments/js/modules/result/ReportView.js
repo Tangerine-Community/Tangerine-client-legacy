@@ -62,7 +62,7 @@ ReportView = (function(_super) {
         'percentile': 0,
         'status': ""
       };
-      person.pCorrect = Math.round(person.nCorrect / person.attempted) * 100;
+      person.pCorrect = Math.round(person.nCorrect / person.attempted * 100);
       this.summary.aCorrect += person.pCorrect;
       this.table.push(person);
     }

@@ -55,7 +55,8 @@ class ReportView extends Backbone.View
         'percentile' : 0
         'status'     : ""
 
-      person.pCorrect = Math.round(person.nCorrect / person.attempted) * 100
+      person.pCorrect = Math.round(person.nCorrect / person.attempted * 100)
+
       @summary.aCorrect += person.pCorrect
       @table.push person
 
