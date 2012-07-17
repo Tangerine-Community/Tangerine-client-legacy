@@ -12,7 +12,9 @@ class GridEditView extends Backbone.View
   save: ->
     # validation can be done on models, perhaps there is a better palce to do it
     if /\t|,/.test(@$el.find("#subtest_items").val()) then alert "Please remember\n\nGrid items are space \" \" delimited"
+
     @model.set
+      randomize: @$el.find("#randomize input:checked").val() == "true"
       timer    : parseInt( @$el.find("#subtest_timer").val() )
       items    : _.compact( @$el.find("#subtest_items").val().split(" ") ) # mild sanitization, happens at read too
       columns  : parseInt( @$el.find("#subtest_columns").val() )

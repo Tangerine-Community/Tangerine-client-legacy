@@ -27,6 +27,7 @@ GridEditView = (function(_super) {
       alert("Please remember\n\nGrid items are space \" \" delimited");
     }
     return this.model.set({
+      randomize: this.$el.find("#randomize input:checked").val() === "true",
       timer: parseInt(this.$el.find("#subtest_timer").val()),
       items: _.compact(this.$el.find("#subtest_items").val().split(" ")),
       columns: parseInt(this.$el.find("#subtest_columns").val()),
