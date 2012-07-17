@@ -184,9 +184,6 @@ class Context
     # true if it finds "iriscouch" in url
     @server = ~(String(window.location).indexOf("iriscouch"))
 
-    @server = true
-    @mobile = !@server
-
 ##UI helpers
 $ ->
   # ###.clear_message

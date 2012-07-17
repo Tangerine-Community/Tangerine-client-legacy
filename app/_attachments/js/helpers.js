@@ -237,8 +237,6 @@ Context = (function() {
     this.mobile = !~(String(window.location).indexOf("iriscouch"));
     this.kindle = /kindle/.test(navigator.userAgent.toLowerCase());
     this.server = ~(String(window.location).indexOf("iriscouch"));
-    this.server = true;
-    this.mobile = !this.server;
   }
 
   return Context;
