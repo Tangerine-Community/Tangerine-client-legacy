@@ -22,7 +22,7 @@ ReportView = (function(_super) {
 
   ReportView.prototype.back = function() {
     console.log(this.options.subtest.get("week"));
-    return Tangerine.router.navigate("class/" + (this.options.subtest.get('klassId')) + "/" + (this.options.subtest.get('week')), true);
+    return Tangerine.router.navigate("class/" + (this.options.students.models[0].get('klassId')) + "/" + (this.options.subtest.get('week')), true);
   };
 
   ReportView.prototype.initialize = function(options) {

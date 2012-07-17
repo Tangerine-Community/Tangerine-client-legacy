@@ -13,7 +13,7 @@ class ReportView extends Backbone.View
 
   back: ->
     console.log @options.subtest.get("week")
-    Tangerine.router.navigate "class/#{@options.subtest.get('klassId')}/#{@options.subtest.get('week')}", true
+    Tangerine.router.navigate "class/#{@options.students.models[0].get('klassId')}/#{@options.subtest.get('week')}", true
 
   initialize: ( options ) -> 
 
