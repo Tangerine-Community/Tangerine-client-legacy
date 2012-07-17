@@ -59,7 +59,7 @@ class AssessmentListView extends Backbone.View
       "
     if @isAdmin
       html += "
-        #{if Tangerine.context.mobile then newButton else "" }
+        #{if !Tangerine.context.mobile then newButton else "" }
         #{if Tangerine.context.mobile then importButton else ""}
         <div class='new_assessment_form confirmation'>
           <div class='menu_box_wide'>
