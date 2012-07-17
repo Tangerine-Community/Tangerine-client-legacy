@@ -173,11 +173,11 @@ class CSVView extends Backbone.View
             values[keys.indexOf("#{variableName}_time_remain")] = subtest.data.time_remain
             values[keys.indexOf("#{variableName}_attempted")] = subtest.data.attempted
             for item, i in subtest.data.items
-              if item == "correct"
+              if item.itemResult == "correct"
                 exportValue = 1
-              else if item == "incorrect"
+              else if item.itemResult == "incorrect"
                 exportValue = 0
-              else if item == "missing"
+              else if item.itemResult == "missing"
                 exportValue = "."
               values[keys.indexOf("#{variableName}#{i+1}")] = exportValue
 

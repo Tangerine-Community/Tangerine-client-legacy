@@ -10,6 +10,14 @@ GridEditView = (function(_super) {
     GridEditView.__super__.constructor.apply(this, arguments);
   }
 
+  GridEditView.prototype.events = {
+    'blur #subtest_items': 'cleanWhitespace'
+  };
+
+  GridEditView.prototype.cleanWhitespace = function() {
+    return this.$el.find("#subtest_items").val(this.$el.find("#subtest_items").val().replace(/\s+/g, ' '));
+  };
+
   GridEditView.prototype.initialize = function(options) {
     return this.model = options.model;
   };
@@ -28,13 +36,14 @@ GridEditView = (function(_super) {
   };
 
   GridEditView.prototype.render = function() {
-    var autostop, columns, items, timer, variableName;
+    var autostop, columns, items, randomize, timer, variableName;
     timer = this.model.get("timer") || 0;
     items = this.model.get("items").join(" ");
     columns = this.model.get("columns") || 0;
     autostop = this.model.get("autostop") || 0;
     variableName = this.model.get("variableName") || "";
-    return this.$el.html("      <div class='label_value'>        <label for='subtest_variable_name'>Variable name</label>        <input id='subtest_variable_name' value='" + variableName + "'>      </div>      <div class='label_value'>        <label for='subtest_items'>Grid Items (space delimited)</label>        <textarea id='subtest_items'>" + items + "</textarea>      </div>      <div class='label_value'>        <label for='subtest_columns'>Columns</label>        <input id='subtest_columns' value='" + columns + "' type='number'>      </div>      <div class='label_value'>        <label for='subtest_autostop'>Autostop</label>        <input id='subtest_autostop' value='" + autostop + "' type='number'>      </div>      <div class='label_value'>        <label for='subtest_timer'>Timer</label>        <input id='subtest_timer' value='" + timer + "' type='number'>      </div>");
+    randomize = this.model.has("randomize") ? this.model.get("randomize") : false;
+    return this.$el.html("      <div class='label_value'>        <label for='subtest_variable_name'>Variable name</label>        <input id='subtest_variable_name' value='" + variableName + "'>      </div>      <div class='label_value'>        <label for='subtest_items' title='These items are space delimited. Pasting text from other applications may insert tabs and new lines. Whitespace will be automatically corrected.'>Grid Items</label>        <textarea id='subtest_items'>" + items + "</textarea>      </div>      <div class='label_value'>        <label>Randomize items</label><br>        <div class='menu_box'>          <div id='randomize' class='buttonset'>            <label for='randomize_true'>Yes</label><input name='randomize' type='radio' value='true' id='randomize_true' " + (randomize ? 'checked' : void 0) + ">            <label for='randomize_false'>No</label><input name='randomize' type='radio' value='false' id='randomize_false' " + (!randomize ? 'checked' : void 0) + ">          </div>        </div>      </div>      <div class='label_value'>        <label for='subtest_columns'>Columns</label>        <input id='subtest_columns' value='" + columns + "' type='number'>      </div>      <div class='label_value'>        <label for='subtest_autostop'>Autostop</label>        <input id='subtest_autostop' value='" + autostop + "' type='number'>      </div>      <div class='label_value'>        <label for='subtest_timer'>Timer</label>        <input id='subtest_timer' value='" + timer + "' type='number'>      </div>");
   };
 
   return GridEditView;

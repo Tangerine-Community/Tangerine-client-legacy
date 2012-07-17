@@ -1,5 +1,11 @@
 class GridEditView extends Backbone.View
 
+  events:
+    'blur #subtest_items' : 'cleanWhitespace'
+
+  cleanWhitespace: ->
+    @$el.find("#subtest_items").val( @$el.find("#subtest_items").val().replace(/\s+/g, ' ') )
+
   initialize: ( options ) ->
     @model = options.model
 
@@ -20,6 +26,7 @@ class GridEditView extends Backbone.View
     columns      = @model.get("columns") || 0
     autostop     = @model.get("autostop") || 0
     variableName = @model.get("variableName") || ""
+    randomize    = if @model.has("randomize") then @model.get("randomize") else false
 
 
     @$el.html "
@@ -28,9 +35,20 @@ class GridEditView extends Backbone.View
         <input id='subtest_variable_name' value='#{variableName}'>
       </div>
       <div class='label_value'>
-        <label for='subtest_items'>Grid Items (space delimited)</label>
+        <label for='subtest_items' title='These items are space delimited. Pasting text from other applications may insert tabs and new lines. Whitespace will be automatically corrected.'>Grid Items</label>
         <textarea id='subtest_items'>#{items}</textarea>
       </div>
+
+      <div class='label_value'>
+        <label>Randomize items</label><br>
+        <div class='menu_box'>
+          <div id='randomize' class='buttonset'>
+            <label for='randomize_true'>Yes</label><input name='randomize' type='radio' value='true' id='randomize_true' #{'checked' if randomize}>
+            <label for='randomize_false'>No</label><input name='randomize' type='radio' value='false' id='randomize_false' #{'checked' if not randomize}>
+          </div>
+        </div>
+      </div>
+
       <div class='label_value'>
         <label for='subtest_columns'>Columns</label>
         <input id='subtest_columns' value='#{columns}' type='number'>

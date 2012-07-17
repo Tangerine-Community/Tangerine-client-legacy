@@ -207,7 +207,7 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.resetVariables = function() {
-    var i, item, _len, _ref;
+    var i, item, temp, tempValue, _len, _len2, _len3, _len4, _len5, _ref, _ref2, _ref3, _ref4, _ref5;
     this.markRecord = [];
     this.timerStopped = false;
     this.startTime = 0;
@@ -220,11 +220,40 @@ GridRunView = (function(_super) {
     this.timeRunning = false;
     this.timer = parseInt(this.model.get("timer")) || 0;
     this.items = _.compact(this.model.get("items"));
+    this.itemMap = [];
+    this.mapItem = [];
+    if (this.model.has("randomize") && this.model.get("randomize")) {
+      _ref = this.items;
+      for (i = 0, _len = _ref.length; i < _len; i++) {
+        item = _ref[i];
+        this.itemMap[i] = i;
+      }
+      _ref2 = this.items;
+      for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
+        item = _ref2[i];
+        temp = Math.floor(Math.random() * this.items.length);
+        tempValue = this.itemMap[temp];
+        this.itemMap[temp] = this.itemMap[i];
+        this.itemMap[i] = tempValue;
+      }
+      _ref3 = this.itemMap;
+      for (i = 0, _len3 = _ref3.length; i < _len3; i++) {
+        item = _ref3[i];
+        this.mapItem[this.itemMap[i]] = i;
+      }
+    } else {
+      _ref4 = this.items;
+      for (i = 0, _len4 = _ref4.length; i < _len4; i++) {
+        item = _ref4[i];
+        this.itemMap[i] = i;
+        this.mapItem[i] = i;
+      }
+    }
     this.mode = "disabled";
     this.gridOutput = [];
-    _ref = this.items;
-    for (i = 0, _len = _ref.length; i < _len; i++) {
-      item = _ref[i];
+    _ref5 = this.items;
+    for (i = 0, _len5 = _ref5.length; i < _len5; i++) {
+      item = _ref5[i];
       this.gridOutput[i] = 'correct';
     }
     this.columns = parseInt(this.model.get("columns")) || 0;
@@ -260,7 +289,7 @@ GridRunView = (function(_super) {
       for (i = 1, _ref = this.columns; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
         if (done < this.items.length) {
           html += this.gridElement({
-            label: _.escape(this.items[done]),
+            label: _.escape(this.items[this.itemMap[done]]),
             i: done + 1
           });
         }
@@ -292,15 +321,22 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.getResult = function() {
-    var i, item, itemResults, result, _len, _ref;
+    var completeResults, i, item, itemResults, result, _len, _ref;
+    completeResults = [];
     itemResults = [];
     _ref = this.items;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       item = _ref[i];
       if (i < this.lastAttempted) {
-        itemResults[i] = this.gridOutput[i];
+        itemResults[i] = {
+          itemResult: this.gridOutput[this.mapItem[i]],
+          itemLabel: item
+        };
       } else {
-        itemResults[i] = "missing";
+        itemResults[i] = {
+          itemResult: "missing",
+          itemLabel: this.items[this.mapItem[i]]
+        };
       }
     }
     return result = {
