@@ -1,12 +1,16 @@
 class KlassWeeklyView extends Backbone.View
 
   events:
-    "click .student_subtest" : 'gotoStudentSubtest'
-    "click .next_week" : "nextWeek"
-    "click .prev_week" : "prevWeek"
-    "click .subtest" : "subtest"
+    "click .student_subtest"          : "gotoStudentSubtest"
+    "click .next_week"                : "nextWeek"
+    "click .prev_week"                : "prevWeek"
+    "click .week_subtest_report"      : "weekSubtestReport"
+    "click .back"                     : "back"
+    
+  back: ->
+    Tangerine.router.navigate "classes", true
 
-  subtest: (event) ->
+  weekSubtestReport: (event) ->
     id = $(event.target).attr("data-id")
     Tangerine.router.navigate "report/#{id}", true
 
@@ -15,49 +19,68 @@ class KlassWeeklyView extends Backbone.View
     subtestId = $(event.target).attr("data-subtestId")
     Tangerine.router.navigate "class/result/student/subtest/#{studentId}/#{subtestId}", true
 
-  nextWeek: -> @currentWeek++; @render()
-  prevWeek: -> @currentWeek--; @render()
+  nextWeek: ->
+    if @currentWeek < @subtestsByWeek.length-1
+      @currentWeek++
+      @render()
+
+  prevWeek: -> 
+    if @currentWeek > 1
+      @currentWeek-- 
+      @render()
 
   initialize: (options) ->
     @currentWeek = options.week || 1
     @subtestsByWeek = []
     week = 1
     while (byWeek=options.subtests.where "week" : week).length != 0
-      @subtestsByWeek[week] = byWeek
+      @subtestsByWeek[week] = byWeek unless byWeek == 0
+      @subtestsByWeek[week].sort (a,b) -> a.get("name").toLowerCase() < b.get("name").toLowerCase()
       week++
     @totalWeeks = week - 1
 
+
   render: ->
-    gridPage = "<table class='info_box_wide '><tbody><tr><th></th>"
-    @options.students.each (student) ->
-      gridPage += "<th>#{student.get("name")}</th>"
-    gridPage += "</tr>"
+
+    @table = []
 
     subtestsThisWeek = @subtestsByWeek[@currentWeek]
 
-    for subtest, i in subtestsThisWeek
+    for student, i in @options.students.models
+      @table[i] = []
 
-      gridPage += "<tr>"
-      resultsForThisSubtest = new KlassResults @options.results.where "subtestId" : subtest.id
-      gridPage += "<td><div class='subtest' data-id='#{subtest.id}'>#{subtest.get('name')}</div></td>"
-      @options.students.each (student) ->
+      resultsForThisStudent = new KlassResults @options.results.where "studentId" : student.id
 
-        studentResult = resultsForThisSubtest.where "studentId" : student.id
-        marker = if studentResult.length == 0 then "?" else "O"
-        gridPage += "<td><div class='student_subtest command' data-taken='true' data-studentId='#{student.id}' data-subtestId='#{subtest.id}'>#{marker}</div></td>"
+      for subtest, j in subtestsThisWeek
 
+        studentResult = resultsForThisStudent.where "subtestId" : subtest.id
+        marker        = if studentResult.length == 0 then "?" else "&#x2714;"
+        @table[i].push
+          "content"   : marker
+          "taken"     : studentResult.length != 0
+          "studentId" : student.id
+          "studentName" : student.get("name")
+          "subtestId" : subtest.id
+
+    # make headers
+    gridPage = "<table class='info_box_wide '><tbody><tr><th></th>"
+    for subtest in subtestsThisWeek
+      gridPage += "<th><div class='command week_subtest_report' data-id='#{subtest.id}'>#{subtest.get('name')}</div></th>"
+    gridPage += "</tr>"
+    for row in @table
+      gridPage += "<tr><td>#{row[0].studentName}</td>"
+      for cell, column in row
+        gridPage += "<td><div class='student_subtest command' data-taken='#{cell.taken}' data-studentId='#{cell.studentId}' data-subtestId='#{cell.subtestId}'>#{cell.content}</div></td>"
       gridPage += "</tr>"
-
     gridPage += "</tbody></table>"
 
-    html = "
+    @$el.html "
       <h1>Class Status</h1>
       <h2>Week #{@currentWeek}</h2>
       #{gridPage}<br>
       
-      <button class='prev_week command'>Previous</button> <button class='next_week command'>Next</button> 
+      <button class='prev_week command'>Previous</button> <button class='next_week command'>Next</button><br><br>
+      <button class='back navigation'>Back</button> 
       "
-
-    @$el.html html
 
     @trigger "rendered"

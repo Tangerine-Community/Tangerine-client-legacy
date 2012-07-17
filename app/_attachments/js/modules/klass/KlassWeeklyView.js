@@ -11,13 +11,18 @@ KlassWeeklyView = (function(_super) {
   }
 
   KlassWeeklyView.prototype.events = {
-    "click .student_subtest": 'gotoStudentSubtest',
+    "click .student_subtest": "gotoStudentSubtest",
     "click .next_week": "nextWeek",
     "click .prev_week": "prevWeek",
-    "click .subtest": "subtest"
+    "click .week_subtest_report": "weekSubtestReport",
+    "click .back": "back"
   };
 
-  KlassWeeklyView.prototype.subtest = function(event) {
+  KlassWeeklyView.prototype.back = function() {
+    return Tangerine.router.navigate("classes", true);
+  };
+
+  KlassWeeklyView.prototype.weekSubtestReport = function(event) {
     var id;
     id = $(event.target).attr("data-id");
     return Tangerine.router.navigate("report/" + id, true);
@@ -31,13 +36,17 @@ KlassWeeklyView = (function(_super) {
   };
 
   KlassWeeklyView.prototype.nextWeek = function() {
-    this.currentWeek++;
-    return this.render();
+    if (this.currentWeek < this.subtestsByWeek.length - 1) {
+      this.currentWeek++;
+      return this.render();
+    }
   };
 
   KlassWeeklyView.prototype.prevWeek = function() {
-    this.currentWeek--;
-    return this.render();
+    if (this.currentWeek > 1) {
+      this.currentWeek--;
+      return this.render();
+    }
   };
 
   KlassWeeklyView.prototype.initialize = function(options) {
@@ -48,40 +57,59 @@ KlassWeeklyView = (function(_super) {
     while ((byWeek = options.subtests.where({
         "week": week
       })).length !== 0) {
-      this.subtestsByWeek[week] = byWeek;
+      if (byWeek !== 0) this.subtestsByWeek[week] = byWeek;
+      this.subtestsByWeek[week].sort(function(a, b) {
+        return a.get("name").toLowerCase() < b.get("name").toLowerCase();
+      });
       week++;
     }
     return this.totalWeeks = week - 1;
   };
 
   KlassWeeklyView.prototype.render = function() {
-    var gridPage, html, i, resultsForThisSubtest, subtest, subtestsThisWeek, _len;
-    gridPage = "<table class='info_box_wide '><tbody><tr><th></th>";
-    this.options.students.each(function(student) {
-      return gridPage += "<th>" + (student.get("name")) + "</th>";
-    });
-    gridPage += "</tr>";
+    var cell, column, gridPage, i, j, marker, resultsForThisStudent, row, student, studentResult, subtest, subtestsThisWeek, _i, _j, _len, _len2, _len3, _len4, _len5, _ref, _ref2;
+    this.table = [];
     subtestsThisWeek = this.subtestsByWeek[this.currentWeek];
-    for (i = 0, _len = subtestsThisWeek.length; i < _len; i++) {
-      subtest = subtestsThisWeek[i];
-      gridPage += "<tr>";
-      resultsForThisSubtest = new KlassResults(this.options.results.where({
-        "subtestId": subtest.id
+    _ref = this.options.students.models;
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      student = _ref[i];
+      this.table[i] = [];
+      resultsForThisStudent = new KlassResults(this.options.results.where({
+        "studentId": student.id
       }));
-      gridPage += "<td><div class='subtest' data-id='" + subtest.id + "'>" + (subtest.get('name')) + "</div></td>";
-      this.options.students.each(function(student) {
-        var marker, studentResult;
-        studentResult = resultsForThisSubtest.where({
-          "studentId": student.id
+      for (j = 0, _len2 = subtestsThisWeek.length; j < _len2; j++) {
+        subtest = subtestsThisWeek[j];
+        studentResult = resultsForThisStudent.where({
+          "subtestId": subtest.id
         });
-        marker = studentResult.length === 0 ? "?" : "O";
-        return gridPage += "<td><div class='student_subtest command' data-taken='true' data-studentId='" + student.id + "' data-subtestId='" + subtest.id + "'>" + marker + "</div></td>";
-      });
+        marker = studentResult.length === 0 ? "?" : "&#x2714;";
+        this.table[i].push({
+          "content": marker,
+          "taken": studentResult.length !== 0,
+          "studentId": student.id,
+          "studentName": student.get("name"),
+          "subtestId": subtest.id
+        });
+      }
+    }
+    gridPage = "<table class='info_box_wide '><tbody><tr><th></th>";
+    for (_i = 0, _len3 = subtestsThisWeek.length; _i < _len3; _i++) {
+      subtest = subtestsThisWeek[_i];
+      gridPage += "<th><div class='command week_subtest_report' data-id='" + subtest.id + "'>" + (subtest.get('name')) + "</div></th>";
+    }
+    gridPage += "</tr>";
+    _ref2 = this.table;
+    for (_j = 0, _len4 = _ref2.length; _j < _len4; _j++) {
+      row = _ref2[_j];
+      gridPage += "<tr><td>" + row[0].studentName + "</td>";
+      for (column = 0, _len5 = row.length; column < _len5; column++) {
+        cell = row[column];
+        gridPage += "<td><div class='student_subtest command' data-taken='" + cell.taken + "' data-studentId='" + cell.studentId + "' data-subtestId='" + cell.subtestId + "'>" + cell.content + "</div></td>";
+      }
       gridPage += "</tr>";
     }
     gridPage += "</tbody></table>";
-    html = "      <h1>Class Status</h1>      <h2>Week " + this.currentWeek + "</h2>      " + gridPage + "<br>            <button class='prev_week command'>Previous</button> <button class='next_week command'>Next</button>       ";
-    this.$el.html(html);
+    this.$el.html("      <h1>Class Status</h1>      <h2>Week " + this.currentWeek + "</h2>      " + gridPage + "<br>            <button class='prev_week command'>Previous</button> <button class='next_week command'>Next</button><br><br>      <button class='back navigation'>Back</button>       ");
     return this.trigger("rendered");
   };
 
