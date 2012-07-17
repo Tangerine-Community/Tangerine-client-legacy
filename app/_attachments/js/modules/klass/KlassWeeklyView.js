@@ -38,7 +38,8 @@ KlassWeeklyView = (function(_super) {
   KlassWeeklyView.prototype.nextWeek = function() {
     if (this.currentWeek < this.subtestsByWeek.length - 1) {
       this.currentWeek++;
-      return this.render();
+      this.render();
+      return Tangerine.router.navigate("class/" + this.options.klass.id + "/" + this.currentWeek);
     }
   };
 
@@ -59,7 +60,7 @@ KlassWeeklyView = (function(_super) {
       })).length !== 0) {
       if (byWeek !== 0) this.subtestsByWeek[week] = byWeek;
       this.subtestsByWeek[week].sort(function(a, b) {
-        return a.get("name").toLowerCase() < b.get("name").toLowerCase();
+        return a.get("name").toLowerCase() > b.get("name").toLowerCase();
       });
       week++;
     }

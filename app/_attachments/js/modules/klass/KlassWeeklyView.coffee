@@ -23,6 +23,7 @@ class KlassWeeklyView extends Backbone.View
     if @currentWeek < @subtestsByWeek.length-1
       @currentWeek++
       @render()
+      Tangerine.router.navigate "class/#{@options.klass.id}/#{@currentWeek}"
 
   prevWeek: -> 
     if @currentWeek > 1
@@ -35,7 +36,7 @@ class KlassWeeklyView extends Backbone.View
     week = 1
     while (byWeek=options.subtests.where "week" : week).length != 0
       @subtestsByWeek[week] = byWeek unless byWeek == 0
-      @subtestsByWeek[week].sort (a,b) -> a.get("name").toLowerCase() < b.get("name").toLowerCase()
+      @subtestsByWeek[week].sort (a,b) -> a.get("name").toLowerCase() > b.get("name").toLowerCase()
       week++
     @totalWeeks = week - 1
 
