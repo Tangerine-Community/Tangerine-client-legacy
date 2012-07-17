@@ -173,6 +173,26 @@
 
     <span class="vi">@timer    = </span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;timer&quot;</span><span class="p">))</span> <span class="o">||</span> <span class="mi">0</span>
     <span class="vi">@items    = </span><span class="nx">_</span><span class="p">.</span><span class="nx">compact</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">))</span> <span class="c1"># mild sanitization, happens at save too</span>
+    
+    <span class="vi">@itemMap = </span><span class="p">[]</span>
+    <span class="vi">@mapItem = </span><span class="p">[]</span>
+    
+    <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;randomize&quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;randomize&quot;</span><span class="p">)</span>
+      <span class="k">for</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@items</span>
+        <span class="nx">@itemMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span>
+      <span class="k">for</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@items</span>
+        <span class="nv">temp = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="nx">@items</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+        <span class="nv">tempValue = </span><span class="nx">@itemMap</span><span class="p">[</span><span class="nx">temp</span><span class="p">]</span>
+        <span class="nx">@itemMap</span><span class="p">[</span><span class="nx">temp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">@itemMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+        <span class="nx">@itemMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">tempValue</span>
+
+      <span class="k">for</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@itemMap</span>
+        <span class="nx">@mapItem</span><span class="p">[</span><span class="nx">@itemMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">i</span>
+    <span class="k">else</span>
+      <span class="k">for</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@items</span>
+        <span class="nx">@itemMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span>
+        <span class="nx">@mapItem</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span>
+
     <span class="vi">@mode     = </span><span class="s">&quot;disabled&quot;</span>
     <span class="vi">@gridOutput = </span><span class="p">[]</span>
     <span class="k">for</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@items</span>
@@ -190,6 +210,7 @@
     <span class="nx">@updateMode</span><span class="p">(</span><span class="nx">@mode</span><span class="p">)</span>
 
   <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
+
 
     <span class="vi">@totalTime = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;timer&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span>
 
@@ -217,7 +238,7 @@
       <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;tr&gt;&quot;</span>
       <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nx">@columns</span><span class="p">]</span>
         <span class="k">if</span> <span class="nx">done</span> <span class="o">&lt;</span> <span class="nx">@items</span><span class="p">.</span><span class="nx">length</span>
-          <span class="nx">html</span> <span class="o">+=</span> <span class="nx">@gridElement</span> <span class="p">{</span> <span class="nv">label : </span><span class="nx">_</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">@items</span><span class="p">[</span><span class="nx">done</span><span class="p">]),</span> <span class="nv">i: </span><span class="nx">done</span><span class="o">+</span><span class="mi">1</span> <span class="p">}</span>
+          <span class="nx">html</span> <span class="o">+=</span> <span class="nx">@gridElement</span> <span class="p">{</span> <span class="nv">label : </span><span class="nx">_</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">@items</span><span class="p">[</span><span class="nx">@itemMap</span><span class="p">[</span><span class="nx">done</span><span class="p">]]),</span> <span class="nv">i: </span><span class="nx">done</span><span class="o">+</span><span class="mi">1</span> <span class="p">}</span>
         <span class="nx">done</span><span class="o">++</span>
       <span class="nx">html</span> <span class="o">+=</span> <span class="nx">@endOfGridLine</span><span class="p">({</span><span class="nx">i</span><span class="o">:</span><span class="nx">done</span><span class="p">})</span> <span class="k">if</span> <span class="nx">done</span> <span class="o">&lt;</span> <span class="p">(</span> <span class="nx">@items</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">)</span>
       <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;/tr&gt;&quot;</span>
@@ -253,12 +274,18 @@
     <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Time still running.&quot;</span> <span class="k">if</span> <span class="nx">@timeRuning</span> <span class="o">==</span> <span class="kc">true</span>
   
   <span class="nv">getResult: </span><span class="o">-&gt;</span>
+    <span class="nv">completeResults = </span><span class="p">[]</span>
     <span class="nv">itemResults = </span><span class="p">[]</span>
     <span class="k">for</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@items</span>
+      
       <span class="k">if</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">@lastAttempted</span>
-        <span class="nx">itemResults</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">@gridOutput</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+        <span class="nx">itemResults</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span>
+          <span class="nv">itemResult : </span><span class="nx">@gridOutput</span><span class="p">[</span><span class="nx">@mapItem</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span>
+          <span class="nv">itemLabel  : </span><span class="nx">item</span>
       <span class="k">else</span>
-        <span class="nx">itemResults</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;missing&quot;</span>
+        <span class="nx">itemResults</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span>
+          <span class="nv">itemResult : </span><span class="s">&quot;missing&quot;</span>
+          <span class="nv">itemLabel : </span><span class="nx">@items</span><span class="p">[</span><span class="nx">@mapItem</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span>
 
     <span class="nv">result =</span>
       <span class="s">&quot;auto_stop&quot;</span>     <span class="o">:</span> <span class="nx">@autostopped</span>
