@@ -1,7 +1,7 @@
 {
   "_id" : "example_swahili_subtest_w01_f",
   "curriculumId" : "example_swahili_curriculum",
-  "captureLastAttempted" : false,
+  "captureLastAttempted" : true,
   "endOfLine" : false,
   "prototype": "grid",
   "collection": "subtest",

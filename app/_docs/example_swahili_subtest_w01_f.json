@@ -2,7 +2,7 @@
   "_id" : "example_swahili_subtest_w01_l",
   "collection": "subtest",
   "curriculumId" : "example_swahili_curriculum",
-  "captureLastAttempted" : false,
+  "captureLastAttempted" : true,
   "endOfLine" : false,
   "prototype": "grid",
   "timer" : 60,
