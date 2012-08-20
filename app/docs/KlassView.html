@@ -20,10 +20,11 @@
     <span class="nv">grade  = </span><span class="nx">@klass</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;grade&quot;</span><span class="p">)</span>  <span class="o">||</span> <span class="s">&quot;&quot;</span>
     <span class="nv">stream = </span><span class="nx">@klass</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;stream&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
     <span class="nv">html = </span><span class="s">&quot;</span>
-<span class="s">    &lt;h1&gt;Class: </span><span class="si">#{</span><span class="nx">stream</span><span class="si">}</span><span class="s">&lt;/h1&gt;</span>
-<span class="s">    &lt;div&gt;</span>
-<span class="s">      Year: </span><span class="si">#{</span><span class="nx">year</span><span class="si">}</span><span class="s">&lt;br&gt;</span>
-<span class="s">      Grade: </span><span class="si">#{</span><span class="nx">grade</span><span class="si">}</span><span class="s"></span>
+<span class="s">    &lt;h1&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;class&#39;</span><span class="p">)</span><span class="si">}</span><span class="s"> </span><span class="si">#{</span><span class="nx">stream</span><span class="si">}</span><span class="s">&lt;/h1&gt;</span>
+<span class="s">    &lt;table&gt;</span>
+<span class="s">      &lt;tr&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">year</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s">      &lt;tr&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;grade&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;tr&gt;</span><span class="si">#{</span><span class="nx">grade</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s">    &lt;/table&gt;</span>
 <span class="s">    &lt;/div&gt;</span>
 <span class="s">    &lt;ul class=&#39;assessment_list&#39;&gt;&quot;</span>
     <span class="k">for</span> <span class="nx">assessment</span> <span class="k">in</span> <span class="nx">@assessments</span>

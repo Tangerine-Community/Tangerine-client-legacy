@@ -2,7 +2,7 @@
 
   <span class="nv">className: </span><span class="s">&quot;grid_prototype&quot;</span>
 
-  <span class="nv">events: </span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">kindle</span> <span class="k">then</span> <span class="p">{</span>
+  <span class="nv">events: </span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">context</span> <span class="o">==</span> <span class="s">&quot;mobile&quot;</span> <span class="k">then</span> <span class="p">{</span>
     <span class="s">&#39;touchstart .grid_element&#39;</span> <span class="o">:</span> <span class="s">&#39;gridClick&#39;</span>
     <span class="s">&#39;touchstart .end_of_grid_line&#39;</span> <span class="o">:</span> <span class="s">&#39;endOfGridLineClick&#39;</span>
     <span class="s">&#39;click .grid_mode&#39;</span>   <span class="o">:</span> <span class="s">&#39;updateMode&#39;</span>

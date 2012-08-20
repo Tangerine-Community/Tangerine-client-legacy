@@ -27,7 +27,7 @@
       <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">=&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>maybe this isn't the best place for a filter
 only applies to this list</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nv">groupCollection = </span><span class="p">[]</span>
         <span class="nx">collection</span><span class="p">.</span><span class="nx">each</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="o">=&gt;</span>
-          <span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">server</span>
+          <span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">context</span> <span class="o">==</span> <span class="s">&quot;server&quot;</span>
             <span class="k">if</span> <span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;group&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="nx">@group</span>
               <span class="nx">groupCollection</span><span class="p">.</span><span class="nx">push</span> <span class="nx">model</span>
           <span class="k">else</span>
@@ -36,7 +36,7 @@ only applies to this list</p>             </td>             <td class="code">   
         <span class="vi">@collection = </span><span class="k">new</span> <span class="nx">Assessments</span> <span class="nx">groupCollection</span>
         <span class="nx">@collection</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;add remove&quot;</span><span class="p">,</span> <span class="nx">@render</span>
 
-        <span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">server</span>
+        <span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">context</span> <span class="o">==</span> <span class="s">&quot;server&quot;</span>
           <span class="vi">@public = </span><span class="k">new</span> <span class="nx">Assessments</span> <span class="nx">collection</span><span class="p">.</span><span class="nx">where</span> <span class="p">{</span> <span class="nv">group : </span><span class="s">&quot;public&quot;</span> <span class="p">}</span>
         <span class="k">else</span>
           <span class="vi">@public = </span><span class="kc">null</span>
@@ -50,13 +50,13 @@ only applies to this list</p>             </td>             <td class="code">   
     <span class="nv">groupsButton = </span><span class="s">&quot;&lt;button class=&#39;navigation groups&#39;&gt;Groups&lt;/button&gt;&quot;</span>
 
     <span class="nv">html = </span><span class="s">&quot;</span>
-<span class="s">      </span><span class="si">#{</span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">server</span> <span class="k">then</span> <span class="nx">groupsButton</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s"></span>
+<span class="s">      </span><span class="si">#{</span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">context</span> <span class="o">==</span> <span class="s">&quot;server&quot;</span> <span class="k">then</span> <span class="nx">groupsButton</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s"></span>
 <span class="s">      &lt;h1&gt;Assessments&lt;/h1&gt;</span>
 <span class="s">      &quot;</span>
     <span class="k">if</span> <span class="nx">@isAdmin</span>
       <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
 <span class="s">        </span><span class="si">#{</span><span class="nx">newButton</span><span class="si">}</span><span class="s"></span>
-<span class="s">        </span><span class="si">#{</span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">mobile</span> <span class="k">then</span> <span class="nx">importButton</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s"></span>
+<span class="s">        </span><span class="si">#{</span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">context</span> <span class="o">==</span> <span class="s">&quot;mobile&quot;</span> <span class="k">then</span> <span class="nx">importButton</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s"></span>
 <span class="s">        &lt;div class=&#39;new_assessment_form confirmation&#39;&gt;</span>
 <span class="s">          &lt;div class=&#39;menu_box_wide&#39;&gt;</span>
 <span class="s">            &lt;input type=&#39;text&#39; class=&#39;new_assessment_name&#39; placeholder=&#39;Assessment Name&#39;&gt;</span>
@@ -82,7 +82,7 @@ only applies to this list</p>             </td>             <td class="code">   
     <span class="k">else</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;p class=&#39;grey&#39;&gt;No assessments yet. Click &lt;b&gt;new&lt;/b&gt; to start making one.&lt;/p&gt;&quot;</span>
 
-    <span class="k">if</span> <span class="nx">@isAdmin</span> <span class="o">&amp;&amp;</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">server</span>
+    <span class="k">if</span> <span class="nx">@isAdmin</span> <span class="o">&amp;&amp;</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">context</span> <span class="o">==</span> <span class="s">&quot;server&quot;</span>
 
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;&lt;h2&gt;Public assessments&lt;/h2&gt;&quot;</span>
 
