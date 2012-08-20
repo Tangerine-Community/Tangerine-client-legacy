@@ -278,7 +278,7 @@ class GridRunView extends Backbone.View
     itemResults = []
     for item, i in @items
       
-      if i < @lastAttempted
+      if @mapItem[i] < @lastAttempted
         itemResults[i] =
           itemResult : @gridOutput[@mapItem[i]]
           itemLabel  : item

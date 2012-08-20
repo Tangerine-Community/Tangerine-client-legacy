@@ -327,7 +327,7 @@ GridRunView = (function(_super) {
     _ref = this.items;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       item = _ref[i];
-      if (i < this.lastAttempted) {
+      if (this.mapItem[i] < this.lastAttempted) {
         itemResults[i] = {
           itemResult: this.gridOutput[this.mapItem[i]],
           itemLabel: item

@@ -278,7 +278,7 @@
     <span class="nv">itemResults = </span><span class="p">[]</span>
     <span class="k">for</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@items</span>
       
-      <span class="k">if</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">@lastAttempted</span>
+      <span class="k">if</span> <span class="nx">@mapItem</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nx">@lastAttempted</span>
         <span class="nx">itemResults</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span>
           <span class="nv">itemResult : </span><span class="nx">@gridOutput</span><span class="p">[</span><span class="nx">@mapItem</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span>
           <span class="nv">itemLabel  : </span><span class="nx">item</span>
