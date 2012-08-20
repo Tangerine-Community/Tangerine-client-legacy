@@ -11,21 +11,14 @@ KlassWeeklyView = (function(_super) {
   }
 
   KlassWeeklyView.prototype.events = {
-    "click .student_subtest": "gotoStudentSubtest",
     "click .next_week": "nextWeek",
     "click .prev_week": "prevWeek",
-    "click .week_subtest_report": "weekSubtestReport",
-    "click .back": "back"
+    "click .back": "back",
+    "click .student_subtest": "gotoStudentSubtest"
   };
 
   KlassWeeklyView.prototype.back = function() {
     return Tangerine.router.navigate("classes", true);
-  };
-
-  KlassWeeklyView.prototype.weekSubtestReport = function(event) {
-    var id;
-    id = $(event.target).attr("data-id");
-    return Tangerine.router.navigate("report/" + id, true);
   };
 
   KlassWeeklyView.prototype.gotoStudentSubtest = function(event) {
@@ -96,13 +89,13 @@ KlassWeeklyView = (function(_super) {
     gridPage = "<table class='info_box_wide '><tbody><tr><th></th>";
     for (_i = 0, _len3 = subtestsThisWeek.length; _i < _len3; _i++) {
       subtest = subtestsThisWeek[_i];
-      gridPage += "<th><div class='command week_subtest_report' data-id='" + subtest.id + "'>" + (subtest.get('name')) + "</div></th>";
+      gridPage += "<th><div class='week_subtest_report' data-id='" + subtest.id + "'>" + (subtest.get('name')) + "</div></th>";
     }
     gridPage += "</tr>";
     _ref2 = this.table;
     for (_j = 0, _len4 = _ref2.length; _j < _len4; _j++) {
       row = _ref2[_j];
-      gridPage += "<tr><td>" + row[0].studentName + "</td>";
+      gridPage += "<tr><td><div class='student' data-studentId='" + row[0].studentId + "'>" + row[0].studentName + "</div></td>";
       for (column = 0, _len5 = row.length; column < _len5; column++) {
         cell = row[column];
         gridPage += "<td><div class='student_subtest command' data-taken='" + cell.taken + "' data-studentId='" + cell.studentId + "' data-subtestId='" + cell.subtestId + "'>" + cell.content + "</div></td>";
@@ -110,7 +103,7 @@ KlassWeeklyView = (function(_super) {
       gridPage += "</tr>";
     }
     gridPage += "</tbody></table>";
-    this.$el.html("      <h1>Class Status</h1>      <h2>Week " + this.currentWeek + "</h2>      " + gridPage + "<br>            <button class='prev_week command'>Previous</button> <button class='next_week command'>Next</button><br><br>      <button class='back navigation'>Back</button>       ");
+    this.$el.html("      <h1>" + (t('class status')) + "</h1>      <h2>" + (t('week')) + " " + this.currentWeek + "</h2>      " + gridPage + "<br>            <button class='prev_week command'>" + (t('previous')) + "</button> <button class='next_week command'>" + (t('next')) + "</button><br><br>      <button class='back navigation'>" + (t('back')) + "</button>       ");
     return this.trigger("rendered");
   };
 

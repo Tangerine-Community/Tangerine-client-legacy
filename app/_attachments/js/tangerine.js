@@ -16,7 +16,6 @@ Router = (function(_super) {
     'logout': 'logout',
     'account': 'account',
     'transfer': 'transfer',
-    '': 'klasses',
     'classes': 'klasses',
     'class': 'klass',
     'class/edit/:id': 'klassEdit',
@@ -26,7 +25,7 @@ Router = (function(_super) {
     'class/:id': 'klassWeekly',
     'class/run/:studentId/:subtestId': 'runSubtest',
     'class/result/student/subtest/:studentId/:subtestId': 'studentSubtest',
-    'setup': 'setup',
+    'settings': 'settings',
     'groups': 'groups',
     'assessments': 'assessments',
     'assessments/:group': 'assessments',
@@ -39,11 +38,12 @@ Router = (function(_super) {
     'import': 'import',
     'subtest/:id': 'editSubtest',
     'question/:id': 'editQuestion',
-    'report/:id': 'report'
+    'report/weekByStudent/:subtestId': 'weekByStudent',
+    'report/classToDate/:klassId': 'klassToDate'
   };
 
   Router.prototype.groups = function() {
-    if (!Tangerine.context.server) {
+    if (Tangerine.settings.context === "mobile") {
       return Tangerine.router.navigate("assessments", true);
     } else {
       return Tangerine.user.verify({
@@ -140,13 +140,13 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.klassWeekly = function(id, week) {
+  Router.prototype.klassWeekly = function(klassId, week) {
     if (week == null) week = null;
     return Tangerine.user.verify({
       isRegistered: function() {
         var klass;
         klass = new Klass({
-          "_id": id
+          "_id": klassId
         });
         return klass.fetch({
           success: function() {
@@ -162,14 +162,14 @@ Router = (function(_super) {
                   success: function(collection) {
                     var allResults, students;
                     students = new Students(collection.where({
-                      "klassId": id
+                      "klassId": klassId
                     }));
                     allResults = new KlassResults;
                     return allResults.fetch({
                       success: function(collection) {
                         var allSubtests, results;
                         results = new KlassResults(collection.where({
-                          "klassId": id
+                          "klassId": klassId
                         }));
                         allSubtests = new Subtests;
                         return allSubtests.fetch({
@@ -318,31 +318,6 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.setup = function() {
-    return Tangerine.device.fetch({
-      success: function(model) {
-        var view;
-        view = new DeviceView({
-          model: model
-        });
-        return vm.show(view);
-      }
-    });
-  };
-
-  Router.prototype.dashboard = function() {
-    return Tangerine.user.verify({
-      isAdmin: function() {
-        var dashboard;
-        dashboard = new DashboardView;
-        return vm.show(dashboard);
-      },
-      isUser: function() {
-        return Tangerine.router.navigate("assessments", true);
-      }
-    });
-  };
-
   Router.prototype["import"] = function() {
     return Tangerine.user.verify({
       isRegistered: function() {
@@ -358,7 +333,7 @@ Router = (function(_super) {
 
   Router.prototype.assessments = function(group) {
     if (group == null) group = null;
-    if (group === null && Tangerine.context.server) {
+    if (group === null && Tangerine.settings.context === "server") {
       return Tangerine.router.navigate("groups", true);
     } else {
       return Tangerine.user.verify({
@@ -494,12 +469,12 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.report = function(id) {
+  Router.prototype.weekByStudent = function(subtestId) {
     return Tangerine.user.verify({
       isRegistered: function() {
         var subtest;
         subtest = new Subtest({
-          "_id": id
+          "_id": subtestId
         });
         return subtest.fetch({
           success: function() {
@@ -515,11 +490,10 @@ Router = (function(_super) {
                 return students.fetch({
                   success: function() {
                     var view;
-                    view = new ReportView({
+                    view = new WeekByStudentView({
                       "students": students,
                       "subtest": subtest,
-                      "results": results,
-                      assessmentId: id
+                      "results": results
                     });
                     return vm.show(view);
                   }
@@ -529,7 +503,58 @@ Router = (function(_super) {
           }
         });
       },
-      isUnregistered: function(options) {
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.klassToDate = function(klassId) {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var klass;
+        klass = new Klass({
+          "_id": klassId
+        });
+        return klass.fetch({
+          success: function() {
+            var allStudents;
+            allStudents = new Students;
+            return allStudents.fetch({
+              success: function(studentCollection) {
+                var allSubtests, studentCount, students;
+                students = studentCollection.where({
+                  "klassId": klassId
+                });
+                studentCount = students.length;
+                allSubtests = new Subtests;
+                return allSubtests.fetch({
+                  success: function(subtestCollection) {
+                    var allResults, subtests;
+                    subtests = subtestCollection.where({
+                      "curriculumId": klass.get("curriculumId")
+                    });
+                    allResults = new Results;
+                    return allResults.fetch({
+                      success: function(results) {
+                        var view;
+                        view = new KlassToDateView({
+                          "studentCount": studentCount,
+                          "results": results,
+                          "subtests": subtests,
+                          "klass": klass
+                        });
+                        return vm.show(view);
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          }
+        });
+      },
+      isUnregistered: function() {
         return Tangerine.router.navigate("login", true);
       }
     });
@@ -615,6 +640,29 @@ Router = (function(_super) {
           user: Tangerine.user
         });
         return vm.show(view);
+      },
+      isUnregistered: function(options) {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.settings = function() {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var settings;
+        settings = new Settings({
+          "_id": "TangerineSettings"
+        });
+        return settings.fetch({
+          success: function(settings) {
+            var view;
+            view = new SettingsView({
+              "settings": settings
+            });
+            return vm.show(view);
+          }
+        });
       },
       isUnregistered: function(options) {
         return Tangerine.router.navigate("login", true);

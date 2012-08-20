@@ -1,18 +1,23 @@
 class KlassWeeklyView extends Backbone.View
 
   events:
-    "click .student_subtest"          : "gotoStudentSubtest"
     "click .next_week"                : "nextWeek"
     "click .prev_week"                : "prevWeek"
-    "click .week_subtest_report"      : "weekSubtestReport"
     "click .back"                     : "back"
+    "click .student_subtest"          : "gotoStudentSubtest"
+    #"click .week_subtest_report"      : "weekSubtestReport"
+    #"click .student"                  : "gotoStudentReport"
+
+#  gotoStudentReport: ->
+#    Tangerine.router.navigate "report/student/" + $(event.target).attr("data-studentId")
+#
+#  weekSubtestReport: (event) ->
+#    id = $(event.target).attr("data-id")
+#    Tangerine.router.navigate "report/#{id}", true
+
     
   back: ->
     Tangerine.router.navigate "classes", true
-
-  weekSubtestReport: (event) ->
-    id = $(event.target).attr("data-id")
-    Tangerine.router.navigate "report/#{id}", true
 
   gotoStudentSubtest: (event) ->
     studentId = $(event.target).attr("data-studentId")
@@ -66,22 +71,22 @@ class KlassWeeklyView extends Backbone.View
     # make headers
     gridPage = "<table class='info_box_wide '><tbody><tr><th></th>"
     for subtest in subtestsThisWeek
-      gridPage += "<th><div class='command week_subtest_report' data-id='#{subtest.id}'>#{subtest.get('name')}</div></th>"
+      gridPage += "<th><div class='week_subtest_report' data-id='#{subtest.id}'>#{subtest.get('name')}</div></th>"
     gridPage += "</tr>"
     for row in @table
-      gridPage += "<tr><td>#{row[0].studentName}</td>"
+      gridPage += "<tr><td><div class='student' data-studentId='#{row[0].studentId}'>#{row[0].studentName}</div></td>"
       for cell, column in row
         gridPage += "<td><div class='student_subtest command' data-taken='#{cell.taken}' data-studentId='#{cell.studentId}' data-subtestId='#{cell.subtestId}'>#{cell.content}</div></td>"
       gridPage += "</tr>"
     gridPage += "</tbody></table>"
 
     @$el.html "
-      <h1>Class Status</h1>
-      <h2>Week #{@currentWeek}</h2>
+      <h1>#{t('class status')}</h1>
+      <h2>#{t('week')} #{@currentWeek}</h2>
       #{gridPage}<br>
       
-      <button class='prev_week command'>Previous</button> <button class='next_week command'>Next</button><br><br>
-      <button class='back navigation'>Back</button> 
+      <button class='prev_week command'>#{t('previous')}</button> <button class='next_week command'>#{t('next')}</button><br><br>
+      <button class='back navigation'>#{t('back')}</button> 
       "
 
     @trigger "rendered"

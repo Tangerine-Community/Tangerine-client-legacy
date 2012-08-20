@@ -34,7 +34,7 @@ class NavigationView extends Backbone.View
     <span id='version'></span>
     <nav id='submenu'></nav>
     <div id='enumerator_box'>
-      Enumerator <span id='logout_link'>LOGOUT</span>
+      #{t('enumerator')} <span id='logout_link'>#{t('logout')}</span>
       <div id='enumerator'></div>
     </div>
     <div id='current_student'>

@@ -46,48 +46,51 @@ class KlassesView extends Backbone.View
       view = new KlassListElementView
         klass      : klass
         curricula  : @curricula
+      view.on "rendered", @onSubviewRendered
       view.render()
       @views.push view
       $ul.append view.el
 
     @$el.find("#klass_list_wrapper").append $ul
 
+  onSubviewRendered: =>
+    @trigger "subRendered"
+
   render: =>
 
-    curriculaOptionList = "<option value='_none' disabled='disabled' selected='selected'>Select a curriculum</option>"
+    curriculaOptionList = "<option value='_none' disabled='disabled' selected='selected'>#{t('select a curriculum')}</option>"
     for curricula in @curricula.models
       curriculaOptionList += "<option data-id='#{curricula.id}'>#{curricula.get 'name'}</option>"
 
 
-    html = "
-      <h1>Classes</h1>
+    @$el.html "
+      <h1>#{t('classes')}</h1>
       <div id='klass_list_wrapper'></div>
 
-      <button class='add command'>Add</button>
+      <button class='add command'>#{t('add')}</button>
       <div id='add_form' class='confirmation'>
         <div class='menu_box'> 
           <div class='label_value'>
-            <label for='year'>Year</label>
+            <label for='year'>#{t('year')}</label>
             <input id='year'>
           </div>
           <div class='label_value'>
-            <label for='grade'>Grade</label>
+            <label for='grade'>#{t('grade')}</label>
             <input id='grade'>
           </div>
           <div class='label_value'>
-            <label for='stream'>Stream</label>
+            <label for='stream'>#{t('stream')}</label>
             <input id='stream'>
           </div>
           <div class='label_value'>
-            <label for='curriculum'>Curriculum</label><br>
+            <label for='curriculum'>#{t('curriculum')}</label><br>
             <select id='curriculum'>#{curriculaOptionList}</select>
           </div>
-          <button class='command save'>Save</button><button class='command cancel'>Cancel</button>
+          <button class='command save'>#{t('save')}</button><button class='command cancel'>#{t('cancel')}</button>
         </div>
       </div>
     "
     
-    @$el.html html
     
     @renderKlasses()
     

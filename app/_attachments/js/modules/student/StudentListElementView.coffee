@@ -31,9 +31,11 @@ class StudentListElementView extends Backbone.View
       <img src='images/icon_delete.png' class='remove' title='Remove'>
       <div class='remove_confirm confirmation'>
         <div class='menu_box'>
-          Remove student?<br>
-          <button class='remove_delete command_red'>Remove</button>
-          <button class='remove_cancel command'>cancel</button>
+          #{t('remove student')}<br>
+          <button class='remove_delete command_red'>#{t('remove')}</button>
+          <button class='remove_cancel command'>#{t('cancel')}</button>
         </div>
       </div>
     "
+    
+    @trigger "rendered"

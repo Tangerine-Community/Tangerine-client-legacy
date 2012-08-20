@@ -44,14 +44,14 @@ StudentEditView = (function(_super) {
     gender = this.student.get("gender") || "";
     age = this.student.get("age") || "";
     klassId = this.student.get("klassId");
-    html = "    <h1>Edit Student</h1>    <button class='back navigation'>Back</button><br>    <div class='info_box'>      <div class='label_value'>        <label for='name'>Name</label>        <input id='name' value='" + name + "'>      </div>      <div class='label_value'>        <label for='gender'>Gender</label>        <input id='gender' value='" + gender + "'>      </div>      <div class='label_value'>        <label for='age'>Age</label>        <input id='age' value='" + age + "'>      </div>      <div class='label_value'>        <label for='klass_select'>Class</label>        <select id='klass_select'>";
-    html += "<option data-id='null' " + (klassId === null ? "selected='selected'" : void 0) + ">None</option>";
+    html = "    <h1>" + (t('edit student')) + "</h1>    <button class='back navigation'>" + (t('back')) + "</button><br>    <div class='info_box'>      <div class='label_value'>        <label for='name'>" + (t('name')) + "</label>        <input id='name' value='" + name + "'>      </div>      <div class='label_value'>        <label for='gender'>" + (t('gender')) + "</label>        <input id='gender' value='" + gender + "'>      </div>      <div class='label_value'>        <label for='age'>" + (t('age')) + "</label>        <input id='age' value='" + age + "'>      </div>      <div class='label_value'>        <label for='klass_select'>" + (t('class')) + "</label>        <select id='klass_select'>";
+    html += "<option data-id='null' " + (klassId === null ? "selected='selected'" : void 0) + ">" + (t('none')) + "</option>";
     _ref = this.klasses.models;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       klass = _ref[_i];
       html += "<option data-id='" + klass.id + "' " + (klass.id === klassId ? "selected='selected'" : void 0) + ">" + (klass.get('year')) + " - " + (klass.get('grade')) + " - " + (klass.get('stream')) + "</option>";
     }
-    html += "        </select>      </div>      <button class='done command'>Done</button>    </div>    ";
+    html += "        </select>      </div>      <button class='done command'>" + (t('done')) + "</button>    </div>    ";
     this.$el.html(html);
     return this.trigger("rendered");
   };

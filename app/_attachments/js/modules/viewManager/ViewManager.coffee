@@ -12,11 +12,14 @@ class ViewManager extends Backbone.View
     @currentView = view
 
     @currentView.on "rendered", =>
-
       $("#content").append @currentView.el
       @currentView.$el.find(".buttonset").buttonset()
+      @currentView.afterRender?()
 
-      # @currentView.afterRender?()
+    @currentView.on "subRendered", =>
+      @currentView.$el.find(".buttonset").buttonset() # button set everything
+
+
       # Utils.resizeScrollPane()
 
     @currentView.on "start_work", =>

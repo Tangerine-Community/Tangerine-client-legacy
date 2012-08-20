@@ -29,32 +29,32 @@ class StudentEditView extends Backbone.View
 
     klassId = @student.get("klassId")
     html = "
-    <h1>Edit Student</h1>
-    <button class='back navigation'>Back</button><br>
+    <h1>#{t('edit student')}</h1>
+    <button class='back navigation'>#{t('back')}</button><br>
     <div class='info_box'>
       <div class='label_value'>
-        <label for='name'>Name</label>
+        <label for='name'>#{t('name')}</label>
         <input id='name' value='#{name}'>
       </div>
       <div class='label_value'>
-        <label for='gender'>Gender</label>
+        <label for='gender'>#{t('gender')}</label>
         <input id='gender' value='#{gender}'>
       </div>
       <div class='label_value'>
-        <label for='age'>Age</label>
+        <label for='age'>#{t('age')}</label>
         <input id='age' value='#{age}'>
       </div>
       <div class='label_value'>
-        <label for='klass_select'>Class</label>
+        <label for='klass_select'>#{t('class')}</label>
         <select id='klass_select'>"
-    html += "<option data-id='null' #{if klassId == null then "selected='selected'"}>None</option>"
+    html += "<option data-id='null' #{if klassId == null then "selected='selected'"}>#{t('none')}</option>"
     for klass in @klasses.models
       html += "<option data-id='#{klass.id}' #{if klass.id == klassId then "selected='selected'"}>#{klass.get 'year'} - #{klass.get 'grade'} - #{klass.get 'stream'}</option>"
 
     html += "
         </select>
       </div>
-      <button class='done command'>Done</button>
+      <button class='done command'>#{t('done')}</button>
     </div>
     "
     

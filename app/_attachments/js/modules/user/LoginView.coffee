@@ -25,11 +25,11 @@ class LoginView extends Backbone.View
     @$el.html "
       <img src='images/tangerine_logo.png' id='login_logo'>
       <div class='messages'></div>
-      <label for='login_username'>Enumerator Name</label>
+      <label for='login_username'>#{t('enumerator name')}</label>
       <input id='login_username' name='login_username'>
-      <label for='login_password'>Password</label>
+      <label for='login_password'>#{t('password')}</label>
       <input id='login_password' name='login_username' type='password'>
-      <button class='login'>Login</button>
+      <button class='login'>#{t('login')}</button>
     "
     @trigger "rendered"
 

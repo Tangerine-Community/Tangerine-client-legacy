@@ -47,7 +47,8 @@ StudentListElementView = (function(_super) {
   };
 
   StudentListElementView.prototype.render = function() {
-    return this.$el.html("      " + (this.student.get('name')) + "      " + (this.student.get('gender')) + "      " + (this.student.get('age')) + "      <img src='images/icon_results.png' class='results' title='Results'>      <img src='images/icon_edit.png' class='edit' title='Edit'>      <img src='images/icon_delete.png' class='remove' title='Remove'>      <div class='remove_confirm confirmation'>        <div class='menu_box'>          Remove student?<br>          <button class='remove_delete command_red'>Remove</button>          <button class='remove_cancel command'>cancel</button>        </div>      </div>    ");
+    this.$el.html("      " + (this.student.get('name')) + "      " + (this.student.get('gender')) + "      " + (this.student.get('age')) + "      <img src='images/icon_results.png' class='results' title='Results'>      <img src='images/icon_edit.png' class='edit' title='Edit'>      <img src='images/icon_delete.png' class='remove' title='Remove'>      <div class='remove_confirm confirmation'>        <div class='menu_box'>          " + (t('remove student')) + "<br>          <button class='remove_delete command_red'>" + (t('remove')) + "</button>          <button class='remove_cancel command'>" + (t('cancel')) + "</button>        </div>      </div>    ");
+    return this.trigger("rendered");
   };
 
   return StudentListElementView;

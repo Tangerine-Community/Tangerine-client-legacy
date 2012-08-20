@@ -9,6 +9,7 @@ KlassesView = (function(_super) {
 
   function KlassesView() {
     this.render = __bind(this.render, this);
+    this.onSubviewRendered = __bind(this.onSubviewRendered, this);
     KlassesView.__super__.constructor.apply(this, arguments);
   }
 
@@ -70,6 +71,7 @@ KlassesView = (function(_super) {
         klass: klass,
         curricula: this.curricula
       });
+      view.on("rendered", this.onSubviewRendered);
       view.render();
       this.views.push(view);
       $ul.append(view.el);
@@ -77,16 +79,19 @@ KlassesView = (function(_super) {
     return this.$el.find("#klass_list_wrapper").append($ul);
   };
 
+  KlassesView.prototype.onSubviewRendered = function() {
+    return this.trigger("subRendered");
+  };
+
   KlassesView.prototype.render = function() {
-    var curricula, curriculaOptionList, html, _i, _len, _ref;
-    curriculaOptionList = "<option value='_none' disabled='disabled' selected='selected'>Select a curriculum</option>";
+    var curricula, curriculaOptionList, _i, _len, _ref;
+    curriculaOptionList = "<option value='_none' disabled='disabled' selected='selected'>" + (t('select a curriculum')) + "</option>";
     _ref = this.curricula.models;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       curricula = _ref[_i];
       curriculaOptionList += "<option data-id='" + curricula.id + "'>" + (curricula.get('name')) + "</option>";
     }
-    html = "      <h1>Classes</h1>      <div id='klass_list_wrapper'></div>      <button class='add command'>Add</button>      <div id='add_form' class='confirmation'>        <div class='menu_box'>           <div class='label_value'>            <label for='year'>Year</label>            <input id='year'>          </div>          <div class='label_value'>            <label for='grade'>Grade</label>            <input id='grade'>          </div>          <div class='label_value'>            <label for='stream'>Stream</label>            <input id='stream'>          </div>          <div class='label_value'>            <label for='curriculum'>Curriculum</label><br>            <select id='curriculum'>" + curriculaOptionList + "</select>          </div>          <button class='command save'>Save</button><button class='command cancel'>Cancel</button>        </div>      </div>    ";
-    this.$el.html(html);
+    this.$el.html("      <h1>" + (t('classes')) + "</h1>      <div id='klass_list_wrapper'></div>      <button class='add command'>" + (t('add')) + "</button>      <div id='add_form' class='confirmation'>        <div class='menu_box'>           <div class='label_value'>            <label for='year'>" + (t('year')) + "</label>            <input id='year'>          </div>          <div class='label_value'>            <label for='grade'>" + (t('grade')) + "</label>            <input id='grade'>          </div>          <div class='label_value'>            <label for='stream'>" + (t('stream')) + "</label>            <input id='stream'>          </div>          <div class='label_value'>            <label for='curriculum'>" + (t('curriculum')) + "</label><br>            <select id='curriculum'>" + curriculaOptionList + "</select>          </div>          <button class='command save'>" + (t('save')) + "</button><button class='command cancel'>" + (t('cancel')) + "</button>        </div>      </div>    ");
     this.renderKlasses();
     return this.trigger("rendered");
   };

@@ -52,7 +52,7 @@ NavigationView = (function(_super) {
   };
 
   NavigationView.prototype.render = function() {
-    this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <span id='version'></span>    <nav id='submenu'></nav>    <div id='enumerator_box'>      Enumerator <span id='logout_link'>LOGOUT</span>      <div id='enumerator'></div>    </div>    <div id='current_student'>      Student ID      <div id='current_student_id'></div>    </div>    ");
+    this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <span id='version'></span>    <nav id='submenu'></nav>    <div id='enumerator_box'>      " + (t('enumerator')) + " <span id='logout_link'>" + (t('logout')) + "</span>      <div id='enumerator'></div>    </div>    <div id='current_student'>      Student ID      <div id='current_student_id'></div>    </div>    ");
     $("body").ajaxStart(function() {
       return $("#corner_logo").attr("src", "images/spin_orange.gif");
     });

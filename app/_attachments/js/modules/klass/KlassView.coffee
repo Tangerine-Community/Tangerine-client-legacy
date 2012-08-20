@@ -20,10 +20,11 @@ class KlassView extends Backbone.View
     grade  = @klass.get("grade")  || ""
     stream = @klass.get("stream") || ""
     html = "
-    <h1>Class: #{stream}</h1>
-    <div>
-      Year: #{year}<br>
-      Grade: #{grade}
+    <h1>#{t('class')} #{stream}</h1>
+    <table>
+      <tr><td>#{t('year')}</td><td>#{year}</td></tr>
+      <tr><td>#{t('grade')}</td><tr>#{grade}</td></tr>
+    </table>
     </div>
     <ul class='assessment_list'>"
     for assessment in @assessments

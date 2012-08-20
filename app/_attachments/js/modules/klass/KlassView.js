@@ -46,7 +46,7 @@ KlassView = (function(_super) {
     year = this.klass.get("year") || "";
     grade = this.klass.get("grade") || "";
     stream = this.klass.get("stream") || "";
-    html = "    <h1>Class: " + stream + "</h1>    <div>      Year: " + year + "<br>      Grade: " + grade + "    </div>    <ul class='assessment_list'>";
+    html = "    <h1>" + (t('class')) + " " + stream + "</h1>    <table>      <tr><td>" + (t('year')) + "</td><td>" + year + "</td></tr>      <tr><td>" + (t('grade')) + "</td><tr>" + grade + "</td></tr>    </table>    </div>    <ul class='assessment_list'>";
     _ref = this.assessments;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       assessment = _ref[_i];

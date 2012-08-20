@@ -17,7 +17,12 @@ ViewManager = (function(_super) {
     if ((_ref = this.currentView) != null) _ref.close();
     this.currentView = view;
     this.currentView.on("rendered", function() {
+      var _base;
       $("#content").append(_this.currentView.el);
+      _this.currentView.$el.find(".buttonset").buttonset();
+      return typeof (_base = _this.currentView).afterRender === "function" ? _base.afterRender() : void 0;
+    });
+    this.currentView.on("subRendered", function() {
       return _this.currentView.$el.find(".buttonset").buttonset();
     });
     this.currentView.on("start_work", function() {

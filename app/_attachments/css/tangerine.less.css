@@ -1053,6 +1053,9 @@ ul.klass_list li {
   vertical-align: bottom;
   padding: 0 10px 0 0;
 }
+body[rtl] {
+  direction: rtl !important;
+}
 /*
  * cleditor
  */

@@ -1,0 +1,19 @@
+{
+    "tangerine" : {
+      "logout"     : "logout",
+      "enumerator" : "enumerator",
+      "login"      : "login"
+    },
+    "label" : {
+      "next"       : "Next",
+      "add"        : "Add",
+      "confirm"    : "Confirm",
+      "delete"     : "Delete"
+      "year"       : "Year",
+      "grade"      : "Grade",
+      "stream"     : "Stream",
+      "curriculum" : "Curriculum",
+      "classes"    : "Classes"
+      
+    }
+}
