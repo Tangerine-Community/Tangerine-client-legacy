@@ -16,6 +16,9 @@ KlassListElementView = (function(_super) {
 
   KlassListElementView.prototype.events = {
     'click .run': 'run',
+    'click .results': 'showReportSelect',
+    'change #report': 'getReportMenu',
+    'click .cancel_report': 'cancelReport',
     'click .edit': 'edit',
     'click .delete': 'toggleDelete',
     'click .delete_cancel': 'toggleDelete',
@@ -23,6 +26,7 @@ KlassListElementView = (function(_super) {
   };
 
   KlassListElementView.prototype.initialize = function(options) {
+    this.availableReports = Tangerine.config.reports;
     if (options.klass.has("curriculumId")) {
       this.curriculum = new Curriculum({
         "_id": options.klass.get("curriculumId" || "")
@@ -39,8 +43,27 @@ KlassListElementView = (function(_super) {
     return Tangerine.router.navigate("class/edit/" + this.options.klass.id, true);
   };
 
-  KlassListElementView.prototype.results = function() {
-    return Tangerine.router.navigate("class/results/" + this.options.klass.id, true);
+  KlassListElementView.prototype.getReportMenu = function(event) {
+    var _ref;
+    if ((_ref = this.subMenuView) != null) _ref.close();
+    this.subMenuView = new window[$(event.target).find(":selected").attr("data-menu_view")]({
+      parent: this
+    });
+    this.$el.find("#report_menu_container").append("<div class='report_menu'></div>");
+    this.subMenuView.setElement(this.$el.find("#report_menu_container .report_menu"));
+    return this.subMenuView.render();
+  };
+
+  KlassListElementView.prototype.showReportSelect = function() {
+    return this.$el.find(".report_select_container").removeClass("confirmation");
+  };
+
+  KlassListElementView.prototype.cancelReport = function() {
+    var _ref;
+    this.$el.find('div#report_menu').empty();
+    this.$el.find('#report :nth-child(1)').attr('selected', 'selected');
+    this.$el.find(".report_select_container").addClass("confirmation");
+    return (_ref = this.subMenuView) != null ? _ref.close() : void 0;
   };
 
   KlassListElementView.prototype.run = function() {
@@ -56,9 +79,19 @@ KlassListElementView = (function(_super) {
   };
 
   KlassListElementView.prototype.render = function() {
-    var klass;
+    var klass, report;
     klass = this.options.klass;
-    return this.$el.html("      <small>Year:</small> " + (klass.get('year')) + " -      <small>Grade:</small> " + (klass.get('grade')) + " -      <small>Stream:</small>" + (klass.get('stream')) + "<br>      <small>Curriculum:</small>" + (this.curriculum.escape('name' || "")) + "<br>      <img src='images/icon_run.png' class='run'>      <img src='images/icon_results.png' class='results'>      <img src='images/icon_edit.png' class='edit'>      <img src='images/icon_delete.png' class='delete'>      <div class='delete_confirm confirmation'>      <div class='menu_box'>        Confirm<br>        <button class='delete_delete command_red'>Delete</button>        <button class='delete_cancel command'>Cancel</button>      </div>      </div>    ");
+    this.$el.html("      <table>        <tr><td><small>" + (t('year')) + "</small></td><td>" + (klass.get('year')) + "</td></tr>        <tr><td><small>" + (t('grade')) + "</small></td><td>" + (klass.get('grade')) + "</td></tr>        <tr><td><small>" + (t('stream')) + "</small></td><td>" + (klass.get('stream')) + "</td></tr>        <tr><td><small>" + (t('curriculum')) + "</small></td><td>" + (this.curriculum.escape('name' || "")) + "</td></tr>      </table>      <img src='images/icon_run.png'     class='run'>      <img src='images/icon_results.png' class='results'>      <img src='images/icon_edit.png'    class='edit'>      <img src='images/icon_delete.png'  class='delete'>      <div class='report_select_container confirmation'>        <div class='menu_box'>          <select id='report'>            <option selected='selected' disabled='disabled'>" + (t('select report type')) + "</option>            " + (((function() {
+      var _i, _len, _ref, _results;
+      _ref = this.availableReports;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        report = _ref[_i];
+        _results.push("<option data-menu_view='" + report.menuView + "'>" + (t(report.name)) + "</option>");
+      }
+      return _results;
+    }).call(this)).join("")) + "          </select>        </div>        <div id='report_menu_container'></div>        <button class='command cancel_report'>" + (t('cancel')) + "</button>      </div>      <div class='delete_confirm confirmation'>        <div class='menu_box'>          " + (t('confirm')) + "<br>          <button class='delete_delete command_red'>" + (t('delete')) + "</button>          <button class='delete_cancel command'>" + (t('cancel')) + "</button>        </div>      </div>    ");
+    return this.trigger("rendered");
   };
 
   return KlassListElementView;
