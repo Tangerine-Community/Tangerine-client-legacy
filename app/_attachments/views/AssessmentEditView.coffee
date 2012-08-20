@@ -16,7 +16,7 @@ class AssessmentEditView extends Backbone.View
     "click img#add_subtest_form"            : "addSubtestForm"
     "click img.save_this_subtest"           : "saveThisSubtest"
     "click li#save_all_new_subtests"        : "saveAllNewSubtests"
-    "change form.newSubtest select": "subtestTypeSelected"
+    "change form.newSubtest select"         : "subtestTypeSelected"
 
   
   

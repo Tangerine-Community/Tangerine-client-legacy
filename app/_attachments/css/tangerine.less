@@ -15,7 +15,7 @@
 @orange-3: #F6C637;
 @orange-4: #F6EF9A;
 @grey: #888;
-
+@green: #8CC63F;
 
 // These are not used
 @first_click_color: yellow;
@@ -62,10 +62,17 @@ body.flash{
   font-size: 30px;
   .box-shadow (0, 0, 5px, rgba(0,0,0,0.3));
 
-  
-  
-  
 }
+
+/*
+ * Remove text-shadow in selection highlight: h5bp.com/i
+ * These selection declarations have to be separate
+ * Also: hot pink! (or customize the background color to match your design)
+ */
+
+::-moz-selection { background: @green; color: #fff; text-shadow: none; }
+::selection { background: @green; color: #fff; text-shadow: none; }
+
 
 /*
  * Navigation
@@ -106,7 +113,6 @@ nav#main_nav
     vertical-align: middle;
     cursor: pointer;
   }
-  
   
 }
 
@@ -312,6 +318,22 @@ div#subtest_edit
 
 }
 
+
+/*
+ * CSV View
+ */
+#csv_view
+{
+  font-size: 12px;
+  
+  textarea
+  {
+    width: 90%;
+    height: 200px;
+    font-family: "andale mono", "courier new", "courier", monospace;
+  }
+  
+}
 
 /*
  * Typography

@@ -1,5 +1,9 @@
 <!DOCTYPE html>  <html> <head>   <title>Results.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               Results.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">ResultsView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
   <span class="nv">el: </span><span class="s">&#39;#content&#39;</span>
+  
+  <span class="nv">initialize: </span><span class="o">-&gt;</span>
+    <span class="vi">@serverContext = </span><span class="nb">String</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&quot;iriscouch&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
 
   <span class="nv">events:</span>
     <span class="s">&quot;click button:contains(Cloud save)&quot;</span> <span class="o">:</span> <span class="s">&quot;save&quot;</span>
@@ -13,17 +17,16 @@
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
 <span class="s">      &lt;div id=&#39;message&#39;&gt;&lt;/div&gt;</span>
 <span class="s">      &lt;h2&gt;</span><span class="si">#{</span><span class="nx">@assessment</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;name&quot;</span><span class="si">}</span><span class="s">&lt;/h2&gt;</span>
-<span class="s">      &lt;div&gt;Last save to cloud: &lt;span id=&#39;lastCloudReplicationTime&#39;&gt;&lt;/span&gt;&lt;/div&gt;</span>
-<span class="s">      &lt;button&gt;Detect save options&lt;/button&gt;</span>
+<span class="s">      </span><span class="si">#{</span><span class="k">if</span> <span class="o">not</span> <span class="nx">@serverContext</span> <span class="k">then</span> <span class="s">&#39;&lt;div&gt;Last save to cloud: &lt;span id=\&#39;lastCloudReplicationTime\&#39;&gt;&lt;/span&gt;&lt;/div&gt;&lt;button&gt;Detect save options&lt;/button&gt;&#39;</span> <span class="k">else</span> <span class="s">&#39;&#39;</span><span class="si">}</span><span class="s"></span>
 <span class="s">      &lt;div id=&#39;saveOptions&#39;&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;button&gt;CSV/Excel&lt;/button&gt;</span>
 <span class="s">      &lt;hr/&gt;</span>
-<span class="s">      Results saved by </span><span class="si">#{</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">:</span>
+<span class="s">      Saved Results</span>
 <span class="s">      &lt;div id=&#39;results&#39;&gt;&lt;/div&gt;</span>
 <span class="s">    &quot;</span>
-
-    <span class="nx">@detectCloud</span><span class="p">()</span>
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">@serverContext</span>
+      <span class="nx">@detectCloud</span><span class="p">()</span>
     <span class="nx">@updateLastCloudReplication</span><span class="p">()</span>
     <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">@results</span><span class="p">,</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="o">=&gt;</span>
       <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">resultView</span> <span class="o">?=</span> <span class="k">new</span> <span class="nx">ResultView</span><span class="p">()</span>
@@ -43,7 +46,6 @@
       <span class="nx">$</span><span class="p">(</span><span class="s">&#39;.sparkline&#39;</span><span class="p">).</span><span class="nx">sparkline</span> <span class="s">&#39;html&#39;</span><span class="p">,</span>
         <span class="nx">type</span><span class="o">:</span><span class="s">&#39;pie&#39;</span>
         <span class="nx">sliceColors</span><span class="o">:</span><span class="p">[</span><span class="s">&#39;black&#39;</span><span class="p">,</span><span class="s">&#39;#F7C942&#39;</span><span class="p">,</span><span class="s">&#39;orangered&#39;</span><span class="p">]</span>
-
 
   <span class="nv">updateLastCloudReplication: </span><span class="o">-&gt;</span>
     <span class="nx">@assessment</span><span class="p">.</span><span class="nx">lastCloudReplication</span>
@@ -118,7 +120,6 @@
         <span class="p">}</span>
     <span class="k">else</span>
       <span class="nv">combines = </span><span class="s">&quot;&quot;</span>
-
 
     <span class="nv">uniqueFields = </span><span class="nx">_</span><span class="p">.</span><span class="nx">difference</span><span class="p">(</span><span class="nx">@uniqueFields</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">ignoreColumn</span><span class="o">?</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/, */</span><span class="p">))</span>
     <span class="nv">uniqueFields = </span><span class="nx">_</span><span class="p">.</span><span class="nx">map</span> <span class="nx">uniqueFields</span><span class="p">,</span> <span class="nf">(field)-&gt;</span>

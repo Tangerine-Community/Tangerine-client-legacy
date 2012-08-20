@@ -18,7 +18,8 @@
         "htmlTextarea": [
         "enumeratorHelp",
         "studentDialog",
-        "content"
+        "content",
+        "message"
         ],
         "textarea": [
         "items"
@@ -96,6 +97,9 @@
             "questionIndices",
             "questions",
             "studentDialog"
+            ],
+            "Dictation": [
+            "message"
             ]
         },
         "subtestOptions": {
@@ -108,10 +112,26 @@
               }
             },
             {
-              "name" : "Letter Sound Knowledge"
+              "name" : "Letter Sound Knowledge",
+              "idValue" : "ToggleGridWithTimer",
+              "template" : {
+                "items" : ["A", "b", "C", "d", "E"]
+              }
             },
-            "Familiar word identification",
-            "Invented word decoding",
+            {
+              "name" : "Familiar word identification",
+              "idValue" : "ToggleGridWithTimer",
+              "template" : {
+                "items" : ["metamorphosis", "erudite", "precocious"]
+              }
+            },
+            {
+              "name" : "Invented word decoding",
+              "idValue" : "ToggleGridWithTimer",
+              "template": {
+                "items" : ["bub", "uf", "mig"]
+              }
+            },
             "Oral passage reading",
             "Addition Level 1",
             "Number Identification",
@@ -151,6 +171,9 @@
             ],
             "Dictation": [
             "Dictation"
+            ],
+            "ResultsPage": [
+            "Simple Confirm Results"
             ]
         }
     }

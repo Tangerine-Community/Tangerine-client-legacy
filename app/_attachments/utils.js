@@ -123,7 +123,7 @@ Utils = (function() {
     }, repOps);
   };
 
-  Utils.disposableAlert = function(alert_text) {
+  Utils.disposableAlert = function(alert_text, opt) {
     return $("<div class='disposable_alert'>" + alert_text + "</div>").appendTo("#content").topCenter().delay(2000).fadeOut(250, function() {
       return $(this).remove();
     });

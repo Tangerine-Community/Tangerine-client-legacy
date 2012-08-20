@@ -479,7 +479,6 @@ class ResultsPage extends AssessmentPage
         You have finished assessment <span class='randomIdForSubject'></span>. Thank the child with a small gift. Please write <span class='randomIdForSubject'></span> on the writing sample.
       </div>
       <div data-role='collapsible' data-collapsed='true' class='results'>
-        <h3>Results</h3>
         <div>
         </div>
         <form>

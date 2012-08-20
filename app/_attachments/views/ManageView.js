@@ -59,11 +59,9 @@ ManageView = (function(_super) {
       var archiveStatus, docId, docName, safeDocName;
       docName = assessment.get("name");
       docId = assessment.get("_id");
-      console.log("is archived");
-      console.log(assessment.get("archived"));
       archiveStatus = assessment.get("archived") ? " class='archived_assessment' " : "";
       safeDocName = docName.toLowerCase().dasherize();
-      return _this.temp.html += "      <li id='" + safeDocName + "'><span" + archiveStatus + ">" + (assessment.get("name")) + "</span>         <a href='#results/" + docName + "'><img class='icon' src='images/icon_result.png'></a>        <a href='#edit/assessment/" + assessment.id + "'><img class='icon' src='images/icon_edit.png'></a>         <img class='icon_delete delete_assessment_confirm' src='images/icon_delete.png'>        <span class='delete_confirm'>Are you sure? <button data-docName='" + docId + "'class='delete_assessment_yes'>Yes</button><button class='delete_assessment_no'>No</button></span>      </li>";
+      return _this.temp.html += "      <li id='" + safeDocName + "'><span" + archiveStatus + ">" + (assessment.get("name")) + "</span>         <a href='#results/" + docId + "'><img class='icon' src='images/icon_result.png'></a>        <a href='#edit/assessment/" + assessment.id + "'><img class='icon' src='images/icon_edit.png'></a>         <img class='icon_delete delete_assessment_confirm' src='images/icon_delete.png'>        <span class='delete_confirm'>Are you sure? <button data-docName='" + docId + "'class='delete_assessment_yes'>Yes</button><button class='delete_assessment_no'>No</button></span>      </li>";
     });
     return $("ul#assessment_list").html(this.temp.html);
   };
@@ -95,13 +93,11 @@ ManageView = (function(_super) {
     });
     return assessment.save(null, {
       success: function() {
-        console.log("saved assessment, adding to collection");
         _this.collection.add(assessment);
         return _this.hideNewAssessmentForm();
       },
       error: function() {
         var messages;
-        console.log("error saving assessment");
         $('#assessment_name_error').html('error');
         messages = $("<span class='error'>Invalid new assessment</span>");
         $('button:contains(Add)').after(messages);
@@ -119,7 +115,6 @@ ManageView = (function(_super) {
   ManageView.prototype.deleteAfirmative = function(event) {
     var assessment,
       _this = this;
-    console.log("trying to get " + $(event.target).attr("data-docName"));
     assessment = this.collection.get($(event.target).attr("data-docName"));
     return assessment.destroy({
       success: function() {
