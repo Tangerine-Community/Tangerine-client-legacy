@@ -3,7 +3,7 @@ class Subtest extends Backbone.Model
   url: "subtest"
 
   initialize: (options) ->
-    @templates = Tangerine.config.prototypeTemplates
+    @templates = Tangerine.templates.prototypeTemplates
 
   loadPrototypeTemplate: (prototype) ->
     for key, value of @templates[prototype]

@@ -19,7 +19,7 @@ GridRunView = (function(_super) {
 
   GridRunView.prototype.className = "grid_prototype";
 
-  GridRunView.prototype.events = Tangerine.context.kindle ? {
+  GridRunView.prototype.events = Tangerine.settings.context === "mobile" ? {
     'touchstart .grid_element': 'gridClick',
     'touchstart .end_of_grid_line': 'endOfGridLineClick',
     'click .grid_mode': 'updateMode',

@@ -53,7 +53,7 @@ SurveyEditView = (function(_super) {
   SurveyEditView.prototype.addQuestion = function(event) {
     var newAttributes, nq;
     if (event.type !== "click" && event.which !== 13) return true;
-    newAttributes = $.extend(Tangerine.config.questionTemplate, {
+    newAttributes = $.extend(Tangerine.templates.questionTemplate, {
       subtestId: this.model.id,
       assessmentId: this.model.get("assessmentId"),
       id: Utils.guid(),

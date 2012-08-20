@@ -47,7 +47,7 @@ AssessmentListView = (function(_super) {
         var groupCollection;
         groupCollection = [];
         collection.each(function(model) {
-          if (Tangerine.context.server) {
+          if (Tangerine.settings.context === "server") {
             if (model.get("group") === _this.group) {
               return groupCollection.push(model);
             }
@@ -57,7 +57,7 @@ AssessmentListView = (function(_super) {
         });
         _this.collection = new Assessments(groupCollection);
         _this.collection.on("add remove", _this.render);
-        if (Tangerine.context.server) {
+        if (Tangerine.settings.context === "server") {
           _this.public = new Assessments(collection.where({
             group: "public"
           }));
@@ -76,9 +76,9 @@ AssessmentListView = (function(_super) {
     newButton = "<button class='new_assessment command'>New</button>";
     importButton = "<button class='import command'>Import</button>";
     groupsButton = "<button class='navigation groups'>Groups</button>";
-    html = "      " + (Tangerine.context.server ? groupsButton : "") + "      <h1>Assessments</h1>      ";
+    html = "      " + (Tangerine.settings.context === "server" ? groupsButton : "") + "      <h1>Assessments</h1>      ";
     if (this.isAdmin) {
-      html += "        " + newButton + "        " + (Tangerine.context.mobile ? importButton : "") + "        <div class='new_assessment_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_assessment_name' placeholder='Assessment Name'>            <button class='new_assessment_save command'>Save</button> <button class='new_assessment_cancel command'>Cancel</button>          </div>        </div>        <h2>Group assessments</h2>      ";
+      html += "        " + newButton + "        " + (Tangerine.settings.context === "mobile" ? importButton : "") + "        <div class='new_assessment_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_assessment_name' placeholder='Assessment Name'>            <button class='new_assessment_save command'>Save</button> <button class='new_assessment_cancel command'>Cancel</button>          </div>        </div>        <h2>Group assessments</h2>      ";
     }
     this.$el.html(html);
     if (((_ref = this.collection) != null ? (_ref2 = _ref.models) != null ? _ref2.length : void 0 : void 0) > 0) {
@@ -98,7 +98,7 @@ AssessmentListView = (function(_super) {
     } else {
       this.$el.append("<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>");
     }
-    if (this.isAdmin && Tangerine.context.server) {
+    if (this.isAdmin && Tangerine.settings.context === "server") {
       this.$el.append("<h2>Public assessments</h2>");
       if (((_ref5 = this.public) != null ? (_ref6 = _ref5.models) != null ? _ref6.length : void 0 : void 0) > 0) {
         publicList = $('<ul>').addClass('public_list assessment_list');

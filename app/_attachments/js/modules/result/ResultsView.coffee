@@ -100,12 +100,12 @@ class ResultsView extends Backbone.View
       <h1>#{@assessment.get('name')}</h1>
       <h2>Save options</h2>
       <div class='menu_box'>
-        #{if Tangerine.context.mobile then cloudButton  else ""}
-        #{if Tangerine.context.mobile then tabletButton else ""}
+        #{if Tangerine.settings.context == "mobile" then cloudButton  else ""}
+        #{if Tangerine.settings.context == "mobile" then tabletButton else ""}
         #{csvButton}
       </div>"
 
-    if Tangerine.context.mobile
+    if Tangerine.settings.context == "mobile"
       html += "
         <button class='detect command'>Detect options</button>
         <div class='status'>

@@ -30,7 +30,7 @@ class SurveyEditView extends Backbone.View
     if event.type != "click" && event.which != 13
       return true
     
-    newAttributes = $.extend Tangerine.config.questionTemplate,
+    newAttributes = $.extend Tangerine.templates.questionTemplate,
       subtestId    : @model.id
       assessmentId : @model.get "assessmentId"
       id           : Utils.guid()
@@ -90,7 +90,7 @@ class SurveyEditView extends Backbone.View
   render: ->
       
 #    addQuestionSelect = "<select id='add_question_select'>"
-#    for template in Tangerine.config.optionTemplates
+#    for template in Tangerine.templates.optionTemplates
 #      addQuestionSelect += "<option value='#{template.name}'>#{template.name}</option>"
 #    addQuestionSelect += "</select>"
 

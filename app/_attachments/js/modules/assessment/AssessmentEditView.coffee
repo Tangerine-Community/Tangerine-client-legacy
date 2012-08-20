@@ -57,14 +57,14 @@ class AssessmentEditView extends Backbone.View
       return true
     
     # general template
-    newAttributes = Tangerine.config.subtestTemplate
+    newAttributes = Tangerine.templates.subtestTemplate
     
     # prototype template
     prototypeTemplate = Tangerine.config.prototypeTemplates[@$el.find("#subtest_type_select").val()]
     
     # bit more specific template
     useType = @$el.find("#subtest_type_select :selected").attr 'data-template'
-    useTypeTemplate = Tangerine.config.subtestTemplates[@$el.find("#subtest_type_select").val()][useType]
+    useTypeTemplate = Tangerine.templates.subtestTemplates[@$el.find("#subtest_type_select").val()][useType]
 
     newAttributes = $.extend newAttributes, prototypeTemplate
     newAttributes = $.extend newAttributes, useTypeTemplate
@@ -92,7 +92,7 @@ class AssessmentEditView extends Backbone.View
     # list of "templates"
     subtestTypeSelect = "<select id='subtest_type_select'>
       <option value='none' disabled='disabled' selected='selected'>Please select a subtest type</option>"
-    for key, value of Tangerine.config.subtestTemplates
+    for key, value of Tangerine.templates.subtestTemplates
       subtestTypeSelect += "<optgroup label='#{key}'>"
       for subKey, subValue of value
         subtestTypeSelect += "<option value='#{key}' data-template='#{subKey}'>#{subKey}</option>"

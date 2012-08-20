@@ -71,7 +71,7 @@ class AssessmentListElementView extends Backbone.View
         </div>
       "
       # Admin on mobile
-      if Tangerine.context.mobile
+      if Tangerine.settings.context == "mobile"
         html += "
           <div class='assessment_menu'>
             #{runButton}

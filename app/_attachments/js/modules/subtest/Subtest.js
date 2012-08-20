@@ -13,7 +13,7 @@ Subtest = (function(_super) {
   Subtest.prototype.url = "subtest";
 
   Subtest.prototype.initialize = function(options) {
-    return this.templates = Tangerine.config.prototypeTemplates;
+    return this.templates = Tangerine.templates.prototypeTemplates;
   };
 
   Subtest.prototype.loadPrototypeTemplate = function(prototype) {

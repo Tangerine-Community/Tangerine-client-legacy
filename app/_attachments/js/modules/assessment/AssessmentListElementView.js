@@ -99,7 +99,7 @@ AssessmentListElementView = (function(_super) {
     resultCount = "<span class='resultCount'>" + (this.model.get('resultCount') || '0') + " results</span>";
     if (this.isAdmin) {
       html = "        <div>          " + toggleButton + "          " + adminName + "         </div>      ";
-      if (Tangerine.context.mobile) {
+      if (Tangerine.settings.context === "mobile") {
         html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + deleteButton + "          </div>        ";
       } else {
         if (this.isPublic) {

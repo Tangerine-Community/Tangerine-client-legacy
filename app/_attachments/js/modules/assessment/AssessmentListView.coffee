@@ -29,7 +29,7 @@ class AssessmentListView extends Backbone.View
         # only applies to this list
         groupCollection = []
         collection.each (model) =>
-          if Tangerine.context.server
+          if Tangerine.settings.context == "server"
             if model.get("group") == @group
               groupCollection.push model
           else
@@ -38,7 +38,7 @@ class AssessmentListView extends Backbone.View
         @collection = new Assessments groupCollection
         @collection.on "add remove", @render
 
-        if Tangerine.context.server
+        if Tangerine.settings.context == "server"
           @public = new Assessments collection.where { group : "public" }
         else
           @public = null
@@ -54,13 +54,13 @@ class AssessmentListView extends Backbone.View
     groupsButton = "<button class='navigation groups'>Groups</button>"
 
     html = "
-      #{if Tangerine.context.server then groupsButton else ""}
+      #{if Tangerine.settings.context == "server" then groupsButton else ""}
       <h1>Assessments</h1>
       "
     if @isAdmin
       html += "
         #{newButton}
-        #{if Tangerine.context.mobile then importButton else ""}
+        #{if Tangerine.settings.context == "mobile" then importButton else ""}
         <div class='new_assessment_form confirmation'>
           <div class='menu_box_wide'>
             <input type='text' class='new_assessment_name' placeholder='Assessment Name'>
@@ -86,7 +86,7 @@ class AssessmentListView extends Backbone.View
     else
       @$el.append "<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>"
 
-    if @isAdmin && Tangerine.context.server
+    if @isAdmin && Tangerine.settings.context == "server"
 
       @$el.append "<h2>Public assessments</h2>"
 
