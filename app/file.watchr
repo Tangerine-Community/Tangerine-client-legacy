@@ -1,7 +1,7 @@
 `couchapp push`
 
 def notify(type,message)
-  `growlnotify -t "#{type}" -m "#{message}"`
+  #`growlnotify -t "#{type}" -m "#{message}" -w`
   `notify-send "#{type} - #{message}" -i /usr/share/icons/Humanity/status/128/dialog-warning.svg &`
 end
 
@@ -33,7 +33,3 @@ watch ( '.*\.css$|.*\.js$|.*\.html$|.*\.json$' ) { |match|
   puts "\nUpdating:\t\t#{match}\nPushing to couchapp\n\n"
   `couchapp push`
 }
-
-
-
-
