@@ -25,9 +25,12 @@
 
     <script src="js/lib/phonegap.js"></script>
     <script src="js/lib/jquery.js"></script>
+    <script src="js/lib/i18next.js"></script>
+
     <script src="js/lib/underscore.js"></script>
     <script src="js/lib/sha1.js"></script>
     <script src="js/lib/jquery.plugins.js"></script>
+    <script src="js/lib/excanvas.js"></script>
     <script src="js/lib/jquery-ui.js"></script>
     <script src="js/lib/handlebars.js"></script>
     <script src="js/lib/mobile_boilerplate.js"></script>
@@ -83,7 +86,9 @@
     <script src="js/modules/result/ResultsView.js"></script>
     <script src="js/modules/result/ResultSumView.js"></script>
     <script src="js/modules/result/CSVView.js"></script>
-    <script src="js/modules/result/ReportView.js"></script>
+
+    <script src="js/modules/settings/Settings.js"></script>
+    <script src="js/modules/settings/SettingsView.js"></script>
 
     <script src="js/modules/question/Question.js"></script>
     <script src="js/modules/question/Questions.js"></script>
@@ -99,22 +104,27 @@
     <script src="js/modules/klass/KlassesView.js"></script>
     <script src="js/modules/klass/KlassListElementView.js"></script>
     <script src="js/modules/klass/KlassSubtestRunView.js"></script>
-		<script src="js/modules/klass/KlassSubtestResultView.js"></script>
+    <script src="js/modules/klass/KlassSubtestResultView.js"></script>
     <script src="js/modules/klass/KlassMenuView.js"></script>
     <script src="js/modules/klass/KlassWeeklyView.js"></script>
     <script src="js/modules/klass/KlassResult.js"></script>
     <script src="js/modules/klass/KlassResults.js"></script>
     <script src="js/modules/klass/RegisterTeacherView.js"></script>
 
+    <script src="js/modules/report/KlassToDateView.js"></script>
+    <script src="js/modules/report/KlassToDateMenuView.js"></script>
+    <script src="js/modules/report/ThresholdView.js"></script>
+    <script src="js/modules/report/ThresholdMenuView.js"></script>
+    <script src="js/modules/report/WeekByStudentView.js"></script>
+    <script src="js/modules/report/WeekByStudentMenuView.js"></script>
+
     <script src="js/modules/klass/Curriculum.js"></script>
     <script src="js/modules/klass/Curricula.js"></script>
-
 
     <script src="js/modules/student/Student.js"></script>
     <script src="js/modules/student/Students.js"></script>
     <script src="js/modules/student/StudentListElementView.js"></script>
     <script src="js/modules/student/StudentEditView.js"></script>
-
 
     <script src="js/modules/user/User.js"></script>
     <script src="js/modules/user/LoginView.js"></script>
@@ -125,17 +135,10 @@
 
     <script src="js/modules/log/Log.js"></script>
 
-    <script src="js/modules/device/Device.js"></script>
-    <script src="js/modules/device/DeviceView.js"></script>
-
-    <script src="js/modules/dashboard/DashboardView.js"></script>
-
-    <script src="js/modules/language/Language.js"></script>
-
     <script src="js/modules/viewManager/ViewManager.js"></script>
 
     <script src="js/modules/navigation/NavigationView.js"></script>
-    
+
     <script src="js/tangerine.js"></script>
 
     <script>MBP.scaleFix();</script>

@@ -1,4 +1,4 @@
-var Context, MapReduce, Utils;
+var MapReduce, Utils;
 
 Backbone.View.prototype.close = function() {
   this.remove();
@@ -121,6 +121,17 @@ String.prototype.htmlSafe = function() {
   return $("<div/>").text(this).html().replace(/'/g, "&#39;").replace(/"/g, "&#34;");
 };
 
+Math.ave = function() {
+  var result, x, _i, _len;
+  result = 0;
+  for (_i = 0, _len = arguments.length; _i < _len; _i++) {
+    x = arguments[_i];
+    result += x;
+  }
+  result /= arguments.length;
+  return result;
+};
+
 Utils = (function() {
 
   function Utils() {}
@@ -232,20 +243,6 @@ Utils = (function() {
   };
 
   return Utils;
-
-})();
-
-Context = (function() {
-
-  function Context() {
-    this.mobile = !~(String(window.location).indexOf("iriscouch"));
-    this.kindle = /kindle/.test(navigator.userAgent.toLowerCase());
-    this.server = ~(String(window.location).indexOf("iriscouch"));
-    this.server = true;
-    this.mobile = !this.server;
-  }
-
-  return Context;
 
 })();
 

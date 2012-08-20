@@ -1,33 +1,30 @@
-Tangerine =
-  cloud :
-    target   : "mikeymckay.iriscouch.com"
-    username : "tangerine"
-    password : "tangytangerine"
-  iris :
-    host : "http://tangerine.iriscouch.com"
-    name : "tangerine"
-    pass : "tangytangerine"
-    db_name : "tangerine"
-  subnet :
-    base   : "http://192.168.1."
-    start  : 100
-    finish : 200
-  port : "5985"
-  database_name: "class"
-  design_doc_name: "class"
+Tangerine = {}
 
-Tangerine.context = new Context()
+Tangerine = 
+  "db_name"    : "tangerine"
+  "design_doc" : "tangerine"
 
-Tangerine.cloud.url = "http://#{Tangerine.cloud.username}:#{Tangerine.cloud.password}@#{Tangerine.cloud.target}/#{Tangerine.database_name}"
+# Grab our config docs
+$.couch.db(Tangerine.db_name).openDoc "Config",            { success:(data) -> Tangerine.config    = data }, { async: false }
+$.couch.db(Tangerine.db_name).openDoc "TangerineSettings", { success:(data) -> Tangerine.settings  = data }, { async: false }
+$.couch.db(Tangerine.db_name).openDoc "Templates",         { success:(data) -> Tangerine.templates = data }, { async: false }
 
-Backbone.couch_connector.config.db_name = Tangerine.database_name
-Backbone.couch_connector.config.ddoc_name = Tangerine.design_doc_name
+# default address we sync to
+Tangerine.config.address.cloud.url = "http://" + 
+  Tangerine.config.address.cloud.name + ":" + 
+  Tangerine.config.address.cloud.host + 
+  Tangerine.config.address.cloud.target + "/" +
+  Tangerine.config.address.cloud.db_name
+
+# Backbone configuration
+Backbone.couch_connector.config.db_name   = Tangerine.db_name
+Backbone.couch_connector.config.ddoc_name = Tangerine.design_doc
 Backbone.couch_connector.config.global_changes = false
 
-$.couch.db(Backbone.couch_connector.config.db_name).openDoc "Config", { success:(data) -> Tangerine.config = data }, { async: false }
+# initialize i18next.js
+$.i18n.init "lng" : Tangerine.settings.language
+window.t = $.t # give us a nice handle
 
+# set underscore's template engine to accept handlebar-style variables
 _.templateSettings = 
   interpolate : /\{\{(.+?)\}\}/g
-
-
-

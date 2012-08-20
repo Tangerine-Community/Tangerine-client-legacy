@@ -95,9 +95,14 @@ String.prototype.safeToSave = ->
 String.prototype.htmlSafe = ->
   $("<div/>").text(this).html().replace(/'/g, "&#39;").replace(/"/g, "&#34;")
 
+Math.ave = ->
+  result = 0
+  result += x for x in arguments
+  result /= arguments.length
+  return result
+
 
 class Utils
-
 
   @round: (num, decimals) -> Math.round( num * Math.pow( 10, decimals ) ) / Math.pow( 10, decimals)
   # asks for confirmation in the browser, and uses phonegap for cool confirmation
@@ -174,21 +179,6 @@ class Utils
   @resizeScrollPane: ->
     $(".scroll_pane").height( $(window).height() - ( $("#navigation").height() + $("#footer").height() + 100) ) 
 
-
-
-
-class Context
-  constructor: ->
-    # false if it finds "iriscouch" in url
-    @mobile = !~(String(window.location).indexOf("iriscouch"))
-    # true if "kindle" is in userAgent
-    @kindle = /kindle/.test(navigator.userAgent.toLowerCase())
-    # true if it finds "iriscouch" in url
-    @server = ~(String(window.location).indexOf("iriscouch"))
-
-    @server = true
-    @mobile = !@server
-
 ##UI helpers
 $ ->
   # ###.clear_message
@@ -206,5 +196,4 @@ $ ->
       $(this).remove()
   
   # $(window).resize Utils.resizeScrollPane
-
   # Utils.resizeScrollPane()

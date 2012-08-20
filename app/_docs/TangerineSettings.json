@@ -1,0 +1,7 @@
+{
+	"_id" : "TangerineSettings",
+	"collection" : "settings",
+	"context"          : "mobile",
+	"language"         : "en-US",
+	"generalThreshold" : 0.8
+}
