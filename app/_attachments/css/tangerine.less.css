@@ -873,6 +873,7 @@ input {
   border: 1px solid #888;
   width: 95%;
   padding: 5px !important;
+  margin: 0 0 10px;
 }
 input[type=submit],
 input[type=button] {
@@ -961,7 +962,11 @@ label {
   font-weight: bold;
   display: inline-block;
   clear: both;
+<<<<<<< HEAD
   margin: 5px 0 0px;
+=======
+  margin: 5px 0;
+>>>>>>> c606be08d8d97100d2cca79996a4f318f97143b2
 }
 label[title] {
   clear: right;
@@ -1549,7 +1554,7 @@ button.ui-button-icons-only {
   border: 2px solid #ffffff;
 }
 .ui-button-text-only .ui-button-text {
-  padding: 10px;
+  padding: 8px;
   margin: 0 -2px;
 }
 .ui-button-icon-only .ui-button-text,
@@ -1607,7 +1612,7 @@ input.ui-button {
 }
 .ui-buttonset .ui-button {
   margin-left: 0;
-  margin-right: -0.3em;
+  margin-right: -10px;
 }
 /* workarounds */
 button.ui-button::-moz-focus-inner {

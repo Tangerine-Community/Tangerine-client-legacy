@@ -85,9 +85,9 @@ AssessmentEditView = (function(_super) {
     var newAttributes, newSubtest, prototypeTemplate, useType, useTypeTemplate;
     if (event.type !== "click" && event.which !== 13) return true;
     newAttributes = Tangerine.templates.subtestTemplate;
-    prototypeTemplate = Tangerine.config.prototypeTemplates[this.$el.find("#subtest_type_select").val()];
+    prototypeTemplate = Tangerine.templates.prototypeTemplates[this.$el.find("#subtest_type_select").val()];
     useType = this.$el.find("#subtest_type_select :selected").attr('data-template');
-    useTypeTemplate = Tangerine.templates.subtestTemplates[this.$el.find("#subtest_type_select").val()][useType];
+    useTypeTemplate = Tangerine.templates.subtestTemplatess[this.$el.find("#subtest_type_select").val()][useType];
     newAttributes = $.extend(newAttributes, prototypeTemplate);
     newAttributes = $.extend(newAttributes, useTypeTemplate);
     newAttributes = $.extend(newAttributes, {
@@ -115,7 +115,7 @@ AssessmentEditView = (function(_super) {
     archiveChecked = arch === true || arch === 'true' ? "checked" : "";
     notArchiveChecked = archiveChecked ? "" : "checked";
     subtestTypeSelect = "<select id='subtest_type_select'>      <option value='none' disabled='disabled' selected='selected'>Please select a subtest type</option>";
-    _ref = Tangerine.templates.subtestTemplates;
+    _ref = Tangerine.templates.subtestTemplatess;
     for (key in _ref) {
       value = _ref[key];
       subtestTypeSelect += "<optgroup label='" + key + "'>";

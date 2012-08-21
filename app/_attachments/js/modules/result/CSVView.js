@@ -188,11 +188,11 @@ CSVView = (function(_super) {
             _ref10 = subtest.data.items;
             for (i = 0, _len9 = _ref10.length; i < _len9; i++) {
               item = _ref10[i];
-              if (item === "correct") {
+              if (item.itemResult === "correct") {
                 exportValue = 1;
-              } else if (item === "incorrect") {
+              } else if (item.itemResult === "incorrect") {
                 exportValue = 0;
-              } else if (item === "missing") {
+              } else if (item.itemResult === "missing") {
                 exportValue = ".";
               }
               values[keys.indexOf("" + variableName + (i + 1))] = exportValue;

@@ -79,14 +79,24 @@
 
     <span class="nx">@prototypeEditor</span><span class="p">.</span><span class="nx">save</span><span class="o">?</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
-      <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Subtest Saved&quot;</span>
-      <span class="nx">setTimeout</span> <span class="nx">@goBack</span><span class="p">,</span> <span class="mi">1000</span>
+    <span class="k">if</span> <span class="nx">@prototypeEditor</span><span class="p">.</span><span class="nx">isValid</span><span class="o">?</span> <span class="o">&amp;&amp;</span> <span class="nx">@prototypeEditor</span><span class="p">.</span><span class="nx">isValid</span><span class="p">()</span> <span class="o">==</span> <span class="kc">false</span>
+      <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;There are errors on this page&quot;</span>
+      <span class="nx">@prototypeEditor</span><span class="p">.</span><span class="nx">showErrors</span><span class="o">?</span><span class="p">()</span>
     <span class="k">else</span>
+<<<<<<< HEAD
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;save error&quot;</span>
       <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Save error&quot;</span>
       
   <span class="nv">render: </span><span class="o">-&gt;</span>
+=======
+      <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">{</span><span class="nx">wait</span><span class="o">:</span><span class="kc">true</span><span class="p">})</span>
+        <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Subtest Saved&quot;</span>
+        <span class="nx">setTimeout</span> <span class="nx">@goBack</span><span class="p">,</span> <span class="mi">1000</span>
+      <span class="k">else</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;save error&quot;</span>
+        <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Save error&quot;</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Wow I'm bad at using templates</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">render: </span><span class="o">-&gt;</span>
+>>>>>>> c606be08d8d97100d2cca79996a4f318f97143b2
     <span class="nv">name      = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">escape</span> <span class="s">&quot;name&quot;</span>
     <span class="nv">prototype = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;prototype&quot;</span>
     <span class="nv">help      = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;enumeratorHelp&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>

@@ -177,7 +177,28 @@ class GridRunView extends Backbone.View
     @untimed  = @timer == 0
 
     @items    = _.compact(@model.get("items")) # mild sanitization, happens at save too
+
+    @itemMap = []
+    @mapItem = []
+    
+    if @model.has("randomize") && @model.get("randomize")
+      for item, i in @items
+        @itemMap[i] = i
+      for item, i in @items
+        temp = Math.floor(Math.random() * @items.length)
+        tempValue = @itemMap[temp]
+        @itemMap[temp] = @itemMap[i]
+        @itemMap[i] = tempValue
+
+      for item, i in @itemMap
+        @mapItem[@itemMap[i]] = i
+    else
+      for item, i in @items
+        @itemMap[i] = i
+        @mapItem[i] = i
+
     @mode     = if @untimed then "mark" else "disabled"
+
 
     @gridOutput = []
     for item, i in @items
@@ -195,6 +216,7 @@ class GridRunView extends Backbone.View
     @updateMode( null, @mode )
 
   initialize: (options) ->
+
 
     @captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted") else true
     @endOfLine            = if @model.has("endOfLine")            then @model.get("endOfLine")            else true
@@ -229,7 +251,7 @@ class GridRunView extends Backbone.View
       html += "<tr>"
       for i in [1..@columns]
         if done < @items.length
-          html += @gridElement { label : _.escape(@items[done]), i: done+1 }
+          html += @gridElement { label : _.escape(@items[@itemMap[done]]), i: done+1 }
         done++
       html += @endOfGridLine({i:done}) if done < ( @items.length + 1 ) && @endOfLine
       html += "</tr>"
@@ -276,14 +298,20 @@ class GridRunView extends Backbone.View
     Utils.midAlert "Time still running." if @timeRuning == true
   
   getResult: ->
+    completeResults = []
     itemResults = []
     @lastAttempted = @items.length if not @captureLastAttempted
 
     for item, i in @items
-      if i < @lastAttempted
-        itemResults[i] = @gridOutput[i]
+      
+      if @mapItem[i] < @lastAttempted
+        itemResults[i] =
+          itemResult : @gridOutput[@mapItem[i]]
+          itemLabel  : item
       else
-        itemResults[i] = "missing"
+        itemResults[i] =
+          itemResult : "missing"
+          itemLabel : @items[@mapItem[i]]
 
     @lastAttempted = false if not @captureLastAttempted
 

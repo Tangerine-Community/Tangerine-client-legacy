@@ -60,7 +60,7 @@ class AssessmentEditView extends Backbone.View
     newAttributes = Tangerine.templates.subtestTemplate
     
     # prototype template
-    prototypeTemplate = Tangerine.config.prototypeTemplates[@$el.find("#subtest_type_select").val()]
+    prototypeTemplate = Tangerine.templates.prototypeTemplates[@$el.find("#subtest_type_select").val()]
     
     # bit more specific template
     useType = @$el.find("#subtest_type_select :selected").attr 'data-template'

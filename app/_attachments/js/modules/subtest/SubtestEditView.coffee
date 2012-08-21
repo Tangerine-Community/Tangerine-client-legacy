@@ -79,12 +79,16 @@ class SubtestEditView extends Backbone.View
 
     @prototypeEditor.save?()
 
-    if @model.save()
-      Utils.midAlert "Subtest Saved"
-      setTimeout @goBack, 1000
+    if @prototypeEditor.isValid? && @prototypeEditor.isValid() == false
+      Utils.midAlert "There are errors on this page"
+      @prototypeEditor.showErrors?()
     else
-      console.log "save error"
-      Utils.midAlert "Save error"
+      if @model.save(null, {wait:true})
+        Utils.midAlert "Subtest Saved"
+        setTimeout @goBack, 1000
+      else
+        console.log "save error"
+        Utils.midAlert "Save error"
       
   render: ->
     name      = @model.escape "name"

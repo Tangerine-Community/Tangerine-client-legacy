@@ -1,10 +1,18 @@
 <!DOCTYPE html>  <html> <head>   <title>GridEditView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               GridEditView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">GridEditView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
 
+  <span class="nv">events:</span>
+    <span class="s">&#39;blur #subtest_items&#39;</span> <span class="o">:</span> <span class="s">&#39;cleanWhitespace&#39;</span>
+
+  <span class="nv">cleanWhitespace: </span><span class="o">-&gt;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_items&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_items&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\s+/g</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="p">)</span> <span class="p">)</span>
+
   <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
     <span class="vi">@model = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
 
   <span class="nv">save: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>validation can be done on models, perhaps there is a better palce to do it</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="sr">/\t|,/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_items&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">())</span> <span class="k">then</span> <span class="nx">alert</span> <span class="s">&quot;Please remember\n\nGrid items are space \&quot; \&quot; delimited&quot;</span>
+
     <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
+      <span class="nv">randomize: </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">randomize input:checked&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;true&quot;</span>
       <span class="nv">timer    : </span><span class="nb">parseInt</span><span class="p">(</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_timer&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="p">)</span>
       <span class="nv">items    : </span><span class="nx">_</span><span class="p">.</span><span class="nx">compact</span><span class="p">(</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_items&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span> <span class="p">)</span> <span class="c1"># mild sanitization, happens at read too</span>
       <span class="nv">columns  : </span><span class="nb">parseInt</span><span class="p">(</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_columns&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="p">)</span>
@@ -18,17 +26,29 @@
     <span class="nv">columns      = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;columns&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span>
     <span class="nv">autostop     = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;autostop&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span>
     <span class="nv">variableName = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;variableName&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
+    <span class="nv">randomize    = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;randomize&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;randomize&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">false</span>
 
 
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
 <span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;subtest_items&#39;&gt;Variable name&lt;/label&gt;</span>
+<span class="s">        &lt;label for=&#39;subtest_variable_name&#39;&gt;Variable name&lt;/label&gt;</span>
 <span class="s">        &lt;input id=&#39;subtest_variable_name&#39; value=&#39;</span><span class="si">#{</span><span class="nx">variableName</span><span class="si">}</span><span class="s">&#39;&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;subtest_items&#39;&gt;Grid Items (space delimited)&lt;/label&gt;</span>
+<span class="s">        &lt;label for=&#39;subtest_items&#39; title=&#39;These items are space delimited. Pasting text from other applications may insert tabs and new lines. Whitespace will be automatically corrected.&#39;&gt;Grid Items&lt;/label&gt;</span>
 <span class="s">        &lt;textarea id=&#39;subtest_items&#39;&gt;</span><span class="si">#{</span><span class="nx">items</span><span class="si">}</span><span class="s">&lt;/textarea&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
+
+<span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">        &lt;label&gt;Randomize items&lt;/label&gt;&lt;br&gt;</span>
+<span class="s">        &lt;div class=&#39;menu_box&#39;&gt;</span>
+<span class="s">          &lt;div id=&#39;randomize&#39; class=&#39;buttonset&#39;&gt;</span>
+<span class="s">            &lt;label for=&#39;randomize_true&#39;&gt;Yes&lt;/label&gt;&lt;input name=&#39;randomize&#39; type=&#39;radio&#39; value=&#39;true&#39; id=&#39;randomize_true&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">randomize</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">            &lt;label for=&#39;randomize_false&#39;&gt;No&lt;/label&gt;&lt;input name=&#39;randomize&#39; type=&#39;radio&#39; value=&#39;false&#39; id=&#39;randomize_false&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">randomize</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">          &lt;/div&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+
 <span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
 <span class="s">        &lt;label for=&#39;subtest_columns&#39;&gt;Columns&lt;/label&gt;</span>
 <span class="s">        &lt;input id=&#39;subtest_columns&#39; value=&#39;</span><span class="si">#{</span><span class="nx">columns</span><span class="si">}</span><span class="s">&#39; type=&#39;number&#39;&gt;</span>
