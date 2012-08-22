@@ -29,32 +29,32 @@
 
     <span class="nv">klassId = </span><span class="nx">@student</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;klassId&quot;</span><span class="p">)</span>
     <span class="nv">html = </span><span class="s">&quot;</span>
-<span class="s">    &lt;h1&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;edit student&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/h1&gt;</span>
-<span class="s">    &lt;button class=&#39;back navigation&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;back&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/button&gt;&lt;br&gt;</span>
+<span class="s">    &lt;h1&gt;Edit Student&lt;/h1&gt;</span>
+<span class="s">    &lt;button class=&#39;back navigation&#39;&gt;Back&lt;/button&gt;&lt;br&gt;</span>
 <span class="s">    &lt;div class=&#39;info_box&#39;&gt;</span>
 <span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;name&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/label&gt;</span>
+<span class="s">        &lt;label for=&#39;name&#39;&gt;Name&lt;/label&gt;</span>
 <span class="s">        &lt;input id=&#39;name&#39; value=&#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&#39;&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;gender&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;gender&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/label&gt;</span>
+<span class="s">        &lt;label for=&#39;gender&#39;&gt;Gender&lt;/label&gt;</span>
 <span class="s">        &lt;input id=&#39;gender&#39; value=&#39;</span><span class="si">#{</span><span class="nx">gender</span><span class="si">}</span><span class="s">&#39;&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;age&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;age&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/label&gt;</span>
+<span class="s">        &lt;label for=&#39;age&#39;&gt;Age&lt;/label&gt;</span>
 <span class="s">        &lt;input id=&#39;age&#39; value=&#39;</span><span class="si">#{</span><span class="nx">age</span><span class="si">}</span><span class="s">&#39;&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;klass_select&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;class&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/label&gt;</span>
+<span class="s">        &lt;label for=&#39;klass_select&#39;&gt;Class&lt;/label&gt;</span>
 <span class="s">        &lt;select id=&#39;klass_select&#39;&gt;&quot;</span>
-    <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;option data-id=&#39;null&#39; </span><span class="si">#{</span><span class="k">if</span> <span class="nx">klassId</span> <span class="o">==</span> <span class="kc">null</span> <span class="k">then</span> <span class="s">&quot;selected=&#39;selected&#39;&quot;</span><span class="si">}</span><span class="s">&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;none&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/option&gt;&quot;</span>
+    <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;option data-id=&#39;null&#39; </span><span class="si">#{</span><span class="k">if</span> <span class="nx">klassId</span> <span class="o">==</span> <span class="kc">null</span> <span class="k">then</span> <span class="s">&quot;selected=&#39;selected&#39;&quot;</span><span class="si">}</span><span class="s">&gt;None&lt;/option&gt;&quot;</span>
     <span class="k">for</span> <span class="nx">klass</span> <span class="k">in</span> <span class="nx">@klasses</span><span class="p">.</span><span class="nx">models</span>
       <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;option data-id=&#39;</span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">&#39; </span><span class="si">#{</span><span class="k">if</span> <span class="nx">klass</span><span class="p">.</span><span class="nx">id</span> <span class="o">==</span> <span class="nx">klassId</span> <span class="k">then</span> <span class="s">&quot;selected=&#39;selected&#39;&quot;</span><span class="si">}</span><span class="s">&gt;</span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;year&#39;</span><span class="si">}</span><span class="s"> - </span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;grade&#39;</span><span class="si">}</span><span class="s"> - </span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;stream&#39;</span><span class="si">}</span><span class="s">&lt;/option&gt;&quot;</span>
 
     <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
 <span class="s">        &lt;/select&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
-<span class="s">      &lt;button class=&#39;done command&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;done&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/button&gt;</span>
+<span class="s">      &lt;button class=&#39;done command&#39;&gt;Done&lt;/button&gt;</span>
 <span class="s">    &lt;/div&gt;</span>
 <span class="s">    &quot;</span>
     

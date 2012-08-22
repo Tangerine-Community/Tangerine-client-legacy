@@ -3,7 +3,7 @@
   <span class="nv">url: </span><span class="s">&quot;subtest&quot;</span>
 
   <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
-    <span class="vi">@templates = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">templates</span><span class="p">.</span><span class="nx">prototypeTemplates</span>
+    <span class="vi">@templates = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prototypeTemplates</span>
 
   <span class="nv">loadPrototypeTemplate: </span><span class="nf">(prototype) -&gt;</span>
     <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">@templates</span><span class="p">[</span><span class="nx">prototype</span><span class="p">]</span>

@@ -81,7 +81,7 @@
 
   <span class="nv">render: </span><span class="o">-&gt;</span>
       </pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>addQuestionSelect = "<select id='add_question_select'>"
-   for template in Tangerine.templates.optionTemplates
+   for template in Tangerine.config.optionTemplates
      addQuestionSelect += "<option value='#{template.name}'>#{template.name}</option>"
    addQuestionSelect += "</select>"</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">gridLinkId = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;gridLinkId&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
 

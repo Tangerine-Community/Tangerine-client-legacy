@@ -4,16 +4,13 @@
 
   <span class="nv">events:</span>
     <span class="s">&#39;click .run&#39;</span>           <span class="o">:</span> <span class="s">&#39;run&#39;</span>
-    <span class="s">&#39;click .results&#39;</span>       <span class="o">:</span> <span class="s">&#39;showReportSelect&#39;</span>
-    <span class="s">&#39;change #report&#39;</span>       <span class="o">:</span> <span class="s">&#39;getReportMenu&#39;</span>
-    <span class="s">&#39;click .cancel_report&#39;</span> <span class="o">:</span> <span class="s">&#39;cancelReport&#39;</span>
     <span class="s">&#39;click .edit&#39;</span>          <span class="o">:</span> <span class="s">&#39;edit&#39;</span>
     <span class="s">&#39;click .delete&#39;</span>        <span class="o">:</span> <span class="s">&#39;toggleDelete&#39;</span>
     <span class="s">&#39;click .delete_cancel&#39;</span> <span class="o">:</span> <span class="s">&#39;toggleDelete&#39;</span>
     <span class="s">&#39;click .delete_delete&#39;</span> <span class="o">:</span> <span class="s">&#39;delete&#39;</span>
   
   <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
-    <span class="vi">@availableReports = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">reports</span>
+    
     <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">klass</span><span class="p">.</span><span class="nx">has</span> <span class="s">&quot;curriculumId&quot;</span>
       <span class="vi">@curriculum = </span><span class="k">new</span> <span class="nx">Curriculum</span> 
           <span class="s">&quot;_id&quot;</span> <span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">klass</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;curriculumId&quot;</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
@@ -27,22 +24,9 @@
   <span class="nv">edit: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;class/edit/&quot;</span> <span class="o">+</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">klass</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="kc">true</span>
 
-  <span class="nv">getReportMenu: </span><span class="nf">(event) -&gt;</span>
-    <span class="nx">@subMenuView</span><span class="o">?</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
-    <span class="vi">@subMenuView = </span><span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;:selected&quot;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-menu_view&quot;</span><span class="p">)]</span>
-      <span class="nv">parent : </span><span class="nx">@</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">report_menu_container&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s">&quot;&lt;div class=&#39;report_menu&#39;&gt;&lt;/div&gt;&quot;</span><span class="p">)</span>
-    <span class="nx">@subMenuView</span><span class="p">.</span><span class="nx">setElement</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">report_menu_container .report_menu&quot;</span><span class="p">)</span>
-    <span class="nx">@subMenuView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
-
-  <span class="nv">showReportSelect: </span><span class="o">-&gt;</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.report_select_container&quot;</span><span class="p">).</span><span class="nx">removeClass</span> <span class="s">&quot;confirmation&quot;</span>
-
-  <span class="nv">cancelReport: </span><span class="o">-&gt;</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;div#report_menu&#39;</span><span class="p">).</span><span class="nx">empty</span><span class="p">()</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#report :nth-child(1)&#39;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;selected&#39;</span><span class="p">,</span> <span class="s">&#39;selected&#39;</span><span class="p">)</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.report_select_container&quot;</span><span class="p">).</span><span class="nx">addClass</span> <span class="s">&quot;confirmation&quot;</span>
-    <span class="nx">@subMenuView</span><span class="o">?</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
-    
+  <span class="nv">results: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;class/results/&quot;</span> <span class="o">+</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">klass</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="kc">true</span>
+  
   <span class="nv">run: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;class/&quot;</span> <span class="o">+</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">klass</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="kc">true</span>
   
@@ -54,35 +38,22 @@
   <span class="nv">render: </span><span class="o">=&gt;</span>
     <span class="nv">klass = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">klass</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
-<span class="s">      &lt;table&gt;</span>
-<span class="s">        &lt;tr&gt;&lt;td&gt;&lt;small&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/small&gt;&lt;/td&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;year&#39;</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;/tr&gt;</span>
-<span class="s">        &lt;tr&gt;&lt;td&gt;&lt;small&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;grade&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/small&gt;&lt;/td&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;grade&#39;</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;/tr&gt;</span>
-<span class="s">        &lt;tr&gt;&lt;td&gt;&lt;small&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;stream&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/small&gt;&lt;/td&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;stream&#39;</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;/tr&gt;</span>
-<span class="s">        &lt;tr&gt;&lt;td&gt;&lt;small&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;curriculum&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/small&gt;&lt;/td&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">@curriculum</span><span class="p">.</span><span class="nx">escape</span> <span class="s">&#39;name&#39;</span> <span class="o">||</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;/tr&gt;</span>
-<span class="s">      &lt;/table&gt;</span>
-<span class="s">      &lt;img src=&#39;images/icon_run.png&#39;     class=&#39;run&#39;&gt;</span>
+<span class="s">      &lt;small&gt;Year:&lt;/small&gt; </span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;year&#39;</span><span class="si">}</span><span class="s"> -</span>
+<span class="s">      &lt;small&gt;Grade:&lt;/small&gt; </span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;grade&#39;</span><span class="si">}</span><span class="s"> -</span>
+<span class="s">      &lt;small&gt;Stream:&lt;/small&gt;</span><span class="si">#{</span><span class="nx">klass</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;stream&#39;</span><span class="si">}</span><span class="s">&lt;br&gt;</span>
+<span class="s">      &lt;small&gt;Curriculum:&lt;/small&gt;</span><span class="si">#{</span><span class="nx">@curriculum</span><span class="p">.</span><span class="nx">escape</span> <span class="s">&#39;name&#39;</span> <span class="o">||</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s">&lt;br&gt;</span>
+
+<span class="s">      &lt;img src=&#39;images/icon_run.png&#39; class=&#39;run&#39;&gt;</span>
 <span class="s">      &lt;img src=&#39;images/icon_results.png&#39; class=&#39;results&#39;&gt;</span>
-<span class="s">      &lt;img src=&#39;images/icon_edit.png&#39;    class=&#39;edit&#39;&gt;</span>
-<span class="s">      &lt;img src=&#39;images/icon_delete.png&#39;  class=&#39;delete&#39;&gt;</span>
-<span class="s">      &lt;div class=&#39;report_select_container confirmation&#39;&gt;</span>
-<span class="s">        &lt;div class=&#39;menu_box&#39;&gt;</span>
-<span class="s">          &lt;select id=&#39;report&#39;&gt;</span>
-<span class="s">            &lt;option selected=&#39;selected&#39; disabled=&#39;disabled&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;select report type&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/option&gt;</span>
-<span class="s">            </span><span class="si">#{</span><span class="p">(</span><span class="s">&quot;&lt;option data-menu_view=&#39;</span><span class="si">#{</span><span class="nx">report</span><span class="p">.</span><span class="nx">menuView</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="nx">report</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/option&gt;&quot;</span> <span class="k">for</span> <span class="nx">report</span> <span class="k">in</span> <span class="nx">@availableReports</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s"></span>
-<span class="s">          &lt;/select&gt;</span>
-<span class="s">        &lt;/div&gt;</span>
-<span class="s">        &lt;div id=&#39;report_menu_container&#39;&gt;&lt;/div&gt;</span>
-<span class="s">        &lt;button class=&#39;command cancel_report&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;cancel&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/button&gt;</span>
-<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;img src=&#39;images/icon_edit.png&#39; class=&#39;edit&#39;&gt;</span>
+<span class="s">      &lt;img src=&#39;images/icon_delete.png&#39; class=&#39;delete&#39;&gt;</span>
 <span class="s">      &lt;div class=&#39;delete_confirm confirmation&#39;&gt;</span>
-<span class="s">        &lt;div class=&#39;menu_box&#39;&gt;</span>
-<span class="s">          </span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;confirm&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;br&gt;</span>
-<span class="s">          &lt;button class=&#39;delete_delete command_red&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;delete&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/button&gt;</span>
-<span class="s">          &lt;button class=&#39;delete_cancel command&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;cancel&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/button&gt;</span>
-<span class="s">        &lt;/div&gt;</span>
+<span class="s">      &lt;div class=&#39;menu_box&#39;&gt;</span>
+<span class="s">        Confirm&lt;br&gt;</span>
+<span class="s">        &lt;button class=&#39;delete_delete command_red&#39;&gt;Delete&lt;/button&gt;</span>
+<span class="s">        &lt;button class=&#39;delete_cancel command&#39;&gt;Cancel&lt;/button&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">    &quot;</span>
-
-    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
