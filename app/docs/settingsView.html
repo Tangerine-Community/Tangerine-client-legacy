@@ -10,6 +10,7 @@
     <span class="nx">@settings</span><span class="p">.</span><span class="nx">set</span>
       <span class="nv">context          : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#context&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="nv">generalThreshold : </span><span class="nb">parseFloat</span><span class="p">(</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#generalThreshold&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">())</span>
+      <span class="nv">language         : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#language&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
 
   <span class="nv">save: </span><span class="o">-&gt;</span>
     <span class="nx">@updateModel</span><span class="p">()</span>
@@ -21,6 +22,7 @@
   <span class="nv">render: </span><span class="o">-&gt;</span>
     <span class="nv">context = </span><span class="nx">@settings</span><span class="p">.</span><span class="nx">escape</span> <span class="s">&quot;context&quot;</span>
     <span class="nv">generalThreshold = </span><span class="nx">@settings</span><span class="p">.</span><span class="nx">escape</span> <span class="s">&quot;generalThreshold&quot;</span>
+    <span class="nv">language = </span><span class="nx">@settings</span><span class="p">.</span><span class="nx">escape</span> <span class="s">&quot;language&quot;</span>
 
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;&lt;h1&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&quot;settings&quot;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/h1&gt;</span>
 <span class="s">    &lt;p&gt;Please be careful with the following settings.&lt;/p&gt;</span>
@@ -32,6 +34,10 @@
 <span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
 <span class="s">        &lt;label for=&#39;context&#39;&gt;General Threshold&lt;/label&gt;</span>
 <span class="s">        &lt;input id=&#39;generalThreshold&#39; type=&#39;number&#39; value=&#39;</span><span class="si">#{</span><span class="nx">generalThreshold</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;context&#39;&gt;Language&lt;/label&gt;</span>
+<span class="s">        &lt;input id=&#39;language&#39; type=&#39;number&#39; value=&#39;</span><span class="si">#{</span><span class="nx">language</span><span class="si">}</span><span class="s">&#39;&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">    &lt;/div&gt;</span>
 <span class="s">    &lt;button class=&#39;command save&#39;&gt;Save&lt;/button&gt;</span>
