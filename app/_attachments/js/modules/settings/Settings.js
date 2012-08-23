@@ -12,6 +12,11 @@ Settings = (function(_super) {
 
   Settings.prototype.url = "settings";
 
+  Settings.prototype.save = function() {
+    Settings.__super__.save.call(this, arguments);
+    return Tangerine.settings = this.attributes;
+  };
+
   return Settings;
 
 })(Backbone.Model);
