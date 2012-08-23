@@ -84,8 +84,13 @@ watchr will watch all files in your Tangerine directory. When they change it wil
 
 #### Getting Started - Windows (TODO)
 
+We have not done this yet, so we need help in documenting this section. Some things to try:
+
 - Use a virtual box to run linux
-- Use a windows build of couchdb and cygwin for python and ruby
+- Use a windows build of couchdb along with:
+    - cygwin for python and ruby or
+    - <https://github.com/downloads/couchapp/couchapp/couchapp-0.8.1-win.zip>
+    - not sure how to do coffeescript
 
 ----
 
