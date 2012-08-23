@@ -8,11 +8,8 @@ couchdb (http://couchdb.apache.org/) for a more streamlined process
 #### Getting Started - Mac
 This guide is for snow leopard (Mac OS 10.6.x)
 
-##### 1. Follow this tutorial
+##### 1. Install xcode, homebrew, git and ruby
 <http://moncefbelyamani.com/how-to-install-xcode-homebrew-git-rvm-ruby-on-mac/>
-
-This should install xCode, homebrew, git, rvm, and ruby. 
-Install couchdb and couchapp from the sites above. 
 
 Use the command
     brew doctor
@@ -26,19 +23,22 @@ Some known problems that can occur:
 - Solution: Run all the updates for brew, git, ruby, etc.
 
 ##### 2. Install additional programs:
-Ruby
-
-    rvm install 1.9.3
-Watchr
-
-    gem install watchr
-Rake
-
-    gem install rake
 Couchapp
-
+    sudo brew install pip
     sudo env ARCHFLAGS="-arch i386 -arch x86_64" pip install couchapp
-Install coffeescript (http://coffeescript.org) and node (http://nodejs.org)
+
+Coffeescript compiler:
+    http://www.blog.bridgeutopiaweb.com/post/how-to-install-coffeescript-on-mac-os-x/
+
+Ruby
+    rvm install 1.9.3
+
+Watchr
+    gem install watchr
+
+Rake
+    gem install rake
+
 
 ##### 3. Build couchdb
 
