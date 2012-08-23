@@ -4,7 +4,7 @@ class KlassMenuView extends Backbone.View
     'click .registration' : 'gotoKlasses'
 
   gotoKlasses: ->
-    Tangerine.router.navigate "classes", true
+    Tangerine.router.navigate "class", true
 
   initialize: ( options ) ->
 

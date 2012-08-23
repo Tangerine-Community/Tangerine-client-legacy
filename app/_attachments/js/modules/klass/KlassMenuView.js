@@ -15,7 +15,7 @@ KlassMenuView = (function(_super) {
   };
 
   KlassMenuView.prototype.gotoKlasses = function() {
-    return Tangerine.router.navigate("classes", true);
+    return Tangerine.router.navigate("class", true);
   };
 
   KlassMenuView.prototype.initialize = function(options) {};

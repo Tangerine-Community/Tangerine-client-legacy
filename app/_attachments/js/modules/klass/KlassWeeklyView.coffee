@@ -17,7 +17,7 @@ class KlassWeeklyView extends Backbone.View
 
     
   back: ->
-    Tangerine.router.navigate "classes", true
+    Tangerine.router.navigate "class", true
 
   gotoStudentSubtest: (event) ->
     studentId = $(event.target).attr("data-studentId")

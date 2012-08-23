@@ -18,7 +18,7 @@ KlassWeeklyView = (function(_super) {
   };
 
   KlassWeeklyView.prototype.back = function() {
-    return Tangerine.router.navigate("classes", true);
+    return Tangerine.router.navigate("class", true);
   };
 
   KlassWeeklyView.prototype.gotoStudentSubtest = function(event) {
