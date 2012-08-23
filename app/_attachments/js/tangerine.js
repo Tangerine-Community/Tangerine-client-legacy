@@ -16,7 +16,6 @@ Router = (function(_super) {
     'logout': 'logout',
     'account': 'account',
     'transfer': 'transfer',
-    'classes': 'klasses',
     'class': 'klass',
     'class/edit/:id': 'klassEdit',
     'class/student/:studentId': 'studentEdit',
@@ -26,11 +25,11 @@ Router = (function(_super) {
     'class/run/:studentId/:subtestId': 'runSubtest',
     'class/result/student/subtest/:studentId/:subtestId': 'studentSubtest',
     'settings': 'settings',
+    '': 'landing',
     'groups': 'groups',
     'assessments': 'assessments',
     'assessments/:group': 'assessments',
-    'dashboard': 'dashboard',
-    'codebook/:id': 'codebook',
+    'run/:id': 'run',
     'restart/:id': 'restart',
     'edit/:id': 'edit',
     'csv/:id': 'csv',
@@ -42,8 +41,18 @@ Router = (function(_super) {
     'report/classToDate/:klassId': 'klassToDate'
   };
 
+  Router.prototype.landing = function() {
+    if (Tangerine.settings.context === "server") {
+      return Tangerine.router.navigate("groups", true);
+    } else if (Tangerine.settings.context === "mobile") {
+      return Tangerine.router.navigate("assessments", true);
+    } else if (Tangerine.settings.context === "class") {
+      return Tangerine.router.navigate("class", true);
+    }
+  };
+
   Router.prototype.groups = function() {
-    if (Tangerine.settings.context === "mobile") {
+    if (Tangerine.settings.context !== "server") {
       return Tangerine.router.navigate("assessments", true);
     } else {
       return Tangerine.user.verify({
@@ -64,10 +73,6 @@ Router = (function(_super) {
     }
   };
 
-  Router.prototype.codebook = function(id) {
-    return id = Utils.cleanURL(id);
-  };
-
   Router.prototype.klass = function() {
     return Tangerine.user.verify({
       isRegistered: function() {
@@ -81,7 +86,7 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.klasses = function() {
+  Router.prototype.klass = function() {
     return Tangerine.user.verify({
       isRegistered: function() {
         var allKlasses;
@@ -424,6 +429,29 @@ Router = (function(_super) {
 
   Router.prototype.restart = function(name) {
     return Tangerine.router.navigate("run/" + name, true);
+  };
+
+  Router.prototype.run = function(id) {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var assessment;
+        assessment = new Assessment({
+          "_id": id
+        });
+        return assessment.fetch({
+          success: function(model) {
+            var view;
+            view = new AssessmentRunView({
+              model: model
+            });
+            return vm.show(view);
+          }
+        });
+      },
+      isUnregistered: function(options) {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
   };
 
   Router.prototype.results = function(id) {

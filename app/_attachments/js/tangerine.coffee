@@ -7,7 +7,6 @@ class Router extends Backbone.Router
 
     'transfer' : 'transfer'
 
-    'classes'        : 'klasses'
     'class'          : 'klass'
     'class/edit/:id' : 'klassEdit'
     'class/student/:studentId'        : 'studentEdit'
@@ -22,22 +21,20 @@ class Router extends Backbone.Router
 
     'settings' : 'settings'
 
+    '' : 'landing'
+
     'groups' : 'groups'
 
     'assessments'        : 'assessments'
     'assessments/:group' : 'assessments'
 
-
-    'dashboard' : 'dashboard' 
-
-    'codebook/:id' : 'codebook'
-
+    'run/:id'       : 'run'
     'restart/:id'   : 'restart'
     'edit/:id'      : 'edit'
     'csv/:id'       : 'csv'
     'results/:name' : 'results'
     'import'        : 'import'
-
+    
     'subtest/:id' : 'editSubtest'
 
     'question/:id' : 'editQuestion'
@@ -45,8 +42,16 @@ class Router extends Backbone.Router
     'report/weekByStudent/:subtestId' : 'weekByStudent'
     'report/classToDate/:klassId'     : 'klassToDate'
 
+  landing: ->
+    if Tangerine.settings.context == "server"
+      Tangerine.router.navigate "groups", true
+    else if Tangerine.settings.context == "mobile"
+      Tangerine.router.navigate "assessments", true
+    else if Tangerine.settings.context == "class"
+      Tangerine.router.navigate "class", true
+
   groups: ->
-    if Tangerine.settings.context == "mobile"
+    if Tangerine.settings.context != "server"
       Tangerine.router.navigate "assessments", true
     else 
       Tangerine.user.verify
@@ -59,11 +64,7 @@ class Router extends Backbone.Router
             vm.show view
         isUnregistered: ->
           Tangerine.router.navigate "login", true
-    
-
-  codebook: (id) ->
-    id = Utils.cleanURL(id)
-
+  
   klass: ->
     Tangerine.user.verify
       isRegistered: ->
@@ -72,7 +73,7 @@ class Router extends Backbone.Router
       isUnregistered: ->
         Tangerine.router.navigate "login", true
 
-  klasses: ->
+  klass: ->
     Tangerine.user.verify
       isRegistered: ->
         allKlasses = new Klasses
@@ -208,6 +209,7 @@ class Router extends Backbone.Router
       isUnregistered: ->
         Tangerine.router.navigate "", true
 
+
   #
   # Assessment
   #
@@ -276,6 +278,18 @@ class Router extends Backbone.Router
 
   restart: (name) ->
     Tangerine.router.navigate "run/#{name}", true
+
+  run: (id) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        assessment = new Assessment
+          "_id" : id
+        assessment.fetch
+          success : ( model ) ->
+            view = new AssessmentRunView model: model
+            vm.show view
+      isUnregistered: (options) ->
+        Tangerine.router.navigate "login", true
 
   results: (id) ->
     Tangerine.user.verify
@@ -347,11 +361,7 @@ class Router extends Backbone.Router
                           "results"  : results
                           "subtests" : subtests
                           "klass"    : klass
-                      
                         vm.show view
-
-
-
       isUnregistered: ->
         Tangerine.router.navigate "login", true
 
