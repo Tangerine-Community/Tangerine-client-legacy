@@ -49,7 +49,7 @@ Follow the instructions on this page to install CouchDB:
 ##### 4. Ensure that couchdb is running
 Go to the couchdb server that should now be running on your machine:
 
-    <http://localhost:5984/_utils>
+http://localhost:5984/_utils
 
 ##### 5. Get Tangerine
 Using github create a local clone of the tangerine repository.
