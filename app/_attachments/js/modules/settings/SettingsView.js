@@ -21,7 +21,8 @@ SettingsView = (function(_super) {
   SettingsView.prototype.updateModel = function() {
     return this.settings.set({
       context: this.$el.find('#context').val(),
-      generalThreshold: parseFloat(this.$el.find('#generalThreshold').val())
+      generalThreshold: parseFloat(this.$el.find('#generalThreshold').val()),
+      language: this.$el.find('#language').val()
     });
   };
 
@@ -35,10 +36,11 @@ SettingsView = (function(_super) {
   };
 
   SettingsView.prototype.render = function() {
-    var context, generalThreshold;
+    var context, generalThreshold, language;
     context = this.settings.escape("context");
     generalThreshold = this.settings.escape("generalThreshold");
-    this.$el.html("<h1>" + (t("settings")) + "</h1>    <p>Please be careful with the following settings.</p>    <div class='menu_box'>      <div class='label_value'>        <label for='context'>Context</label>        <input id='context' type='text' value='" + context + "'>      </div>      <div class='label_value'>        <label for='context'>General Threshold</label>        <input id='generalThreshold' type='number' value='" + generalThreshold + "'>      </div>    </div>    <button class='command save'>Save</button>    ");
+    language = this.settings.escape("language");
+    this.$el.html("<h1>" + (t("settings")) + "</h1>    <p>Please be careful with the following settings.</p>    <div class='menu_box'>      <div class='label_value'>        <label for='context'>Context</label>        <input id='context' type='text' value='" + context + "'>      </div>      <div class='label_value'>        <label for='context'>General Threshold</label>        <input id='generalThreshold' type='number' value='" + generalThreshold + "'>      </div>      <div class='label_value'>        <label for='context'>Language</label>        <input id='language' type='number' value='" + language + "'>      </div>    </div>    <button class='command save'>Save</button>    ");
     return this.trigger("rendered");
   };
 

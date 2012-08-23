@@ -10,6 +10,7 @@ class SettingsView extends Backbone.View
     @settings.set
       context          : @$el.find('#context').val()
       generalThreshold : parseFloat(@$el.find('#generalThreshold').val())
+      language         : @$el.find('#language').val()
 
   save: ->
     @updateModel()
@@ -21,6 +22,7 @@ class SettingsView extends Backbone.View
   render: ->
     context = @settings.escape "context"
     generalThreshold = @settings.escape "generalThreshold"
+    language = @settings.escape "language"
 
     @$el.html "<h1>#{t("settings")}</h1>
     <p>Please be careful with the following settings.</p>
@@ -32,6 +34,10 @@ class SettingsView extends Backbone.View
       <div class='label_value'>
         <label for='context'>General Threshold</label>
         <input id='generalThreshold' type='number' value='#{generalThreshold}'>
+      </div>
+      <div class='label_value'>
+        <label for='context'>Language</label>
+        <input id='language' type='number' value='#{language}'>
       </div>
     </div>
     <button class='command save'>Save</button>
