@@ -1,4 +1,4 @@
-class SubtestRunSingleView extends Backbone.View
+class SubtestRunView extends Backbone.View
   
   events:
     'click .next'         : 'next'

@@ -1,35 +1,35 @@
-var SubtestRunSingleView,
+var SubtestRunView,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-SubtestRunSingleView = (function(_super) {
+SubtestRunView = (function(_super) {
 
-  __extends(SubtestRunSingleView, _super);
+  __extends(SubtestRunView, _super);
 
-  function SubtestRunSingleView() {
+  function SubtestRunView() {
     this.onPrototypeRendered = __bind(this.onPrototypeRendered, this);
-    SubtestRunSingleView.__super__.constructor.apply(this, arguments);
+    SubtestRunView.__super__.constructor.apply(this, arguments);
   }
 
-  SubtestRunSingleView.prototype.events = {
+  SubtestRunView.prototype.events = {
     'click .next': 'next',
     'click .subtest_help': 'toggleHelp',
     'click .skip': 'skip'
   };
 
-  SubtestRunSingleView.prototype.toggleHelp = function() {
+  SubtestRunView.prototype.toggleHelp = function() {
     return this.$el.find(".enumerator_help").fadeToggle(250);
   };
 
-  SubtestRunSingleView.prototype.initialize = function(options) {
+  SubtestRunView.prototype.initialize = function(options) {
     this.protoViews = Tangerine.config.prototypeViews;
     this.model = options.model;
     this.parent = options.parent;
     return this.prototypeRendered = false;
   };
 
-  SubtestRunSingleView.prototype.render = function() {
+  SubtestRunView.prototype.render = function() {
     var enumeratorHelp, skipButton, skippable, studentDialog;
     enumeratorHelp = (this.model.get("enumeratorHelp") || "") !== "" ? "<button class='subtest_help command'>help</button><div class='enumerator_help'>" + (this.model.get('enumeratorHelp')) + "</div>" : "";
     studentDialog = (this.model.get("studentDialog") || "") !== "" ? "<div class='student_dialog'>" + (this.model.get('studentDialog')) + "</div>" : "";
@@ -48,11 +48,11 @@ SubtestRunSingleView = (function(_super) {
     return this.trigger("rendered");
   };
 
-  SubtestRunSingleView.prototype.onPrototypeRendered = function() {
+  SubtestRunView.prototype.onPrototypeRendered = function() {
     return this.trigger("rendered");
   };
 
-  SubtestRunSingleView.prototype.getGridScore = function() {
+  SubtestRunView.prototype.getGridScore = function() {
     var grid, gridScore, link;
     link = this.model.get("gridLinkId") || "";
     if (link === "") {
@@ -64,12 +64,12 @@ SubtestRunSingleView = (function(_super) {
     return gridScore;
   };
 
-  SubtestRunSingleView.prototype.onClose = function() {
+  SubtestRunView.prototype.onClose = function() {
     var _ref;
     return (_ref = this.prototypeView) != null ? typeof _ref.close === "function" ? _ref.close() : void 0 : void 0;
   };
 
-  SubtestRunSingleView.prototype.isValid = function() {
+  SubtestRunView.prototype.isValid = function() {
     if (!this.prototypeRendered) return false;
     if (this.prototypeView.isValid != null) {
       return this.prototypeView.isValid();
@@ -79,11 +79,11 @@ SubtestRunSingleView = (function(_super) {
     return true;
   };
 
-  SubtestRunSingleView.prototype.showErrors = function() {
+  SubtestRunView.prototype.showErrors = function() {
     return this.prototypeView.showErrors();
   };
 
-  SubtestRunSingleView.prototype.getSum = function() {
+  SubtestRunView.prototype.getSum = function() {
     if (this.prototypeView.getSum != null) {
       return this.prototypeView.getSum();
     } else {
@@ -96,15 +96,15 @@ SubtestRunSingleView = (function(_super) {
     }
   };
 
-  SubtestRunSingleView.prototype.abort = function() {
+  SubtestRunView.prototype.abort = function() {
     return this.parent.abort();
   };
 
-  SubtestRunSingleView.prototype.getResult = function() {
+  SubtestRunView.prototype.getResult = function() {
     return this.prototypeView.getResult();
   };
 
-  SubtestRunSingleView.prototype.getSkipped = function() {
+  SubtestRunView.prototype.getSkipped = function() {
     if (this.prototypeView.getSkipped != null) {
       return this.prototypeView.getSkipped();
     } else {
@@ -112,14 +112,14 @@ SubtestRunSingleView = (function(_super) {
     }
   };
 
-  SubtestRunSingleView.prototype.next = function() {
+  SubtestRunView.prototype.next = function() {
     return this.parent.next();
   };
 
-  SubtestRunSingleView.prototype.skip = function() {
+  SubtestRunView.prototype.skip = function() {
     return this.parent.skip();
   };
 
-  return SubtestRunSingleView;
+  return SubtestRunView;
 
 })(Backbone.View);
