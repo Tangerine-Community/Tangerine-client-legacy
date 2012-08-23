@@ -12,7 +12,9 @@ This guide is for snow leopard (Mac OS 10.6.x)
 <http://moncefbelyamani.com/how-to-install-xcode-homebrew-git-rvm-ruby-on-mac/>
 
 Use the command
+
     brew doctor
+    
 to make sure everything is correct. When you have all the above installed 
 and brew reports "Raring to Brew" you should be ready to move on.
 Some known problems that can occur:
@@ -24,19 +26,24 @@ Some known problems that can occur:
 
 ##### 2. Install additional programs:
 Couchapp
+
     sudo brew install pip
     sudo env ARCHFLAGS="-arch i386 -arch x86_64" pip install couchapp
 
 Coffeescript compiler:
+
     http://www.blog.bridgeutopiaweb.com/post/how-to-install-coffeescript-on-mac-os-x/
 
 Ruby
+
     rvm install 1.9.3
 
 Watchr
+
     gem install watchr
 
 Rake
+
     gem install rake
 
 
@@ -70,6 +77,7 @@ If not check for error message from your couchapp push command. You can also loo
 
 ##### 7. Setup automatic pushing
 From the Tangerine directory run:
+
     watchr file.watchr
 
 watchr will watch all files in your Tangerine directory. When they change it will compile any coffeescript that has been updated and then push the changes to the couchdb.
