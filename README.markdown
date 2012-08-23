@@ -9,7 +9,8 @@ couchdb (http://couchdb.apache.org/) for a more streamlined process
 This guide is for snow leopard (Mac OS 10.6.x)
 
 ##### 1. Follow this tutorial
-    http://moncefbelyamani.com/how-to-install-xcode-homebrew-git-rvm-ruby-on-mac/
+<http://moncefbelyamani.com/how-to-install-xcode-homebrew-git-rvm-ruby-on-mac/>
+
 This should install xCode, homebrew, git, rvm, and ruby. 
 Install couchdb and couchapp from the sites above. 
 
@@ -40,36 +41,43 @@ Couchapp
 Install coffeescript (http://coffeescript.org) and node (http://nodejs.org)
 
 ##### 3. Build couchdb
-Use one of the commands below:
 
-    build/bin/couchdb
-    ~/build-couchdb/build/bin/couchdb
-Note building couchdb may take upwards of an hour
+Follow the instructions on this page to install CouchDB:
 
-##### 4. Get Tangerine
+<http://wiki.apache.org/couchdb/Installing_on_OSX>
+
+##### 4. Ensure that couchdb is running
+Go to the couchdb server that should now be running on your machine:
+
+    <http://localhost:5984/_utils>
+
+##### 5. Get Tangerine
 Using github create a local clone of the tangerine repository.
-Note that the cloud version can be found at tangerine.iriscouch.com/tangerine
 
-##### 5. Troubleshooting Tips
-- With couchdb running, go to the localhost server and add /_util to the url. Register as an admin. 
-- You may need to get couchapprc and couchappignore from someone. 
+    git clone https://github.com/Tangerine-Community/Tangerine.git
 
-##### 6. Finish
-With couchdb running, run watchr using 
+##### 6. Deploy the tangerine source code to your local CouchDB
+Go to the Tangerine directory that you just cloned into and push:
 
-    watchr file.watchr
-and use
-
+    cd Tangerine
     couchapp push
-to push tangerine to your localhost server. Time to begin developing!
 
+(TODO: may need to deal with .couchapprc and .couchappignore)
 
-#### Getting Started - PC
-Getting started developing on a pc is much more complicated, as a pc does not run on unix. Two options are available:
+Check that it is working by going to <http://localhost:5984/tangerine/_design/tangerine/index.html>
+
+If not check for error message from your couchapp push command. You can also look at the couchdb log file.
+
+##### 7. Setup automatic pushing
+From the Tangerine directory run:
+    watchr file.watchr
+
+watchr will watch all files in your Tangerine directory. When they change it will compile any coffeescript that has been updated and then push the changes to the couchdb.
+
+#### Getting Started - Windows (TODO)
 
 - Use a virtual box to run linux
-- Try to find the pc equivalent of the above software
-
+- Use a windows build of couchdb and cygwin for python and ruby
 
 ----
 
