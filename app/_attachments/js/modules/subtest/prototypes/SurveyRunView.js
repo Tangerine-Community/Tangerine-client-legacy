@@ -22,11 +22,9 @@ SurveyRunView = (function(_super) {
     questions = new Questions;
     return questions.fetch({
       success: function(collection) {
-        var filteredCollection;
-        filteredCollection = collection.where({
+        _this.questions = new Questions(collection.where({
           subtestId: _this.model.id
-        });
-        _this.questions = new Questions(filteredCollection);
+        }));
         _this.questions.sort();
         return _this.render();
       }
