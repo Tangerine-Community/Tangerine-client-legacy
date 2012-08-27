@@ -14,7 +14,9 @@ class GridEditView extends Backbone.View
     if /\t|,/.test(@$el.find("#subtest_items").val()) then alert "Please remember\n\nGrid items are space \" \" delimited"
 
     @model.set
-      captureMinuteItem: @$el.find("#capture_minute_item input:checked").val() == "true"
+      captureLastAttempted: @$el.find("#capture_minute_item input:checked").val()    == "true"
+      endOfLine:            @$el.find("#capture_last_attempted input:checked").val() == "true"
+      captureMinuteItem:    @$el.find("#end_of_line input:checked").val()            == "true"
       randomize: @$el.find("#randomize input:checked").val() == "true"
       timer    : parseInt( @$el.find("#subtest_timer").val() )
       items    : _.compact( @$el.find("#subtest_items").val().split(" ") ) # mild sanitization, happens at read too
@@ -30,7 +32,10 @@ class GridEditView extends Backbone.View
     autostop     = @model.get("autostop") || 0
     variableName = @model.get("variableName") || ""
     randomize    = if @model.has("randomize") then @model.get("randomize") else false
-    minuteItem   = if @model.has("captureMinuteItem") then @model.get("captureMinuteItem") else false
+    minuteItem   = if @model.has("captureMinuteItem")    then @model.get("captureMinuteItem") else false
+
+    captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureMinuteItem") else true
+    endOfLine            = if @model.has("endOfLine")            then @model.get("endOfLine") else true
 
 
     @$el.html "
@@ -51,7 +56,9 @@ class GridEditView extends Backbone.View
             <label for='randomize_false'>No</label><input name='randomize' type='radio' value='false' id='randomize_false' #{'checked' if not randomize}>
           </div>
         </div>
+
         <br>
+
         <label>Capture item at 60 seconds</label><br>
         <div class='menu_box'>
           <div id='capture_minute_item' class='buttonset'>
@@ -59,18 +66,40 @@ class GridEditView extends Backbone.View
             <label for='capture_minute_item_false'>No</label><input name='capture_minute_item' type='radio' value='false' id='capture_minute_item_false' #{'checked' if not minuteItem}>
           </div>
         </div>
+
+        <br>
+
+        <label>Capture last item attempted</label><br>
+        <div class='menu_box'>
+          <div id='capture_last_attempted' class='buttonset'>
+            <label for='capture_last_attempted_true'>Yes</label><input name='capture_last_attempted' type='radio' value='true' id='capture_last_attempted_true' #{'checked' if captureLastAttempted}>
+            <label for='capture_last_attempted_false'>No</label><input name='capture_last_attempted' type='radio' value='false' id='capture_last_attempted_false' #{'checked' if not captureLastAttempted}>
+          </div>
+        </div>
+
+        <br>
+
+        <label>Mark entire line button</label><br>
+        <div class='menu_box'>
+          <div id='end_of_line' class='buttonset'>
+            <label for='end_of_line_true'>Yes</label><input name='end_of_line' type='radio' value='true' id='end_of_line_true' #{'checked' if endOfLine}>
+            <label for='end_of_line_false'>No</label><input name='end_of_line' type='radio' value='false' id='end_of_line_false' #{'checked' if not endOfLine}>
+          </div>
+        </div>
+
+
       </div>
 
       <div class='label_value'>
-        <label for='subtest_columns'>Columns</label>
+        <label for='subtest_columns' title='Number of columns in which to display the grid items.'>Columns</label>
         <input id='subtest_columns' value='#{columns}' type='number'>
       </div>
       <div class='label_value'>
-        <label for='subtest_autostop'>Autostop</label>
+        <label for='subtest_autostop' title='Number of incorrect items in a row from the beginning, after which, the test automatically stops. If the item that triggered the autostop was an enumerator error, the enumerator has 3 seconds to undo any incorrect item and resume the test. Otherwise, the test is stopped but may still be reset completely.'>Autostop</label>
         <input id='subtest_autostop' value='#{autostop}' type='number'>
       </div>
       <div class='label_value'>
-        <label for='subtest_timer'>Timer</label>
+        <label for='subtest_timer' title='Seconds to give the child to complete the test. Setting this value to 0 will make the test untimed.'>Timer</label>
         <input id='subtest_timer' value='#{timer}' type='number'>
       </div>"
     

@@ -12,7 +12,9 @@
   <span class="nv">save: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>validation can be done on models, perhaps there is a better palce to do it</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="sr">/\t|,/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_items&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">())</span> <span class="k">then</span> <span class="nx">alert</span> <span class="s">&quot;Please remember\n\nGrid items are space \&quot; \&quot; delimited&quot;</span>
 
     <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
-      <span class="nv">captureMinuteItem: </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">capture_minute_item input:checked&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;true&quot;</span>
+      <span class="nv">captureLastAttempted: </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">capture_minute_item input:checked&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>    <span class="o">==</span> <span class="s">&quot;true&quot;</span>
+      <span class="nv">endOfLine: </span>           <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">capture_last_attempted input:checked&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;true&quot;</span>
+      <span class="nv">captureMinuteItem: </span>   <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">end_of_line input:checked&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>            <span class="o">==</span> <span class="s">&quot;true&quot;</span>
       <span class="nv">randomize: </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">randomize input:checked&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;true&quot;</span>
       <span class="nv">timer    : </span><span class="nb">parseInt</span><span class="p">(</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_timer&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="p">)</span>
       <span class="nv">items    : </span><span class="nx">_</span><span class="p">.</span><span class="nx">compact</span><span class="p">(</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">subtest_items&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span> <span class="p">)</span> <span class="c1"># mild sanitization, happens at read too</span>
@@ -28,7 +30,10 @@
     <span class="nv">autostop     = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;autostop&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span>
     <span class="nv">variableName = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;variableName&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
     <span class="nv">randomize    = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;randomize&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;randomize&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">false</span>
-    <span class="nv">minuteItem   = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureMinuteItem&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureMinuteItem&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">false</span>
+    <span class="nv">minuteItem   = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureMinuteItem&quot;</span><span class="p">)</span>    <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureMinuteItem&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">false</span>
+
+    <span class="nv">captureLastAttempted = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureLastAttempted&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureMinuteItem&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">true</span>
+    <span class="nv">endOfLine            = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span>            <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">true</span>
 
 
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
@@ -49,7 +54,9 @@
 <span class="s">            &lt;label for=&#39;randomize_false&#39;&gt;No&lt;/label&gt;&lt;input name=&#39;randomize&#39; type=&#39;radio&#39; value=&#39;false&#39; id=&#39;randomize_false&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">randomize</span><span class="si">}</span><span class="s">&gt;</span>
 <span class="s">          &lt;/div&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
+
 <span class="s">        &lt;br&gt;</span>
+
 <span class="s">        &lt;label&gt;Capture item at 60 seconds&lt;/label&gt;&lt;br&gt;</span>
 <span class="s">        &lt;div class=&#39;menu_box&#39;&gt;</span>
 <span class="s">          &lt;div id=&#39;capture_minute_item&#39; class=&#39;buttonset&#39;&gt;</span>
@@ -57,18 +64,40 @@
 <span class="s">            &lt;label for=&#39;capture_minute_item_false&#39;&gt;No&lt;/label&gt;&lt;input name=&#39;capture_minute_item&#39; type=&#39;radio&#39; value=&#39;false&#39; id=&#39;capture_minute_item_false&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">minuteItem</span><span class="si">}</span><span class="s">&gt;</span>
 <span class="s">          &lt;/div&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
+
+<span class="s">        &lt;br&gt;</span>
+
+<span class="s">        &lt;label&gt;Capture last item attempted&lt;/label&gt;&lt;br&gt;</span>
+<span class="s">        &lt;div class=&#39;menu_box&#39;&gt;</span>
+<span class="s">          &lt;div id=&#39;capture_last_attempted&#39; class=&#39;buttonset&#39;&gt;</span>
+<span class="s">            &lt;label for=&#39;capture_last_attempted_true&#39;&gt;Yes&lt;/label&gt;&lt;input name=&#39;capture_last_attempted&#39; type=&#39;radio&#39; value=&#39;true&#39; id=&#39;capture_last_attempted_true&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">captureLastAttempted</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">            &lt;label for=&#39;capture_last_attempted_false&#39;&gt;No&lt;/label&gt;&lt;input name=&#39;capture_last_attempted&#39; type=&#39;radio&#39; value=&#39;false&#39; id=&#39;capture_last_attempted_false&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">captureLastAttempted</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">          &lt;/div&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+
+<span class="s">        &lt;br&gt;</span>
+
+<span class="s">        &lt;label&gt;Mark entire line button&lt;/label&gt;&lt;br&gt;</span>
+<span class="s">        &lt;div class=&#39;menu_box&#39;&gt;</span>
+<span class="s">          &lt;div id=&#39;end_of_line&#39; class=&#39;buttonset&#39;&gt;</span>
+<span class="s">            &lt;label for=&#39;end_of_line_true&#39;&gt;Yes&lt;/label&gt;&lt;input name=&#39;end_of_line&#39; type=&#39;radio&#39; value=&#39;true&#39; id=&#39;end_of_line_true&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">endOfLine</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">            &lt;label for=&#39;end_of_line_false&#39;&gt;No&lt;/label&gt;&lt;input name=&#39;end_of_line&#39; type=&#39;radio&#39; value=&#39;false&#39; id=&#39;end_of_line_false&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">endOfLine</span><span class="si">}</span><span class="s">&gt;</span>
+<span class="s">          &lt;/div&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+
+
 <span class="s">      &lt;/div&gt;</span>
 
 <span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;subtest_columns&#39;&gt;Columns&lt;/label&gt;</span>
+<span class="s">        &lt;label for=&#39;subtest_columns&#39; title=&#39;Number of columns in which to display the grid items.&#39;&gt;Columns&lt;/label&gt;</span>
 <span class="s">        &lt;input id=&#39;subtest_columns&#39; value=&#39;</span><span class="si">#{</span><span class="nx">columns</span><span class="si">}</span><span class="s">&#39; type=&#39;number&#39;&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;subtest_autostop&#39;&gt;Autostop&lt;/label&gt;</span>
+<span class="s">        &lt;label for=&#39;subtest_autostop&#39; title=&#39;Number of incorrect items in a row from the beginning, after which, the test automatically stops. If the item that triggered the autostop was an enumerator error, the enumerator has 3 seconds to undo any incorrect item and resume the test. Otherwise, the test is stopped but may still be reset completely.&#39;&gt;Autostop&lt;/label&gt;</span>
 <span class="s">        &lt;input id=&#39;subtest_autostop&#39; value=&#39;</span><span class="si">#{</span><span class="nx">autostop</span><span class="si">}</span><span class="s">&#39; type=&#39;number&#39;&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
 <span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">        &lt;label for=&#39;subtest_timer&#39;&gt;Timer&lt;/label&gt;</span>
+<span class="s">        &lt;label for=&#39;subtest_timer&#39; title=&#39;Seconds to give the child to complete the test. Setting this value to 0 will make the test untimed.&#39;&gt;Timer&lt;/label&gt;</span>
 <span class="s">        &lt;input id=&#39;subtest_timer&#39; value=&#39;</span><span class="si">#{</span><span class="nx">timer</span><span class="si">}</span><span class="s">&#39; type=&#39;number&#39;&gt;</span>
 <span class="s">      &lt;/div&gt;&quot;</span>
     
