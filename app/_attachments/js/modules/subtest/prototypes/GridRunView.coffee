@@ -33,7 +33,14 @@ class GridRunView extends Backbone.View
     @markElement(index)
     if @autostop != 0
       @checkAutostop()
-      
+
+  minuteItemHandler: (event) =>
+    $target = $(event.target)
+    index = $target.attr('data-index')
+    @itemAtMinute = index
+    $target.addClass "element_minute"
+    @updateMode null, "mark"
+
   checkAutostop: ->
     if @timeRunning
       autoCount = 0
@@ -143,6 +150,12 @@ class GridRunView extends Backbone.View
     
     @$el.find(".timer").html @timeRemaining
     if @timeRemaining <= 0 && @timeRunning == true && @captureLastAttempted then @stopTimer null, "Time<br><br>Please mark<br>last item attempted"
+    if !@gotMinute && !@minuteMessage && @timeElapsed >= 3 && @captureMinuteItem
+      Utils.flash "yellow"
+      Utils.midAlert "Please select the item the child is currently attempting."
+      @minuteMessage = true
+      @mode = "minuteItem"
+
 
   updateMode: (event, mode = null) =>
     if mode?
@@ -156,6 +169,11 @@ class GridRunView extends Backbone.View
     Math.round((new Date()).getTime() / 1000)
 
   resetVariables: ->
+
+    @gotMinuteItem = false
+    @minuteMessage = false
+    @itemAtMinute = null
+
 
     @markRecord = []
 
@@ -217,15 +235,16 @@ class GridRunView extends Backbone.View
 
   initialize: (options) ->
 
-
+    @captureMinuteItem    = if @model.has("captureMinuteItem")    then @model.get("captureMinuteItem")    else false
     @captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted") else true
     @endOfLine            = if @model.has("endOfLine")            then @model.get("endOfLine")            else true
 
     @totalTime = @model.get("timer") || 0
 
     @modeHandlers =
-      mark : @markHandler
-      last : @lastHandler
+      "mark"       : @markHandler
+      "last"       : @lastHandler
+      "minuteItem" : @minuteItemHandler 
       disabled : $.noop
 
     @model  = @options.model
@@ -265,14 +284,23 @@ class GridRunView extends Backbone.View
       <br>
     </div>"
 
+    if @captureMinuteItem
+      minuteItemButton = "
+        <label for='minute_item'>Item at 60 seconds</label>
+          <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>
+      "
+    else
+      minuteItemButton =  ""
+
     modeSelector = "
-    <div id='grid_mode' class='question buttonset clearfix'>
-      <label>Input mode</label><br>
-      <label for='mark'>Mark</label>
-      <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>
-      <label for='last_attempted'>Last attempted</label>
-      <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>
-    </div>
+      <div id='grid_mode' class='question buttonset clearfix'>
+        <label>Input mode</label><br>
+        <label for='mark'>Mark</label>
+        <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>
+        #{minuteItemButton}
+        <label for='last_attempted'>Last attempted</label>
+        <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>
+      </div>
     "
 
     html += "
@@ -317,6 +345,7 @@ class GridRunView extends Backbone.View
 
     result =
       "capture_last_attempted" : @captureLastAttempted
+      "item_at_minute" : @itemAtMinute
       "auto_stop"     : @autostopped
       "attempted"     : @lastAttempted
       "items"         : itemResults

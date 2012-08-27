@@ -14,6 +14,7 @@ class GridEditView extends Backbone.View
     if /\t|,/.test(@$el.find("#subtest_items").val()) then alert "Please remember\n\nGrid items are space \" \" delimited"
 
     @model.set
+      captureMinuteItem: @$el.find("#capture_minute_item input:checked").val() == "true"
       randomize: @$el.find("#randomize input:checked").val() == "true"
       timer    : parseInt( @$el.find("#subtest_timer").val() )
       items    : _.compact( @$el.find("#subtest_items").val().split(" ") ) # mild sanitization, happens at read too
@@ -29,6 +30,7 @@ class GridEditView extends Backbone.View
     autostop     = @model.get("autostop") || 0
     variableName = @model.get("variableName") || ""
     randomize    = if @model.has("randomize") then @model.get("randomize") else false
+    minuteItem   = if @model.has("captureMinuteItem") then @model.get("captureMinuteItem") else false
 
 
     @$el.html "
@@ -47,6 +49,14 @@ class GridEditView extends Backbone.View
           <div id='randomize' class='buttonset'>
             <label for='randomize_true'>Yes</label><input name='randomize' type='radio' value='true' id='randomize_true' #{'checked' if randomize}>
             <label for='randomize_false'>No</label><input name='randomize' type='radio' value='false' id='randomize_false' #{'checked' if not randomize}>
+          </div>
+        </div>
+        <br>
+        <label>Capture item at 60 seconds</label><br>
+        <div class='menu_box'>
+          <div id='capture_minute_item' class='buttonset'>
+            <label for='capture_minute_item_true'>Yes</label><input name='capture_minute_item' type='radio' value='true' id='capture_minute_item_true' #{'checked' if minuteItem}>
+            <label for='capture_minute_item_false'>No</label><input name='capture_minute_item' type='radio' value='false' id='capture_minute_item_false' #{'checked' if not minuteItem}>
           </div>
         </div>
       </div>
