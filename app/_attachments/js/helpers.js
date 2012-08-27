@@ -135,9 +135,10 @@ Utils = (function() {
     return this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4();
   };
 
-  Utils.flash = function() {
+  Utils.flash = function(color) {
+    if (color == null) color = "red";
     $("body").css({
-      "backgroundColor": "red"
+      "backgroundColor": color
     });
     return setTimeout(function() {
       return $("body").css({

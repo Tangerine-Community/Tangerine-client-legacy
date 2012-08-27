@@ -111,11 +111,12 @@ class Utils
   @guid: ->
    return @S4()+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+@S4()+@S4()
 
-  @flash: ->
-    $("body").css "backgroundColor" : "red"
+  @flash: (color="red") ->
+    $("body").css "backgroundColor" : color
     setTimeout ->
       $("body").css "backgroundColor" : "white"
     , 1000
+
 
   @$_GET: (q,s) ->
     vars = {}

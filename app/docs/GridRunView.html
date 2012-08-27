@@ -2,7 +2,7 @@
 
   <span class="nv">className: </span><span class="s">&quot;grid_prototype&quot;</span>
 
-  <span class="nv">events: </span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">kindle</span> <span class="k">then</span> <span class="p">{</span>
+  <span class="nv">events: </span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">context</span> <span class="o">==</span> <span class="s">&quot;mobile&quot;</span> <span class="k">then</span> <span class="p">{</span>
     <span class="s">&#39;touchstart .grid_element&#39;</span> <span class="o">:</span> <span class="s">&#39;gridClick&#39;</span>
     <span class="s">&#39;touchstart .end_of_grid_line&#39;</span> <span class="o">:</span> <span class="s">&#39;endOfGridLineClick&#39;</span>
     <span class="s">&#39;click .grid_mode&#39;</span>   <span class="o">:</span> <span class="s">&#39;updateMode&#39;</span>
@@ -33,7 +33,14 @@
     <span class="nx">@markElement</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span>
     <span class="k">if</span> <span class="nx">@autostop</span> <span class="o">!=</span> <span class="mi">0</span>
       <span class="nx">@checkAutostop</span><span class="p">()</span>
-      
+
+  <span class="nv">minuteItemHandler: </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span>
+    <span class="nv">$target = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span>
+    <span class="nv">index = </span><span class="nx">$target</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-index&#39;</span><span class="p">)</span>
+    <span class="vi">@itemAtMinute = </span><span class="nx">index</span>
+    <span class="nx">$target</span><span class="p">.</span><span class="nx">addClass</span> <span class="s">&quot;element_minute&quot;</span>
+    <span class="nx">@updateMode</span> <span class="kc">null</span><span class="p">,</span> <span class="s">&quot;mark&quot;</span>
+
   <span class="nv">checkAutostop: </span><span class="o">-&gt;</span>
     <span class="k">if</span> <span class="nx">@timeRunning</span>
       <span class="nv">autoCount = </span><span class="mi">0</span>
@@ -143,6 +150,12 @@
     
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.timer&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">@timeRemaining</span>
     <span class="k">if</span> <span class="nx">@timeRemaining</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">@timeRunning</span> <span class="o">==</span> <span class="kc">true</span> <span class="o">&amp;&amp;</span> <span class="nx">@captureLastAttempted</span> <span class="k">then</span> <span class="nx">@stopTimer</span> <span class="kc">null</span><span class="p">,</span> <span class="s">&quot;Time&lt;br&gt;&lt;br&gt;Please mark&lt;br&gt;last item attempted&quot;</span>
+    <span class="k">if</span> <span class="o">!</span><span class="nx">@gotMinute</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">@minuteMessage</span> <span class="o">&amp;&amp;</span> <span class="nx">@timeElapsed</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="nx">@captureMinuteItem</span>
+      <span class="nx">Utils</span><span class="p">.</span><span class="nx">flash</span> <span class="s">&quot;yellow&quot;</span>
+      <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Please select the item the child is currently attempting.&quot;</span>
+      <span class="vi">@minuteMessage = </span><span class="kc">true</span>
+      <span class="vi">@mode = </span><span class="s">&quot;minuteItem&quot;</span>
+
 
   <span class="nv">updateMode: </span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nv">mode = </span><span class="kc">null</span><span class="p">)</span> <span class="o">=&gt;</span>
     <span class="k">if</span> <span class="nx">mode</span><span class="o">?</span>
@@ -156,6 +169,11 @@
     <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">((</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
 
   <span class="nv">resetVariables: </span><span class="o">-&gt;</span>
+
+    <span class="vi">@gotMinuteItem = </span><span class="kc">false</span>
+    <span class="vi">@minuteMessage = </span><span class="kc">false</span>
+    <span class="vi">@itemAtMinute = </span><span class="kc">null</span>
+
 
     <span class="vi">@markRecord = </span><span class="p">[]</span>
 
@@ -177,11 +195,7 @@
     <span class="vi">@untimed  = </span><span class="nx">@timer</span> <span class="o">==</span> <span class="mi">0</span>
 
     <span class="vi">@items    = </span><span class="nx">_</span><span class="p">.</span><span class="nx">compact</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">))</span> <span class="c1"># mild sanitization, happens at save too</span>
-<<<<<<< HEAD
-    <span class="vi">@mode     = </span><span class="k">if</span> <span class="nx">@untimed</span> <span class="k">then</span> <span class="s">&quot;mark&quot;</span> <span class="k">else</span> <span class="s">&quot;disabled&quot;</span>
 
-=======
-    
     <span class="vi">@itemMap = </span><span class="p">[]</span>
     <span class="vi">@mapItem = </span><span class="p">[]</span>
     
@@ -201,8 +215,9 @@
         <span class="nx">@itemMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span>
         <span class="nx">@mapItem</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span>
 
-    <span class="vi">@mode     = </span><span class="s">&quot;disabled&quot;</span>
->>>>>>> c606be08d8d97100d2cca79996a4f318f97143b2
+    <span class="vi">@mode     = </span><span class="k">if</span> <span class="nx">@untimed</span> <span class="k">then</span> <span class="s">&quot;mark&quot;</span> <span class="k">else</span> <span class="s">&quot;disabled&quot;</span>
+
+
     <span class="vi">@gridOutput = </span><span class="p">[]</span>
     <span class="k">for</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@items</span>
       <span class="nx">@gridOutput</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;correct&#39;</span>
@@ -220,17 +235,16 @@
 
   <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
 
-<<<<<<< HEAD
+    <span class="vi">@captureMinuteItem = </span><span class="kc">true</span> <span class="c1"># if @model.has(&quot;captureMinuteItem&quot;) then @model.get(&quot;captureMinuteItem&quot;) else true</span>
     <span class="vi">@captureLastAttempted = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureLastAttempted&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureLastAttempted&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">true</span>
     <span class="vi">@endOfLine            = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span>            <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span>            <span class="k">else</span> <span class="kc">true</span>
-=======
->>>>>>> c606be08d8d97100d2cca79996a4f318f97143b2
 
     <span class="vi">@totalTime = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;timer&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span>
 
     <span class="vi">@modeHandlers =</span>
-      <span class="nv">mark : </span><span class="nx">@markHandler</span>
-      <span class="nv">last : </span><span class="nx">@lastHandler</span>
+      <span class="s">&quot;mark&quot;</span>       <span class="o">:</span> <span class="nx">@markHandler</span>
+      <span class="s">&quot;last&quot;</span>       <span class="o">:</span> <span class="nx">@lastHandler</span>
+      <span class="s">&quot;minuteItem&quot;</span> <span class="o">:</span> <span class="nx">@minuteItemHandler</span> 
       <span class="nv">disabled : </span><span class="nx">$</span><span class="p">.</span><span class="nx">noop</span>
 
     <span class="vi">@model  = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">model</span>
@@ -256,11 +270,7 @@
       <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;tr&gt;&quot;</span>
       <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nx">@columns</span><span class="p">]</span>
         <span class="k">if</span> <span class="nx">done</span> <span class="o">&lt;</span> <span class="nx">@items</span><span class="p">.</span><span class="nx">length</span>
-<<<<<<< HEAD
-          <span class="nx">html</span> <span class="o">+=</span> <span class="nx">@gridElement</span> <span class="p">{</span> <span class="nv">label : </span><span class="nx">_</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">@items</span><span class="p">[</span><span class="nx">done</span><span class="p">]),</span> <span class="nv">i: </span><span class="nx">done</span><span class="o">+</span><span class="mi">1</span> <span class="p">}</span>
-=======
           <span class="nx">html</span> <span class="o">+=</span> <span class="nx">@gridElement</span> <span class="p">{</span> <span class="nv">label : </span><span class="nx">_</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">@items</span><span class="p">[</span><span class="nx">@itemMap</span><span class="p">[</span><span class="nx">done</span><span class="p">]]),</span> <span class="nv">i: </span><span class="nx">done</span><span class="o">+</span><span class="mi">1</span> <span class="p">}</span>
->>>>>>> c606be08d8d97100d2cca79996a4f318f97143b2
         <span class="nx">done</span><span class="o">++</span>
       <span class="nx">html</span> <span class="o">+=</span> <span class="nx">@endOfGridLine</span><span class="p">({</span><span class="nx">i</span><span class="o">:</span><span class="nx">done</span><span class="p">})</span> <span class="k">if</span> <span class="nx">done</span> <span class="o">&lt;</span> <span class="p">(</span> <span class="nx">@items</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">@endOfLine</span>
       <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;&lt;/tr&gt;&quot;</span>
@@ -324,6 +334,7 @@
 
     <span class="nv">result =</span>
       <span class="s">&quot;capture_last_attempted&quot;</span> <span class="o">:</span> <span class="nx">@captureLastAttempted</span>
+      <span class="s">&quot;item_at_minute&quot;</span> <span class="o">:</span> <span class="nx">@itemAtMinute</span>
       <span class="s">&quot;auto_stop&quot;</span>     <span class="o">:</span> <span class="nx">@autostopped</span>
       <span class="s">&quot;attempted&quot;</span>     <span class="o">:</span> <span class="nx">@lastAttempted</span>
       <span class="s">&quot;items&quot;</span>         <span class="o">:</span> <span class="nx">itemResults</span>

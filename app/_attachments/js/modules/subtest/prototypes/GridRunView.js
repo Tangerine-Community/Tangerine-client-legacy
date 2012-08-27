@@ -12,6 +12,7 @@ GridRunView = (function(_super) {
     this.updateCountdown = __bind(this.updateCountdown, this);
     this.removeUndo = __bind(this.removeUndo, this);
     this.lastHandler = __bind(this.lastHandler, this);
+    this.minuteItemHandler = __bind(this.minuteItemHandler, this);
     this.markHandler = __bind(this.markHandler, this);
     this.gridClick = __bind(this.gridClick, this);
     GridRunView.__super__.constructor.apply(this, arguments);
@@ -52,6 +53,15 @@ GridRunView = (function(_super) {
     if (this.lastAttempted !== 0 && index > this.lastAttempted) return;
     this.markElement(index);
     if (this.autostop !== 0) return this.checkAutostop();
+  };
+
+  GridRunView.prototype.minuteItemHandler = function(event) {
+    var $target, index;
+    $target = $(event.target);
+    index = $target.attr('data-index');
+    this.itemAtMinute = index;
+    $target.addClass("element_minute");
+    return this.updateMode(null, "mark");
   };
 
   GridRunView.prototype.checkAutostop = function() {
@@ -195,7 +205,13 @@ GridRunView = (function(_super) {
     this.timeRemaining = this.timer - this.timeElapsed;
     this.$el.find(".timer").html(this.timeRemaining);
     if (this.timeRemaining <= 0 && this.timeRunning === true && this.captureLastAttempted) {
-      return this.stopTimer(null, "Time<br><br>Please mark<br>last item attempted");
+      this.stopTimer(null, "Time<br><br>Please mark<br>last item attempted");
+    }
+    if (!this.gotMinute && !this.minuteMessage && this.timeElapsed >= 3 && this.captureMinuteItem) {
+      Utils.flash("yellow");
+      Utils.midAlert("Please select the item the child is currently attempting.");
+      this.minuteMessage = true;
+      return this.mode = "minuteItem";
     }
   };
 
@@ -216,6 +232,9 @@ GridRunView = (function(_super) {
 
   GridRunView.prototype.resetVariables = function() {
     var i, item, temp, tempValue, _len, _len2, _len3, _len4, _len5, _ref, _ref2, _ref3, _ref4, _ref5;
+    this.gotMinuteItem = false;
+    this.minuteMessage = false;
+    this.itemAtMinute = null;
     this.markRecord = [];
     this.timerStopped = false;
     this.startTime = 0;
@@ -275,12 +294,14 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.initialize = function(options) {
+    this.captureMinuteItem = true;
     this.captureLastAttempted = this.model.has("captureLastAttempted") ? this.model.get("captureLastAttempted") : true;
     this.endOfLine = this.model.has("endOfLine") ? this.model.get("endOfLine") : true;
     this.totalTime = this.model.get("timer") || 0;
     this.modeHandlers = {
-      mark: this.markHandler,
-      last: this.lastHandler,
+      "mark": this.markHandler,
+      "last": this.lastHandler,
+      "minuteItem": this.minuteItemHandler,
       disabled: $.noop
     };
     this.model = this.options.model;
@@ -361,6 +382,7 @@ GridRunView = (function(_super) {
     if (!this.captureLastAttempted) this.lastAttempted = false;
     return result = {
       "capture_last_attempted": this.captureLastAttempted,
+      "item_at_minute": this.itemAtMinute,
       "auto_stop": this.autostopped,
       "attempted": this.lastAttempted,
       "items": itemResults,

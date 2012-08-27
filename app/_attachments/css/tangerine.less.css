@@ -451,6 +451,12 @@ table.grid .element_last {
   border-right: 5px solid red;
   border-bottom: 5px solid red;
 }
+table.grid .element_minute {
+  margin: 0;
+  border-top: 5px solid blue;
+  border-left: 5px solid blue;
+  border-bottom: 5px solid blue;
+}
 .grid_prototype {
   width: 100%;
 }
@@ -962,11 +968,7 @@ label {
   font-weight: bold;
   display: inline-block;
   clear: both;
-<<<<<<< HEAD
-  margin: 5px 0 0px;
-=======
   margin: 5px 0;
->>>>>>> c606be08d8d97100d2cca79996a4f318f97143b2
 }
 label[title] {
   clear: right;
