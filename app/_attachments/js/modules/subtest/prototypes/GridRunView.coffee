@@ -235,7 +235,7 @@ class GridRunView extends Backbone.View
 
   initialize: (options) ->
 
-    @captureMinuteItem = true # if @model.has("captureMinuteItem") then @model.get("captureMinuteItem") else true
+    @captureMinuteItem    = if @model.has("captureMinuteItem")    then @model.get("captureMinuteItem")    else false
     @captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted") else true
     @endOfLine            = if @model.has("endOfLine")            then @model.get("endOfLine")            else true
 
@@ -284,14 +284,23 @@ class GridRunView extends Backbone.View
       <br>
     </div>"
 
+    if @captureMinuteItem
+      minuteItemButton = "
+        <label for='minute_item'>Item at 60 seconds</label>
+          <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>
+      "
+    else
+      minuteItemButton =  ""
+
     modeSelector = "
-    <div id='grid_mode' class='question buttonset clearfix'>
-      <label>Input mode</label><br>
-      <label for='mark'>Mark</label>
-      <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>
-      <label for='last_attempted'>Last attempted</label>
-      <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>
-    </div>
+      <div id='grid_mode' class='question buttonset clearfix'>
+        <label>Input mode</label><br>
+        <label for='mark'>Mark</label>
+        <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>
+        #{minuteItemButton}
+        <label for='last_attempted'>Last attempted</label>
+        <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>
+      </div>
     "
 
     html += "

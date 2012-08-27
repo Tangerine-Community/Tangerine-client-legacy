@@ -294,7 +294,7 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.initialize = function(options) {
-    this.captureMinuteItem = true;
+    this.captureMinuteItem = this.model.has("captureMinuteItem") ? this.model.get("captureMinuteItem") : false;
     this.captureLastAttempted = this.model.has("captureLastAttempted") ? this.model.get("captureLastAttempted") : true;
     this.endOfLine = this.model.has("endOfLine") ? this.model.get("endOfLine") : true;
     this.totalTime = this.model.get("timer") || 0;
@@ -312,7 +312,7 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.render = function() {
-    var disabling, done, html, i, modeSelector, resetButton, startTimerHTML, stopTimerHTML, _ref;
+    var disabling, done, html, i, minuteItemButton, modeSelector, resetButton, startTimerHTML, stopTimerHTML, _ref;
     done = 0;
     startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>Start</button><div class='timer'>" + this.timer + "</div></div>";
     disabling = this.untimed ? "" : "disabled";
@@ -339,7 +339,12 @@ GridRunView = (function(_super) {
     html += "</table>";
     stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>";
     resetButton = "    <div>      <button class='restart command'>Restart</button>      <br>    </div>";
-    modeSelector = "    <div id='grid_mode' class='question buttonset clearfix'>      <label>Input mode</label><br>      <label for='mark'>Mark</label>      <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>      <label for='last_attempted'>Last attempted</label>      <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>    </div>    ";
+    if (this.captureMinuteItem) {
+      minuteItemButton = "        <label for='minute_item'>Item at 60 seconds</label>          <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>      ";
+    } else {
+      minuteItemButton = "";
+    }
+    modeSelector = "      <div id='grid_mode' class='question buttonset clearfix'>        <label>Input mode</label><br>        <label for='mark'>Mark</label>        <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>        " + minuteItemButton + "        <label for='last_attempted'>Last attempted</label>        <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>      </div>    ";
     html += "      " + (!this.untimed ? stopTimerHTML : "") + "      " + (!this.untimed ? resetButton : "") + "      " + (this.captureLastAttempted ? modeSelector : "") + "    ";
     this.$el.html(html);
     return this.trigger("rendered");
