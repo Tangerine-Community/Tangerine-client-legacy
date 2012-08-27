@@ -51,19 +51,16 @@ class Router extends Backbone.Router
       Tangerine.router.navigate "class", true
 
   groups: ->
-    if Tangerine.settings.context != "server"
-      Tangerine.router.navigate "assessments", true
-    else 
-      Tangerine.user.verify
-        isAdmin: ->
-          groups = Tangerine.user.get("groups")
-          if groups.length == 1 && window.location.hash = ""
-            Tangerine.router.navigate "assessments/#{groups[0]}", true
-          else
-            view = new GroupsView
-            vm.show view
-        isUnregistered: ->
-          Tangerine.router.navigate "login", true
+    Tangerine.user.verify
+      isAdmin: ->
+        groups = Tangerine.user.get("groups")
+        if groups.length == 1 && window.location.hash == ""
+          Tangerine.router.navigate "assessments/#{groups[0]}", true
+        else
+          view = new GroupsView
+          vm.show view
+      isUnregistered: ->
+        Tangerine.router.navigate "login", true
   
   klass: ->
     Tangerine.user.verify

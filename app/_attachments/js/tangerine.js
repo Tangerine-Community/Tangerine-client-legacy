@@ -52,25 +52,21 @@ Router = (function(_super) {
   };
 
   Router.prototype.groups = function() {
-    if (Tangerine.settings.context !== "server") {
-      return Tangerine.router.navigate("assessments", true);
-    } else {
-      return Tangerine.user.verify({
-        isAdmin: function() {
-          var groups, view;
-          groups = Tangerine.user.get("groups");
-          if (groups.length === 1 && (window.location.hash = "")) {
-            return Tangerine.router.navigate("assessments/" + groups[0], true);
-          } else {
-            view = new GroupsView;
-            return vm.show(view);
-          }
-        },
-        isUnregistered: function() {
-          return Tangerine.router.navigate("login", true);
+    return Tangerine.user.verify({
+      isAdmin: function() {
+        var groups, view;
+        groups = Tangerine.user.get("groups");
+        if (groups.length === 1 && window.location.hash === "") {
+          return Tangerine.router.navigate("assessments/" + groups[0], true);
+        } else {
+          view = new GroupsView;
+          return vm.show(view);
         }
-      });
-    }
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
   };
 
   Router.prototype.klass = function() {
