@@ -13,6 +13,14 @@ KlassesView = (function(_super) {
     KlassesView.__super__.constructor.apply(this, arguments);
   }
 
+  KlassesView.prototype.events = {
+    'click .add': 'toggleAddForm',
+    'click .cancel': 'toggleAddForm',
+    'click .save': 'saveNewKlass',
+    'click .goto_class': 'gotoKlass',
+    'click .curricula': 'gotoCurricula'
+  };
+
   KlassesView.prototype.initialize = function(options) {
     this.views = [];
     this.klasses = options.klasses;
@@ -20,11 +28,8 @@ KlassesView = (function(_super) {
     return this.klasses.on("add remove change", this.render);
   };
 
-  KlassesView.prototype.events = {
-    'click .add': 'toggleAddForm',
-    'click .cancel': 'toggleAddForm',
-    'click .save': 'saveNewKlass',
-    'click .goto_class': 'gotoKlass'
+  KlassesView.prototype.gotoCurricula = function() {
+    return Tangerine.router.navigate("curricula", true);
   };
 
   KlassesView.prototype.saveNewKlass = function() {
@@ -91,7 +96,7 @@ KlassesView = (function(_super) {
       curricula = _ref[_i];
       curriculaOptionList += "<option data-id='" + curricula.id + "'>" + (curricula.get('name')) + "</option>";
     }
-    this.$el.html("      <h1>" + (t('classes')) + "</h1>      <div id='klass_list_wrapper'></div>      <button class='add command'>" + (t('add')) + "</button>      <div id='add_form' class='confirmation'>        <div class='menu_box'>           <div class='label_value'>            <label for='year'>" + (t('year')) + "</label>            <input id='year'>          </div>          <div class='label_value'>            <label for='grade'>" + (t('grade')) + "</label>            <input id='grade'>          </div>          <div class='label_value'>            <label for='stream'>" + (t('stream')) + "</label>            <input id='stream'>          </div>          <div class='label_value'>            <label for='curriculum'>" + (t('curriculum')) + "</label><br>            <select id='curriculum'>" + curriculaOptionList + "</select>          </div>          <button class='command save'>" + (t('save')) + "</button><button class='command cancel'>" + (t('cancel')) + "</button>        </div>      </div>    ");
+    this.$el.html("      <h1>" + (t('classes')) + "</h1>      <div id='klass_list_wrapper'></div>      <button class='add command'>" + (t('add')) + "</button>      <div id='add_form' class='confirmation'>        <div class='menu_box'>           <div class='label_value'>            <label for='year'>" + (t('year')) + "</label>            <input id='year'>          </div>          <div class='label_value'>            <label for='grade'>" + (t('grade')) + "</label>            <input id='grade'>          </div>          <div class='label_value'>            <label for='stream'>" + (t('stream')) + "</label>            <input id='stream'>          </div>          <div class='label_value'>            <label for='curriculum'>" + (t('curriculum')) + "</label><br>            <select id='curriculum'>" + curriculaOptionList + "</select>          </div>          <button class='command save'>" + (t('save')) + "</button><button class='command cancel'>" + (t('cancel')) + "</button>        </div>      </div>      <button class='command curricula'>" + (t('all curricula')) + "</button>    ");
     this.renderKlasses();
     return this.trigger("rendered");
   };
