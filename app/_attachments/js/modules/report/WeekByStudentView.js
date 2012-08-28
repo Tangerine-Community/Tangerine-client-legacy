@@ -89,7 +89,7 @@ WeekByStudentView = (function(_super) {
   WeekByStudentView.prototype.render = function() {
     var detailsHTML, person, summaryHTML, _i, _len, _ref;
     if (this.table.length === 0) {
-      this.$el.html("<h1>Part by student</h1>      <p>No students assessed yet. Return to the <a href='#classes'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>");
+      this.$el.html("<h1>Part by student</h1>      <p>No students assessed yet. Return to the <a href='#class'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>");
       this.trigger("rendered");
       return;
     }
