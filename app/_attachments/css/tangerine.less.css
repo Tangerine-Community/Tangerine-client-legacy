@@ -667,6 +667,14 @@ span.delete_confirm {
 /*
  * assessmentList
  */
+.icon_ryte {
+  cursor: pointer;
+  vertical-align: middle;
+  display: inline-block;
+  width: 35px;
+  height: 37px;
+  background: url('../images/icon_ryte.png');
+}
 ul.assessment_list {
   text-indent: 0px;
   margin: 0px;
@@ -678,14 +686,6 @@ ul.assessment_list li {
   padding-bottom: 10px;
   border-bottom: 1px solid #888888;
   font-size: 20px;
-}
-ul.assessment_list .icon_ryte {
-  cursor: pointer;
-  vertical-align: middle;
-  display: inline-block;
-  width: 35px;
-  height: 37px;
-  background: url('../images/icon_ryte.png');
 }
 ul.assessment_list .icon_down {
   background: url('../images/icon_down.png') !important;

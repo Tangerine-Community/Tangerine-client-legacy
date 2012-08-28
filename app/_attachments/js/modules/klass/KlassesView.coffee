@@ -1,5 +1,12 @@
 class KlassesView extends Backbone.View
 
+  events :
+    'click .add'        : 'toggleAddForm'
+    'click .cancel'     : 'toggleAddForm'
+    'click .save'       : 'saveNewKlass'
+    'click .goto_class' : 'gotoKlass'
+    'click .curricula'  : 'gotoCurricula'
+
   initialize: ( options ) ->
     @views = []
     @klasses   = options.klasses
@@ -7,11 +14,8 @@ class KlassesView extends Backbone.View
     
     @klasses.on "add remove change", @render
 
-  events :
-    'click .add'        : 'toggleAddForm'
-    'click .cancel'     : 'toggleAddForm'
-    'click .save'       : 'saveNewKlass'
-    'click .goto_class' : 'gotoKlass'
+  gotoCurricula: ->
+    Tangerine.router.navigate "curricula", true
 
   saveNewKlass: ->
     errors = []
@@ -89,6 +93,7 @@ class KlassesView extends Backbone.View
           <button class='command save'>#{t('save')}</button><button class='command cancel'>#{t('cancel')}</button>
         </div>
       </div>
+      <button class='command curricula'>#{t('all curricula')}</button>
     "
     
     

@@ -19,6 +19,10 @@
 
     <span class="s">&#39;class/result/student/subtest/:studentId/:subtestId&#39;</span> <span class="o">:</span> <span class="s">&#39;studentSubtest&#39;</span>
 
+    <span class="s">&#39;curricula&#39;</span>         <span class="o">:</span> <span class="s">&#39;curricula&#39;</span>
+    <span class="s">&#39;curriculum/:id&#39;</span>    <span class="o">:</span> <span class="s">&#39;curriculum&#39;</span>
+    <span class="s">&#39;curriculum/import&#39;</span> <span class="o">:</span> <span class="s">&#39;curriculumImport&#39;</span>
+
     <span class="s">&#39;settings&#39;</span> <span class="o">:</span> <span class="s">&#39;settings&#39;</span>
 
     <span class="s">&#39;&#39;</span> <span class="o">:</span> <span class="s">&#39;landing&#39;</span>
@@ -29,6 +33,7 @@
     <span class="s">&#39;assessments/:group&#39;</span> <span class="o">:</span> <span class="s">&#39;assessments&#39;</span>
 
     <span class="s">&#39;run/:id&#39;</span>       <span class="o">:</span> <span class="s">&#39;run&#39;</span>
+    
     <span class="s">&#39;restart/:id&#39;</span>   <span class="o">:</span> <span class="s">&#39;restart&#39;</span>
     <span class="s">&#39;edit/:id&#39;</span>      <span class="o">:</span> <span class="s">&#39;edit&#39;</span>
     <span class="s">&#39;csv/:id&#39;</span>       <span class="o">:</span> <span class="s">&#39;csv&#39;</span>
@@ -51,20 +56,58 @@
       <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;class&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">groups: </span><span class="o">-&gt;</span>
-    <span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">context</span> <span class="o">!=</span> <span class="s">&quot;server&quot;</span>
-      <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;assessments&quot;</span><span class="p">,</span> <span class="kc">true</span>
-    <span class="k">else</span> 
-      <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
-        <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
-          <span class="nv">groups = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;groups&quot;</span><span class="p">)</span>
-          <span class="k">if</span> <span class="nx">groups</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="p">.</span><span class="nv">location.hash = </span><span class="s">&quot;&quot;</span>
-            <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;assessments/</span><span class="si">#{</span><span class="nx">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
-          <span class="k">else</span>
-            <span class="nv">view = </span><span class="k">new</span> <span class="nx">GroupsView</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
+      <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
+        <span class="nv">groups = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;groups&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">groups</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">==</span> <span class="s">&quot;&quot;</span>
+          <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;assessments/</span><span class="si">#{</span><span class="nx">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="kc">true</span>
+        <span class="k">else</span>
+          <span class="nv">view = </span><span class="k">new</span> <span class="nx">GroupsView</span>
+          <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
+      <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
+        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
+  <span class="nv">curricula: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
+      <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
+        <span class="nv">curricula = </span><span class="k">new</span> <span class="nx">Curricula</span>
+        <span class="nx">curricula</span><span class="p">.</span><span class="nx">fetch</span>
+          <span class="nv">success: </span><span class="nf">(collection) -&gt;</span>
+            <span class="nv">view = </span><span class="k">new</span> <span class="nx">CurriculaView</span>
+              <span class="s">&quot;curricula&quot;</span> <span class="o">:</span> <span class="nx">collection</span>
             <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
-        <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
-          <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
-  
+      <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
+        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
+  <span class="nv">curriculum: </span><span class="nf">(curriculumId) -&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
+      <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
+        <span class="nv">curriculum = </span><span class="k">new</span> <span class="nx">Curriculum</span> <span class="s">&quot;_id&quot;</span> <span class="o">:</span> <span class="nx">curriculumId</span>
+        <span class="nx">curriculum</span><span class="p">.</span><span class="nx">fetch</span>
+          <span class="nv">success: </span><span class="o">-&gt;</span>
+            <span class="nv">allSubtests = </span><span class="k">new</span> <span class="nx">Subtests</span>
+            <span class="nx">allSubtests</span><span class="p">.</span><span class="nx">fetch</span>
+              <span class="nv">success: </span><span class="o">-&gt;</span>
+                <span class="nv">subtests = </span><span class="nx">allSubtests</span><span class="p">.</span><span class="nx">where</span> <span class="s">&quot;curriculumId&quot;</span> <span class="o">:</span> <span class="nx">curriculumId</span>
+                <span class="nv">allParts = </span><span class="p">(</span><span class="nx">subtest</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;week&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="nx">subtest</span> <span class="k">in</span> <span class="nx">subtests</span><span class="p">)</span>
+                <span class="nv">partCount = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">.</span><span class="nx">apply</span> <span class="nb">Math</span><span class="p">,</span> <span class="nx">allParts</span> 
+                <span class="nv">view = </span><span class="k">new</span> <span class="nx">CurriculumView</span>
+                  <span class="s">&quot;curriculum&quot;</span> <span class="o">:</span> <span class="nx">curriculum</span>
+                  <span class="s">&quot;subtests&quot;</span> <span class="o">:</span> <span class="nx">subtests</span>
+                  <span class="s">&quot;parts&quot;</span> <span class="o">:</span> <span class="nx">partCount</span>
+                <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
+      <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
+        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
+
+  <span class="nv">curriculumImport: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
+      <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
+        <span class="nv">view = </span><span class="k">new</span> <span class="nx">CurriculumImportView</span>
+        <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
+      <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
+        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
   <span class="nv">klass: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isRegistered: </span><span class="o">-&gt;</span>

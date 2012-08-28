@@ -84,7 +84,7 @@ class WeekByStudentView extends Backbone.View
   render: ->
     if @table.length == 0
       @$el.html "<h1>Part by student</h1>
-      <p>No students assessed yet. Return to the <a href='#classes'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>"
+      <p>No students assessed yet. Return to the <a href='#class'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>"
       @trigger "rendered"
       return
 
