@@ -1,5 +1,12 @@
 <!DOCTYPE html>  <html> <head>   <title>KlassesView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               KlassesView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">KlassesView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
 
+  <span class="nv">events :</span>
+    <span class="s">&#39;click .add&#39;</span>        <span class="o">:</span> <span class="s">&#39;toggleAddForm&#39;</span>
+    <span class="s">&#39;click .cancel&#39;</span>     <span class="o">:</span> <span class="s">&#39;toggleAddForm&#39;</span>
+    <span class="s">&#39;click .save&#39;</span>       <span class="o">:</span> <span class="s">&#39;saveNewKlass&#39;</span>
+    <span class="s">&#39;click .goto_class&#39;</span> <span class="o">:</span> <span class="s">&#39;gotoKlass&#39;</span>
+    <span class="s">&#39;click .curricula&#39;</span>  <span class="o">:</span> <span class="s">&#39;gotoCurricula&#39;</span>
+
   <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
     <span class="vi">@views = </span><span class="p">[]</span>
     <span class="vi">@klasses   = </span><span class="nx">options</span><span class="p">.</span><span class="nx">klasses</span>
@@ -7,11 +14,8 @@
     
     <span class="nx">@klasses</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;add remove change&quot;</span><span class="p">,</span> <span class="nx">@render</span>
 
-  <span class="nv">events :</span>
-    <span class="s">&#39;click .add&#39;</span>        <span class="o">:</span> <span class="s">&#39;toggleAddForm&#39;</span>
-    <span class="s">&#39;click .cancel&#39;</span>     <span class="o">:</span> <span class="s">&#39;toggleAddForm&#39;</span>
-    <span class="s">&#39;click .save&#39;</span>       <span class="o">:</span> <span class="s">&#39;saveNewKlass&#39;</span>
-    <span class="s">&#39;click .goto_class&#39;</span> <span class="o">:</span> <span class="s">&#39;gotoKlass&#39;</span>
+  <span class="nv">gotoCurricula: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;curricula&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">saveNewKlass: </span><span class="o">-&gt;</span>
     <span class="nv">errors = </span><span class="p">[]</span>
@@ -46,48 +50,52 @@
       <span class="nv">view = </span><span class="k">new</span> <span class="nx">KlassListElementView</span>
         <span class="nv">klass      : </span><span class="nx">klass</span>
         <span class="nv">curricula  : </span><span class="nx">@curricula</span>
+      <span class="nx">view</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;rendered&quot;</span><span class="p">,</span> <span class="nx">@onSubviewRendered</span>
       <span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
       <span class="nx">@views</span><span class="p">.</span><span class="nx">push</span> <span class="nx">view</span>
       <span class="nx">$ul</span><span class="p">.</span><span class="nx">append</span> <span class="nx">view</span><span class="p">.</span><span class="nx">el</span>
 
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">klass_list_wrapper&quot;</span><span class="p">).</span><span class="nx">append</span> <span class="nx">$ul</span>
 
+  <span class="nv">onSubviewRendered: </span><span class="o">=&gt;</span>
+    <span class="nx">@trigger</span> <span class="s">&quot;subRendered&quot;</span>
+
   <span class="nv">render: </span><span class="o">=&gt;</span>
 
-    <span class="nv">curriculaOptionList = </span><span class="s">&quot;&lt;option value=&#39;_none&#39; disabled=&#39;disabled&#39; selected=&#39;selected&#39;&gt;Select a curriculum&lt;/option&gt;&quot;</span>
+    <span class="nv">curriculaOptionList = </span><span class="s">&quot;&lt;option value=&#39;_none&#39; disabled=&#39;disabled&#39; selected=&#39;selected&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;select a curriculum&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/option&gt;&quot;</span>
     <span class="k">for</span> <span class="nx">curricula</span> <span class="k">in</span> <span class="nx">@curricula</span><span class="p">.</span><span class="nx">models</span>
       <span class="nx">curriculaOptionList</span> <span class="o">+=</span> <span class="s">&quot;&lt;option data-id=&#39;</span><span class="si">#{</span><span class="nx">curricula</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">curricula</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;name&#39;</span><span class="si">}</span><span class="s">&lt;/option&gt;&quot;</span>
 
 
-    <span class="nv">html = </span><span class="s">&quot;</span>
-<span class="s">      &lt;h1&gt;Classes&lt;/h1&gt;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">      &lt;h1&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;classes&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/h1&gt;</span>
 <span class="s">      &lt;div id=&#39;klass_list_wrapper&#39;&gt;&lt;/div&gt;</span>
 
-<span class="s">      &lt;button class=&#39;add command&#39;&gt;Add&lt;/button&gt;</span>
+<span class="s">      &lt;button class=&#39;add command&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;add&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/button&gt;</span>
 <span class="s">      &lt;div id=&#39;add_form&#39; class=&#39;confirmation&#39;&gt;</span>
 <span class="s">        &lt;div class=&#39;menu_box&#39;&gt; </span>
 <span class="s">          &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">            &lt;label for=&#39;year&#39;&gt;Year&lt;/label&gt;</span>
+<span class="s">            &lt;label for=&#39;year&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/label&gt;</span>
 <span class="s">            &lt;input id=&#39;year&#39;&gt;</span>
 <span class="s">          &lt;/div&gt;</span>
 <span class="s">          &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">            &lt;label for=&#39;grade&#39;&gt;Grade&lt;/label&gt;</span>
+<span class="s">            &lt;label for=&#39;grade&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;grade&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/label&gt;</span>
 <span class="s">            &lt;input id=&#39;grade&#39;&gt;</span>
 <span class="s">          &lt;/div&gt;</span>
 <span class="s">          &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">            &lt;label for=&#39;stream&#39;&gt;Stream&lt;/label&gt;</span>
+<span class="s">            &lt;label for=&#39;stream&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;stream&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/label&gt;</span>
 <span class="s">            &lt;input id=&#39;stream&#39;&gt;</span>
 <span class="s">          &lt;/div&gt;</span>
 <span class="s">          &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">            &lt;label for=&#39;curriculum&#39;&gt;Curriculum&lt;/label&gt;&lt;br&gt;</span>
+<span class="s">            &lt;label for=&#39;curriculum&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;curriculum&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/label&gt;&lt;br&gt;</span>
 <span class="s">            &lt;select id=&#39;curriculum&#39;&gt;</span><span class="si">#{</span><span class="nx">curriculaOptionList</span><span class="si">}</span><span class="s">&lt;/select&gt;</span>
 <span class="s">          &lt;/div&gt;</span>
-<span class="s">          &lt;button class=&#39;command save&#39;&gt;Save&lt;/button&gt;&lt;button class=&#39;command cancel&#39;&gt;Cancel&lt;/button&gt;</span>
+<span class="s">          &lt;button class=&#39;command save&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;save&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/button&gt;&lt;button class=&#39;command cancel&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;cancel&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/button&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
 <span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;button class=&#39;command curricula&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;all curricula&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/button&gt;</span>
 <span class="s">    &quot;</span>
     
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="nx">html</span>
     
     <span class="nx">@renderKlasses</span><span class="p">()</span>
     
