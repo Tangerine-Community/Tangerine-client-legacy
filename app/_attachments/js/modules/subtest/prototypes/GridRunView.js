@@ -12,7 +12,7 @@ GridRunView = (function(_super) {
     this.updateCountdown = __bind(this.updateCountdown, this);
     this.removeUndo = __bind(this.removeUndo, this);
     this.lastHandler = __bind(this.lastHandler, this);
-    this.minuteItemHandler = __bind(this.minuteItemHandler, this);
+    this.intermediateItemHandler = __bind(this.intermediateItemHandler, this);
     this.markHandler = __bind(this.markHandler, this);
     this.gridClick = __bind(this.gridClick, this);
     GridRunView.__super__.constructor.apply(this, arguments);
@@ -55,11 +55,12 @@ GridRunView = (function(_super) {
     if (this.autostop !== 0) return this.checkAutostop();
   };
 
-  GridRunView.prototype.minuteItemHandler = function(event) {
+  GridRunView.prototype.intermediateItemHandler = function(event) {
     var $target, index;
+    this.timeIntermediateCaptured = this.getTime() - this.startTime;
     $target = $(event.target);
     index = $target.attr('data-index');
-    this.itemAtMinute = index;
+    this.itemAtTime = index;
     $target.addClass("element_minute");
     return this.updateMode(null, "mark");
   };
@@ -207,7 +208,7 @@ GridRunView = (function(_super) {
     if (this.timeRemaining <= 0 && this.timeRunning === true && this.captureLastAttempted) {
       this.stopTimer(null, "Time<br><br>Please mark<br>last item attempted");
     }
-    if (!this.gotMinute && !this.minuteMessage && this.timeElapsed >= 3 && this.captureMinuteItem) {
+    if (this.captureItemAtTime && !this.gotIntermediate && !this.minuteMessage && this.timeElapsed >= this.captureAfterSeconds) {
       Utils.flash("yellow");
       Utils.midAlert("Please select the item the child is currently attempting.");
       this.minuteMessage = true;
@@ -234,7 +235,7 @@ GridRunView = (function(_super) {
     var i, item, temp, tempValue, _len, _len2, _len3, _len4, _len5, _ref, _ref2, _ref3, _ref4, _ref5;
     this.gotMinuteItem = false;
     this.minuteMessage = false;
-    this.itemAtMinute = null;
+    this.itemAtTime = null;
     this.markRecord = [];
     this.timerStopped = false;
     this.startTime = 0;
@@ -294,14 +295,16 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.initialize = function(options) {
-    this.captureMinuteItem = this.model.has("captureMinuteItem") ? this.model.get("captureMinuteItem") : false;
+    this.captureAfterSeconds = this.model.has("captureAfterSeconds") ? this.model.get("captureAfterSeconds") : 0;
+    this.captureItemAtTime = this.model.has("captureItemAtTime") ? this.model.get("captureItemAtTime") : false;
     this.captureLastAttempted = this.model.has("captureLastAttempted") ? this.model.get("captureLastAttempted") : true;
     this.endOfLine = this.model.has("endOfLine") ? this.model.get("endOfLine") : true;
+    console.log(this.captureAfterSeconds);
     this.totalTime = this.model.get("timer") || 0;
     this.modeHandlers = {
       "mark": this.markHandler,
       "last": this.lastHandler,
-      "minuteItem": this.minuteItemHandler,
+      "minuteItem": this.intermediateItemHandler,
       disabled: $.noop
     };
     this.model = this.options.model;
@@ -339,7 +342,7 @@ GridRunView = (function(_super) {
     html += "</table>";
     stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>";
     resetButton = "    <div>      <button class='restart command'>Restart</button>      <br>    </div>";
-    if (this.captureMinuteItem) {
+    if (this.captureItemAtTime) {
       minuteItemButton = "        <label for='minute_item'>Item at 60 seconds</label>          <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>      ";
     } else {
       minuteItemButton = "";
@@ -387,7 +390,9 @@ GridRunView = (function(_super) {
     if (!this.captureLastAttempted) this.lastAttempted = false;
     return result = {
       "capture_last_attempted": this.captureLastAttempted,
-      "item_at_minute": this.itemAtMinute,
+      "item_at_time": this.itemAtTime,
+      "time_intermediate_captured": this.timeIntermediateCaptured,
+      "capture_item_at_time": this.captureItemAtTime,
       "auto_stop": this.autostopped,
       "attempted": this.lastAttempted,
       "items": itemResults,

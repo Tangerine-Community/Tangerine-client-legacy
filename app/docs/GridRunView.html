@@ -34,12 +34,14 @@
     <span class="k">if</span> <span class="nx">@autostop</span> <span class="o">!=</span> <span class="mi">0</span>
       <span class="nx">@checkAutostop</span><span class="p">()</span>
 
-  <span class="nv">minuteItemHandler: </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span>
+  <span class="nv">intermediateItemHandler: </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span>
+    <span class="vi">@timeIntermediateCaptured = </span><span class="nx">@getTime</span><span class="p">()</span> <span class="o">-</span> <span class="nx">@startTime</span>
     <span class="nv">$target = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span>
     <span class="nv">index = </span><span class="nx">$target</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-index&#39;</span><span class="p">)</span>
-    <span class="vi">@itemAtMinute = </span><span class="nx">index</span>
+    <span class="vi">@itemAtTime = </span><span class="nx">index</span>
     <span class="nx">$target</span><span class="p">.</span><span class="nx">addClass</span> <span class="s">&quot;element_minute&quot;</span>
     <span class="nx">@updateMode</span> <span class="kc">null</span><span class="p">,</span> <span class="s">&quot;mark&quot;</span>
+    
 
   <span class="nv">checkAutostop: </span><span class="o">-&gt;</span>
     <span class="k">if</span> <span class="nx">@timeRunning</span>
@@ -150,7 +152,7 @@
     
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.timer&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">@timeRemaining</span>
     <span class="k">if</span> <span class="nx">@timeRemaining</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">@timeRunning</span> <span class="o">==</span> <span class="kc">true</span> <span class="o">&amp;&amp;</span> <span class="nx">@captureLastAttempted</span> <span class="k">then</span> <span class="nx">@stopTimer</span> <span class="kc">null</span><span class="p">,</span> <span class="s">&quot;Time&lt;br&gt;&lt;br&gt;Please mark&lt;br&gt;last item attempted&quot;</span>
-    <span class="k">if</span> <span class="o">!</span><span class="nx">@gotMinute</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">@minuteMessage</span> <span class="o">&amp;&amp;</span> <span class="nx">@timeElapsed</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="nx">@captureMinuteItem</span>
+    <span class="k">if</span> <span class="nx">@captureItemAtTime</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">@gotIntermediate</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">@minuteMessage</span> <span class="o">&amp;&amp;</span> <span class="nx">@timeElapsed</span> <span class="o">&gt;=</span> <span class="nx">@captureAfterSeconds</span>
       <span class="nx">Utils</span><span class="p">.</span><span class="nx">flash</span> <span class="s">&quot;yellow&quot;</span>
       <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Please select the item the child is currently attempting.&quot;</span>
       <span class="vi">@minuteMessage = </span><span class="kc">true</span>
@@ -172,7 +174,7 @@
 
     <span class="vi">@gotMinuteItem = </span><span class="kc">false</span>
     <span class="vi">@minuteMessage = </span><span class="kc">false</span>
-    <span class="vi">@itemAtMinute = </span><span class="kc">null</span>
+    <span class="vi">@itemAtTime = </span><span class="kc">null</span>
 
 
     <span class="vi">@markRecord = </span><span class="p">[]</span>
@@ -235,16 +237,19 @@
 
   <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
 
-    <span class="vi">@captureMinuteItem    = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureMinuteItem&quot;</span><span class="p">)</span>    <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureMinuteItem&quot;</span><span class="p">)</span>    <span class="k">else</span> <span class="kc">false</span>
+    <span class="vi">@captureAfterSeconds  = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureAfterSeconds&quot;</span><span class="p">)</span>  <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureAfterSeconds&quot;</span><span class="p">)</span>  <span class="k">else</span> <span class="mi">0</span>
+    <span class="vi">@captureItemAtTime    = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureItemAtTime&quot;</span><span class="p">)</span>    <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureItemAtTime&quot;</span><span class="p">)</span>    <span class="k">else</span> <span class="kc">false</span>
     <span class="vi">@captureLastAttempted = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureLastAttempted&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureLastAttempted&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">true</span>
     <span class="vi">@endOfLine            = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span>            <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span>            <span class="k">else</span> <span class="kc">true</span>
+
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@captureAfterSeconds</span>
 
     <span class="vi">@totalTime = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;timer&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span>
 
     <span class="vi">@modeHandlers =</span>
       <span class="s">&quot;mark&quot;</span>       <span class="o">:</span> <span class="nx">@markHandler</span>
       <span class="s">&quot;last&quot;</span>       <span class="o">:</span> <span class="nx">@lastHandler</span>
-      <span class="s">&quot;minuteItem&quot;</span> <span class="o">:</span> <span class="nx">@minuteItemHandler</span> 
+      <span class="s">&quot;minuteItem&quot;</span> <span class="o">:</span> <span class="nx">@intermediateItemHandler</span> 
       <span class="nv">disabled : </span><span class="nx">$</span><span class="p">.</span><span class="nx">noop</span>
 
     <span class="vi">@model  = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">model</span>
@@ -284,7 +289,7 @@
 <span class="s">      &lt;br&gt;</span>
 <span class="s">    &lt;/div&gt;&quot;</span>
 
-    <span class="k">if</span> <span class="nx">@captureMinuteItem</span>
+    <span class="k">if</span> <span class="nx">@captureItemAtTime</span>
       <span class="nv">minuteItemButton = </span><span class="s">&quot;</span>
 <span class="s">        &lt;label for=&#39;minute_item&#39;&gt;Item at 60 seconds&lt;/label&gt;</span>
 <span class="s">          &lt;input class=&#39;grid_mode&#39; name=&#39;grid_mode&#39; id=&#39;minute_item&#39; type=&#39;radio&#39; value=&#39;minuteItem&#39;&gt;</span>
@@ -342,8 +347,10 @@
     <span class="vi">@lastAttempted = </span><span class="kc">false</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">@captureLastAttempted</span>
 
     <span class="nv">result =</span>
-      <span class="s">&quot;capture_last_attempted&quot;</span> <span class="o">:</span> <span class="nx">@captureLastAttempted</span>
-      <span class="s">&quot;item_at_minute&quot;</span> <span class="o">:</span> <span class="nx">@itemAtMinute</span>
+      <span class="s">&quot;capture_last_attempted&quot;</span>     <span class="o">:</span> <span class="nx">@captureLastAttempted</span>
+      <span class="s">&quot;item_at_time&quot;</span>               <span class="o">:</span> <span class="nx">@itemAtTime</span>
+      <span class="s">&quot;time_intermediate_captured&quot;</span> <span class="o">:</span> <span class="nx">@timeIntermediateCaptured</span>
+      <span class="s">&quot;capture_item_at_time&quot;</span>       <span class="o">:</span> <span class="nx">@captureItemAtTime</span>
       <span class="s">&quot;auto_stop&quot;</span>     <span class="o">:</span> <span class="nx">@autostopped</span>
       <span class="s">&quot;attempted&quot;</span>     <span class="o">:</span> <span class="nx">@lastAttempted</span>
       <span class="s">&quot;items&quot;</span>         <span class="o">:</span> <span class="nx">itemResults</span>

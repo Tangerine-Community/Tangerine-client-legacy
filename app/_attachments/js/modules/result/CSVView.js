@@ -128,7 +128,7 @@ CSVView = (function(_super) {
           keys.push("consent");
         } else if (prototype === "grid") {
           variableName = subtest.data.variable_name;
-          keys.push("" + variableName + "_auto_stop", "" + variableName + "_time_remain", "" + variableName + "_attempted", "" + variableName + "_item_at_minute");
+          keys.push("" + variableName + "_auto_stop", "" + variableName + "_time_remain", "" + variableName + "_attempted", "" + variableName + "_item_at_time", "" + variableName + "_time_intermediate_captured");
           _ref4 = subtest.data.items;
           for (i = 0, _len4 = _ref4.length; i < _len4; i++) {
             item = _ref4[i];
@@ -185,7 +185,8 @@ CSVView = (function(_super) {
             values[keys.indexOf("" + variableName + "_auto_stop")] = subtest.data.auto_stop;
             values[keys.indexOf("" + variableName + "_time_remain")] = subtest.data.time_remain;
             values[keys.indexOf("" + variableName + "_attempted")] = subtest.data.attempted;
-            values[keys.indexOf("" + variableName + "_item_at_minute")] = subtest.data.item_at_minute;
+            values[keys.indexOf("" + variableName + "_item_at_time")] = subtest.data.item_at_time;
+            values[keys.indexOf("" + variableName + "_time_intermediate_captured")] = subtest.data.time_intermediate_captured;
             _ref10 = subtest.data.items;
             for (i = 0, _len9 = _ref10.length; i < _len9; i++) {
               item = _ref10[i];
