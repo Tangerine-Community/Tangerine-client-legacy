@@ -70,8 +70,8 @@ class GridRunView extends Backbone.View
   endOfGridLineClick: (event) ->
     if @mode == "mark"
       $target = $(event.target)
-      if $target.hasClass("element_wrong") 
-        $target.removeClass "element_wrong" 
+      if $target.hasClass("element_wrong")
+        $target.removeClass "element_wrong"
         value = "correct"
         index = $target.attr('data-index')
         for i in [index..(index-(@columns-1))]
@@ -249,7 +249,7 @@ class GridRunView extends Backbone.View
     @modeHandlers =
       "mark"       : @markHandler
       "last"       : @lastHandler
-      "minuteItem" : @intermediateItemHandler 
+      "minuteItem" : @intermediateItemHandler
       disabled : $.noop
 
     @model  = @options.model
@@ -291,7 +291,7 @@ class GridRunView extends Backbone.View
 
     if @captureItemAtTime
       minuteItemButton = "
-        <label for='minute_item'>Item at 60 seconds</label>
+        <label for='minute_item'>Item at #{@captureAfterSeconds} seconds</label>
           <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>
       "
     else
