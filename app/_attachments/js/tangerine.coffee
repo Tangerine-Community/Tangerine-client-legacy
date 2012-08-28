@@ -19,6 +19,10 @@ class Router extends Backbone.Router
 
     'class/result/student/subtest/:studentId/:subtestId' : 'studentSubtest'
 
+    'curricula'         : 'curricula'
+    'curriculum/:id'    : 'curriculum'
+    'curriculum/import' : 'curriculumImport'
+
     'settings' : 'settings'
 
     '' : 'landing'
@@ -29,6 +33,7 @@ class Router extends Backbone.Router
     'assessments/:group' : 'assessments'
 
     'run/:id'       : 'run'
+    
     'restart/:id'   : 'restart'
     'edit/:id'      : 'edit'
     'csv/:id'       : 'csv'
@@ -61,7 +66,48 @@ class Router extends Backbone.Router
           vm.show view
       isUnregistered: ->
         Tangerine.router.navigate "login", true
-  
+
+  curricula: ->
+    Tangerine.user.verify
+      isRegistered: ->
+        curricula = new Curricula
+        curricula.fetch
+          success: (collection) ->
+            view = new CurriculaView
+              "curricula" : collection
+            vm.show view
+      isUnregistered: ->
+        Tangerine.router.navigate "login", true
+
+  curriculum: (curriculumId) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        curriculum = new Curriculum "_id" : curriculumId
+        curriculum.fetch
+          success: ->
+            allSubtests = new Subtests
+            allSubtests.fetch
+              success: ->
+                subtests = allSubtests.where "curriculumId" : curriculumId
+                allParts = (subtest.get("week") for subtest in subtests)
+                partCount = Math.max.apply Math, allParts 
+                view = new CurriculumView
+                  "curriculum" : curriculum
+                  "subtests" : subtests
+                  "parts" : partCount
+                vm.show view
+      isUnregistered: ->
+        Tangerine.router.navigate "login", true
+
+
+  curriculumImport: ->
+    Tangerine.user.verify
+      isRegistered: ->
+        view = new CurriculumImportView
+        vm.show view
+      isUnregistered: ->
+        Tangerine.router.navigate "login", true
+
   klass: ->
     Tangerine.user.verify
       isRegistered: ->

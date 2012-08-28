@@ -24,6 +24,9 @@ Router = (function(_super) {
     'class/:id': 'klassWeekly',
     'class/run/:studentId/:subtestId': 'runSubtest',
     'class/result/student/subtest/:studentId/:subtestId': 'studentSubtest',
+    'curricula': 'curricula',
+    'curriculum/:id': 'curriculum',
+    'curriculum/import': 'curriculumImport',
     'settings': 'settings',
     '': 'landing',
     'groups': 'groups',
@@ -62,6 +65,84 @@ Router = (function(_super) {
           view = new GroupsView;
           return vm.show(view);
         }
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.curricula = function() {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var curricula;
+        curricula = new Curricula;
+        return curricula.fetch({
+          success: function(collection) {
+            var view;
+            view = new CurriculaView({
+              "curricula": collection
+            });
+            return vm.show(view);
+          }
+        });
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.curriculum = function(curriculumId) {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var curriculum;
+        curriculum = new Curriculum({
+          "_id": curriculumId
+        });
+        return curriculum.fetch({
+          success: function() {
+            var allSubtests;
+            allSubtests = new Subtests;
+            return allSubtests.fetch({
+              success: function() {
+                var allParts, partCount, subtest, subtests, view;
+                subtests = allSubtests.where({
+                  "curriculumId": curriculumId
+                });
+                allParts = (function() {
+                  var _i, _len, _results;
+                  _results = [];
+                  for (_i = 0, _len = subtests.length; _i < _len; _i++) {
+                    subtest = subtests[_i];
+                    _results.push(subtest.get("week"));
+                  }
+                  return _results;
+                })();
+                partCount = Math.max.apply(Math, allParts);
+                view = new CurriculumView({
+                  "curriculum": curriculum,
+                  "subtests": subtests,
+                  "parts": partCount
+                });
+                return vm.show(view);
+              }
+            });
+          }
+        });
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.curriculumImport = function() {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var view;
+        view = new CurriculumImportView;
+        return vm.show(view);
       },
       isUnregistered: function() {
         return Tangerine.router.navigate("login", true);
