@@ -2,7 +2,7 @@ class GridRunView extends Backbone.View
 
   className: "grid_prototype"
 
-  events: if Tangerine.settings.context == "mobile" then {
+  events: if Modernizr.touch then {
     'touchstart .grid_element' : 'gridClick'
     'touchstart .end_of_grid_line' : 'endOfGridLineClick'
     'click .grid_mode'   : 'updateMode'
