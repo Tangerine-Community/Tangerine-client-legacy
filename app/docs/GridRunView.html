@@ -70,8 +70,8 @@
   <span class="nv">endOfGridLineClick: </span><span class="nf">(event) -&gt;</span>
     <span class="k">if</span> <span class="nx">@mode</span> <span class="o">==</span> <span class="s">&quot;mark&quot;</span>
       <span class="nv">$target = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span>
-      <span class="k">if</span> <span class="nx">$target</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="s">&quot;element_wrong&quot;</span><span class="p">)</span> 
-        <span class="nx">$target</span><span class="p">.</span><span class="nx">removeClass</span> <span class="s">&quot;element_wrong&quot;</span> 
+      <span class="k">if</span> <span class="nx">$target</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="s">&quot;element_wrong&quot;</span><span class="p">)</span>
+        <span class="nx">$target</span><span class="p">.</span><span class="nx">removeClass</span> <span class="s">&quot;element_wrong&quot;</span>
         <span class="nv">value = </span><span class="s">&quot;correct&quot;</span>
         <span class="nv">index = </span><span class="nx">$target</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-index&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="nx">index</span><span class="p">..(</span><span class="nx">index</span><span class="o">-</span><span class="p">(</span><span class="nx">@columns</span><span class="o">-</span><span class="mi">1</span><span class="p">))]</span>
@@ -176,6 +176,7 @@
     <span class="vi">@minuteMessage = </span><span class="kc">false</span>
     <span class="vi">@itemAtTime = </span><span class="kc">null</span>
 
+    <span class="vi">@timeIntermediateCaptured = </span><span class="kc">null</span>
 
     <span class="vi">@markRecord = </span><span class="p">[]</span>
 
@@ -242,14 +243,12 @@
     <span class="vi">@captureLastAttempted = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureLastAttempted&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureLastAttempted&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">true</span>
     <span class="vi">@endOfLine            = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span>            <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span>            <span class="k">else</span> <span class="kc">true</span>
 
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@captureAfterSeconds</span>
-
     <span class="vi">@totalTime = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;timer&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span>
 
     <span class="vi">@modeHandlers =</span>
       <span class="s">&quot;mark&quot;</span>       <span class="o">:</span> <span class="nx">@markHandler</span>
       <span class="s">&quot;last&quot;</span>       <span class="o">:</span> <span class="nx">@lastHandler</span>
-      <span class="s">&quot;minuteItem&quot;</span> <span class="o">:</span> <span class="nx">@intermediateItemHandler</span> 
+      <span class="s">&quot;minuteItem&quot;</span> <span class="o">:</span> <span class="nx">@intermediateItemHandler</span>
       <span class="nv">disabled : </span><span class="nx">$</span><span class="p">.</span><span class="nx">noop</span>
 
     <span class="vi">@model  = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">model</span>
@@ -291,7 +290,7 @@
 
     <span class="k">if</span> <span class="nx">@captureItemAtTime</span>
       <span class="nv">minuteItemButton = </span><span class="s">&quot;</span>
-<span class="s">        &lt;label for=&#39;minute_item&#39;&gt;Item at 60 seconds&lt;/label&gt;</span>
+<span class="s">        &lt;label for=&#39;minute_item&#39;&gt;Item at </span><span class="si">#{</span><span class="nx">@captureAfterSeconds</span><span class="si">}</span><span class="s"> seconds&lt;/label&gt;</span>
 <span class="s">          &lt;input class=&#39;grid_mode&#39; name=&#39;grid_mode&#39; id=&#39;minute_item&#39; type=&#39;radio&#39; value=&#39;minuteItem&#39;&gt;</span>
 <span class="s">      &quot;</span>
     <span class="k">else</span>

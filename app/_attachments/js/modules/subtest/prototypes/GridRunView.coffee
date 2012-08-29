@@ -176,6 +176,7 @@ class GridRunView extends Backbone.View
     @minuteMessage = false
     @itemAtTime = null
 
+    @timeIntermediateCaptured = null
 
     @markRecord = []
 
@@ -241,8 +242,6 @@ class GridRunView extends Backbone.View
     @captureItemAtTime    = if @model.has("captureItemAtTime")    then @model.get("captureItemAtTime")    else false
     @captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted") else true
     @endOfLine            = if @model.has("endOfLine")            then @model.get("endOfLine")            else true
-
-    console.log @captureAfterSeconds
 
     @totalTime = @model.get("timer") || 0
 
