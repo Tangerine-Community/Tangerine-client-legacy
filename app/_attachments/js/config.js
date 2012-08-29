@@ -1,4 +1,4 @@
-var Tangerine;
+var $db, Tangerine;
 
 Tangerine = {};
 
@@ -7,7 +7,9 @@ Tangerine = {
   "design_doc": "tangerine"
 };
 
-$.couch.db(Tangerine.db_name).openDoc("Config", {
+$db = $.couch.db(Tangerine.db_name);
+
+$db.openDoc("Config", {
   success: function(data) {
     return Tangerine.config = data;
   }
@@ -15,15 +17,29 @@ $.couch.db(Tangerine.db_name).openDoc("Config", {
   async: false
 });
 
-$.couch.db(Tangerine.db_name).openDoc("TangerineSettings", {
+$db.openDoc("TangerineSettings", {
   success: function(data) {
     return Tangerine.settings = data;
+  },
+  error: function(code) {
+    if (a === 404) {
+      return $db.openDoc("TangerineSettingsDefault", {
+        success: function(doc) {
+          doc._id = "TangerineSettings";
+          doc._rev = void 0;
+          Tangerine.settings = doc;
+          return $db.saveDoc(doc);
+        }
+      }, {
+        async: false
+      });
+    }
   }
 }, {
   async: false
 });
 
-$.couch.db(Tangerine.db_name).openDoc("Templates", {
+$db.openDoc("Templates", {
   success: function(data) {
     return Tangerine.templates = data;
   }

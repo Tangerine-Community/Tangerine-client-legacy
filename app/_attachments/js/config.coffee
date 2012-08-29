@@ -4,10 +4,27 @@ Tangerine =
   "db_name"    : "tangerine"
   "design_doc" : "tangerine"
 
+$db = $.couch.db(Tangerine.db_name)
+
 # Grab our config docs
-$.couch.db(Tangerine.db_name).openDoc "Config",            { success:(data) -> Tangerine.config    = data }, { async: false }
-$.couch.db(Tangerine.db_name).openDoc "TangerineSettings", { success:(data) -> Tangerine.settings  = data }, { async: false }
-$.couch.db(Tangerine.db_name).openDoc "Templates",         { success:(data) -> Tangerine.templates = data }, { async: false }
+$db.openDoc "Config",            { success:(data) -> Tangerine.config    = data }, { async: false }
+# get our settings
+$db.openDoc "TangerineSettings", {
+  success:(data) -> Tangerine.settings  = data
+
+  # if the settings aren't there, use default settings, save as normal settings
+  error: (code) ->
+    if a == 404
+      $db.openDoc "TangerineSettingsDefault"
+      , {
+      success: (doc) ->
+        doc._id = "TangerineSettings"
+        doc._rev = undefined
+        Tangerine.settings = doc
+        $db.saveDoc doc
+      }, { async: false }
+}, { async: false }
+$db.openDoc "Templates",         { success:(data) -> Tangerine.templates = data }, { async: false }
 
 # default address we sync to
 Tangerine.config.address.cloud.url = "http://" + 
