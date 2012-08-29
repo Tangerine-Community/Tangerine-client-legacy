@@ -19,8 +19,7 @@ class ResultSumView extends Backbone.View
       </div>
       <div class='confirmation detail_box'>"
     for datum, i in @model.get("subtestData")
-      datum.name_safe = datum.name.replace(/\s/g, "_")
-      html += "<div><span id='#{@cid}_#{datum.name_safe}_#{i}'></span>#{datum.name} - items #{datum.sum.total}</div>"
+      html += "<div><span id='#{@cid}_#{i}'></span>#{datum.name} - items #{datum.sum.total}</div>"
     html += "
       </div>
     "
@@ -31,10 +30,10 @@ class ResultSumView extends Backbone.View
 
   afterRender: =>
     for datum, i in @model.get("subtestData")
-      datum.name_safe = datum.name.replace(/\s/g, "_")
-      spark_id = "##{@cid}_#{datum.name_safe}_#{i}"
+      spark_id = "##{@cid}_#{i}"
       @$el.find(spark_id).sparkline [datum.sum.correct,datum.sum.incorrect,datum.sum.missing],
         type   : 'pie'
         width  : '30'
         height : '30'
         sliceColors: ["#6f6","#c66","#ccc"]
+    null

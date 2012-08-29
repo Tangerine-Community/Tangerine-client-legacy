@@ -32,8 +32,7 @@ ResultSumView = (function(_super) {
     _ref = this.model.get("subtestData");
     for (i = 0, _len = _ref.length; i < _len; i++) {
       datum = _ref[i];
-      datum.name_safe = datum.name.replace(/\s/g, "_");
-      html += "<div><span id='" + this.cid + "_" + datum.name_safe + "_" + i + "'></span>" + datum.name + " - items " + datum.sum.total + "</div>";
+      html += "<div><span id='" + this.cid + "_" + i + "'></span>" + datum.name + " - items " + datum.sum.total + "</div>";
     }
     html += "      </div>    ";
     this.$el.html(html);
@@ -41,21 +40,19 @@ ResultSumView = (function(_super) {
   };
 
   ResultSumView.prototype.afterRender = function() {
-    var datum, i, spark_id, _len, _ref, _results;
+    var datum, i, spark_id, _len, _ref;
     _ref = this.model.get("subtestData");
-    _results = [];
     for (i = 0, _len = _ref.length; i < _len; i++) {
       datum = _ref[i];
-      datum.name_safe = datum.name.replace(/\s/g, "_");
-      spark_id = "#" + this.cid + "_" + datum.name_safe + "_" + i;
-      _results.push(this.$el.find(spark_id).sparkline([datum.sum.correct, datum.sum.incorrect, datum.sum.missing], {
+      spark_id = "#" + this.cid + "_" + i;
+      this.$el.find(spark_id).sparkline([datum.sum.correct, datum.sum.incorrect, datum.sum.missing], {
         type: 'pie',
         width: '30',
         height: '30',
         sliceColors: ["#6f6", "#c66", "#ccc"]
-      }));
+      });
     }
-    return _results;
+    return null;
   };
 
   return ResultSumView;
