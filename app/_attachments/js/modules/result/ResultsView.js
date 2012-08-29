@@ -29,29 +29,19 @@ ResultsView = (function(_super) {
     this.$el.find(".status").find(".info_box").html("");
     ajaxOptions = {
       success: function() {
-        _this.$el.find(".status").find(".info_box").html("Results uploaded successfully");
-        return new Log({
-          type: "replication",
-          event: "cloud:success",
-          assessmentId: _this.assessment.id
-        });
+        return _this.$el.find(".status").find(".info_box").html("Results uploaded successfully");
       },
       error: function(res) {
-        _this.$el.find(".status").find(".info_box").html("<div>Upload error</div><div>" + res + "</div>");
-        return new Log({
-          type: "replication",
-          event: "cloud:error",
-          assessmentId: _this.assessment.id
-        });
+        return _this.$el.find(".status").find(".info_box").html("<div>Upload error</div><div>" + res + "</div>");
       }
     };
     replicationOptions = {
-      filter: "tangerine/resultFilter",
+      filter: Tangerine.config.address.local.dbName + "/resultFilter",
       query_params: {
         assessmentId: this.assessment.id
       }
     };
-    return $.couch.replicate("tangerine", "http://tangerine.iriscouch.com/tangerine", ajaxOptions, replicationOptions);
+    return $.couch.replicate(Tangerine.config.address.local.dbName, Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName, ajaxOptions, replicationOptions);
   };
 
   ResultsView.prototype.tablets = function() {
@@ -73,7 +63,7 @@ ResultsView = (function(_super) {
     };
     $.ajax({
       dataType: "jsonp",
-      url: "http://tangerine.iriscouch.com:5984/",
+      url: Tangerine.config.address.cloud.host + ":" + Tangerine.config.address.port + "/",
       success: function(a, b) {
         _this.available.cloud = true;
         return _this.updateOptions();

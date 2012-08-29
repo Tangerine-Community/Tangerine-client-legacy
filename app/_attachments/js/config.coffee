@@ -1,37 +1,41 @@
+# This file loads the most basic settings related to Tangerine.
+# it downloads a majority of them from JSON docs in _docs
+#   * Config, TangerineSettings(Default), and Templates
+# Including those necessary for: Backbone.js, and jQuery.i18n
+
 Tangerine = {}
 
 Tangerine = 
   "db_name"    : "tangerine"
   "design_doc" : "tangerine"
 
-$db = $.couch.db(Tangerine.db_name)
+Tangerine.$db = $.couch.db(Tangerine.db_name)
 
-# Grab our config docs
-$db.openDoc "Config",            { success:(data) -> Tangerine.config    = data }, { async: false }
-# get our settings
-$db.openDoc "TangerineSettings", {
-  success:(data) -> Tangerine.settings  = data
+# Grab our system config doc
+Tangerine.$db.openDoc "Config",            { success:(data) -> Tangerine.config    = data }, { async: false }
 
-  # if the settings aren't there, use default settings, save as normal settings
+#
+# get our Tangerine settings
+#
+Tangerine.$db.openDoc "TangerineSettings", {
+
+  # If the doc is there, use the settings
+  success:(data) -> Tangerine.settings = data
+
+  # if the docs's there, use default settings, save as normal settings
   error: (code) ->
-    if a == 404
-      $db.openDoc "TangerineSettingsDefault"
-      , {
-      success: (doc) ->
-        doc._id = "TangerineSettings"
-        doc._rev = undefined
-        Tangerine.settings = doc
-        $db.saveDoc doc
+    if code == 404
+      Tangerine.$db.openDoc "TangerineSettingsDefault", {
+        success: (doc) ->
+          doc._id = "TangerineSettings"
+          doc._rev = undefined
+          Tangerine.settings = doc
+          Tangerine.$db.saveDoc doc
       }, { async: false }
 }, { async: false }
-$db.openDoc "Templates",         { success:(data) -> Tangerine.templates = data }, { async: false }
 
-# default address we sync to
-Tangerine.config.address.cloud.url = "http://" + 
-  Tangerine.config.address.cloud.name + ":" + 
-  Tangerine.config.address.cloud.host + 
-  Tangerine.config.address.cloud.target + "/" +
-  Tangerine.config.address.cloud.db_name
+# Template files for ease of use in grids
+Tangerine.$db.openDoc "Templates",         { success:(data) -> Tangerine.templates = data }, { async: false }
 
 # Backbone configuration
 Backbone.couch_connector.config.db_name   = Tangerine.db_name

@@ -1,4 +1,4 @@
-var $db, Tangerine;
+var Tangerine;
 
 Tangerine = {};
 
@@ -7,9 +7,9 @@ Tangerine = {
   "design_doc": "tangerine"
 };
 
-$db = $.couch.db(Tangerine.db_name);
+Tangerine.$db = $.couch.db(Tangerine.db_name);
 
-$db.openDoc("Config", {
+Tangerine.$db.openDoc("Config", {
   success: function(data) {
     return Tangerine.config = data;
   }
@@ -17,18 +17,18 @@ $db.openDoc("Config", {
   async: false
 });
 
-$db.openDoc("TangerineSettings", {
+Tangerine.$db.openDoc("TangerineSettings", {
   success: function(data) {
     return Tangerine.settings = data;
   },
   error: function(code) {
-    if (a === 404) {
-      return $db.openDoc("TangerineSettingsDefault", {
+    if (code === 404) {
+      return Tangerine.$db.openDoc("TangerineSettingsDefault", {
         success: function(doc) {
           doc._id = "TangerineSettings";
           doc._rev = void 0;
           Tangerine.settings = doc;
-          return $db.saveDoc(doc);
+          return Tangerine.$db.saveDoc(doc);
         }
       }, {
         async: false
@@ -39,15 +39,13 @@ $db.openDoc("TangerineSettings", {
   async: false
 });
 
-$db.openDoc("Templates", {
+Tangerine.$db.openDoc("Templates", {
   success: function(data) {
     return Tangerine.templates = data;
   }
 }, {
   async: false
 });
-
-Tangerine.config.address.cloud.url = "http://" + Tangerine.config.address.cloud.name + ":" + Tangerine.config.address.cloud.host + Tangerine.config.address.cloud.target + "/" + Tangerine.config.address.cloud.db_name;
 
 Backbone.couch_connector.config.db_name = Tangerine.db_name;
 

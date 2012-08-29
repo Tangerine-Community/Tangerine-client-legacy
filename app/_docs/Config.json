@@ -4,7 +4,8 @@
 		"cloud" :
 		{
 			"host"    : "http://tangerine.iriscouch.com",
-			"login"   : "tangerine:tangytangerine"
+			"login"   : "tangerine:tangytangerine",
+			"dbName"  : "tangerine"
 		},
 		"subnet" :
 		{
@@ -12,6 +13,12 @@
 			"start"  : 0,
 			"finish" : 255
 		},
+		"local" :
+		{
+			"login"  : "tangerine:tangytangerine",
+			"dbName" : "tangerine"
+		},
+		"designDoc"       : "tangerine",
 		"port"            : 5984
 	},
 

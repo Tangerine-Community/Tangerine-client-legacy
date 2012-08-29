@@ -14,21 +14,13 @@
     <span class="nv">ajaxOptions =</span>
       <span class="nv">success: </span><span class="o">=&gt;</span>
         <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.status&quot;</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.info_box&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;Results uploaded successfully&quot;</span>
-        <span class="k">new</span> <span class="nx">Log</span>
-          <span class="nv">type         : </span><span class="s">&quot;replication&quot;</span>
-          <span class="nv">event        : </span><span class="s">&quot;cloud:success&quot;</span>
-          <span class="nv">assessmentId : </span><span class="nx">@assessment</span><span class="p">.</span><span class="nx">id</span>
       <span class="nv">error: </span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span>
         <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.status&quot;</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.info_box&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;&lt;div&gt;Upload error&lt;/div&gt;&lt;div&gt;</span><span class="si">#{</span><span class="nx">res</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span>
-        <span class="k">new</span> <span class="nx">Log</span>
-          <span class="nv">type         : </span><span class="s">&quot;replication&quot;</span>
-          <span class="nv">event        : </span><span class="s">&quot;cloud:error&quot;</span>
-          <span class="nv">assessmentId : </span><span class="nx">@assessment</span><span class="p">.</span><span class="nx">id</span>
     <span class="nv">replicationOptions =</span>
-      <span class="nv">filter: </span><span class="s">&quot;tangerine/resultFilter&quot;</span>
+      <span class="nv">filter: </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nx">dbName</span><span class="o">+</span><span class="s">&quot;/resultFilter&quot;</span>
       <span class="nv">query_params:</span>
         <span class="nv">assessmentId: </span><span class="nx">@assessment</span><span class="p">.</span><span class="nx">id</span>
-    <span class="nx">$</span><span class="p">.</span><span class="nx">couch</span><span class="p">.</span><span class="nx">replicate</span><span class="p">(</span><span class="s">&quot;tangerine&quot;</span><span class="p">,</span> <span class="s">&quot;http://tangerine.iriscouch.com/tangerine&quot;</span><span class="p">,</span> <span class="nx">ajaxOptions</span><span class="p">,</span> <span class="nx">replicationOptions</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">couch</span><span class="p">.</span><span class="nx">replicate</span><span class="p">(</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nx">dbName</span><span class="p">,</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">cloud</span><span class="p">.</span><span class="nx">host</span><span class="o">+</span><span class="s">&quot;/&quot;</span><span class="o">+</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">cloud</span><span class="p">.</span><span class="nx">dbName</span><span class="p">,</span> <span class="nx">ajaxOptions</span><span class="p">,</span> <span class="nx">replicationOptions</span><span class="p">)</span>
 
 
   <span class="nv">tablets: </span><span class="o">-&gt;</span>
@@ -45,7 +37,7 @@
       <span class="nv">tablets : </span><span class="kc">null</span>
     <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span>
       <span class="nv">dataType: </span><span class="s">&quot;jsonp&quot;</span>
-      <span class="nv">url: </span><span class="s">&quot;http://tangerine.iriscouch.com:5984/&quot;</span>
+      <span class="nv">url: </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">cloud</span><span class="p">.</span><span class="nx">host</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="o">+</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">port</span><span class="o">+</span><span class="s">&quot;/&quot;</span>
       <span class="nv">success: </span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=&gt;</span>
         <span class="vi">@available.cloud = </span><span class="kc">true</span>
         <span class="nx">@updateOptions</span><span class="p">()</span>
@@ -98,12 +90,12 @@
 <span class="s">      &lt;h1&gt;</span><span class="si">#{</span><span class="nx">@assessment</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/h1&gt;</span>
 <span class="s">      &lt;h2&gt;Save options&lt;/h2&gt;</span>
 <span class="s">      &lt;div class=&#39;menu_box&#39;&gt;</span>
-<span class="s">        </span><span class="si">#{</span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">mobile</span> <span class="k">then</span> <span class="nx">cloudButton</span>  <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s"></span>
-<span class="s">        </span><span class="si">#{</span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">mobile</span> <span class="k">then</span> <span class="nx">tabletButton</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s"></span>
+<span class="s">        </span><span class="si">#{</span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">context</span> <span class="o">==</span> <span class="s">&quot;mobile&quot;</span> <span class="k">then</span> <span class="nx">cloudButton</span>  <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s"></span>
+<span class="s">        </span><span class="si">#{</span><span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">context</span> <span class="o">==</span> <span class="s">&quot;mobile&quot;</span> <span class="k">then</span> <span class="nx">tabletButton</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s"></span>
 <span class="s">        </span><span class="si">#{</span><span class="nx">csvButton</span><span class="si">}</span><span class="s"></span>
 <span class="s">      &lt;/div&gt;&quot;</span>
 
-    <span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">mobile</span>
+    <span class="k">if</span> <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">context</span> <span class="o">==</span> <span class="s">&quot;mobile&quot;</span>
       <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
 <span class="s">        &lt;button class=&#39;detect command&#39;&gt;Detect options&lt;/button&gt;</span>
 <span class="s">        &lt;div class=&#39;status&#39;&gt;</span>

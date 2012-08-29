@@ -8,6 +8,7 @@ class CurriculumImportView extends Backbone.View
     Tangerine.router.navigate "", true
     false
 
+  # @TODO This should be moved somewhere, it's a copy of the assesssmentImport View
   import: ->
     
     # This is supposed to work
@@ -20,7 +21,7 @@ class CurriculumImportView extends Backbone.View
     @$el.find(".status").fadeIn(250)
     @$el.find("#progress").html "Looking for #{dKey}"
     repOps = 
-      'filter' : 'tangerine/importFilter'
+      'filter' : Tangerine.config.address.designDoc + '/importFilter'
       'create_target' : true
       'query_params' :
         'downloadKey' : dKey
@@ -30,7 +31,7 @@ class CurriculumImportView extends Backbone.View
         @$el.find("#progress").html "Import successful <h3>Imported</h3>"
         # this next step is just a test to see everything is there...
         # maybe it doesn't need to. Kind of impressive though.
-        $.couch.db("tangerine").view "tangerine/byDKey",
+        $.couch.db("tangerine").view Tangerine.config.address.designDoc + '/byDKey',
           keys: [dKey]
           success: (data) =>
             console.log data
@@ -50,9 +51,7 @@ class CurriculumImportView extends Backbone.View
       error: (a,b) =>
         @$el.find("#progress").html "<div>Import error</div><div>#{a}</div><div>#{b}"
     
-    $.couch.replicate "http://tangerine.iriscouch.com:5984/tangerine", "tangerine", opts, repOps
-
-
+    $.couch.replicate Tangerine.config.address.cloud.host+":"+Tangerine.config.address.port+"/"+Tangerine.config.address.cloud.dbName, Tangerine.config.address.local.dbName, opts, repOps
     false
 
   render: ->

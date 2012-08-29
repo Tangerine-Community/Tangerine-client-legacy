@@ -14,21 +14,13 @@ class ResultsView extends Backbone.View
     ajaxOptions =
       success: =>
         @$el.find(".status").find(".info_box").html "Results uploaded successfully"
-        new Log
-          type         : "replication"
-          event        : "cloud:success"
-          assessmentId : @assessment.id
       error: (res) =>
         @$el.find(".status").find(".info_box").html "<div>Upload error</div><div>#{res}</div>"
-        new Log
-          type         : "replication"
-          event        : "cloud:error"
-          assessmentId : @assessment.id
     replicationOptions =
-      filter: "tangerine/resultFilter"
+      filter: Tangerine.config.address.local.dbName+"/resultFilter"
       query_params:
         assessmentId: @assessment.id
-    $.couch.replicate("tangerine", "http://tangerine.iriscouch.com/tangerine", ajaxOptions, replicationOptions)
+    $.couch.replicate(Tangerine.config.address.local.dbName, Tangerine.config.address.cloud.host+"/"+Tangerine.config.address.cloud.dbName, ajaxOptions, replicationOptions)
 
 
   tablets: ->
@@ -45,7 +37,7 @@ class ResultsView extends Backbone.View
       tablets : null
     $.ajax
       dataType: "jsonp"
-      url: "http://tangerine.iriscouch.com:5984/"
+      url: Tangerine.config.address.cloud.host+":"+Tangerine.config.address.port+"/"
       success: (a, b) =>
         @available.cloud = true
         @updateOptions()

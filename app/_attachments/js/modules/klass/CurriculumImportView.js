@@ -27,7 +27,7 @@ CurriculumImportView = (function(_super) {
     this.$el.find(".status").fadeIn(250);
     this.$el.find("#progress").html("Looking for " + dKey);
     repOps = {
-      'filter': 'tangerine/importFilter',
+      'filter': Tangerine.config.address.designDoc + '/importFilter',
       'create_target': true,
       'query_params': {
         'downloadKey': dKey
@@ -36,7 +36,7 @@ CurriculumImportView = (function(_super) {
     opts = {
       success: function(a, b) {
         _this.$el.find("#progress").html("Import successful <h3>Imported</h3>");
-        return $.couch.db("tangerine").view("tangerine/byDKey", {
+        return $.couch.db("tangerine").view(Tangerine.config.address.designDoc + '/byDKey', {
           keys: [dKey],
           success: function(data) {
             var curriculumName, datum, doc, subtests, _i, _len, _ref;
@@ -61,7 +61,7 @@ CurriculumImportView = (function(_super) {
         return _this.$el.find("#progress").html("<div>Import error</div><div>" + a + "</div><div>" + b);
       }
     };
-    $.couch.replicate("http://tangerine.iriscouch.com:5984/tangerine", "tangerine", opts, repOps);
+    $.couch.replicate(Tangerine.config.address.cloud.host + ":" + Tangerine.config.address.port + "/" + Tangerine.config.address.cloud.dbName, Tangerine.config.address.local.dbName, opts, repOps);
     return false;
   };
 
