@@ -16,7 +16,6 @@ class CurriculaListView extends Backbone.View
       view.render()
       @$el.append view.el
       @views.push view
-      console.log view.el
 
     @trigger "rendered"
   

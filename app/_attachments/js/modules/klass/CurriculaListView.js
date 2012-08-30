@@ -30,8 +30,7 @@ CurriculaListView = (function(_super) {
       });
       view.render();
       _this.$el.append(view.el);
-      _this.views.push(view);
-      return console.log(view.el);
+      return _this.views.push(view);
     });
     return this.trigger("rendered");
   };
