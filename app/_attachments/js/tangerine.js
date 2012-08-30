@@ -20,8 +20,8 @@ Router = (function(_super) {
     'class/edit/:id': 'klassEdit',
     'class/student/:studentId': 'studentEdit',
     'class/student/report/:studentId': 'studentReport',
-    'class/:id/:week': 'klassWeekly',
-    'class/:id': 'klassWeekly',
+    'class/:id/:part': 'klassPartly',
+    'class/:id': 'klassPartly',
     'class/run/:studentId/:subtestId': 'runSubtest',
     'class/result/student/subtest/:studentId/:subtestId': 'studentSubtest',
     'curricula': 'curricula',
@@ -40,7 +40,7 @@ Router = (function(_super) {
     'import': 'import',
     'subtest/:id': 'editSubtest',
     'question/:id': 'editQuestion',
-    'report/weekByStudent/:subtestId': 'weekByStudent',
+    'report/partByStudent/:subtestId': 'partByStudent',
     'report/classToDate/:klassId': 'klassToDate'
   };
 
@@ -115,7 +115,7 @@ Router = (function(_super) {
                   _results = [];
                   for (_i = 0, _len = subtests.length; _i < _len; _i++) {
                     subtest = subtests[_i];
-                    _results.push(subtest.get("week"));
+                    _results.push(subtest.get("part"));
                   }
                   return _results;
                 })();
@@ -222,8 +222,8 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.klassWeekly = function(klassId, week) {
-    if (week == null) week = null;
+  Router.prototype.klassPartly = function(klassId, part) {
+    if (part == null) part = null;
     return Tangerine.user.verify({
       isRegistered: function() {
         var klass;
@@ -260,8 +260,8 @@ Router = (function(_super) {
                             subtests = new Subtests(collection.where({
                               "curriculumId": klass.get("curriculumId")
                             }));
-                            view = new KlassWeeklyView({
-                              "week": week,
+                            view = new KlassPartlyView({
+                              "part": part,
                               "subtests": subtests,
                               "results": results,
                               "students": students,
@@ -581,7 +581,7 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.weekByStudent = function(subtestId) {
+  Router.prototype.partByStudent = function(subtestId) {
     return Tangerine.user.verify({
       isRegistered: function() {
         var subtest;
@@ -602,7 +602,7 @@ Router = (function(_super) {
                 return students.fetch({
                   success: function() {
                     var view;
-                    view = new WeekByStudentView({
+                    view = new PartByStudentView({
                       "students": students,
                       "subtest": subtest,
                       "results": results

@@ -1,17 +1,17 @@
-class KlassWeeklyView extends Backbone.View
+class KlassPartlyView extends Backbone.View
 
   events:
-    "click .next_week"                : "nextWeek"
-    "click .prev_week"                : "prevWeek"
+    "click .next_part"                : "nextPart"
+    "click .prev_part"                : "prevPart"
     "click .back"                     : "back"
     "click .student_subtest"          : "gotoStudentSubtest"
-    #"click .week_subtest_report"      : "weekSubtestReport"
+    #"click .part_subtest_report"      : "partSubtestReport"
     #"click .student"                  : "gotoStudentReport"
 
 #  gotoStudentReport: ->
 #    Tangerine.router.navigate "report/student/" + $(event.target).attr("data-studentId")
 #
-#  weekSubtestReport: (event) ->
+#  partSubtestReport: (event) ->
 #    id = $(event.target).attr("data-id")
 #    Tangerine.router.navigate "report/#{id}", true
 
@@ -24,40 +24,40 @@ class KlassWeeklyView extends Backbone.View
     subtestId = $(event.target).attr("data-subtestId")
     Tangerine.router.navigate "class/result/student/subtest/#{studentId}/#{subtestId}", true
 
-  nextWeek: ->
-    if @currentWeek < @subtestsByWeek.length-1
-      @currentWeek++
+  nextPart: ->
+    if @currentPart < @subtestsByPart.length-1
+      @currentPart++
       @render()
-      Tangerine.router.navigate "class/#{@options.klass.id}/#{@currentWeek}"
+      Tangerine.router.navigate "class/#{@options.klass.id}/#{@currentPart}"
 
-  prevWeek: -> 
-    if @currentWeek > 1
-      @currentWeek-- 
+  prevPart: -> 
+    if @currentPart > 1
+      @currentPart-- 
       @render()
 
   initialize: (options) ->
-    @currentWeek = options.week || 1
-    @subtestsByWeek = []
-    week = 1
-    while (byWeek=options.subtests.where "week" : week).length != 0
-      @subtestsByWeek[week] = byWeek unless byWeek == 0
-      @subtestsByWeek[week].sort (a,b) -> a.get("name").toLowerCase() > b.get("name").toLowerCase()
-      week++
-    @totalWeeks = week - 1
+    @currentPart = options.part || 1
+    @subtestsByPart = []
+    part = 1
+    while (byPart=options.subtests.where "part" : part).length != 0
+      @subtestsByPart[part] = byPart unless byPart == 0
+      @subtestsByPart[part].sort (a,b) -> a.get("name").toLowerCase() > b.get("name").toLowerCase()
+      part++
+    @totalParts = part - 1
 
 
   render: ->
 
     @table = []
 
-    subtestsThisWeek = @subtestsByWeek[@currentWeek]
+    subtestsThisPart = @subtestsByPart[@currentPart]
 
     for student, i in @options.students.models
       @table[i] = []
 
       resultsForThisStudent = new KlassResults @options.results.where "studentId" : student.id
 
-      for subtest, j in subtestsThisWeek
+      for subtest, j in subtestsThisPart
 
         studentResult = resultsForThisStudent.where "subtestId" : subtest.id
         marker        = if studentResult.length == 0 then "?" else "&#x2714;"
@@ -69,9 +69,9 @@ class KlassWeeklyView extends Backbone.View
           "subtestId" : subtest.id
 
     # make headers
-    gridPage = "<table class='info_box_wide '><tbody><tr><th></th>"
-    for subtest in subtestsThisWeek
-      gridPage += "<th><div class='week_subtest_report' data-id='#{subtest.id}'>#{subtest.get('name')}</div></th>"
+    gridPage = "<table class='info_box_wide'><tbody><tr><th></th>"
+    for subtest in subtestsThisPart
+      gridPage += "<th><div class='part_subtest_report' data-id='#{subtest.id}'>#{subtest.get('name')}</div></th>"
     gridPage += "</tr>"
     for row in @table
       gridPage += "<tr><td><div class='student' data-studentId='#{row[0].studentId}'>#{row[0].studentName}</div></td>"
@@ -82,10 +82,10 @@ class KlassWeeklyView extends Backbone.View
 
     @$el.html "
       <h1>#{t('class status')}</h1>
-      <h2>#{t('week')} #{@currentWeek}</h2>
+      <h2>#{t('part')} #{@currentPart}</h2>
       #{gridPage}<br>
       
-      <button class='prev_week command'>#{t('previous')}</button> <button class='next_week command'>#{t('next')}</button><br><br>
+      <button class='prev_part command'>#{t('previous')}</button> <button class='next_part command'>#{t('next')}</button><br><br>
       <button class='back navigation'>#{t('back')}</button> 
       "
 

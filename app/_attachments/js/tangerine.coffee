@@ -12,8 +12,8 @@ class Router extends Backbone.Router
     'class/student/:studentId'        : 'studentEdit'
     'class/student/report/:studentId' : 'studentReport'
 
-    'class/:id/:week' : 'klassWeekly'
-    'class/:id'       : 'klassWeekly'
+    'class/:id/:part' : 'klassPartly'
+    'class/:id'       : 'klassPartly'
 
     'class/run/:studentId/:subtestId' : 'runSubtest'
 
@@ -44,7 +44,7 @@ class Router extends Backbone.Router
 
     'question/:id' : 'editQuestion'
 
-    'report/weekByStudent/:subtestId' : 'weekByStudent'
+    'report/partByStudent/:subtestId' : 'partByStudent'
     'report/classToDate/:klassId'     : 'klassToDate'
 
   landing: ->
@@ -89,7 +89,7 @@ class Router extends Backbone.Router
             allSubtests.fetch
               success: ->
                 subtests = allSubtests.where "curriculumId" : curriculumId
-                allParts = (subtest.get("week") for subtest in subtests)
+                allParts = (subtest.get("part") for subtest in subtests)
                 partCount = Math.max.apply Math, allParts 
                 view = new CurriculumView
                   "curriculum" : curriculum
@@ -149,7 +149,7 @@ class Router extends Backbone.Router
       isUnregistered: ->
         Tangerine.router.navigate "", true
 
-  klassWeekly: (klassId, week=null) ->
+  klassPartly: (klassId, part=null) ->
     Tangerine.user.verify
       isRegistered: ->
         klass = new Klass "_id" : klassId
@@ -173,8 +173,8 @@ class Router extends Backbone.Router
                           success: (collection ) ->
                             subtests = new Subtests ( collection.where( "curriculumId" : klass.get("curriculumId") ) )
 
-                            view = new KlassWeeklyView
-                              "week"       : week
+                            view = new KlassPartlyView
+                              "part"       : part
                               "subtests"   : subtests
                               "results"    : results
                               "students"   : students
@@ -363,7 +363,7 @@ class Router extends Backbone.Router
           details : "How did you get here?"
         vm.show errView
 
-  weekByStudent: (subtestId) ->
+  partByStudent: (subtestId) ->
     Tangerine.user.verify
       isRegistered: ->
         subtest = new Subtest "_id" : subtestId
@@ -377,7 +377,7 @@ class Router extends Backbone.Router
                 students = new Students
                 students.fetch
                   success: ->
-                    view = new WeekByStudentView
+                    view = new PartByStudentView
                       "students"   : students
                       "subtest"    : subtest
                       "results"    : results

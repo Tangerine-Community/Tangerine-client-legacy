@@ -1,38 +1,38 @@
-class WeekByStudentMenuView extends Backbone.View
+class PartByStudentMenuView extends Backbone.View
 
   events:
-    'change .week_selector' : 'gotoWeekByStudentReport'
+    'change .part_selector' : 'gotoPartByStudentReport'
 
-  gotoWeekByStudentReport: (event) ->
-    Tangerine.router.navigate "report/weekByStudent/" + @$el.find(event.target).find(":selected").attr("data-subtestId"), true
+  gotoPartByStudentReport: (event) ->
+    Tangerine.router.navigate "report/partByStudent/" + @$el.find(event.target).find(":selected").attr("data-subtestId"), true
 
   initialize: (options) ->
     @parent    = options.parent
     @klass     = @parent.options.klass
     @curricula = @parent.options.curricula
-    milisecondsPerWeek = 604800000
-    @currentWeek = Math.round(((new Date()).getTime() - @klass.get("startDate")) / milisecondsPerWeek)
+    milisecondsPerPart = 604800000
+    @currentPart = Math.round(((new Date()).getTime() - @klass.get("startDate")) / milisecondsPerPart)
     allSubtests = new Subtests
     allSubtests.fetch
       success: (collection) =>
         subtests = collection.where 
           curriculaId : @curricula.id
-        @weeks = []
+        @parts = []
         for subtest in subtests
-          @weeks[subtest.get('week')] = subtest.id
+          @parts[subtest.get('part')] = subtest.id
         @ready = true
         @render()
 
   render: ->
     if (@ready)
       html = "
-        <select class='week_selector'>
-          <option disabled='disabled' selected='selected'>Select a week</option>
+        <select class='part_selector'>
+          <option disabled='disabled' selected='selected'>Select a part</option>
           "
-      for subtestId, week in @weeks
+      for subtestId, part in @parts
         if subtestId?
-          flagForCurrent = if @currentWeek == week then "**" else ''
-          html += "<option data-subtestId='#{subtestId}'>#{week}#{flagForCurrent}</option>"
+          flagForCurrent = if @currentPart == part then "**" else ''
+          html += "<option data-subtestId='#{subtestId}'>#{part}#{flagForCurrent}</option>"
       html += "</select>"
           
       @$el.html html

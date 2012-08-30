@@ -6,7 +6,7 @@
   "prototype": "grid",
   "collection": "subtest",
   "timer": 60,
-  "week": 1,
+  "part": 1,
   "columns": 3,
   "variableName": "baseline_letters",
   "name": "Baseline letters",

@@ -13,57 +13,57 @@ KlassToDateView = (function(_super) {
   }
 
   KlassToDateView.prototype.initialize = function(options) {
-    var correctItems, i, item, j, maxWeek, milisecondsPerWeek, result, results, resultsByWeek, subtest, subtestWeek, subtests, subtestsByWeek, totalItems, _i, _j, _k, _len, _len2, _len3, _len4, _len5, _len6, _ref, _ref2, _results;
-    milisecondsPerWeek = 604800000;
-    this.currentWeek = Math.round(((new Date()).getTime() - options.klass.get("startDate")) / milisecondsPerWeek);
+    var correctItems, i, item, j, maxPart, milisecondsPerPart, result, results, resultsByPart, subtest, subtestPart, subtests, subtestsByPart, totalItems, _i, _j, _k, _len, _len2, _len3, _len4, _len5, _len6, _ref, _ref2, _results;
+    milisecondsPerPart = 604800000;
+    this.currentPart = Math.round(((new Date()).getTime() - options.klass.get("startDate")) / milisecondsPerPart);
     this.range = (function() {
       var _ref, _results;
       _results = [];
-      for (i = 1, _ref = this.currentWeek; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
+      for (i = 1, _ref = this.currentPart; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
         _results.push(i);
       }
       return _results;
     }).call(this);
-    subtestsByWeek = [];
-    maxWeek = 0;
+    subtestsByPart = [];
+    maxPart = 0;
     _ref = options.subtests;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       subtest = _ref[_i];
-      subtestWeek = typeof subtest.get === "function" ? subtest.get("week") : void 0;
-      maxWeek = subtestWeek;
-      if (subtestsByWeek[subtestWeek] != null) {
-        subtestsByWeek[subtestWeek].push(subtest);
+      subtestPart = typeof subtest.get === "function" ? subtest.get("part") : void 0;
+      maxPart = subtestPart;
+      if (subtestsByPart[subtestPart] != null) {
+        subtestsByPart[subtestPart].push(subtest);
       } else {
-        subtestsByWeek[subtestWeek] = [subtest];
+        subtestsByPart[subtestPart] = [subtest];
       }
     }
-    resultsByWeek = [];
-    for (i = 0, _len2 = subtestsByWeek.length; i < _len2; i++) {
-      subtests = subtestsByWeek[i];
+    resultsByPart = [];
+    for (i = 0, _len2 = subtestsByPart.length; i < _len2; i++) {
+      subtests = subtestsByPart[i];
       if (!(subtests != null)) continue;
       for (j = 0, _len3 = subtests.length; j < _len3; j++) {
         subtest = subtests[j];
-        if (resultsByWeek[i] != null) {
-          resultsByWeek[i] = resultsByWeek[i].concat(options.results.where({
+        if (resultsByPart[i] != null) {
+          resultsByPart[i] = resultsByPart[i].concat(options.results.where({
             "subtestId": subtest.id
           }));
         } else {
-          resultsByWeek[i] = options.results.where({
+          resultsByPart[i] = options.results.where({
             "subtestId": subtest.id
           });
         }
       }
     }
-    this.percentageCorrectByWeek = [];
-    this.collectionCompleteByWeek = [];
+    this.percentageCorrectByPart = [];
+    this.collectionCompleteByPart = [];
     _results = [];
-    for (i = 0, _len4 = resultsByWeek.length; i < _len4; i++) {
-      results = resultsByWeek[i];
-      this.collectionCompleteByWeek[i] = 0;
-      this.percentageCorrectByWeek[i] = 0;
+    for (i = 0, _len4 = resultsByPart.length; i < _len4; i++) {
+      results = resultsByPart[i];
+      this.collectionCompleteByPart[i] = 0;
+      this.percentageCorrectByPart[i] = 0;
       if (!(results != null)) continue;
       if (results.length !== 0) {
-        this.collectionCompleteByWeek[i] = (results.length / (options.studentCount * subtestsByWeek.length)) * 100;
+        this.collectionCompleteByPart[i] = (results.length / (options.studentCount * subtestsByPart.length)) * 100;
       }
       totalItems = 0;
       correctItems = 0;
@@ -77,7 +77,7 @@ KlassToDateView = (function(_super) {
         }
       }
       if (totalItems !== 0) {
-        _results.push(this.percentageCorrectByWeek[i] = (correctItems / totalItems) * 100);
+        _results.push(this.percentageCorrectByPart[i] = (correctItems / totalItems) * 100);
       } else {
         _results.push(void 0);
       }
@@ -93,7 +93,7 @@ KlassToDateView = (function(_super) {
   };
 
   KlassToDateView.prototype.afterRender = function() {
-    return $.plot(this.$el.find("#chart"), [this.collectionCompleteByWeek.slice(1, this.currentWeek + 1 || 9e9), this.percentageCorrectByWeek.slice(1, this.currentWeek + 1 || 9e9)]);
+    return $.plot(this.$el.find("#chart"), [this.collectionCompleteByPart.slice(1, this.currentPart + 1 || 9e9), this.percentageCorrectByPart.slice(1, this.currentPart + 1 || 9e9)]);
   };
 
   return KlassToDateView;

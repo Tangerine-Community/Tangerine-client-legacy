@@ -6,7 +6,7 @@
   "endOfLine" : false,
   "prototype": "grid",
   "timer" : 60,
-  "week": 1,
+  "part": 1,
   "columns": 3,
   "variableName": "baseline_words",
   "name": "Baseline Words",

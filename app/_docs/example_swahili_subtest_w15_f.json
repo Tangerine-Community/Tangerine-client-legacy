@@ -5,7 +5,7 @@
   "captureLastAttempted" : false,
   "endOfLine" : false,
   "prototype": "grid",
-  "week": 15,
+  "part": 15,
   "variableName": "familiarWords",
   "name": "Words",
   "items": [

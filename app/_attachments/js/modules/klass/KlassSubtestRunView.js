@@ -83,13 +83,13 @@ KlassSubtestRunView = (function(_super) {
   };
 
   KlassSubtestRunView.prototype.cancel = function() {
-    return Tangerine.router.navigate("class/" + (this.options.student.get('klassId')) + "/" + (this.options.subtest.get('week')), true);
+    return Tangerine.router.navigate("class/" + (this.options.student.get('klassId')) + "/" + (this.options.subtest.get('part')), true);
   };
 
   KlassSubtestRunView.prototype.done = function() {
     if (this.isValid()) {
       this.result.add(this.getResult());
-      return Tangerine.router.navigate("class/" + (this.options.student.get('klassId')) + "/" + (this.options.subtest.get('week')), true);
+      return Tangerine.router.navigate("class/" + (this.options.student.get('klassId')) + "/" + (this.options.subtest.get('part')), true);
     } else {
       return this.prototypeView.showErrors();
     }

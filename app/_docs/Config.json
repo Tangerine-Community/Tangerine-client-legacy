@@ -39,8 +39,8 @@
 			"menuView" : "KlassToDateMenuView"
 		},
 		{
-			"name"     : "week by student",
-			"menuView" : "WeekByStudentMenuView"
+			"name"     : "part by student",
+			"menuView" : "PartByStudentMenuView"
 		}
 	]
 }

@@ -1,31 +1,31 @@
-var WeekByStudentMenuView,
+var PartByStudentMenuView,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-WeekByStudentMenuView = (function(_super) {
+PartByStudentMenuView = (function(_super) {
 
-  __extends(WeekByStudentMenuView, _super);
+  __extends(PartByStudentMenuView, _super);
 
-  function WeekByStudentMenuView() {
-    WeekByStudentMenuView.__super__.constructor.apply(this, arguments);
+  function PartByStudentMenuView() {
+    PartByStudentMenuView.__super__.constructor.apply(this, arguments);
   }
 
-  WeekByStudentMenuView.prototype.events = {
-    'change .week_selector': 'gotoWeekByStudentReport'
+  PartByStudentMenuView.prototype.events = {
+    'change .part_selector': 'gotoPartByStudentReport'
   };
 
-  WeekByStudentMenuView.prototype.gotoWeekByStudentReport = function(event) {
-    return Tangerine.router.navigate("report/weekByStudent/" + this.$el.find(event.target).find(":selected").attr("data-subtestId"), true);
+  PartByStudentMenuView.prototype.gotoPartByStudentReport = function(event) {
+    return Tangerine.router.navigate("report/partByStudent/" + this.$el.find(event.target).find(":selected").attr("data-subtestId"), true);
   };
 
-  WeekByStudentMenuView.prototype.initialize = function(options) {
-    var allSubtests, milisecondsPerWeek,
+  PartByStudentMenuView.prototype.initialize = function(options) {
+    var allSubtests, milisecondsPerPart,
       _this = this;
     this.parent = options.parent;
     this.klass = this.parent.options.klass;
     this.curricula = this.parent.options.curricula;
-    milisecondsPerWeek = 604800000;
-    this.currentWeek = Math.round(((new Date()).getTime() - this.klass.get("startDate")) / milisecondsPerWeek);
+    milisecondsPerPart = 604800000;
+    this.currentPart = Math.round(((new Date()).getTime() - this.klass.get("startDate")) / milisecondsPerPart);
     allSubtests = new Subtests;
     return allSubtests.fetch({
       success: function(collection) {
@@ -33,10 +33,10 @@ WeekByStudentMenuView = (function(_super) {
         subtests = collection.where({
           curriculaId: _this.curricula.id
         });
-        _this.weeks = [];
+        _this.parts = [];
         for (_i = 0, _len = subtests.length; _i < _len; _i++) {
           subtest = subtests[_i];
-          _this.weeks[subtest.get('week')] = subtest.id;
+          _this.parts[subtest.get('part')] = subtest.id;
         }
         _this.ready = true;
         return _this.render();
@@ -44,16 +44,16 @@ WeekByStudentMenuView = (function(_super) {
     });
   };
 
-  WeekByStudentMenuView.prototype.render = function() {
-    var flagForCurrent, html, subtestId, week, _len, _ref;
+  PartByStudentMenuView.prototype.render = function() {
+    var flagForCurrent, html, part, subtestId, _len, _ref;
     if (this.ready) {
-      html = "        <select class='week_selector'>          <option disabled='disabled' selected='selected'>Select a week</option>          ";
-      _ref = this.weeks;
-      for (week = 0, _len = _ref.length; week < _len; week++) {
-        subtestId = _ref[week];
+      html = "        <select class='part_selector'>          <option disabled='disabled' selected='selected'>Select a part</option>          ";
+      _ref = this.parts;
+      for (part = 0, _len = _ref.length; part < _len; part++) {
+        subtestId = _ref[part];
         if (subtestId != null) {
-          flagForCurrent = this.currentWeek === week ? "**" : '';
-          html += "<option data-subtestId='" + subtestId + "'>" + week + flagForCurrent + "</option>";
+          flagForCurrent = this.currentPart === part ? "**" : '';
+          html += "<option data-subtestId='" + subtestId + "'>" + part + flagForCurrent + "</option>";
         }
       }
       html += "</select>";
@@ -63,6 +63,6 @@ WeekByStudentMenuView = (function(_super) {
     }
   };
 
-  return WeekByStudentMenuView;
+  return PartByStudentMenuView;
 
 })(Backbone.View);

@@ -1,69 +1,69 @@
-var KlassWeeklyView,
+var KlassPartlyView,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-KlassWeeklyView = (function(_super) {
+KlassPartlyView = (function(_super) {
 
-  __extends(KlassWeeklyView, _super);
+  __extends(KlassPartlyView, _super);
 
-  function KlassWeeklyView() {
-    KlassWeeklyView.__super__.constructor.apply(this, arguments);
+  function KlassPartlyView() {
+    KlassPartlyView.__super__.constructor.apply(this, arguments);
   }
 
-  KlassWeeklyView.prototype.events = {
-    "click .next_week": "nextWeek",
-    "click .prev_week": "prevWeek",
+  KlassPartlyView.prototype.events = {
+    "click .next_part": "nextPart",
+    "click .prev_part": "prevPart",
     "click .back": "back",
     "click .student_subtest": "gotoStudentSubtest"
   };
 
-  KlassWeeklyView.prototype.back = function() {
+  KlassPartlyView.prototype.back = function() {
     return Tangerine.router.navigate("class", true);
   };
 
-  KlassWeeklyView.prototype.gotoStudentSubtest = function(event) {
+  KlassPartlyView.prototype.gotoStudentSubtest = function(event) {
     var studentId, subtestId;
     studentId = $(event.target).attr("data-studentId");
     subtestId = $(event.target).attr("data-subtestId");
     return Tangerine.router.navigate("class/result/student/subtest/" + studentId + "/" + subtestId, true);
   };
 
-  KlassWeeklyView.prototype.nextWeek = function() {
-    if (this.currentWeek < this.subtestsByWeek.length - 1) {
-      this.currentWeek++;
+  KlassPartlyView.prototype.nextPart = function() {
+    if (this.currentPart < this.subtestsByPart.length - 1) {
+      this.currentPart++;
       this.render();
-      return Tangerine.router.navigate("class/" + this.options.klass.id + "/" + this.currentWeek);
+      return Tangerine.router.navigate("class/" + this.options.klass.id + "/" + this.currentPart);
     }
   };
 
-  KlassWeeklyView.prototype.prevWeek = function() {
-    if (this.currentWeek > 1) {
-      this.currentWeek--;
+  KlassPartlyView.prototype.prevPart = function() {
+    if (this.currentPart > 1) {
+      this.currentPart--;
       return this.render();
     }
   };
 
-  KlassWeeklyView.prototype.initialize = function(options) {
-    var byWeek, week;
-    this.currentWeek = options.week || 1;
-    this.subtestsByWeek = [];
-    week = 1;
-    while ((byWeek = options.subtests.where({
-        "week": week
+  KlassPartlyView.prototype.initialize = function(options) {
+    var byPart, part;
+    this.currentPart = options.part || 1;
+    this.subtestsByPart = [];
+    part = 1;
+    while ((byPart = options.subtests.where({
+        "part": part
       })).length !== 0) {
-      if (byWeek !== 0) this.subtestsByWeek[week] = byWeek;
-      this.subtestsByWeek[week].sort(function(a, b) {
+      if (byPart !== 0) this.subtestsByPart[part] = byPart;
+      this.subtestsByPart[part].sort(function(a, b) {
         return a.get("name").toLowerCase() > b.get("name").toLowerCase();
       });
-      week++;
+      part++;
     }
-    return this.totalWeeks = week - 1;
+    return this.totalParts = part - 1;
   };
 
-  KlassWeeklyView.prototype.render = function() {
-    var cell, column, gridPage, i, j, marker, resultsForThisStudent, row, student, studentResult, subtest, subtestsThisWeek, _i, _j, _len, _len2, _len3, _len4, _len5, _ref, _ref2;
+  KlassPartlyView.prototype.render = function() {
+    var cell, column, gridPage, i, j, marker, resultsForThisStudent, row, student, studentResult, subtest, subtestsThisPart, _i, _j, _len, _len2, _len3, _len4, _len5, _ref, _ref2;
     this.table = [];
-    subtestsThisWeek = this.subtestsByWeek[this.currentWeek];
+    subtestsThisPart = this.subtestsByPart[this.currentPart];
     _ref = this.options.students.models;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       student = _ref[i];
@@ -71,8 +71,8 @@ KlassWeeklyView = (function(_super) {
       resultsForThisStudent = new KlassResults(this.options.results.where({
         "studentId": student.id
       }));
-      for (j = 0, _len2 = subtestsThisWeek.length; j < _len2; j++) {
-        subtest = subtestsThisWeek[j];
+      for (j = 0, _len2 = subtestsThisPart.length; j < _len2; j++) {
+        subtest = subtestsThisPart[j];
         studentResult = resultsForThisStudent.where({
           "subtestId": subtest.id
         });
@@ -86,10 +86,10 @@ KlassWeeklyView = (function(_super) {
         });
       }
     }
-    gridPage = "<table class='info_box_wide '><tbody><tr><th></th>";
-    for (_i = 0, _len3 = subtestsThisWeek.length; _i < _len3; _i++) {
-      subtest = subtestsThisWeek[_i];
-      gridPage += "<th><div class='week_subtest_report' data-id='" + subtest.id + "'>" + (subtest.get('name')) + "</div></th>";
+    gridPage = "<table class='info_box_wide'><tbody><tr><th></th>";
+    for (_i = 0, _len3 = subtestsThisPart.length; _i < _len3; _i++) {
+      subtest = subtestsThisPart[_i];
+      gridPage += "<th><div class='part_subtest_report' data-id='" + subtest.id + "'>" + (subtest.get('name')) + "</div></th>";
     }
     gridPage += "</tr>";
     _ref2 = this.table;
@@ -103,10 +103,10 @@ KlassWeeklyView = (function(_super) {
       gridPage += "</tr>";
     }
     gridPage += "</tbody></table>";
-    this.$el.html("      <h1>" + (t('class status')) + "</h1>      <h2>" + (t('week')) + " " + this.currentWeek + "</h2>      " + gridPage + "<br>            <button class='prev_week command'>" + (t('previous')) + "</button> <button class='next_week command'>" + (t('next')) + "</button><br><br>      <button class='back navigation'>" + (t('back')) + "</button>       ");
+    this.$el.html("      <h1>" + (t('class status')) + "</h1>      <h2>" + (t('part')) + " " + this.currentPart + "</h2>      " + gridPage + "<br>            <button class='prev_part command'>" + (t('previous')) + "</button> <button class='next_part command'>" + (t('next')) + "</button><br><br>      <button class='back navigation'>" + (t('back')) + "</button>       ");
     return this.trigger("rendered");
   };
 
-  return KlassWeeklyView;
+  return KlassPartlyView;
 
 })(Backbone.View);

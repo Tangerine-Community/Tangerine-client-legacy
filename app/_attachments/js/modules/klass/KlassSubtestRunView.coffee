@@ -66,11 +66,11 @@ class KlassSubtestRunView extends Backbone.View
       throw "Prototype skipping not implemented"
 
   cancel: ->
-    Tangerine.router.navigate "class/#{@options.student.get('klassId')}/#{@options.subtest.get('week')}", true
+    Tangerine.router.navigate "class/#{@options.student.get('klassId')}/#{@options.subtest.get('part')}", true
 
   done: ->
     if @isValid()
       @result.add(@getResult())
-      Tangerine.router.navigate "class/#{@options.student.get('klassId')}/#{@options.subtest.get('week')}", true
+      Tangerine.router.navigate "class/#{@options.student.get('klassId')}/#{@options.subtest.get('part')}", true
     else
       @prototypeView.showErrors()
