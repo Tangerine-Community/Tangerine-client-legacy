@@ -45,6 +45,7 @@
     <span class="s">&#39;question/:id&#39;</span> <span class="o">:</span> <span class="s">&#39;editQuestion&#39;</span>
 
     <span class="s">&#39;report/partByStudent/:subtestId&#39;</span> <span class="o">:</span> <span class="s">&#39;partByStudent&#39;</span>
+    <span class="s">&#39;report/studentToDate/:studentId&#39;</span> <span class="o">:</span> <span class="s">&#39;studentToDate&#39;</span>
     <span class="s">&#39;report/classToDate/:klassId&#39;</span>     <span class="o">:</span> <span class="s">&#39;klassToDate&#39;</span>
 
   <span class="nv">landing: </span><span class="o">-&gt;</span>
@@ -396,6 +397,30 @@
                           <span class="s">&quot;klass&quot;</span>    <span class="o">:</span> <span class="nx">klass</span>
                         <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
       <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
+        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
+  <span class="nv">studentToDate: </span><span class="nf">(studentId) -&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
+      <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
+        <span class="nv">student = </span><span class="k">new</span> <span class="nx">Student</span> <span class="s">&quot;_id&quot;</span> <span class="o">:</span> <span class="nx">studentId</span>
+        <span class="nx">student</span><span class="p">.</span><span class="nx">fetch</span>
+          <span class="nv">success: </span><span class="o">-&gt;</span>
+            <span class="nv">klass = </span><span class="k">new</span> <span class="nx">Klass</span> <span class="s">&quot;_id&quot;</span> <span class="o">:</span> <span class="nx">student</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;klassId&quot;</span><span class="p">)</span>
+            <span class="nx">klass</span><span class="p">.</span><span class="nx">fetch</span>
+              <span class="nv">success: </span><span class="o">-&gt;</span>
+                <span class="nv">allSubtests = </span><span class="k">new</span> <span class="nx">Subtests</span>
+                <span class="nx">allSubtests</span><span class="p">.</span><span class="nx">fetch</span>
+                  <span class="nv">success: </span><span class="nf">(subtestCollection) -&gt;</span>
+                    <span class="nv">subtests = </span><span class="nx">subtestCollection</span><span class="p">.</span><span class="nx">where</span> <span class="s">&quot;curriculumId&quot;</span> <span class="o">:</span> <span class="nx">klass</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;curriculumId&quot;</span><span class="p">)</span>
+                    <span class="nv">allResults = </span><span class="k">new</span> <span class="nx">Results</span>
+                    <span class="nx">allResults</span><span class="p">.</span><span class="nx">fetch</span>
+                      <span class="nv">success: </span><span class="nf">(results) -&gt;</span>
+                        <span class="nv">view = </span><span class="k">new</span> <span class="nx">StudentToDateView</span>
+                          <span class="s">&quot;results&quot;</span>  <span class="o">:</span> <span class="nx">results</span>
+                          <span class="s">&quot;subtests&quot;</span> <span class="o">:</span> <span class="nx">subtests</span>
+                          <span class="s">&quot;klass&quot;</span> <span class="o">:</span> <span class="nx">klass</span>
+                        <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
+      <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Subtests</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">editSubtest: </span><span class="nf">(id) -&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
@@ -432,7 +457,6 @@
 
   <span class="nv">logout: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">logout</span><span class="p">()</span>
-    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
   <span class="nv">account: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
