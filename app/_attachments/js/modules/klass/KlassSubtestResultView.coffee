@@ -1,18 +1,16 @@
 class KlassSubtestResultView extends Backbone.View
 
   events: 
-    "click .run"  : "gotoRun"
-    "click .back" : "back"
+    "click .run"           : "gotoRun"
+    "click .back"          : "back"
+    "click .show_itemized" : "showItemized"
 
   initialize: (options) ->
     #do nothing?
 
-  gotoRun: ->
-    Tangerine.router.navigate "class/run/#{@options.student.id}/#{@options.subtest.id}", true
-
-  back: ->
-    Tangerine.router.navigate "class/#{@options.student.get("klassId")}/#{@options.subtest.get("week")}", true
-
+  showItemized: -> @$el.find(".itemized").fadeToggle()
+  gotoRun: -> Tangerine.router.navigate "class/run/#{@options.student.id}/#{@options.subtest.id}", true
+  back: -> Tangerine.router.navigate "class/#{@options.student.get("klassId")}/#{@options.subtest.get("week")}", true
 
   render: ->
     subtestItems = @options.subtest.get("items")
@@ -21,10 +19,10 @@ class KlassSubtestResultView extends Backbone.View
     taken      = ""
 
     if @options.result.length != 0
-      resultHTML += "<table><tbody><tr><th>Item</th><th>Result</th></tr>"
+      resultHTML += "<button class='command show_itemized'>#{t('Itemized results')}</button><table class='itemized confirmation'><tbody><tr><th>Item</th><th>Result</th></tr>"
       for datum, i in @options.result[0].get("subtestData").items
-        resultHTML += "<tr><td>#{subtestItems[i]}</td><td>#{datum}</td></tr>"
-      resultHTML += "</tbody></table>"
+        resultHTML += "<tr><td>#{datum.itemLabel}</td><td>#{t(datum.itemResult)}</td></tr>"
+      resultHTML += "</tbody></table><br>"
 
       timestamp = new Date @options.result[0].get("timestamp")
 
@@ -34,8 +32,7 @@ class KlassSubtestResultView extends Backbone.View
         </tr>
       "
 
-
-    html = "
+    @$el.html "
       <h1>Result</h1>
       <table class='info_box'><tbody>
         <tr>
@@ -59,8 +56,4 @@ class KlassSubtestResultView extends Backbone.View
       <button class='navigation back'>Back</button>
     "
 
-
-
-
-    @$el.html html
     @trigger "rendered"

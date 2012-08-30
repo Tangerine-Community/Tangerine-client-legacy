@@ -12,10 +12,15 @@ KlassSubtestResultView = (function(_super) {
 
   KlassSubtestResultView.prototype.events = {
     "click .run": "gotoRun",
-    "click .back": "back"
+    "click .back": "back",
+    "click .show_itemized": "showItemized"
   };
 
   KlassSubtestResultView.prototype.initialize = function(options) {};
+
+  KlassSubtestResultView.prototype.showItemized = function() {
+    return this.$el.find(".itemized").fadeToggle();
+  };
 
   KlassSubtestResultView.prototype.gotoRun = function() {
     return Tangerine.router.navigate("class/run/" + this.options.student.id + "/" + this.options.subtest.id, true);
@@ -26,23 +31,22 @@ KlassSubtestResultView = (function(_super) {
   };
 
   KlassSubtestResultView.prototype.render = function() {
-    var datum, html, i, resultHTML, subtestItems, taken, timestamp, _len, _ref;
+    var datum, i, resultHTML, subtestItems, taken, timestamp, _len, _ref;
     subtestItems = this.options.subtest.get("items");
     resultHTML = "<br>";
     taken = "";
     if (this.options.result.length !== 0) {
-      resultHTML += "<table><tbody><tr><th>Item</th><th>Result</th></tr>";
+      resultHTML += "<button class='command show_itemized'>" + (t('Itemized results')) + "</button><table class='itemized confirmation'><tbody><tr><th>Item</th><th>Result</th></tr>";
       _ref = this.options.result[0].get("subtestData").items;
       for (i = 0, _len = _ref.length; i < _len; i++) {
         datum = _ref[i];
-        resultHTML += "<tr><td>" + subtestItems[i] + "</td><td>" + datum + "</td></tr>";
+        resultHTML += "<tr><td>" + datum.itemLabel + "</td><td>" + (t(datum.itemResult)) + "</td></tr>";
       }
-      resultHTML += "</tbody></table>";
+      resultHTML += "</tbody></table><br>";
       timestamp = new Date(this.options.result[0].get("timestamp"));
       taken += "        <tr>          <td><label>Taken</label></td><td>" + (timestamp.getFullYear()) + "/" + (timestamp.getMonth() + 1) + "/" + (timestamp.getDate()) + "</td>        </tr>      ";
     }
-    html = "      <h1>Result</h1>      <table class='info_box'><tbody>        <tr>          <td><label>Week</label></td>          <td>" + (this.options.subtest.get("week")) + "</td>        </tr>        <tr>          <td><label>Student</label></td>          <td>" + (this.options.student.escape("name")) + "</td>        </tr>        <tr>          <td><label>Subtest</label></td>          <td>" + (this.options.subtest.escape("name")) + "</td>        </tr>        " + taken + "      </tbody></table>      " + resultHTML + "      <div class='menu_box'>        <img src='images/icon_run.png' class='run'>      </div><br>      <button class='navigation back'>Back</button>    ";
-    this.$el.html(html);
+    this.$el.html("      <h1>Result</h1>      <table class='info_box'><tbody>        <tr>          <td><label>Week</label></td>          <td>" + (this.options.subtest.get("week")) + "</td>        </tr>        <tr>          <td><label>Student</label></td>          <td>" + (this.options.student.escape("name")) + "</td>        </tr>        <tr>          <td><label>Subtest</label></td>          <td>" + (this.options.subtest.escape("name")) + "</td>        </tr>        " + taken + "      </tbody></table>      " + resultHTML + "      <div class='menu_box'>        <img src='images/icon_run.png' class='run'>      </div><br>      <button class='navigation back'>Back</button>    ");
     return this.trigger("rendered");
   };
 
