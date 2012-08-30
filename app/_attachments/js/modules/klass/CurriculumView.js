@@ -21,7 +21,7 @@ CurriculumView = (function(_super) {
   CurriculumView.prototype.initialize = function(options) {};
 
   CurriculumView.prototype.render = function() {
-    this.$el.html("    <button class='navigation back'>" + (t('back')) + "</button>    <h1>" + (this.options.curriculum.get('name')) + "</h1>        <table>      <tr><td>" + (t('total subtests')) + "</td><td>" + this.options.subtests.length + "</td></tr>      <tr><td>" + (t('total parts')) + "</td><td>" + this.options.parts + "</td></tr>    </table>");
+    this.$el.html("    <button class='navigation back'>" + (t('back')) + "</button>    <h1>" + (this.options.curriculum.get('name')) + "</h1>        <div class='label_value'>      <label>" + (t('total subtests')) + "</label><br>      <div class='info_box'>" + this.options.subtests.length + "</div>    </div>        <div class='label_value'>      <label>" + (t('total parts')) + "</label><br>      <div class='info_box'>" + this.options.parts + "</div>    </div>    <div class='label_value'>      <label>" + (t('download key')) + "</label><br>      <div class='info_box'>" + (this.options.curriculum.id.substr(-5, 5)) + "</div>    </div>    </table>");
     return this.trigger("rendered");
   };
 

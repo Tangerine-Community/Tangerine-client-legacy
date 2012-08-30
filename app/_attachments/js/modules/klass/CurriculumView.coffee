@@ -12,8 +12,20 @@ class CurriculumView extends Backbone.View
     <button class='navigation back'>#{t('back')}</button>
     <h1>#{@options.curriculum.get('name')}</h1>
     
-    <table>
-      <tr><td>#{t('total subtests')}</td><td>#{@options.subtests.length}</td></tr>
-      <tr><td>#{t('total parts')}</td><td>#{@options.parts}</td></tr>
+    <div class='label_value'>
+      <label>#{t('total subtests')}</label><br>
+      <div class='info_box'>#{@options.subtests.length}</div>
+    </div>
+    
+    <div class='label_value'>
+      <label>#{t('total parts')}</label><br>
+      <div class='info_box'>#{@options.parts}</div>
+    </div>
+
+    <div class='label_value'>
+      <label>#{t('download key')}</label><br>
+      <div class='info_box'>#{@options.curriculum.id.substr(-5, 5)}</div>
+    </div>
+
     </table>"
     @trigger "rendered"
