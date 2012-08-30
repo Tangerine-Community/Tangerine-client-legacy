@@ -271,9 +271,13 @@ class Router extends Backbone.Router
     else
       Tangerine.user.verify
         isRegistered: ->
-          assessments = new AssessmentListView
-            group : group
-          vm.show assessments
+          curricula = new Curricula
+          curricula.fetch
+            success: ->
+              assessments = new AssessmentListView
+                "curricula" : curricula
+                "group"     : group
+              vm.show assessments
         isUnregistered: ->
           Tangerine.router.navigate "login", true
 

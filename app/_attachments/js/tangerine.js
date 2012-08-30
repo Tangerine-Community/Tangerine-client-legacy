@@ -420,11 +420,18 @@ Router = (function(_super) {
     } else {
       return Tangerine.user.verify({
         isRegistered: function() {
-          var assessments;
-          assessments = new AssessmentListView({
-            group: group
+          var curricula;
+          curricula = new Curricula;
+          return curricula.fetch({
+            success: function() {
+              var assessments;
+              assessments = new AssessmentListView({
+                "curricula": curricula,
+                "group": group
+              });
+              return vm.show(assessments);
+            }
           });
-          return vm.show(assessments);
         },
         isUnregistered: function() {
           return Tangerine.router.navigate("login", true);
