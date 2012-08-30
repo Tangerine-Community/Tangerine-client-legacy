@@ -15,6 +15,8 @@ class AssessmentListView extends Backbone.View
     Tangerine.router.navigate "import", true
 
   initialize:(options) ->
+    @curriculaListView = new CurriculaListView
+      "curricula" : options.curricula
     @group = options.group
     @isAdmin = Tangerine.user.isAdmin()
     @views = []
@@ -44,8 +46,9 @@ class AssessmentListView extends Backbone.View
           @public = null
         @render()
 
+  # @TODO This can be refactored easily
+  # Take the two portions that make assessment lists, and make it one view that you can give options.
   render: =>
-    # clean up
     @closeViews()
     @views = []
 
@@ -105,6 +108,10 @@ class AssessmentListView extends Backbone.View
         @$el.append "<p>No assessments available.</p>"
 
       @$el.append publicList
+      if @options.curricula.length != 0
+        @curriculaListView.render()
+        @$el.append "<h2>Curricula</h2>"
+        @$el.append @curriculaListView.el
 
     @trigger "rendered"
 
@@ -141,7 +148,9 @@ class AssessmentListView extends Backbone.View
 
   # ViewManager
   closeViews: ->
-    _.each @views, (view) -> view.close()
+    @curriculaListView.close?()
+    for view in @views
+      view.close()
 
   onClose: ->
     @closeViews()

@@ -31,6 +31,9 @@ AssessmentListView = (function(_super) {
   };
 
   AssessmentListView.prototype.initialize = function(options) {
+    this.curriculaListView = new CurriculaListView({
+      "curricula": options.curricula
+    });
     this.group = options.group;
     this.isAdmin = Tangerine.user.isAdmin();
     this.views = [];
@@ -118,6 +121,11 @@ AssessmentListView = (function(_super) {
         this.$el.append("<p>No assessments available.</p>");
       }
       this.$el.append(publicList);
+      if (this.options.curricula.length !== 0) {
+        this.curriculaListView.render();
+        this.$el.append("<h2>Curricula</h2>");
+        this.$el.append(this.curriculaListView.el);
+      }
     }
     return this.trigger("rendered");
   };
@@ -149,9 +157,17 @@ AssessmentListView = (function(_super) {
   };
 
   AssessmentListView.prototype.closeViews = function() {
-    return _.each(this.views, function(view) {
-      return view.close();
-    });
+    var view, _base, _i, _len, _ref, _results;
+    if (typeof (_base = this.curriculaListView).close === "function") {
+      _base.close();
+    }
+    _ref = this.views;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      view = _ref[_i];
+      _results.push(view.close());
+    }
+    return _results;
   };
 
   AssessmentListView.prototype.onClose = function() {
