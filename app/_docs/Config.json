@@ -35,6 +35,10 @@
 	"reports" : 
 	[
 		{
+			"name"     : "student to date",
+			"menuView" : "StudentToDateMenuView"
+		},
+		{
 			"name"     : "class to date",
 			"menuView" : "KlassToDateMenuView"
 		},
