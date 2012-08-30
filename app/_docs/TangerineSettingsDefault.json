@@ -1,6 +1,6 @@
 {
 	"collection"       : "settings",
 	"context"          : "mobile",
-	"language"         : "en-US",
+	"language"         : "en",
 	"generalThreshold" : 0.8
 }

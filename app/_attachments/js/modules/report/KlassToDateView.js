@@ -13,7 +13,7 @@ KlassToDateView = (function(_super) {
   }
 
   KlassToDateView.prototype.initialize = function(options) {
-    var correctItems, i, item, j, maxPart, milisecondsPerPart, result, results, resultsByPart, subtest, subtestPart, subtests, subtestsByPart, totalItems, _i, _j, _k, _len, _len2, _len3, _len4, _len5, _len6, _ref, _ref2, _results;
+    var correctItems, i, item, j, maxPart, milisecondsPerPart, result, results, resultsByPart, subtest, subtestPart, subtests, subtestsByPart, totalItems, _i, _j, _k, _len, _len2, _len3, _len4, _len5, _len6, _ref, _ref2, _ref3;
     milisecondsPerPart = 604800000;
     this.currentPart = Math.round(((new Date()).getTime() - options.klass.get("startDate")) / milisecondsPerPart);
     this.range = (function() {
@@ -56,15 +56,12 @@ KlassToDateView = (function(_super) {
     }
     this.percentageCorrectByPart = [];
     this.collectionCompleteByPart = [];
-    _results = [];
     for (i = 0, _len4 = resultsByPart.length; i < _len4; i++) {
       results = resultsByPart[i];
       this.collectionCompleteByPart[i] = 0;
       this.percentageCorrectByPart[i] = 0;
       if (!(results != null)) continue;
-      if (results.length !== 0) {
-        this.collectionCompleteByPart[i] = (results.length / (options.studentCount * subtestsByPart.length)) * 100;
-      }
+      this.collectionCompleteByPart[i] = (results.length / (options.studentCount * subtestsByPart[i].length)) * 100;
       totalItems = 0;
       correctItems = 0;
       for (_j = 0, _len5 = results.length; _j < _len5; _j++) {
@@ -77,12 +74,50 @@ KlassToDateView = (function(_super) {
         }
       }
       if (totalItems !== 0) {
-        _results.push(this.percentageCorrectByPart[i] = (correctItems / totalItems) * 100);
-      } else {
-        _results.push(void 0);
+        this.percentageCorrectByPart[i] = (correctItems / totalItems) * 100;
       }
     }
-    return _results;
+    j = 0;
+    for (i = 1, _ref3 = this.currentPart + 1; 1 <= _ref3 ? i <= _ref3 : i >= _ref3; 1 <= _ref3 ? i++ : i--) {
+      this.percentageCorrectByPart[j] = [i, this.percentageCorrectByPart[i]];
+      this.collectionCompleteByPart[j] = [i, this.collectionCompleteByPart[i]];
+      j++;
+    }
+    this.flotData = [
+      {
+        "label": "% Correct",
+        "data": this.percentageCorrectByPart,
+        "lines": {
+          "show": true,
+          "steps": true
+        }
+      }, {
+        "label": "% Collected",
+        "data": this.collectionCompleteByPart,
+        "lines": {
+          "show": true,
+          "steps": true
+        }
+      }
+    ];
+    return this.flotOptions = {
+      "yaxis": {
+        min: 0,
+        max: 100,
+        ticks: 10
+      },
+      "xaxis": {
+        ticks: (function() {
+          var _ref4, _results;
+          _results = [];
+          for (i = 1, _ref4 = this.currentPart; 1 <= _ref4 ? i <= _ref4 : i >= _ref4; 1 <= _ref4 ? i++ : i--) {
+            _results.push(String(i));
+          }
+          return _results;
+        }).call(this),
+        tickDecimals: 0
+      }
+    };
   };
 
   KlassToDateView.prototype.render = function() {
@@ -93,7 +128,7 @@ KlassToDateView = (function(_super) {
   };
 
   KlassToDateView.prototype.afterRender = function() {
-    return $.plot(this.$el.find("#chart"), [this.collectionCompleteByPart.slice(1, this.currentPart + 1 || 9e9), this.percentageCorrectByPart.slice(1, this.currentPart + 1 || 9e9)]);
+    return $.plot(this.$el.find("#chart"), this.flotData, this.flotOptions);
   };
 
   return KlassToDateView;

@@ -32,8 +32,7 @@ class KlassToDateView extends Backbone.View
       @collectionCompleteByPart[i] = 0
       @percentageCorrectByPart[i] = 0
       if not results? then continue
-      if results.length != 0
-        @collectionCompleteByPart[i] = (results.length / (options.studentCount * subtestsByPart.length) ) * 100;
+      @collectionCompleteByPart[i] = (results.length / (options.studentCount * subtestsByPart[i].length) ) * 100;
 
       totalItems = 0
       correctItems = 0
@@ -45,6 +44,42 @@ class KlassToDateView extends Backbone.View
       if totalItems != 0
         @percentageCorrectByPart[i] = (correctItems / totalItems) * 100
 
+    # flotify
+    j = 0
+    for i in [1..@currentPart+1]
+      @percentageCorrectByPart[j] = [i, @percentageCorrectByPart[i]]
+      @collectionCompleteByPart[j] = [i, @collectionCompleteByPart[i]]
+      j++
+
+    @flotData = [
+      { 
+        "label": "% Correct"
+        "data": @percentageCorrectByPart
+        "lines" :
+          "show":true
+          "steps": true
+      },
+      { 
+        "label": "% Collected"
+        "data": @collectionCompleteByPart
+        "lines" :
+          "show":true
+          "steps": true
+      }
+    ]
+    
+
+    
+    
+    @flotOptions = 
+      "yaxis" : 
+        min: 0
+        max: 100
+        ticks: 10
+      "xaxis" :
+        ticks: (String(i) for i in [1..@currentPart])
+        tickDecimals : 0
+      
   render: ->
     @$el.html "
       <h1>Class to date</h1>
@@ -56,5 +91,6 @@ class KlassToDateView extends Backbone.View
     lineColor = "#BDDC93"
 
   afterRender: =>
-    $.plot(@$el.find("#chart"), [ @collectionCompleteByPart[1..@currentPart], @percentageCorrectByPart[1..@currentPart] ])
+    
+    $.plot @$el.find("#chart"), @flotData, @flotOptions
 
