@@ -31,15 +31,26 @@ KlassSubtestResultView = (function(_super) {
   };
 
   KlassSubtestResultView.prototype.render = function() {
-    var datum, i, resultHTML, subtestItems, taken, timestamp, _len, _ref;
+    var correctItems, datum, i, item, percentageCorrect, resultHTML, subtestItems, taken, timestamp, totalItems, _i, _len, _len2, _ref, _ref2;
     subtestItems = this.options.subtest.get("items");
     resultHTML = "<br>";
     taken = "";
     if (this.options.result.length !== 0) {
-      resultHTML += "<button class='command show_itemized'>" + (t('itemized results')) + "</button><table class='itemized confirmation'><tbody><tr><th>Item</th><th>Result</th></tr>";
+      correctItems = totalItems = 0;
       _ref = this.options.result[0].get("subtestData").items;
-      for (i = 0, _len = _ref.length; i < _len; i++) {
-        datum = _ref[i];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        item = _ref[_i];
+        if (item.itemResult === "correct") correctItems++;
+        totalItems++;
+      }
+      percentageCorrect = (correctItems / totalItems) * 100;
+      if (percentageCorrect < (parseFloat(Tangerine.settings.generalThreshold) * 100)) {
+        resultHTML += "<div class='info_box'><b></b>Warning<br>Student's %" + (Utils.round(percentageCorrect, 2)) + " score is less than threshold of %" + (Utils.round(Tangerine.settings.generalThreshold * 100, 2)) + "</div>";
+      }
+      resultHTML += "<button class='command show_itemized'>" + (t('itemized results')) + "</button><table class='itemized confirmation'><tbody><tr><th>Item</th><th>Result</th></tr>";
+      _ref2 = this.options.result[0].get("subtestData").items;
+      for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
+        datum = _ref2[i];
         resultHTML += "<tr><td>" + datum.itemLabel + "</td><td>" + (t(datum.itemResult)) + "</td></tr>";
       }
       resultHTML += "</tbody></table><br>";
