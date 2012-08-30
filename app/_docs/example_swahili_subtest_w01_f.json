@@ -8,6 +8,7 @@
   "timer" : 60,
   "part": 1,
   "columns": 3,
+  "resultBucket" : "w",
   "variableName": "baseline_words",
   "name": "Baseline Words",
   "items": [

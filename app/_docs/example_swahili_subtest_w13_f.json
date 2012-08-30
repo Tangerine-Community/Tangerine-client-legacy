@@ -7,6 +7,7 @@
   "prototype": "grid",
   "part": 13,
   "variableName": "familiarWords",
+  "resultBucket" : "w",
   "name": "Words",
   "items": [
     "nchi",

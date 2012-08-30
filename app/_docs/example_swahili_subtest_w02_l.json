@@ -7,6 +7,7 @@
   "prototype": "grid",
   "part": 2,
   "variableName": "letters",
+  "resultBucket" : "l",
   "name": "Letters",
   "items": [
     "P",
