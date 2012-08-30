@@ -41,6 +41,7 @@ Router = (function(_super) {
     'subtest/:id': 'editSubtest',
     'question/:id': 'editQuestion',
     'report/partByStudent/:subtestId': 'partByStudent',
+    'report/studentToDate/:studentId': 'studentToDate',
     'report/classToDate/:klassId': 'klassToDate'
   };
 
@@ -672,6 +673,54 @@ Router = (function(_super) {
     });
   };
 
+  Router.prototype.studentToDate = function(studentId) {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var student;
+        student = new Student({
+          "_id": studentId
+        });
+        return student.fetch({
+          success: function() {
+            var klass;
+            klass = new Klass({
+              "_id": student.get("klassId")
+            });
+            return klass.fetch({
+              success: function() {
+                var allSubtests;
+                allSubtests = new Subtests;
+                return allSubtests.fetch({
+                  success: function(subtestCollection) {
+                    var allResults, subtests;
+                    subtests = subtestCollection.where({
+                      "curriculumId": klass.get("curriculumId")
+                    });
+                    allResults = new Results;
+                    return allResults.fetch({
+                      success: function(results) {
+                        var view;
+                        view = new StudentToDateView({
+                          "results": results,
+                          "subtests": subtests,
+                          "klass": klass
+                        });
+                        return vm.show(view);
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          }
+        });
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
   Router.prototype.editSubtest = function(id) {
     return Tangerine.user.verify({
       isAdmin: function() {
@@ -740,8 +789,7 @@ Router = (function(_super) {
   };
 
   Router.prototype.logout = function() {
-    Tangerine.user.logout();
-    return Tangerine.router.navigate("login", true);
+    return Tangerine.user.logout();
   };
 
   Router.prototype.account = function() {

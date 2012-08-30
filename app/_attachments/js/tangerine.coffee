@@ -45,6 +45,7 @@ class Router extends Backbone.Router
     'question/:id' : 'editQuestion'
 
     'report/partByStudent/:subtestId' : 'partByStudent'
+    'report/studentToDate/:studentId' : 'studentToDate'
     'report/classToDate/:klassId'     : 'klassToDate'
 
   landing: ->
@@ -412,6 +413,30 @@ class Router extends Backbone.Router
       isUnregistered: ->
         Tangerine.router.navigate "login", true
 
+  studentToDate: (studentId) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        student = new Student "_id" : studentId
+        student.fetch
+          success: ->
+            klass = new Klass "_id" : student.get("klassId")
+            klass.fetch
+              success: ->
+                allSubtests = new Subtests
+                allSubtests.fetch
+                  success: (subtestCollection) ->
+                    subtests = subtestCollection.where "curriculumId" : klass.get("curriculumId")
+                    allResults = new Results
+                    allResults.fetch
+                      success: (results) ->
+                        view = new StudentToDateView
+                          "results"  : results
+                          "subtests" : subtests
+                          "klass" : klass
+                        vm.show view
+      isUnregistered: ->
+        Tangerine.router.navigate "login", true
+
 
 
   #
@@ -464,7 +489,6 @@ class Router extends Backbone.Router
 
   logout: ->
     Tangerine.user.logout()
-    Tangerine.router.navigate "login", true
 
   account: ->
     Tangerine.user.verify
