@@ -41,6 +41,8 @@
   <span class="nv">toggleAddForm: </span><span class="o">-&gt;</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">add_form, .add&quot;</span><span class="p">).</span><span class="nx">toggle</span><span class="p">()</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">year&quot;</span><span class="p">).</span><span class="nx">focus</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">add_form&quot;</span><span class="p">).</span><span class="o">is</span><span class="p">(</span><span class="s">&quot;:visible&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">add_form&quot;</span><span class="p">).</span><span class="nx">scrollTo</span><span class="p">()</span>
+
 
   <span class="nv">renderKlasses: </span><span class="o">-&gt;</span>
     <span class="nx">@closeViews</span><span class="p">()</span>
