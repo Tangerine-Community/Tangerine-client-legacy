@@ -24,7 +24,7 @@ class KlassToDateView extends Backbone.View
           resultsByWeek[i] = resultsByWeek[i].concat options.results.where({"subtestId" : subtest.id})
         else
           resultsByWeek[i] = options.results.where({"subtestId" : subtest.id})
-
+      
     @percentageCorrectByWeek  = []
     @collectionCompleteByWeek = []
 
@@ -38,50 +38,23 @@ class KlassToDateView extends Backbone.View
       totalItems = 0
       correctItems = 0
       for result in results
-        if not result.get? then continue
-        for itemResult in result.get("subtestData").items
-          correctItems++ if itemResult == "correct" 
+        for item in result.get("subtestData").items
+          correctItems++ if item.itemResult == "correct"
           totalItems++
 
       if totalItems != 0
         @percentageCorrectByWeek[i] = (correctItems / totalItems) * 100
 
   render: ->
-    html = "
+    @$el.html "
       <h1>Class to date</h1>
+      <div id='chart' style='width:450px; height:300px;'></div>
     "
-    html += "
-    <table id='chart'>
-    <caption>Wicked chart</caption>
-    <thead>
-      <tr>
-      "
-    html += "<th scope='col'>#{i}</th>" for i in @range
-    html += "
-    </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope='row'>Collection Complete</th>"
-    html += "<td>#{@collectionCompleteByWeek[i]}</td>" for i in @range
-    html += "
-      </tr>
-      <tr>
-        <th scope='row'>Percentage Correct</th>"
-    html += "<td>#{@percentageCorrectByWeek[i]}</td>" for i in @range
-    html += "
-      </tr>
-    </tbody>
-    </table>
-    "
-
-    @$el.html html
 
     @trigger "rendered"
 
     lineColor = "#BDDC93"
 
-  afterRender: ->
-    @$el.find('#chart').visualize
-      "type" : "line"
-    @$el.find('#chart').hide()
+  afterRender: =>
+    $.plot(@$el.find("#chart"), [ @collectionCompleteByWeek[1..@currentWeek], @percentageCorrectByWeek[1..@currentWeek] ])
+

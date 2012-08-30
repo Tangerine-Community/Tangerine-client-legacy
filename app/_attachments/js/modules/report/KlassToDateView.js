@@ -1,4 +1,5 @@
 var KlassToDateView,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -7,11 +8,12 @@ KlassToDateView = (function(_super) {
   __extends(KlassToDateView, _super);
 
   function KlassToDateView() {
+    this.afterRender = __bind(this.afterRender, this);
     KlassToDateView.__super__.constructor.apply(this, arguments);
   }
 
   KlassToDateView.prototype.initialize = function(options) {
-    var correctItems, i, itemResult, j, maxWeek, milisecondsPerWeek, result, results, resultsByWeek, subtest, subtestWeek, subtests, subtestsByWeek, totalItems, _i, _j, _k, _len, _len2, _len3, _len4, _len5, _len6, _ref, _ref2, _results;
+    var correctItems, i, item, j, maxWeek, milisecondsPerWeek, result, results, resultsByWeek, subtest, subtestWeek, subtests, subtestsByWeek, totalItems, _i, _j, _k, _len, _len2, _len3, _len4, _len5, _len6, _ref, _ref2, _results;
     milisecondsPerWeek = 604800000;
     this.currentWeek = Math.round(((new Date()).getTime() - options.klass.get("startDate")) / milisecondsPerWeek);
     this.range = (function() {
@@ -67,11 +69,10 @@ KlassToDateView = (function(_super) {
       correctItems = 0;
       for (_j = 0, _len5 = results.length; _j < _len5; _j++) {
         result = results[_j];
-        if (!(result.get != null)) continue;
         _ref2 = result.get("subtestData").items;
         for (_k = 0, _len6 = _ref2.length; _k < _len6; _k++) {
-          itemResult = _ref2[_k];
-          if (itemResult === "correct") correctItems++;
+          item = _ref2[_k];
+          if (item.itemResult === "correct") correctItems++;
           totalItems++;
         }
       }
@@ -85,37 +86,14 @@ KlassToDateView = (function(_super) {
   };
 
   KlassToDateView.prototype.render = function() {
-    var html, i, lineColor, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
-    html = "      <h1>Class to date</h1>    ";
-    html += "    <table id='chart'>    <caption>Wicked chart</caption>    <thead>      <tr>      ";
-    _ref = this.range;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      i = _ref[_i];
-      html += "<th scope='col'>" + i + "</th>";
-    }
-    html += "    </tr>    </thead>    <tbody>      <tr>        <th scope='row'>Collection Complete</th>";
-    _ref2 = this.range;
-    for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-      i = _ref2[_j];
-      html += "<td>" + this.collectionCompleteByWeek[i] + "</td>";
-    }
-    html += "      </tr>      <tr>        <th scope='row'>Percentage Correct</th>";
-    _ref3 = this.range;
-    for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-      i = _ref3[_k];
-      html += "<td>" + this.percentageCorrectByWeek[i] + "</td>";
-    }
-    html += "      </tr>    </tbody>    </table>    ";
-    this.$el.html(html);
+    var lineColor;
+    this.$el.html("      <h1>Class to date</h1>      <div id='chart' style='width:450px; height:300px;'></div>    ");
     this.trigger("rendered");
     return lineColor = "#BDDC93";
   };
 
   KlassToDateView.prototype.afterRender = function() {
-    this.$el.find('#chart').visualize({
-      "type": "line"
-    });
-    return this.$el.find('#chart').hide();
+    return $.plot(this.$el.find("#chart"), [this.collectionCompleteByWeek.slice(1, this.currentWeek + 1 || 9e9), this.percentageCorrectByWeek.slice(1, this.currentWeek + 1 || 9e9)]);
   };
 
   return KlassToDateView;
