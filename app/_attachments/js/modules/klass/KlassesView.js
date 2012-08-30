@@ -62,7 +62,10 @@ KlassesView = (function(_super) {
 
   KlassesView.prototype.toggleAddForm = function() {
     this.$el.find("#add_form, .add").toggle();
-    return this.$el.find("#year").focus();
+    this.$el.find("#year").focus();
+    if (this.$el.find("#add_form").is(":visible")) {
+      return this.$el.find("#add_form").scrollTo();
+    }
   };
 
   KlassesView.prototype.renderKlasses = function() {
