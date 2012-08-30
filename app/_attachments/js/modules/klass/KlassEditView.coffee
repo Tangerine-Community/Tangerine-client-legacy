@@ -47,6 +47,13 @@ class KlassEditView extends Backbone.View
 
   basicInfoToggle: ->
     @$el.find(".basic_info").toggle()
+    
+    $basicInfo = $(@$el.find(".basic_info")[1])
+    
+    if $basicInfo.is(":visible")
+      $basicInfo.scrollTo()
+      @$el.find("#year").focus()
+      
     @$el.find("#year").val(  @klass.get("year")   || "")
     @$el.find("#grade").val( @klass.get("grade")  || "")
     @$el.find("#stream").val(@klass.get("stream") || "")
@@ -160,7 +167,7 @@ class KlassEditView extends Backbone.View
     <button class='add_student command'>#{t('add student')}</button>
     <div class='add_student_form menu_box confirmation'>
       <div class='label_value'>
-        <label for='add_student_select'>#{t('select student')}</label>
+        <label for='add_student_select'>#{t('add student')}</label><br>
         <select id='add_student_select'>
         </select>
       </div>      
@@ -170,7 +177,7 @@ class KlassEditView extends Backbone.View
 
     <button class='register_student command'>#{$.t("register student")}</button>
     <div class='register_student_form menu_box confirmation'>
-      <h2>#{t('register new student')}</h2>
+      <h2>#{t('register student')}</h2>
       <div class='label_value'>
         <label for='register_student_name'>#{t('name')}</label>
         <input id='register_student_name' value=''>
