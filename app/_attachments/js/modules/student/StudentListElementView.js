@@ -28,7 +28,7 @@ StudentListElementView = (function(_super) {
   };
 
   StudentListElementView.prototype.results = function() {
-    return Tangerine.router.navigate("class/student/results/" + this.student.id, true);
+    return Tangerine.router.navigate("report/studentToDate/" + this.student.id, true);
   };
 
   StudentListElementView.prototype.edit = function() {

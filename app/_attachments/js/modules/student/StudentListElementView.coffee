@@ -14,7 +14,7 @@ class StudentListElementView extends Backbone.View
     @student = options.student
     @students = options.students
   
-  results: -> Tangerine.router.navigate "class/student/results/#{@student.id}", true
+  results: -> Tangerine.router.navigate "report/studentToDate/#{@student.id}", true
   edit:    -> Tangerine.router.navigate "class/student/#{@student.id}", true
   toggleRemove: -> @$el.find(".remove_confirm, .remove").toggle()
   removeStudent: -> 
