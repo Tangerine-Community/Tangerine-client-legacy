@@ -20,6 +20,10 @@ class RegisterTeacherView extends Backbone.View
     @$el.html "
     <h1>Register</h1>
     <div class='label_value'>
+      <label for='role'>Role</label>
+      <input id='role'>
+    </div>
+    <div class='label_value'>
       <label for='name'>Name</label>
       <input id='name'>
     </div>

@@ -30,10 +30,11 @@ class StudentToDateView extends Backbone.View
     for subtests, i in subtestsByPart
       if subtests == undefined then continue
       for subtest in subtests
-        if resultsByBucketByPart[subtest.get("resultBucket")]? || resultsByBucketByPart[subtest.get("resultBucket")] == undefined
+        if resultsByBucketByPart[subtest.get("resultBucket")] == undefined
           resultsByBucketByPart[subtest.get("resultBucket")]  = []
-        resultsByBucketByPart[subtest.get("resultBucket")][parseInt(i)] = options.results.where({"subtestId" : subtest.id})
-        console.log options.results.where({"subtestId" : subtest.id})
+
+        resultsByBucketByPart[subtest.get("resultBucket")][i] = options.results.where({"subtestId" : subtest.id})
+
 
 
 
@@ -41,16 +42,16 @@ class StudentToDateView extends Backbone.View
 
     for bucketKey, bucket of resultsByBucketByPart
 
-
       for part, result of bucket
 
-        if flotArrays[bucketKey]? || flotArrays[bucketKey] == undefined then flotArrays[bucketKey] = []
+        if flotArrays[bucketKey] == undefined then flotArrays[bucketKey] = []
         if result.get?
           correctItems = 0
           totalItems   = 0
           for item in result.get("subtestData").items
             correctItems++ if item.itemResult == "correct"
             totalItems++
+            console.log correctItems
           percentCorrect = (correctItems / totalItems) * 100
           flotArrays[bucketKey].push [part, percentCorrect]
         else
@@ -63,7 +64,7 @@ class StudentToDateView extends Backbone.View
 
       @flotData.push {
         "label" : bucket
-        "data" : flotArray
+        "data" : flotArray[0..@currentPart]
         "lines" :
           "show":true
           "steps": true

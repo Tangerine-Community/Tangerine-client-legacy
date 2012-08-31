@@ -15,9 +15,10 @@ CurriculaListView = (function(_super) {
   CurriculaListView.prototype.tagName = "ul";
 
   CurriculaListView.prototype.initialize = function(options) {
+    var _base;
     this.views = [];
     this.curricula = options.curricula;
-    return this.curricula.on("all", this.render);
+    return typeof (_base = this.curricula).on === "function" ? _base.on("all", this.render) : void 0;
   };
 
   CurriculaListView.prototype.render = function() {

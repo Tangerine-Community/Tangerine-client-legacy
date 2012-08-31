@@ -15,9 +15,9 @@ class AssessmentListView extends Backbone.View
     Tangerine.router.navigate "import", true
 
   initialize:(options) ->
+    @group = options.group
     @curriculaListView = new CurriculaListView
       "curricula" : options.curricula
-    @group = options.group
     @isAdmin = Tangerine.user.isAdmin()
     @views = []
     @publicViews = []

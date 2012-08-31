@@ -138,10 +138,10 @@ GridRunView = (function(_super) {
 
   GridRunView.prototype.startTimer = function() {
     if (this.timerStopped === false && this.timeRunning === false) {
-      this.updateMode(null, "mark");
       this.interval = setInterval(this.updateCountdown, 1000);
       this.startTime = this.getTime();
       this.timeRunning = true;
+      this.updateMode(null, "mark");
       this.enableGrid();
       return this.updateCountdown();
     }
@@ -218,6 +218,11 @@ GridRunView = (function(_super) {
 
   GridRunView.prototype.updateMode = function(event, mode) {
     if (mode == null) mode = null;
+    if ((mode === null && this.timeElapsed === 0) || mode === "disabled") {
+      this.$el.find("#grid_mode :radio").removeAttr("checked");
+      this.$el.find("#grid_mode").buttonset("refresh");
+      return;
+    }
     if (mode != null) {
       this.mode = mode;
       this.$el.find("#grid_mode :radio[value=" + mode + "]").attr("checked", "checked");
@@ -279,7 +284,7 @@ GridRunView = (function(_super) {
         this.mapItem[i] = i;
       }
     }
-    this.mode = this.untimed ? "mark" : "disabled";
+    this.mode = "disabled";
     this.gridOutput = [];
     _ref5 = this.items;
     for (i = 0, _len5 = _ref5.length; i < _len5; i++) {
@@ -315,7 +320,7 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.render = function() {
-    var disabling, done, html, i, minuteItemButton, modeSelector, resetButton, startTimerHTML, stopTimerHTML, _ref;
+    var captureLastButton, disabling, done, html, i, minuteItemButton, modeSelector, resetButton, startTimerHTML, stopTimerHTML, _ref;
     done = 0;
     startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>Start</button><div class='timer'>" + this.timer + "</div></div>";
     disabling = this.untimed ? "" : "disabled";
@@ -342,13 +347,18 @@ GridRunView = (function(_super) {
     html += "</table>";
     stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>";
     resetButton = "    <div>      <button class='restart command'>Restart</button>      <br>    </div>";
+    minuteItemButton = "";
     if (this.captureItemAtTime) {
-      minuteItemButton = "        <label for='minute_item'>Item at " + this.captureAfterSeconds + " seconds</label>          <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>      ";
-    } else {
-      minuteItemButton = "";
+      minuteItemButton = "        <label for='minute_item'>Item at " + this.captureAfterSeconds + " seconds</label>        <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>      ";
     }
-    modeSelector = "      <div id='grid_mode' class='question buttonset clearfix'>        <label>Input mode</label><br>        <label for='mark'>Mark</label>        <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>        " + minuteItemButton + "        <label for='last_attempted'>Last attempted</label>        <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>      </div>    ";
-    html += "      " + (!this.untimed ? stopTimerHTML : "") + "      " + (!this.untimed ? resetButton : "") + "      " + (this.captureLastAttempted ? modeSelector : "") + "    ";
+    captureLastButton = "";
+    if (this.captureLastAttempted) {
+      captureLastButton = "        <label for='last_attempted'>Last attempted</label>        <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>      ";
+    }
+    if (this.captureLastAttmpted || this.captureItemAtTime) {
+      modeSelector = "        <div id='grid_mode' class='question buttonset clearfix'>          <label>Input mode</label><br>          <label for='mark'>Mark</label>          <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark'>          " + minuteItemButton + "          " + captureLastButton + "        </div>    ";
+    }
+    html += "      " + (!this.untimed ? stopTimerHTML : "") + "      " + (!this.untimed ? resetButton : "") + "      " + modeSelector + "    ";
     this.$el.html(html);
     return this.trigger("rendered");
   };

@@ -27,6 +27,7 @@ Router = (function(_super) {
     'curricula': 'curricula',
     'curriculum/:id': 'curriculum',
     'curriculum/import': 'curriculumImport',
+    'register': 'register',
     'settings': 'settings',
     '': 'landing',
     'groups': 'groups',
@@ -424,8 +425,11 @@ Router = (function(_super) {
           var curricula;
           curricula = new Curricula;
           return curricula.fetch({
-            success: function() {
+            success: function(collection) {
               var assessments;
+              curricula = new Curricula(collection.where({
+                "group": group
+              }));
               assessments = new AssessmentListView({
                 "curricula": curricula,
                 "group": group
@@ -742,7 +746,7 @@ Router = (function(_super) {
       isUser: function() {
         return Tangerine.router.navigate("", true);
       },
-      isUnregistered: function() {
+      isUnregistereded: function() {
         return Tangerine.router.navigate("login", true);
       }
     });

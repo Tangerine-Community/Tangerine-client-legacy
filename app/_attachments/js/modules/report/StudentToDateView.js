@@ -49,15 +49,12 @@ StudentToDateView = (function(_super) {
       if (subtests === void 0) continue;
       for (_j = 0, _len3 = subtests.length; _j < _len3; _j++) {
         subtest = subtests[_j];
-        if ((resultsByBucketByPart[subtest.get("resultBucket")] != null) || resultsByBucketByPart[subtest.get("resultBucket")] === void 0) {
+        if (resultsByBucketByPart[subtest.get("resultBucket")] === void 0) {
           resultsByBucketByPart[subtest.get("resultBucket")] = [];
         }
-        resultsByBucketByPart[subtest.get("resultBucket")][parseInt(i)] = options.results.where({
+        resultsByBucketByPart[subtest.get("resultBucket")][i] = options.results.where({
           "subtestId": subtest.id
         });
-        console.log(options.results.where({
-          "subtestId": subtest.id
-        }));
       }
     }
     flotArrays = [];
@@ -65,9 +62,7 @@ StudentToDateView = (function(_super) {
       bucket = resultsByBucketByPart[bucketKey];
       for (part in bucket) {
         result = bucket[part];
-        if ((flotArrays[bucketKey] != null) || flotArrays[bucketKey] === void 0) {
-          flotArrays[bucketKey] = [];
-        }
+        if (flotArrays[bucketKey] === void 0) flotArrays[bucketKey] = [];
         if (result.get != null) {
           correctItems = 0;
           totalItems = 0;
@@ -76,6 +71,7 @@ StudentToDateView = (function(_super) {
             item = _ref2[_k];
             if (item.itemResult === "correct") correctItems++;
             totalItems++;
+            console.log(correctItems);
           }
           percentCorrect = (correctItems / totalItems) * 100;
           flotArrays[bucketKey].push([part, percentCorrect]);
@@ -89,7 +85,7 @@ StudentToDateView = (function(_super) {
       flotArray = flotArrays[bucket];
       this.flotData.push({
         "label": bucket,
-        "data": flotArray,
+        "data": flotArray.slice(0, this.currentPart + 1 || 9e9),
         "lines": {
           "show": true,
           "steps": true

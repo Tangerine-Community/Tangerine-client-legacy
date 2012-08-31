@@ -40,7 +40,7 @@ SettingsView = (function(_super) {
     context = this.settings.escape("context");
     generalThreshold = this.settings.escape("generalThreshold");
     language = this.settings.escape("language");
-    this.$el.html("<h1>" + (t("settings")) + "</h1>    <p>Please be careful with the following settings.</p>    <div class='menu_box'>      <div class='label_value'>        <label for='context'>Context</label>        <input id='context' type='text' value='" + context + "'>      </div>      <div class='label_value'>        <label for='context'>General Threshold</label>        <input id='generalThreshold' type='number' value='" + generalThreshold + "'>      </div>      <div class='label_value'>        <label for='context'>Language</label>        <input id='language' type='number' value='" + language + "'>      </div>    </div>    <button class='command save'>Save</button>    ");
+    this.$el.html("<h1>" + (t("settings")) + "</h1>    <p>Please be careful with the following settings.</p>    <div class='menu_box'>      <div class='label_value'>        <label for='context'>Context</label>        <input id='context' type='text' value='" + context + "'>      </div>      <div class='label_value'>        <label for='context'>General Threshold</label>        <input id='generalThreshold' type='number' value='" + generalThreshold + "'>      </div>      <div class='label_value'>        <label for='context'>Language</label>        <input id='language' type='number' value='" + language + "'>      </div>    </div><br>        <button class='command save'>Save</button>    ");
     return this.trigger("rendered");
   };
 

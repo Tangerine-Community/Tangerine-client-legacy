@@ -23,6 +23,8 @@
     <span class="s">&#39;curriculum/:id&#39;</span>    <span class="o">:</span> <span class="s">&#39;curriculum&#39;</span>
     <span class="s">&#39;curriculum/import&#39;</span> <span class="o">:</span> <span class="s">&#39;curriculumImport&#39;</span>
 
+    <span class="s">&#39;register&#39;</span>         <span class="o">:</span> <span class="s">&#39;register&#39;</span>
+
     <span class="s">&#39;settings&#39;</span> <span class="o">:</span> <span class="s">&#39;settings&#39;</span>
 
     <span class="s">&#39;&#39;</span> <span class="o">:</span> <span class="s">&#39;landing&#39;</span>
@@ -260,7 +262,8 @@
         <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
           <span class="nv">curricula = </span><span class="k">new</span> <span class="nx">Curricula</span>
           <span class="nx">curricula</span><span class="p">.</span><span class="nx">fetch</span>
-            <span class="nv">success: </span><span class="o">-&gt;</span>
+            <span class="nv">success: </span><span class="nf">(collection )-&gt;</span>
+              <span class="nv">curricula = </span><span class="k">new</span> <span class="nx">Curricula</span> <span class="nx">collection</span><span class="p">.</span><span class="nx">where</span> <span class="s">&quot;group&quot;</span> <span class="o">:</span> <span class="nx">group</span>
               <span class="nv">assessments = </span><span class="k">new</span> <span class="nx">AssessmentListView</span>
                 <span class="s">&quot;curricula&quot;</span> <span class="o">:</span> <span class="nx">curricula</span>
                 <span class="s">&quot;group&quot;</span>     <span class="o">:</span> <span class="nx">group</span>
@@ -433,7 +436,7 @@
             <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
       <span class="nv">isUser: </span><span class="o">-&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="kc">true</span>
-      <span class="nv">isUnregistered: </span><span class="o">-&gt;</span>
+      <span class="nv">isUnregistereded: </span><span class="o">-&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Question</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">editQuestion: </span><span class="nf">(id) -&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isAdmin: </span><span class="o">-&gt;</span>

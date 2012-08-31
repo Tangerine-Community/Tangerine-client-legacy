@@ -7,7 +7,7 @@
   "prototype": "grid",
   "part": 11,
   "variableName": "familiarWords",
-  "resultBucket" : "w",
+  "resultBucket" : "Words",
   "name": "Words",
   "items": [
     "fungwa",

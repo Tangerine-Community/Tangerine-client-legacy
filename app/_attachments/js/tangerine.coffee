@@ -23,6 +23,8 @@ class Router extends Backbone.Router
     'curriculum/:id'    : 'curriculum'
     'curriculum/import' : 'curriculumImport'
 
+    'register'         : 'register'
+
     'settings' : 'settings'
 
     '' : 'landing'
@@ -274,7 +276,8 @@ class Router extends Backbone.Router
         isRegistered: ->
           curricula = new Curricula
           curricula.fetch
-            success: ->
+            success: (collection )->
+              curricula = new Curricula collection.where "group" : group
               assessments = new AssessmentListView
                 "curricula" : curricula
                 "group"     : group
@@ -454,7 +457,7 @@ class Router extends Backbone.Router
             vm.show view
       isUser: ->
         Tangerine.router.navigate "", true
-      isUnregistered: ->
+      isUnregistereded: ->
         Tangerine.router.navigate "login", true
 
   #

@@ -9,7 +9,7 @@
   "columns": 3,
   "timer": 60,
   "variableName" : "familiarWords",
-  "resultBucket" : "w",
+  "resultBucket" : "Words",
   "name" : "Progress Monitor - words",
   "items" : [
        "Mto",

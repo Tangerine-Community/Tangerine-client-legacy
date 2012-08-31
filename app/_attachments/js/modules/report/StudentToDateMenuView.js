@@ -24,13 +24,14 @@ StudentToDateMenuView = (function(_super) {
     this.parent = options.parent;
     this.klass = this.parent.options.klass;
     this.curricula = this.parent.options.curricula;
-    allStudents = new Subtests;
+    allStudents = new Students;
     return allStudents.fetch({
       success: function(collection) {
         _this.students = collection.where({
           klassId: _this.klass.id
         });
         _this.ready = true;
+        console.log(collection);
         return _this.render();
       }
     });
@@ -39,13 +40,11 @@ StudentToDateMenuView = (function(_super) {
   StudentToDateMenuView.prototype.render = function() {
     var html, student, _i, _len, _ref;
     if (this.ready) {
-      html = "        <select class='student_selector'>          <option disabled='disabled' selected='selected'>t('select a student')</option>          ";
+      html = "        <select class='student_selector'>          <option disabled='disabled' selected='selected'>" + (t('select a student')) + "</option>          ";
       _ref = this.students;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         student = _ref[_i];
-        if (typeof subtestId !== "undefined" && subtestId !== null) {
-          html += "<option data-studentId='" + studentId + "'>" + part + "</option>";
-        }
+        html += "<option data-studentId='" + student.id + "'>" + (student.get('name')) + "</option>";
       }
       html += "</select>";
       return this.$el.html(html);

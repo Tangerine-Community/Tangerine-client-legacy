@@ -31,10 +31,10 @@ AssessmentListView = (function(_super) {
   };
 
   AssessmentListView.prototype.initialize = function(options) {
+    this.group = options.group;
     this.curriculaListView = new CurriculaListView({
       "curricula": options.curricula
     });
-    this.group = options.group;
     this.isAdmin = Tangerine.user.isAdmin();
     this.views = [];
     this.publicViews = [];

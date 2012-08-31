@@ -95,10 +95,10 @@ class GridRunView extends Backbone.View
 
   startTimer: ->
     if @timerStopped == false && @timeRunning == false
-      @updateMode null, "mark"
       @interval = setInterval( @updateCountdown,1000 )
       @startTime = @getTime()
       @timeRunning = true
+      @updateMode null, "mark"
       @enableGrid()
       @updateCountdown()
 
@@ -160,6 +160,11 @@ class GridRunView extends Backbone.View
 
 
   updateMode: (event, mode = null) =>
+    # dont' change the mode if the time has never been started
+    if (mode==null && @timeElapsed == 0) || mode == "disabled"
+      @$el.find("#grid_mode :radio").removeAttr("checked")
+      @$el.find("#grid_mode").buttonset("refresh")
+      return
     if mode?
       @mode = mode
       @$el.find("#grid_mode :radio[value=#{mode}]").attr("checked", "checked")
@@ -218,7 +223,7 @@ class GridRunView extends Backbone.View
         @itemMap[i] = i
         @mapItem[i] = i
 
-    @mode     = if @untimed then "mark" else "disabled"
+    @mode     = "disabled"
 
 
     @gridOutput = []
@@ -288,30 +293,39 @@ class GridRunView extends Backbone.View
       <br>
     </div>"
 
+    minuteItemButton =  ""
     if @captureItemAtTime
       minuteItemButton = "
         <label for='minute_item'>Item at #{@captureAfterSeconds} seconds</label>
-          <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>
+        <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>
       "
-    else
-      minuteItemButton =  ""
 
-    modeSelector = "
-      <div id='grid_mode' class='question buttonset clearfix'>
-        <label>Input mode</label><br>
-        <label for='mark'>Mark</label>
-        <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark' checked='checked'>
-        #{minuteItemButton}
+    captureLastButton = ""
+    if @captureLastAttempted
+      captureLastButton = "
         <label for='last_attempted'>Last attempted</label>
         <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>
-      </div>
+      "
+
+
+    if @captureLastAttmpted || @captureItemAtTime 
+      modeSelector = "
+        <div id='grid_mode' class='question buttonset clearfix'>
+          <label>Input mode</label><br>
+          <label for='mark'>Mark</label>
+          <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark'>
+          #{minuteItemButton}
+          #{captureLastButton}
+        </div>
     "
 
     html += "
       #{if not @untimed then stopTimerHTML else ""}
       #{if not @untimed then resetButton else ""}
-      #{if @captureLastAttempted then modeSelector else ""}
+      #{modeSelector}
     "
+    
+
 
     @$el.html html
 

@@ -4,7 +4,7 @@ class CurriculaListView extends Backbone.View
   initialize: (options) ->
     @views = []
     @curricula = options.curricula
-    @curricula.on "all", @render
+    @curricula.on? "all", @render
 
 
   render: =>

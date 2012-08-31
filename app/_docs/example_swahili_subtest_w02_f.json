@@ -7,7 +7,7 @@
   "prototype": "grid",
   "part": 2,
   "variableName": "familiarWords",
-  "resultBucket" : "w",
+  "resultBucket" : "Words",
   "name": "Words",
   "items": [
     "utu",

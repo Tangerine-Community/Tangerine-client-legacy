@@ -45,7 +45,7 @@ KlassSubtestResultView = (function(_super) {
       }
       percentageCorrect = (correctItems / totalItems) * 100;
       if (percentageCorrect < (parseFloat(Tangerine.settings.generalThreshold) * 100)) {
-        resultHTML += "<div class='info_box'><b></b>Warning<br>Student's %" + (Utils.round(percentageCorrect, 2)) + " score is less than threshold of %" + (Utils.round(Tangerine.settings.generalThreshold * 100, 2)) + "</div>";
+        resultHTML += "<div class='info_box'><b>Warning</b><br>Student's " + (Utils.round(percentageCorrect, 2)) + "% score is less than threshold of " + (Utils.round(Tangerine.settings.generalThreshold * 100, 2)) + "%</div><br>";
       }
       resultHTML += "<button class='command show_itemized'>" + (t('itemized results')) + "</button><table class='itemized confirmation'><tbody><tr><th>Item</th><th>Result</th></tr>";
       _ref2 = this.options.result[0].get("subtestData").items;

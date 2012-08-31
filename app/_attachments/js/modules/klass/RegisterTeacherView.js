@@ -30,7 +30,7 @@ RegisterTeacherView = (function(_super) {
   };
 
   RegisterTeacherView.prototype.render = function() {
-    this.$el.html("    <h1>Register</h1>    <div class='label_value'>      <label for='name'>Name</label>      <input id='name'>    </div>    <div class='label_value'>      <label for='school'>School</label>      <input id='school'>    </div>    <div class='label_value'>      <label for='school'>Village</label>      <input id='school'>    </div>    <div class='label_value'>      <label for='district'>District</label>      <input id='district'>    </div>    <div class='label_value'>      <label for='region'>Region</label>      <input id='region'>    </div>    <button class='register'>Register</button>    ");
+    this.$el.html("    <h1>Register</h1>    <div class='label_value'>      <label for='role'>Role</label>      <input id='role'>    </div>    <div class='label_value'>      <label for='name'>Name</label>      <input id='name'>    </div>    <div class='label_value'>      <label for='school'>School</label>      <input id='school'>    </div>    <div class='label_value'>      <label for='school'>Village</label>      <input id='school'>    </div>    <div class='label_value'>      <label for='district'>District</label>      <input id='district'>    </div>    <div class='label_value'>      <label for='region'>Region</label>      <input id='region'>    </div>    <button class='register'>Register</button>    ");
     return this.trigger("rendered");
   };
 

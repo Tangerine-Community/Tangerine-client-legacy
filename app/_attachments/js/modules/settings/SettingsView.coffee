@@ -39,7 +39,8 @@ class SettingsView extends Backbone.View
         <label for='context'>Language</label>
         <input id='language' type='number' value='#{language}'>
       </div>
-    </div>
+    </div><br>
+    
     <button class='command save'>Save</button>
     "
     
