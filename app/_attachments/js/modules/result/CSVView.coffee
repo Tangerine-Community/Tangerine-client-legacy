@@ -107,9 +107,18 @@ class CSVView extends Backbone.View
       for metaKey in @metaKeys
         keys.push metaKey
 
-      maxIndex = 0
 
-      for subtest in @results[0].attributes.subtestData
+      # find the result with the most subtest data
+      maxIndex = 0
+      maxLength = 0
+
+      for subtest, i in @results
+        if subtest.attributes.subtestData.length > maxLength
+          maxIndex = i
+          maxLength = subtest.attributes.subtestData.length
+      
+      # build columns
+      for subtest in @results[maxIndex].attributes.subtestData
         subtestName = subtest.name.toLowerCase().dasherize()
         prototype = subtest.prototype
         

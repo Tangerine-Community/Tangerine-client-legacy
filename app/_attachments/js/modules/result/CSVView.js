@@ -98,7 +98,7 @@ CSVView = (function(_super) {
   };
 
   CSVView.prototype.render = function() {
-    var checkedString, count, d, exportValue, i, index, item, keys, label, maxIndex, metaKey, optionKey, optionValue, prototype, result, resultDataArray, row, subtest, subtestName, surveyValue, surveyVariable, tableHTML, values, variableName, _i, _j, _k, _l, _len, _len10, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+    var checkedString, count, d, exportValue, i, index, item, keys, label, maxIndex, maxLength, metaKey, optionKey, optionValue, prototype, result, resultDataArray, row, subtest, subtestName, surveyValue, surveyVariable, tableHTML, values, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref13, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     if ((this.results != null) && (this.results[0] != null)) {
       tableHTML = "";
       resultDataArray = [];
@@ -109,9 +109,18 @@ CSVView = (function(_super) {
         keys.push(metaKey);
       }
       maxIndex = 0;
-      _ref2 = this.results[0].attributes.subtestData;
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        subtest = _ref2[_j];
+      maxLength = 0;
+      _ref2 = this.results;
+      for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
+        subtest = _ref2[i];
+        if (subtest.attributes.subtestData.length > maxLength) {
+          maxIndex = i;
+          maxLength = subtest.attributes.subtestData.length;
+        }
+      }
+      _ref3 = this.results[maxIndex].attributes.subtestData;
+      for (_j = 0, _len3 = _ref3.length; _j < _len3; _j++) {
+        subtest = _ref3[_j];
         subtestName = subtest.name.toLowerCase().dasherize();
         prototype = subtest.prototype;
         if (prototype === "id") {
@@ -119,9 +128,9 @@ CSVView = (function(_super) {
         } else if (prototype === "datetime") {
           keys.push("year", "month", "date", "assess_time");
         } else if (prototype === "location") {
-          _ref3 = subtest.data.labels;
-          for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-            label = _ref3[_k];
+          _ref4 = subtest.data.labels;
+          for (_k = 0, _len4 = _ref4.length; _k < _len4; _k++) {
+            label = _ref4[_k];
             keys.push(label);
           }
         } else if (prototype === "consent") {
@@ -129,15 +138,15 @@ CSVView = (function(_super) {
         } else if (prototype === "grid") {
           variableName = subtest.data.variable_name;
           keys.push("" + variableName + "_auto_stop", "" + variableName + "_time_remain", "" + variableName + "_attempted", "" + variableName + "_item_at_time", "" + variableName + "_time_intermediate_captured");
-          _ref4 = subtest.data.items;
-          for (i = 0, _len4 = _ref4.length; i < _len4; i++) {
-            item = _ref4[i];
+          _ref5 = subtest.data.items;
+          for (i = 0, _len5 = _ref5.length; i < _len5; i++) {
+            item = _ref5[i];
             keys.push("" + variableName + (i + 1));
           }
         } else if (prototype === "survey") {
-          _ref5 = subtest.data;
-          for (surveyVariable in _ref5) {
-            surveyValue = _ref5[surveyVariable];
+          _ref6 = subtest.data;
+          for (surveyVariable in _ref6) {
+            surveyValue = _ref6[surveyVariable];
             if (_.isObject(surveyValue)) {
               for (optionKey in surveyValue) {
                 optionValue = surveyValue[optionKey];
@@ -152,25 +161,25 @@ CSVView = (function(_super) {
         }
       }
       resultDataArray.push(keys);
-      _ref6 = this.results;
-      for (d = 0, _len5 = _ref6.length; d < _len5; d++) {
-        result = _ref6[d];
+      _ref7 = this.results;
+      for (d = 0, _len6 = _ref7.length; d < _len6; d++) {
+        result = _ref7[d];
         values = [];
-        _ref7 = this.metaKeys;
-        for (_l = 0, _len6 = _ref7.length; _l < _len6; _l++) {
-          metaKey = _ref7[_l];
+        _ref8 = this.metaKeys;
+        for (_l = 0, _len7 = _ref8.length; _l < _len7; _l++) {
+          metaKey = _ref8[_l];
           values.push(result.attributes[metaKey]);
         }
-        _ref8 = result.attributes.subtestData;
-        for (_m = 0, _len7 = _ref8.length; _m < _len7; _m++) {
-          subtest = _ref8[_m];
+        _ref9 = result.attributes.subtestData;
+        for (_m = 0, _len8 = _ref9.length; _m < _len8; _m++) {
+          subtest = _ref9[_m];
           prototype = subtest.prototype;
           if (prototype === "id") {
             values[keys.indexOf("id")] = subtest.data.participant_id;
           } else if (prototype === "location") {
-            _ref9 = subtest.data.labels;
-            for (i = 0, _len8 = _ref9.length; i < _len8; i++) {
-              label = _ref9[i];
+            _ref10 = subtest.data.labels;
+            for (i = 0, _len9 = _ref10.length; i < _len9; i++) {
+              label = _ref10[i];
               values[keys.indexOf(label)] = subtest.data.location[i];
             }
           } else if (prototype === "datetime") {
@@ -187,9 +196,9 @@ CSVView = (function(_super) {
             values[keys.indexOf("" + variableName + "_attempted")] = subtest.data.attempted;
             values[keys.indexOf("" + variableName + "_item_at_time")] = subtest.data.item_at_time;
             values[keys.indexOf("" + variableName + "_time_intermediate_captured")] = subtest.data.time_intermediate_captured;
-            _ref10 = subtest.data.items;
-            for (i = 0, _len9 = _ref10.length; i < _len9; i++) {
-              item = _ref10[i];
+            _ref11 = subtest.data.items;
+            for (i = 0, _len10 = _ref11.length; i < _len10; i++) {
+              item = _ref11[i];
               if (item.itemResult === "correct") {
                 exportValue = 1;
               } else if (item.itemResult === "incorrect") {
@@ -200,9 +209,9 @@ CSVView = (function(_super) {
               values[keys.indexOf("" + variableName + (i + 1))] = exportValue;
             }
           } else if (prototype === "survey") {
-            _ref11 = subtest.data;
-            for (surveyVariable in _ref11) {
-              surveyValue = _ref11[surveyVariable];
+            _ref12 = subtest.data;
+            for (surveyVariable in _ref12) {
+              surveyValue = _ref12[surveyVariable];
               if (_.isObject(surveyValue)) {
                 for (optionKey in surveyValue) {
                   optionValue = surveyValue[optionKey];
@@ -284,11 +293,11 @@ CSVView = (function(_super) {
         
         # End Taylor's Edits for Malawi 2012 EGRA May
         */;
-      for (i = 0, _len10 = resultDataArray.length; i < _len10; i++) {
+      for (i = 0, _len11 = resultDataArray.length; i < _len11; i++) {
         row = resultDataArray[i];
         tableHTML += "<tr>";
         count = 0;
-        for (index = 0, _ref12 = row.length - 1; 0 <= _ref12 ? index <= _ref12 : index >= _ref12; 0 <= _ref12 ? index++ : index--) {
+        for (index = 0, _ref13 = row.length - 1; 0 <= _ref13 ? index <= _ref13 : index >= _ref13; 0 <= _ref13 ? index++ : index--) {
           tableHTML += "<td>" + row[index] + "</td>";
           count++;
         }
