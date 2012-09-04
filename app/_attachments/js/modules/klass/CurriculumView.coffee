@@ -18,7 +18,7 @@ class CurriculumView extends Backbone.View
     </div>
     
     <div class='label_value'>
-      <label>#{t('total parts')}</label><br>
+      <label>#{t('total assessments')}</label><br>
       <div class='info_box'>#{@options.parts}</div>
     </div>
 

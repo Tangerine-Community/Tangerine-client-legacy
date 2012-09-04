@@ -47,7 +47,7 @@ PartByStudentMenuView = (function(_super) {
   PartByStudentMenuView.prototype.render = function() {
     var flagForCurrent, html, part, subtestId, _len, _ref;
     if (this.ready) {
-      html = "        <select class='part_selector'>          <option disabled='disabled' selected='selected'>Select a part</option>          ";
+      html = "        <select class='part_selector'>          <option disabled='disabled' selected='selected'>Select an assessment</option>          ";
       _ref = this.parts;
       for (part = 0, _len = _ref.length; part < _len; part++) {
         subtestId = _ref[part];

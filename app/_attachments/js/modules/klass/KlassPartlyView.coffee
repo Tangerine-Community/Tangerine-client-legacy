@@ -82,7 +82,7 @@ class KlassPartlyView extends Backbone.View
 
     @$el.html "
       <h1>#{t('class status')}</h1>
-      <h2>#{t('part')} #{@currentPart}</h2>
+      <h2>#{t('assessment')} #{@currentPart}</h2>
       #{gridPage}<br>
       
       <button class='prev_part command'>#{t('previous')}</button> <button class='next_part command'>#{t('next')}</button><br><br>

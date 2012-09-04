@@ -4,6 +4,11 @@ class PartByStudentView extends Backbone.View
   colors      : ["2E8B57","90EE90","00FF00"]
   status      : ["Concerning","Average", "Great"]
 
+  events:
+    "click .back" : "goBack"
+
+  goBack: -> history.back()
+
   initialize: ( options ) -> 
 
     @table   = []
@@ -28,9 +33,9 @@ class PartByStudentView extends Backbone.View
       total     = 0
 
       for item in result.attributes.subtestData.items
-        correct++   if item == "correct"
-        incorrect++ if item == "incorrect"
-        missing++   if item == "missing"
+        correct++   if item.itemResult == "correct"
+        incorrect++ if item.itemResult == "incorrect"
+        missing++   if item.itemResult == "missing"
         total++
 
       person =
@@ -83,14 +88,14 @@ class PartByStudentView extends Backbone.View
 
   render: ->
     if @table.length == 0
-      @$el.html "<h1>Part by student</h1>
+      @$el.html "<h1>Assessment by student</h1>
       <p>No students assessed yet. Return to the <a href='#class'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>"
       @trigger "rendered"
       return
 
     # Write HTML Table of all data
     detailsHTML = "
-      <h1>Part by student</h1>
+      <h1>Assessment by student</h1>
       <table border='3'>
       <tr>
         <td>Name</td>
@@ -118,7 +123,7 @@ class PartByStudentView extends Backbone.View
     detailsHTML += "</table>"
     
     # Write HTML table of quick summary stats
-    summaryHTML = "<h1>Part by student</h1>
+    summaryHTML = "<h1>Assessment by student</h1>
     <table border='3'>
       <tr><td>Subtest Name</td>          <td>#{@summary.name}</td></tr>
       <tr><td>Average (%)</td>           <td>#{@summary.aCorrect}</td></tr>

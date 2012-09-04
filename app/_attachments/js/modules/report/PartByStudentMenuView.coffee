@@ -27,7 +27,7 @@ class PartByStudentMenuView extends Backbone.View
     if (@ready)
       html = "
         <select class='part_selector'>
-          <option disabled='disabled' selected='selected'>Select a part</option>
+          <option disabled='disabled' selected='selected'>Select an assessment</option>
           "
       for subtestId, part in @parts
         if subtestId?
