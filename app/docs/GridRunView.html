@@ -221,7 +221,10 @@
         <span class="nx">@itemMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span>
         <span class="nx">@mapItem</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span>
 
-    <span class="vi">@mode     = </span><span class="s">&quot;disabled&quot;</span>
+    <span class="k">if</span> <span class="o">!</span><span class="nx">@captureLastAttmpted</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">@captureAfterSeconds</span>
+      <span class="vi">@mode = </span><span class="s">&quot;mark&quot;</span>
+    <span class="k">else</span>
+      <span class="vi">@mode = </span><span class="s">&quot;disabled&quot;</span>
 
 
     <span class="vi">@gridOutput = </span><span class="p">[]</span>
@@ -245,6 +248,8 @@
     <span class="vi">@captureItemAtTime    = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureItemAtTime&quot;</span><span class="p">)</span>    <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureItemAtTime&quot;</span><span class="p">)</span>    <span class="k">else</span> <span class="kc">false</span>
     <span class="vi">@captureLastAttempted = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureLastAttempted&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureLastAttempted&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">true</span>
     <span class="vi">@endOfLine            = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span>            <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span>            <span class="k">else</span> <span class="kc">true</span>
+
+
 
     <span class="vi">@totalTime = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;timer&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span>
 
@@ -305,7 +310,7 @@
 <span class="s">        &lt;input class=&#39;grid_mode&#39; name=&#39;grid_mode&#39; id=&#39;last_attempted&#39; type=&#39;radio&#39; value=&#39;last&#39;&gt;</span>
 <span class="s">      &quot;</span>
 
-
+    <span class="nv">modeSelector = </span><span class="s">&quot;&quot;</span>
     <span class="k">if</span> <span class="nx">@captureLastAttmpted</span> <span class="o">||</span> <span class="nx">@captureItemAtTime</span> 
       <span class="nv">modeSelector = </span><span class="s">&quot;</span>
 <span class="s">        &lt;div id=&#39;grid_mode&#39; class=&#39;question buttonset clearfix&#39;&gt;</span>
@@ -316,6 +321,7 @@
 <span class="s">          </span><span class="si">#{</span><span class="nx">captureLastButton</span><span class="si">}</span><span class="s"></span>
 <span class="s">        &lt;/div&gt;</span>
 <span class="s">    &quot;</span>
+
 
     <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
 <span class="s">      </span><span class="si">#{</span><span class="k">if</span> <span class="o">not</span> <span class="nx">@untimed</span> <span class="k">then</span> <span class="nx">stopTimerHTML</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="si">}</span><span class="s"></span>

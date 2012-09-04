@@ -45,13 +45,12 @@
       <span class="k">for</span> <span class="nx">part</span><span class="p">,</span> <span class="nx">result</span> <span class="k">of</span> <span class="nx">bucket</span>
 
         <span class="k">if</span> <span class="nx">flotArrays</span><span class="p">[</span><span class="nx">bucketKey</span><span class="p">]</span> <span class="o">==</span> <span class="kc">undefined</span> <span class="k">then</span> <span class="nx">flotArrays</span><span class="p">[</span><span class="nx">bucketKey</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">get</span><span class="o">?</span>
+        <span class="k">if</span> <span class="nx">result</span><span class="o">?</span> <span class="o">&amp;&amp;</span> <span class="nx">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">?</span> <span class="o">&amp;&amp;</span> <span class="nx">result</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">get</span><span class="o">?</span>
           <span class="nv">correctItems = </span><span class="mi">0</span>
           <span class="nv">totalItems   = </span><span class="mi">0</span>
-          <span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="nx">result</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;subtestData&quot;</span><span class="p">).</span><span class="nx">items</span>
+          <span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="nx">result</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;subtestData&quot;</span><span class="p">).</span><span class="nx">items</span>
             <span class="nx">correctItems</span><span class="o">++</span> <span class="k">if</span> <span class="nx">item</span><span class="p">.</span><span class="nx">itemResult</span> <span class="o">==</span> <span class="s">&quot;correct&quot;</span>
             <span class="nx">totalItems</span><span class="o">++</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">correctItems</span>
           <span class="nv">percentCorrect = </span><span class="p">(</span><span class="nx">correctItems</span> <span class="o">/</span> <span class="nx">totalItems</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
           <span class="nx">flotArrays</span><span class="p">[</span><span class="nx">bucketKey</span><span class="p">].</span><span class="nx">push</span> <span class="p">[</span><span class="nx">part</span><span class="p">,</span> <span class="nx">percentCorrect</span><span class="p">]</span>
         <span class="k">else</span>
@@ -70,7 +69,6 @@
           <span class="s">&quot;steps&quot;</span><span class="o">:</span> <span class="kc">true</span>
       <span class="p">}</span>
 
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@flotData</span>
 
     <span class="vi">@flotOptions = </span>
       <span class="s">&quot;yaxis&quot;</span> <span class="o">:</span> 
@@ -80,9 +78,7 @@
       <span class="s">&quot;xaxis&quot;</span> <span class="o">:</span>
         <span class="nv">ticks: </span><span class="p">(</span><span class="nb">String</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nx">@currentPart</span><span class="p">])</span>
         <span class="nv">tickDecimals : </span><span class="mi">0</span>
-        
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@flotData</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@flotOptions</span>
+
     
   <span class="nv">render: </span><span class="o">-&gt;</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>

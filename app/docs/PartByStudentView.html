@@ -4,6 +4,11 @@
   <span class="nv">colors      : </span><span class="p">[</span><span class="s">&quot;2E8B57&quot;</span><span class="p">,</span><span class="s">&quot;90EE90&quot;</span><span class="p">,</span><span class="s">&quot;00FF00&quot;</span><span class="p">]</span>
   <span class="nv">status      : </span><span class="p">[</span><span class="s">&quot;Concerning&quot;</span><span class="p">,</span><span class="s">&quot;Average&quot;</span><span class="p">,</span> <span class="s">&quot;Great&quot;</span><span class="p">]</span>
 
+  <span class="nv">events:</span>
+    <span class="s">&quot;click .back&quot;</span> <span class="o">:</span> <span class="s">&quot;goBack&quot;</span>
+
+  <span class="nv">goBack: </span><span class="o">-&gt;</span> <span class="nx">history</span><span class="p">.</span><span class="nx">back</span><span class="p">()</span>
+
   <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span> 
 
     <span class="vi">@table   = </span><span class="p">[]</span>
@@ -24,9 +29,9 @@ Use indices where Index = Standard Deviation * 100 for negative deviations</p>  
       <span class="nv">total     = </span><span class="mi">0</span>
 
       <span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="nx">result</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">subtestData</span><span class="p">.</span><span class="nx">items</span>
-        <span class="nx">correct</span><span class="o">++</span>   <span class="k">if</span> <span class="nx">item</span> <span class="o">==</span> <span class="s">&quot;correct&quot;</span>
-        <span class="nx">incorrect</span><span class="o">++</span> <span class="k">if</span> <span class="nx">item</span> <span class="o">==</span> <span class="s">&quot;incorrect&quot;</span>
-        <span class="nx">missing</span><span class="o">++</span>   <span class="k">if</span> <span class="nx">item</span> <span class="o">==</span> <span class="s">&quot;missing&quot;</span>
+        <span class="nx">correct</span><span class="o">++</span>   <span class="k">if</span> <span class="nx">item</span><span class="p">.</span><span class="nx">itemResult</span> <span class="o">==</span> <span class="s">&quot;correct&quot;</span>
+        <span class="nx">incorrect</span><span class="o">++</span> <span class="k">if</span> <span class="nx">item</span><span class="p">.</span><span class="nx">itemResult</span> <span class="o">==</span> <span class="s">&quot;incorrect&quot;</span>
+        <span class="nx">missing</span><span class="o">++</span>   <span class="k">if</span> <span class="nx">item</span><span class="p">.</span><span class="nx">itemResult</span> <span class="o">==</span> <span class="s">&quot;missing&quot;</span>
         <span class="nx">total</span><span class="o">++</span>
 
       <span class="nv">person =</span>
@@ -76,11 +81,11 @@ Use indices where Index = Standard Deviation * 100 for negative deviations</p>  
 
   <span class="nv">render: </span><span class="o">-&gt;</span>
     <span class="k">if</span> <span class="nx">@table</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">0</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;&lt;h1&gt;Part by student&lt;/h1&gt;</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;&lt;h1&gt;Assessment by student&lt;/h1&gt;</span>
 <span class="s">      &lt;p&gt;No students assessed yet. Return to the &lt;a href=&#39;</span><span class="err">#</span><span class="s">class&#39;&gt;class menu&lt;/a&gt; and click the &lt;img src=&#39;images/icon_run.png&#39;&gt; icon to collect data.&lt;/p&gt;&quot;</span>
       <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
       <span class="k">return</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Write HTML Table of all data</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">detailsHTML = </span><span class="s">&quot;</span>
-<span class="s">      &lt;h1&gt;Part by student&lt;/h1&gt;</span>
+<span class="s">      &lt;h1&gt;Assessment by student&lt;/h1&gt;</span>
 <span class="s">      &lt;table border=&#39;3&#39;&gt;</span>
 <span class="s">      &lt;tr&gt;</span>
 <span class="s">        &lt;td&gt;Name&lt;/td&gt;</span>
@@ -106,7 +111,7 @@ Use indices where Index = Standard Deviation * 100 for negative deviations</p>  
 <span class="s">        &lt;/tr&gt;</span>
 <span class="s">        &quot;</span>
     <span class="nx">detailsHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;/table&gt;&quot;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Write HTML table of quick summary stats</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">summaryHTML = </span><span class="s">&quot;&lt;h1&gt;Part by student&lt;/h1&gt;</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Write HTML table of quick summary stats</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">summaryHTML = </span><span class="s">&quot;&lt;h1&gt;Assessment by student&lt;/h1&gt;</span>
 <span class="s">    &lt;table border=&#39;3&#39;&gt;</span>
 <span class="s">      &lt;tr&gt;&lt;td&gt;Subtest Name&lt;/td&gt;          &lt;td&gt;</span><span class="si">#{</span><span class="nx">@summary</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;/tr&gt;</span>
 <span class="s">      &lt;tr&gt;&lt;td&gt;Average (%)&lt;/td&gt;           &lt;td&gt;</span><span class="si">#{</span><span class="nx">@summary</span><span class="p">.</span><span class="nx">aCorrect</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;/tr&gt;</span>
