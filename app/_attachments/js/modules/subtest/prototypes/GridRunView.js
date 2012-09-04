@@ -284,7 +284,11 @@ GridRunView = (function(_super) {
         this.mapItem[i] = i;
       }
     }
-    this.mode = "disabled";
+    if (!this.captureLastAttmpted && !this.captureAfterSeconds) {
+      this.mode = "mark";
+    } else {
+      this.mode = "disabled";
+    }
     this.gridOutput = [];
     _ref5 = this.items;
     for (i = 0, _len5 = _ref5.length; i < _len5; i++) {
@@ -355,6 +359,7 @@ GridRunView = (function(_super) {
     if (this.captureLastAttempted) {
       captureLastButton = "        <label for='last_attempted'>Last attempted</label>        <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>      ";
     }
+    modeSelector = "";
     if (this.captureLastAttmpted || this.captureItemAtTime) {
       modeSelector = "        <div id='grid_mode' class='question buttonset clearfix'>          <label>Input mode</label><br>          <label for='mark'>Mark</label>          <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark'>          " + minuteItemButton + "          " + captureLastButton + "        </div>    ";
     }

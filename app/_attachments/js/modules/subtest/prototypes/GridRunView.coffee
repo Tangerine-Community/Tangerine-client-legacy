@@ -223,7 +223,10 @@ class GridRunView extends Backbone.View
         @itemMap[i] = i
         @mapItem[i] = i
 
-    @mode     = "disabled"
+    if !@captureLastAttmpted && !@captureAfterSeconds
+      @mode = "mark"
+    else
+      @mode = "disabled"
 
 
     @gridOutput = []
@@ -247,6 +250,8 @@ class GridRunView extends Backbone.View
     @captureItemAtTime    = if @model.has("captureItemAtTime")    then @model.get("captureItemAtTime")    else false
     @captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted") else true
     @endOfLine            = if @model.has("endOfLine")            then @model.get("endOfLine")            else true
+
+
 
     @totalTime = @model.get("timer") || 0
 
@@ -307,7 +312,7 @@ class GridRunView extends Backbone.View
         <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>
       "
 
-
+    modeSelector = ""
     if @captureLastAttmpted || @captureItemAtTime 
       modeSelector = "
         <div id='grid_mode' class='question buttonset clearfix'>
@@ -318,6 +323,7 @@ class GridRunView extends Backbone.View
           #{captureLastButton}
         </div>
     "
+
 
     html += "
       #{if not @untimed then stopTimerHTML else ""}
