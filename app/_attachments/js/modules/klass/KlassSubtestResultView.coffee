@@ -45,7 +45,7 @@ class KlassSubtestResultView extends Backbone.View
       <h1>Result</h1>
       <table class='info_box'><tbody>
         <tr>
-          <td><label>Part</label></td>
+          <td><label>Assessment</label></td>
           <td>#{@options.subtest.get("part")}</td>
         </tr>
         <tr>

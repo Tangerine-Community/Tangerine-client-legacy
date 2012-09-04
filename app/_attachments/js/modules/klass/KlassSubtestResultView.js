@@ -57,7 +57,7 @@ KlassSubtestResultView = (function(_super) {
       timestamp = new Date(this.options.result[0].get("timestamp"));
       taken += "        <tr>          <td><label>" + (t('taken')) + "</label></td><td>" + (timestamp.getFullYear()) + "/" + (timestamp.getMonth() + 1) + "/" + (timestamp.getDate()) + "</td>        </tr>      ";
     }
-    this.$el.html("      <h1>Result</h1>      <table class='info_box'><tbody>        <tr>          <td><label>Part</label></td>          <td>" + (this.options.subtest.get("part")) + "</td>        </tr>        <tr>          <td><label>Student</label></td>          <td>" + (this.options.student.escape("name")) + "</td>        </tr>        <tr>          <td><label>Subtest</label></td>          <td>" + (this.options.subtest.escape("name")) + "</td>        </tr>        " + taken + "      </tbody></table>      " + resultHTML + "      <div class='menu_box'>        <img src='images/icon_run.png' class='run'>      </div><br>      <button class='navigation back'>Back</button>    ");
+    this.$el.html("      <h1>Result</h1>      <table class='info_box'><tbody>        <tr>          <td><label>Assessment</label></td>          <td>" + (this.options.subtest.get("part")) + "</td>        </tr>        <tr>          <td><label>Student</label></td>          <td>" + (this.options.student.escape("name")) + "</td>        </tr>        <tr>          <td><label>Subtest</label></td>          <td>" + (this.options.subtest.escape("name")) + "</td>        </tr>        " + taken + "      </tbody></table>      " + resultHTML + "      <div class='menu_box'>        <img src='images/icon_run.png' class='run'>      </div><br>      <button class='navigation back'>Back</button>    ");
     return this.trigger("rendered");
   };
 
