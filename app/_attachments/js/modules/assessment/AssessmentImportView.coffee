@@ -59,13 +59,13 @@ class AssessmentImportView extends Backbone.View
 
   render: ->
     @$el.html "
-    <button class='back'>Back</button>
+    <button class='back navigation'>Back</button>
 
     <h1>Tangerine Central Import</h1>
     <div class='question'>
       <label for='d_key'>Download key</label>
       <input id='d_key' value=''>
-      <button class='import'>Import</button>
+      <button class='import command'>Import</button>
     </div>
 
     <div class='confirmation status'>
