@@ -518,8 +518,8 @@ class Router extends Backbone.Router
       isAdmin: ->
         $("#version-uuid").html("Updating...")
         $.couch.replicate(
-          Tangerine.config.address.local.dbName,
           Tangerine.config.address.cloud.host+"/"+Tangerine.config.address.cloud.dbName,
+          Tangerine.config.address.local.dbName,
             success: ->
               $("#version-uuid").html("Successful update, now refreshing app...")
               _.delay ->
