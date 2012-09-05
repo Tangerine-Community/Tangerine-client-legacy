@@ -25,14 +25,14 @@ class KlassToDateView extends Backbone.View
           resultsByBucketByPart[subtest.get("resultBucket")]  = []
           subtestsByResultsBucket[subtest.get("resultBucket")]  = []
         resultsByBucketByPart[subtest.get("resultBucket")][i] = options.results.where({"subtestId" : subtest.id, "klassId" : options.klass.id})
-        subtestsByResultsBucket[subtest.get("resultBucket")].push subtest.get("items")
+        subtestsByResultsBucket[subtest.get("resultBucket")].push subtest
 
 
     # should we use lines or dots
     bucketType = []
     for bucketKey, subtests of subtestsByResultsBucket
       bucketType[bucketKey] = null
-      if _.union.apply(this, (element.length for element in subtests)).length == 1
+      if subtests[0]?.get?("timer") > 0 && _.flatten(resultsByBucketByPart[subtests[0].get('resultBucket')]).length > 1
         bucketType[bucketKey] = "lines"
       else
         bucketType[bucketKey] = "points"
@@ -63,13 +63,13 @@ class KlassToDateView extends Backbone.View
               totalItems++
           percentCorrect = (correctItems / totalItems) * 100
           flotArrays[bucketKey].push [parseInt(part), percentCorrect]
-        else
-          flotArrays[bucketKey].push [parseInt(part), 0]
+
+
+
 
     @flotData = []
     for bucket, flotArray of flotArrays
       flotArray = _.reject flotArray, (arr) => arr[0] > @currentPart
-
       if bucketType[bucket] == "lines"
         flotArray.push [@currentPart + 1, _.last(flotArray)[1]]
 

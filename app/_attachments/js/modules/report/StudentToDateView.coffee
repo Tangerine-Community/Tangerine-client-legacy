@@ -33,13 +33,13 @@ class StudentToDateView extends Backbone.View
           "subtestId" : subtest.id
           "studentId" : options.studentId
           "klassId"   : options.klass.id
-        subtestsByResultsBucket[subtest.get("resultBucket")].push subtest.get("items")
+        subtestsByResultsBucket[subtest.get("resultBucket")].push subtest
 
     # should we use lines or dots
     bucketType = []
     for bucketKey, subtests of subtestsByResultsBucket
       bucketType[bucketKey] = null
-      if _.union.apply(this, (element.length for element in subtests)).length == 1
+      if subtests[0]?.get?("timer") > 0 && _.flatten(resultsByBucketByPart[subtests[0].get('resultBucket')]).length > 1
         bucketType[bucketKey] = "lines"
       else
         bucketType[bucketKey] = "points"

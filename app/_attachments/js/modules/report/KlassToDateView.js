@@ -13,7 +13,7 @@ KlassToDateView = (function(_super) {
   }
 
   KlassToDateView.prototype.initialize = function(options) {
-    var bucket, bucketKey, bucketType, correctItems, element, flotArray, flotArrays, i, item, j, milisecondsPerPart, oneObject, part, percentCorrect, result, results, resultsByBucketByPart, resultsByPart, subtest, subtestPart, subtests, subtestsByPart, subtestsByResultsBucket, totalItems, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _len7, _ref, _ref2,
+    var bucket, bucketKey, bucketType, correctItems, flotArray, flotArrays, i, item, j, milisecondsPerPart, oneObject, part, percentCorrect, result, results, resultsByBucketByPart, resultsByPart, subtest, subtestPart, subtests, subtestsByPart, subtestsByResultsBucket, totalItems, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _len7, _ref, _ref2, _ref3,
       _this = this;
     milisecondsPerPart = 604800000;
     this.currentPart = Math.round(((new Date()).getTime() - options.klass.get("startDate")) / milisecondsPerPart);
@@ -51,22 +51,14 @@ KlassToDateView = (function(_super) {
           "subtestId": subtest.id,
           "klassId": options.klass.id
         });
-        subtestsByResultsBucket[subtest.get("resultBucket")].push(subtest.get("items"));
+        subtestsByResultsBucket[subtest.get("resultBucket")].push(subtest);
       }
     }
     bucketType = [];
     for (bucketKey in subtestsByResultsBucket) {
       subtests = subtestsByResultsBucket[bucketKey];
       bucketType[bucketKey] = null;
-      if (_.union.apply(this, (function() {
-        var _k, _len4, _results;
-        _results = [];
-        for (_k = 0, _len4 = subtests.length; _k < _len4; _k++) {
-          element = subtests[_k];
-          _results.push(element.length);
-        }
-        return _results;
-      })()).length === 1) {
+      if (((_ref2 = subtests[0]) != null ? typeof _ref2.get === "function" ? _ref2.get("timer") : void 0 : void 0) > 0 && _.flatten(resultsByBucketByPart[subtests[0].get('resultBucket')]).length > 1) {
         bucketType[bucketKey] = "lines";
       } else {
         bucketType[bucketKey] = "points";
@@ -100,17 +92,15 @@ KlassToDateView = (function(_super) {
           totalItems = 0;
           for (_k = 0, _len6 = results.length; _k < _len6; _k++) {
             result = results[_k];
-            _ref2 = result.get("subtestData").items;
-            for (_l = 0, _len7 = _ref2.length; _l < _len7; _l++) {
-              item = _ref2[_l];
+            _ref3 = result.get("subtestData").items;
+            for (_l = 0, _len7 = _ref3.length; _l < _len7; _l++) {
+              item = _ref3[_l];
               if (item.itemResult === "correct") correctItems++;
               totalItems++;
             }
           }
           percentCorrect = (correctItems / totalItems) * 100;
           flotArrays[bucketKey].push([parseInt(part), percentCorrect]);
-        } else {
-          flotArrays[bucketKey].push([parseInt(part), 0]);
         }
       }
     }
@@ -144,9 +134,9 @@ KlassToDateView = (function(_super) {
         min: 0.5,
         max: this.currentPart + 0.5,
         ticks: (function() {
-          var _ref3, _results;
+          var _ref4, _results;
           _results = [];
-          for (i = 1, _ref3 = this.currentPart; 1 <= _ref3 ? i <= _ref3 : i >= _ref3; 1 <= _ref3 ? i++ : i--) {
+          for (i = 1, _ref4 = this.currentPart; 1 <= _ref4 ? i <= _ref4 : i >= _ref4; 1 <= _ref4 ? i++ : i--) {
             _results.push(String(i));
           }
           return _results;
