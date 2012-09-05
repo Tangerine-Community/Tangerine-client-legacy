@@ -16,7 +16,7 @@ class AssessmentEditView extends Backbone.View
   
   save: =>
     if @updateModel()
-      if @model.save({wait:true}) 
+      if @model.save(null, {wait:true}) 
         Utils.midAlert "Assessment saved" 
         Tangerine.router.navigate "edit/"+@model.id, true
         @hideSave()

@@ -30,7 +30,7 @@ AssessmentEditView = (function(_super) {
 
   AssessmentEditView.prototype.save = function() {
     if (this.updateModel()) {
-      if (this.model.save({
+      if (this.model.save(null, {
         wait: true
       })) {
         Utils.midAlert("Assessment saved");
