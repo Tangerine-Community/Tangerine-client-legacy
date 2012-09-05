@@ -5,15 +5,38 @@ class KlassToDateView extends Backbone.View
     @currentPart = Math.round(((new Date()).getTime() - options.klass.get("startDate")) / milisecondsPerPart)
     @range = (i for i in [1..@currentPart])
 
+    # group subtests by part
     subtestsByPart = []
-    maxPart = 0
     for subtest in options.subtests
-      subtestPart = subtest.get?("part")
-      maxPart = subtestPart
+      subtestPart = subtest.get("part")
       if subtestsByPart[subtestPart]?
         subtestsByPart[subtestPart].push subtest 
       else
         subtestsByPart[subtestPart] = [subtest]
+
+
+    # sort subtests-by-part, by result bucket
+    subtestsByResultsBucket = []
+    resultsByBucketByPart = {}
+    for subtests, i in subtestsByPart
+      if subtests == undefined then continue
+      for subtest in subtests
+        if resultsByBucketByPart[subtest.get("resultBucket")] == undefined
+          resultsByBucketByPart[subtest.get("resultBucket")]  = []
+          subtestsByResultsBucket[subtest.get("resultBucket")]  = []
+        resultsByBucketByPart[subtest.get("resultBucket")][i] = options.results.where({"subtestId" : subtest.id, "klassId" : options.klass.id})
+        subtestsByResultsBucket[subtest.get("resultBucket")].push subtest.get("items")
+
+
+    # should we use lines or dots
+    bucketType = []
+    for bucketKey, subtests of subtestsByResultsBucket
+      bucketType[bucketKey] = null
+      if _.union.apply(this, (element.length for element in subtests)).length == 1
+        bucketType[bucketKey] = "lines"
+      else
+        bucketType[bucketKey] = "points"
+
 
     resultsByPart = []
 
@@ -25,68 +48,59 @@ class KlassToDateView extends Backbone.View
         else
           resultsByPart[i] = options.results.where({"subtestId" : subtest.id})
       
-    @percentageCorrectByPart  = []
-    @collectionCompleteByPart = []
 
-    for results, i in resultsByPart
-      @collectionCompleteByPart[i] = 0
-      @percentageCorrectByPart[i] = 0
-      if not results? then continue
-      @collectionCompleteByPart[i] = (results.length / (options.studentCount * subtestsByPart[i].length) ) * 100;
+    # count correct in each bucket
+    flotArrays = []
+    for bucketKey, bucket of resultsByBucketByPart
+      for part, results of bucket
+        if flotArrays[bucketKey] == undefined then flotArrays[bucketKey] = []
+        if results
+          correctItems = 0
+          totalItems   = 0
+          console.log "part #{part}"
+          console.log results.length
+          for result in results
+            for item in result.get("subtestData").items
+              correctItems++ if item.itemResult == "correct"
+              totalItems++
+            console.log "#{correctItems} / #{totalItems}"
+          percentCorrect = (correctItems / totalItems) * 100
+          console.log "%" + percentCorrect
+          flotArrays[bucketKey].push [parseInt(part), percentCorrect]
+        else
+          flotArrays[bucketKey].push [parseInt(part), 0]
 
-      totalItems = 0
-      correctItems = 0
-      for result in results
-        for item in result.get("subtestData").items
-          correctItems++ if item.itemResult == "correct"
-          totalItems++
+    @flotData = []
+    for bucket, flotArray of flotArrays
+      flotArray = _.reject flotArray, (arr) => arr[0] > @currentPart
 
-      if totalItems != 0
-        @percentageCorrectByPart[i] = (correctItems / totalItems) * 100
+      if bucketType[bucket] == "lines"
+        flotArray.push [@currentPart + 1, _.last(flotArray)[1]]
 
-    # flotify
-    j = 0
-    for i in [1..@currentPart+1]
-      @percentageCorrectByPart[j] = [i, @percentageCorrectByPart[i]]
-      @collectionCompleteByPart[j] = [i, @collectionCompleteByPart[i]]
-      j++
-
-    @flotData = [
-      { 
-        "label": "% Correct"
-        "data": @percentageCorrectByPart
-        "lines" :
-          "show":true
-          "steps": true
-      },
-      { 
-        "label": "General Threshold"
-        "data": [[1, (Tangerine.settings.generalThreshold*100)], [@currentPart+1, (Tangerine.settings.generalThreshold*100)]]
-        "lines" :
-          "show":true
+      oneObject = {
+        "label" : bucket
+        "data" : flotArray
       }
-      
-    ]
+      oneObject[bucketType[bucket]] = 
+        "show" : true
+        "radius" : 4
+        "width" : 4
+        
+
+      @flotData.push oneObject
 
 
-    `/*{ 
-      "label": "% Collected"
-      "data": @collectionCompleteByPart
-      "lines" :
-        "show":true
-        "steps": true
-    }*/`
-
-    
     @flotOptions = 
       "yaxis" : 
         min: 0
         max: 100
         ticks: 10
       "xaxis" :
+        min : 0.5
+        max : @currentPart + 0.5
         ticks: (String(i) for i in [1..@currentPart])
         tickDecimals : 0
-      
+
   render: ->
     @$el.html "
       <h1>#{t('class progress report')}</h1>

@@ -714,7 +714,8 @@ Router = (function(_super) {
                         view = new StudentToDateView({
                           "results": results,
                           "subtests": subtests,
-                          "klass": klass
+                          "klass": klass,
+                          "studentId": studentId
                         });
                         return vm.show(view);
                       }

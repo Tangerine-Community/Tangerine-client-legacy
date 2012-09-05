@@ -434,7 +434,8 @@ class Router extends Backbone.Router
                         view = new StudentToDateView
                           "results"  : results
                           "subtests" : subtests
-                          "klass" : klass
+                          "klass"    : klass
+                          "studentId" : studentId
                         vm.show view
       isUnregistered: ->
         Tangerine.router.navigate "login", true
