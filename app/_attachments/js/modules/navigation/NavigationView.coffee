@@ -31,7 +31,6 @@ class NavigationView extends Backbone.View
   render: ->
     @$el.html "
     <img id='corner_logo' src='images/corner_logo.png'>
-    <span id='version'></span>
     <nav id='submenu'></nav>
     <div id='enumerator_box'>
       #{t('enumerator')} <span id='logout_link'>#{t('logout')}</span>
@@ -41,7 +40,25 @@ class NavigationView extends Backbone.View
       Student ID
       <div id='current_student_id'></div>
     </div>
+    <div id='version'>
+    version <br/>
+    <span id='version-uuid'></span><br/>
+    #{
+      if Tangerine.user.isAdmin
+        "<a href='#update'>#{t('update')}</a>"
+      else
+        ""
+    }
+    </div>
     "
+
+    $.ajax "version",
+      dataType: "text"
+      success: (result) ->
+        $("#version-uuid").html result
+      error:
+        $("#version-uuid").html "-"
+
 
     # Spin the logo on ajax calls
     $("body").ajaxStart -> $("#corner_logo").attr "src", "images/spin_orange.gif"

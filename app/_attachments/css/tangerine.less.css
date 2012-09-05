@@ -24,9 +24,7 @@ nav,
 section {
   display: block;
 }
-audio,
-canvas,
-video {
+audio, canvas, video {
   display: inline-block;
   *display: inline;
   *zoom: 1;
@@ -80,8 +78,7 @@ a:focus {
   outline: thin dotted;
 }
 /* Improve readability when focused and hovered in all browsers: h5bp.com/h */
-a:hover,
-a:active {
+a:hover, a:active {
   outline: 0;
 }
 /* =============================================================================
@@ -90,8 +87,7 @@ a:active {
 abbr[title] {
   border-bottom: 1px dotted;
 }
-b,
-strong {
+b, strong {
   font-weight: bold;
 }
 blockquote {
@@ -137,8 +133,7 @@ pre {
 q {
   quotes: none;
 }
-q:before,
-q:after {
+q:before, q:after {
   content: "";
   content: none;
 }
@@ -146,8 +141,7 @@ small {
   font-size: 85%;
 }
 /* Position subscript and superscript content without affecting line-height: h5bp.com/k */
-sub,
-sup {
+sub, sup {
   font-size: 75%;
   line-height: 0;
   position: relative;
@@ -165,8 +159,7 @@ sub {
 dd {
   margin: 0 0 0 40px;
 }
-nav ul,
-nav ol {
+nav ul, nav ol {
   list-style: none;
   list-style-image: none;
   margin: 0;
@@ -238,16 +231,14 @@ textarea {
  * 1. Define line-height as normal to match FF3/4 (set using !important in the UA stylesheet)
  * 2. Correct inner spacing displayed oddly in IE6/7
  */
-button,
-input {
+button, input {
   line-height: normal;
   *overflow: visible;
 }
 /*
  * Reintroduce inner spacing in 'table' to avoid overlap and whitespace issues in IE6/7
  */
-table button,
-table input {
+table button, table input {
   *overflow: auto;
 }
 /*
@@ -264,8 +255,7 @@ input[type="submit"],
 /*
  * Consistent box sizing and appearance
  */
-input[type="checkbox"],
-input[type="radio"] {
+input[type="checkbox"], input[type="radio"] {
   box-sizing: border-box;
   padding: 0;
 }
@@ -281,8 +271,7 @@ input[type="search"]::-webkit-search-decoration {
 /*
  * Remove inner padding and border in FF3/4: h5bp.com/l
  */
-button::-moz-focus-inner,
-input::-moz-focus-inner {
+button::-moz-focus-inner, input::-moz-focus-inner {
   border: 0;
   padding: 0;
 }
@@ -294,8 +283,7 @@ input::-moz-focus-inner {
 textarea { overflow: auto; vertical-align: top; resize: vertical; }
 */
 /* Colors for form validity */
-input:invalid,
-textarea:invalid {
+input:invalid, textarea:invalid {
   background-color: #f0dddd;
 }
 /* =============================================================================
@@ -364,8 +352,7 @@ textarea[contenteditable] {
   width: 1px;
 }
 /* Extends the .visuallyhidden class to allow the element to be focusable when navigated to via the keyboard: h5bp.com/p */
-.visuallyhidden.focusable:active,
-.visuallyhidden.focusable:focus {
+.visuallyhidden.focusable:active, .visuallyhidden.focusable:focus {
   clip: auto;
   height: auto;
   margin: 0;
@@ -378,8 +365,7 @@ textarea[contenteditable] {
   visibility: hidden;
 }
 /* Contain floats: h5bp.com/q */
-.clearfix:before,
-.clearfix:after {
+.clearfix:before, .clearfix:after {
   content: "";
   display: table;
 }
@@ -618,8 +604,7 @@ nav#submenu {
 #save_all_new_subtests {
   display: none;
 }
-#current_student,
-div#enumerator_box {
+#current_student, div#enumerator_box {
   float: right;
   vertical-align: middle;
   display: inline-block;
@@ -628,8 +613,7 @@ div#enumerator_box {
   font-size: 15px !important;
   font-weight: bold;
 }
-#current_student div,
-div#enumerator_box div {
+#current_student div, div#enumerator_box div {
   display: block;
   clear: both;
   color: white;
@@ -650,9 +634,14 @@ button {
   margin: 10px 0px;
 }
 #version {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  float: right;
+  font-size: 50%;
+  padding-right: 20px;
+}
+#version a {
+  font-weight: bold;
+  color: black;
+  text-decoration: none;
 }
 #content {
   width: 80%;
@@ -751,8 +740,7 @@ div.subtest_edit td {
   padding-right: 10px;
   vertical-align: middle;
 }
-div.subtest_edit .enumerator_help_preview,
-div.subtest_edit .student_dialog_preview {
+div.subtest_edit .enumerator_help_preview, div.subtest_edit .student_dialog_preview {
   height: 70px;
   overflow: hidden;
 }
@@ -881,8 +869,7 @@ input {
   padding: 5px !important;
   margin: 0 0 10px;
 }
-input[type=submit],
-input[type=button] {
+input[type=submit], input[type=button] {
   display: inline-block;
   width: auto;
 }
@@ -1148,8 +1135,7 @@ body[rtl] {
   padding: 4px;
   font-size: 8.5pt;
 }
-.cleditorPrompt input,
-.cleditorPrompt textarea {
+.cleditorPrompt input, .cleditorPrompt textarea {
   font: 8.5pt Arial,Verdana;
 }
 .cleditorMsg {
@@ -1170,8 +1156,7 @@ table.tablesorter {
   width: 100%;
   text-align: left;
 }
-table.tablesorter thead tr th,
-table.tablesorter tfoot tr th {
+table.tablesorter thead tr th, table.tablesorter tfoot tr th {
   background-color: #e6EEEE;
   border: 1px solid #FFF;
   font-size: 8pt;
@@ -1198,8 +1183,7 @@ table.tablesorter thead tr .headerSortUp {
 table.tablesorter thead tr .headerSortDown {
   background-image: url(../images/desc.gif);
 }
-table.tablesorter thead tr .headerSortDown,
-table.tablesorter thead tr .headerSortUp {
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
   background-color: #8dbdd8;
 }
 /*
@@ -1234,8 +1218,7 @@ table.tablesorter thead tr .headerSortUp {
   font-size: 100%;
   list-style: none;
 }
-.ui-helper-clearfix:before,
-.ui-helper-clearfix:after {
+.ui-helper-clearfix:before, .ui-helper-clearfix:after {
   content: "";
   display: table;
 }
@@ -1301,42 +1284,29 @@ table.tablesorter thead tr .headerSortUp {
 }
 /* Interaction states
 ----------------------------------*/
-.ui-state-default,
-.ui-widget-content .ui-state-default,
-.ui-widget-header .ui-state-default {
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
   background: #cccccc;
   color: #999999;
 }
-.ui-state-default a,
-.ui-state-default a:link,
-.ui-state-default a:visited {
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
   color: #f6ef9a;
   text-decoration: none;
 }
-.ui-state-hover,
-.ui-widget-content .ui-state-hover,
-.ui-widget-header .ui-state-hover {
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover {
   color: #333333;
 }
-.ui-state-focus,
-.ui-widget-content .ui-state-focus,
-.ui-widget-header .ui-state-focus {
+.ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
   color: #333333;
 }
-.ui-state-hover a,
-.ui-state-hover a:hover {
+.ui-state-hover a, .ui-state-hover a:hover {
   color: #f6ef9a;
   text-decoration: none;
 }
-.ui-state-active,
-.ui-widget-content .ui-state-active,
-.ui-widget-header .ui-state-active {
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
   background: #f6c637;
   color: white;
 }
-.ui-state-active a,
-.ui-state-active a:link,
-.ui-state-active a:visited {
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
   color: #f49b00;
   text-decoration: none;
 }
@@ -1345,50 +1315,34 @@ table.tablesorter thead tr .headerSortUp {
 }
 /* Interaction Cues
 ----------------------------------*/
-.ui-state-highlight,
-.ui-widget-content .ui-state-highlight,
-.ui-widget-header .ui-state-highlight {
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
   border: 1px solid #eeb420;
   background: #fff9e5;
   color: #1f1f1f;
 }
-.ui-state-highlight a,
-.ui-widget-content .ui-state-highlight a,
-.ui-widget-header .ui-state-highlight a {
+.ui-state-highlight a, .ui-widget-content .ui-state-highlight a, .ui-widget-header .ui-state-highlight a {
   color: #1f1f1f;
 }
-.ui-state-error,
-.ui-widget-content .ui-state-error,
-.ui-widget-header .ui-state-error {
+.ui-state-error, .ui-widget-content .ui-state-error, .ui-widget-header .ui-state-error {
   border: 1px solid #ffb73d;
   background: #d34d17 ;
   color: #ffffff;
 }
-.ui-state-error a,
-.ui-widget-content .ui-state-error a,
-.ui-widget-header .ui-state-error a {
+.ui-state-error a, .ui-widget-content .ui-state-error a, .ui-widget-header .ui-state-error a {
   color: #ffffff;
 }
-.ui-state-error-text,
-.ui-widget-content .ui-state-error-text,
-.ui-widget-header .ui-state-error-text {
+.ui-state-error-text, .ui-widget-content .ui-state-error-text, .ui-widget-header .ui-state-error-text {
   color: #ffffff;
 }
-.ui-priority-primary,
-.ui-widget-content .ui-priority-primary,
-.ui-widget-header .ui-priority-primary {
+.ui-priority-primary, .ui-widget-content .ui-priority-primary, .ui-widget-header .ui-priority-primary {
   font-weight: bold;
 }
-.ui-priority-secondary,
-.ui-widget-content .ui-priority-secondary,
-.ui-widget-header .ui-priority-secondary {
+.ui-priority-secondary, .ui-widget-content .ui-priority-secondary, .ui-widget-header .ui-priority-secondary {
   opacity: .7;
   filter: alpha(opacity=70);
   font-weight: normal;
 }
-.ui-state-disabled,
-.ui-widget-content .ui-state-disabled,
-.ui-widget-header .ui-state-disabled {
+.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled {
   opacity: .35;
   filter: alpha(opacity=35);
   background-image: none;
@@ -1559,17 +1513,14 @@ button.ui-button-icons-only {
   padding: 8px;
   margin: 0 -2px;
 }
-.ui-button-icon-only .ui-button-text,
-.ui-button-icons-only .ui-button-text {
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text {
   padding: .4em;
   text-indent: -9999999px;
 }
-.ui-button-text-icon-primary .ui-button-text,
-.ui-button-text-icons .ui-button-text {
+.ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text {
   padding: .4em 1em .4em 2.1em;
 }
-.ui-button-text-icon-secondary .ui-button-text,
-.ui-button-text-icons .ui-button-text {
+.ui-button-text-icon-secondary .ui-button-text, .ui-button-text-icons .ui-button-text {
   padding: .4em 2.1em .4em 1em;
 }
 .ui-button-text-icons .ui-button-text {
@@ -1594,18 +1545,13 @@ input.ui-button {
   left: 50%;
   margin-left: -8px;
 }
-.ui-button-text-icon-primary .ui-button-icon-primary,
-.ui-button-text-icons .ui-button-icon-primary,
-.ui-button-icons-only .ui-button-icon-primary {
+.ui-button-text-icon-primary .ui-button-icon-primary, .ui-button-text-icons .ui-button-icon-primary, .ui-button-icons-only .ui-button-icon-primary {
   left: .5em;
 }
-.ui-button-text-icon-secondary .ui-button-icon-secondary,
-.ui-button-text-icons .ui-button-icon-secondary,
-.ui-button-icons-only .ui-button-icon-secondary {
+.ui-button-text-icon-secondary .ui-button-icon-secondary, .ui-button-text-icons .ui-button-icon-secondary, .ui-button-icons-only .ui-button-icon-secondary {
   right: .5em;
 }
-.ui-button-text-icons .ui-button-icon-secondary,
-.ui-button-icons-only .ui-button-icon-secondary {
+.ui-button-text-icons .ui-button-icon-secondary, .ui-button-icons-only .ui-button-icon-secondary {
   right: .5em;
 }
 /*button sets*/
