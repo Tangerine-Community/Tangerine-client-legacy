@@ -98,8 +98,6 @@ KlassToDateView = (function(_super) {
         if (results) {
           correctItems = 0;
           totalItems = 0;
-          console.log("part " + part);
-          console.log(results.length);
           for (_k = 0, _len6 = results.length; _k < _len6; _k++) {
             result = results[_k];
             _ref2 = result.get("subtestData").items;
@@ -108,10 +106,8 @@ KlassToDateView = (function(_super) {
               if (item.itemResult === "correct") correctItems++;
               totalItems++;
             }
-            console.log("" + correctItems + " / " + totalItems);
           }
           percentCorrect = (correctItems / totalItems) * 100;
-          console.log("%" + percentCorrect);
           flotArrays[bucketKey].push([parseInt(part), percentCorrect]);
         } else {
           flotArrays[bucketKey].push([parseInt(part), 0]);

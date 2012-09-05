@@ -57,15 +57,11 @@ class KlassToDateView extends Backbone.View
         if results
           correctItems = 0
           totalItems   = 0
-          console.log "part #{part}"
-          console.log results.length
           for result in results
             for item in result.get("subtestData").items
               correctItems++ if item.itemResult == "correct"
               totalItems++
-            console.log "#{correctItems} / #{totalItems}"
           percentCorrect = (correctItems / totalItems) * 100
-          console.log "%" + percentCorrect
           flotArrays[bucketKey].push [parseInt(part), percentCorrect]
         else
           flotArrays[bucketKey].push [parseInt(part), 0]
