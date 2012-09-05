@@ -11,30 +11,25 @@ class StudentToDateView extends Backbone.View
     milisecondsPerPart = 604800000
     @currentPart = Math.round(((new Date()).getTime() - options.klass.get("startDate")) / milisecondsPerPart)
 
-    @range = (i for i in [1..@currentPart])
-
+    # sort subtests by part
     subtestsByPart = []
-
     for subtest in options.subtests
       subtestPart = subtest.get("part")
-
       if subtestsByPart[subtestPart]?
         subtestsByPart[subtestPart].push subtest 
       else
         subtestsByPart[subtestPart] = [subtest]
 
+    # sort subtests-by-part, by result bucket
     subtestsByResultsBucket = []
     resultsByBucketByPart = {}
-
     for subtests, i in subtestsByPart
       if subtests == undefined then continue
       for subtest in subtests
-
         if resultsByBucketByPart[subtest.get("resultBucket")] == undefined
           resultsByBucketByPart[subtest.get("resultBucket")]  = []
           subtestsByResultsBucket[subtest.get("resultBucket")]  = []
-
-        resultsByBucketByPart[subtest.get("resultBucket")][i] = options.results.where({"subtestId" : subtest.id})
+        resultsByBucketByPart[subtest.get("resultBucket")][i] = options.results.where({"subtestId" : subtest.id, "studentId" : options.studentId})
         subtestsByResultsBucket[subtest.get("resultBucket")].push subtest.get("items")
 
     # should we use lines or dots
@@ -46,14 +41,10 @@ class StudentToDateView extends Backbone.View
       else
         bucketType[bucketKey] = "points"
 
-
-
+    # count correct in each bucket
     flotArrays = []
-
     for bucketKey, bucket of resultsByBucketByPart
-
       for part, result of bucket
-
         if flotArrays[bucketKey] == undefined then flotArrays[bucketKey] = []
         if result? && result[0]? && result[0].get?
           correctItems = 0
@@ -66,12 +57,9 @@ class StudentToDateView extends Backbone.View
         else
           flotArrays[bucketKey].push [parseInt(part), 0]
 
-
     @flotData = []
     for bucket, flotArray of flotArrays
-
-      flotArray = _.reject flotArray, (arr) =>
-        arr[0] > @currentPart
+      flotArray = _.reject flotArray, (arr) => arr[0] > @currentPart
 
       if bucketType[bucket] == "lines"
         flotArray.push [@currentPart + 1, _.last(flotArray)[1]]

@@ -25,14 +25,6 @@ StudentToDateView = (function(_super) {
       _this = this;
     milisecondsPerPart = 604800000;
     this.currentPart = Math.round(((new Date()).getTime() - options.klass.get("startDate")) / milisecondsPerPart);
-    this.range = (function() {
-      var _ref, _results;
-      _results = [];
-      for (i = 1, _ref = this.currentPart; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
-        _results.push(i);
-      }
-      return _results;
-    }).call(this);
     subtestsByPart = [];
     _ref = options.subtests;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -56,7 +48,8 @@ StudentToDateView = (function(_super) {
           subtestsByResultsBucket[subtest.get("resultBucket")] = [];
         }
         resultsByBucketByPart[subtest.get("resultBucket")][i] = options.results.where({
-          "subtestId": subtest.id
+          "subtestId": subtest.id,
+          "studentId": options.studentId
         });
         subtestsByResultsBucket[subtest.get("resultBucket")].push(subtest.get("items"));
       }
