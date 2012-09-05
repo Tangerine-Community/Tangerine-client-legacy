@@ -65,11 +65,16 @@ class KlassToDateView extends Backbone.View
         "lines" :
           "show":true
           "steps": true
+      },
+      { 
+        "label": "General Threshold"
+        "data": [[1, (Tangerine.settings.generalThreshold*100)], [@currentPart+1, (Tangerine.settings.generalThreshold*100)]]
+        "lines" :
+          "show":true
       }
+      
     ]
-    
 
-    
     
     @flotOptions = 
       "yaxis" : 
@@ -82,7 +87,7 @@ class KlassToDateView extends Backbone.View
       
   render: ->
     @$el.html "
-      <h1>Class to date</h1>
+      <h1>#{t('class progress report')}</h1>
       <div id='chart' style='width:450px; height:300px;'></div>
     "
 

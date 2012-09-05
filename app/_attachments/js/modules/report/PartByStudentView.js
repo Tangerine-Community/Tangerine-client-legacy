@@ -97,18 +97,18 @@ PartByStudentView = (function(_super) {
   PartByStudentView.prototype.render = function() {
     var detailsHTML, person, summaryHTML, _i, _len, _ref;
     if (this.table.length === 0) {
-      this.$el.html("<h1>Assessment by student</h1>      <p>No students assessed yet. Return to the <a href='#class'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>");
+      this.$el.html("<h1>" + (t('student grouping report')) + "</h1>      <p>No students assessed yet. Return to the <a href='#class'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>");
       this.trigger("rendered");
       return;
     }
-    detailsHTML = "      <h1>Assessment by student</h1>      <table border='3'>      <tr>        <td>Name</td>        <td>% Correct</td>        <td># Correct</td>        <td># Attempted</td>        <td>Total</td>        <td>%ile</td>        <td>Status</td>      </tr>    ";
+    detailsHTML = "      <h1>" + (t('student grouping report')) + "</h1>      <table border='3'>      <tr>        <td>Name</td>        <td>% Correct</td>        <td># Correct</td>        <td># Attempted</td>        <td>Total</td>        <td>%ile</td>        <td>Status</td>      </tr>    ";
     _ref = this.table;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       person = _ref[_i];
       detailsHTML += "        <tr bgcolor='" + this.colors[person.index] + "'>          <td>" + person.name + "</td>          <td>" + person.pCorrect + "</td>          <td>" + person.nCorrect + "</td>          <td>" + person.attempted + "</td>          <td>" + person.total + "</td>          <td>" + person.percentile + "</td>          <td>" + person.status + "</td>        </tr>        ";
     }
     detailsHTML += "</table>";
-    summaryHTML = "<h1>Assessment by student</h1>    <table border='3'>      <tr><td>Subtest Name</td>          <td>" + this.summary.name + "</td></tr>      <tr><td>Average (%)</td>           <td>" + this.summary.aCorrect + "</td></tr>      <tr><td>Standard Deviation (%)</td><td>" + this.summary.stdDev + "</td></tr>      <tr><td>Class Size</td>            <td>" + this.summary.classSize + "</td></tr>      <tr><td>Number of Questions</td>   <td>" + this.summary.totalItems + "</td></tr>      <tr><td>Students to watch</td>     <td>" + (this.summary.watchList.join(', ')) + "</td></tr>    </table>";
+    summaryHTML = "<h1>" + (t('student grouping report')) + "</h1>    <table border='3'>      <tr><td>Subtest Name</td>          <td>" + this.summary.name + "</td></tr>      <tr><td>Average (%)</td>           <td>" + this.summary.aCorrect + "</td></tr>      <tr><td>Standard Deviation (%)</td><td>" + this.summary.stdDev + "</td></tr>      <tr><td>Class Size</td>            <td>" + this.summary.classSize + "</td></tr>      <tr><td>Number of Questions</td>   <td>" + this.summary.totalItems + "</td></tr>      <tr><td>Students to watch</td>     <td>" + (this.summary.watchList.join(', ')) + "</td></tr>    </table>";
     this.$el.html("      " + summaryHTML + "      " + detailsHTML + "          <button class='navigation back'>Back</button>    ");
     return this.trigger("rendered");
   };

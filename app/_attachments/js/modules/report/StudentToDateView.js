@@ -63,15 +63,14 @@ StudentToDateView = (function(_super) {
       for (part in bucket) {
         result = bucket[part];
         if (flotArrays[bucketKey] === void 0) flotArrays[bucketKey] = [];
-        if (result.get != null) {
+        if ((result != null) && (result[0] != null) && (result[0].get != null)) {
           correctItems = 0;
           totalItems = 0;
-          _ref2 = result.get("subtestData").items;
+          _ref2 = result[0].get("subtestData").items;
           for (_k = 0, _len4 = _ref2.length; _k < _len4; _k++) {
             item = _ref2[_k];
             if (item.itemResult === "correct") correctItems++;
             totalItems++;
-            console.log(correctItems);
           }
           percentCorrect = (correctItems / totalItems) * 100;
           flotArrays[bucketKey].push([part, percentCorrect]);
@@ -92,8 +91,7 @@ StudentToDateView = (function(_super) {
         }
       });
     }
-    console.log(this.flotData);
-    this.flotOptions = {
+    return this.flotOptions = {
       "yaxis": {
         min: 0,
         max: 100,
@@ -111,13 +109,11 @@ StudentToDateView = (function(_super) {
         tickDecimals: 0
       }
     };
-    console.log(this.flotData);
-    return console.log(this.flotOptions);
   };
 
   StudentToDateView.prototype.render = function() {
     var lineColor;
-    this.$el.html("      <button class='navigation back'>" + (t('back')) + "</button>      <h1>" + (t('student to date')) + "</h1>      <div id='chart' style='width:450px; height:300px;'></div>    ");
+    this.$el.html("      <button class='navigation back'>" + (t('back')) + "</button>      <h1>" + (t('student progress report')) + "</h1>      <div id='chart' style='width:450px; height:300px;'></div>    ");
     this.trigger("rendered");
     return lineColor = "#BDDC93";
   };

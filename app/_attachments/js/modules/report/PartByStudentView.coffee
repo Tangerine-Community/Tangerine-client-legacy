@@ -88,14 +88,14 @@ class PartByStudentView extends Backbone.View
 
   render: ->
     if @table.length == 0
-      @$el.html "<h1>Assessment by student</h1>
+      @$el.html "<h1>#{t('student grouping report')}</h1>
       <p>No students assessed yet. Return to the <a href='#class'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>"
       @trigger "rendered"
       return
 
     # Write HTML Table of all data
     detailsHTML = "
-      <h1>Assessment by student</h1>
+      <h1>#{t('student grouping report')}</h1>
       <table border='3'>
       <tr>
         <td>Name</td>
@@ -123,7 +123,7 @@ class PartByStudentView extends Backbone.View
     detailsHTML += "</table>"
     
     # Write HTML table of quick summary stats
-    summaryHTML = "<h1>Assessment by student</h1>
+    summaryHTML = "<h1>#{t('student grouping report')}</h1>
     <table border='3'>
       <tr><td>Subtest Name</td>          <td>#{@summary.name}</td></tr>
       <tr><td>Average (%)</td>           <td>#{@summary.aCorrect}</td></tr>

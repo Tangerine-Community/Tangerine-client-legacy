@@ -35,15 +35,15 @@
 	"reports" : 
 	[
 		{
-			"name"     : "student to date",
+			"name"     : "student progress report",
 			"menuView" : "StudentToDateMenuView"
 		},
 		{
-			"name"     : "class to date",
+			"name"     : "class progress report",
 			"menuView" : "KlassToDateMenuView"
 		},
 		{
-			"name"     : "part by student",
+			"name"     : "class grouping report",
 			"menuView" : "PartByStudentMenuView"
 		}
 	]

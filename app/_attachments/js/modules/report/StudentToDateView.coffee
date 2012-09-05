@@ -45,13 +45,12 @@ class StudentToDateView extends Backbone.View
       for part, result of bucket
 
         if flotArrays[bucketKey] == undefined then flotArrays[bucketKey] = []
-        if result.get?
+        if result? && result[0]? && result[0].get?
           correctItems = 0
           totalItems   = 0
-          for item in result.get("subtestData").items
+          for item in result[0].get("subtestData").items
             correctItems++ if item.itemResult == "correct"
             totalItems++
-            console.log correctItems
           percentCorrect = (correctItems / totalItems) * 100
           flotArrays[bucketKey].push [part, percentCorrect]
         else
@@ -70,7 +69,6 @@ class StudentToDateView extends Backbone.View
           "steps": true
       }
 
-    console.log @flotData
 
     @flotOptions = 
       "yaxis" : 
@@ -80,14 +78,12 @@ class StudentToDateView extends Backbone.View
       "xaxis" :
         ticks: (String(i) for i in [1..@currentPart])
         tickDecimals : 0
-        
-    console.log @flotData
-    console.log @flotOptions
+
     
   render: ->
     @$el.html "
       <button class='navigation back'>#{t('back')}</button>
-      <h1>#{t('student to date')}</h1>
+      <h1>#{t('student progress report')}</h1>
       <div id='chart' style='width:450px; height:300px;'></div>
     "
 

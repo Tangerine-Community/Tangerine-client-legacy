@@ -98,6 +98,12 @@ KlassToDateView = (function(_super) {
           "show": true,
           "steps": true
         }
+      }, {
+        "label": "General Threshold",
+        "data": [[1, Tangerine.settings.generalThreshold * 100], [this.currentPart + 1, Tangerine.settings.generalThreshold * 100]],
+        "lines": {
+          "show": true
+        }
       }
     ];
     return this.flotOptions = {
@@ -122,7 +128,7 @@ KlassToDateView = (function(_super) {
 
   KlassToDateView.prototype.render = function() {
     var lineColor;
-    this.$el.html("      <h1>Class to date</h1>      <div id='chart' style='width:450px; height:300px;'></div>    ");
+    this.$el.html("      <h1>" + (t('class progress report')) + "</h1>      <div id='chart' style='width:450px; height:300px;'></div>    ");
     this.trigger("rendered");
     return lineColor = "#BDDC93";
   };
