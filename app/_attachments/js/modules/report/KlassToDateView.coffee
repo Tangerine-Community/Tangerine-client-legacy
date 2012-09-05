@@ -90,6 +90,7 @@ class KlassToDateView extends Backbone.View
   render: ->
     @$el.html "
       <h1>#{t('class progress report')}</h1>
+      <p>This class has #{@options.studentCount} students.</p>
       <div id='chart' style='width:450px; height:300px;'></div>
     "
 

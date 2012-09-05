@@ -128,7 +128,7 @@ KlassToDateView = (function(_super) {
 
   KlassToDateView.prototype.render = function() {
     var lineColor;
-    this.$el.html("      <h1>" + (t('class progress report')) + "</h1>      <div id='chart' style='width:450px; height:300px;'></div>    ");
+    this.$el.html("      <h1>" + (t('class progress report')) + "</h1>      <p>This class has " + this.options.studentCount + " students.</p>      <div id='chart' style='width:450px; height:300px;'></div>    ");
     this.trigger("rendered");
     return lineColor = "#BDDC93";
   };
