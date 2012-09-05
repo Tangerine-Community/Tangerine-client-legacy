@@ -7,11 +7,9 @@ class StudentToDateView extends Backbone.View
     history.back()
 
   initialize: (options) ->
-    
-    
+
     milisecondsPerPart = 604800000
     @currentPart = Math.round(((new Date()).getTime() - options.klass.get("startDate")) / milisecondsPerPart)
-    
 
     @range = (i for i in [1..@currentPart])
 
@@ -25,16 +23,28 @@ class StudentToDateView extends Backbone.View
       else
         subtestsByPart[subtestPart] = [subtest]
 
+    subtestsByResultsBucket = []
     resultsByBucketByPart = {}
 
     for subtests, i in subtestsByPart
       if subtests == undefined then continue
       for subtest in subtests
+
         if resultsByBucketByPart[subtest.get("resultBucket")] == undefined
           resultsByBucketByPart[subtest.get("resultBucket")]  = []
+          subtestsByResultsBucket[subtest.get("resultBucket")]  = []
 
         resultsByBucketByPart[subtest.get("resultBucket")][i] = options.results.where({"subtestId" : subtest.id})
+        subtestsByResultsBucket[subtest.get("resultBucket")].push subtest.get("items")
 
+    # should we use lines or dots
+    bucketType = []
+    for bucketKey, subtests of subtestsByResultsBucket
+      bucketType[bucketKey] = null
+      if _.union.apply(this, (element.length for element in subtests)).length == 1
+        bucketType[bucketKey] = "lines"
+      else
+        bucketType[bucketKey] = "points"
 
 
 
@@ -52,22 +62,31 @@ class StudentToDateView extends Backbone.View
             correctItems++ if item.itemResult == "correct"
             totalItems++
           percentCorrect = (correctItems / totalItems) * 100
-          flotArrays[bucketKey].push [part, percentCorrect]
+          flotArrays[bucketKey].push [parseInt(part), percentCorrect]
         else
-          flotArrays[bucketKey].push [part, 0]
-
+          flotArrays[bucketKey].push [parseInt(part), 0]
 
 
     @flotData = []
     for bucket, flotArray of flotArrays
 
-      @flotData.push {
+      flotArray = _.reject flotArray, (arr) =>
+        arr[0] > @currentPart
+
+      if bucketType[bucket] == "lines"
+        flotArray.push [@currentPart + 1, _.last(flotArray)[1]]
+
+      oneObject = {
         "label" : bucket
-        "data" : flotArray[0..@currentPart]
-        "lines" :
-          "show":true
-          "steps": true
+        "data" : flotArray
       }
+      oneObject[bucketType[bucket]] = 
+        "show" : true
+        "radius" : 4
+        "width" : 4
+        
+
+      @flotData.push oneObject
 
 
     @flotOptions = 
@@ -76,6 +95,8 @@ class StudentToDateView extends Backbone.View
         max: 100
         ticks: 10
       "xaxis" :
+        min : 0.5
+        max : @currentPart + 0.5
         ticks: (String(i) for i in [1..@currentPart])
         tickDecimals : 0
 

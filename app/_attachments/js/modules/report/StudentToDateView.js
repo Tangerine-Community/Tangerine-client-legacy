@@ -21,7 +21,8 @@ StudentToDateView = (function(_super) {
   };
 
   StudentToDateView.prototype.initialize = function(options) {
-    var bucket, bucketKey, correctItems, flotArray, flotArrays, i, item, milisecondsPerPart, part, percentCorrect, result, resultsByBucketByPart, subtest, subtestPart, subtests, subtestsByPart, totalItems, _i, _j, _k, _len, _len2, _len3, _len4, _ref, _ref2;
+    var bucket, bucketKey, bucketType, correctItems, element, flotArray, flotArrays, i, item, milisecondsPerPart, oneObject, part, percentCorrect, result, resultsByBucketByPart, subtest, subtestPart, subtests, subtestsByPart, subtestsByResultsBucket, totalItems, _i, _j, _k, _len, _len2, _len3, _len4, _ref, _ref2,
+      _this = this;
     milisecondsPerPart = 604800000;
     this.currentPart = Math.round(((new Date()).getTime() - options.klass.get("startDate")) / milisecondsPerPart);
     this.range = (function() {
@@ -43,6 +44,7 @@ StudentToDateView = (function(_super) {
         subtestsByPart[subtestPart] = [subtest];
       }
     }
+    subtestsByResultsBucket = [];
     resultsByBucketByPart = {};
     for (i = 0, _len2 = subtestsByPart.length; i < _len2; i++) {
       subtests = subtestsByPart[i];
@@ -51,10 +53,30 @@ StudentToDateView = (function(_super) {
         subtest = subtests[_j];
         if (resultsByBucketByPart[subtest.get("resultBucket")] === void 0) {
           resultsByBucketByPart[subtest.get("resultBucket")] = [];
+          subtestsByResultsBucket[subtest.get("resultBucket")] = [];
         }
         resultsByBucketByPart[subtest.get("resultBucket")][i] = options.results.where({
           "subtestId": subtest.id
         });
+        subtestsByResultsBucket[subtest.get("resultBucket")].push(subtest.get("items"));
+      }
+    }
+    bucketType = [];
+    for (bucketKey in subtestsByResultsBucket) {
+      subtests = subtestsByResultsBucket[bucketKey];
+      bucketType[bucketKey] = null;
+      if (_.union.apply(this, (function() {
+        var _k, _len4, _results;
+        _results = [];
+        for (_k = 0, _len4 = subtests.length; _k < _len4; _k++) {
+          element = subtests[_k];
+          _results.push(element.length);
+        }
+        return _results;
+      })()).length === 1) {
+        bucketType[bucketKey] = "lines";
+      } else {
+        bucketType[bucketKey] = "points";
       }
     }
     flotArrays = [];
@@ -73,23 +95,31 @@ StudentToDateView = (function(_super) {
             totalItems++;
           }
           percentCorrect = (correctItems / totalItems) * 100;
-          flotArrays[bucketKey].push([part, percentCorrect]);
+          flotArrays[bucketKey].push([parseInt(part), percentCorrect]);
         } else {
-          flotArrays[bucketKey].push([part, 0]);
+          flotArrays[bucketKey].push([parseInt(part), 0]);
         }
       }
     }
     this.flotData = [];
     for (bucket in flotArrays) {
       flotArray = flotArrays[bucket];
-      this.flotData.push({
-        "label": bucket,
-        "data": flotArray.slice(0, this.currentPart + 1 || 9e9),
-        "lines": {
-          "show": true,
-          "steps": true
-        }
+      flotArray = _.reject(flotArray, function(arr) {
+        return arr[0] > _this.currentPart;
       });
+      if (bucketType[bucket] === "lines") {
+        flotArray.push([this.currentPart + 1, _.last(flotArray)[1]]);
+      }
+      oneObject = {
+        "label": bucket,
+        "data": flotArray
+      };
+      oneObject[bucketType[bucket]] = {
+        "show": true,
+        "radius": 4,
+        "width": 4
+      };
+      this.flotData.push(oneObject);
     }
     return this.flotOptions = {
       "yaxis": {
@@ -98,6 +128,8 @@ StudentToDateView = (function(_super) {
         ticks: 10
       },
       "xaxis": {
+        min: 0.5,
+        max: this.currentPart + 0.5,
         ticks: (function() {
           var _ref3, _results;
           _results = [];

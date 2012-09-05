@@ -9,7 +9,7 @@
   "part": 1,
   "columns": 3,
   "variableName": "baseline_letters",
-  "resultBucket" : "Letters",
+  "resultBucket" : "Progress letters",
   "name": "Baseline letters",
   "items": [
        "g",
