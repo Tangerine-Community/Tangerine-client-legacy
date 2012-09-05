@@ -57,13 +57,6 @@
           <span class="s">&quot;steps&quot;</span><span class="o">:</span> <span class="kc">true</span>
       <span class="p">},</span>
       <span class="p">{</span> 
-        <span class="s">&quot;label&quot;</span><span class="o">:</span> <span class="s">&quot;% Collected&quot;</span>
-        <span class="s">&quot;data&quot;</span><span class="o">:</span> <span class="nx">@collectionCompleteByPart</span>
-        <span class="s">&quot;lines&quot;</span> <span class="o">:</span>
-          <span class="s">&quot;show&quot;</span><span class="o">:</span><span class="kc">true</span>
-          <span class="s">&quot;steps&quot;</span><span class="o">:</span> <span class="kc">true</span>
-      <span class="p">},</span>
-      <span class="p">{</span> 
         <span class="s">&quot;label&quot;</span><span class="o">:</span> <span class="s">&quot;General Threshold&quot;</span>
         <span class="s">&quot;data&quot;</span><span class="o">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">generalThreshold</span><span class="o">*</span><span class="mi">100</span><span class="p">)],</span> <span class="p">[</span><span class="nx">@currentPart</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">generalThreshold</span><span class="o">*</span><span class="mi">100</span><span class="p">)]]</span>
         <span class="s">&quot;lines&quot;</span> <span class="o">:</span>
@@ -71,6 +64,15 @@
       <span class="p">}</span>
       
     <span class="p">]</span>
+
+
+    <span class="o">`/*</span><span class="p">{</span> 
+      <span class="s">&quot;label&quot;</span><span class="o">:</span> <span class="s">&quot;% Collected&quot;</span>
+      <span class="s">&quot;data&quot;</span><span class="o">:</span> <span class="nx">@collectionCompleteByPart</span>
+      <span class="s">&quot;lines&quot;</span> <span class="o">:</span>
+        <span class="s">&quot;show&quot;</span><span class="o">:</span><span class="kc">true</span>
+        <span class="s">&quot;steps&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">}</span><span class="o">*/`</span>
 
     
     <span class="vi">@flotOptions = </span>

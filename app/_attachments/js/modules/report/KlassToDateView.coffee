@@ -60,13 +60,6 @@ class KlassToDateView extends Backbone.View
           "steps": true
       },
       { 
-        "label": "% Collected"
-        "data": @collectionCompleteByPart
-        "lines" :
-          "show":true
-          "steps": true
-      },
-      { 
         "label": "General Threshold"
         "data": [[1, (Tangerine.settings.generalThreshold*100)], [@currentPart+1, (Tangerine.settings.generalThreshold*100)]]
         "lines" :
@@ -74,6 +67,15 @@ class KlassToDateView extends Backbone.View
       }
       
     ]
+
+
+    `/*{ 
+      "label": "% Collected"
+      "data": @collectionCompleteByPart
+      "lines" :
+        "show":true
+        "steps": true
+    }*/`
 
     
     @flotOptions = 

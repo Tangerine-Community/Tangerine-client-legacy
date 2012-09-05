@@ -92,13 +92,6 @@ KlassToDateView = (function(_super) {
           "steps": true
         }
       }, {
-        "label": "% Collected",
-        "data": this.collectionCompleteByPart,
-        "lines": {
-          "show": true,
-          "steps": true
-        }
-      }, {
         "label": "General Threshold",
         "data": [[1, Tangerine.settings.generalThreshold * 100], [this.currentPart + 1, Tangerine.settings.generalThreshold * 100]],
         "lines": {
@@ -106,6 +99,13 @@ KlassToDateView = (function(_super) {
         }
       }
     ];
+    /*{ 
+      "label": "% Collected"
+      "data": @collectionCompleteByPart
+      "lines" :
+        "show":true
+        "steps": true
+    }*/;
     return this.flotOptions = {
       "yaxis": {
         min: 0,
