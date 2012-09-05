@@ -29,7 +29,10 @@ class StudentToDateView extends Backbone.View
         if resultsByBucketByPart[subtest.get("resultBucket")] == undefined
           resultsByBucketByPart[subtest.get("resultBucket")]  = []
           subtestsByResultsBucket[subtest.get("resultBucket")]  = []
-        resultsByBucketByPart[subtest.get("resultBucket")][i] = options.results.where({"subtestId" : subtest.id, "studentId" : options.studentId})
+        resultsByBucketByPart[subtest.get("resultBucket")][i] = options.results.where
+          "subtestId" : subtest.id
+          "studentId" : options.studentId
+          "klassId"   : options.klass.id
         subtestsByResultsBucket[subtest.get("resultBucket")].push subtest.get("items")
 
     # should we use lines or dots
@@ -54,8 +57,6 @@ class StudentToDateView extends Backbone.View
             totalItems++
           percentCorrect = (correctItems / totalItems) * 100
           flotArrays[bucketKey].push [parseInt(part), percentCorrect]
-        else
-          flotArrays[bucketKey].push [parseInt(part), 0]
 
     @flotData = []
     for bucket, flotArray of flotArrays

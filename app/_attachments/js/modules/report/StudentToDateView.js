@@ -49,7 +49,8 @@ StudentToDateView = (function(_super) {
         }
         resultsByBucketByPart[subtest.get("resultBucket")][i] = options.results.where({
           "subtestId": subtest.id,
-          "studentId": options.studentId
+          "studentId": options.studentId,
+          "klassId": options.klass.id
         });
         subtestsByResultsBucket[subtest.get("resultBucket")].push(subtest.get("items"));
       }
@@ -89,8 +90,6 @@ StudentToDateView = (function(_super) {
           }
           percentCorrect = (correctItems / totalItems) * 100;
           flotArrays[bucketKey].push([parseInt(part), percentCorrect]);
-        } else {
-          flotArrays[bucketKey].push([parseInt(part), 0]);
         }
       }
     }
