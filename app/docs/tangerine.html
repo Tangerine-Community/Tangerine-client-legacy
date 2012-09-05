@@ -23,9 +23,8 @@
     <span class="s">&#39;curriculum/:id&#39;</span>    <span class="o">:</span> <span class="s">&#39;curriculum&#39;</span>
     <span class="s">&#39;curriculum/import&#39;</span> <span class="o">:</span> <span class="s">&#39;curriculumImport&#39;</span>
 
-    <span class="s">&#39;register&#39;</span>         <span class="o">:</span> <span class="s">&#39;register&#39;</span>
-
     <span class="s">&#39;settings&#39;</span> <span class="o">:</span> <span class="s">&#39;settings&#39;</span>
+    <span class="s">&#39;update&#39;</span> <span class="o">:</span> <span class="s">&#39;update&#39;</span>
 
     <span class="s">&#39;&#39;</span> <span class="o">:</span> <span class="s">&#39;landing&#39;</span>
 
@@ -479,6 +478,27 @@
             <span class="nv">view = </span><span class="k">new</span> <span class="nx">SettingsView</span>
               <span class="s">&quot;settings&quot;</span> <span class="o">:</span> <span class="nx">settings</span>
             <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
+      <span class="nv">isUnregistered: </span><span class="nf">(options) -&gt;</span>
+        <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
+
+  <span class="nv">update: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
+      <span class="nv">isAdmin: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">version-uuid&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;Updating...&quot;</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">couch</span><span class="p">.</span><span class="nx">replicate</span><span class="p">(</span>
+          <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">cloud</span><span class="p">.</span><span class="nx">host</span><span class="o">+</span><span class="s">&quot;/&quot;</span><span class="o">+</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">cloud</span><span class="p">.</span><span class="nx">dbName</span><span class="p">,</span>
+          <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nx">dbName</span><span class="p">,</span>
+            <span class="nv">success: </span><span class="o">-&gt;</span>
+              <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">version-uuid&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;Successful update, now refreshing app...&quot;</span><span class="p">)</span>
+              <span class="nx">_</span><span class="p">.</span><span class="nx">delay</span> <span class="o">-&gt;</span>
+                <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="kc">false</span>
+                <span class="nb">document</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">reload</span><span class="p">()</span>
+              <span class="p">,</span> <span class="mi">2000</span>
+            <span class="nv">error: </span><span class="nf">(error) -&gt;</span>
+              <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">version-uuid&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;Error updating: </span><span class="si">#{</span><span class="nx">error</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)</span>
+          <span class="p">,</span>
+            <span class="nv">doc_ids: </span><span class="p">[</span><span class="s">&quot;_design/tangerine&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
       <span class="nv">isUnregistered: </span><span class="nf">(options) -&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
