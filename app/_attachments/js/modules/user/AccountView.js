@@ -15,7 +15,24 @@ AccountView = (function(_super) {
     'click .join_cancel': 'joinToggle',
     'click .join': 'joinToggle',
     'click .join_group': 'join',
-    'click .back': 'goBack'
+    'click .back': 'goBack',
+    'click #mode_buttons input': 'changeMode'
+  };
+
+  AccountView.prototype.changeMode = function(event) {
+    var settings,
+      _this = this;
+    settings = new Settings({
+      "_id": "TangerineSettings"
+    });
+    return settings.fetch({
+      success: function(settingsModel) {
+        settingsModel.set({
+          "context": $(event.target).val()
+        });
+        return settingsModel.save();
+      }
+    });
   };
 
   AccountView.prototype.goBack = function() {
@@ -48,14 +65,21 @@ AccountView = (function(_super) {
   };
 
   AccountView.prototype.render = function() {
-    var group, html, _i, _len, _ref;
+    var classChecked, group, html, mobileChecked, modeSelector, _i, _len, _ref;
     html = "      <button class='back navigation'>Back</button>      <h1>Account</h1>      <div class='label_value'>        <label>Name</label>        <p>" + this.user.name + "</p>      </div>      <div class='label_value menu_box'>        <label>Groups</label>        <ul>    ";
     _ref = this.user.get("groups") || [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       group = _ref[_i];
       html += "<li data-group='" + group + "'>" + group + " <button class='command leave'>Leave</button></li>";
     }
-    html += "        </ul>        <button class='command join'>Join or create a group</button>        <div class='confirmation join_confirmation'>          <input id='group_name' placeholder='Group name'>          <small>Please be specific.<br>          Good examples: MalawiJun2012, MikeTestGroup2012, EGRAGroup2012<br>          Bad examples: group, test, mine</small><br>          <button class='command join_group'>Join Group</button>          <button class='command join_cancel'>Cancel</button>        </div>      </div><br>      <!--button class='command confirmation'>Report a bug</button>      <div class='confirmation' id='bug'>        <label for='where'>What broke?        <input id='where' placeholder='where'>        <label for='where'>What happened?        <input id='where' placeholder='what'>        <label for='where'>What should have happened?        <input id='should' placeholder='should'>        <button>Send</button>      </div-->      ";
+    mobileChecked = Tangerine.settings.context === "mobile" ? " checked='checked'" : "";
+    classChecked = Tangerine.settings.context === "class" ? " checked='checked'" : "";
+    if (Tangerine.settings.context !== 'server') {
+      modeSelector = "        <label title='This setting changes the mobile version of Tangerine to the class version of Tangerine.'>Tangerine</label><br>        <div id='mode_buttons' class='buttonset'>          <input type='radio' id='mode_class' name='mode' value='class' " + classChecked + "><label for='mode_class'>Class</label>          <input type='radio' id='mode_mobile'  name='mode' value='mobile'  " + mobileChecked + "><label for='mode_mobile'>Mobile</label>        </div>      ";
+    } else {
+      modeSelector = "";
+    }
+    html += "        </ul>        <button class='command join'>Join or create a group</button>        <div class='confirmation join_confirmation'>          <input id='group_name' placeholder='Group name'>          <small>Please be specific.<br>          Good examples: MalawiJun2012, MikeTestGroup2012, EGRAGroup2012<br>          Bad examples: group, test, mine</small><br>          <button class='command join_group'>Join Group</button>          <button class='command join_cancel'>Cancel</button>        </div>      </div><br>      " + modeSelector + "      <!--button class='command confirmation'>Report a bug</button>      <div class='confirmation' id='bug'>        <label for='where'>What broke?        <input id='where' placeholder='where'>        <label for='where'>What happened?        <input id='where' placeholder='what'>        <label for='where'>What should have happened?        <input id='should' placeholder='should'>        <button>Send</button>      </div-->      ";
     this.$el.html(html);
     return this.trigger("rendered");
   };
