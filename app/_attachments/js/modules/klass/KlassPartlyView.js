@@ -103,7 +103,7 @@ KlassPartlyView = (function(_super) {
       gridPage += "</tr>";
     }
     gridPage += "</tbody></table>";
-    this.$el.html("      <h1>" + (t('class status')) + "</h1>      <h2>" + (t('assessment')) + " " + this.currentPart + "</h2>      " + gridPage + "<br>            <button class='prev_part command'>" + (t('previous')) + "</button> <button class='next_part command'>" + (t('next')) + "</button><br><br>      <button class='back navigation'>" + (t('back')) + "</button>       ");
+    this.$el.html("      <h1>" + (t('assessment status')) + "</h1>      <h2>" + (t('assessment')) + " " + this.currentPart + "</h2>      " + gridPage + "<br>            <button class='prev_part command'>" + (t('previous')) + "</button> <button class='next_part command'>" + (t('next')) + "</button><br><br>      <button class='back navigation'>" + (t('back')) + "</button>       ");
     return this.trigger("rendered");
   };
 

@@ -81,7 +81,7 @@ class KlassPartlyView extends Backbone.View
     gridPage += "</tbody></table>"
 
     @$el.html "
-      <h1>#{t('class status')}</h1>
+      <h1>#{t('assessment status')}</h1>
       <h2>#{t('assessment')} #{@currentPart}</h2>
       #{gridPage}<br>
       
