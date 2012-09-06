@@ -4,7 +4,7 @@ def push
 end
 
 def notify(type,message)
-  #`growlnotify -t "#{type}" -m "#{message}" -w`
+  `growlnotify -t "#{type}" -m "#{message}" -w`
   `notify-send "#{type} - #{message}" -i /usr/share/icons/Humanity/status/128/dialog-warning.svg &`
 end
 
@@ -15,7 +15,6 @@ watch ( '.*\.coffee$' ) { |match|
     notify("CoffeeScript error", result)
     puts "\n\nCoffeescript error\n******************\n#{result}"
   else
-    push()
     docco_result = `docco #{match}`
     puts "\nDocco-menting:\t\t#{match}\n"
   end
