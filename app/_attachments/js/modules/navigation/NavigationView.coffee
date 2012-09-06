@@ -44,7 +44,7 @@ class NavigationView extends Backbone.View
     version <br/>
     <span id='version-uuid'></span><br/>
     #{
-      if Tangerine.user.isAdmin
+      if Tangerine.user.isAdmin && Tangerine.settings.context != "server"
         "<a href='#update'>#{t('update')}</a>"
       else
         ""
