@@ -778,6 +778,20 @@ li
 }
 
 /*
+ * Placeholders
+ */
+input::-webkit-input-placeholder {
+    color: @grey-1;
+}
+input:-moz-placeholder {
+    color: @grey-1;
+}
+input:-ms-input-placeholder {
+    color: @grey-1;
+}
+
+
+/*
  * Edit Subtest
  */
 
@@ -1247,6 +1261,15 @@ ul.klass_list li
 .subtest_taken
 {
   background: @green;
+}
+
+#current_part
+{
+  width: 30px;
+  display: inline-block;
+  text-align:center;
+  margin: 5px;
+  padding: 5px;
 }
 
 // Klass editor

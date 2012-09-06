@@ -4,13 +4,31 @@
     <span class="s">&quot;click .next_part&quot;</span>                <span class="o">:</span> <span class="s">&quot;nextPart&quot;</span>
     <span class="s">&quot;click .prev_part&quot;</span>                <span class="o">:</span> <span class="s">&quot;prevPart&quot;</span>
     <span class="s">&quot;click .back&quot;</span>                     <span class="o">:</span> <span class="s">&quot;back&quot;</span>
-    <span class="s">&quot;click .student_subtest&quot;</span>          <span class="o">:</span> <span class="s">&quot;gotoStudentSubtest&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>"click .part<em>subtest</em>report"      : "partSubtestReport"
+    <span class="s">&quot;click .student_subtest&quot;</span>          <span class="o">:</span> <span class="s">&quot;gotoStudentSubtest&quot;</span>
+    <span class="s">&quot;keyup </span><span class="err">#</span><span class="s">current_part&quot;</span>             <span class="o">:</span> <span class="s">&quot;gotoAssessment&quot;</span>
+    <span class="s">&quot;keyup </span><span class="err">#</span><span class="s">search_student_name&quot;</span>      <span class="o">:</span> <span class="s">&quot;filterStudents&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>"click .part<em>subtest</em>report"      : "partSubtestReport"
 "click .student"                  : "gotoStudentReport"</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>gotoStudentReport: ->
    Tangerine.router.navigate "report/student/" + $(event.target).attr("data-studentId")</p>
 
 <p>partSubtestReport: (event) ->
    id = $(event.target).attr("data-id")
-   Tangerine.router.navigate "report/#{id}", true</p>             </td>             <td class="code">               <div class="highlight"><pre>    
+   Tangerine.router.navigate "report/#{id}", true</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">filterStudents: </span><span class="o">-&gt;</span>
+    <span class="nv">val = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">search_student_name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+    <span class="vi">@search = </span><span class="nx">val</span>
+    <span class="nx">@updateGridPage</span><span class="p">()</span>
+
+  <span class="nv">gotoAssessment: </span><span class="o">-&gt;</span>
+    <span class="nv">val = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current_part&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nx">val</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> <span class="k">then</span> <span class="k">return</span>
+    <span class="vi">@currentPart = </span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current_part&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+    <span class="nx">@updateGridPage</span><span class="p">()</span>
+
+  <span class="nv">update: </span><span class="o">-&gt;</span>
+    <span class="nx">@render</span><span class="p">()</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;class/</span><span class="si">#{</span><span class="nx">@options</span><span class="p">.</span><span class="nx">klass</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">/</span><span class="si">#{</span><span class="nx">@currentPart</span><span class="si">}</span><span class="s">&quot;</span>
+
+
   <span class="nv">back: </span><span class="o">-&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;class&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
@@ -22,16 +40,15 @@
   <span class="nv">nextPart: </span><span class="o">-&gt;</span>
     <span class="k">if</span> <span class="nx">@currentPart</span> <span class="o">&lt;</span> <span class="nx">@subtestsByPart</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span>
       <span class="nx">@currentPart</span><span class="o">++</span>
-      <span class="nx">@render</span><span class="p">()</span>
-      <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;class/</span><span class="si">#{</span><span class="nx">@options</span><span class="p">.</span><span class="nx">klass</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">/</span><span class="si">#{</span><span class="nx">@currentPart</span><span class="si">}</span><span class="s">&quot;</span>
+      <span class="nx">@update</span><span class="p">()</span>
 
   <span class="nv">prevPart: </span><span class="o">-&gt;</span> 
     <span class="k">if</span> <span class="nx">@currentPart</span> <span class="o">&gt;</span> <span class="mi">1</span>
       <span class="nx">@currentPart</span><span class="o">--</span> 
-      <span class="nx">@render</span><span class="p">()</span>
-      <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;class/</span><span class="si">#{</span><span class="nx">@options</span><span class="p">.</span><span class="nx">klass</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">/</span><span class="si">#{</span><span class="nx">@currentPart</span><span class="si">}</span><span class="s">&quot;</span>
+      <span class="nx">@update</span><span class="p">()</span>
 
   <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@search = </span><span class="s">&quot;&quot;</span>
     <span class="vi">@currentPart = </span><span class="nx">options</span><span class="p">.</span><span class="nx">part</span> <span class="o">||</span> <span class="mi">1</span>
     <span class="vi">@subtestsByPart = </span><span class="p">[]</span>
     <span class="nv">part = </span><span class="mi">1</span>
@@ -41,15 +58,14 @@
       <span class="nx">part</span><span class="o">++</span>
     <span class="vi">@totalParts = </span><span class="nx">part</span> <span class="o">-</span> <span class="mi">1</span>
 
+  <span class="nx">updateGridPage</span><span class="o">:-&gt;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">grid_container&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">@getGridPage</span><span class="p">()</span>
 
-  <span class="nv">render: </span><span class="o">-&gt;</span>
-
-    <span class="vi">@table = </span><span class="p">[]</span>
-
+  <span class="nv">getGridPage: </span><span class="o">-&gt;</span>
+    <span class="nv">table = </span><span class="p">[]</span>
     <span class="nv">subtestsThisPart = </span><span class="nx">@subtestsByPart</span><span class="p">[</span><span class="nx">@currentPart</span><span class="p">]</span>
-
     <span class="k">for</span> <span class="nx">student</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">students</span><span class="p">.</span><span class="nx">models</span>
-      <span class="nx">@table</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="nx">table</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
       <span class="nv">resultsForThisStudent = </span><span class="k">new</span> <span class="nx">KlassResults</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">results</span><span class="p">.</span><span class="nx">where</span> <span class="s">&quot;studentId&quot;</span> <span class="o">:</span> <span class="nx">student</span><span class="p">.</span><span class="nx">id</span>
 
@@ -57,29 +73,40 @@
         <span class="nv">studentResult = </span><span class="nx">resultsForThisStudent</span><span class="p">.</span><span class="nx">where</span> <span class="s">&quot;subtestId&quot;</span> <span class="o">:</span> <span class="nx">subtest</span><span class="p">.</span><span class="nx">id</span>
         <span class="nv">taken = </span><span class="nx">studentResult</span><span class="p">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="mi">0</span>
         
-        <span class="nx">@table</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">push</span>
-          <span class="s">&quot;content&quot;</span>   <span class="o">:</span> <span class="k">if</span> <span class="nx">taken</span> <span class="k">then</span> <span class="s">&quot;&amp;</span><span class="err">#</span><span class="s">x2714;&quot;</span> <span class="k">else</span> <span class="s">&quot;?&quot;</span>
-          <span class="s">&quot;taken&quot;</span>     <span class="o">:</span> <span class="nx">taken</span>
-          <span class="s">&quot;studentId&quot;</span> <span class="o">:</span> <span class="nx">student</span><span class="p">.</span><span class="nx">id</span>
-          <span class="s">&quot;studentName&quot;</span> <span class="o">:</span> <span class="nx">student</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span>
-          <span class="s">&quot;subtestId&quot;</span> <span class="o">:</span> <span class="nx">subtest</span><span class="p">.</span><span class="nx">id</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>make headers</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">gridPage = </span><span class="s">&quot;&lt;table class=&#39;info_box_wide&#39;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&quot;</span>
+        <span class="k">if</span> <span class="o">~</span><span class="nx">student</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">@search</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">())</span> <span class="o">||</span> <span class="nx">@search</span> <span class="o">==</span> <span class="s">&quot;&quot;</span>
+          <span class="nx">table</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">push</span>
+            <span class="s">&quot;content&quot;</span>   <span class="o">:</span> <span class="k">if</span> <span class="nx">taken</span> <span class="k">then</span> <span class="s">&quot;&amp;</span><span class="err">#</span><span class="s">x2714;&quot;</span> <span class="k">else</span> <span class="s">&quot;?&quot;</span>
+            <span class="s">&quot;taken&quot;</span>     <span class="o">:</span> <span class="nx">taken</span>
+            <span class="s">&quot;studentId&quot;</span> <span class="o">:</span> <span class="nx">student</span><span class="p">.</span><span class="nx">id</span>
+            <span class="s">&quot;studentName&quot;</span> <span class="o">:</span> <span class="nx">student</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span>
+            <span class="s">&quot;subtestId&quot;</span> <span class="o">:</span> <span class="nx">subtest</span><span class="p">.</span><span class="nx">id</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>make headers</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">gridPage = </span><span class="s">&quot;&lt;table class=&#39;info_box_wide&#39;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&quot;</span>
     <span class="k">for</span> <span class="nx">subtest</span> <span class="k">in</span> <span class="nx">subtestsThisPart</span>
       <span class="nx">gridPage</span> <span class="o">+=</span> <span class="s">&quot;&lt;th&gt;&lt;div class=&#39;part_subtest_report&#39; data-id=&#39;</span><span class="si">#{</span><span class="nx">subtest</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">subtest</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/div&gt;&lt;/th&gt;&quot;</span>
     <span class="nx">gridPage</span> <span class="o">+=</span> <span class="s">&quot;&lt;/tr&gt;&quot;</span>
-    <span class="k">for</span> <span class="nx">row</span> <span class="k">in</span> <span class="nx">@table</span>
-      <span class="nx">gridPage</span> <span class="o">+=</span> <span class="s">&quot;&lt;tr&gt;&lt;td&gt;&lt;div class=&#39;student&#39; data-studentId=&#39;</span><span class="si">#{</span><span class="nx">row</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">studentId</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">row</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">studentName</span><span class="si">}</span><span class="s">&lt;/div&gt;&lt;/td&gt;&quot;</span>
-      <span class="k">for</span> <span class="nx">cell</span><span class="p">,</span> <span class="nx">column</span> <span class="k">in</span> <span class="nx">row</span>
-        <span class="nv">takenClass = </span><span class="k">if</span> <span class="nx">cell</span><span class="p">.</span><span class="nx">taken</span> <span class="k">then</span> <span class="s">&quot; subtest_taken&quot;</span> <span class="k">else</span> <span class="s">&quot;&quot;</span>
-        <span class="nx">gridPage</span> <span class="o">+=</span> <span class="s">&quot;&lt;td&gt;&lt;div class=&#39;student_subtest command </span><span class="si">#{</span><span class="nx">takenClass</span><span class="si">}</span><span class="s">&#39; data-taken=&#39;</span><span class="si">#{</span><span class="nx">cell</span><span class="p">.</span><span class="nx">taken</span><span class="si">}</span><span class="s">&#39; data-studentId=&#39;</span><span class="si">#{</span><span class="nx">cell</span><span class="p">.</span><span class="nx">studentId</span><span class="si">}</span><span class="s">&#39; data-subtestId=&#39;</span><span class="si">#{</span><span class="nx">cell</span><span class="p">.</span><span class="nx">subtestId</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">cell</span><span class="p">.</span><span class="nx">content</span><span class="si">}</span><span class="s">&lt;/div&gt;&lt;/td&gt;&quot;</span>
-      <span class="nx">gridPage</span> <span class="o">+=</span> <span class="s">&quot;&lt;/tr&gt;&quot;</span>
+    <span class="k">for</span> <span class="nx">row</span> <span class="k">in</span> <span class="nx">table</span>
+      <span class="k">if</span> <span class="nx">row</span><span class="o">?</span> <span class="o">&amp;&amp;</span> <span class="nx">row</span><span class="p">.</span><span class="nx">length</span>
+        <span class="nx">gridPage</span> <span class="o">+=</span> <span class="s">&quot;&lt;tr&gt;&lt;td&gt;&lt;div class=&#39;student&#39; data-studentId=&#39;</span><span class="si">#{</span><span class="nx">row</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">studentId</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">row</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">studentName</span><span class="si">}</span><span class="s">&lt;/div&gt;&lt;/td&gt;&quot;</span>
+        <span class="k">for</span> <span class="nx">cell</span><span class="p">,</span> <span class="nx">column</span> <span class="k">in</span> <span class="nx">row</span>
+          <span class="nv">takenClass = </span><span class="k">if</span> <span class="nx">cell</span><span class="p">.</span><span class="nx">taken</span> <span class="k">then</span> <span class="s">&quot; subtest_taken&quot;</span> <span class="k">else</span> <span class="s">&quot;&quot;</span>
+          <span class="nx">gridPage</span> <span class="o">+=</span> <span class="s">&quot;&lt;td&gt;&lt;div class=&#39;student_subtest command </span><span class="si">#{</span><span class="nx">takenClass</span><span class="si">}</span><span class="s">&#39; data-taken=&#39;</span><span class="si">#{</span><span class="nx">cell</span><span class="p">.</span><span class="nx">taken</span><span class="si">}</span><span class="s">&#39; data-studentId=&#39;</span><span class="si">#{</span><span class="nx">cell</span><span class="p">.</span><span class="nx">studentId</span><span class="si">}</span><span class="s">&#39; data-subtestId=&#39;</span><span class="si">#{</span><span class="nx">cell</span><span class="p">.</span><span class="nx">subtestId</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">cell</span><span class="p">.</span><span class="nx">content</span><span class="si">}</span><span class="s">&lt;/div&gt;&lt;/td&gt;&quot;</span>
+        <span class="nx">gridPage</span> <span class="o">+=</span> <span class="s">&quot;&lt;/tr&gt;&quot;</span>
     <span class="nx">gridPage</span> <span class="o">+=</span> <span class="s">&quot;&lt;/tbody&gt;&lt;/table&gt;&quot;</span>
 
+    <span class="k">return</span> <span class="nx">gridPage</span>
+
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    
+    <span class="nv">gridPage = </span><span class="nx">@getGridPage</span><span class="p">()</span>
+    
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
 <span class="s">      &lt;h1&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;assessment status&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/h1&gt;</span>
-<span class="s">      </span><span class="si">#{</span><span class="nx">gridPage</span><span class="si">}</span><span class="s">&lt;br&gt;</span>
+<span class="s">      &lt;input id=&#39;search_student_name&#39; placeholder=&#39;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;search student name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&#39; type=&#39;text&#39;&gt;</span>
+
+<span class="s">      &lt;div id=&#39;grid_container&#39;&gt;</span><span class="si">#{</span><span class="nx">gridPage</span><span class="si">}</span><span class="s">&lt;/div&gt;&lt;br&gt;</span>
 <span class="s">      &lt;h2&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;current assessment&#39;</span><span class="p">)</span><span class="si">}</span><span class="s"> &lt;/h2&gt;</span>
 <span class="s">      </span>
-<span class="s">      &lt;button class=&#39;prev_part command&#39;&gt;&amp;lt;&lt;/button&gt; </span><span class="si">#{</span><span class="nx">@currentPart</span><span class="si">}</span><span class="s"> &lt;button class=&#39;next_part command&#39;&gt;&amp;gt;&lt;/button&gt;&lt;br&gt;&lt;br&gt;</span>
+<span class="s">      &lt;button class=&#39;prev_part command&#39;&gt;&amp;lt;&lt;/button&gt; &lt;input type=&#39;number&#39; value=&#39;</span><span class="si">#{</span><span class="nx">@currentPart</span><span class="si">}</span><span class="s">&#39; id=&#39;current_part&#39;&gt; &lt;button class=&#39;next_part command&#39;&gt;&amp;gt;&lt;/button&gt;&lt;br&gt;&lt;br&gt;</span>
 <span class="s">      &lt;button class=&#39;back navigation&#39;&gt;</span><span class="si">#{</span><span class="nx">t</span><span class="p">(</span><span class="s">&#39;back&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/button&gt; </span>
 <span class="s">      &quot;</span>
 
