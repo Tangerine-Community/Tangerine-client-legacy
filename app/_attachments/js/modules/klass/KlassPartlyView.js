@@ -39,7 +39,8 @@ KlassPartlyView = (function(_super) {
   KlassPartlyView.prototype.prevPart = function() {
     if (this.currentPart > 1) {
       this.currentPart--;
-      return this.render();
+      this.render();
+      return Tangerine.router.navigate("class/" + this.options.klass.id + "/" + this.currentPart);
     }
   };
 
@@ -61,7 +62,7 @@ KlassPartlyView = (function(_super) {
   };
 
   KlassPartlyView.prototype.render = function() {
-    var cell, column, gridPage, i, j, marker, resultsForThisStudent, row, student, studentResult, subtest, subtestsThisPart, _i, _j, _len, _len2, _len3, _len4, _len5, _ref, _ref2;
+    var cell, column, gridPage, i, j, resultsForThisStudent, row, student, studentResult, subtest, subtestsThisPart, taken, takenClass, _i, _j, _len, _len2, _len3, _len4, _len5, _ref, _ref2;
     this.table = [];
     subtestsThisPart = this.subtestsByPart[this.currentPart];
     _ref = this.options.students.models;
@@ -76,10 +77,10 @@ KlassPartlyView = (function(_super) {
         studentResult = resultsForThisStudent.where({
           "subtestId": subtest.id
         });
-        marker = studentResult.length === 0 ? "?" : "&#x2714;";
+        taken = studentResult.length !== 0;
         this.table[i].push({
-          "content": marker,
-          "taken": studentResult.length !== 0,
+          "content": taken ? "&#x2714;" : "?",
+          "taken": taken,
           "studentId": student.id,
           "studentName": student.get("name"),
           "subtestId": subtest.id
@@ -98,12 +99,13 @@ KlassPartlyView = (function(_super) {
       gridPage += "<tr><td><div class='student' data-studentId='" + row[0].studentId + "'>" + row[0].studentName + "</div></td>";
       for (column = 0, _len5 = row.length; column < _len5; column++) {
         cell = row[column];
-        gridPage += "<td><div class='student_subtest command' data-taken='" + cell.taken + "' data-studentId='" + cell.studentId + "' data-subtestId='" + cell.subtestId + "'>" + cell.content + "</div></td>";
+        takenClass = cell.taken ? " subtest_taken" : "";
+        gridPage += "<td><div class='student_subtest command " + takenClass + "' data-taken='" + cell.taken + "' data-studentId='" + cell.studentId + "' data-subtestId='" + cell.subtestId + "'>" + cell.content + "</div></td>";
       }
       gridPage += "</tr>";
     }
     gridPage += "</tbody></table>";
-    this.$el.html("      <h1>" + (t('assessment status')) + "</h1>      <h2>" + (t('assessment')) + " " + this.currentPart + "</h2>      " + gridPage + "<br>            <button class='prev_part command'>" + (t('previous')) + "</button> <button class='next_part command'>" + (t('next')) + "</button><br><br>      <button class='back navigation'>" + (t('back')) + "</button>       ");
+    this.$el.html("      <h1>" + (t('assessment status')) + "</h1>      " + gridPage + "<br>      <h2>" + (t('current assessment')) + " </h2>            <button class='prev_part command'>&lt;</button> " + this.currentPart + " <button class='next_part command'>&gt;</button><br><br>      <button class='back navigation'>" + (t('back')) + "</button>       ");
     return this.trigger("rendered");
   };
 

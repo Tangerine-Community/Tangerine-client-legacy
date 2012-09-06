@@ -34,6 +34,7 @@ class KlassPartlyView extends Backbone.View
     if @currentPart > 1
       @currentPart-- 
       @render()
+      Tangerine.router.navigate "class/#{@options.klass.id}/#{@currentPart}"
 
   initialize: (options) ->
     @currentPart = options.part || 1
@@ -58,12 +59,12 @@ class KlassPartlyView extends Backbone.View
       resultsForThisStudent = new KlassResults @options.results.where "studentId" : student.id
 
       for subtest, j in subtestsThisPart
-
         studentResult = resultsForThisStudent.where "subtestId" : subtest.id
-        marker        = if studentResult.length == 0 then "?" else "&#x2714;"
+        taken = studentResult.length != 0
+        
         @table[i].push
-          "content"   : marker
-          "taken"     : studentResult.length != 0
+          "content"   : if taken then "&#x2714;" else "?"
+          "taken"     : taken
           "studentId" : student.id
           "studentName" : student.get("name")
           "subtestId" : subtest.id
@@ -76,16 +77,17 @@ class KlassPartlyView extends Backbone.View
     for row in @table
       gridPage += "<tr><td><div class='student' data-studentId='#{row[0].studentId}'>#{row[0].studentName}</div></td>"
       for cell, column in row
-        gridPage += "<td><div class='student_subtest command' data-taken='#{cell.taken}' data-studentId='#{cell.studentId}' data-subtestId='#{cell.subtestId}'>#{cell.content}</div></td>"
+        takenClass = if cell.taken then " subtest_taken" else ""
+        gridPage += "<td><div class='student_subtest command #{takenClass}' data-taken='#{cell.taken}' data-studentId='#{cell.studentId}' data-subtestId='#{cell.subtestId}'>#{cell.content}</div></td>"
       gridPage += "</tr>"
     gridPage += "</tbody></table>"
 
     @$el.html "
       <h1>#{t('assessment status')}</h1>
-      <h2>#{t('assessment')} #{@currentPart}</h2>
       #{gridPage}<br>
+      <h2>#{t('current assessment')} </h2>
       
-      <button class='prev_part command'>#{t('previous')}</button> <button class='next_part command'>#{t('next')}</button><br><br>
+      <button class='prev_part command'>&lt;</button> #{@currentPart} <button class='next_part command'>&gt;</button><br><br>
       <button class='back navigation'>#{t('back')}</button> 
       "
 
