@@ -284,7 +284,7 @@ GridRunView = (function(_super) {
         this.mapItem[i] = i;
       }
     }
-    if (!this.captureLastAttmpted && !this.captureAfterSeconds) {
+    if (!this.captureLastAttempted && !this.captureItemAtTime) {
       this.mode = "mark";
     } else {
       this.mode = "disabled";
@@ -351,17 +351,17 @@ GridRunView = (function(_super) {
     html += "</table>";
     stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>";
     resetButton = "    <div>      <button class='restart command'>Restart</button>      <br>    </div>";
-    minuteItemButton = "";
-    if (this.captureItemAtTime) {
-      minuteItemButton = "        <label for='minute_item'>Item at " + this.captureAfterSeconds + " seconds</label>        <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>      ";
-    }
-    captureLastButton = "";
-    if (this.captureLastAttempted) {
-      captureLastButton = "        <label for='last_attempted'>Last attempted</label>        <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>      ";
-    }
     modeSelector = "";
-    if (this.captureLastAttmpted || this.captureItemAtTime) {
-      modeSelector = "        <div id='grid_mode' class='question buttonset clearfix'>          <label>Input mode</label><br>          <label for='mark'>Mark</label>          <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark'>          " + minuteItemButton + "          " + captureLastButton + "        </div>    ";
+    if (this.captureLastAttempted || this.captureItemAtTime) {
+      minuteItemButton = "";
+      if (this.captureItemAtTime) {
+        minuteItemButton = "          <label for='minute_item'>Item at " + this.captureAfterSeconds + " seconds</label>          <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>        ";
+      }
+      captureLastButton = "";
+      if (this.captureLastAttempted) {
+        captureLastButton = "          <label for='last_attempted'>Last attempted</label>          <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>        ";
+      }
+      modeSelector = "        <div id='grid_mode' class='question buttonset clearfix'>          <label>Input mode</label><br>          <label for='mark'>Mark</label>          <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark'>          " + minuteItemButton + "          " + captureLastButton + "        </div>      ";
     }
     html += "      " + (!this.untimed ? stopTimerHTML : "") + "      " + (!this.untimed ? resetButton : "") + "      " + modeSelector + "    ";
     this.$el.html(html);

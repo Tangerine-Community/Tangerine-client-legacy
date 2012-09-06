@@ -221,7 +221,7 @@
         <span class="nx">@itemMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span>
         <span class="nx">@mapItem</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span>
 
-    <span class="k">if</span> <span class="o">!</span><span class="nx">@captureLastAttmpted</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">@captureAfterSeconds</span>
+    <span class="k">if</span> <span class="o">!</span><span class="nx">@captureLastAttempted</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">@captureItemAtTime</span>
       <span class="vi">@mode = </span><span class="s">&quot;mark&quot;</span>
     <span class="k">else</span>
       <span class="vi">@mode = </span><span class="s">&quot;disabled&quot;</span>
@@ -248,8 +248,6 @@
     <span class="vi">@captureItemAtTime    = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureItemAtTime&quot;</span><span class="p">)</span>    <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureItemAtTime&quot;</span><span class="p">)</span>    <span class="k">else</span> <span class="kc">false</span>
     <span class="vi">@captureLastAttempted = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureLastAttempted&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureLastAttempted&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">true</span>
     <span class="vi">@endOfLine            = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span>            <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span>            <span class="k">else</span> <span class="kc">true</span>
-
-
 
     <span class="vi">@totalTime = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;timer&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span>
 
@@ -294,24 +292,23 @@
 <span class="s">    &lt;div&gt;</span>
 <span class="s">      &lt;button class=&#39;restart command&#39;&gt;Restart&lt;/button&gt;</span>
 <span class="s">      &lt;br&gt;</span>
-<span class="s">    &lt;/div&gt;&quot;</span>
+<span class="s">    &lt;/div&gt;&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Mode selector</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">modeSelector = </span><span class="s">&quot;&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>if any other option is avaialbe other than mark, then show the selector</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="nx">@captureLastAttempted</span> <span class="o">||</span> <span class="nx">@captureItemAtTime</span>
 
-    <span class="nv">minuteItemButton = </span> <span class="s">&quot;&quot;</span>
-    <span class="k">if</span> <span class="nx">@captureItemAtTime</span>
-      <span class="nv">minuteItemButton = </span><span class="s">&quot;</span>
-<span class="s">        &lt;label for=&#39;minute_item&#39;&gt;Item at </span><span class="si">#{</span><span class="nx">@captureAfterSeconds</span><span class="si">}</span><span class="s"> seconds&lt;/label&gt;</span>
-<span class="s">        &lt;input class=&#39;grid_mode&#39; name=&#39;grid_mode&#39; id=&#39;minute_item&#39; type=&#39;radio&#39; value=&#39;minuteItem&#39;&gt;</span>
-<span class="s">      &quot;</span>
+      <span class="nv">minuteItemButton = </span> <span class="s">&quot;&quot;</span>
+      <span class="k">if</span> <span class="nx">@captureItemAtTime</span>
+        <span class="nv">minuteItemButton = </span><span class="s">&quot;</span>
+<span class="s">          &lt;label for=&#39;minute_item&#39;&gt;Item at </span><span class="si">#{</span><span class="nx">@captureAfterSeconds</span><span class="si">}</span><span class="s"> seconds&lt;/label&gt;</span>
+<span class="s">          &lt;input class=&#39;grid_mode&#39; name=&#39;grid_mode&#39; id=&#39;minute_item&#39; type=&#39;radio&#39; value=&#39;minuteItem&#39;&gt;</span>
+<span class="s">        &quot;</span>
 
-    <span class="nv">captureLastButton = </span><span class="s">&quot;&quot;</span>
-    <span class="k">if</span> <span class="nx">@captureLastAttempted</span>
-      <span class="nv">captureLastButton = </span><span class="s">&quot;</span>
-<span class="s">        &lt;label for=&#39;last_attempted&#39;&gt;Last attempted&lt;/label&gt;</span>
-<span class="s">        &lt;input class=&#39;grid_mode&#39; name=&#39;grid_mode&#39; id=&#39;last_attempted&#39; type=&#39;radio&#39; value=&#39;last&#39;&gt;</span>
-<span class="s">      &quot;</span>
+      <span class="nv">captureLastButton = </span><span class="s">&quot;&quot;</span>
+      <span class="k">if</span> <span class="nx">@captureLastAttempted</span>
+        <span class="nv">captureLastButton = </span><span class="s">&quot;</span>
+<span class="s">          &lt;label for=&#39;last_attempted&#39;&gt;Last attempted&lt;/label&gt;</span>
+<span class="s">          &lt;input class=&#39;grid_mode&#39; name=&#39;grid_mode&#39; id=&#39;last_attempted&#39; type=&#39;radio&#39; value=&#39;last&#39;&gt;</span>
+<span class="s">        &quot;</span>
 
-    <span class="nv">modeSelector = </span><span class="s">&quot;&quot;</span>
-    <span class="k">if</span> <span class="nx">@captureLastAttmpted</span> <span class="o">||</span> <span class="nx">@captureItemAtTime</span> 
+
       <span class="nv">modeSelector = </span><span class="s">&quot;</span>
 <span class="s">        &lt;div id=&#39;grid_mode&#39; class=&#39;question buttonset clearfix&#39;&gt;</span>
 <span class="s">          &lt;label&gt;Input mode&lt;/label&gt;&lt;br&gt;</span>
@@ -320,7 +317,7 @@
 <span class="s">          </span><span class="si">#{</span><span class="nx">minuteItemButton</span><span class="si">}</span><span class="s"></span>
 <span class="s">          </span><span class="si">#{</span><span class="nx">captureLastButton</span><span class="si">}</span><span class="s"></span>
 <span class="s">        &lt;/div&gt;</span>
-<span class="s">    &quot;</span>
+<span class="s">      &quot;</span>
 
 
     <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
@@ -336,7 +333,7 @@
     <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
     
   <span class="nv">isValid: </span><span class="o">-&gt;</span>
-    <span class="k">if</span> <span class="nx">@captureLastAttempted</span> <span class="o">&amp;&amp;</span> <span class="nx">@lastAttempted</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">then</span> <span class="k">return</span> <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>might need to let it know if it's timed or untimed too ::shrug::</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="nx">@timeRunning</span> <span class="o">==</span> <span class="kc">true</span> <span class="k">then</span> <span class="k">return</span> <span class="kc">false</span>
+    <span class="k">if</span> <span class="nx">@captureLastAttempted</span> <span class="o">&amp;&amp;</span> <span class="nx">@lastAttempted</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">then</span> <span class="k">return</span> <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>might need to let it know if it's timed or untimed too ::shrug::</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="nx">@timeRunning</span> <span class="o">==</span> <span class="kc">true</span> <span class="k">then</span> <span class="k">return</span> <span class="kc">false</span>
     <span class="kc">true</span>
     
   <span class="nv">showErrors: </span><span class="o">-&gt;</span>

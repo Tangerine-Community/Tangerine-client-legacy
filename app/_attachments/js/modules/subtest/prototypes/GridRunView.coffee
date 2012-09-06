@@ -223,7 +223,7 @@ class GridRunView extends Backbone.View
         @itemMap[i] = i
         @mapItem[i] = i
 
-    if !@captureLastAttmpted && !@captureAfterSeconds
+    if !@captureLastAttempted && !@captureItemAtTime
       @mode = "mark"
     else
       @mode = "disabled"
@@ -250,8 +250,6 @@ class GridRunView extends Backbone.View
     @captureItemAtTime    = if @model.has("captureItemAtTime")    then @model.get("captureItemAtTime")    else false
     @captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted") else true
     @endOfLine            = if @model.has("endOfLine")            then @model.get("endOfLine")            else true
-
-
 
     @totalTime = @model.get("timer") || 0
 
@@ -298,22 +296,30 @@ class GridRunView extends Backbone.View
       <br>
     </div>"
 
-    minuteItemButton =  ""
-    if @captureItemAtTime
-      minuteItemButton = "
-        <label for='minute_item'>Item at #{@captureAfterSeconds} seconds</label>
-        <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>
-      "
 
-    captureLastButton = ""
-    if @captureLastAttempted
-      captureLastButton = "
-        <label for='last_attempted'>Last attempted</label>
-        <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>
-      "
+    #
+    # Mode selector
+    #
 
     modeSelector = ""
-    if @captureLastAttmpted || @captureItemAtTime 
+    # if any other option is avaialbe other than mark, then show the selector
+    if @captureLastAttempted || @captureItemAtTime
+
+      minuteItemButton =  ""
+      if @captureItemAtTime
+        minuteItemButton = "
+          <label for='minute_item'>Item at #{@captureAfterSeconds} seconds</label>
+          <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>
+        "
+
+      captureLastButton = ""
+      if @captureLastAttempted
+        captureLastButton = "
+          <label for='last_attempted'>Last attempted</label>
+          <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>
+        "
+
+
       modeSelector = "
         <div id='grid_mode' class='question buttonset clearfix'>
           <label>Input mode</label><br>
@@ -322,7 +328,7 @@ class GridRunView extends Backbone.View
           #{minuteItemButton}
           #{captureLastButton}
         </div>
-    "
+      "
 
 
     html += "
