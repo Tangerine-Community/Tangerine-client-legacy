@@ -695,7 +695,8 @@ Router = (function(_super) {
                           "results": results,
                           "subtests": subtests,
                           "klass": klass,
-                          "studentId": studentId
+                          "studentId": studentId,
+                          "student": student
                         });
                         return vm.show(view);
                       }
