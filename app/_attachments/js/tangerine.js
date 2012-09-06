@@ -155,19 +155,6 @@ Router = (function(_super) {
   Router.prototype.klass = function() {
     return Tangerine.user.verify({
       isRegistered: function() {
-        var view;
-        view = new KlassMenuView;
-        return vm.show(view);
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
-      }
-    });
-  };
-
-  Router.prototype.klass = function() {
-    return Tangerine.user.verify({
-      isRegistered: function() {
         var allKlasses;
         allKlasses = new Klasses;
         return allKlasses.fetch({

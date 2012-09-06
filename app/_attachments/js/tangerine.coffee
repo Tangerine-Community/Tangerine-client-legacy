@@ -113,14 +113,6 @@ class Router extends Backbone.Router
   klass: ->
     Tangerine.user.verify
       isRegistered: ->
-        view = new KlassMenuView
-        vm.show view
-      isUnregistered: ->
-        Tangerine.router.navigate "login", true
-
-  klass: ->
-    Tangerine.user.verify
-      isRegistered: ->
         allKlasses = new Klasses
         allKlasses.fetch
           success: ( klassCollection ) ->
