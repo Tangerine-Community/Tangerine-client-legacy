@@ -447,15 +447,6 @@ Router = (function(_super) {
               model: model
             });
             return vm.show(view);
-          },
-          error: function(details) {
-            var name, view;
-            name = Utils.cleanURL(name);
-            view = new ErrorView({
-              message: "There was an error loading the assessment '" + name + "'",
-              details: details
-            });
-            return vm.show(view);
           }
         });
       },
@@ -480,15 +471,6 @@ Router = (function(_super) {
             var view;
             view = new AssessmentEditView({
               model: model
-            });
-            return vm.show(view);
-          },
-          error: function(details) {
-            var name, view;
-            name = Utils.cleanURL(name);
-            view = new ErrorView({
-              message: "There was an error loading the assessment '" + name + "'",
-              details: details
             });
             return vm.show(view);
           }

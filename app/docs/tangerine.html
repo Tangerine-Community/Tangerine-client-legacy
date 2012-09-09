@@ -272,12 +272,6 @@
           <span class="nv">success : </span><span class="nf">( model ) -&gt;</span>
             <span class="nv">view = </span><span class="k">new</span> <span class="nx">AssessmentEditView</span> <span class="nv">model: </span><span class="nx">model</span>
             <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
-          <span class="nv">error: </span><span class="nf">(details) -&gt;</span>
-            <span class="nv">name = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">cleanURL</span> <span class="nx">name</span>
-            <span class="nv">view = </span><span class="k">new</span> <span class="nx">ErrorView</span>
-              <span class="nv">message : </span><span class="s">&quot;There was an error loading the assessment &#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&#39;&quot;</span>
-              <span class="nv">details : </span><span class="nx">details</span>
-            <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
       <span class="nv">isUser: </span><span class="o">-&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="kc">true</span>
       <span class="nv">isUnregistered: </span><span class="nf">(options) -&gt;</span>
@@ -291,12 +285,6 @@
         <span class="nx">assessment</span><span class="p">.</span><span class="nx">fetch</span>
           <span class="nv">success : </span><span class="nf">( model ) -&gt;</span>
             <span class="nv">view = </span><span class="k">new</span> <span class="nx">AssessmentEditView</span> <span class="nv">model: </span><span class="nx">model</span>
-            <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
-          <span class="nv">error: </span><span class="nf">(details) -&gt;</span>
-            <span class="nv">name = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">cleanURL</span> <span class="nx">name</span>
-            <span class="nv">view = </span><span class="k">new</span> <span class="nx">ErrorView</span>
-              <span class="nv">message : </span><span class="s">&quot;There was an error loading the assessment &#39;</span><span class="si">#{</span><span class="nx">name</span><span class="si">}</span><span class="s">&#39;&quot;</span>
-              <span class="nv">details : </span><span class="nx">details</span>
             <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
       <span class="nv">isUser: </span><span class="o">-&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="kc">true</span>

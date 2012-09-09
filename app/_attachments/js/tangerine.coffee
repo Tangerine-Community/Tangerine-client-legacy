@@ -286,12 +286,6 @@ class Router extends Backbone.Router
           success : ( model ) ->
             view = new AssessmentEditView model: model
             vm.show view
-          error: (details) ->
-            name = Utils.cleanURL name
-            view = new ErrorView
-              message : "There was an error loading the assessment '#{name}'"
-              details : details
-            vm.show view
       isUser: ->
         Tangerine.router.navigate "", true
       isUnregistered: (options) ->
@@ -305,12 +299,6 @@ class Router extends Backbone.Router
         assessment.fetch
           success : ( model ) ->
             view = new AssessmentEditView model: model
-            vm.show view
-          error: (details) ->
-            name = Utils.cleanURL name
-            view = new ErrorView
-              message : "There was an error loading the assessment '#{name}'"
-              details : details
             vm.show view
       isUser: ->
         Tangerine.router.navigate "", true
