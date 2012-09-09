@@ -145,7 +145,7 @@ class CSVView extends Backbone.View
             else
               keys.push surveyVariable
         else if prototype == "complete"
-          keys.push "additional_comments"
+          keys.push "additional_comments", "end_time"
 
       resultDataArray.push keys
 
@@ -209,8 +209,8 @@ class CSVView extends Backbone.View
                 values[keys.indexOf("#{surveyVariable}")] = exportValue
 
           else if prototype == "complete"
-            console.log subtest.data.comment
             values[keys.indexOf("additional_comments")] = subtest.data.comment
+            values[keys.indexOf("end_time")] = subtest.data.end_time
 
         resultDataArray.push values
 

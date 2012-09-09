@@ -26,7 +26,8 @@ ResultView = (function(_super) {
       name: "Assessment complete",
       prototype: "complete",
       data: {
-        "comment": this.$el.find('#additional_comments').val() || ""
+        "comment": this.$el.find('#additional_comments').val() || "",
+        "end_time": (new Date()).getTime()
       },
       subtestId: "result",
       sum: {

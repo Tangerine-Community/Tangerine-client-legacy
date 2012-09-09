@@ -157,7 +157,7 @@ CSVView = (function(_super) {
             }
           }
         } else if (prototype === "complete") {
-          keys.push("additional_comments");
+          keys.push("additional_comments", "end_time");
         }
       }
       resultDataArray.push(keys);
@@ -230,8 +230,8 @@ CSVView = (function(_super) {
               }
             }
           } else if (prototype === "complete") {
-            console.log(subtest.data.comment);
             values[keys.indexOf("additional_comments")] = subtest.data.comment;
+            values[keys.indexOf("end_time")] = subtest.data.end_time;
           }
         }
         resultDataArray.push(values);

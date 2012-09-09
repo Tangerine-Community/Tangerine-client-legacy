@@ -15,6 +15,7 @@ class ResultView extends Backbone.View
       prototype: "complete"
       data :
         "comment" : @$el.find('#additional_comments').val() || ""
+        "end_time" : (new Date()).getTime()
       subtestId : "result"
       sum :
         correct : 1
