@@ -17,6 +17,10 @@
       "prototype" : "survey",
       "gridLinkId": ""
     },
+    "observation" : {
+      "prototype" : "survey",
+      "gridLinkId": ""
+    },
     "location": {
       "prototype" : "location",
       "locations" : []
@@ -84,6 +88,9 @@
         "timer" : 60
       }
     },
+    "survey" : {
+		"Classroom Observation" : {},
+	},
     "survey" : {
       "Phoneme Segmentation":{},
       "Listening Comprehension":{},
