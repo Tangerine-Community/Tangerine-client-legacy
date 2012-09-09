@@ -118,7 +118,7 @@ LocationRunView = (function(_super) {
     _ref = this.levels;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       level = _ref[i];
-      html += "        <div class='label_value'>          <label for='level_" + i + "'>" + level + "</label>          <input data-level='" + i + "' id='level_" + i + "' value=''>        </div>      ";
+      html += "        <div class='label_value'>          <label for='level_" + i + "'>" + level + "</label><br>          <input data-level='" + i + "' id='level_" + i + "' value=''>        </div>      ";
     }
     html += "      <div id='autofill' style='display:none'>        <h2>Select one from autofill list</h2>        <ul id='school_list'>        </ul>      </div>    ";
     this.$el.html(html);

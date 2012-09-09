@@ -84,7 +84,7 @@ class LocationRunView extends Backbone.View
     for level, i in @levels
       html += "
         <div class='label_value'>
-          <label for='level_#{i}'>#{level}</label>
+          <label for='level_#{i}'>#{level}</label><br>
           <input data-level='#{i}' id='level_#{i}' value=''>
         </div>
       "
