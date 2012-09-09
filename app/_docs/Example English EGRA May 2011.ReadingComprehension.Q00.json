@@ -1,7 +1,7 @@
 {
-  "_id": "Example English EGRA May 2011.ReadingComprehension.Q00",
-  "subtestId": "Example English EGRA May 2011.ReadingComprehension",
-  "assessmentId": "Example English EGRA May 2011.Assessment",
+  "_id": "Example_English_EGRA_May_2011.ReadingComprehension.Q00",
+  "subtestId": "Example_English_EGRA_May_2011.ReadingComprehension",
+  "assessmentId": "Example_English_EGRA_May_2011.Assessment",
   "collection": "question",
   "couchapp": {},
   "order": 0,

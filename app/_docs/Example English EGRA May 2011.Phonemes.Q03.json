@@ -1,6 +1,6 @@
 {
-  "_id": "Example English EGRA May 2011.Phonemes.Q03",
-  "subtestId": "Example English EGRA May 2011.Phonemes",
+  "_id": "Example_English_EGRA_May_2011.Phonemes.Q03",
+  "subtestId": "Example_English_EGRA_May_2011.Phonemes",
   "prompt": "top",
   "name" : "top",
   "order" : 3,
@@ -21,5 +21,5 @@
   ],
   "collection": "question",
   "couchapp": {},
-  "assessmentId": "Example English EGRA May 2011.Assessment"
+  "assessmentId": "Example_English_EGRA_May_2011.Assessment"
 }

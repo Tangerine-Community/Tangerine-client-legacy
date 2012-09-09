@@ -4,7 +4,7 @@
   "name" : "Invented Words",
   "variableName" : "invented_words",
   "order" : 8,
-  "assessmentId" : "Example English EGRA May 2011.Assessment",
+  "assessmentId" : "Example_English_EGRA_May_2011.Assessment",
   "timer" : 60,
   "autostop" : 5,
   "columns" : 5,
@@ -62,7 +62,7 @@
     "jat",
     "nid"
   ],
-  "_id": "Example English EGRA May 2011.InventedWords",
+  "_id": "Example_English_EGRA_May_2011.InventedWords",
  
  
   "couchapp": {

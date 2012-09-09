@@ -1,6 +1,6 @@
 {
-  "_id": "Example English EGRA May 2011.ListeningComprehension.Q01",
-  "subtestId": "Example English EGRA May 2011.ListeningComprehension",
+  "_id": "Example_English_EGRA_May_2011.ListeningComprehension.Q01",
+  "subtestId": "Example_English_EGRA_May_2011.ListeningComprehension",
   "prompt": "Why does the land get dry?",
   "hint": "[the rain hasn't come; there is a dry season]",
   "type": "single",
@@ -18,5 +18,5 @@
   ],
   "collection": "question",
   "couchapp": {},
-  "assessmentId": "Example English EGRA May 2011.Assessment"
+  "assessmentId": "Example_English_EGRA_May_2011.Assessment"
 }

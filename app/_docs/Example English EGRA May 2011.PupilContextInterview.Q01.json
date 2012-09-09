@@ -1,6 +1,6 @@
 {
-  "_id": "Example English EGRA May 2011.PupilContextInterview.Q01",
-  "subtestId": "Example English EGRA May 2011.PupilContextInterview",
+  "_id": "Example_English_EGRA_May_2011.PupilContextInterview.Q01",
+  "subtestId": "Example_English_EGRA_May_2011.PupilContextInterview",
   "collection": "question",
   "couchapp": {},
   "order": 1,
@@ -33,5 +33,5 @@
       "value": "Other"
     }
   ],
-  "assessmentId": "Example English EGRA May 2011.Assessment"
+  "assessmentId": "Example_English_EGRA_May_2011.Assessment"
 }

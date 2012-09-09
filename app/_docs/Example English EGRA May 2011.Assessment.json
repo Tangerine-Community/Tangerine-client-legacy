@@ -1,7 +1,7 @@
 {
   "name": "Example English EGRA May 2011",
-  "_id": "Example English EGRA May 2011.Assessment",
-  "assessmentId" : "Example English EGRA May 2011.Assessment",
+  "_id": "Example_English_EGRA_May_2011.Assessment",
+  "assessmentId" : "Example_English_EGRA_May_2011.Assessment",
   "group" : "public",
   "collection" : "assessment",
   "couchapp": {

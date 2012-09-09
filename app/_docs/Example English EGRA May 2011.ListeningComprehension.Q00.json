@@ -1,6 +1,6 @@
 {
-  "_id": "Example English EGRA May 2011.ListeningComprehension.Q00",
-  "subtestId": "Example English EGRA May 2011.ListeningComprehension",
+  "_id": "Example_English_EGRA_May_2011.ListeningComprehension.Q00",
+  "subtestId": "Example_English_EGRA_May_2011.ListeningComprehension",
   "prompt": "Where does Pat live?",
   "name" : "pat_live",
   "hint": "[on a farm; home]",
@@ -18,5 +18,5 @@
   ],
   "collection": "question",
   "couchapp": {},
-  "assessmentId": "Example English EGRA May 2011.Assessment"
+  "assessmentId": "Example_English_EGRA_May_2011.Assessment"
 }

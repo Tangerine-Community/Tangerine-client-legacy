@@ -3,8 +3,8 @@
   "prototype": "survey",
   "name" : "Phonemes",
   "order" : 6,
-  "assessmentId" : "Example English EGRA May 2011.Assessment",
-  "_id": "Example English EGRA May 2011.Phonemes",
+  "assessmentId" : "Example_English_EGRA_May_2011.Assessment",
+  "_id": "Example_English_EGRA_May_2011.Phonemes",
   "couchapp": {
   }
 }
