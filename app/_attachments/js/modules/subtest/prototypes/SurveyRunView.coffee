@@ -4,11 +4,11 @@ class SurveyRunView extends Backbone.View
     @model         = @options.model
     @parent        = @options.parent
     @questionViews = []
-    @questions     = []
-    questions      = new Questions
-    questions.fetch
+    @questions     = new Questions
+    @questions.fetch
+      key: @model.get "assessmentId"
       success: (collection) =>
-        @questions = new Questions collection.where { subtestId : @model.id }
+        @questions = new Questions(@questions.where { subtestId : @model.id })
         @questions.sort()
         @render()
 

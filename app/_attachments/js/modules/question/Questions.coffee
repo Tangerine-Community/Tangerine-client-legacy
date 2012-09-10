@@ -2,6 +2,8 @@ class Questions extends Backbone.Collection
 
   model : Question
   url   : "question"
+  db:
+    view: "questionsByAssessmentId"
 
   comparator: (subtest) ->
     subtest.get "order"

@@ -11,8 +11,9 @@ class SurveyEditView extends Backbone.View
     @parent = options.parent
     @model.questions = new Questions
     @model.questions.fetch
-      success: (collection, response) =>
-        @model.questions = new Questions(collection.where {subtestId : @model.id })
+      key: @model.get "assessmentId"
+      success: =>
+        @model.questions = new Questions(@model.questions.where {subtestId : @model.id })
         @model.questions.maintainOrder()
         @questionsEditView = new QuestionsEditView
           questions : @model.questions

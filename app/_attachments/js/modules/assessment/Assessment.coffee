@@ -32,8 +32,8 @@ class Assessment extends Backbone.Model
     
     questions = new Questions
     questions.fetch
+      key: @id
       success: ( questions ) =>
-        filteredQuestions = questions.where { "assessmentId" : originalId }
         subtests = new Subtests
         subtests.fetch
           key: originalId
@@ -61,7 +61,7 @@ class Assessment extends Backbone.Model
 
             newQuestions = []
             # link questions to new subtest
-            for question in filteredQuestions
+            for question in questions
               newQuestion = question.clone()
               oldId = newQuestion.get "subtestId"
               newQuestion.set "assessmentId", newModel.id
@@ -82,8 +82,9 @@ class Assessment extends Backbone.Model
       success: (collection) -> collection.pop().destroy() while collection.length != 0
     questions = new Questions
     questions.fetch
+      key: @id
       success: (collection) ->
-        for model in collection.where { "assessmentId" : assessmentId }
+        for model in collection
           model.destroy()
 
     # remove model
