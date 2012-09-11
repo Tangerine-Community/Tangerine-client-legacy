@@ -57,7 +57,7 @@ Assessment = (function(_super) {
         return subtests.fetch({
           key: originalId,
           success: function(subtests) {
-            var filteredSubtests, gridId, i, model, newQuestion, newQuestions, newSubtest, newSubtestId, newSubtests, oldId, question, subtestIdMap, _i, _len, _len2, _len3;
+            var filteredSubtests, gridId, i, model, newQuestion, newQuestions, newSubtest, newSubtestId, newSubtests, oldId, question, subtestIdMap, _i, _len, _len2, _len3, _ref;
             filteredSubtests = subtests.models;
             subtestIdMap = {};
             newSubtests = [];
@@ -79,8 +79,9 @@ Assessment = (function(_super) {
               model.save();
             }
             newQuestions = [];
-            for (_i = 0, _len3 = questions.length; _i < _len3; _i++) {
-              question = questions[_i];
+            _ref = questions.models;
+            for (_i = 0, _len3 = _ref.length; _i < _len3; _i++) {
+              question = _ref[_i];
               newQuestion = question.clone();
               oldId = newQuestion.get("subtestId");
               newQuestion.set("assessmentId", newModel.id);
@@ -115,10 +116,11 @@ Assessment = (function(_super) {
     questions.fetch({
       key: this.id,
       success: function(collection) {
-        var model, _i, _len, _results;
+        var model, _i, _len, _ref, _results;
+        _ref = collection.models;
         _results = [];
-        for (_i = 0, _len = collection.length; _i < _len; _i++) {
-          model = collection[_i];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          model = _ref[_i];
           _results.push(model.destroy());
         }
         return _results;

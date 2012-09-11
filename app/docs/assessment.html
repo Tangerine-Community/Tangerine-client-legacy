@@ -33,7 +33,6 @@ fetchs all subtests for the assessment</p>             </td>             <td cla
         <span class="nx">subtests</span><span class="p">.</span><span class="nx">fetch</span>
           <span class="nv">key: </span><span class="nx">originalId</span>
           <span class="nv">success: </span><span class="p">(</span> <span class="nx">subtests</span> <span class="p">)</span> <span class="o">=&gt;</span>
-        
             <span class="nv">filteredSubtests = </span><span class="nx">subtests</span><span class="p">.</span><span class="nx">models</span>
             <span class="nv">subtestIdMap = </span><span class="p">{}</span>
             <span class="nv">newSubtests = </span><span class="p">[]</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>link new subtests to new assessment</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">for</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">filteredSubtests</span>
@@ -48,7 +47,7 @@ fetchs all subtests for the assessment</p>             </td>             <td cla
                 <span class="nx">model</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;gridLinkId&quot;</span><span class="p">,</span> <span class="nx">subtestIdMap</span><span class="p">[</span><span class="nx">gridId</span><span class="p">]</span>
               <span class="nx">model</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
 
-            <span class="nv">newQuestions = </span><span class="p">[]</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>link questions to new subtest</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">for</span> <span class="nx">question</span> <span class="k">in</span> <span class="nx">questions</span>
+            <span class="nv">newQuestions = </span><span class="p">[]</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>link questions to new subtest</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">for</span> <span class="nx">question</span> <span class="k">in</span> <span class="nx">questions</span><span class="p">.</span><span class="nx">models</span>
               <span class="nv">newQuestion = </span><span class="nx">question</span><span class="p">.</span><span class="nx">clone</span><span class="p">()</span>
               <span class="nv">oldId = </span><span class="nx">newQuestion</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;subtestId&quot;</span>
               <span class="nx">newQuestion</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;assessmentId&quot;</span><span class="p">,</span> <span class="nx">newModel</span><span class="p">.</span><span class="nx">id</span>
@@ -56,7 +55,7 @@ fetchs all subtests for the assessment</p>             </td>             <td cla
               <span class="nx">newQuestion</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;subtestId&quot;</span><span class="p">,</span> <span class="nx">subtestIdMap</span><span class="p">[</span><span class="nx">oldId</span><span class="p">]</span>
               <span class="nx">newQuestions</span><span class="p">.</span><span class="nx">push</span> <span class="nx">newQuestion</span>
               <span class="nx">newQuestion</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
-            
+              
             <span class="nx">callback</span><span class="p">()</span>
 
   <span class="nv">destroy: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>remove children</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">assessmentId = </span><span class="nx">@id</span>
@@ -68,7 +67,7 @@ fetchs all subtests for the assessment</p>             </td>             <td cla
     <span class="nx">questions</span><span class="p">.</span><span class="nx">fetch</span>
       <span class="nv">key: </span><span class="nx">@id</span>
       <span class="nv">success: </span><span class="nf">(collection) -&gt;</span>
-        <span class="k">for</span> <span class="nx">model</span> <span class="k">in</span> <span class="nx">collection</span>
+        <span class="k">for</span> <span class="nx">model</span> <span class="k">in</span> <span class="nx">collection</span><span class="p">.</span><span class="nx">models</span>
           <span class="nx">model</span><span class="p">.</span><span class="nx">destroy</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>remove model</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">super</span><span class="p">()</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
