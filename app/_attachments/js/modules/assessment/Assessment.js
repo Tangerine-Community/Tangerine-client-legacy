@@ -116,12 +116,10 @@ Assessment = (function(_super) {
     questions.fetch({
       key: this.id,
       success: function(collection) {
-        var model, _i, _len, _ref, _results;
-        _ref = collection.models;
+        var _results;
         _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          model = _ref[_i];
-          _results.push(model.destroy());
+        while (collection.length !== 0) {
+          _results.push(collection.pop().destroy());
         }
         return _results;
       }

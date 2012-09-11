@@ -82,9 +82,7 @@ class Assessment extends Backbone.Model
     questions = new Questions
     questions.fetch
       key: @id
-      success: (collection) ->
-        for model in collection.models
-          model.destroy()
+      success: (collection) -> collection.pop().destroy() while collection.length != 0
 
     # remove model
     super()
