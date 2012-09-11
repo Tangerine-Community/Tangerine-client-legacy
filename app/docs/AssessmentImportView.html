@@ -5,7 +5,7 @@
     <span class="s">&#39;click .back&#39;</span>   <span class="o">:</span> <span class="s">&#39;back&#39;</span>
 
   <span class="nv">initialize: </span><span class="o">-&gt;</span>
-
+    <span class="vi">@docsRemaining = </span><span class="mi">0</span>
     <span class="vi">@serverStatus = </span><span class="s">&quot;checking...&quot;</span>
     <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span>
       <span class="nv">dataType: </span><span class="s">&quot;jsonp&quot;</span>
@@ -36,6 +36,7 @@
       <span class="nv">url: </span><span class="s">&quot;http://tangerine.iriscouch.com/tangerine/_design/tangerine/_view/byDKey?keys=[%22</span><span class="si">#{</span><span class="nx">dKey</span><span class="si">}</span><span class="s">%22]&quot;</span>
       <span class="nv">dataType: </span><span class="s">&quot;jsonp&quot;</span> 
       <span class="nv">success: </span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="vi">@docsRemaining = </span><span class="nx">data</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">length</span>
         <span class="k">for</span> <span class="nx">row</span> <span class="k">in</span> <span class="nx">data</span><span class="p">.</span><span class="nx">rows</span>
           <span class="nv">doc = </span><span class="nx">row</span><span class="p">.</span><span class="nx">value</span>
           <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">collection</span>
@@ -105,13 +106,22 @@ maybe it doesn't need to. Kind of impressive though.</p>             </td>      
   
 
   <span class="nv">updateProgress: </span><span class="nf">(key) -&gt;</span>
+    <span class="nx">@docsRemaining</span><span class="o">--</span>
     <span class="k">if</span> <span class="nx">@importList</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span><span class="o">?</span>
       <span class="nx">@importList</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span><span class="o">++</span>
     <span class="k">else</span>
       <span class="nx">@importList</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="nv">progressHTML = </span><span class="s">&quot;&quot;</span>
+    <span class="nv">progressHTML = </span><span class="s">&quot;&lt;table&gt;&quot;</span>
     <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">@importList</span>
-      <span class="nx">progressHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;div&gt;</span><span class="si">#{</span><span class="nx">key</span><span class="p">.</span><span class="nx">titleize</span><span class="p">().</span><span class="nx">pluralize</span><span class="p">()</span><span class="si">}</span><span class="s"> - </span><span class="si">#{</span><span class="nx">value</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span>
+      <span class="nx">progressHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;tr&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">key</span><span class="p">.</span><span class="nx">titleize</span><span class="p">().</span><span class="nx">pluralize</span><span class="p">()</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">value</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;/tr&gt;&quot;</span>
+    
+    <span class="k">if</span> <span class="nx">@docsRemaining</span> <span class="o">&gt;</span> <span class="mi">0</span>
+      <span class="nx">progressHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;tr&gt;&lt;td&gt;Documents remaining&lt;/td&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">@docsRemaining</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;/tr&gt;&quot;</span>
+    <span class="k">else</span>
+      <span class="nx">progressHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;tr&gt;&lt;td colspan=&#39;2&#39;&gt;Import Successful&lt;/td&gt;&lt;/tr&gt;&quot;</span>
+
+    <span class="nx">progressHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;/table&gt;&quot;</span>
+    
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">progress&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">progressHTML</span>
 
   <span class="nv">render: </span><span class="o">-&gt;</span>

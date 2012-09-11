@@ -5,7 +5,7 @@ class AssessmentImportView extends Backbone.View
     'click .back'   : 'back'
 
   initialize: ->
-
+    @docsRemaining = 0
     @serverStatus = "checking..."
     $.ajax
       dataType: "jsonp"
@@ -36,6 +36,7 @@ class AssessmentImportView extends Backbone.View
       url: "http://tangerine.iriscouch.com/tangerine/_design/tangerine/_view/byDKey?keys=[%22#{dKey}%22]"
       dataType: "jsonp" 
       success: (data) =>
+        @docsRemaining = data.rows.length
         for row in data.rows
           doc = row.value
           console.log doc.collection
@@ -107,13 +108,22 @@ class AssessmentImportView extends Backbone.View
   
 
   updateProgress: (key) ->
+    @docsRemaining--
     if @importList[key]?
       @importList[key]++
     else
       @importList[key] = 1
-    progressHTML = ""
+    progressHTML = "<table>"
     for key, value of @importList
-      progressHTML += "<div>#{key.titleize().pluralize()} - #{value}</div>"
+      progressHTML += "<tr><td>#{key.titleize().pluralize()}</td><td>#{value}</td></tr>"
+    
+    if @docsRemaining > 0
+      progressHTML += "<tr><td>Documents remaining</td><td>#{@docsRemaining}</td></tr>"
+    else
+      progressHTML += "<tr><td colspan='2'>Import Successful</td></tr>"
+
+    progressHTML += "</table>"
+    
     @$el.find("#progress").html progressHTML
 
   render: ->

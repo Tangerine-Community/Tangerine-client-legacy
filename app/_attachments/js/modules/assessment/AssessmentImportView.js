@@ -17,6 +17,7 @@ AssessmentImportView = (function(_super) {
 
   AssessmentImportView.prototype.initialize = function() {
     var _this = this;
+    this.docsRemaining = 0;
     this.serverStatus = "checking...";
     return $.ajax({
       dataType: "jsonp",
@@ -54,6 +55,7 @@ AssessmentImportView = (function(_super) {
       dataType: "jsonp",
       success: function(data) {
         var doc, row, _i, _len, _ref, _results;
+        _this.docsRemaining = data.rows.length;
         _ref = data.rows;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -152,17 +154,24 @@ AssessmentImportView = (function(_super) {
 
   AssessmentImportView.prototype.updateProgress = function(key) {
     var progressHTML, value, _ref;
+    this.docsRemaining--;
     if (this.importList[key] != null) {
       this.importList[key]++;
     } else {
       this.importList[key] = 1;
     }
-    progressHTML = "";
+    progressHTML = "<table>";
     _ref = this.importList;
     for (key in _ref) {
       value = _ref[key];
-      progressHTML += "<div>" + (key.titleize().pluralize()) + " - " + value + "</div>";
+      progressHTML += "<tr><td>" + (key.titleize().pluralize()) + "</td><td>" + value + "</td></tr>";
     }
+    if (this.docsRemaining > 0) {
+      progressHTML += "<tr><td>Documents remaining</td><td>" + this.docsRemaining + "</td></tr>";
+    } else {
+      progressHTML += "<tr><td colspan='2'>Import Successful</td></tr>";
+    }
+    progressHTML += "</table>";
     return this.$el.find("#progress").html(progressHTML);
   };
 
