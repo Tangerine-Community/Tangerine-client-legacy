@@ -44,66 +44,65 @@ AssessmentImportView = (function(_super) {
   AssessmentImportView.prototype["import"] = function() {
     var dKey,
       _this = this;
+    this.importList = {};
     dKey = this.$el.find("#d_key").val();
     this.$el.find(".status").fadeIn(250);
     this.$el.find("#progress").html("Looking for " + dKey);
-    $.ajax({
+    return $.ajax({
       type: "GET",
       url: "http://tangerine.iriscouch.com/tangerine/_design/tangerine/_view/byDKey?keys=[%22" + dKey + "%22]",
       dataType: "jsonp",
       success: function(data) {
-        var doc, _i, _len, _ref, _results;
-        console.log(data);
+        var doc, row, _i, _len, _ref, _results;
         _ref = data.rows;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          doc = _ref[_i];
-          doc = doc.value;
+          row = _ref[_i];
+          doc = row.value;
+          console.log(doc.collection);
           _results.push(Tangerine.$db.openDoc(doc._id, {
+            async: false,
             success: function(oldDoc) {
-              console.log("work with this:");
-              console.log(data);
+              var newDoc;
+              newDoc = doc;
               doc._rev = oldDoc._rev;
-              return Tangerine.$db.saveDoc(doc, {
-                success: function() {
-                  return console.log("overwrote old doc");
+              return Tangerine.$db.saveDoc(newDoc, {
+                async: false,
+                success: function(data) {
+                  return _this.updateProgress(newDoc.collection);
                 },
                 error: function() {
-                  console.log("could not overwrite old doc");
-                  return console.log(arguments);
+                  return _this.updateProgress(newDoc.collection + " save error");
                 }
+              }, {
+                async: false
               });
             },
             error: function() {
-              console.log("no doc there: arguments[2]");
+              var newDoc;
+              newDoc = doc;
+              Tangerine.$db.saveDoc(newDoc, {
+                async: false,
+                success: function() {
+                  return _this.updateProgress(newDoc.collection);
+                },
+                error: function() {
+                  return _this.updateProgress(newDoc.collection + " save error");
+                }
+              }, {
+                async: false
+              });
               if (arguments[2] === "deleted") {
-                console.log("trying to undelete");
                 return Tangerine.$db.compact({
                   complete: function() {
-                    console.log("compacted database");
                     return Tangerine.$db.saveDoc(doc, {
-                      success: function() {
-                        return console.log("saved brand new doc");
-                      },
+                      success: function() {},
                       error: function() {
-                        console.log("could not save brand new doc");
                         return console.log(arguments);
                       }
                     });
                   },
-                  error: function() {
-                    return console.log("could not compact");
-                  }
-                });
-              } else {
-                return Tangerine.$db.saveDoc(doc, {
-                  success: function() {
-                    return console.log("saved brand new doc");
-                  },
-                  error: function() {
-                    console.log("could not save brand new doc");
-                    return console.log(arguments);
-                  }
+                  error: function() {}
                 });
               }
             }
@@ -114,8 +113,8 @@ AssessmentImportView = (function(_super) {
         }
         return _results;
       },
-      error: function(a, b) {
-        return _this.$el.find("#progress").html("<div>Import error</div><div>" + a + "</div><div>" + b);
+      error: function() {
+        return updateProgress(null, "Download key not found. Please check and try again.");
       }
     });
   };
@@ -149,6 +148,22 @@ AssessmentImportView = (function(_super) {
     } else if (status === "bad") {
       return this.$el.find("#progress").html("<div>Import error</div>" + (arguments.join(',')));
     }
+  };
+
+  AssessmentImportView.prototype.updateProgress = function(key) {
+    var progressHTML, value, _ref;
+    if (this.importList[key] != null) {
+      this.importList[key]++;
+    } else {
+      this.importList[key] = 1;
+    }
+    progressHTML = "";
+    _ref = this.importList;
+    for (key in _ref) {
+      value = _ref[key];
+      progressHTML += "<div>" + (key.titleize().pluralize()) + " - " + value + "</div>";
+    }
+    return this.$el.find("#progress").html(progressHTML);
   };
 
   AssessmentImportView.prototype.render = function() {

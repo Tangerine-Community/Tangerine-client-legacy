@@ -26,6 +26,7 @@
 
 
   <span class="nv">import: </span><span class="o">-&gt;</span>
+    <span class="vi">@importList = </span><span class="p">{}</span>
     <span class="nv">dKey = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">d_key&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.status&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">progress&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;Looking for </span><span class="si">#{</span><span class="nx">dKey</span><span class="si">}</span><span class="s">&quot;</span>
@@ -35,49 +36,47 @@
       <span class="nv">url: </span><span class="s">&quot;http://tangerine.iriscouch.com/tangerine/_design/tangerine/_view/byDKey?keys=[%22</span><span class="si">#{</span><span class="nx">dKey</span><span class="si">}</span><span class="s">%22]&quot;</span>
       <span class="nv">dataType: </span><span class="s">&quot;jsonp&quot;</span> 
       <span class="nv">success: </span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">data</span>
-        <span class="k">for</span> <span class="nx">doc</span> <span class="k">in</span> <span class="nx">data</span><span class="p">.</span><span class="nx">rows</span>
-          <span class="nv">doc = </span><span class="nx">doc</span><span class="p">.</span><span class="nx">value</span>
+        <span class="k">for</span> <span class="nx">row</span> <span class="k">in</span> <span class="nx">data</span><span class="p">.</span><span class="nx">rows</span>
+          <span class="nv">doc = </span><span class="nx">row</span><span class="p">.</span><span class="nx">value</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">collection</span>
           <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">$db</span><span class="p">.</span><span class="nx">openDoc</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span>
+            <span class="nv">async: </span><span class="kc">false</span>
             <span class="nv">success: </span><span class="p">(</span><span class="nx">oldDoc</span><span class="p">)</span> <span class="o">=&gt;</span>
-              <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;work with this:&quot;</span>
-              <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">data</span>
+              <span class="nv">newDoc = </span><span class="nx">doc</span>
               <span class="nv">doc._rev = </span><span class="nx">oldDoc</span><span class="p">.</span><span class="nx">_rev</span>
-              <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">$db</span><span class="p">.</span><span class="nx">saveDoc</span> <span class="nx">doc</span><span class="p">,</span>
-                <span class="nv">success: </span><span class="o">=&gt;</span>
-                  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;overwrote old doc&quot;</span>
+              <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">$db</span><span class="p">.</span><span class="nx">saveDoc</span> <span class="nx">newDoc</span><span class="p">,</span>
+                <span class="nv">async: </span><span class="kc">false</span>
+                <span class="nv">success: </span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span>
+                  <span class="nx">@updateProgress</span> <span class="nx">newDoc</span><span class="p">.</span><span class="nx">collection</span> 
                 <span class="nv">error: </span><span class="o">=&gt;</span>
-                  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;could not overwrite old doc&quot;</span>
-                  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">arguments</span>
+                  <span class="nx">@updateProgress</span> <span class="nx">newDoc</span><span class="p">.</span><span class="nx">collection</span> <span class="o">+</span> <span class="s">&quot; save error&quot;</span>
+              <span class="p">,</span>
+                <span class="nv">async: </span><span class="kc">false</span>
             <span class="nv">error  : </span><span class="o">=&gt;</span>
-              <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;no doc there: arguments[2]&quot;</span>
+              <span class="nv">newDoc = </span><span class="nx">doc</span>
+              <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">$db</span><span class="p">.</span><span class="nx">saveDoc</span> <span class="nx">newDoc</span><span class="p">,</span>
+                <span class="nv">async: </span><span class="kc">false</span>
+                <span class="nv">success: </span><span class="o">=&gt;</span>
+                  <span class="nx">@updateProgress</span> <span class="nx">newDoc</span><span class="p">.</span><span class="nx">collection</span> 
+                <span class="nv">error: </span><span class="o">=&gt;</span>
+                  <span class="nx">@updateProgress</span> <span class="nx">newDoc</span><span class="p">.</span><span class="nx">collection</span> <span class="o">+</span> <span class="s">&quot; save error&quot;</span>
+              <span class="p">,</span>
+                <span class="nv">async: </span><span class="kc">false</span>
+
               <span class="k">if</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;deleted&quot;</span>
-                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;trying to undelete&quot;</span>
                 <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">$db</span><span class="p">.</span><span class="nx">compact</span>
                   <span class="nv">complete: </span><span class="o">=&gt;</span>
-                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;compacted database&quot;</span>
                     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">$db</span><span class="p">.</span><span class="nx">saveDoc</span> <span class="nx">doc</span><span class="p">,</span>
                       <span class="nv">success: </span><span class="o">=&gt;</span>
-                        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;saved brand new doc&quot;</span>
                       <span class="nv">error: </span><span class="o">=&gt;</span>
-                        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;could not save brand new doc&quot;</span>
                         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">arguments</span>
                   <span class="nv">error: </span><span class="o">=&gt;</span>
-                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;could not compact&quot;</span>
 
-              <span class="k">else</span>
-                <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">$db</span><span class="p">.</span><span class="nx">saveDoc</span> <span class="nx">doc</span><span class="p">,</span>
-                  <span class="nv">success: </span><span class="o">=&gt;</span>
-                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;saved brand new doc&quot;</span>
-                  <span class="nv">error: </span><span class="o">=&gt;</span>
-                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;could not save brand new doc&quot;</span>
-                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">arguments</span>
           <span class="p">,</span> 
             <span class="nv">async: </span><span class="kc">false</span>
             <span class="nv">revs_info: </span><span class="kc">true</span>
-      <span class="nv">error: </span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">)</span> <span class="o">=&gt;</span>
-        <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">progress&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;&lt;div&gt;Import error&lt;/div&gt;&lt;div&gt;</span><span class="si">#{</span><span class="nx">a</span><span class="si">}</span><span class="s">&lt;/div&gt;&lt;div&gt;</span><span class="si">#{</span><span class="nx">b</span><span class="si">}</span><span class="s">&quot;</span>
-    <span class="k">return</span>
+      <span class="nv">error: </span><span class="o">=&gt;</span>
+        <span class="nx">updateProgress</span> <span class="kc">null</span><span class="p">,</span> <span class="s">&quot;Download key not found. Please check and try again.&quot;</span>
 
   <span class="nv">showProgress: </span><span class="nf">(status, info) -&gt;</span>
     <span class="k">if</span> <span class="nx">status</span> <span class="o">==</span> <span class="s">&quot;good&quot;</span>
@@ -102,6 +101,18 @@ maybe it doesn't need to. Kind of impressive though.</p>             </td>      
           <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">progress&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;&lt;div&gt;Error after data imported&lt;/div&gt;&lt;div&gt;</span><span class="si">#{</span><span class="nx">a</span><span class="si">}</span><span class="s">&lt;/div&gt;&lt;div&gt;</span><span class="si">#{</span><span class="nx">b</span><span class="si">}</span><span class="s">&quot;</span>
     <span class="k">else</span> <span class="k">if</span> <span class="nx">status</span> <span class="o">==</span> <span class="s">&quot;bad&quot;</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">progress&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;&lt;div&gt;Import error&lt;/div&gt;</span><span class="si">#{</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&quot;</span>
+
+  
+
+  <span class="nv">updateProgress: </span><span class="nf">(key) -&gt;</span>
+    <span class="k">if</span> <span class="nx">@importList</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span><span class="o">?</span>
+      <span class="nx">@importList</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span><span class="o">++</span>
+    <span class="k">else</span>
+      <span class="nx">@importList</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="nv">progressHTML = </span><span class="s">&quot;&quot;</span>
+    <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">@importList</span>
+      <span class="nx">progressHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;div&gt;</span><span class="si">#{</span><span class="nx">key</span><span class="p">.</span><span class="nx">titleize</span><span class="p">().</span><span class="nx">pluralize</span><span class="p">()</span><span class="si">}</span><span class="s"> - </span><span class="si">#{</span><span class="nx">value</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">progress&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">progressHTML</span>
 
   <span class="nv">render: </span><span class="o">-&gt;</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>

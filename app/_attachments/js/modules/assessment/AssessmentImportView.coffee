@@ -26,6 +26,7 @@ class AssessmentImportView extends Backbone.View
 
 
   import: ->
+    @importList = {}
     dKey = @$el.find("#d_key").val()
     @$el.find(".status").fadeIn(250)
     @$el.find("#progress").html "Looking for #{dKey}"
@@ -35,49 +36,47 @@ class AssessmentImportView extends Backbone.View
       url: "http://tangerine.iriscouch.com/tangerine/_design/tangerine/_view/byDKey?keys=[%22#{dKey}%22]"
       dataType: "jsonp" 
       success: (data) =>
-        console.log data
-        for doc in data.rows
-          doc = doc.value
+        for row in data.rows
+          doc = row.value
+          console.log doc.collection
           Tangerine.$db.openDoc doc._id,
+            async: false
             success: (oldDoc) =>
-              console.log "work with this:"
-              console.log data
+              newDoc = doc
               doc._rev = oldDoc._rev
-              Tangerine.$db.saveDoc doc,
-                success: =>
-                  console.log "overwrote old doc"
+              Tangerine.$db.saveDoc newDoc,
+                async: false
+                success: (data) =>
+                  @updateProgress newDoc.collection 
                 error: =>
-                  console.log "could not overwrite old doc"
-                  console.log arguments
+                  @updateProgress newDoc.collection + " save error"
+              ,
+                async: false
             error  : =>
-              console.log "no doc there: arguments[2]"
+              newDoc = doc
+              Tangerine.$db.saveDoc newDoc,
+                async: false
+                success: =>
+                  @updateProgress newDoc.collection 
+                error: =>
+                  @updateProgress newDoc.collection + " save error"
+              ,
+                async: false
+
               if arguments[2] == "deleted"
-                console.log "trying to undelete"
                 Tangerine.$db.compact
                   complete: =>
-                    console.log "compacted database"
                     Tangerine.$db.saveDoc doc,
                       success: =>
-                        console.log "saved brand new doc"
                       error: =>
-                        console.log "could not save brand new doc"
                         console.log arguments
                   error: =>
-                    console.log "could not compact"
 
-              else
-                Tangerine.$db.saveDoc doc,
-                  success: =>
-                    console.log "saved brand new doc"
-                  error: =>
-                    console.log "could not save brand new doc"
-                    console.log arguments
           , 
             async: false
             revs_info: true
-      error: (a,b) =>
-        @$el.find("#progress").html "<div>Import error</div><div>#{a}</div><div>#{b}"
-    return
+      error: =>
+        updateProgress null, "Download key not found. Please check and try again."
 
   showProgress: (status, info) ->
     if status == "good"
@@ -104,6 +103,18 @@ class AssessmentImportView extends Backbone.View
           @$el.find("#progress").html "<div>Error after data imported</div><div>#{a}</div><div>#{b}"
     else if status == "bad"
       @$el.find("#progress").html "<div>Import error</div>#{arguments.join(',')}"
+
+  
+
+  updateProgress: (key) ->
+    if @importList[key]?
+      @importList[key]++
+    else
+      @importList[key] = 1
+    progressHTML = ""
+    for key, value of @importList
+      progressHTML += "<div>#{key.titleize().pluralize()} - #{value}</div>"
+    @$el.find("#progress").html progressHTML
 
   render: ->
     @$el.html "
