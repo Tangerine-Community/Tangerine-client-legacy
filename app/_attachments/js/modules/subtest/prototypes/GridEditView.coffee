@@ -36,7 +36,7 @@ class GridEditView extends Backbone.View
     randomize    = if @model.has("randomize") then @model.get("randomize") else false
     captureItemAtTime    = if @model.has("captureItemAtTime")    then @model.get("captureItemAtTime")   else false
     captureAfterSeconds  = if @model.has("captureAfterSeconds")  then @model.get("captureAfterSeconds") else 0
-    captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureMinuteItem")   else true
+    captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted")   else true
     endOfLine            = if @model.has("endOfLine")            then @model.get("endOfLine")           else true
 
 
