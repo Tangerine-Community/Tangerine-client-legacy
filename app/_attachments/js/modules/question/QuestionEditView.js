@@ -22,7 +22,7 @@ QuestionEditView = (function(_super) {
     'click .delete_option': 'showDeleteConfirm',
     'click .delete_cancel': 'hideDeleteConfirm',
     'click .delete_delete': 'deleteOption',
-    'click input:radio': 'changeQuestionType',
+    'click #question_type input:radio': 'changeQuestionType',
     'click .delete_question': 'deleteQuestion',
     'keypress': 'hijackEnter',
     'change .option_select': 'templateFill'
@@ -120,7 +120,7 @@ QuestionEditView = (function(_super) {
     if (($target.val() !== "open" && this.model.get("type") === "open") || ($target.val() === "open" && this.model.get("type") !== "open")) {
       this.model.set("type", $target.val());
       this.model.set("options", []);
-      return this.render(false);
+      return this.render();
     }
   };
 

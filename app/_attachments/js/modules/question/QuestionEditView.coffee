@@ -9,7 +9,7 @@ class QuestionEditView extends Backbone.View
     'click .delete_option'    : 'showDeleteConfirm'
     'click .delete_cancel'    : 'hideDeleteConfirm'
     'click .delete_delete'    : 'deleteOption'
-    'click input:radio'       : 'changeQuestionType'
+    'click #question_type input:radio'       : 'changeQuestionType'
     'click .delete_question'  : 'deleteQuestion'
     'keypress'                : 'hijackEnter'
     'change .option_select'   : 'templateFill'
@@ -168,11 +168,11 @@ class QuestionEditView extends Backbone.View
 
   changeQuestionType: (event) ->
     $target = $(event.target)
-    # list to open
+    # if it changes, redo the rendering
     if ($target.val() != "open" && @model.get("type") == "open") || ($target.val() == "open" && @model.get("type") != "open")
       @model.set "type", $target.val()
       @model.set "options", []
-      @render false
+      @render()
 
   #
   # Saving
