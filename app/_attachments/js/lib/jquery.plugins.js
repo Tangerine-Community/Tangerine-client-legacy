@@ -3172,7 +3172,6 @@ $.fn.visualize = function(options, container){
     i18n.addPostProcessor = addPostProcessor;
     i18n.options = o;
 
-    console.log(i18n);
 
 
 })();
