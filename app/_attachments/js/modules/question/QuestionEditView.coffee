@@ -81,6 +81,7 @@ class QuestionEditView extends Backbone.View
     name            = @model.escape("name") || ""
     prompt          = @model.escape("prompt") || ""
     hint            = @model.escape("hint") || ""
+    skipLogic       = @model.escape("skipLogic") || ""
     type            = @model.get "type"
     options         = @model.get "options"
     linkedGridScore = @model.get("linkedGridScore") || 0
@@ -104,6 +105,10 @@ class QuestionEditView extends Backbone.View
         <div class='label_value'>
           <label for='hint'>Hint</label>
           <input id='hint' type='text' value='#{hint}'>
+        </div>
+        <div class='label_value'>
+          <label for='skip-logic'>Skip if false</label>
+          <input id='skip-logic' type='text' value='#{skipLogic}'>
         </div>
         <div class='label_value'>
           <label>Skippable</label>
@@ -161,7 +166,7 @@ class QuestionEditView extends Backbone.View
 
 
 
-  hijackEnter: (event) -> 
+  hijackEnter: (event) ->
     if event.which == 13
       @$el.find(event.target).blur()
       return false
@@ -195,10 +200,11 @@ class QuestionEditView extends Backbone.View
   
   updateModel: =>
     # basics
-    @model.set 
-      "prompt"          : @$el.find("#prompt").val() 
+    @model.set
+      "prompt"          : @$el.find("#prompt").val()
       "name"            : @$el.find("#name").val()
       "hint"            : @$el.find("#hint").val()
+      "skipLogic"       : @$el.find("#skip-logic").val()
       "linkedGridScore" : @$el.find("#linked_grid_score").val()
       "type"            : @$el.find("#question_type input:checked").val()
       "skippable"       : @$el.find("#skip_radio input:radio[name=skippable]:checked").val()
