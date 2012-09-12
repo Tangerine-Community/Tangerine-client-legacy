@@ -49,6 +49,31 @@ AssessmentImportView = (function(_super) {
     dKey = this.$el.find("#d_key").val();
     this.$el.find(".status").fadeIn(250);
     this.$el.find("#progress").html("Looking for " + dKey);
+    $.getJSON("http://localhost:5984/tangerine/_changes", null, function(data) {
+      var i, limit, result, toPurge, _i, _len, _ref;
+      toPurge = {};
+      limit = 10;
+      i = 0;
+      _ref = data.results;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        result = _ref[_i];
+        if (i > limit) break;
+        if (result.deleted === true) {
+          i++;
+          toPurge[result.id] = result.changes.shift().rev;
+        }
+      }
+      $.ajax({
+        contentType: "application/json",
+        type: "POST",
+        url: "http://localhost:5984/tangerine/_purge",
+        data: JSON.stringify(toPurge),
+        success: function() {
+          return console.log(arguments);
+        }
+      });
+      return console.log(toPurge);
+    });
     return $.ajax({
       type: "GET",
       url: "http://tangerine.iriscouch.com/tangerine/_design/tangerine/_view/byDKey?keys=[%22" + dKey + "%22]",
@@ -83,28 +108,24 @@ AssessmentImportView = (function(_super) {
             error: function() {
               var newDoc;
               newDoc = doc;
-              Tangerine.$db.saveDoc(newDoc, {
-                async: false,
-                success: function() {
-                  return _this.updateProgress(newDoc.collection);
-                },
-                error: function() {
-                  return _this.updateProgress(newDoc.collection + " save error");
-                }
-              }, {
-                async: false
-              });
               if (arguments[2] === "deleted") {
-                return Tangerine.$db.compact({
-                  complete: function() {
-                    return Tangerine.$db.saveDoc(doc, {
-                      success: function() {},
-                      error: function() {
-                        return console.log(arguments);
-                      }
-                    });
+                return Tangerine.$db.saveDoc(doc, {
+                  success: function() {},
+                  error: function() {
+                    return console.log(arguments);
+                  }
+                });
+              } else {
+                return Tangerine.$db.saveDoc(newDoc, {
+                  async: false,
+                  success: function() {
+                    return _this.updateProgress(newDoc.collection);
                   },
-                  error: function() {}
+                  error: function() {
+                    return _this.updateProgress(newDoc.collection + " save error");
+                  }
+                }, {
+                  async: false
                 });
               }
             }

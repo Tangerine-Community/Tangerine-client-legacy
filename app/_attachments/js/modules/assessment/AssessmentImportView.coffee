@@ -31,6 +31,26 @@ class AssessmentImportView extends Backbone.View
     @$el.find(".status").fadeIn(250)
     @$el.find("#progress").html "Looking for #{dKey}"
 
+    $.getJSON "http://localhost:5984/tangerine/_changes", null, (data) ->
+        toPurge = {}
+        limit = 10
+        i = 0
+        for result in data.results
+          if i>limit then break
+          if result.deleted == true
+            i++
+            toPurge[result.id] = result.changes.shift().rev
+
+        $.ajax
+          contentType: "application/json"
+          type: "POST"
+          url: "http://localhost:5984/tangerine/_purge"
+          data: JSON.stringify(toPurge)
+          success: ->
+            console.log arguments
+        console.log toPurge
+
+  
     $.ajax
       type: "GET"
       url: "http://tangerine.iriscouch.com/tangerine/_design/tangerine/_view/byDKey?keys=[%22#{dKey}%22]"
@@ -55,23 +75,24 @@ class AssessmentImportView extends Backbone.View
                 async: false
             error  : =>
               newDoc = doc
-              Tangerine.$db.saveDoc newDoc,
-                async: false
-                success: =>
-                  @updateProgress newDoc.collection 
-                error: =>
-                  @updateProgress newDoc.collection + " save error"
-              ,
-                async: false
-
               if arguments[2] == "deleted"
-                Tangerine.$db.compact
-                  complete: =>
-                    Tangerine.$db.saveDoc doc,
-                      success: =>
-                      error: =>
-                        console.log arguments
+                Tangerine.$db.saveDoc doc,
+                  success: =>
                   error: =>
+                    console.log arguments
+                    
+
+              else
+
+                Tangerine.$db.saveDoc newDoc,
+                  async: false
+                  success: =>
+                    @updateProgress newDoc.collection 
+                  error: =>
+                    @updateProgress newDoc.collection + " save error"
+                ,
+                  async: false
+
 
           , 
             async: false
