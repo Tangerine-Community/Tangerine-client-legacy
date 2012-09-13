@@ -31,12 +31,8 @@ Backbone.View.prototype.close = function() {
   };
 })(jQuery);
 
-String.prototype.safeToSave = function() {
-  return this.replace(/\s|-/g, "_").replace(/[^a-zA-Z0-9_'""]/g, "");
-};
-
-String.prototype.htmlSafe = function() {
-  return $("<div/>").text(this).html().replace(/'/g, "&#39;").replace(/"/g, "&#34;");
+String.prototype.safetyDance = function() {
+  return this.replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
 };
 
 Math.ave = function() {
@@ -48,6 +44,10 @@ Math.ave = function() {
   }
   result /= arguments.length;
   return result;
+};
+
+Math.isInt = function() {
+  return typeof n === 'number' && parseFloat(n) === parseInt(n, 10) && !isNaN(n);
 };
 
 Utils = (function() {

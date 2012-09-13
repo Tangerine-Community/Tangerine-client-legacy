@@ -35,20 +35,16 @@ Backbone.View.prototype.close = ->
 
 )(jQuery)
 
-
-
-
-String.prototype.safeToSave = ->
-  this.replace(/\s|-/g, "_").replace(/[^a-zA-Z0-9_'""]/g,"")
-
-String.prototype.htmlSafe = ->
-  $("<div/>").text(this).html().replace(/'/g, "&#39;").replace(/"/g, "&#34;")
+String.prototype.safetyDance = -> this.replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g,"")
 
 Math.ave = ->
   result = 0
   result += x for x in arguments
   result /= arguments.length
   return result
+
+Math.isInt = ->
+ return typeof n == 'number' && parseFloat(n) == parseInt(n, 10) && !isNaN(n);
 
 
 class Utils

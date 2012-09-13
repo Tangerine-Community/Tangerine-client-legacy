@@ -18,8 +18,11 @@
       "gridLinkId": ""
     },
     "observation" : {
-      "prototype" : "survey",
-      "gridLinkId": ""
+      "prototype"      : "observation",
+      "totalSeconds"   : 0,
+      "intervalLength" : 0,
+      "variableName"   : "",
+      "displayName"    : ""
     },
     "location": {
       "prototype" : "location",
@@ -88,9 +91,9 @@
         "timer" : 60
       }
     },
-    "survey" : {
-		"Classroom Observation" : {},
-	},
+    "observation" : {
+      "Classroom Observation" : {}
+    },
     "survey" : {
       "Phoneme Segmentation":{},
       "Listening Comprehension":{},
