@@ -29,7 +29,6 @@ class ObservationRunView extends Backbone.View
       "models"     : models
       "views"      : views
       "results"    : []
-    
 
   initializeFlags: ->
     @iAm =
