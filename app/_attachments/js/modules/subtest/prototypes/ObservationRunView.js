@@ -23,7 +23,8 @@ ObservationRunView = (function(_super) {
   };
 
   ObservationRunView.prototype.initializeSurvey = function() {
-    var attributes, i, model, models, view, views, _len;
+    var attributes, i, model, models, view, views, _len,
+      _this = this;
     if (this.survey != null) this.onClose();
     attributes = $.extend(this.model.get('surveyAttributes'), {
       "_id": this.model.id
@@ -51,6 +52,9 @@ ObservationRunView = (function(_super) {
     for (i = 0, _len = views.length; i < _len; i++) {
       view = views[i];
       view.index = i;
+      view.on("rendered", function() {
+        return _this.trigger("rendered");
+      });
     }
     return this.survey = {
       "models": models,

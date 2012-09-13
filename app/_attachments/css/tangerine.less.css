@@ -410,6 +410,9 @@ body.flash {
 table.disabled .grid_element {
   color: #cccccc !important;
 }
+.disabled_cover:before {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGElEQVQImQXBMQEAAADCIHLvMrqgGgardio8BN35e7/IAAAAAElFTkSuQmCC);
+}
 table.grid {
   clear: both;
   width: 101%;
@@ -734,6 +737,9 @@ div.assessment_edit_view a {
   margin: 5px !important;
   padding: 0 !important;
   -webkit-appearance: none !important;
+}
+input[type='number'] {
+  width: 100px;
 }
 ul {
   padding: 0;

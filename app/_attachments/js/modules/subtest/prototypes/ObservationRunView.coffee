@@ -21,9 +21,13 @@ class ObservationRunView extends Backbone.View
     # makes an array of identical models based on the above attributes
     models = (new Backbone.Model attributes for i in [0..parseInt(@model.get('totalSeconds')/@model.get('intervalLength'))])
     
-    # makes an array of views for each model, with an index variable
+    # makes an array of views for each model
     views  = (new SurveyRunView {"model"  : model,"parent" : @} for model in models)
-    view.index = i for view, i in views
+    for view, i in views
+      view.index = i # add an index for reference
+      view.on "rendered", => @trigger "rendered" # listen for render events, pass them up
+    
+    
     
     @survey =
       "models"     : models

@@ -17,7 +17,6 @@ class ObservationEditView extends Backbone.View
       surveyAttributes : @surveyModel.attributes
 
   render: ->
-
     totalSeconds   = @model.get("totalSeconds")   || 0
     intervalLength = @model.get("intervalLength") || 0
     variableName   = @model.get("variableName")   || ""
