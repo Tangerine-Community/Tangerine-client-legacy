@@ -33,13 +33,9 @@ class AssessmentImportView extends Backbone.View
 
     $.getJSON "http://localhost:5984/tangerine/_changes", null, (data) ->
         toPurge = {}
-        limit = 10
-        i = 0
         for result in data.results
-          if i>limit then break
           if result.deleted == true
-            i++
-            toPurge[result.id] = result.changes.shift().rev
+            toPurge[result.id] = _.pluck(result.changes, "rev")
 
         $.ajax
           contentType: "application/json"

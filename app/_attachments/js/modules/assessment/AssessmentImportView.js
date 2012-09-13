@@ -50,17 +50,13 @@ AssessmentImportView = (function(_super) {
     this.$el.find(".status").fadeIn(250);
     this.$el.find("#progress").html("Looking for " + dKey);
     $.getJSON("http://localhost:5984/tangerine/_changes", null, function(data) {
-      var i, limit, result, toPurge, _i, _len, _ref;
+      var result, toPurge, _i, _len, _ref;
       toPurge = {};
-      limit = 10;
-      i = 0;
       _ref = data.results;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         result = _ref[_i];
-        if (i > limit) break;
         if (result.deleted === true) {
-          i++;
-          toPurge[result.id] = result.changes.shift().rev;
+          toPurge[result.id] = _.pluck(result.changes, "rev");
         }
       }
       $.ajax({
