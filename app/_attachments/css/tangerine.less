@@ -329,7 +329,8 @@ body.flash{
   background-color: @yellow;
 }
 
-table.disabled
+table.disabled,
+div.disabled
 {
   .grid_element
   {
@@ -337,7 +338,8 @@ table.disabled
   }
 }
 
-table.grid
+table.grid,
+div.grid
 {
 
   clear: both;
@@ -360,6 +362,12 @@ table.grid
     padding:10px;
     border-radius: 10px;
     font-size: 40px;
+  }
+  
+  span.grid_element
+  {
+    width: auto;
+    display: inline-block;
   }
 
   .end_of_grid_line
@@ -399,6 +407,10 @@ table.grid
     border-bottom: 5px solid blue;
   }
 
+  .font_size_small
+  {
+    font-size: 25px;
+  }
 
 }
 

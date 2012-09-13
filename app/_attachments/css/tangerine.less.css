@@ -407,19 +407,23 @@ p {
 body.flash {
   background-color: #f7c942;
 }
-table.disabled .grid_element {
+table.disabled .grid_element,
+div.disabled .grid_element {
   color: #cccccc !important;
 }
-table.grid {
+table.grid,
+div.grid {
   clear: both;
   width: 101%;
 }
-table.grid td {
+table.grid td,
+div.grid td {
   padding: 0;
   margin: 0;
   border: 0;
 }
-table.grid .grid_element {
+table.grid .grid_element,
+div.grid .grid_element {
   cursor: pointer;
   text-align: center;
   background: #cccccc;
@@ -429,7 +433,13 @@ table.grid .grid_element {
   border-radius: 10px;
   font-size: 40px;
 }
-table.grid .end_of_grid_line {
+table.grid span.grid_element,
+div.grid span.grid_element {
+  width: auto;
+  display: inline-block;
+}
+table.grid .end_of_grid_line,
+div.grid .end_of_grid_line {
   margin: 5px;
   padding: 5px 5px;
   cursor: pointer;
@@ -441,21 +451,28 @@ table.grid .end_of_grid_line {
   text-align: center;
   border-radius: 10px;
 }
-table.grid .element_wrong {
+table.grid .element_wrong,
+div.grid .element_wrong {
   background: #6daed9;
   text-decoration: line-through;
 }
-table.grid .element_last {
+table.grid .element_last,
+div.grid .element_last {
   margin: 0;
   border-top: 5px solid red;
   border-right: 5px solid red;
   border-bottom: 5px solid red;
 }
-table.grid .element_minute {
+table.grid .element_minute,
+div.grid .element_minute {
   margin: 0;
   border-top: 5px solid blue;
   border-left: 5px solid blue;
   border-bottom: 5px solid blue;
+}
+table.grid .font_size_small,
+div.grid .font_size_small {
+  font-size: 25px;
 }
 .grid_prototype {
   width: 100%;

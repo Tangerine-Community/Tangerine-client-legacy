@@ -85,7 +85,7 @@ GridRunView = (function(_super) {
   GridRunView.prototype.markElement = function(index, value) {
     var $target;
     if (value == null) value = null;
-    $target = this.$el.find("div.grid_element[data-index=" + index + "]");
+    $target = this.$el.find(".grid_element[data-index=" + index + "]");
     this.markRecord.push(index);
     if (value === null) {
       this.gridOutput[index - 1] = this.gridOutput[index - 1] === "correct" || this.autostopped ? "incorrect" : "correct";
@@ -148,7 +148,7 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.enableGrid = function() {
-    return this.$el.find("table.disabled").removeClass("disabled");
+    return this.$el.find("table.disabled, div.disabled").removeClass("disabled");
   };
 
   GridRunView.prototype.stopTimer = function(event, message) {
@@ -305,10 +305,18 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.initialize = function(options) {
+    var fontSizeClass;
     this.captureAfterSeconds = this.model.has("captureAfterSeconds") ? this.model.get("captureAfterSeconds") : 0;
     this.captureItemAtTime = this.model.has("captureItemAtTime") ? this.model.get("captureItemAtTime") : false;
     this.captureLastAttempted = this.model.has("captureLastAttempted") ? this.model.get("captureLastAttempted") : true;
     this.endOfLine = this.model.has("endOfLine") ? this.model.get("endOfLine") : true;
+    this.layoutMode = this.model.has("layoutMode") ? this.model.get("layoutMode") : "grid";
+    this.fontSize = this.model.has("fontSize") ? this.model.get("fontSize") : "normal";
+    if (this.fontSize === "small") {
+      fontSizeClass = "font_size_small";
+    } else {
+      fontSizeClass = "";
+    }
     this.totalTime = this.model.get("timer") || 0;
     this.modeHandlers = {
       "mark": this.markHandler,
@@ -319,36 +327,57 @@ GridRunView = (function(_super) {
     this.model = this.options.model;
     this.parent = this.options.parent;
     this.resetVariables();
-    this.gridElement = _.template("<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element'>{{label}}</div></td>");
-    return this.endOfGridLine = _.template("<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>");
+    this.gridElement = _.template("<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element " + fontSizeClass + "'>{{label}}</div></td>");
+    this.variableGridElement = _.template("<span data-label='{{label}}' data-index='{{i}}' class='grid_element " + fontSizeClass + "'>{{label}}</span>");
+    if (this.layoutMode === "grid") {
+      return this.endOfGridLine = _.template("<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>");
+    } else {
+      return this.endOfGridLine = _.template("");
+    }
   };
 
   GridRunView.prototype.render = function() {
-    var captureLastButton, disabling, done, html, i, minuteItemButton, modeSelector, resetButton, startTimerHTML, stopTimerHTML, _ref;
+    var captureLastButton, disabling, done, gridHTML, html, i, item, minuteItemButton, modeSelector, resetButton, startTimerHTML, stopTimerHTML, _len, _ref, _ref2;
     done = 0;
     startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>Start</button><div class='timer'>" + this.timer + "</div></div>";
     disabling = this.untimed ? "" : "disabled";
-    html = "    " + (!this.untimed ? startTimerHTML : "") + "    <table class='grid " + disabling + "'>";
-    while (true) {
-      if (done > this.items.length) break;
-      html += "<tr>";
-      for (i = 1, _ref = this.columns; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
-        if (done < this.items.length) {
-          html += this.gridElement({
-            label: _.escape(this.items[this.itemMap[done]]),
-            i: done + 1
+    html = !this.untimed ? startTimerHTML : "";
+    gridHTML = "";
+    if (this.layoutMode === "grid") {
+      gridHTML += "<table class='grid " + disabling + "'>";
+      while (true) {
+        if (done > this.items.length) break;
+        gridHTML += "<tr>";
+        for (i = 1, _ref = this.columns; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
+          if (done < this.items.length) {
+            gridHTML += this.gridElement({
+              label: _.escape(this.items[this.itemMap[done]]),
+              i: done + 1
+            });
+          }
+          done++;
+        }
+        if (done < (this.items.length + 1) && this.endOfLine) {
+          gridHTML += this.endOfGridLine({
+            i: done
           });
         }
-        done++;
+        gridHTML += "</tr>";
       }
-      if (done < (this.items.length + 1) && this.endOfLine) {
-        html += this.endOfGridLine({
-          i: done
+      gridHTML += "</table>";
+    } else {
+      gridHTML += "<div class='grid " + disabling + "'>";
+      _ref2 = this.items;
+      for (i = 0, _len = _ref2.length; i < _len; i++) {
+        item = _ref2[i];
+        gridHTML += this.variableGridElement({
+          "label": _.escape(this.items[this.itemMap[i]]),
+          "i": i + 1
         });
       }
-      html += "</tr>";
+      gridHTML += "</div>";
     }
-    html += "</table>";
+    html += gridHTML;
     stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>";
     resetButton = "    <div>      <button class='restart command'>Restart</button>      <br>    </div>";
     modeSelector = "";

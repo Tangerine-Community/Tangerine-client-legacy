@@ -19,6 +19,9 @@ class GridEditView extends Backbone.View
       captureItemAtTime:    @$el.find("#capture_item_at_time input:checked").val()   == "true"
       captureAfterSeconds:  parseInt(@$el.find("#capture_after_seconds").val())
 
+      fontSize:   @$el.find("#font_size input:checked").val()
+      layoutMode: @$el.find("#layout_mode input:checked").val()
+
       randomize: @$el.find("#randomize input:checked").val() == "true"
       timer    : parseInt( @$el.find("#subtest_timer").val() )
       items    : _.compact( @$el.find("#subtest_items").val().split(" ") ) # mild sanitization, happens at read too
@@ -28,8 +31,8 @@ class GridEditView extends Backbone.View
 
 
   render: ->
-    timer        = @model.get("timer") || 0
     items        = @model.get("items").join " "
+    timer        = @model.get("timer")   || 0
     columns      = @model.get("columns") || 0
     autostop     = @model.get("autostop") || 0
     variableName = @model.get("variableName") || ""
@@ -38,6 +41,9 @@ class GridEditView extends Backbone.View
     captureAfterSeconds  = if @model.has("captureAfterSeconds")  then @model.get("captureAfterSeconds") else 0
     captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted")   else true
     endOfLine            = if @model.has("endOfLine")            then @model.get("endOfLine")           else true
+
+    fontSize    = if @model.has("fontSize")   then @model.get("fontSize")   else "medium"
+    layoutMode  = if @model.has("layoutMode") then @model.get("layoutMode") else "fixed"
 
 
     @$el.html "
@@ -51,11 +57,30 @@ class GridEditView extends Backbone.View
       </div>
 
       <div class='label_value'>
+
         <label>Randomize items</label><br>
         <div class='menu_box'>
           <div id='randomize' class='buttonset'>
             <label for='randomize_true'>Yes</label><input name='randomize' type='radio' value='true' id='randomize_true' #{'checked' if randomize}>
             <label for='randomize_false'>No</label><input name='randomize' type='radio' value='false' id='randomize_false' #{'checked' if not randomize}>
+          </div>
+        </div>
+
+        <br>
+        <label>Layout mode</label><br>
+        <div class='menu_box'>
+          <div id='layout_mode' class='buttonset'>
+            <label for='layout_mode_fixed'>Fixed<img></label><input name='layout_mode' type='radio' value='fixed' id='layout_mode_fixed' #{if layoutMode == "fixed" then "checked" else ""}>
+            <label for='layout_mode_variable'>Variable<img></label><input name='layout_mode' type='radio' value='variable' id='layout_mode_variable' #{if layoutMode == "variable" then "checked" else ""}>
+          </div>
+        </div>
+
+        <br>
+        <label>Grid font size</label><br>
+        <div class='menu_box'>
+          <div id='font_size' class='buttonset'>
+            <label for='font_size_medium'>Medium</label><input name='font_size' type='radio' value='medium' id='font_size_medium' #{if fontSize == "medium" then 'checked' else ''}>
+            <label for='font_size_small'>Small</label><input name='font_size' type='radio' value='small' id='font_size_small' #{if fontSize == "small" then 'checked' else ''}>
           </div>
         </div>
 
