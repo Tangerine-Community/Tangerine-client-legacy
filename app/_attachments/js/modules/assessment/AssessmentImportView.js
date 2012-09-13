@@ -68,11 +68,7 @@ AssessmentImportView = (function(_super) {
           contentType: "application/json",
           type: "POST",
           url: "http://localhost:5984/tangerine/_purge",
-          data: JSON.stringify(toPurge),
-          success: function() {
-            console.log("Purge success");
-            return console.log(arguments);
-          }
+          data: JSON.stringify(toPurge)
         });
       }
     });

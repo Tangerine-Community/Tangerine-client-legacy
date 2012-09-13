@@ -47,9 +47,6 @@ class AssessmentImportView extends Backbone.View
           type: "POST"
           url: "http://localhost:5984/tangerine/_purge"
           data: JSON.stringify(toPurge)
-          success: ->
-            console.log "Purge success" 
-            console.log arguments
 
   
     $.ajax
