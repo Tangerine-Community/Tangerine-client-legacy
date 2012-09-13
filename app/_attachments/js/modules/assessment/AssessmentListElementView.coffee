@@ -31,7 +31,8 @@ class AssessmentListElementView extends Backbone.View
       @parent.refresh()
 
   copyToGroup: ->
-    @model.duplicate {group:Tangerine.user.get("groups")[0]}, null, null, =>
+    console.log @parent.group
+    @model.duplicate {group:@parent.group}, null, null, =>
       @render()
       @parent.refresh()
 
