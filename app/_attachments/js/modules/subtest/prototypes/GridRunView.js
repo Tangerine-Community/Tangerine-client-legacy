@@ -310,7 +310,7 @@ GridRunView = (function(_super) {
     this.captureItemAtTime = this.model.has("captureItemAtTime") ? this.model.get("captureItemAtTime") : false;
     this.captureLastAttempted = this.model.has("captureLastAttempted") ? this.model.get("captureLastAttempted") : true;
     this.endOfLine = this.model.has("endOfLine") ? this.model.get("endOfLine") : true;
-    this.layoutMode = this.model.has("layoutMode") ? this.model.get("layoutMode") : "grid";
+    this.layoutMode = this.model.has("layoutMode") ? this.model.get("layoutMode") : "fixed";
     this.fontSize = this.model.has("fontSize") ? this.model.get("fontSize") : "normal";
     if (this.fontSize === "small") {
       fontSizeClass = "font_size_small";
@@ -329,7 +329,7 @@ GridRunView = (function(_super) {
     this.resetVariables();
     this.gridElement = _.template("<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element " + fontSizeClass + "'>{{label}}</div></td>");
     this.variableGridElement = _.template("<span data-label='{{label}}' data-index='{{i}}' class='grid_element " + fontSizeClass + "'>{{label}}</span>");
-    if (this.layoutMode === "grid") {
+    if (this.layoutMode === "fixed") {
       return this.endOfGridLine = _.template("<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>");
     } else {
       return this.endOfGridLine = _.template("");
@@ -343,7 +343,7 @@ GridRunView = (function(_super) {
     disabling = this.untimed ? "" : "disabled";
     html = !this.untimed ? startTimerHTML : "";
     gridHTML = "";
-    if (this.layoutMode === "grid") {
+    if (this.layoutMode === "fixed") {
       gridHTML += "<table class='grid " + disabling + "'>";
       while (true) {
         if (done > this.items.length) break;

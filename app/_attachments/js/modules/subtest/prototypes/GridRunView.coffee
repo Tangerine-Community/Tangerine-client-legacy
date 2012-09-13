@@ -251,8 +251,9 @@ class GridRunView extends Backbone.View
     @captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted") else true
     @endOfLine            = if @model.has("endOfLine")            then @model.get("endOfLine")            else true
 
-    @layoutMode = if @model.has("layoutMode") then @model.get("layoutMode") else "grid"
+    @layoutMode = if @model.has("layoutMode") then @model.get("layoutMode") else "fixed"
     @fontSize   = if @model.has("fontSize")   then @model.get("fontSize")   else "normal"
+
     if @fontSize == "small"
       fontSizeClass = "font_size_small"
     else
@@ -274,7 +275,7 @@ class GridRunView extends Backbone.View
     @gridElement         = _.template "<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element #{fontSizeClass}'>{{label}}</div></td>"
     @variableGridElement = _.template "<span data-label='{{label}}' data-index='{{i}}' class='grid_element #{fontSizeClass}'>{{label}}</span>"
     
-    if @layoutMode == "grid"
+    if @layoutMode == "fixed"
       @endOfGridLine = _.template "<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>"
     else
       @endOfGridLine = _.template ""
@@ -290,7 +291,7 @@ class GridRunView extends Backbone.View
     
     gridHTML = ""
     
-    if @layoutMode == "grid"
+    if @layoutMode == "fixed"
       gridHTML += "<table class='grid #{disabling}'>"
       loop
         break if done > @items.length

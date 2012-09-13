@@ -249,8 +249,9 @@
     <span class="vi">@captureLastAttempted = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;captureLastAttempted&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;captureLastAttempted&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">true</span>
     <span class="vi">@endOfLine            = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span>            <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;endOfLine&quot;</span><span class="p">)</span>            <span class="k">else</span> <span class="kc">true</span>
 
-    <span class="vi">@layoutMode = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;layoutMode&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;layoutMode&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s">&quot;grid&quot;</span>
+    <span class="vi">@layoutMode = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;layoutMode&quot;</span><span class="p">)</span> <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;layoutMode&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s">&quot;fixed&quot;</span>
     <span class="vi">@fontSize   = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&quot;fontSize&quot;</span><span class="p">)</span>   <span class="k">then</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;fontSize&quot;</span><span class="p">)</span>   <span class="k">else</span> <span class="s">&quot;normal&quot;</span>
+
     <span class="k">if</span> <span class="nx">@fontSize</span> <span class="o">==</span> <span class="s">&quot;small&quot;</span>
       <span class="nv">fontSizeClass = </span><span class="s">&quot;font_size_small&quot;</span>
     <span class="k">else</span>
@@ -272,7 +273,7 @@
     <span class="vi">@gridElement         = </span><span class="nx">_</span><span class="p">.</span><span class="nx">template</span> <span class="s">&quot;&lt;td&gt;&lt;div data-label=&#39;{{label}}&#39; data-index=&#39;{{i}}&#39; class=&#39;grid_element </span><span class="si">#{</span><span class="nx">fontSizeClass</span><span class="si">}</span><span class="s">&#39;&gt;{{label}}&lt;/div&gt;&lt;/td&gt;&quot;</span>
     <span class="vi">@variableGridElement = </span><span class="nx">_</span><span class="p">.</span><span class="nx">template</span> <span class="s">&quot;&lt;span data-label=&#39;{{label}}&#39; data-index=&#39;{{i}}&#39; class=&#39;grid_element </span><span class="si">#{</span><span class="nx">fontSizeClass</span><span class="si">}</span><span class="s">&#39;&gt;{{label}}&lt;/span&gt;&quot;</span>
     
-    <span class="k">if</span> <span class="nx">@layoutMode</span> <span class="o">==</span> <span class="s">&quot;grid&quot;</span>
+    <span class="k">if</span> <span class="nx">@layoutMode</span> <span class="o">==</span> <span class="s">&quot;fixed&quot;</span>
       <span class="vi">@endOfGridLine = </span><span class="nx">_</span><span class="p">.</span><span class="nx">template</span> <span class="s">&quot;&lt;td&gt;&lt;div data-index=&#39;{{i}}&#39; class=&#39;end_of_grid_line&#39;&gt;*&lt;/div&gt;&lt;/td&gt;&quot;</span>
     <span class="k">else</span>
       <span class="vi">@endOfGridLine = </span><span class="nx">_</span><span class="p">.</span><span class="nx">template</span> <span class="s">&quot;&quot;</span>
@@ -288,7 +289,7 @@
     
     <span class="nv">gridHTML = </span><span class="s">&quot;&quot;</span>
     
-    <span class="k">if</span> <span class="nx">@layoutMode</span> <span class="o">==</span> <span class="s">&quot;grid&quot;</span>
+    <span class="k">if</span> <span class="nx">@layoutMode</span> <span class="o">==</span> <span class="s">&quot;fixed&quot;</span>
       <span class="nx">gridHTML</span> <span class="o">+=</span> <span class="s">&quot;&lt;table class=&#39;grid </span><span class="si">#{</span><span class="nx">disabling</span><span class="si">}</span><span class="s">&#39;&gt;&quot;</span>
       <span class="nx">loop</span>
         <span class="k">break</span> <span class="k">if</span> <span class="nx">done</span> <span class="o">&gt;</span> <span class="nx">@items</span><span class="p">.</span><span class="nx">length</span>
