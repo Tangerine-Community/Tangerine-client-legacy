@@ -31,6 +31,22 @@
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.status&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">progress&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;Looking for </span><span class="si">#{</span><span class="nx">dKey</span><span class="si">}</span><span class="s">&quot;</span>
 
+    <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span> <span class="s">&quot;http://localhost:5984/tangerine/_changes&quot;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nf">(data) -&gt;</span>
+        <span class="nv">toPurge = </span><span class="p">{}</span>
+        <span class="k">for</span> <span class="nx">result</span> <span class="k">in</span> <span class="nx">data</span><span class="p">.</span><span class="nx">results</span>
+          <span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">deleted</span> <span class="o">==</span> <span class="kc">true</span>
+            <span class="nx">toPurge</span><span class="p">[</span><span class="nx">result</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">pluck</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">changes</span><span class="p">,</span> <span class="s">&quot;rev&quot;</span><span class="p">)</span>
+
+        <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span>
+          <span class="nv">contentType: </span><span class="s">&quot;application/json&quot;</span>
+          <span class="nv">type: </span><span class="s">&quot;POST&quot;</span>
+          <span class="nv">url: </span><span class="s">&quot;http://localhost:5984/tangerine/_purge&quot;</span>
+          <span class="nv">data: </span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">toPurge</span><span class="p">)</span>
+          <span class="nv">success: </span><span class="o">-&gt;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">arguments</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">toPurge</span>
+
+  
     <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span>
       <span class="nv">type: </span><span class="s">&quot;GET&quot;</span>
       <span class="nv">url: </span><span class="s">&quot;http://tangerine.iriscouch.com/tangerine/_design/tangerine/_view/byDKey?keys=[%22</span><span class="si">#{</span><span class="nx">dKey</span><span class="si">}</span><span class="s">%22]&quot;</span>
@@ -55,23 +71,24 @@
                 <span class="nv">async: </span><span class="kc">false</span>
             <span class="nv">error  : </span><span class="o">=&gt;</span>
               <span class="nv">newDoc = </span><span class="nx">doc</span>
-              <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">$db</span><span class="p">.</span><span class="nx">saveDoc</span> <span class="nx">newDoc</span><span class="p">,</span>
-                <span class="nv">async: </span><span class="kc">false</span>
-                <span class="nv">success: </span><span class="o">=&gt;</span>
-                  <span class="nx">@updateProgress</span> <span class="nx">newDoc</span><span class="p">.</span><span class="nx">collection</span> 
-                <span class="nv">error: </span><span class="o">=&gt;</span>
-                  <span class="nx">@updateProgress</span> <span class="nx">newDoc</span><span class="p">.</span><span class="nx">collection</span> <span class="o">+</span> <span class="s">&quot; save error&quot;</span>
-              <span class="p">,</span>
-                <span class="nv">async: </span><span class="kc">false</span>
-
               <span class="k">if</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;deleted&quot;</span>
-                <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">$db</span><span class="p">.</span><span class="nx">compact</span>
-                  <span class="nv">complete: </span><span class="o">=&gt;</span>
-                    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">$db</span><span class="p">.</span><span class="nx">saveDoc</span> <span class="nx">doc</span><span class="p">,</span>
-                      <span class="nv">success: </span><span class="o">=&gt;</span>
-                      <span class="nv">error: </span><span class="o">=&gt;</span>
-                        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">arguments</span>
+                <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">$db</span><span class="p">.</span><span class="nx">saveDoc</span> <span class="nx">doc</span><span class="p">,</span>
+                  <span class="nv">success: </span><span class="o">=&gt;</span>
                   <span class="nv">error: </span><span class="o">=&gt;</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">arguments</span>
+                    
+
+              <span class="k">else</span>
+
+                <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">$db</span><span class="p">.</span><span class="nx">saveDoc</span> <span class="nx">newDoc</span><span class="p">,</span>
+                  <span class="nv">async: </span><span class="kc">false</span>
+                  <span class="nv">success: </span><span class="o">=&gt;</span>
+                    <span class="nx">@updateProgress</span> <span class="nx">newDoc</span><span class="p">.</span><span class="nx">collection</span> 
+                  <span class="nv">error: </span><span class="o">=&gt;</span>
+                    <span class="nx">@updateProgress</span> <span class="nx">newDoc</span><span class="p">.</span><span class="nx">collection</span> <span class="o">+</span> <span class="s">&quot; save error&quot;</span>
+                <span class="p">,</span>
+                  <span class="nv">async: </span><span class="kc">false</span>
+
 
           <span class="p">,</span> 
             <span class="nv">async: </span><span class="kc">false</span>
