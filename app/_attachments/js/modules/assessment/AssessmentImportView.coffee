@@ -31,20 +31,25 @@ class AssessmentImportView extends Backbone.View
     @$el.find(".status").fadeIn(250)
     @$el.find("#progress").html "Looking for #{dKey}"
 
-    $.getJSON "http://localhost:5984/tangerine/_changes", null, (data) ->
+    $.ajax
+      "url"      : "http://localhost:5984/tangerine/_changes", 
+      "dataType" : "json"
+      "async"    : false
+      success    : (data) ->
         toPurge = {}
         for result in data.results
           if result.deleted == true
             toPurge[result.id] = _.pluck(result.changes, "rev")
 
         $.ajax
+          async: false
           contentType: "application/json"
           type: "POST"
           url: "http://localhost:5984/tangerine/_purge"
           data: JSON.stringify(toPurge)
           success: ->
+            console.log "Purge success" 
             console.log arguments
-        console.log toPurge
 
   
     $.ajax

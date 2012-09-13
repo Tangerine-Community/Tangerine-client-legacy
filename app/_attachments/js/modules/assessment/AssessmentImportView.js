@@ -49,26 +49,32 @@ AssessmentImportView = (function(_super) {
     dKey = this.$el.find("#d_key").val();
     this.$el.find(".status").fadeIn(250);
     this.$el.find("#progress").html("Looking for " + dKey);
-    $.getJSON("http://localhost:5984/tangerine/_changes", null, function(data) {
-      var result, toPurge, _i, _len, _ref;
-      toPurge = {};
-      _ref = data.results;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        result = _ref[_i];
-        if (result.deleted === true) {
-          toPurge[result.id] = _.pluck(result.changes, "rev");
+    $.ajax({
+      "url": "http://localhost:5984/tangerine/_changes",
+      "dataType": "json",
+      "async": false,
+      success: function(data) {
+        var result, toPurge, _i, _len, _ref;
+        toPurge = {};
+        _ref = data.results;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          result = _ref[_i];
+          if (result.deleted === true) {
+            toPurge[result.id] = _.pluck(result.changes, "rev");
+          }
         }
+        return $.ajax({
+          async: false,
+          contentType: "application/json",
+          type: "POST",
+          url: "http://localhost:5984/tangerine/_purge",
+          data: JSON.stringify(toPurge),
+          success: function() {
+            console.log("Purge success");
+            return console.log(arguments);
+          }
+        });
       }
-      $.ajax({
-        contentType: "application/json",
-        type: "POST",
-        url: "http://localhost:5984/tangerine/_purge",
-        data: JSON.stringify(toPurge),
-        success: function() {
-          return console.log(arguments);
-        }
-      });
-      return console.log(toPurge);
     });
     return $.ajax({
       type: "GET",
