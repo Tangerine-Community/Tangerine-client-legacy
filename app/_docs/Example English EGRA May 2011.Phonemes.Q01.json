@@ -4,6 +4,7 @@
   "type": "multiple",
   "name" : "am",
   "order" : 1,
+  "skippable": true,
   "prompt": "am",
   "options": [
     {

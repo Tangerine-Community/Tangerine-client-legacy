@@ -4,6 +4,7 @@
   "prompt": "thank",
   "name" : "thank",
   "order" : 4,
+  "skippable": true,
   "type": "multiple",
   "options": [
     {

@@ -4,6 +4,7 @@
   "name" : "up",
   "order" : 0,
   "prompt": "up",
+  "skippable": true,
   "type": "multiple",
   "options": [
     {

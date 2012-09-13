@@ -4,6 +4,7 @@
   "prompt": "is",
   "name" : "is",
   "order" : 2,
+  "skippable": true,
   "type": "multiple",
   "options": [
     {
