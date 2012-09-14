@@ -35,27 +35,28 @@ Backbone.View.prototype.close = ->
 
 )(jQuery)
 
+#
+# CouchDB error handling
+#
+$.ajaxSetup
+  statusCode:
+    404: (xhr, status, message) ->
+      code = xhr.status
+      statusText = xhr.statusText
+      seeUnauthorized = ~xhr.responseText.indexOf("unauthorized")
+      if seeUnauthorized
+        Utils.midAlert "Error<br>You are not currently logged in"
+        # Tell user model to refresh
+        Tangerine.user.fetch()
+
+
+# debug codes
 km = {"0":48,"1":49,"2":50,"3":51,"4":52,"5":53,"6":54,"7":55,"8":56,"9":57,"a":65,"b":66,"c":67,"d":68,"e":69,"f":70,"g":71,"h":72,"i":73,"j":74,"k":75,"l":76,"m":77,"n":78,"o":79,"p":80,"q":81,"r":82,"s":83,"t":84,"u":85,"v":86,"w":87,"x":88,"y":89,"z":90}
-sks = 
-  [
-    { 
-      q : (km["0100set"[i]] for i in [0..6])
-      i : 0
-      c : -> Tangerine.router.navigate "settings", true
-    }
-  ]
-
-keyList = []
-
-$(document).keydown (e) ->
-  keyList.push e.keyCode
-  for sk, j in sks
-    if e.keyCode == sks[j].q[sks[j].i++]
-      sks[j]['c']() if sks[j].i == sks[j].q.length
-    else
-      sks[j].i = 0
+sks = [ { q : (km["0100set"[i]] for i in [0..6]), i : 0, c : -> Tangerine.router.navigate "settings", true } ]
+$(document).keydown (e) -> ( if e.keyCode == sks[j].q[sks[j].i++] then sks[j]['c']() if sks[j].i == sks[j].q.length else sks[j].i = 0 ) for sk, j in sks 
 
 String.prototype.safetyDance = -> this.replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g,"")
+
 
 Math.ave = ->
   result = 0
@@ -63,13 +64,13 @@ Math.ave = ->
   result /= arguments.length
   return result
 
-Math.isInt = ->
- return typeof n == 'number' && parseFloat(n) == parseInt(n, 10) && !isNaN(n);
+Math.isInt = -> return typeof n == 'number' && parseFloat(n) == parseInt(n, 10) && !isNaN(n)
+
+Math.decimals = (num, decimals) -> m = Math.pow( 10, decimals ); num *= m; num =  num+(num<0?-0.5:+0.5)>>0; num /= m
 
 
 class Utils
 
-  @round: (num, decimals) -> Math.round( num * Math.pow( 10, decimals ) ) / Math.pow( 10, decimals)
   # asks for confirmation in the browser, and uses phonegap for cool confirmation
   @confirm: (message, options) ->
     if navigator.notification?.confirm?
@@ -158,7 +159,7 @@ $ ->
     alert_text = if $(this).attr("data-alert") then $(this).attr("data-alert") else $(this).val()
     Utils.disposableAlert alert_text
   $("#content").on "click", ".disposable_alert", ->
-    $(this).stop().fadeOut 250, ->
+    $(this).stop().fadeOut 100, ->
       $(this).remove()
   
   # $(window).resize Utils.resizeScrollPane

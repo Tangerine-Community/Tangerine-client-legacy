@@ -1,4 +1,4 @@
-var Utils, i, keyList, km, sks;
+var Utils, i, km, sks;
 
 Backbone.View.prototype.close = function() {
   this.remove();
@@ -30,6 +30,21 @@ Backbone.View.prototype.close = function() {
     return this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
   };
 })(jQuery);
+
+$.ajaxSetup({
+  statusCode: {
+    404: function(xhr, status, message) {
+      var code, seeUnauthorized, statusText;
+      code = xhr.status;
+      statusText = xhr.statusText;
+      seeUnauthorized = ~xhr.responseText.indexOf("unauthorized");
+      if (seeUnauthorized) {
+        Utils.midAlert("Error<br>You are not currently logged in");
+        return Tangerine.user.fetch();
+      }
+    }
+  }
+});
 
 km = {
   "0": 48,
@@ -87,23 +102,12 @@ sks = [
   }
 ];
 
-keyList = [];
-
 $(document).keydown(function(e) {
   var j, sk, _len, _results;
-  keyList.push(e.keyCode);
   _results = [];
   for (j = 0, _len = sks.length; j < _len; j++) {
     sk = sks[j];
-    if (e.keyCode === sks[j].q[sks[j].i++]) {
-      if (sks[j].i === sks[j].q.length) {
-        _results.push(sks[j]['c']());
-      } else {
-        _results.push(void 0);
-      }
-    } else {
-      _results.push(sks[j].i = 0);
-    }
+    _results.push(e.keyCode === sks[j].q[sks[j].i++] ? sks[j].i === sks[j].q.length ? sks[j]['c']() : void 0 : sks[j].i = 0);
   }
   return _results;
 });
@@ -127,13 +131,19 @@ Math.isInt = function() {
   return typeof n === 'number' && parseFloat(n) === parseInt(n, 10) && !isNaN(n);
 };
 
+Math.decimals = function(num, decimals) {
+  var m;
+  m = Math.pow(10, decimals);
+  num *= m;
+  num = num + (num < (0 != null) - {
+    0.5: +0.5
+  }) >> 0;
+  return num /= m;
+};
+
 Utils = (function() {
 
   function Utils() {}
-
-  Utils.round = function(num, decimals) {
-    return Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals);
-  };
 
   Utils.confirm = function(message, options) {
     var _ref;
@@ -259,7 +269,7 @@ $(function() {
     return Utils.disposableAlert(alert_text);
   });
   return $("#content").on("click", ".disposable_alert", function() {
-    return $(this).stop().fadeOut(250, function() {
+    return $(this).stop().fadeOut(100, function() {
       return $(this).remove();
     });
   });
