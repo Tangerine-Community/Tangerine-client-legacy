@@ -10,12 +10,14 @@ class ResultView extends Backbone.View
     Tangerine.router.navigate "restart/#{@assessment.id}", true
 
   save: ->
+      
     @model.add
       name : "Assessment complete"
       prototype: "complete"
       data :
         "comment" : @$el.find('#additional_comments').val() || ""
         "end_time" : (new Date()).getTime()
+        "gps" : @gpsData
       subtestId : "result"
       sum :
         correct : 1
@@ -34,6 +36,22 @@ class ResultView extends Backbone.View
       @$el.find('.save_status').html "Results may not have saved"
 
   initialize: ( options ) ->
+
+    # Try to get GPS coordinates
+    @gpsData = {}
+    try
+      navigator.geolocation.getCurrentPosition(
+          (geo) => 
+            @gpsData = geo.coords
+        , 
+          => @gpsData[error] = arguments
+        , 
+          "enableHighAccuracy" : true
+      )
+    catch error
+      @gpsData =
+        "error" : error
+  
     @model = options.model
     @assessment = options.assessment
     @saved = false
