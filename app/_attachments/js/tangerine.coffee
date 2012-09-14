@@ -333,16 +333,21 @@ class Router extends Backbone.Router
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
 
-  results: (id) ->
+  results: (assessmentId) ->
     Tangerine.user.verify
       isRegistered: ->
         assessment = new Assessment
-          "_id" : id
+          "_id" : assessmentId
         assessment.fetch
-          success : ( model ) ->
-            view = new ResultsView 
-              assessment : model
-            vm.show view
+          success :  ->
+            allResults = new Results
+            allResults.fetch
+              key: assessmentId
+              success: =>
+                view = new ResultsView 
+                  "assessment" : assessment
+                  "results"    : allResults.models
+                vm.show view
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
 
