@@ -105,6 +105,7 @@ class User extends Backbone.Model
           )
         else
           options.success?()
+          @logout()
 
       error: ( status, error, reason ) ->
         @trigger "change:authentication"
