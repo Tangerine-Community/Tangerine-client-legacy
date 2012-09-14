@@ -319,16 +319,21 @@
       <span class="nv">isUnregistered: </span><span class="nf">(options) -&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 
-  <span class="nv">results: </span><span class="nf">(id) -&gt;</span>
+  <span class="nv">results: </span><span class="nf">(assessmentId) -&gt;</span>
     <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">verify</span>
       <span class="nv">isRegistered: </span><span class="o">-&gt;</span>
         <span class="nv">assessment = </span><span class="k">new</span> <span class="nx">Assessment</span>
-          <span class="s">&quot;_id&quot;</span> <span class="o">:</span> <span class="nx">id</span>
+          <span class="s">&quot;_id&quot;</span> <span class="o">:</span> <span class="nx">assessmentId</span>
         <span class="nx">assessment</span><span class="p">.</span><span class="nx">fetch</span>
-          <span class="nv">success : </span><span class="nf">( model ) -&gt;</span>
-            <span class="nv">view = </span><span class="k">new</span> <span class="nx">ResultsView</span> 
-              <span class="nv">assessment : </span><span class="nx">model</span>
-            <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
+          <span class="nv">success : </span> <span class="o">-&gt;</span>
+            <span class="nv">allResults = </span><span class="k">new</span> <span class="nx">Results</span>
+            <span class="nx">allResults</span><span class="p">.</span><span class="nx">fetch</span>
+              <span class="nv">key: </span><span class="nx">assessmentId</span>
+              <span class="nv">success: </span><span class="o">=&gt;</span>
+                <span class="nv">view = </span><span class="k">new</span> <span class="nx">ResultsView</span> 
+                  <span class="s">&quot;assessment&quot;</span> <span class="o">:</span> <span class="nx">assessment</span>
+                  <span class="s">&quot;results&quot;</span>    <span class="o">:</span> <span class="nx">allResults</span><span class="p">.</span><span class="nx">models</span>
+                <span class="nx">vm</span><span class="p">.</span><span class="nx">show</span> <span class="nx">view</span>
       <span class="nv">isUnregistered: </span><span class="nf">(options) -&gt;</span>
         <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="kc">true</span>
 

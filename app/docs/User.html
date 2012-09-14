@@ -95,6 +95,7 @@ they're handled by couchdb, so we have to load them manually</p>             </t
           <span class="p">)</span>
         <span class="k">else</span>
           <span class="nx">options</span><span class="p">.</span><span class="nx">success</span><span class="o">?</span><span class="p">()</span>
+          <span class="nx">@logout</span><span class="p">()</span>
 
       <span class="nv">error: </span><span class="nf">( status, error, reason ) -&gt;</span>
         <span class="nx">@trigger</span> <span class="s">&quot;change:authentication&quot;</span>
