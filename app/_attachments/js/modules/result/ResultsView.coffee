@@ -24,69 +24,99 @@ class ResultsView extends Backbone.View
 
 
   tablets: ->
-    if not @available.tablets
-      Utils.midAlert "Cannot detect cloud"
-      return false
+    console.log "Syncing to #{@availableTablets} tablets"
+    if not @available.tablets.okCount
+      for ip in @available.tablets.ips
+        do (ip) ->
+          ajaxOptions =
+            success: =>
+              @$el.find(".status").find(".info_box").html "Results synced successfully"
+            error: (res) =>
+              @$el.find(".status").find(".info_box").html "<div>Sync error</div><div>#{res}</div>"
+
+          replicationOptions = 
+            "filter": Tangerine.config.address.local.dbName+"/resultFilter"
+            "query_params":
+              "assessmentId": @assessment.id
+          $.couch.replicate(Tangerine.config.address.local.dbName, "http://#{ip}:5984/"+Tangerine.config.address.local.dbName, ajaxOptions, replicationOptions)
+
+    else
+      Utils.midAlert "Cannot detect tablets"
+    return false
 
   csv: ->
     Tangerine.router.navigate "csv/"+@assessment.id, true
 
   detectOptions: ->
     @available = 
-      cloud : null
-      tablets : null
+      cloud : 
+        ok : false
+        checked : false
+      tablets :
+        ips : [] 
+        okCount  : 0
+        checked  : 0
+        total : 256
+    
+    @detectCloud()
+    @detectTablets()
+    
+  detectCloud: ->
+    # Detect Cloud
     $.ajax
       dataType: "jsonp"
       url: Tangerine.config.address.cloud.host+":"+Tangerine.config.address.port+"/"
       success: (a, b) =>
-        @available.cloud = true
-        @updateOptions()
+        @available.cloud.ok = true
       error: (a, b) =>
-        @available.cloud = false
+        @available.cloud.ok = false
+      complete: =>
         @updateOptions()
 
-    @available.tablets = false
-    @updateOptions()
-        
-#    $.ajax
-#      dataType: "jsonp"
-#      url: "http://127.0.0.2:5984/"
-#      success: (a, b) =>
-#        @available.tablets = true
-#        @updateOptions()
-#      error: (a, b) =>
-#        @available.tablets = false
-#        @updateOptions()
-  
-  updateOptions: ->
-    if @available.cloud 
-      @$el.find('button.cloud').removeAttr('disabled')
-    if @available.tablets
-      @$el.find('button.cloud').removeAttr('disabled')
+  detectTablets: =>
+    port = Tangerine.config.address.port
+    for local in [0..255]
+      do (local, port) =>
+        ip = "192.168.1.#{local}"
+        $.ajax
+          dataType: "jsonp"
+          contentType: "application/json;charset=utf-8",
+          timeout: 30000
+          url: "http://#{ip}:#{port}/"
+          complete:  (xhr, error) =>
+            @available.tablets.checked++
+            if xhr.status == 200
+              @available.tablets.okCount++
+              @available.tablets.ips.push ip
+            @updateOptions
 
-    if _.isBoolean(@available.cloud) && _.isBoolean(@available.tablets)
+  updateOptions: =>
+    if @available.cloud.ok
+      @$el.find('button.cloud').removeAttr('disabled')
+    if @available.tablets.okCount > 0
+      @$el.find('button.tablets').removeAttr('disabled')
+
+    tabletMessage = "Tablet detection: #{Math.decimals((@available.tablets.checked / @available.tablets.total) * 100, 2)}%"
+
+    @$el.find(".checking_status").html "#{tabletMessage}"
+
+    if @available.cloud.checked && @available.tablets.checked == @available.tablets.total
       @$el.find(".status .info_box").html "Done detecting options"
 
 
   initialize: ( options ) ->
-    @detectOptions()
-    @results = []
     @subViews = []
+    @results = options.results
     @model = options.model
     @assessment = options.assessment
-    allResults = new Results
-    allResults.fetch
-      key: @assessment.id
-      success: (collection) =>
-        @results = collection.models
-        @render()
-
+    
   render: ->
+
     @clearSubViews()
 
-    cloudButton = "<button class='cloud command' disabled='disabled'>Cloud</button>"
+    cloudButton  = "<button class='cloud command' disabled='disabled'>Cloud</button>"
     tabletButton = "<button class='tablets command' disabled='disabled'>Tablets</button>"
-    csvButton = "<button class='csv command'>CSV</button>"
+    csvButton    = "<button class='csv command'>CSV</button>"
 
     html = "
       <h1>#{@assessment.get('name')}</h1>
@@ -95,6 +125,7 @@ class ResultsView extends Backbone.View
         #{if Tangerine.settings.context == "mobile" then cloudButton  else ""}
         #{if Tangerine.settings.context == "mobile" then tabletButton else ""}
         #{csvButton}
+        <div class='checking_status'></div>
       </div>"
 
     if Tangerine.settings.context == "mobile"
@@ -110,8 +141,6 @@ class ResultsView extends Backbone.View
     "
     
     @$el.html html
-    
-    
     
     if @results?.length == 0
       @$el.append "No results yet!"
