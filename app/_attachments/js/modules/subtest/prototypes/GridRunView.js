@@ -85,6 +85,7 @@ GridRunView = (function(_super) {
   GridRunView.prototype.markElement = function(index, value) {
     var $target;
     if (value == null) value = null;
+    if (this.lastAttempted !== 0 && index > this.lastAttempted) return;
     $target = this.$el.find(".grid_element[data-index=" + index + "]");
     this.markRecord.push(index);
     if (value === null) {

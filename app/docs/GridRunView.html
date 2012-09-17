@@ -54,6 +54,9 @@
       <span class="k">if</span> <span class="nx">@autostopped</span> <span class="o">==</span> <span class="kc">true</span> <span class="o">&amp;&amp;</span> <span class="nx">autoCount</span> <span class="o">&lt;</span> <span class="nx">@autostop</span> <span class="o">&amp;&amp;</span> <span class="nx">@undoable</span> <span class="o">==</span> <span class="kc">true</span> <span class="k">then</span> <span class="nx">@unAutostopTest</span><span class="p">()</span>
 
   <span class="nv">markElement: </span><span class="nf">(index, value = null) -&gt;</span>
+
+    <span class="k">if</span> <span class="nx">@lastAttempted</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">index</span> <span class="o">&gt;</span> <span class="nx">@lastAttempted</span> <span class="k">then</span> <span class="k">return</span>
+      
     <span class="nv">$target = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.grid_element[data-index=</span><span class="si">#{</span><span class="nx">index</span><span class="si">}</span><span class="s">]&quot;</span><span class="p">)</span>
     <span class="nx">@markRecord</span><span class="p">.</span><span class="nx">push</span> <span class="nx">index</span>
     <span class="k">if</span> <span class="nx">value</span> <span class="o">==</span> <span class="kc">null</span>

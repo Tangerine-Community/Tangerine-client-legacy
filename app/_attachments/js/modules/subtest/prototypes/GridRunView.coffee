@@ -54,6 +54,9 @@ class GridRunView extends Backbone.View
       if @autostopped == true && autoCount < @autostop && @undoable == true then @unAutostopTest()
 
   markElement: (index, value = null) ->
+
+    if @lastAttempted != 0 && index > @lastAttempted then return
+      
     $target = @$el.find(".grid_element[data-index=#{index}]")
     @markRecord.push index
     if value == null
