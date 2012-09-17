@@ -156,17 +156,17 @@
     {
       "name" : "Trinary agreement",
       "options" : [
-        {"label":"Yes","value":"yes"},
-        {"label":"No","value":"no"},
-        {"label":"No response","value":"no_response"}
+        {"label":"Yes","value":"1"},
+        {"label":"No","value":"0"},
+        {"label":"No response","value":"."}
       ]
     },
     {
       "name" : "Trinary validity",
       "options" : [
-        {"label":"Correct","value":"correct"},
-        {"label":"Incorrect","value":"incorrect"},
-        {"label":"No response","value":"no_response"}
+        {"label":"Correct","value":"1"},
+        {"label":"Incorrect","value":"0"},
+        {"label":"No response","value":"."}
       ]
     },
     {
