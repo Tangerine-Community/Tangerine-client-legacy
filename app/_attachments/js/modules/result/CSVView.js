@@ -194,7 +194,7 @@ CSVView = (function(_super) {
             }
           } else if (prototype === "datetime") {
             values[keys.indexOf("year")] = subtest.data.year;
-            values[keys.indexOf("month")] = ["", "Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].indexOf(subtest.data.month);
+            values[keys.indexOf("month")] = subtest.data.month;
             values[keys.indexOf("date")] = subtest.data.day;
             values[keys.indexOf("assess_time")] = subtest.data.time;
           } else if (prototype === "consent") {
