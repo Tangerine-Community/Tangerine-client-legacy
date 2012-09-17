@@ -76,6 +76,7 @@
     <span class="nv">name            = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
     <span class="nv">prompt          = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="s">&quot;prompt&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
     <span class="nv">hint            = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="s">&quot;hint&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
+    <span class="nv">skipLogic       = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="s">&quot;skipLogic&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
     <span class="nv">type            = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;type&quot;</span>
     <span class="nv">options         = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;options&quot;</span>
     <span class="nv">linkedGridScore = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;linkedGridScore&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span>
@@ -101,6 +102,10 @@
 <span class="s">          &lt;input id=&#39;hint&#39; type=&#39;text&#39; value=&#39;</span><span class="si">#{</span><span class="nx">hint</span><span class="si">}</span><span class="s">&#39;&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
 <span class="s">        &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">          &lt;label for=&#39;skip-logic&#39;&gt;Skip if false&lt;/label&gt;</span>
+<span class="s">          &lt;input id=&#39;skip-logic&#39; type=&#39;text&#39; value=&#39;</span><span class="si">#{</span><span class="nx">skipLogic</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div class=&#39;label_value&#39;&gt;</span>
 <span class="s">          &lt;label&gt;Skippable&lt;/label&gt;</span>
 <span class="s">          &lt;div id=&#39;skip_radio&#39; class=&#39;buttonset&#39;&gt;</span>
 <span class="s">            &lt;label for=&#39;skip_true&#39;&gt;Yes&lt;/label&gt;&lt;input name=&#39;skippable&#39; type=&#39;radio&#39; value=&#39;true&#39; id=&#39;skip_true&#39; </span><span class="si">#{</span><span class="s">&#39;checked&#39;</span> <span class="k">if</span> <span class="nx">skippable</span><span class="si">}</span><span class="s">&gt;</span>
@@ -108,7 +113,7 @@
 <span class="s">          &lt;/div&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
 <span class="s">        &lt;div class=&#39;label_value&#39;&gt;</span>
-<span class="s">          &lt;label for=&#39;linked_grid_score&#39;&gt;Linked grid score&lt;/label&gt;</span>
+<span class="s">          &lt;label for=&#39;linked_grid_score&#39;&gt;Items attempted required on linked grid&lt;/label&gt;</span>
 <span class="s">          &lt;input id=&#39;linked_grid_score&#39; type=&#39;number&#39; value=&#39;</span><span class="si">#{</span><span class="nx">linkedGridScore</span><span class="si">}</span><span class="s">&#39;&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
 <span class="s">        &lt;div class=&#39;label_value&#39; id=&#39;question_type&#39; class=&#39;question_type&#39;&gt;</span>
@@ -154,7 +159,7 @@
 
 
 
-  <span class="nv">hijackEnter: </span><span class="nf">(event) -&gt;</span> 
+  <span class="nv">hijackEnter: </span><span class="nf">(event) -&gt;</span>
     <span class="k">if</span> <span class="nx">event</span><span class="p">.</span><span class="nx">which</span> <span class="o">==</span> <span class="mi">13</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">blur</span><span class="p">()</span>
       <span class="k">return</span> <span class="kc">false</span>
@@ -177,10 +182,11 @@
     <span class="nx">@parentView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
     <span class="k">return</span> <span class="kc">false</span>
   
-  <span class="nv">updateModel: </span><span class="o">=&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>basics</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span> 
-      <span class="s">&quot;prompt&quot;</span>          <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">prompt&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> 
+  <span class="nv">updateModel: </span><span class="o">=&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>basics</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
+      <span class="s">&quot;prompt&quot;</span>          <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">prompt&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="s">&quot;name&quot;</span>            <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="s">&quot;hint&quot;</span>            <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">hint&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+      <span class="s">&quot;skipLogic&quot;</span>       <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">skip-logic&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="s">&quot;linkedGridScore&quot;</span> <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">linked_grid_score&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="s">&quot;type&quot;</span>            <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">question_type input:checked&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
       <span class="s">&quot;skippable&quot;</span>       <span class="o">:</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">skip_radio input:radio[name=skippable]:checked&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>options</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">options = </span><span class="p">[]</span>

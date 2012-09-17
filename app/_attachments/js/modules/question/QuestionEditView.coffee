@@ -118,7 +118,7 @@ class QuestionEditView extends Backbone.View
           </div>
         </div>
         <div class='label_value'>
-          <label for='linked_grid_score'>Linked grid score</label>
+          <label for='linked_grid_score'>Items attempted required on linked grid</label>
           <input id='linked_grid_score' type='number' value='#{linkedGridScore}'>
         </div>
         <div class='label_value' id='question_type' class='question_type'>
