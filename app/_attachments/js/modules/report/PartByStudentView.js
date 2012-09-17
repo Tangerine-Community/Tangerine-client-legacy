@@ -65,13 +65,13 @@ PartByStudentView = (function(_super) {
       this.summary.aCorrect += person.pCorrect;
       this.table.push(person);
     }
-    this.summary.aCorrect = Utils.decimals(this.summary.aCorrect / this.table.length, 2);
+    this.summary.aCorrect = Math.decimals(this.summary.aCorrect / this.table.length, 2);
     _ref3 = this.table;
     for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
       person = _ref3[_k];
       this.summary.stdDev += Math.pow(person.pCorrect - this.summary.aCorrect, 2);
     }
-    this.summary.stdDev = Utils.decimals(Math.pow(this.summary.stdDev / this.table.length, 0.5), 2);
+    this.summary.stdDev = Math.decimals(Math.pow(this.summary.stdDev / this.table.length, 0.5), 2);
     _ref4 = this.table;
     _results = [];
     for (i = 0, _len4 = _ref4.length; i < _len4; i++) {
