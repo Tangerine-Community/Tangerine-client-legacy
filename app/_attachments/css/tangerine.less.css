@@ -526,6 +526,7 @@ progress {
   -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  z-index: 9999999;
 }
 .result_view .save_status {
   color: #8cc63f;
