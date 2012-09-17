@@ -1,4 +1,7 @@
 class SurveyRunView extends Backbone.View
+  events:
+    'change input'        : 'updateSkipLogic'
+    'change textarea'     : 'updateSkipLogic'
 
   initialize: (options) ->
     @model         = @options.model
@@ -11,6 +14,21 @@ class SurveyRunView extends Backbone.View
         @questions = new Questions(@questions.where { subtestId : @model.id })
         @questions.sort()
         @render()
+
+  questionResult: (label) =>
+    # Should really return the label, not the value, too much indirection. Maybe the GUI will help.
+    @getResult()[name]
+
+  updateSkipLogic: =>
+    @questions.each (question) ->
+      skipLogic = question.get "skipLogic"
+      if skipLogic?
+#        compiledSkipLogic = CoffeeScript.compile "#{skipLogic}", bare: on
+        result = CoffeeScript.eval "#{skipLogic}"
+#        console.log "#{compiledSkipLogic} -> #{result}"
+        console.log "SKIP" if result is false
+        $("#question-#{question.get "name"}").addClass "disabled_skipped"
+
 
   isValid: ->
     for qv, i in @questionViews
@@ -31,9 +49,11 @@ class SurveyRunView extends Backbone.View
         result[@questions.models[i].get("name")] = qv.answer
       return result
 
-  getResult: ->
+  getResult: =>
+    console.log @
     result = {}
     for qv, i in @questionViews
+      console.log i
       result[@questions.models[i].get("name")] = qv.answer
     return result
 
@@ -84,7 +104,7 @@ class SurveyRunView extends Backbone.View
         required = parseInt(question.get("linkedGridScore")) || 0
 
         isNotAsked = (required != 0 && @parent.getGridScore() < required)
-        oneView = new QuestionRunView 
+        oneView = new QuestionRunView
           model  : question
           parent : @
           notAsked : isNotAsked
@@ -93,6 +113,7 @@ class SurveyRunView extends Backbone.View
         @questionViews[i] = oneView
         @$el.append oneView.el
 
+    @updateSkipLogic()
     @trigger "rendered"
 
   onQuestionRendered: =>

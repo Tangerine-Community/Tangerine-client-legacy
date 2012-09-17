@@ -1,6 +1,7 @@
 class QuestionRunView extends Backbone.View
 
   className: "question buttonset"
+
   events:
     'change input'    : 'update'
     'change textarea' : 'update'
@@ -45,6 +46,8 @@ class QuestionRunView extends Backbone.View
         for option, i in @options
           @answer[@options[i].value] = if @$el.find("##{@cid}_#{@name}_#{i}").is(":checked") then "checked" else "unchecked"
 
+    @$el.attr "data-result", @answer
+
   updateValidity: ->
     if @model.has("skippable") == "true" || @model.get("skippable") == true
       @isValid = true
@@ -57,11 +60,13 @@ class QuestionRunView extends Backbone.View
         @isValid = $.trim(@$el.find(".#{@cid}_#{@name}:checked")) == ""
       @isValid = true
     
-
   setMessage: (message) =>
     @$el.find(".error_message").html message
 
+
   render: ->
+
+    @$el.attr "id", "question-#{@name}"
 
     if not @notAsked
       html = "<div class='error_message'></div><div class='prompt'>#{@model.get 'prompt'}</div>
@@ -85,6 +90,8 @@ class QuestionRunView extends Backbone.View
 
     else
       @$el.hide()
+
+    console.log @$el
 
     @trigger "rendered"
 
