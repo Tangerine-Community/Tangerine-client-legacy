@@ -7,11 +7,12 @@ Backbone.View.prototype.close = function() {
 };
 
 (function($) {
-  $.fn.scrollTo = function() {
+  $.fn.scrollTo = function(speed, callback) {
+    if (speed == null) speed = 250;
     try {
       $('html, body').animate({
         scrollTop: $(this).offset().top + 'px'
-      }, 250);
+      }, speed, null, callback);
     } catch (e) {
       console.log(e);
       console.log("Scroll error with 'this'");

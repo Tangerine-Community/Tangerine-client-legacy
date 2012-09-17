@@ -9,11 +9,11 @@ Backbone.View.prototype.close = ->
 #
 ( ($) -> 
 
-  $.fn.scrollTo = ->
+  $.fn.scrollTo = (speed=250, callback)->
     try
       $('html, body').animate {
         scrollTop: $(@).offset().top + 'px'
-        }, 250
+        }, speed, null, callback
     catch e
       console.log e
       console.log "Scroll error with 'this'"
