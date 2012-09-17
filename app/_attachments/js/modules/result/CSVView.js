@@ -98,7 +98,7 @@ CSVView = (function(_super) {
   };
 
   CSVView.prototype.render = function() {
-    var checkedString, count, d, exportValue, i, index, item, keys, label, maxIndex, maxLength, metaKey, observationData, observations, optionKey, optionValue, prototype, result, resultDataArray, row, subtest, subtestName, surveyValue, surveyVariable, tableHTML, values, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len12, _len13, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+    var checkedString, count, d, exportValue, i, index, item, keys, label, maxIndex, maxLength, metaKey, monthData, months, observationData, observations, optionKey, optionValue, prototype, result, resultDataArray, row, subtest, subtestName, surveyValue, surveyVariable, tableHTML, values, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len12, _len13, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     if ((this.results != null) && (this.results[0] != null)) {
       tableHTML = "";
       resultDataArray = [];
@@ -193,8 +193,14 @@ CSVView = (function(_super) {
               values[keys.indexOf(label)] = subtest.data.location[i];
             }
           } else if (prototype === "datetime") {
+            months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+            if (~months.indexOf(subtest.data.month.toLowerCase())) {
+              monthData = months.indexOf(subtest.data.month.toLowerCase()) + 1;
+            } else {
+              monthData = subtest.data.month;
+            }
             values[keys.indexOf("year")] = subtest.data.year;
-            values[keys.indexOf("month")] = subtest.data.month;
+            values[keys.indexOf("month")] = monthData;
             values[keys.indexOf("date")] = subtest.data.day;
             values[keys.indexOf("assess_time")] = subtest.data.time;
           } else if (prototype === "consent") {

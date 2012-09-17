@@ -173,8 +173,13 @@ class CSVView extends Backbone.View
             for label, i in subtest.data.labels
               values[keys.indexOf(label)] = subtest.data.location[i]
           else if prototype == "datetime"
+            months = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
+            if ~months.indexOf(subtest.data.month.toLowerCase())
+              monthData = months.indexOf(subtest.data.month.toLowerCase()) + 1
+            else
+              monthData = subtest.data.month
             values[keys.indexOf("year")]        = subtest.data.year
-            values[keys.indexOf("month")]       = subtest.data.month
+            values[keys.indexOf("month")]       = monthData
             values[keys.indexOf("date")]        = subtest.data.day
             values[keys.indexOf("assess_time")] = subtest.data.time
             
