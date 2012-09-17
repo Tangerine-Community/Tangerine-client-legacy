@@ -17,6 +17,13 @@
       "prototype" : "survey",
       "gridLinkId": ""
     },
+    "observation" : {
+      "prototype"      : "observation",
+      "totalSeconds"   : 0,
+      "intervalLength" : 0,
+      "variableName"   : "",
+      "displayName"    : ""
+    },
     "location": {
       "prototype" : "location",
       "locations" : []
@@ -83,6 +90,9 @@
         "items" : ["ma", "en", "ta", "ki", "bo"],
         "timer" : 60
       }
+    },
+    "observation" : {
+      "Classroom Observation" : {}
     },
     "survey" : {
       "Phoneme Segmentation":{},

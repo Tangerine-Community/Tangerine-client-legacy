@@ -144,8 +144,13 @@ class CSVView extends Backbone.View
                 keys.push "#{surveyVariable}_#{optionKey}"
             else
               keys.push surveyVariable
+        else if prototype == "observation"
+          for observations, i in subtest.data.surveys
+            observationData = observations.data
+            for surveyVariable, surveyValue of observationData
+              keys.push "#{surveyVariable}_#{i}"
         else if prototype == "complete"
-          keys.push "additional_comments", "end_time"
+          keys.push "additional_comments", "end_time", "gps"
 
       resultDataArray.push keys
 
@@ -208,8 +213,18 @@ class CSVView extends Backbone.View
                 exportValue = if surveyValue == "not_asked" then "." else surveyValue
                 values[keys.indexOf("#{surveyVariable}")] = exportValue
 
+          else if prototype == "observation"
+            for observations, i in subtest.data.surveys
+              observationData = observations.data
+              console.log observationData
+              for surveyVariable, surveyValue of observationData
+                
+                values[keys.indexOf("#{surveyVariable}_#{i}")] = surveyValue
+              
+
           else if prototype == "complete"
             values[keys.indexOf("additional_comments")] = subtest.data.comment
+            values[keys.indexOf("gps")] = JSON.stringify(subtest.data.gps)
             values[keys.indexOf("end_time")] = subtest.data.end_time
 
         resultDataArray.push values

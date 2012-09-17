@@ -98,7 +98,7 @@ CSVView = (function(_super) {
   };
 
   CSVView.prototype.render = function() {
-    var checkedString, count, d, exportValue, i, index, item, keys, label, maxIndex, maxLength, metaKey, optionKey, optionValue, prototype, result, resultDataArray, row, subtest, subtestName, surveyValue, surveyVariable, tableHTML, values, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref13, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+    var checkedString, count, d, exportValue, i, index, item, keys, label, maxIndex, maxLength, metaKey, observationData, observations, optionKey, optionValue, prototype, result, resultDataArray, row, subtest, subtestName, surveyValue, surveyVariable, tableHTML, values, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len12, _len13, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     if ((this.results != null) && (this.results[0] != null)) {
       tableHTML = "";
       resultDataArray = [];
@@ -156,30 +156,40 @@ CSVView = (function(_super) {
               keys.push(surveyVariable);
             }
           }
+        } else if (prototype === "observation") {
+          _ref7 = subtest.data.surveys;
+          for (i = 0, _len6 = _ref7.length; i < _len6; i++) {
+            observations = _ref7[i];
+            observationData = observations.data;
+            for (surveyVariable in observationData) {
+              surveyValue = observationData[surveyVariable];
+              keys.push("" + surveyVariable + "_" + i);
+            }
+          }
         } else if (prototype === "complete") {
-          keys.push("additional_comments", "end_time");
+          keys.push("additional_comments", "end_time", "gps");
         }
       }
       resultDataArray.push(keys);
-      _ref7 = this.results;
-      for (d = 0, _len6 = _ref7.length; d < _len6; d++) {
-        result = _ref7[d];
+      _ref8 = this.results;
+      for (d = 0, _len7 = _ref8.length; d < _len7; d++) {
+        result = _ref8[d];
         values = [];
-        _ref8 = this.metaKeys;
-        for (_l = 0, _len7 = _ref8.length; _l < _len7; _l++) {
-          metaKey = _ref8[_l];
+        _ref9 = this.metaKeys;
+        for (_l = 0, _len8 = _ref9.length; _l < _len8; _l++) {
+          metaKey = _ref9[_l];
           values.push(result.attributes[metaKey]);
         }
-        _ref9 = result.attributes.subtestData;
-        for (_m = 0, _len8 = _ref9.length; _m < _len8; _m++) {
-          subtest = _ref9[_m];
+        _ref10 = result.attributes.subtestData;
+        for (_m = 0, _len9 = _ref10.length; _m < _len9; _m++) {
+          subtest = _ref10[_m];
           prototype = subtest.prototype;
           if (prototype === "id") {
             values[keys.indexOf("id")] = subtest.data.participant_id;
           } else if (prototype === "location") {
-            _ref10 = subtest.data.labels;
-            for (i = 0, _len9 = _ref10.length; i < _len9; i++) {
-              label = _ref10[i];
+            _ref11 = subtest.data.labels;
+            for (i = 0, _len10 = _ref11.length; i < _len10; i++) {
+              label = _ref11[i];
               values[keys.indexOf(label)] = subtest.data.location[i];
             }
           } else if (prototype === "datetime") {
@@ -196,9 +206,9 @@ CSVView = (function(_super) {
             values[keys.indexOf("" + variableName + "_attempted")] = subtest.data.attempted;
             values[keys.indexOf("" + variableName + "_item_at_time")] = subtest.data.item_at_time;
             values[keys.indexOf("" + variableName + "_time_intermediate_captured")] = subtest.data.time_intermediate_captured;
-            _ref11 = subtest.data.items;
-            for (i = 0, _len10 = _ref11.length; i < _len10; i++) {
-              item = _ref11[i];
+            _ref12 = subtest.data.items;
+            for (i = 0, _len11 = _ref12.length; i < _len11; i++) {
+              item = _ref12[i];
               if (item.itemResult === "correct") {
                 exportValue = 1;
               } else if (item.itemResult === "incorrect") {
@@ -209,9 +219,9 @@ CSVView = (function(_super) {
               values[keys.indexOf("" + variableName + (i + 1))] = exportValue;
             }
           } else if (prototype === "survey") {
-            _ref12 = subtest.data;
-            for (surveyVariable in _ref12) {
-              surveyValue = _ref12[surveyVariable];
+            _ref13 = subtest.data;
+            for (surveyVariable in _ref13) {
+              surveyValue = _ref13[surveyVariable];
               if (_.isObject(surveyValue)) {
                 for (optionKey in surveyValue) {
                   optionValue = surveyValue[optionKey];
@@ -229,8 +239,20 @@ CSVView = (function(_super) {
                 values[keys.indexOf("" + surveyVariable)] = exportValue;
               }
             }
+          } else if (prototype === "observation") {
+            _ref14 = subtest.data.surveys;
+            for (i = 0, _len12 = _ref14.length; i < _len12; i++) {
+              observations = _ref14[i];
+              observationData = observations.data;
+              console.log(observationData);
+              for (surveyVariable in observationData) {
+                surveyValue = observationData[surveyVariable];
+                values[keys.indexOf("" + surveyVariable + "_" + i)] = surveyValue;
+              }
+            }
           } else if (prototype === "complete") {
             values[keys.indexOf("additional_comments")] = subtest.data.comment;
+            values[keys.indexOf("gps")] = JSON.stringify(subtest.data.gps);
             values[keys.indexOf("end_time")] = subtest.data.end_time;
           }
         }
@@ -293,11 +315,11 @@ CSVView = (function(_super) {
         
         # End Taylor's Edits for Malawi 2012 EGRA May
         */;
-      for (i = 0, _len11 = resultDataArray.length; i < _len11; i++) {
+      for (i = 0, _len13 = resultDataArray.length; i < _len13; i++) {
         row = resultDataArray[i];
         tableHTML += "<tr>";
         count = 0;
-        for (index = 0, _ref13 = row.length - 1; 0 <= _ref13 ? index <= _ref13 : index >= _ref13; 0 <= _ref13 ? index++ : index--) {
+        for (index = 0, _ref15 = row.length - 1; 0 <= _ref15 ? index <= _ref15 : index >= _ref15; 0 <= _ref15 ? index++ : index--) {
           tableHTML += "<td>" + row[index] + "</td>";
           count++;
         }

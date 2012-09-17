@@ -1,4 +1,4 @@
-var Utils;
+var Utils, i, km, sks;
 
 Backbone.View.prototype.close = function() {
   this.remove();
@@ -7,11 +7,12 @@ Backbone.View.prototype.close = function() {
 };
 
 (function($) {
-  $.fn.scrollTo = function() {
+  $.fn.scrollTo = function(speed, callback) {
+    if (speed == null) speed = 250;
     try {
       $('html, body').animate({
         scrollTop: $(this).offset().top + 'px'
-      }, 250);
+      }, speed, null, callback);
     } catch (e) {
       console.log(e);
       console.log("Scroll error with 'this'");
@@ -31,12 +32,89 @@ Backbone.View.prototype.close = function() {
   };
 })(jQuery);
 
-String.prototype.safeToSave = function() {
-  return this.replace(/\s|-/g, "_").replace(/[^a-zA-Z0-9_'""]/g, "");
+$.ajaxSetup({
+  statusCode: {
+    404: function(xhr, status, message) {
+      var code, seeUnauthorized, statusText;
+      code = xhr.status;
+      statusText = xhr.statusText;
+      seeUnauthorized = ~xhr.responseText.indexOf("unauthorized");
+      if (seeUnauthorized) {
+        Utils.midAlert("Error<br>You are not currently logged in");
+        return Tangerine.user.fetch();
+      }
+    }
+  }
+});
+
+km = {
+  "0": 48,
+  "1": 49,
+  "2": 50,
+  "3": 51,
+  "4": 52,
+  "5": 53,
+  "6": 54,
+  "7": 55,
+  "8": 56,
+  "9": 57,
+  "a": 65,
+  "b": 66,
+  "c": 67,
+  "d": 68,
+  "e": 69,
+  "f": 70,
+  "g": 71,
+  "h": 72,
+  "i": 73,
+  "j": 74,
+  "k": 75,
+  "l": 76,
+  "m": 77,
+  "n": 78,
+  "o": 79,
+  "p": 80,
+  "q": 81,
+  "r": 82,
+  "s": 83,
+  "t": 84,
+  "u": 85,
+  "v": 86,
+  "w": 87,
+  "x": 88,
+  "y": 89,
+  "z": 90
 };
 
-String.prototype.htmlSafe = function() {
-  return $("<div/>").text(this).html().replace(/'/g, "&#39;").replace(/"/g, "&#34;");
+sks = [
+  {
+    q: (function() {
+      var _results;
+      _results = [];
+      for (i = 0; i <= 6; i++) {
+        _results.push(km["0100set"[i]]);
+      }
+      return _results;
+    })(),
+    i: 0,
+    c: function() {
+      return Tangerine.router.navigate("settings", true);
+    }
+  }
+];
+
+$(document).keydown(function(e) {
+  var j, sk, _len, _results;
+  _results = [];
+  for (j = 0, _len = sks.length; j < _len; j++) {
+    sk = sks[j];
+    _results.push(e.keyCode === sks[j].q[sks[j].i++] ? sks[j].i === sks[j].q.length ? sks[j]['c']() : void 0 : sks[j].i = 0);
+  }
+  return _results;
+});
+
+String.prototype.safetyDance = function() {
+  return this.replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
 };
 
 Math.ave = function() {
@@ -50,13 +128,23 @@ Math.ave = function() {
   return result;
 };
 
+Math.isInt = function() {
+  return typeof n === 'number' && parseFloat(n) === parseInt(n, 10) && !isNaN(n);
+};
+
+Math.decimals = function(num, decimals) {
+  var m;
+  m = Math.pow(10, decimals);
+  num *= m;
+  num = num + (num < (0 != null) - {
+    0.5: +0.5
+  }) >> 0;
+  return num /= m;
+};
+
 Utils = (function() {
 
   function Utils() {}
-
-  Utils.round = function(num, decimals) {
-    return Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals);
-  };
 
   Utils.confirm = function(message, options) {
     var _ref;
@@ -182,7 +270,7 @@ $(function() {
     return Utils.disposableAlert(alert_text);
   });
   return $("#content").on("click", ".disposable_alert", function() {
-    return $(this).stop().fadeOut(250, function() {
+    return $(this).stop().fadeOut(100, function() {
       return $(this).remove();
     });
   });

@@ -356,8 +356,32 @@ div.disabled
   }
 }
 
-table.grid,
-div.grid
+.disabled_cover:after {
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQImWP4////mf////9n+A8BZwCMhQ+LNDQxswAAAABJRU5ErkJggg==") repeat scroll 0 0 transparent;
+    bottom: 0;
+    content: "";
+    display: block;
+    float: left;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.disabled_cover:after {
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQImWP4////mf////9n+A8BZwCMhQ+LNDQxswAAAABJRU5ErkJggg==") repeat scroll 0 0 transparent;
+    bottom: 0;
+    content: "";
+    display: block;
+    float: left;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+div.grid,
+table.grid
 {
 
   clear: both;
@@ -455,6 +479,8 @@ button.time
   }  
 }
 
+
+
 div.timer
 {
   min-width: 60px;
@@ -475,6 +501,16 @@ div.timer
 }
 
 /*
+ * Observation
+ */
+
+progress
+{
+  display: block;
+  clear:both;
+}
+
+/*
  * Location
  */
 
@@ -492,6 +528,7 @@ div.timer
   padding: 20px;
   font-size: 30px;
   .box-shadow (0, 0, 5px, rgba(0,0,0,0.3));
+  z-index: 9999999;
 }
 
 .result_view
@@ -797,6 +834,11 @@ div.assessment_edit_view
 }
 
 
+input[type='number']
+{
+  width: 100px;
+}
+
 
 ul
 {
@@ -894,6 +936,7 @@ label.ui-button
  
 .question
 {
+  position:relative;
 
   box-shadow: 2px 2px 6px rgba(0,0,0,0.5);
   background: white;

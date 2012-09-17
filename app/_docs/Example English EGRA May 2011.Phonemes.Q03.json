@@ -4,6 +4,7 @@
   "prompt": "top",
   "name" : "top",
   "order" : 3,
+  "skippable": true,
   "type": "multiple",
   "options": [
     {

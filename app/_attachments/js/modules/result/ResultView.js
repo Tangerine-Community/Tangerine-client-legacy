@@ -27,7 +27,8 @@ ResultView = (function(_super) {
       prototype: "complete",
       data: {
         "comment": this.$el.find('#additional_comments').val() || "",
-        "end_time": (new Date()).getTime()
+        "end_time": (new Date()).getTime(),
+        "gps": this.gpsData
       },
       subtestId: "result",
       sum: {
@@ -50,6 +51,21 @@ ResultView = (function(_super) {
   };
 
   ResultView.prototype.initialize = function(options) {
+    var _this = this;
+    this.gpsData = {};
+    try {
+      navigator.geolocation.getCurrentPosition(function(geo) {
+        return _this.gpsData = geo.coords;
+      }, function() {
+        return _this.gpsData[error] = arguments;
+      }, {
+        "enableHighAccuracy": true
+      });
+    } catch (error) {
+      this.gpsData = {
+        "error": error
+      };
+    }
     this.model = options.model;
     this.assessment = options.assessment;
     this.saved = false;

@@ -26,7 +26,7 @@ class KlassSubtestResultView extends Backbone.View
           totalItems++
       percentageCorrect = (correctItems / totalItems) * 100
       if percentageCorrect < (parseFloat(Tangerine.settings.generalThreshold)*100)
-        resultHTML += "<div class='info_box'><b>Warning</b><br>Student's #{Utils.round(percentageCorrect,2)}% score is less than threshold of #{Utils.round(Tangerine.settings.generalThreshold*100, 2)}%</div><br>"
+        resultHTML += "<div class='info_box'><b>Warning</b><br>Student's #{Utils.decimals(percentageCorrect,2)}% score is less than threshold of #{Utils.decimals(Tangerine.settings.generalThreshold*100, 2)}%</div><br>"
 
       resultHTML += "<button class='command show_itemized'>#{t('itemized results')}</button><table class='itemized confirmation'><tbody><tr><th>Item</th><th>Result</th></tr>"
       for datum, i in @options.result[0].get("subtestData").items

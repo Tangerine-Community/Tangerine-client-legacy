@@ -1,0 +1,45 @@
+<!DOCTYPE html>  <html> <head>   <title>ObservationEditView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               ObservationEditView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>This prototype runs a survey at specified intervals.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">ObservationEditView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">initialize: </span><span class="nf">( options ) -&gt;</span>
+    <span class="vi">@model = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
+    <span class="nv">surveyAttributes = </span><span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;surveyAttributes&#39;</span><span class="p">),</span> <span class="p">{</span><span class="s">&quot;_id&quot;</span><span class="o">:</span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span><span class="p">})</span>
+    <span class="vi">@surveyModel = </span><span class="k">new</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">(</span><span class="nx">surveyAttributes</span><span class="p">)</span>
+    <span class="vi">@surveyView = </span><span class="k">new</span> <span class="nx">SurveyEditView</span>
+      <span class="s">&quot;model&quot;</span> <span class="o">:</span> <span class="nx">@surveyModel</span>
+
+  <span class="nv">save: </span><span class="o">-&gt;</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span>
+      <span class="nv">totalSeconds     : </span><span class="nb">parseInt</span><span class="p">(</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">total_seconds&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="p">)</span>
+      <span class="nv">intervalLength   : </span><span class="nb">parseInt</span><span class="p">(</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">interval_length&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="p">)</span>
+      <span class="nv">variableName     : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">variable_name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">safetyDance</span><span class="p">()</span>
+      <span class="nv">displayName      : </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">display_name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">safetyDance</span><span class="p">()</span>
+      <span class="nv">surveyAttributes : </span><span class="nx">@surveyModel</span><span class="p">.</span><span class="nx">attributes</span>
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+
+    <span class="nv">totalSeconds   = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;totalSeconds&quot;</span><span class="p">)</span>   <span class="o">||</span> <span class="mi">0</span>
+    <span class="nv">intervalLength = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;intervalLength&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span>
+    <span class="nv">variableName   = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;variableName&quot;</span><span class="p">)</span>   <span class="o">||</span> <span class="s">&quot;&quot;</span>
+    <span class="nv">displayName    = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;displayName&quot;</span><span class="p">)</span>    <span class="o">||</span> <span class="s">&quot;&quot;</span>
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">      &lt;div class=&#39;label_value&#39;&gt;</span>
+<span class="s">        &lt;label for=&#39;variable_name&#39;&gt;Variable name&lt;/label&gt;</span>
+<span class="s">        &lt;input id=&#39;variable_name&#39; value=&#39;</span><span class="si">#{</span><span class="nx">variableName</span><span class="si">}</span><span class="s">&#39;&gt;&lt;br&gt;</span>
+
+<span class="s">        &lt;label for=&#39;display_name&#39;&gt;Display name&lt;/label&gt;</span>
+<span class="s">        &lt;input id=&#39;display_name&#39; value=&#39;</span><span class="si">#{</span><span class="nx">displayName</span><span class="si">}</span><span class="s">&#39;&gt;&lt;br&gt;</span>
+
+<span class="s">        &lt;label for=&#39;total_seconds&#39;&gt;Total seconds&lt;/label&gt;</span>
+<span class="s">        &lt;input id=&#39;total_seconds&#39; value=&#39;</span><span class="si">#{</span><span class="nx">totalSeconds</span><span class="si">}</span><span class="s">&#39; type=&#39;number&#39;&gt;</span>
+
+<span class="s">        &lt;label for=&#39;interval_length&#39; title=&#39;In seconds&#39;&gt;Interval length&lt;/label&gt;</span>
+<span class="s">        &lt;input id=&#39;interval_length&#39; value=&#39;</span><span class="si">#{</span><span class="nx">intervalLength</span><span class="si">}</span><span class="s">&#39; type=&#39;number&#39;&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;div id=&#39;survey_editor&#39;&gt;&lt;/div&gt;</span>
+<span class="s">    &quot;</span>
+
+    <span class="nx">@surveyView</span><span class="p">.</span><span class="nx">setElement</span><span class="p">(</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">survey_editor&quot;</span><span class="p">))</span>
+    <span class="nx">@surveyView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

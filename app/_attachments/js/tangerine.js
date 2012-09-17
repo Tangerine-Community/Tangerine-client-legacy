@@ -512,20 +512,29 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.results = function(id) {
+  Router.prototype.results = function(assessmentId) {
     return Tangerine.user.verify({
       isRegistered: function() {
         var assessment;
         assessment = new Assessment({
-          "_id": id
+          "_id": assessmentId
         });
         return assessment.fetch({
-          success: function(model) {
-            var view;
-            view = new ResultsView({
-              assessment: model
+          success: function() {
+            var allResults,
+              _this = this;
+            allResults = new Results;
+            return allResults.fetch({
+              key: assessmentId,
+              success: function() {
+                var view;
+                view = new ResultsView({
+                  "assessment": assessment,
+                  "results": allResults.models
+                });
+                return vm.show(view);
+              }
             });
-            return vm.show(view);
           }
         });
       },
