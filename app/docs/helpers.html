@@ -3,11 +3,11 @@
   <span class="nx">@unbind</span><span class="p">()</span>
   <span class="nx">@onClose</span><span class="o">?</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>handy jquery functions</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="p">(</span> <span class="nf">($) -&gt;</span> 
 
-  <span class="nv">$.fn.scrollTo = </span><span class="o">-&gt;</span>
+  <span class="nv">$.fn.scrollTo = </span><span class="nf">(speed=250, callback)-&gt;</span>
     <span class="k">try</span>
       <span class="nx">$</span><span class="p">(</span><span class="s">&#39;html, body&#39;</span><span class="p">).</span><span class="nx">animate</span> <span class="p">{</span>
         <span class="nv">scrollTop: </span><span class="nx">$</span><span class="p">(</span><span class="nx">@</span><span class="p">).</span><span class="nx">offset</span><span class="p">().</span><span class="nx">top</span> <span class="o">+</span> <span class="s">&#39;px&#39;</span>
-        <span class="p">},</span> <span class="mi">250</span>
+        <span class="p">},</span> <span class="nx">speed</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">callback</span>
     <span class="k">catch</span> <span class="nx">e</span>
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">e</span>
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;Scroll error with &#39;this&#39;&quot;</span>
