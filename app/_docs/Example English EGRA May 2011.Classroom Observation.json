@@ -1,0 +1,10 @@
+{
+  "collection": "subtest",
+  "prototype": "observation",
+  "name" : "Classrooom Observation",
+  "order" : 13,
+  "assessmentId" : "Example English EGRA May 2011.Assessment",
+  "_id": "Example English EGRA May 2011.Classroom Observation",
+  "couchapp": {
+  }
+}
