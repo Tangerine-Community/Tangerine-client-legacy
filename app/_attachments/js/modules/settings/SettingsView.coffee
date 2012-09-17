@@ -28,15 +28,15 @@ class SettingsView extends Backbone.View
     <p>Please be careful with the following settings.</p>
     <div class='menu_box'>
       <div class='label_value'>
-        <label for='context'>Context</label>
+        <label for='context'>Context</label><br>
         <input id='context' type='text' value='#{context}'>
       </div>
       <div class='label_value'>
-        <label for='context'>General Threshold</label>
+        <label for='context'>General Threshold</label><br>
         <input id='generalThreshold' type='number' value='#{generalThreshold}'>
       </div>
       <div class='label_value'>
-        <label for='context'>Language</label>
+        <label for='context'>Language</label><br>
         <input id='language' type='number' value='#{language}'>
       </div>
     </div><br>

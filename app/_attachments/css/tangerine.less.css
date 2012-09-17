@@ -407,9 +407,35 @@ p {
 body.flash {
   background-color: #f7c942;
 }
+.disabled_skipped:after {
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQImWP4DwHPGP7////s/////wGOCw+/Sq1MagAAAABJRU5ErkJggg==") repeat scroll 0 0 transparent;
+  bottom: 0;
+  color: #DDDDDD;
+  content: "Skipped";
+  display: block;
+  float: left;
+  font-size: 50px;
+  left: 0;
+  padding: 10px;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: 0;
+}
 table.disabled .grid_element,
 div.disabled .grid_element {
   color: #cccccc !important;
+}
+.disabled_cover:after {
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQImWP4////mf////9n+A8BZwCMhQ+LNDQxswAAAABJRU5ErkJggg==") repeat scroll 0 0 transparent;
+  bottom: 0;
+  content: "";
+  display: block;
+  float: left;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 table.grid,
 div.grid {
@@ -508,6 +534,13 @@ div.timer {
   margin: 15px 0 20px;
 }
 /*
+ * Observation
+ */
+progress {
+  display: block;
+  clear: both;
+}
+/*
  * Location
  */
 .school_list {
@@ -525,6 +558,7 @@ div.timer {
   -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  z-index: 9999999;
 }
 .result_view .save_status {
   color: #8cc63f;
@@ -752,6 +786,9 @@ div.assessment_edit_view a {
   padding: 0 !important;
   -webkit-appearance: none !important;
 }
+input[type='number'] {
+  width: 100px;
+}
 ul {
   padding: 0;
 }
@@ -812,6 +849,7 @@ label.ui-button {
  * Question
  */
 .question {
+  position: relative;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
   background: white;
   margin: 0 0 40px;

@@ -24,12 +24,13 @@
 
 	"prototypeViews" : 
 	{
-		"consent":  {"run" : "ConsentRunView",  "edit" : "ConsentEditView" },
-		"datetime": {"run" : "DatetimeRunView", "edit" : "DatetimeEditView" },
-		"location": {"run" : "LocationRunView", "edit" : "LocationEditView" },
-		"survey":   {"run" : "SurveyRunView",   "edit" : "SurveyEditView" },
-		"grid":     {"run" : "GridRunView",     "edit" : "GridEditView" },
-		"id":       {"run" : "IdRunView",       "edit" : "IdEditView" }
+		"observation": {"run" : "ObservationRunView", "edit" : "ObservationEditView" },
+		"consent":     {"run" : "ConsentRunView",     "edit" : "ConsentEditView" },
+		"datetime":    {"run" : "DatetimeRunView",    "edit" : "DatetimeEditView" },
+		"location":    {"run" : "LocationRunView",    "edit" : "LocationEditView" },
+		"survey":      {"run" : "SurveyRunView",      "edit" : "SurveyEditView" },
+		"grid":        {"run" : "GridRunView",        "edit" : "GridEditView" },
+		"id":          {"run" : "IdRunView",          "edit" : "IdEditView" }
 	},
 
 	"reports" : 

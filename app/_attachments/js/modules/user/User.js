@@ -140,7 +140,8 @@ User = (function(_super) {
             }
           });
         } else {
-          return typeof options.success === "function" ? options.success() : void 0;
+          if (typeof options.success === "function") options.success();
+          return _this.logout();
         }
       },
       error: function(status, error, reason) {
