@@ -78,9 +78,9 @@ class QuestionEditView extends Backbone.View
 
 
   render: ->
-    name            = @model.escape("name") || ""
-    prompt          = @model.escape("prompt") || ""
-    hint            = @model.escape("hint") || ""
+    name            = @model.escape("name")      || ""
+    prompt          = @model.escape("prompt")    || ""
+    hint            = @model.escape("hint")      || ""
     skipLogic       = @model.escape("skipLogic") || ""
     type            = @model.get "type"
     options         = @model.get "options"
