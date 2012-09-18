@@ -171,7 +171,7 @@ renamed both with a number and letter, for instance 4a</p>             </td>    
 
           <span class="k">else</span> <span class="k">if</span> <span class="nx">prototype</span> <span class="o">==</span> <span class="s">&quot;survey&quot;</span>
             <span class="k">for</span> <span class="nx">surveyVariable</span><span class="p">,</span> <span class="nx">surveyValue</span> <span class="k">of</span> <span class="nx">subtest</span><span class="p">.</span><span class="nx">data</span>
-              <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">surveyValue</span><span class="p">)</span>
+              <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">surveyValue</span><span class="p">)</span> <span class="c1"># multiple type question</span>
                 <span class="k">for</span> <span class="nx">optionKey</span><span class="p">,</span> <span class="nx">optionValue</span> <span class="k">of</span> <span class="nx">surveyValue</span>
                   <span class="k">if</span> <span class="nx">optionValue</span> <span class="o">==</span> <span class="s">&quot;checked&quot;</span>
                     <span class="nv">exportValue = </span><span class="mi">1</span>
@@ -180,14 +180,13 @@ renamed both with a number and letter, for instance 4a</p>             </td>    
                   <span class="k">else</span> <span class="k">if</span> <span class="nx">optionValue</span> <span class="o">==</span> <span class="s">&quot;not_asked&quot;</span>
                     <span class="nv">exportValue = </span><span class="s">&quot;.&quot;</span>
                   <span class="nx">values</span><span class="p">[</span><span class="nx">keys</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">surveyVariable</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">optionKey</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">exportValue</span>
-              <span class="k">else</span>
-                <span class="nv">exportValue = </span><span class="k">if</span> <span class="nx">surveyValue</span> <span class="o">==</span> <span class="s">&quot;not_asked&quot;</span> <span class="k">then</span> <span class="s">&quot;.&quot;</span> <span class="k">else</span> <span class="nx">surveyValue</span>
+              <span class="k">else</span> <span class="c1"># single type question or open</span>
+                <span class="nv">exportValue = </span><span class="k">if</span> <span class="nx">surveyValue</span> <span class="o">==</span> <span class="s">&quot;not_asked&quot;</span> <span class="k">then</span> <span class="s">&quot;.&quot;</span> <span class="k">else</span> <span class="nx">surveyValue</span> <span class="c1"># if open just show result, otherwise translate not_asked</span>
                 <span class="nx">values</span><span class="p">[</span><span class="nx">keys</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">surveyVariable</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">exportValue</span>
 
           <span class="k">else</span> <span class="k">if</span> <span class="nx">prototype</span> <span class="o">==</span> <span class="s">&quot;observation&quot;</span>
             <span class="k">for</span> <span class="nx">observations</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">subtest</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">surveys</span>
               <span class="nv">observationData = </span><span class="nx">observations</span><span class="p">.</span><span class="nx">data</span>
-              <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">observationData</span>
               <span class="k">for</span> <span class="nx">surveyVariable</span><span class="p">,</span> <span class="nx">surveyValue</span> <span class="k">of</span> <span class="nx">observationData</span>
                 
                 <span class="nx">values</span><span class="p">[</span><span class="nx">keys</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">surveyVariable</span><span class="si">}</span><span class="s">_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">surveyValue</span>

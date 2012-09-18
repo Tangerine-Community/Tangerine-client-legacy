@@ -28,3 +28,7 @@ class Result extends Backbone.Model
   getGridScore: (id) ->
     for datum in @get 'subtestData'
       return parseInt(datum.data.attempted) if datum.subtestId == id
+
+  gridWasAutostopped: (id) ->
+    for datum in @get 'subtestData'
+      return datum.data.auto_stop if datum.subtestId == id

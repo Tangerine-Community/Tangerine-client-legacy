@@ -76,6 +76,7 @@ class SurveyRunView extends Backbone.View
 
 
   render: ->
+    notAskedCount = 0
     @questions.sort()
     if @questions.models?
       for question, i in @questions.models
@@ -83,7 +84,11 @@ class SurveyRunView extends Backbone.View
 
         required = parseInt(question.get("linkedGridScore")) || 0
 
-        isNotAsked = (required != 0 && @parent.getGridScore() < required)
+        isNotAsked = (required != 0 && @parent.getGridScore() < required) || @parent.gridWasAutostopped()
+        console.log "autostopped:"
+        console.log @parent.gridWasAutostopped()
+        if isNotAsked then notAskedCount++
+
         oneView = new QuestionRunView 
           model  : question
           parent : @
@@ -93,6 +98,7 @@ class SurveyRunView extends Backbone.View
         @questionViews[i] = oneView
         @$el.append oneView.el
 
+    if @questions.models.length == notAskedCount then @parent.next()
     @trigger "rendered"
 
   onQuestionRendered: =>

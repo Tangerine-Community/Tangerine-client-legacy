@@ -56,12 +56,23 @@ SubtestRunView = (function(_super) {
     var grid, gridScore, link;
     link = this.model.get("gridLinkId") || "";
     if (link === "") {
-      throw "subtest grid link unspecified";
+      Utils.midAlert("Survey grid link unspecified");
       return;
     }
     grid = this.parent.model.subtests.get(this.model.get("gridLinkId"));
     gridScore = this.parent.result.getGridScore(grid.id);
     return gridScore;
+  };
+
+  SubtestRunView.prototype.gridWasAutostopped = function() {
+    var grid, gridWasAutostopped, link;
+    link = this.model.get("gridLinkId") || "";
+    if (link === "") {
+      Utils.midAlert("Survey grid link unspecified");
+      return;
+    }
+    grid = this.parent.model.subtests.get(this.model.get("gridLinkId"));
+    return gridWasAutostopped = this.parent.result.gridWasAutostopped(grid.id);
   };
 
   SubtestRunView.prototype.onClose = function() {

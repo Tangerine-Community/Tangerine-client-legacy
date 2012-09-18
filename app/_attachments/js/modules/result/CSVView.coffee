@@ -205,7 +205,7 @@ class CSVView extends Backbone.View
 
           else if prototype == "survey"
             for surveyVariable, surveyValue of subtest.data
-              if _.isObject(surveyValue)
+              if _.isObject(surveyValue) # multiple type question
                 for optionKey, optionValue of surveyValue
                   if optionValue == "checked"
                     exportValue = 1
@@ -214,14 +214,13 @@ class CSVView extends Backbone.View
                   else if optionValue == "not_asked"
                     exportValue = "."
                   values[keys.indexOf("#{surveyVariable}_#{optionKey}")] = exportValue
-              else
-                exportValue = if surveyValue == "not_asked" then "." else surveyValue
+              else # single type question or open
+                exportValue = if surveyValue == "not_asked" then "." else surveyValue # if open just show result, otherwise translate not_asked
                 values[keys.indexOf("#{surveyVariable}")] = exportValue
 
           else if prototype == "observation"
             for observations, i in subtest.data.surveys
               observationData = observations.data
-              console.log observationData
               for surveyVariable, surveyValue of observationData
                 
                 values[keys.indexOf("#{surveyVariable}_#{i}")] = surveyValue

@@ -125,14 +125,18 @@ SurveyRunView = (function(_super) {
   };
 
   SurveyRunView.prototype.render = function() {
-    var i, isNotAsked, oneView, question, required, _len, _ref;
+    var i, isNotAsked, notAskedCount, oneView, question, required, _len, _ref;
+    notAskedCount = 0;
     this.questions.sort();
     if (this.questions.models != null) {
       _ref = this.questions.models;
       for (i = 0, _len = _ref.length; i < _len; i++) {
         question = _ref[i];
         required = parseInt(question.get("linkedGridScore")) || 0;
-        isNotAsked = required !== 0 && this.parent.getGridScore() < required;
+        isNotAsked = (required !== 0 && this.parent.getGridScore() < required) || this.parent.gridWasAutostopped();
+        console.log("autostopped:");
+        console.log(this.parent.gridWasAutostopped());
+        if (isNotAsked) notAskedCount++;
         oneView = new QuestionRunView({
           model: question,
           parent: this,
@@ -144,6 +148,7 @@ SurveyRunView = (function(_super) {
         this.$el.append(oneView.el);
       }
     }
+    if (this.questions.models.length === notAskedCount) this.parent.next();
     return this.trigger("rendered");
   };
 

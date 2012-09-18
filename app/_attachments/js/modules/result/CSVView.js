@@ -250,7 +250,6 @@ CSVView = (function(_super) {
             for (i = 0, _len12 = _ref14.length; i < _len12; i++) {
               observations = _ref14[i];
               observationData = observations.data;
-              console.log(observationData);
               for (surveyVariable in observationData) {
                 surveyValue = observationData[surveyVariable];
                 values[keys.indexOf("" + surveyVariable + "_" + i)] = surveyValue;
