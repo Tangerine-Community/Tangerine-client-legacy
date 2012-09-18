@@ -9,16 +9,23 @@ class ResultSumView extends Backbone.View
     @$el.find('.detail_box').toggle(250)
 
   initialize: ( options ) ->
-    @model = options.model
+    @result = options.model
+    for subtest in @result.attributes.subtestData
+      prototype = subtest.prototype
+      if prototype == "id"
+        @studentId = subtest.data.participant_id
+        break
+
 
   render: ->
     html = "<div>
-        #{moment(new Date(@model.get('timestamp'))).format( 'YYYY-MMM-DD HH:mm')}
-        (#{moment(new Date(@model.get('timestamp'))).fromNow()})
+        #{@studentId}
+        #{moment(new Date(@result.get('timestamp'))).format( 'YYYY-MMM-DD HH:mm' )}
+        (#{moment(new Date(@result.get('timestamp'))).fromNow()})
         <button class='details command'>details</button>
       </div>
       <div class='confirmation detail_box'>"
-    for datum, i in @model.get("subtestData")
+    for datum, i in @result.get("subtestData")
       html += "<div><span id='#{@cid}_#{i}'></span>#{datum.name} - items #{datum.sum.total}</div>"
     html += "
       </div>
@@ -29,7 +36,7 @@ class ResultSumView extends Backbone.View
     @trigger "rendered"
 
   afterRender: =>
-    for datum, i in @model.get("subtestData")
+    for datum, i in @result.get("subtestData")
       spark_id = "##{@cid}_#{i}"
       @$el.find(spark_id).sparkline [datum.sum.correct,datum.sum.incorrect,datum.sum.missing],
         type   : 'pie'

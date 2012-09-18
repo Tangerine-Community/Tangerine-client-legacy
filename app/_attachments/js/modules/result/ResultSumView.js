@@ -23,13 +23,27 @@ ResultSumView = (function(_super) {
   };
 
   ResultSumView.prototype.initialize = function(options) {
-    return this.model = options.model;
+    var prototype, subtest, _i, _len, _ref, _results;
+    this.result = options.model;
+    _ref = this.result.attributes.subtestData;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      subtest = _ref[_i];
+      prototype = subtest.prototype;
+      if (prototype === "id") {
+        this.studentId = subtest.data.participant_id;
+        break;
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
   };
 
   ResultSumView.prototype.render = function() {
     var datum, html, i, _len, _ref;
-    html = "<div>        " + (moment(new Date(this.model.get('timestamp'))).format('YYYY-MMM-DD HH:mm')) + "        (" + (moment(new Date(this.model.get('timestamp'))).fromNow()) + ")        <button class='details command'>details</button>      </div>      <div class='confirmation detail_box'>";
-    _ref = this.model.get("subtestData");
+    html = "<div>        " + this.studentId + "        " + (moment(new Date(this.result.get('timestamp'))).format('YYYY-MMM-DD HH:mm')) + "        (" + (moment(new Date(this.result.get('timestamp'))).fromNow()) + ")        <button class='details command'>details</button>      </div>      <div class='confirmation detail_box'>";
+    _ref = this.result.get("subtestData");
     for (i = 0, _len = _ref.length; i < _len; i++) {
       datum = _ref[i];
       html += "<div><span id='" + this.cid + "_" + i + "'></span>" + datum.name + " - items " + datum.sum.total + "</div>";
@@ -41,7 +55,7 @@ ResultSumView = (function(_super) {
 
   ResultSumView.prototype.afterRender = function() {
     var datum, i, spark_id, _len, _ref;
-    _ref = this.model.get("subtestData");
+    _ref = this.result.get("subtestData");
     for (i = 0, _len = _ref.length; i < _len; i++) {
       datum = _ref[i];
       spark_id = "#" + this.cid + "_" + i;
