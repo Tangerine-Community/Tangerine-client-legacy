@@ -32,23 +32,25 @@ class GridEditView extends Backbone.View
 
   render: ->
     items        = @model.get("items").join " "
-    timer        = @model.get("timer")   || 0
-    columns      = @model.get("columns") || 0
-    autostop     = @model.get("autostop") || 0
+    timer        = @model.get("timer")        || 0
+    columns      = @model.get("columns")      || 0
+    autostop     = @model.get("autostop")     || 0
     variableName = @model.get("variableName") || ""
+    
     randomize    = if @model.has("randomize") then @model.get("randomize") else false
-    captureItemAtTime    = if @model.has("captureItemAtTime")    then @model.get("captureItemAtTime")   else false
-    captureAfterSeconds  = if @model.has("captureAfterSeconds")  then @model.get("captureAfterSeconds") else 0
-    captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted")   else true
-    endOfLine            = if @model.has("endOfLine")            then @model.get("endOfLine")           else true
+    
+    captureItemAtTime    = if @model.has("captureItemAtTime")    then @model.get("captureItemAtTime")    else false
+    captureAfterSeconds  = if @model.has("captureAfterSeconds")  then @model.get("captureAfterSeconds")  else 0
+    captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted") else true
+    endOfLine            = if @model.has("endOfLine")            then @model.get("endOfLine")            else true
 
-    fontSize    = if @model.has("fontSize")   then @model.get("fontSize")   else "medium"
-    layoutMode  = if @model.has("layoutMode") then @model.get("layoutMode") else "fixed"
+    fontSize   = if @model.has("fontSize")   then @model.get("fontSize")   else "medium"
+    layoutMode = if @model.has("layoutMode") then @model.get("layoutMode") else "fixed"
 
 
     @$el.html "
       <div class='label_value'>
-        <label for='subtest_variable_name'>Variable name</label>
+        <label for='subtest_variable_name' title='This will be used for CSV exporting.'>Variable name</label>
         <input id='subtest_variable_name' value='#{variableName}'>
       </div>
       <div class='label_value'>
