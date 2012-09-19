@@ -48,14 +48,14 @@ class SubtestRunView extends Backbone.View
 
   getGridScore: ->
     link = @model.get("gridLinkId") || ""
-    if link == "" then Utils.midAlert "Survey grid link unspecified"; return
+    if link == "" then return
     grid = @parent.model.subtests.get @model.get("gridLinkId")
     gridScore = @parent.result.getGridScore grid.id
     gridScore
 
   gridWasAutostopped: ->
     link = @model.get("gridLinkId") || ""
-    if link == "" then Utils.midAlert "Survey grid link unspecified"; return
+    if link == "" then return
     grid = @parent.model.subtests.get @model.get("gridLinkId")
     gridWasAutostopped = @parent.result.gridWasAutostopped grid.id    
 
