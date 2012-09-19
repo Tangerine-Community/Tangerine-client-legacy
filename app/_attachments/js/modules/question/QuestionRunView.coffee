@@ -49,16 +49,17 @@ class QuestionRunView extends Backbone.View
     @$el.attr "data-result", @answer
 
   updateValidity: ->
-    if @model.has("skippable") == "true" || @model.get("skippable") == true
+    if @model.get("skippable") is true || $("#question-#{@name}").hasClass("disabled_skipped")
       @isValid = true
     else
-      if @type == "multiple"
-         @isValid = false if _.values(@answer).indexOf("checked") < @options.length
-      else if @type == "single"
-        @isValid = false if @$el.find(".#{@cid}_#{@name}:checked").length == 0
-      else if @type == "open"
-        @isValid = $.trim(@$el.find(".#{@cid}_#{@name}:checked")) == ""
-      @isValid = true
+      if @type is "multiple" and _.values(@answer).indexOf("checked") < @options.length
+        @isValid = false
+      else if @type is "single" and @$el.find(".#{@cid}_#{@name}:checked").length is 0
+        @isValid = false
+      else if @type is "open" and $.trim(@$el.find(".#{@cid}_#{@name}:checked")).length is 0
+        @isValid = false
+      else
+        @isValid = true
     
   setMessage: (message) =>
     @$el.find(".error_message").html message
@@ -90,8 +91,6 @@ class QuestionRunView extends Backbone.View
 
     else
       @$el.hide()
-
-    console.log @$el
 
     @trigger "rendered"
 

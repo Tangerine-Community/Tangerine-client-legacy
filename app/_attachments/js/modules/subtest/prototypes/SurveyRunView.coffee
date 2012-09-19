@@ -23,15 +23,19 @@ class SurveyRunView extends Backbone.View
     @questions.each (question) ->
       skipLogic = question.get "skipLogic"
       if skipLogic?
-#        compiledSkipLogic = CoffeeScript.compile "#{skipLogic}", bare: on
         result = CoffeeScript.eval "#{skipLogic}"
-#        console.log "#{compiledSkipLogic} -> #{result}"
-        console.log "SKIP" if result is false
-        $("#question-#{question.get "name"}").addClass "disabled_skipped"
-
-
+        if result is false
+          $("#question-#{question.get "name"}").addClass "disabled_skipped"
+        else
+          $("#question-#{question.get "name"}").removeClass "disabled_skipped"
+    _.each @questionViews, (questionView) ->
+      questionView.updateValidity()
+      
   isValid: ->
     for qv, i in @questionViews
+      console.log qv.isValid
+      qv.updateValidity()
+      console.log qv.isValid
       # does it have a method? otherwise it's a string
       if qv.isValid?
         # can we skip it?

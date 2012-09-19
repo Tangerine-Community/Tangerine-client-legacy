@@ -49,16 +49,20 @@ SurveyRunView = (function(_super) {
   };
 
   SurveyRunView.prototype.updateSkipLogic = function() {
-    return this.questions.each(function(question) {
+    this.questions.each(function(question) {
       var result, skipLogic;
       skipLogic = question.get("skipLogic");
       if (skipLogic != null) {
         result = CoffeeScript["eval"]("" + skipLogic);
         if (result === false) {
-          console.log("SKIP");
+          return $("#question-" + (question.get("name"))).addClass("disabled_skipped");
+        } else {
+          return $("#question-" + (question.get("name"))).removeClass("disabled_skipped");
         }
-        return $("#question-" + (question.get("name"))).addClass("disabled_skipped");
       }
+    });
+    return _.each(this.questionViews, function(questionView) {
+      return questionView.updateValidity();
     });
   };
 
@@ -67,6 +71,9 @@ SurveyRunView = (function(_super) {
     _ref = this.questionViews;
     for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
       qv = _ref[i];
+      console.log(qv.isValid);
+      qv.updateValidity();
+      console.log(qv.isValid);
       if (qv.isValid != null) {
         if (!(qv.model.get("skippable") === "true" || qv.model.get("skippable") === true)) {
           if (!qv.isValid) {

@@ -78,21 +78,18 @@ QuestionRunView = (function(_super) {
   };
 
   QuestionRunView.prototype.updateValidity = function() {
-    if (this.model.has("skippable") === "true" || this.model.get("skippable") === true) {
+    if (this.model.get("skippable") === true || $("#question-" + this.name).hasClass("disabled_skipped")) {
       return this.isValid = true;
     } else {
-      if (this.type === "multiple") {
-        if (_.values(this.answer).indexOf("checked") < this.options.length) {
-          this.isValid = false;
-        }
-      } else if (this.type === "single") {
-        if (this.$el.find("." + this.cid + "_" + this.name + ":checked").length === 0) {
-          this.isValid = false;
-        }
-      } else if (this.type === "open") {
-        this.isValid = $.trim(this.$el.find("." + this.cid + "_" + this.name + ":checked")) === "";
+      if (this.type === "multiple" && _.values(this.answer).indexOf("checked") < this.options.length) {
+        return this.isValid = false;
+      } else if (this.type === "single" && this.$el.find("." + this.cid + "_" + this.name + ":checked").length === 0) {
+        return this.isValid = false;
+      } else if (this.type === "open" && $.trim(this.$el.find("." + this.cid + "_" + this.name + ":checked")).length === 0) {
+        return this.isValid = false;
+      } else {
+        return this.isValid = true;
       }
-      return this.isValid = true;
     }
   };
 
@@ -124,7 +121,6 @@ QuestionRunView = (function(_super) {
     } else {
       this.$el.hide();
     }
-    console.log(this.$el);
     return this.trigger("rendered");
   };
 
