@@ -474,7 +474,7 @@ GridRunView = (function(_super) {
       incorrect: counts['incorrect'],
       missing: counts['missing'],
       total: counts['total'],
-      correct_per_minute: counts['correct'] * (this.timeElapsed / 60)
+      correct_per_minute: counts['correct'] * (60 / this.timeElapsed)
     };
   };
 

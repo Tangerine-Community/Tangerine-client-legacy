@@ -437,6 +437,6 @@ class GridRunView extends Backbone.View
       incorrect : counts['incorrect']
       missing   : counts['missing']
       total     : counts['total']
-      correct_per_minute : (counts['correct'] * (@timeElapsed / 60))
+      correct_per_minute : (counts['correct'] * (60 / @timeElapsed))
     }
 
