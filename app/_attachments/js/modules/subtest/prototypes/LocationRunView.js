@@ -11,7 +11,7 @@ LocationRunView = (function(_super) {
   }
 
   LocationRunView.prototype.events = {
-    "click #school_list li": "autofill",
+    "click .school_list li": "autofill",
     "keyup input": "showOptions",
     "click clear": "clearInputs"
   };
@@ -49,7 +49,8 @@ LocationRunView = (function(_super) {
 
   LocationRunView.prototype.autofill = function(event) {
     var i, index, level, location, _len, _ref, _results;
-    this.$el.find("#autofill").fadeOut(250);
+    console.log(event.target);
+    this.$el.find(".autofill").fadeOut(250);
     index = $(event.target).attr("data-index");
     location = this.locations[index];
     _ref = this.levels;
@@ -62,21 +63,24 @@ LocationRunView = (function(_super) {
   };
 
   LocationRunView.prototype.showOptions = function(event) {
-    var atLeastOne, field, html, i, isThere, j, needle, otherField, result, results, stack, _i, _len, _len2, _len3, _len4, _ref, _ref2;
+    var atLeastOne, field, html, i, isThere, j, needle, otherField, result, results, stack, _i, _len, _len2, _len3, _len4, _ref, _ref2, _ref3;
     needle = $(event.target).val().toLowerCase();
     field = parseInt($(event.target).attr('data-level'));
+    for (otherField = 0, _ref = this.haystack.length; 0 <= _ref ? otherField <= _ref : otherField >= _ref; 0 <= _ref ? otherField++ : otherField--) {
+      this.$el.find("#autofill_" + otherField).hide();
+    }
     atLeastOne = false;
     results = [];
-    _ref = this.haystack;
-    for (i = 0, _len = _ref.length; i < _len; i++) {
-      stack = _ref[i];
+    _ref2 = this.haystack;
+    for (i = 0, _len = _ref2.length; i < _len; i++) {
+      stack = _ref2[i];
       isThere = ~this.haystack[i][field].indexOf(needle);
       if (isThere) results.push(i);
       if (isThere) atLeastOne = true;
     }
-    _ref2 = this.haystack;
-    for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
-      stack = _ref2[i];
+    _ref3 = this.haystack;
+    for (i = 0, _len2 = _ref3.length; i < _len2; i++) {
+      stack = _ref3[i];
       for (j = 0, _len3 = stack.length; j < _len3; j++) {
         otherField = stack[j];
         if (j === field) continue;
@@ -91,10 +95,10 @@ LocationRunView = (function(_super) {
         result = results[_i];
         html += this.getLocationLi(result);
       }
-      this.$el.find("#autofill").fadeIn(250);
-      return this.$el.find("#school_list").html(html);
+      this.$el.find("#autofill_" + field).fadeIn(250);
+      return this.$el.find("#school_list_" + field).html(html);
     } else {
-      return this.$el.find("#autofill").fadeOut(250);
+      return this.$el.find("#autofill_" + field).fadeOut(250);
     }
   };
 
@@ -118,9 +122,8 @@ LocationRunView = (function(_super) {
     _ref = this.levels;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       level = _ref[i];
-      html += "        <div class='label_value'>          <label for='level_" + i + "'>" + level + "</label><br>          <input data-level='" + i + "' id='level_" + i + "' value=''>        </div>      ";
+      html += "        <div class='label_value'>          <label for='level_" + i + "'>" + level + "</label><br>          <input data-level='" + i + "' id='level_" + i + "' value=''>        </div>        <div id='autofill_" + i + "' class='autofill' style='display:none'>          <h2>Select one from autofill list</h2>          <ul class='school_list' id='school_list_" + i + "'>          </ul>        </div>    ";
     }
-    html += "      <div id='autofill' style='display:none'>        <h2>Select one from autofill list</h2>        <ul id='school_list'>        </ul>      </div>    ";
     this.$el.html(html);
     return this.trigger("rendered");
   };
