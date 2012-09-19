@@ -414,7 +414,6 @@ class GridRunView extends Backbone.View
       "variable_name" : @model.get("variableName")
 
 
-
   getSkippedResult: ->
     return "skipped"
 
@@ -427,6 +426,7 @@ class GridRunView extends Backbone.View
       incorrect : 0
       missing   : @items.length - @lastAttempted
       total     : @items.length
+ 
 
     for i in @gridOutput
       counts['correct']   += 1 if i == "correct"
@@ -437,5 +437,6 @@ class GridRunView extends Backbone.View
       incorrect : counts['incorrect']
       missing   : counts['missing']
       total     : counts['total']
+      correct_per_minute : (counts['correct'] * (@timeElapsed / 60))
     }
 
