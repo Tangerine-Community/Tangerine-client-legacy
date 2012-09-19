@@ -1,88 +1,9 @@
 # little janky, no model
 class CSVView extends Backbone.View
 
-  events:
-    'click .option_reduce' : 'toggleReduce'
-  
-  toggleReduce: (event) ->
-    value = $(event.target).val()
-    @reduceExclusive = if value == "true" then true else false
-    @initialize
-      assessmentId : @assessmentId
-
   initialize: ( options ) ->
-    @reduceExclusive = options.reduceExclusive
-    
+  
     @assessmentId = Utils.cleanURL options.assessmentId
-    
-    # Do we need Taylor's edits for the Malawi 2012 EGRA?
-    # Note, always use reduceExclusive = true for the Malawi 2012 EGRA
-    @malawi2012EGRA = false
-    if @assessmentId == "b6faf1dcbe0aac8e66fc4607aa2c348b"
-      @reduceExclusive = true
-      @malawi2012EGRA = true
-      console.log "Malawi 2012 May EGRA"
-      
-      @replaceMapValues = 
-        "1" : ["yes", "true", "TRUE", "True", "correct", "checked", "mkazi"] 
-        "0" : ["no", "false", "FALSE", "False", "incorrect", "unchecked","mwamuna"]
-        "." : ["missing", "na", "Na", "NA", "undefined", "not_asked", "no_response", "skip"]
-
-      @replaceMapKeys = 
-        "enumerator" : "admin_name"
-        "starttime" : "start_time"
-        "endtime" : "end_time"
-        "date-and-time:year" : "year"
-        "date-and-time:month" : "month"
-        "date-and-time:day" : "day"
-        "date-and-time:time" : "assess_time"
-        "school:province" : "region"
-        "school:district" : "district"
-        "school:name" : "school"
-        "school:school-id" : "school_code"
-        "student-consent:participant-consents" : "consent"
-        "student-information:school-shift" : "shift"
-        "student-information:zaka-zakubadwa" : "age"
-        "student-information:mkazi" : "gender"
-        "letter-name:autostopped" : "letter_auto_stop"
-        "letter-name:last-attempted" : "letter_attempted"
-        "letter-name:time-remaining" : "letter_time_remain"
-        "letter-name:time-elapsed" : "NOT USED - time_elapsed"
-        "syllables:autostopped" : "syllable_sound_auto_stop"
-        "syllables:last-attempted" : "syllable_sound_attempted"
-        "syllables:time-remaining" : "syllable_sound_time_remain"
-        "syllables:time-elapsed" : "NOT USED - time_elapsed"
-        "invented-words:autostopped" : "invent_word_auto_stop"
-        "invented-words:last-attempted" : "invent_word_attempted"
-        "invented-words:time-remaining" : "invent_word_time_remain"
-        "invented-words:time-elapsed" : "NOT USED - time_elapsed"
-        "oral-passage-reading:autostopped" : "oral_read_auto_stop"
-        "oral-passage-reading:last-attempted" : "oral_read_attempted"
-        "oral-passage-reading:time-remaining" : "oral_read_time_remain"
-        "oral-passage-reading:time-elapsed" : "NOT USED - time_elapsed"
-        "student-information:stream:stream" : "section"
-
-
-      # Look for variable names starting with the left side
-      # and turn them into the right side plus a number starting at 1
-      @replaceWithNumbering = 
-        "initial-sounds" : "pa_init_sound"
-        "letter-name:letters-results" : "letter"
-        "syllables:letters-results" : "syllable_sound"
-        "invented-words:letters-results" : "invent_word"
-        "oral-passage-reading:letters-results" : "oral_read_word"
-        "reading-comprehension:comp" : "read_comp"
-      
-      # Only the pupil-context-interview questions need to be 
-      # renamed both with a number and letter, for instance 4a
-      @abnormalNamingTag = "pupil-context-interview"
-      @abnormalNamingReplacement = "exit_interview"
-      
-      # Used to give letters to exit_interviews
-      @alphabetLetters = ["", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"]
-      @betweenColonsIgnore = [":lang-spec", ":kodi-kunyumba-kwanu-kuli-zinthu-ngati-izi", ":16b"]
-    
-    # This is where the real work starts
     
     allResults = new Results
     allResults.fetch
@@ -154,15 +75,12 @@ class CSVView extends Backbone.View
 
       resultDataArray.push keys
 
-      # iterate all results
+      # fill values array with all results
       for result, d in @results
-        #console.log result
         values = []
-        # add meta keys
         for metaKey in @metaKeys
           values.push result.attributes[metaKey]
 
-        # add subtest data
         for subtest in result.attributes.subtestData
 
           prototype = subtest.prototype
@@ -233,63 +151,7 @@ class CSVView extends Backbone.View
 
         resultDataArray.push values
 
-      `/*
-      for rowNumber, row of resultDataArray
-        
-        # Begin Taylor's Edits for Malawi 2012 EGRA May
-        if @malawi2012EGRA
-          if rowNumber == "0"
-            lastNumberedReplace = "**TRASHVALUE**"
-            lastAbnormalReplace = "**TRASHVALUE**"
-            index = 0
-            letterIndex = 0
-            for i, key of resultDataArray[0]
-              if @replaceMapKeys[key]? # Is it a simple substitute?
-                resultDataArray[0][i] = @replaceMapKeys[key]
-                index = 0
-              else # Or do we need to add numbering?
-                for prefixTag, replacement of @replaceWithNumbering
-                  if ~key.indexOf(prefixTag)
-                    if lastNumberedReplace == prefixTag
-                      index++
-                    else
-                      lastNumberedReplace = prefixTag
-                      index = 1
-                    resultDataArray[0][i] = replacement + index.toString()
-                if ~key.indexOf(@abnormalNamingTag)
-                  
-                  if lastNumberedReplace != @abnormalNamingTag
-                    index = 0
-                    lastNumberedReplace = @abnormalNamingTag
-                    
-                  indexFirstColon = key.indexOf(":")
-                  indexLastColon = key.lastIndexOf(":")
-                  betweenColons = key.substring(indexFirstColon, indexLastColon)
-                  if indexFirstColon == indexLastColon or ~@betweenColonsIgnore.indexOf(betweenColons)
-                    index++
-                    letterIndex = 0
-                  else if betweenColons != lastAbnormalReplace
-                    letterIndex = 1
-                    index++
-                    lastAbnormalReplace = betweenColons
-                  else
-                    letterIndex++
-                    index++ if letterIndex == 1
-                  resultDataArray[0][i] = @abnormalNamingReplacement + 
-                    index.toString() + @alphabetLetters[letterIndex]
-                  
-                  
-                  
-          else
-            for i, value of resultDataArray[rowNumber]
-              for mapKey, mapValue of @replaceMapValues
-                if _.isBoolean(value) # Handle values that pretend to be a boolean
-                  value = value.toString()
-                if ~mapValue.indexOf(value) # Can we convert it?
-                  resultDataArray[rowNumber][i] = mapKey
-        
-        # End Taylor's Edits for Malawi 2012 EGRA May
-        */`
+      # Use table2csv to create a safe csv data
       for row, i in resultDataArray
         tableHTML += "<tr>"
         count = 0
@@ -304,14 +166,19 @@ class CSVView extends Backbone.View
 
       checkedString = "checked='checked'"
 
-      @$el.html "
-        <div id='csv_view'>
-        <h1>Result CSV</h1>
-        <textarea>#{@csv}</textarea><br>
-        <a href='data:text/octet-stream;base64,#{Base64.encode(@csv)}' download='#{@assessmentId}.csv'>Download file</a>
-        (Right click and click <i>Save Link As...</i>)
-        </div>
-        "
+      # Save 
+      csvFile = new Backbone.Model
+        "_id" : "Tangerine-#{@assessmentId.substr(-5, 5)}.csv"
+      csvFile.url = "csv"
+      csvFile.fetch
+        complete: =>
+          csvFile.save 
+            "csv" : @csv
+          , complete : =>
+            
+            # point browser to file
+            window.open("/tangerine/_design/tangerine/_show/csv/Tangerine-#{@assessmentId.substr(-5, 5)}.csv","_blank")
+
 
 
     @trigger "rendered"
