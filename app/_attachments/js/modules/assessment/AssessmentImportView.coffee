@@ -33,7 +33,7 @@ class AssessmentImportView extends Backbone.View
 
     @newAssessment.updateFromServer dKey
 
-    @activeTaskInterval = setInterval @updateFromActiveTasks, 500
+    @activeTaskInterval = setInterval @updateFromActiveTasks, 3000
 
 
   updateFromActiveTasks: =>
