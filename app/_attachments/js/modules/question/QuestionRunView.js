@@ -74,18 +74,14 @@ QuestionRunView = (function(_super) {
         }
       }
     }
-    return this.$el.attr("data-result", this.answer);
+    return this.$el.attr("data-result", _.isString(this.answer) ? this.answer : JSON.stringify(this.answer));
   };
 
   QuestionRunView.prototype.updateValidity = function() {
     if (this.model.get("skippable") === true || $("#question-" + this.name).hasClass("disabled_skipped")) {
       return this.isValid = true;
     } else {
-      if (this.type === "multiple" && _.values(this.answer).indexOf("checked") < this.options.length) {
-        return this.isValid = false;
-      } else if (this.type === "single" && this.$el.find("." + this.cid + "_" + this.name + ":checked").length === 0) {
-        return this.isValid = false;
-      } else if (this.type === "open" && $.trim(this.$el.find("." + this.cid + "_" + this.name + ":checked")).length === 0) {
+      if (_.isEmpty(this.answer)) {
         return this.isValid = false;
       } else {
         return this.isValid = true;

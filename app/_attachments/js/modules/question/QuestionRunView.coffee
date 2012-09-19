@@ -46,17 +46,13 @@ class QuestionRunView extends Backbone.View
         for option, i in @options
           @answer[@options[i].value] = if @$el.find("##{@cid}_#{@name}_#{i}").is(":checked") then "checked" else "unchecked"
 
-    @$el.attr "data-result", @answer
+    @$el.attr "data-result", if _.isString(@answer) then @answer else JSON.stringify(@answer)
 
   updateValidity: ->
-    if @model.get("skippable") is true || $("#question-#{@name}").hasClass("disabled_skipped")
+    if @model.get("skippable") is true or $("#question-#{@name}").hasClass("disabled_skipped")
       @isValid = true
     else
-      if @type is "multiple" and _.values(@answer).indexOf("checked") < @options.length
-        @isValid = false
-      else if @type is "single" and @$el.find(".#{@cid}_#{@name}:checked").length is 0
-        @isValid = false
-      else if @type is "open" and $.trim(@$el.find(".#{@cid}_#{@name}:checked")).length is 0
+      if _.isEmpty(@answer)
         @isValid = false
       else
         @isValid = true

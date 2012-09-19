@@ -2,7 +2,7 @@ class QuestionEditView extends Backbone.View
 
   className : "question_list_element"
 
-  events : 
+  events :
     'click .back'             : 'goBack'
     'click .done'             : 'done'
     'click .add_option'       : 'addOption'
@@ -107,7 +107,7 @@ class QuestionEditView extends Backbone.View
           <input id='hint' type='text' value='#{hint}'>
         </div>
         <div class='label_value'>
-          <label for='skip-logic'>Skip if false</label>
+          <label for='skip-logic'>Skip if <span style='font-size: small;font-weight:normal'>example: ResultOfQuestion(\"maze1\") isnt \"2\"</span></label>
           <input id='skip-logic' type='text' value='#{skipLogic}'>
         </div>
         <div class='label_value'>

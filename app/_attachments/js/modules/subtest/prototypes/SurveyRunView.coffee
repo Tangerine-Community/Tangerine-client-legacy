@@ -1,3 +1,6 @@
+ResultOfQuestion = (name) ->
+  $("#question-#{name}").attr("data-result")
+
 class SurveyRunView extends Backbone.View
   events:
     'change input'        : 'updateSkipLogic'
@@ -24,7 +27,7 @@ class SurveyRunView extends Backbone.View
       skipLogic = question.get "skipLogic"
       if skipLogic?
         result = CoffeeScript.eval "#{skipLogic}"
-        if result is false
+        if result
           $("#question-#{question.get "name"}").addClass "disabled_skipped"
         else
           $("#question-#{question.get "name"}").removeClass "disabled_skipped"
@@ -33,9 +36,7 @@ class SurveyRunView extends Backbone.View
       
   isValid: ->
     for qv, i in @questionViews
-      console.log qv.isValid
       qv.updateValidity()
-      console.log qv.isValid
       # does it have a method? otherwise it's a string
       if qv.isValid?
         # can we skip it?
@@ -54,10 +55,8 @@ class SurveyRunView extends Backbone.View
       return result
 
   getResult: =>
-    console.log @
     result = {}
     for qv, i in @questionViews
-      console.log i
       result[@questions.models[i].get("name")] = qv.answer
     return result
 
