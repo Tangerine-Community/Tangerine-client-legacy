@@ -22,6 +22,7 @@ AssessmentRunView = (function(_super) {
   AssessmentRunView.prototype.initializeViews = function() {
     var resultView,
       _this = this;
+    Tangerine.activity = "assessment run";
     this.subtestViews = [];
     this.model.subtests.sort();
     this.model.subtests.each(function(model) {

@@ -53,12 +53,12 @@ class PartByStudentView extends Backbone.View
       @summary.aCorrect += person.pCorrect
       @table.push person
 
-    @summary.aCorrect = Utils.decimals( @summary.aCorrect / @table.length, 2)
+    @summary.aCorrect = Math.decimals( @summary.aCorrect / @table.length, 2)
 
     for person in @table
       @summary.stdDev += Math.pow(person.pCorrect - @summary.aCorrect, 2)
 
-    @summary.stdDev = Utils.decimals(Math.pow( @summary.stdDev / @table.length, 0.5), 2)
+    @summary.stdDev = Math.decimals(Math.pow( @summary.stdDev / @table.length, 0.5), 2)
 
     for person, i in @table
 

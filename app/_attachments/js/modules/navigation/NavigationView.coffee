@@ -10,8 +10,29 @@ class NavigationView extends Backbone.View
     
   enumeratorClick: -> Tangerine.router.navigate "account", true
 
-  logoClick:-> @router.navigate '', true
-  logout: -> @router.navigate 'logout', true
+  logoClick:-> 
+    @user.verify
+      isAdmin: =>
+        Tangerine.activity = ""
+        @router.navigate '', true
+
+    if Tangerine.activity == "assessment run"
+      if confirm("Assessment not finished. Continue to main screen?")
+        Tangerine.activity = ""
+        @router.navigate '', true
+      
+  logout: ->
+    @user.verify
+      isAdmin: =>
+        Tangerine.activity = ""
+        @router.navigate 'logout', true
+
+      
+    if Tangerine.activity == "assessment run"
+      if confirm("Assessment not finished. Continue to logout?")
+        Tangerine.activity = ""
+        @router.navigate 'logout', true
+
 
   initialize: (options) =>
     @render()

@@ -26,6 +26,7 @@ class ResultView extends Backbone.View
         total : 1
 
     if @model.save()
+      Tangerine.activity = ""
       Utils.midAlert "Result saved"
       @$el.find('.save_status').html "saved"
       @$el.find('.save_status').removeClass('not_saved')

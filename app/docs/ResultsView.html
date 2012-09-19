@@ -45,9 +45,9 @@
     <span class="k">return</span> <span class="kc">false</span>
 
   <span class="nv">csv: </span><span class="o">-&gt;</span>
-    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span> <span class="s">&quot;csv/&quot;</span><span class="o">+</span><span class="nx">@assessment</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="kc">true</span>
-
-  <span class="nv">detectOptions: </span><span class="o">-&gt;</span>
+    <span class="nv">view = </span><span class="k">new</span> <span class="nx">CSVView</span>
+      <span class="nv">assessmentId : </span><span class="nx">@assessment</span><span class="p">.</span><span class="nx">id</span>
+    <span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Tangerine.router.navigate "csv/"+@assessment.id, true</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">detectOptions: </span><span class="o">-&gt;</span>
     <span class="vi">@available = </span>
       <span class="nv">cloud : </span>
         <span class="nv">ok : </span><span class="kc">false</span>
@@ -61,7 +61,7 @@
     <span class="nx">@detectCloud</span><span class="p">()</span>
     <span class="nx">@detectTablets</span><span class="p">()</span>
     
-  <span class="nv">detectCloud: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Detect Cloud</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span>
+  <span class="nv">detectCloud: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Detect Cloud</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span>
       <span class="nv">dataType: </span><span class="s">&quot;jsonp&quot;</span>
       <span class="nv">url: </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">cloud</span><span class="p">.</span><span class="nx">host</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="o">+</span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">port</span><span class="o">+</span><span class="s">&quot;/&quot;</span>
       <span class="nv">success: </span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=&gt;</span>

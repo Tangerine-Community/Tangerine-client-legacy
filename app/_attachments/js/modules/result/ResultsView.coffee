@@ -45,7 +45,11 @@ class ResultsView extends Backbone.View
     return false
 
   csv: ->
-    Tangerine.router.navigate "csv/"+@assessment.id, true
+    view = new CSVView
+      assessmentId : @assessment.id
+    view.render()
+
+  #  Tangerine.router.navigate "csv/"+@assessment.id, true
 
   detectOptions: ->
     @available = 

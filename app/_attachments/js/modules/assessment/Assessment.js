@@ -39,12 +39,16 @@ Assessment = (function(_super) {
   };
 
   Assessment.prototype.duplicate = function(assessmentAttributes, subtestAttributes, questionAttributes, callback) {
-    var newModel, originalId, questions,
+    var newId, newModel, originalId, questions,
       _this = this;
     originalId = this.id;
     newModel = this.clone();
     newModel.set(assessmentAttributes);
-    newModel.set("_id", Utils.guid());
+    newId = Utils.guid();
+    newModel.set({
+      "_id": newId,
+      "assessmentId": newId
+    });
     newModel.save(null, {
       "wait": true
     });

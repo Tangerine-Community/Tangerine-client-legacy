@@ -23,13 +23,13 @@ jQuery.fn.table2CSV = function(options) {
             if ($(this).css('display') != 'none') tmpRow[tmpRow.length] = formatData($(this).html());
         });
     }
-
     row2CSV(tmpRow);
+
 
     // actual data
     $(el).find('tr').each(function() {
         var tmpRow = [];
-        $(this).filter(':visible').find('td').each(function() {
+        $(this).find('td').each(function() {
             if ($(this).css('display') != 'none') tmpRow[tmpRow.length] = formatData($(this).html());
         });
         row2CSV(tmpRow);

@@ -81,7 +81,11 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.csv = function() {
-    return Tangerine.router.navigate("csv/" + this.assessment.id, true);
+    var view;
+    view = new CSVView({
+      assessmentId: this.assessment.id
+    });
+    return view.render();
   };
 
   ResultsView.prototype.detectOptions = function() {

@@ -92,13 +92,78 @@ sks = [
       var _results;
       _results = [];
       for (i = 0; i <= 6; i++) {
-        _results.push(km["0100set"[i]]);
+        _results.push(km["0100ser"[i]]);
       }
       return _results;
     })(),
     i: 0,
     c: function() {
-      return Tangerine.router.navigate("settings", true);
+      var settings;
+      settings = new Settings({
+        "_id": "TangerineSettings"
+      });
+      return settings.fetch({
+        success: function(settings) {
+          settings.set({
+            "context": "server"
+          });
+          settings.save();
+          Tangerine.router.navigate("", true);
+          return console.log("tried");
+        }
+      });
+    }
+  }, {
+    q: (function() {
+      var _results;
+      _results = [];
+      for (i = 0; i <= 6; i++) {
+        _results.push(km["0100mob"[i]]);
+      }
+      return _results;
+    })(),
+    i: 0,
+    c: function() {
+      var settings;
+      settings = new Settings({
+        "_id": "TangerineSettings"
+      });
+      return settings.fetch({
+        success: function(settings) {
+          settings.set({
+            "context": "mobile"
+          });
+          settings.save();
+          Tangerine.router.navigate("", true);
+          return console.log("tried");
+        }
+      });
+    }
+  }, {
+    q: (function() {
+      var _results;
+      _results = [];
+      for (i = 0; i <= 6; i++) {
+        _results.push(km["0100cla"[i]]);
+      }
+      return _results;
+    })(),
+    i: 0,
+    c: function() {
+      var settings;
+      settings = new Settings({
+        "_id": "TangerineSettings"
+      });
+      return settings.fetch({
+        success: function(settings) {
+          settings.set({
+            "context": "class"
+          });
+          settings.save();
+          Tangerine.router.navigate("", true);
+          return console.log("tried");
+        }
+      });
     }
   }
 ];

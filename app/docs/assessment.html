@@ -22,9 +22,14 @@ fetchs all subtests for the assessment</p>             </td>             <td cla
 
     <span class="nv">newModel = </span><span class="nx">@clone</span><span class="p">()</span>
     <span class="nx">newModel</span><span class="p">.</span><span class="nx">set</span> <span class="nx">assessmentAttributes</span>
-    <span class="nx">newModel</span><span class="p">.</span><span class="nx">set</span> <span class="s">&quot;_id&quot;</span><span class="p">,</span> <span class="nx">Utils</span><span class="p">.</span><span class="nx">guid</span><span class="p">()</span>
+    <span class="nv">newId = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">guid</span><span class="p">()</span>
+
+    <span class="nx">newModel</span><span class="p">.</span><span class="nx">set</span> 
+      <span class="s">&quot;_id&quot;</span>          <span class="o">:</span> <span class="nx">newId</span>
+      <span class="s">&quot;assessmentId&quot;</span> <span class="o">:</span> <span class="nx">newId</span>
+
     <span class="nx">newModel</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">{</span><span class="s">&quot;wait&quot;</span><span class="o">:</span><span class="kc">true</span><span class="p">})</span>
-    
+
     <span class="nv">questions = </span><span class="k">new</span> <span class="nx">Questions</span>
     <span class="nx">questions</span><span class="p">.</span><span class="nx">fetch</span>
       <span class="nv">key: </span><span class="nx">@id</span>

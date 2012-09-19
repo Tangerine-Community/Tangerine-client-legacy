@@ -7,6 +7,7 @@ class AssessmentRunView extends Backbone.View
     @initializeViews()
 
   initializeViews: ->
+    Tangerine.activity = "assessment run"
     @subtestViews = []
     @model.subtests.sort()
     @model.subtests.each (model) =>

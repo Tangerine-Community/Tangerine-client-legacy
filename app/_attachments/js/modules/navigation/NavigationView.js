@@ -27,11 +27,35 @@ NavigationView = (function(_super) {
   };
 
   NavigationView.prototype.logoClick = function() {
-    return this.router.navigate('', true);
+    var _this = this;
+    this.user.verify({
+      isAdmin: function() {
+        Tangerine.activity = "";
+        return _this.router.navigate('', true);
+      }
+    });
+    if (Tangerine.activity === "assessment run") {
+      if (confirm("Assessment not finished. Continue to main screen?")) {
+        Tangerine.activity = "";
+        return this.router.navigate('', true);
+      }
+    }
   };
 
   NavigationView.prototype.logout = function() {
-    return this.router.navigate('logout', true);
+    var _this = this;
+    this.user.verify({
+      isAdmin: function() {
+        Tangerine.activity = "";
+        return _this.router.navigate('logout', true);
+      }
+    });
+    if (Tangerine.activity === "assessment run") {
+      if (confirm("Assessment not finished. Continue to logout?")) {
+        Tangerine.activity = "";
+        return this.router.navigate('logout', true);
+      }
+    }
   };
 
   NavigationView.prototype.initialize = function(options) {

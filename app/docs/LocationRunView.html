@@ -1,7 +1,7 @@
 <!DOCTYPE html>  <html> <head>   <title>LocationRunView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               LocationRunView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">LocationRunView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
 
   <span class="nv">events:</span>
-    <span class="s">&quot;click </span><span class="err">#</span><span class="s">school_list li&quot;</span> <span class="o">:</span> <span class="s">&quot;autofill&quot;</span>
+    <span class="s">&quot;click .school_list li&quot;</span> <span class="o">:</span> <span class="s">&quot;autofill&quot;</span>
     <span class="s">&quot;keyup input&quot;</span> <span class="o">:</span> <span class="s">&quot;showOptions&quot;</span>
     <span class="s">&quot;click clear&quot;</span> <span class="o">:</span> <span class="s">&quot;clearInputs&quot;</span>
 
@@ -34,7 +34,8 @@
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">school_id, </span><span class="err">#</span><span class="s">district, </span><span class="err">#</span><span class="s">province, </span><span class="err">#</span><span class="s">name&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
 
   <span class="nv">autofill: </span><span class="nf">(event) -&gt;</span>
-    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">autofill&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.autofill&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
     <span class="nv">index = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;data-index&quot;</span><span class="p">)</span>
     <span class="nv">location = </span><span class="nx">@locations</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span>
     <span class="k">for</span> <span class="nx">level</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@levels</span>
@@ -43,7 +44,9 @@
 
   <span class="nv">showOptions: </span><span class="nf">(event) -&gt;</span>
     <span class="nv">needle = </span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">toLowerCase</span><span class="p">()</span>
-    <span class="nv">field = </span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-level&#39;</span><span class="p">))</span>
+    <span class="nv">field = </span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;data-level&#39;</span><span class="p">))</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>hide if others are showing</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">for</span> <span class="nx">otherField</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">@haystack</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">autofill_</span><span class="si">#{</span><span class="nx">otherField</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+
     <span class="nv">atLeastOne = </span><span class="kc">false</span>
     <span class="nv">results = </span><span class="p">[]</span>
     <span class="k">for</span> <span class="nx">stack</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@haystack</span>
@@ -63,11 +66,11 @@
       <span class="nv">html = </span><span class="s">&quot;&quot;</span>
       <span class="k">for</span> <span class="nx">result</span> <span class="k">in</span> <span class="nx">results</span>
         <span class="nx">html</span> <span class="o">+=</span> <span class="nx">@getLocationLi</span> <span class="nx">result</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">autofill&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>  
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">school_list&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">html</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">autofill_</span><span class="si">#{</span><span class="nx">field</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">school_list_</span><span class="si">#{</span><span class="nx">field</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">html</span>
 
     <span class="k">else</span>
-      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">autofill&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">autofill_</span><span class="si">#{</span><span class="nx">field</span><span class="si">}</span><span class="s">&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
 
   <span class="nv">getLocationLi: </span><span class="nf">(i) -&gt;</span>
     <span class="nv">templateInfo = </span><span class="s">&quot;i&quot;</span> <span class="o">:</span> <span class="nx">i</span>
@@ -87,14 +90,11 @@
 <span class="s">          &lt;label for=&#39;level_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;</span><span class="si">#{</span><span class="nx">level</span><span class="si">}</span><span class="s">&lt;/label&gt;&lt;br&gt;</span>
 <span class="s">          &lt;input data-level=&#39;</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39; id=&#39;level_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39; value=&#39;&#39;&gt;</span>
 <span class="s">        &lt;/div&gt;</span>
-<span class="s">      &quot;</span>
-
-    <span class="nx">html</span> <span class="o">+=</span> <span class="s">&quot;</span>
-<span class="s">      &lt;div id=&#39;autofill&#39; style=&#39;display:none&#39;&gt;</span>
-<span class="s">        &lt;h2&gt;Select one from autofill list&lt;/h2&gt;</span>
-<span class="s">        &lt;ul id=&#39;school_list&#39;&gt;</span>
-<span class="s">        &lt;/ul&gt;</span>
-<span class="s">      &lt;/div&gt;</span>
+<span class="s">        &lt;div id=&#39;autofill_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39; class=&#39;autofill&#39; style=&#39;display:none&#39;&gt;</span>
+<span class="s">          &lt;h2&gt;Select one from autofill list&lt;/h2&gt;</span>
+<span class="s">          &lt;ul class=&#39;school_list&#39; id=&#39;school_list_</span><span class="si">#{</span><span class="nx">i</span><span class="si">}</span><span class="s">&#39;&gt;</span>
+<span class="s">          &lt;/ul&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
 <span class="s">    &quot;</span>
 
     <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="nx">html</span>

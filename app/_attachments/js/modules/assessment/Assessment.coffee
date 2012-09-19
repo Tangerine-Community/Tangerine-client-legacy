@@ -27,9 +27,14 @@ class Assessment extends Backbone.Model
 
     newModel = @clone()
     newModel.set assessmentAttributes
-    newModel.set "_id", Utils.guid()
+    newId = Utils.guid()
+
+    newModel.set 
+      "_id"          : newId
+      "assessmentId" : newId
+
     newModel.save(null, {"wait":true})
-    
+
     questions = new Questions
     questions.fetch
       key: @id

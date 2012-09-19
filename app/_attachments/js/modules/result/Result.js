@@ -41,6 +41,15 @@ Result = (function(_super) {
     }
   };
 
+  Result.prototype.gridWasAutostopped = function(id) {
+    var datum, _i, _len, _ref;
+    _ref = this.get('subtestData');
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      datum = _ref[_i];
+      if (datum.subtestId === id) return datum.data.auto_stop;
+    }
+  };
+
   return Result;
 
 })(Backbone.Model);

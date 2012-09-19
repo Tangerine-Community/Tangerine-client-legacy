@@ -1,7 +1,7 @@
 class LocationRunView extends Backbone.View
 
   events:
-    "click #school_list li" : "autofill"
+    "click .school_list li" : "autofill"
     "keyup input" : "showOptions"
     "click clear" : "clearInputs"
 
@@ -34,7 +34,8 @@ class LocationRunView extends Backbone.View
     @$el.find("#school_id, #district, #province, #name").val("")
 
   autofill: (event) ->
-    @$el.find("#autofill").fadeOut(250)
+    console.log event.target
+    @$el.find(".autofill").fadeOut(250)
     index = $(event.target).attr("data-index")
     location = @locations[index]
     for level, i in @levels
@@ -44,6 +45,10 @@ class LocationRunView extends Backbone.View
   showOptions: (event) ->
     needle = $(event.target).val().toLowerCase()
     field = parseInt($(event.target).attr('data-level'))
+    # hide if others are showing
+    for otherField in [0..@haystack.length]
+      @$el.find("#autofill_#{otherField}").hide()
+
     atLeastOne = false
     results = []
     for stack, i in @haystack
@@ -63,11 +68,11 @@ class LocationRunView extends Backbone.View
       html = ""
       for result in results
         html += @getLocationLi result
-      @$el.find("#autofill").fadeIn(250)  
-      @$el.find("#school_list").html html
+      @$el.find("#autofill_#{field}").fadeIn(250)
+      @$el.find("#school_list_#{field}").html html
 
     else
-      @$el.find("#autofill").fadeOut(250)
+      @$el.find("#autofill_#{field}").fadeOut(250)
 
   getLocationLi: (i) ->
     templateInfo = "i" : i
@@ -87,14 +92,11 @@ class LocationRunView extends Backbone.View
           <label for='level_#{i}'>#{level}</label><br>
           <input data-level='#{i}' id='level_#{i}' value=''>
         </div>
-      "
-
-    html += "
-      <div id='autofill' style='display:none'>
-        <h2>Select one from autofill list</h2>
-        <ul id='school_list'>
-        </ul>
-      </div>
+        <div id='autofill_#{i}' class='autofill' style='display:none'>
+          <h2>Select one from autofill list</h2>
+          <ul class='school_list' id='school_list_#{i}'>
+          </ul>
+        </div>
     "
 
     @$el.html html

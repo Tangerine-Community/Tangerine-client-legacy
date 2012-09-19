@@ -120,7 +120,7 @@ class SubtestEditView extends Backbone.View
           </div>
         </div>
         <div class='label_value'>
-          <label for='enumerator_help'>Enumerator help <button class='edit_enumerator command'>Edit</button></label>
+          <label for='enumerator_help' title='If text is supplied, a help button will appear at the top of the subtest as a reference for the enumerator. If you are pasting from word it is recommended to paste into a plain text editor first, and then into this box.'>Enumerator help <button class='edit_enumerator command'>Edit</button></label>
           <div class='info_box_wide enumerator_help_preview'>#{help}</div>
           <textarea id='enumerator_help' class='confirmation'>#{help}</textarea>
           <div class='enumerator_save_buttons confirmation'>
@@ -128,7 +128,7 @@ class SubtestEditView extends Backbone.View
           </div>
         </div>
         <div class='label_value'>
-          <label for='student_dialog'>Student Dialog <button class='edit_student command'>Edit</button></label>
+          <label for='student_dialog' title='Generally this is a script that will be read to the student. If you are pasting from word it is recommended to paste into a plain text editor first, and then into this box.'>Student Dialog <button class='edit_student command'>Edit</button></label>
           <div class='info_box_wide student_dialog_preview'>#{dialog}</div>
           <textarea id='student_dialog' class='confirmation'>#{dialog}</textarea>
           <div class='student_save_buttons confirmation'>

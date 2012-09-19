@@ -85,6 +85,7 @@ GridRunView = (function(_super) {
   GridRunView.prototype.markElement = function(index, value) {
     var $target;
     if (value == null) value = null;
+    if (this.lastAttempted !== 0 && index > this.lastAttempted) return;
     $target = this.$el.find(".grid_element[data-index=" + index + "]");
     this.markRecord.push(index);
     if (value === null) {
@@ -202,7 +203,7 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.updateCountdown = function() {
-    this.timeElapsed = this.getTime() - this.startTime;
+    this.timeElapsed = Math.min(this.getTime() - this.startTime, this.timer);
     this.timeRemaining = this.timer - this.timeElapsed;
     this.$el.find(".timer").html(this.timeRemaining);
     if (this.timeRemaining <= 0 && this.timeRunning === true && this.captureLastAttempted) {
