@@ -160,11 +160,7 @@ class CSVView extends Backbone.View
           count++
         tableHTML += "</tr>"
 
-      tableHTML = "<table>#{tableHTML}</table>"
-      @$el.html tableHTML
-      @csv = @$el.table2CSV { delivery : "value" }
-
-      checkedString = "checked='checked'"
+      @csv = $("<table>#{tableHTML}</table>").table2CSV { "delivery" : "value" }
 
       # Save
       csvFile = new Backbone.Model
@@ -178,7 +174,5 @@ class CSVView extends Backbone.View
             # point browser to file
             # do it in a new window because otherwise it will cancel the fetching/updating of the file
             window.open("/tangerine/_design/tangerine/_show/csv/Tangerine-#{@assessmentId.substr(-5, 5)}.csv","_blank")
-
-
 
     @trigger "rendered"

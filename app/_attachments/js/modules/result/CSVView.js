@@ -27,7 +27,7 @@ CSVView = (function(_super) {
   };
 
   CSVView.prototype.render = function() {
-    var checkedString, count, csvFile, d, exportValue, i, index, item, keys, label, maxIndex, maxLength, metaKey, monthData, months, observationData, observations, optionKey, optionValue, prototype, result, resultDataArray, row, subtest, subtestName, surveyValue, surveyVariable, tableHTML, values, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len12, _len13, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
+    var count, csvFile, d, exportValue, i, index, item, keys, label, maxIndex, maxLength, metaKey, monthData, months, observationData, observations, optionKey, optionValue, prototype, result, resultDataArray, row, subtest, subtestName, surveyValue, surveyVariable, tableHTML, values, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len12, _len13, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
       _this = this;
     if ((this.results != null) && (this.results[0] != null)) {
       tableHTML = "";
@@ -203,12 +203,9 @@ CSVView = (function(_super) {
         }
         tableHTML += "</tr>";
       }
-      tableHTML = "<table>" + tableHTML + "</table>";
-      this.$el.html(tableHTML);
-      this.csv = this.$el.table2CSV({
-        delivery: "value"
+      this.csv = $("<table>" + tableHTML + "</table>").table2CSV({
+        "delivery": "value"
       });
-      checkedString = "checked='checked'";
       csvFile = new Backbone.Model({
         "_id": "Tangerine-" + (this.assessmentId.substr(-5, 5)) + ".csv"
       });
