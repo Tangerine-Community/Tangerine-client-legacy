@@ -150,7 +150,9 @@ class GridRunView extends Backbone.View
     Utils.topAlert "Autostop removed. Continue."
 
   updateCountdown: =>
-    @timeElapsed = @getTime() - @startTime
+    # sometimes the "tick" doesn't happen within a second
+    @timeElapsed = Math.min(@getTime() - @startTime, @timer)
+    
     @timeRemaining = @timer - @timeElapsed
     
     @$el.find(".timer").html @timeRemaining
@@ -410,6 +412,8 @@ class GridRunView extends Backbone.View
       "time_remain"   : @timeRemaining
       "mark_record"   : @markRecord
       "variable_name" : @model.get("variableName")
+
+
 
   getSkippedResult: ->
     return "skipped"
