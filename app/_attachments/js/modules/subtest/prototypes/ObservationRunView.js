@@ -205,7 +205,8 @@ ObservationRunView = (function(_super) {
     this.iAm.recording = true;
     this.survey.view = new SurveyRunView({
       "model": this.survey.models[this.my.observation.index],
-      "parent": this
+      "parent": this,
+      "isObservation": true
     });
     this.survey.view.index = this.my.observation.index;
     this.survey.view.on("rendered", function() {

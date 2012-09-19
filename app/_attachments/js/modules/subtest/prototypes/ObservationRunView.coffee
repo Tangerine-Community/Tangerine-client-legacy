@@ -174,8 +174,9 @@ class ObservationRunView extends Backbone.View
     if not @iAm.counting then return
     @iAm.recording = true
     @survey.view  = new SurveyRunView
-      "model"  : @survey.models[@my.observation.index]
-      "parent" : @
+      "model"         : @survey.models[@my.observation.index]
+      "parent"        : @
+      "isObservation" : true
     @survey.view.index = @my.observation.index # add an index for reference
     @survey.view.on "rendered", => @trigger "rendered" # listen for render events, pass them up
     @survey.view.render()
