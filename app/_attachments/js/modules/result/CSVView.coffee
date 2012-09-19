@@ -166,17 +166,17 @@ class CSVView extends Backbone.View
 
       checkedString = "checked='checked'"
 
-      # Save 
+      # Save
       csvFile = new Backbone.Model
         "_id" : "Tangerine-#{@assessmentId.substr(-5, 5)}.csv"
       csvFile.url = "csv"
       csvFile.fetch
         complete: =>
-          csvFile.save 
+          csvFile.save
             "csv" : @csv
           , complete : =>
-            
             # point browser to file
+            # do it in a new window because otherwise it will cancel the fetching/updating of the file
             window.open("/tangerine/_design/tangerine/_show/csv/Tangerine-#{@assessmentId.substr(-5, 5)}.csv","_blank")
 
 
