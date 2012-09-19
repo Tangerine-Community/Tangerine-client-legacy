@@ -10,6 +10,7 @@ class ResultSumView extends Backbone.View
 
   initialize: ( options ) ->
     @result = options.model
+    @studentId = ""
     for subtest in @result.attributes.subtestData
       prototype = subtest.prototype
       if prototype == "id"

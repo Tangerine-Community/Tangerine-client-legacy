@@ -25,6 +25,7 @@ ResultSumView = (function(_super) {
   ResultSumView.prototype.initialize = function(options) {
     var prototype, subtest, _i, _len, _ref, _results;
     this.result = options.model;
+    this.studentId = "";
     _ref = this.result.attributes.subtestData;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
