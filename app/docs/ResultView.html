@@ -26,6 +26,7 @@
         <span class="nv">total : </span><span class="mi">1</span>
 
     <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
+      <span class="nv">Tangerine.activity = </span><span class="s">&quot;&quot;</span>
       <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Result saved&quot;</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.save_status&#39;</span><span class="p">).</span><span class="nx">html</span> <span class="s">&quot;saved&quot;</span>
       <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.save_status&#39;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&#39;not_saved&#39;</span><span class="p">)</span>
