@@ -24,123 +24,60 @@ class AssessmentImportView extends Backbone.View
     Tangerine.router.navigate "", true
     false
 
-
-  import: ->
-    @importList = {}
+  import: =>
+    @updateActivity();
     dKey = @$el.find("#d_key").val()
+
+    @newAssessment = new Assessment
+    @newAssessment.on "status", @updateActivity
+
+    @newAssessment.updateFromServer dKey
+
+    @activeTaskInterval = setInterval @updateFromActiveTasks, 500
+
+
+  updateFromActiveTasks: =>
+    $.couch.activeTasks
+      success: (tasks) => 
+        for task in tasks
+          if task.type.toLowerCase() == "replication"
+            @activity = task.status
+            @updateProgress()
+
+
+  updateActivity: (status, message) =>
+
     @$el.find(".status").fadeIn(250)
-    @$el.find("#progress").html "Looking for #{dKey}"
 
-    $.ajax
-      "url"      : "http://localhost:5984/tangerine/_changes", 
-      "dataType" : "json"
-      "async"    : false
-      success    : (data) ->
-        toPurge = {}
-        for result in data.results
-          if result.deleted == true
-            toPurge[result.id] = _.pluck(result.changes, "rev")
-
-        $.ajax
-          async: false
-          contentType: "application/json"
-          type: "POST"
-          url: "http://localhost:5984/tangerine/_purge"
-          data: JSON.stringify(toPurge)
-
-  
-    $.ajax
-      type: "GET"
-      url: "http://tangerine.iriscouch.com/tangerine/_design/tangerine/_view/byDKey?keys=[%22#{dKey}%22]"
-      dataType: "jsonp" 
-      success: (data) =>
-        @docsRemaining = data.rows.length
-        for row in data.rows
-          doc = row.value
-          console.log doc.collection
-          Tangerine.$db.openDoc doc._id,
-            async: false
-            success: (oldDoc) =>
-              newDoc = doc
-              doc._rev = oldDoc._rev
-              Tangerine.$db.saveDoc newDoc,
-                async: false
-                success: (data) =>
-                  @updateProgress newDoc.collection 
-                error: =>
-                  @updateProgress newDoc.collection + " save error"
-              ,
-                async: false
-            error  : =>
-              newDoc = doc
-              if arguments[2] == "deleted"
-                Tangerine.$db.saveDoc doc,
-                  success: =>
-                  error: =>
-                    console.log arguments
-                    
-
-              else
-
-                Tangerine.$db.saveDoc newDoc,
-                  async: false
-                  success: =>
-                    @updateProgress newDoc.collection 
-                  error: =>
-                    @updateProgress newDoc.collection + " save error"
-                ,
-                  async: false
-
-
-          , 
-            async: false
-            revs_info: true
-      error: =>
-        updateProgress null, "Download key not found. Please check and try again."
-
-  showProgress: (status, info) ->
-    if status == "good"
-      @$el.find("#progress").html "Import successful <h3>Imported</h3>"
-      # this next step is just a test to see everything is there...
-      # maybe it doesn't need to. Kind of impressive though.
-      Tangerine.$db.view Tangerine.config.address.designDoc + "/byDKey",
-        keys: [dKey]
-        success: (data) =>
-          questions = 0
-          assessments = 0
-          subtests = 0
-          assessmentName = ""
-          for datum in data.rows
-            doc = datum.value
-            subtests++ if doc.collection == 'subtest'
-            questions++ if doc.collection == 'question'  
-            assessmentName = doc.name if doc.collection == 'assessment'
-          @$el.find("#progress").append "
-            <div>#{assessmentName}</div>
-            <div>Subtests - #{subtests}</div>
-            <div>Questions - #{questions}</div>"
-        error: (a, b ,c) ->
-          @$el.find("#progress").html "<div>Error after data imported</div><div>#{a}</div><div>#{b}"
-    else if status == "bad"
-      @$el.find("#progress").html "<div>Import error</div>#{arguments.join(',')}"
-
-  
-
-  updateProgress: (key) ->
-    @docsRemaining--
-    if @importList[key]?
-      @importList[key]++
+    @activity = ""
+    if status == "import lookup"
+      @activity = "Finding assessment"
+    else if status == "import success"
+      clearInterval @activeTaskInterval
+      @activity = "Import successful"
+    else if status == "import error"
+      clearInterval @activeTaskInterval
+      @activity = "Import error: #{message}"
     else
-      @importList[key] = 1
+      @$el.find(".status").fadeOut(250)
+
+    @updateProgress()
+
+  updateProgress: (key) =>
+
+    if key?
+      if @importList[key]?
+        @importList[key]++
+      else
+        @importList[key] = 1
+
     progressHTML = "<table>"
     for key, value of @importList
       progressHTML += "<tr><td>#{key.titleize().pluralize()}</td><td>#{value}</td></tr>"
     
-    if @docsRemaining > 0
-      progressHTML += "<tr><td>Documents remaining</td><td>#{@docsRemaining}</td></tr>"
-    else
-      progressHTML += "<tr><td colspan='2'>Import Successful</td></tr>"
-
+    if @activity?
+      progressHTML += "<tr><td colspan='2'>#{@activity}</td></tr>"
+    
     progressHTML += "</table>"
     
     @$el.find("#progress").html progressHTML

@@ -37,7 +37,7 @@ class AssessmentEditView extends Backbone.View
       return false
     else
       @model.set
-        archived : @$el.find("#archive_buttons input:checked").val()
+        archived : @$el.find("#archive_buttons input:checked").val() == "true"
         name     : @$el.find("#assessment_name").val()
         group    : @$el.find("#assessment_group").val()
         dKey     : @$el.find("#assessment_d_key").val()

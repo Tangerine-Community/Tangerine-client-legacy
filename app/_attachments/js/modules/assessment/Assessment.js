@@ -8,6 +8,7 @@ Assessment = (function(_super) {
   __extends(Assessment, _super);
 
   function Assessment() {
+    this.updateFromServer = __bind(this.updateFromServer, this);
     this.fetch = __bind(this.fetch, this);
     Assessment.__super__.constructor.apply(this, arguments);
   }
@@ -36,6 +37,30 @@ Assessment = (function(_super) {
       });
     };
     return Assessment.__super__.fetch.call(this, options);
+  };
+
+  Assessment.prototype.updateFromServer = function(dKey) {
+    var opts, repOps,
+      _this = this;
+    if (dKey == null) dKey = this.id.substr(-5, 5);
+    this.trigger("status", "import lookup");
+    repOps = {
+      'filter': 'tangerine/importFilter',
+      'create_target': true,
+      'query_params': {
+        'downloadKey': dKey
+      }
+    };
+    opts = {
+      success: function() {
+        return _this.trigger("status", "import success");
+      },
+      error: function(a, b) {
+        return _this.trigger("status", "import error", "" + a + " " + b);
+      }
+    };
+    $.couch.replicate(Tangerine.config.address.cloud.host + ":" + Tangerine.config.address.port + "/" + Tangerine.config.address.cloud.dbName, Tangerine.config.address.local.dbName, opts, repOps);
+    return false;
   };
 
   Assessment.prototype.duplicate = function(assessmentAttributes, subtestAttributes, questionAttributes, callback) {

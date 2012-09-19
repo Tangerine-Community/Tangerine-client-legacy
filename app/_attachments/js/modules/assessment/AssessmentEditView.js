@@ -62,7 +62,7 @@ AssessmentEditView = (function(_super) {
       return false;
     } else {
       this.model.set({
-        archived: this.$el.find("#archive_buttons input:checked").val(),
+        archived: this.$el.find("#archive_buttons input:checked").val() === "true",
         name: this.$el.find("#assessment_name").val(),
         group: this.$el.find("#assessment_group").val(),
         dKey: this.$el.find("#assessment_d_key").val(),

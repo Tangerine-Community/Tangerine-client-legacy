@@ -21,6 +21,23 @@ class Assessment extends Backbone.Model
             oldSuccess? @
     Assessment.__super__.fetch.call @, options
 
+  updateFromServer: ( dKey = @id.substr(-5,5)) =>
+
+    @trigger "status", "import lookup"
+    repOps =
+      'filter' : 'tangerine/importFilter'
+      'create_target' : true
+      'query_params' :
+        'downloadKey' : dKey
+
+    opts =
+      success: =>     @trigger "status", "import success"
+      error: (a,b) => @trigger "status", "import error", "#{a} #{b}"
+    
+    $.couch.replicate Tangerine.config.address.cloud.host+":"+Tangerine.config.address.port+"/"+Tangerine.config.address.cloud.dbName, Tangerine.config.address.local.dbName, opts, repOps
+
+    false
+
   duplicate: (assessmentAttributes, subtestAttributes, questionAttributes, callback) ->
 
     originalId = @id
