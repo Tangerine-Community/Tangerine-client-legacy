@@ -124,7 +124,7 @@ class SurveyRunView extends Backbone.View
     @trigger "rendered"
 
   onQuestionRendered: =>
-    @trigger "rendered"
+    @trigger "subRendered"
 
   onClose:->
     for qv in @questionViews
