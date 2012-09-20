@@ -473,7 +473,8 @@ GridRunView = (function(_super) {
       correct: counts['correct'],
       incorrect: counts['incorrect'],
       missing: counts['missing'],
-      total: counts['total']
+      total: counts['total'],
+      correct_per_minute: counts['correct'] * (60 / this.timeElapsed)
     };
   };
 

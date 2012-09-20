@@ -44,56 +44,46 @@ QuestionRunView = (function(_super) {
   };
 
   QuestionRunView.prototype.updateResult = function() {
-    var i, option, _len, _len2, _ref, _ref2, _results, _results2;
+    var i, option, _len, _len2, _ref, _ref2;
     if (this.type === "open") {
       if (this.notAsked === true) {
-        return this.answer = "not_asked";
+        this.answer = "not_asked";
       } else {
-        return this.answer = this.$el.find("#" + this.cid + "_" + this.name).val();
+        this.answer = this.$el.find("#" + this.cid + "_" + this.name).val();
       }
     } else if (this.type === "single") {
       if (this.notAsked === true) {
-        return this.answer = "not_asked";
+        this.answer = "not_asked";
       } else {
-        return this.answer = this.$el.find("." + this.cid + "_" + this.name + ":checked").val();
+        this.answer = this.$el.find("." + this.cid + "_" + this.name + ":checked").val();
       }
     } else if (this.type === "multiple") {
       if (this.notAsked === true) {
         _ref = this.options;
-        _results = [];
         for (i = 0, _len = _ref.length; i < _len; i++) {
           option = _ref[i];
-          _results.push(this.answer[this.options[i].value] = "not_asked");
+          this.answer[this.options[i].value] = "not_asked";
         }
-        return _results;
       } else {
         _ref2 = this.options;
-        _results2 = [];
         for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
           option = _ref2[i];
-          _results2.push(this.answer[this.options[i].value] = this.$el.find("#" + this.cid + "_" + this.name + "_" + i).is(":checked") ? "checked" : "unchecked");
+          this.answer[this.options[i].value] = this.$el.find("#" + this.cid + "_" + this.name + "_" + i).is(":checked") ? "checked" : "unchecked";
         }
-        return _results2;
       }
     }
+    return this.$el.attr("data-result", _.isString(this.answer) ? this.answer : JSON.stringify(this.answer));
   };
 
   QuestionRunView.prototype.updateValidity = function() {
-    if (this.model.has("skippable") === "true" || this.model.get("skippable") === true) {
+    if (this.model.get("skippable") === true || $("#question-" + this.name).hasClass("disabled_skipped")) {
       return this.isValid = true;
     } else {
-      if (this.type === "multiple") {
-        if (_.values(this.answer).indexOf("checked") < this.options.length) {
-          this.isValid = false;
-        }
-      } else if (this.type === "single") {
-        if (this.$el.find("." + this.cid + "_" + this.name + ":checked").length === 0) {
-          this.isValid = false;
-        }
-      } else if (this.type === "open") {
-        this.isValid = $.trim(this.$el.find("." + this.cid + "_" + this.name + ":checked")) === "";
+      if (_.isEmpty(this.answer)) {
+        return this.isValid = false;
+      } else {
+        return this.isValid = true;
       }
-      return this.isValid = true;
     }
   };
 
@@ -103,6 +93,7 @@ QuestionRunView = (function(_super) {
 
   QuestionRunView.prototype.render = function() {
     var checkOrRadio, html, i, option, _len, _ref;
+    this.$el.attr("id", "question-" + this.name);
     if (!this.notAsked) {
       if (!this.isObservation) {
         html = "<div class='error_message'></div><div class='prompt'>" + (this.model.get('prompt')) + "</div>        <div class='hint'>" + (this.model.get('hint') || "") + "</div>";

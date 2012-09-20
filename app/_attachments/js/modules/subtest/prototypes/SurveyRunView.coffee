@@ -1,4 +1,10 @@
+ResultOfQuestion = (name) ->
+  $("#question-#{name}").attr("data-result")
+
 class SurveyRunView extends Backbone.View
+  events:
+    'change input'        : 'updateSkipLogic'
+    'change textarea'     : 'updateSkipLogic'
 
   initialize: (options) ->
     @model         = @options.model
@@ -13,8 +19,25 @@ class SurveyRunView extends Backbone.View
         @questions.sort()
         @render()
 
+  questionResult: (label) =>
+    # Should really return the label, not the value, too much indirection. Maybe the GUI will help.
+    @getResult()[name]
+
+  updateSkipLogic: =>
+    @questions.each (question) ->
+      skipLogic = question.get "skipLogic"
+      if skipLogic?
+        result = CoffeeScript.eval "#{skipLogic}"
+        if result
+          $("#question-#{question.get "name"}").addClass "disabled_skipped"
+        else
+          $("#question-#{question.get "name"}").removeClass "disabled_skipped"
+    _.each @questionViews, (questionView) ->
+      questionView.updateValidity()
+      
   isValid: ->
     for qv, i in @questionViews
+      qv.updateValidity()
       # does it have a method? otherwise it's a string
       if qv.isValid?
         # can we skip it?
@@ -32,7 +55,7 @@ class SurveyRunView extends Backbone.View
         result[@questions.models[i].get("name")] = qv.answer
       return result
 
-  getResult: ->
+  getResult: =>
     result = {}
     for qv, i in @questionViews
       result[@questions.models[i].get("name")] = qv.answer
@@ -99,6 +122,7 @@ class SurveyRunView extends Backbone.View
         @questionViews[i] = oneView
         @$el.append oneView.el
 
+    @updateSkipLogic()
     if @questions.models.length == notAskedCount then @parent.next()
     @trigger "rendered"
 

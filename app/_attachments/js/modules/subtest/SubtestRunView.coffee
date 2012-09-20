@@ -15,10 +15,7 @@ class SubtestRunView extends Backbone.View
     @prototypeRendered = false
 
   render: ->
-    
-    # in case we hit a back button accidentally
-    # window.onbeforeunload = => "Assessment is still running"
-
+      
     enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help'>#{@model.get 'enumeratorHelp'}</div>" else ""
     studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog'>#{@model.get 'studentDialog'}</div>" else ""
     skipButton = "<button class='skip navigation'>Skip</button>"
@@ -48,12 +45,14 @@ class SubtestRunView extends Backbone.View
 
   getGridScore: ->
     link = @model.get("gridLinkId") || ""
+    if link == "" then return
     grid = @parent.model.subtests.get @model.get("gridLinkId")
     gridScore = @parent.result.getGridScore grid.id
     gridScore
 
   gridWasAutostopped: ->
     link = @model.get("gridLinkId") || ""
+    if link == "" then return
     grid = @parent.model.subtests.get @model.get("gridLinkId")
     gridWasAutostopped = @parent.result.gridWasAutostopped grid.id    
 

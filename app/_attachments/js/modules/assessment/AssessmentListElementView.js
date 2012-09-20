@@ -22,7 +22,9 @@ AssessmentListElementView = (function(_super) {
     'click .assessment_delete_cancel': 'assessmentDeleteToggle',
     'click .assessment_delete_confirm': 'assessmentDelete',
     'click .copy': 'copyToGroup',
-    'click .duplicate': 'duplicate'
+    'click .duplicate': 'duplicate',
+    'click .archive': 'archive',
+    'click .update': 'update'
   };
 
   AssessmentListElementView.prototype.initialize = function(options) {
@@ -56,9 +58,25 @@ AssessmentListElementView = (function(_super) {
     });
   };
 
+  AssessmentListElementView.prototype.update = function() {
+    return this.model.updateFromServer();
+  };
+
+  AssessmentListElementView.prototype.archive = function() {
+    var result;
+    result = this.$el.find(".archive :selected").val() === "true";
+    if (result === true) {
+      this.$el.find(".admin_name").addClass("archived_assessment");
+    } else {
+      this.$el.find(".admin_name").removeClass("archived_assessment");
+    }
+    return this.model.save({
+      archived: result
+    });
+  };
+
   AssessmentListElementView.prototype.copyToGroup = function() {
     var _this = this;
-    console.log(this.parent.group);
     return this.model.duplicate({
       group: this.parent.group
     }, null, null, function() {
@@ -86,22 +104,25 @@ AssessmentListElementView = (function(_super) {
   };
 
   AssessmentListElementView.prototype.render = function() {
-    var adminName, archiveClass, copyButton, deleteButton, duplicateButton, editButton, html, name, resultCount, resultsButton, runButton, toggleButton;
+    var adminName, archiveClass, archiveSwitch, copyButton, deleteButton, duplicateButton, editButton, html, name, resultCount, resultsButton, runButton, selected, toggleButton, updateButton;
+    selected = " selected='selected' ";
     archiveClass = this.model.get('archived') === true || this.model.get('archived') === 'true' ? " archived_assessment" : "";
     copyButton = "<button class='copy command'>Copy to group</button>";
     toggleButton = "<span class='assessment_menu_toggle icon_ryte'> </span>";
     deleteButton = "<img class='assessment_delete link_icon' title='Delete' src='images/icon_delete.png'><br><span class='assessment_delete_confirm'><div class='menu_box'>Confirm <button class='assessment_delete_yes command_red'>Delete</button> <button class='assessment_delete_cancel command'>Cancel</button></div></span>";
     duplicateButton = "<img class='link_icon duplicate' title='Duplicate' src='images/icon_duplicate.png'>";
     editButton = "<img class='link_icon edit' title='Edit' src='images/icon_edit.png'>";
+    updateButton = "<img class='link_icon update' title='Update' src='images/icon_sync.png'>";
     resultsButton = "<img class='link_icon results' title='Results' src='images/icon_results.png'>";
     runButton = "<img class='link_icon run' title='Run' src='images/icon_run.png'>";
     name = "<span class='name clickable '>" + (this.model.get('name')) + "</span>";
     adminName = "<span class='admin_name clickable " + archiveClass + "'>" + (this.model.get('name')) + "</span>";
     resultCount = "<span class='resultCount'>" + (this.model.get('resultCount') || '0') + " results</span>";
+    archiveSwitch = "    <select class='archive'>      <option value='false' " + (this.model.get('archived') === false ? selected : '') + ">Active</option>      <option value='true'  " + (this.model.get('archived') === true ? selected : '') + ">Archived</option>    </select>    ";
     if (this.isAdmin) {
       html = "        <div>          " + toggleButton + "          " + adminName + "         </div>      ";
       if (Tangerine.settings.context === "mobile") {
-        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + deleteButton + "          </div>        ";
+        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + updateButton + "            " + archiveSwitch + "          </div>        ";
       } else {
         if (this.isPublic) {
           html += "            <div class='assessment_menu'>              " + copyButton + "            </div>          ";

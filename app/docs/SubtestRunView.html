@@ -42,12 +42,20 @@ window.onbeforeunload = => "Assessment is still running"</p>             </td>  
 
   <span class="nv">getGridScore: </span><span class="o">-&gt;</span>
     <span class="nv">link = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;gridLinkId&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
+<<<<<<< HEAD
+=======
+    <span class="k">if</span> <span class="nx">link</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> <span class="k">then</span> <span class="k">return</span>
+>>>>>>> develop
     <span class="nv">grid = </span><span class="nx">@parent</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">subtests</span><span class="p">.</span><span class="nx">get</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;gridLinkId&quot;</span><span class="p">)</span>
     <span class="nv">gridScore = </span><span class="nx">@parent</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">getGridScore</span> <span class="nx">grid</span><span class="p">.</span><span class="nx">id</span>
     <span class="nx">gridScore</span>
 
   <span class="nv">gridWasAutostopped: </span><span class="o">-&gt;</span>
     <span class="nv">link = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;gridLinkId&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span>
+<<<<<<< HEAD
+=======
+    <span class="k">if</span> <span class="nx">link</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> <span class="k">then</span> <span class="k">return</span>
+>>>>>>> develop
     <span class="nv">grid = </span><span class="nx">@parent</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">subtests</span><span class="p">.</span><span class="nx">get</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;gridLinkId&quot;</span><span class="p">)</span>
     <span class="nv">gridWasAutostopped = </span><span class="nx">@parent</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">gridWasAutostopped</span> <span class="nx">grid</span><span class="p">.</span><span class="nx">id</span>    
 

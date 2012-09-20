@@ -1,7 +1,11 @@
-var SurveyRunView,
+var ResultOfQuestion, SurveyRunView,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+ResultOfQuestion = function(name) {
+  return $("#question-" + name).attr("data-result");
+};
 
 SurveyRunView = (function(_super) {
 
@@ -9,8 +13,16 @@ SurveyRunView = (function(_super) {
 
   function SurveyRunView() {
     this.onQuestionRendered = __bind(this.onQuestionRendered, this);
+    this.getResult = __bind(this.getResult, this);
+    this.updateSkipLogic = __bind(this.updateSkipLogic, this);
+    this.questionResult = __bind(this.questionResult, this);
     SurveyRunView.__super__.constructor.apply(this, arguments);
   }
+
+  SurveyRunView.prototype.events = {
+    'change input': 'updateSkipLogic',
+    'change textarea': 'updateSkipLogic'
+  };
 
   SurveyRunView.prototype.initialize = function(options) {
     var _this = this;
@@ -31,11 +43,34 @@ SurveyRunView = (function(_super) {
     });
   };
 
+  SurveyRunView.prototype.questionResult = function(label) {
+    return this.getResult()[name];
+  };
+
+  SurveyRunView.prototype.updateSkipLogic = function() {
+    this.questions.each(function(question) {
+      var result, skipLogic;
+      skipLogic = question.get("skipLogic");
+      if (skipLogic != null) {
+        result = CoffeeScript.eval("" + skipLogic);
+        if (result) {
+          return $("#question-" + (question.get("name"))).addClass("disabled_skipped");
+        } else {
+          return $("#question-" + (question.get("name"))).removeClass("disabled_skipped");
+        }
+      }
+    });
+    return _.each(this.questionViews, function(questionView) {
+      return questionView.updateValidity();
+    });
+  };
+
   SurveyRunView.prototype.isValid = function() {
     var i, qv, _len, _ref;
     _ref = this.questionViews;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       qv = _ref[i];
+      qv.updateValidity();
       if (qv.isValid != null) {
         if (!(qv.model.get("skippable") === "true" || qv.model.get("skippable") === true)) {
           if (!qv.isValid) return false;
@@ -148,6 +183,7 @@ SurveyRunView = (function(_super) {
         this.$el.append(oneView.el);
       }
     }
+    this.updateSkipLogic();
     if (this.questions.models.length === notAskedCount) this.parent.next();
     return this.trigger("rendered");
   };

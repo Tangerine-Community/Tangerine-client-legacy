@@ -55,7 +55,7 @@ class CSVView extends Backbone.View
           keys.push "consent"
         else if prototype == "grid"
           variableName = subtest.data.variable_name
-          keys.push "#{variableName}_auto_stop","#{variableName}_time_remain", "#{variableName}_attempted", "#{variableName}_item_at_time", "#{variableName}_time_intermediate_captured"
+          keys.push "#{variableName}_auto_stop","#{variableName}_time_remain", "#{variableName}_attempted", "#{variableName}_item_at_time", "#{variableName}_time_intermediate_captured", "#{variableName}_correct_per_minute"
           for item, i in subtest.data.items
             keys.push "#{variableName}#{i+1}"
         else if prototype == "survey"
@@ -111,6 +111,7 @@ class CSVView extends Backbone.View
             values[keys.indexOf("#{variableName}_attempted")]   = subtest.data.attempted
             values[keys.indexOf("#{variableName}_item_at_time")]   = subtest.data.item_at_time
             values[keys.indexOf("#{variableName}_time_intermediate_captured")]   = subtest.data.time_intermediate_captured
+            values[keys.indexOf("#{variableName}_correct_per_minute")]   = subtest.sum.correct_per_minute
 
             for item, i in subtest.data.items
               if item.itemResult == "correct"

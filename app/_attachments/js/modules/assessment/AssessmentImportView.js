@@ -1,4 +1,5 @@
 var AssessmentImportView,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -7,6 +8,10 @@ AssessmentImportView = (function(_super) {
   __extends(AssessmentImportView, _super);
 
   function AssessmentImportView() {
+    this.updateProgress = __bind(this.updateProgress, this);
+    this.updateActivity = __bind(this.updateActivity, this);
+    this.updateFromActiveTasks = __bind(this.updateFromActiveTasks, this);
+    this["import"] = __bind(this["import"], this);
     AssessmentImportView.__super__.constructor.apply(this, arguments);
   }
 
@@ -43,141 +48,60 @@ AssessmentImportView = (function(_super) {
   };
 
   AssessmentImportView.prototype["import"] = function() {
-    var dKey,
-      _this = this;
-    this.importList = {};
+    var dKey;
+    this.updateActivity();
     dKey = this.$el.find("#d_key").val();
-    this.$el.find(".status").fadeIn(250);
-    this.$el.find("#progress").html("Looking for " + dKey);
-    $.ajax({
-      "url": "http://localhost:5984/tangerine/_changes",
-      "dataType": "json",
-      "async": false,
-      success: function(data) {
-        var result, toPurge, _i, _len, _ref;
-        toPurge = {};
-        _ref = data.results;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          result = _ref[_i];
-          if (result.deleted === true) {
-            toPurge[result.id] = _.pluck(result.changes, "rev");
+    this.newAssessment = new Assessment;
+    this.newAssessment.on("status", this.updateActivity);
+    this.newAssessment.updateFromServer(dKey);
+    return this.activeTaskInterval = setInterval(this.updateFromActiveTasks, 500);
+  };
+
+  AssessmentImportView.prototype.updateFromActiveTasks = function() {
+    var _this = this;
+    return $.couch.activeTasks({
+      success: function(tasks) {
+        var task, _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = tasks.length; _i < _len; _i++) {
+          task = tasks[_i];
+          if (task.type.toLowerCase() === "replication") {
+            _this.activity = task.status;
+            _results.push(_this.updateProgress());
+          } else {
+            _results.push(void 0);
           }
         }
-        return $.ajax({
-          async: false,
-          contentType: "application/json",
-          type: "POST",
-          url: "http://localhost:5984/tangerine/_purge",
-          data: JSON.stringify(toPurge)
-        });
-      }
-    });
-    return $.ajax({
-      type: "GET",
-      url: "http://tangerine.iriscouch.com/tangerine/_design/tangerine/_view/byDKey?keys=[%22" + dKey + "%22]",
-      dataType: "jsonp",
-      success: function(data) {
-        var doc, row, _i, _len, _ref, _results;
-        _this.docsRemaining = data.rows.length;
-        _ref = data.rows;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          row = _ref[_i];
-          doc = row.value;
-          console.log(doc.collection);
-          _results.push(Tangerine.$db.openDoc(doc._id, {
-            async: false,
-            success: function(oldDoc) {
-              var newDoc;
-              newDoc = doc;
-              doc._rev = oldDoc._rev;
-              return Tangerine.$db.saveDoc(newDoc, {
-                async: false,
-                success: function(data) {
-                  return _this.updateProgress(newDoc.collection);
-                },
-                error: function() {
-                  return _this.updateProgress(newDoc.collection + " save error");
-                }
-              }, {
-                async: false
-              });
-            },
-            error: function() {
-              var newDoc;
-              newDoc = doc;
-              if (arguments[2] === "deleted") {
-                return Tangerine.$db.saveDoc(doc, {
-                  success: function() {},
-                  error: function() {
-                    return console.log(arguments);
-                  }
-                });
-              } else {
-                return Tangerine.$db.saveDoc(newDoc, {
-                  async: false,
-                  success: function() {
-                    return _this.updateProgress(newDoc.collection);
-                  },
-                  error: function() {
-                    return _this.updateProgress(newDoc.collection + " save error");
-                  }
-                }, {
-                  async: false
-                });
-              }
-            }
-          }, {
-            async: false,
-            revs_info: true
-          }));
-        }
         return _results;
-      },
-      error: function() {
-        return updateProgress(null, "Download key not found. Please check and try again.");
       }
     });
   };
 
-  AssessmentImportView.prototype.showProgress = function(status, info) {
-    var _this = this;
-    if (status === "good") {
-      this.$el.find("#progress").html("Import successful <h3>Imported</h3>");
-      return Tangerine.$db.view(Tangerine.config.address.designDoc + "/byDKey", {
-        keys: [dKey],
-        success: function(data) {
-          var assessmentName, assessments, datum, doc, questions, subtests, _i, _len, _ref;
-          questions = 0;
-          assessments = 0;
-          subtests = 0;
-          assessmentName = "";
-          _ref = data.rows;
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            datum = _ref[_i];
-            doc = datum.value;
-            if (doc.collection === 'subtest') subtests++;
-            if (doc.collection === 'question') questions++;
-            if (doc.collection === 'assessment') assessmentName = doc.name;
-          }
-          return _this.$el.find("#progress").append("            <div>" + assessmentName + "</div>            <div>Subtests - " + subtests + "</div>            <div>Questions - " + questions + "</div>");
-        },
-        error: function(a, b, c) {
-          return this.$el.find("#progress").html("<div>Error after data imported</div><div>" + a + "</div><div>" + b);
-        }
-      });
-    } else if (status === "bad") {
-      return this.$el.find("#progress").html("<div>Import error</div>" + (arguments.join(',')));
+  AssessmentImportView.prototype.updateActivity = function(status, message) {
+    this.$el.find(".status").fadeIn(250);
+    this.activity = "";
+    if (status === "import lookup") {
+      this.activity = "Finding assessment";
+    } else if (status === "import success") {
+      clearInterval(this.activeTaskInterval);
+      this.activity = "Import successful";
+    } else if (status === "import error") {
+      clearInterval(this.activeTaskInterval);
+      this.activity = "Import error: " + message;
+    } else {
+      this.$el.find(".status").fadeOut(250);
     }
+    return this.updateProgress();
   };
 
   AssessmentImportView.prototype.updateProgress = function(key) {
     var progressHTML, value, _ref;
-    this.docsRemaining--;
-    if (this.importList[key] != null) {
-      this.importList[key]++;
-    } else {
-      this.importList[key] = 1;
+    if (key != null) {
+      if (this.importList[key] != null) {
+        this.importList[key]++;
+      } else {
+        this.importList[key] = 1;
+      }
     }
     progressHTML = "<table>";
     _ref = this.importList;
@@ -185,10 +109,8 @@ AssessmentImportView = (function(_super) {
       value = _ref[key];
       progressHTML += "<tr><td>" + (key.titleize().pluralize()) + "</td><td>" + value + "</td></tr>";
     }
-    if (this.docsRemaining > 0) {
-      progressHTML += "<tr><td>Documents remaining</td><td>" + this.docsRemaining + "</td></tr>";
-    } else {
-      progressHTML += "<tr><td colspan='2'>Import Successful</td></tr>";
+    if (this.activity != null) {
+      progressHTML += "<tr><td colspan='2'>" + this.activity + "</td></tr>";
     }
     progressHTML += "</table>";
     return this.$el.find("#progress").html(progressHTML);

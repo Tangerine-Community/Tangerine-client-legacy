@@ -108,8 +108,7 @@ sks = [
             "context": "server"
           });
           settings.save();
-          Tangerine.router.navigate("", true);
-          return console.log("tried");
+          return Tangerine.router.navigate("", true);
         }
       });
     }
@@ -134,8 +133,7 @@ sks = [
             "context": "mobile"
           });
           settings.save();
-          Tangerine.router.navigate("", true);
-          return console.log("tried");
+          return Tangerine.router.navigate("", true);
         }
       });
     }
@@ -160,8 +158,7 @@ sks = [
             "context": "class"
           });
           settings.save();
-          Tangerine.router.navigate("", true);
-          return console.log("tried");
+          return Tangerine.router.navigate("", true);
         }
       });
     }
