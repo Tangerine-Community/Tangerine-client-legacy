@@ -13,6 +13,18 @@ class QuestionEditView extends Backbone.View
     'click .delete_question'  : 'deleteQuestion'
     'keypress'                : 'hijackEnter'
     'change .option_select'   : 'templateFill'
+    'keypress .option_value'  : 'quickAddWithEnter'
+    'keypress .option_label'  : 'quickFocusValue'
+
+  quickAddWithEnter: (event) ->
+    if event.keyCode? && event.keyCode != 13 then return true
+    @addOption()
+
+  quickFocusValue: (event) ->
+    if event.keyCode? && event.keyCode != 13 then return true
+    $(event.target).parent().find(".option_value").focus()
+
+
 
   templateFill: (event) ->
     index = $(event.target).find("option:selected").attr('data-index')
@@ -75,6 +87,7 @@ class QuestionEditView extends Backbone.View
       value : ""
     @model.set "options", options
     @$el.find('#option_list_wrapper').html(@getOptionList())
+    @$el.find("#option_list_wrapper li:last").scrollTo().find("input:first").focus()
 
 
   render: ->
