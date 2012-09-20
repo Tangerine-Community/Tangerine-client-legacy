@@ -44,6 +44,7 @@ class AssessmentListElementView extends Backbone.View
     
     @model.save
       archived : result
+    return true
 
   copyToGroup: ->
     @model.duplicate {group:@parent.group}, null, null, =>
