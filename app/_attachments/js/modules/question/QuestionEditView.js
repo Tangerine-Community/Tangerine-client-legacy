@@ -64,7 +64,7 @@ QuestionEditView = (function(_super) {
     html = "<div id='option_list_wrapper'>      <h2>Options</h2>      <div class='menu_box'>        <ul class='option_list'>";
     for (i = 0, _len = options.length; i < _len; i++) {
       option = options[i];
-      html += "      <li class='question'>        <table><tr><td>          <img src='images/icon_drag.png' class='sortable_handle'>        </td>        <td>          <div style='display: block;'>            <div class='option_label_value'>              <label class='edit' for='options." + i + ".label'>Label</label>              <input id='options." + i + ".label' value='" + (_.escape(option.label)) + "' placeholder='Option label' class='option_label'><br>              <label class='edit' for='options." + i + ".value' title='Allowed characters&#58; A-Z, a-z, 0-9, and underscores.'>Value</label>              <input id='options." + i + ".value' value='" + (_.escape(option.value)) + "' placeholder='Option value' class='option_value'><br>            </div>            <img src='images/icon_delete.png' class='delete_option' data-index='" + i + "'>            <div class='confirmation delete_confirm_" + i + "'>              <button class='delete_delete' data-index='" + i + "'>Delete</button>              <button data-index='" + i + "' class='delete_cancel'>Cancel</button>            </div>          </div>        </td></tr></table>      </li>      ";
+      html += "      <li class='question'>        <table><tr><td>          <img src='images/icon_drag.png' class='sortable_handle'>        </td>        <td>          <div style='display: block;'>            <div class='option_label_value'>              <label class='edit' for='options." + i + ".label'>Label</label>              <input id='options." + i + ".label' value='" + (_.escape(option.label)) + "' placeholder='Option label' class='option_label'><br>              <label class='edit' for='options." + i + ".value' title='Allowed characters&#58; A-Z, a-z, 0-9, and underscores.'>Value</label>              <input id='options." + i + ".value' value='" + (_.escape(option.value)) + "' placeholder='Option value' class='option_value'><br>            </div>            <img src='images/icon_delete.png' class='delete_option' data-index='" + i + "'>            <div class='confirmation delete_confirm_" + i + "'>              <button class='delete_delete command_red' data-index='" + i + "'>Delete</button>              <button data-index='" + i + "' class='delete_cancel command'>Cancel</button>            </div>          </div>        </td></tr></table>      </li>      ";
     }
     return html += "</ul>      <button class='add_option command'>Add option</button>      </div>    </div>";
   };
@@ -157,7 +157,7 @@ QuestionEditView = (function(_super) {
   };
 
   QuestionEditView.prototype.updateModel = function() {
-    var i, label, li, optionListElements, options, value, _i, _len;
+    var i, label, last, li, optionListElements, options, value, _i, _len;
     this.model.set({
       "prompt": this.$el.find("#prompt").val(),
       "name": this.$el.find("#name").val(),
@@ -182,6 +182,8 @@ QuestionEditView = (function(_super) {
         i++;
       }
     }
+    last = options.pop();
+    if (last.label !== "" && last.value !== "") options.push(last);
     return this.model.set("options", options);
   };
 

@@ -63,8 +63,8 @@ class QuestionEditView extends Backbone.View
             </div>
             <img src='images/icon_delete.png' class='delete_option' data-index='#{i}'>
             <div class='confirmation delete_confirm_#{i}'>
-              <button class='delete_delete' data-index='#{i}'>Delete</button>
-              <button data-index='#{i}' class='delete_cancel'>Cancel</button>
+              <button class='delete_delete command_red' data-index='#{i}'>Delete</button>
+              <button data-index='#{i}' class='delete_cancel command'>Cancel</button>
             </div>
           </div>
         </td></tr></table>
@@ -81,11 +81,14 @@ class QuestionEditView extends Backbone.View
   #
   addOption: ->
     @updateModel()
+
     options = @model.get "options"
     options.push
       label : ""
       value : ""
     @model.set "options", options
+    
+    # focus on next
     @$el.find('#option_list_wrapper').html(@getOptionList())
     @$el.find("#option_list_wrapper li:last").scrollTo().find("input:first").focus()
 
@@ -235,6 +238,10 @@ class QuestionEditView extends Backbone.View
           label : label
           value : value
         i++
+    
+    # validate not empty
+    last = options.pop()
+    if last.label != "" && last.value != "" then options.push last
 
     @model.set "options", options
 
