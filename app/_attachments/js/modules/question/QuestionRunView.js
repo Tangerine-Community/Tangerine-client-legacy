@@ -21,7 +21,6 @@ QuestionRunView = (function(_super) {
 
   QuestionRunView.prototype.initialize = function(options) {
     this.model = options.model;
-    this.isObservation = options.isObservation;
     this.answer = {};
     this.name = this.model.escape("name");
     this.type = this.model.get("type");
@@ -40,7 +39,8 @@ QuestionRunView = (function(_super) {
 
   QuestionRunView.prototype.update = function() {
     this.updateResult();
-    return this.updateValidity();
+    this.updateValidity();
+    return this.trigger("answer");
   };
 
   QuestionRunView.prototype.updateResult = function() {
@@ -95,26 +95,22 @@ QuestionRunView = (function(_super) {
     var checkOrRadio, html, i, option, _len, _ref;
     this.$el.attr("id", "question-" + this.name);
     if (!this.notAsked) {
-      if (!this.isObservation) {
-        html = "<div class='error_message'></div><div class='prompt'>" + (this.model.get('prompt')) + "</div>        <div class='hint'>" + (this.model.get('hint') || "") + "</div>";
-        if (this.type === "open") {
-          if (this.model.get("multiline")) {
-            html += "<div><textarea id='" + this.cid + "_" + this.name + "'></textarea></div>";
-          } else {
-            html += "<div><input id='" + this.cid + "_" + this.name + "'></div>";
-          }
-          this.$el.html(html);
+      html = "<div class='error_message'></div><div class='prompt'>" + (this.model.get('prompt')) + "</div>      <div class='hint'>" + (this.model.get('hint') || "") + "</div>";
+      if (this.type === "open") {
+        if (this.model.get("multiline")) {
+          html += "<div><textarea id='" + this.cid + "_" + this.name + "'></textarea></div>";
         } else {
-          checkOrRadio = this.type === "multiple" ? "checkbox" : "radio";
-          _ref = this.options;
-          for (i = 0, _len = _ref.length; i < _len; i++) {
-            option = _ref[i];
-            html += "              <label for='" + this.cid + "_" + this.name + "_" + i + "'>" + option.label + "</label>              <input id='" + this.cid + "_" + this.name + "_" + i + "' class='" + this.cid + "_" + this.name + "' name='" + this.name + "' value='" + option.value + "' type='" + checkOrRadio + "'>            ";
-          }
-          this.$el.html(html);
+          html += "<div><input id='" + this.cid + "_" + this.name + "'></div>";
         }
+        this.$el.html(html);
       } else {
-		
+        checkOrRadio = this.type === "multiple" ? "checkbox" : "radio";
+        _ref = this.options;
+        for (i = 0, _len = _ref.length; i < _len; i++) {
+          option = _ref[i];
+          html += "            <label for='" + this.cid + "_" + this.name + "_" + i + "'>" + option.label + "</label>            <input id='" + this.cid + "_" + this.name + "_" + i + "' class='" + this.cid + "_" + this.name + "' name='" + this.name + "' value='" + option.value + "' type='" + checkOrRadio + "'>          ";
+        }
+        this.$el.html(html);
       }
     } else {
       this.$el.hide();

@@ -174,8 +174,7 @@ SurveyRunView = (function(_super) {
         oneView = new QuestionRunView({
           model: question,
           parent: this,
-          notAsked: isNotAsked,
-          isObservation: this.isObservation
+          notAsked: isNotAsked
         });
         oneView.on("rendered", this.onQuestionRendered);
         oneView.render();
@@ -189,7 +188,7 @@ SurveyRunView = (function(_super) {
   };
 
   SurveyRunView.prototype.onQuestionRendered = function() {
-    return this.trigger("rendered");
+    return this.trigger("subRendered");
   };
 
   SurveyRunView.prototype.onClose = function() {

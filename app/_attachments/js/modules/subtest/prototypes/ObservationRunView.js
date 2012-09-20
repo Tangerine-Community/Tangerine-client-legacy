@@ -212,6 +212,9 @@ ObservationRunView = (function(_super) {
     this.survey.view.on("rendered", function() {
       return _this.trigger("rendered");
     });
+    this.survey.view.on("subRendered", function() {
+      return _this.trigger("subRendered");
+    });
     this.survey.view.render();
     this.$el.find("#current_survey").html("<span class='observation_display confirmation'>Observation <div class='info_box current_observation'>" + this.my.observation.index + "</div></span>");
     this.$el.find("#current_survey").append(this.survey.view.el);

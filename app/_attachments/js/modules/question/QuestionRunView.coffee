@@ -8,7 +8,6 @@ class QuestionRunView extends Backbone.View
 
   initialize: (options) ->
     @model = options.model
-    @isObservation = options.isObservation
 
     @answer = {}
     @name    = @model.escape "name"
@@ -28,6 +27,7 @@ class QuestionRunView extends Backbone.View
   update: ->
     @updateResult()
     @updateValidity()
+    @trigger "answer"
 
   updateResult: ->
     if @type == "open"
@@ -69,29 +69,24 @@ class QuestionRunView extends Backbone.View
 
     if not @notAsked
 
-      if not @isObservation
+      html = "<div class='error_message'></div><div class='prompt'>#{@model.get 'prompt'}</div>
+      <div class='hint'>#{(@model.get('hint') || "")}</div>"
 
-        html = "<div class='error_message'></div><div class='prompt'>#{@model.get 'prompt'}</div>
-        <div class='hint'>#{(@model.get('hint') || "")}</div>"
-
-        if @type == "open"
-          if @model.get("multiline")
-            html += "<div><textarea id='#{@cid}_#{@name}'></textarea></div>"
-          else
-            html += "<div><input id='#{@cid}_#{@name}'></div>"
-          @$el.html html
-
+      if @type == "open"
+        if @model.get("multiline")
+          html += "<div><textarea id='#{@cid}_#{@name}'></textarea></div>"
         else
-          checkOrRadio = if @type == "multiple" then "checkbox" else "radio"
-          for option, i in @options
-            html += "
-              <label for='#{@cid}_#{@name}_#{i}'>#{option.label}</label>
-              <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}'>
-            "
-          @$el.html html
+          html += "<div><input id='#{@cid}_#{@name}'></div>"
+        @$el.html html
 
       else
-        
+        checkOrRadio = if @type == "multiple" then "checkbox" else "radio"
+        for option, i in @options
+          html += "
+            <label for='#{@cid}_#{@name}_#{i}'>#{option.label}</label>
+            <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}'>
+          "
+        @$el.html html
 
     else
       @$el.hide()

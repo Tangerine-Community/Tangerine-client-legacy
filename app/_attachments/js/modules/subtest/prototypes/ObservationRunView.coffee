@@ -149,8 +149,6 @@ class ObservationRunView extends Backbone.View
 
     @trigger "tick" # update displays
 
-
-
   render: ->
     totalSeconds = @model.get("totalSeconds")
 
@@ -178,7 +176,11 @@ class ObservationRunView extends Backbone.View
       "parent"        : @
       "isObservation" : true
     @survey.view.index = @my.observation.index # add an index for reference
-    @survey.view.on "rendered", => @trigger "rendered" # listen for render events, pass them up
+
+    # listen for render events, pass them up
+    @survey.view.on "rendered", => @trigger "rendered"
+    @survey.view.on "subRendered", => @trigger "subRendered"
+
     @survey.view.render()
 
     @$el.find("#current_survey").html("<span class='observation_display confirmation'>Observation <div class='info_box current_observation'>#{@my.observation.index}</div></span>")
