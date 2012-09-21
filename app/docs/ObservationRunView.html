@@ -159,8 +159,9 @@
     <span class="k">if</span> <span class="o">not</span> <span class="nx">@iAm</span><span class="p">.</span><span class="nx">counting</span> <span class="k">then</span> <span class="k">return</span>
     <span class="vi">@iAm.recording = </span><span class="kc">true</span>
     <span class="vi">@survey.view  = </span><span class="k">new</span> <span class="nx">SurveyRunView</span>
-      <span class="s">&quot;model&quot;</span>  <span class="o">:</span> <span class="nx">@survey</span><span class="p">.</span><span class="nx">models</span><span class="p">[</span><span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span><span class="p">]</span>
-      <span class="s">&quot;parent&quot;</span> <span class="o">:</span> <span class="nx">@</span>
+      <span class="s">&quot;model&quot;</span>         <span class="o">:</span> <span class="nx">@survey</span><span class="p">.</span><span class="nx">models</span><span class="p">[</span><span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span><span class="p">]</span>
+      <span class="s">&quot;parent&quot;</span>        <span class="o">:</span> <span class="nx">@</span>
+      <span class="s">&quot;isObservation&quot;</span> <span class="o">:</span> <span class="kc">true</span>
     <span class="vi">@survey.view.index = </span><span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span> <span class="c1"># add an index for reference</span>
     <span class="nx">@survey</span><span class="p">.</span><span class="nx">view</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;rendered&quot;</span><span class="p">,</span> <span class="o">=&gt;</span> <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span> <span class="c1"># listen for render events, pass them up</span>
     <span class="nx">@survey</span><span class="p">.</span><span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>

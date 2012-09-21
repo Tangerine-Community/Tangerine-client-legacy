@@ -38,9 +38,10 @@ QuestionRunView = (function(_super) {
     }
   };
 
-  QuestionRunView.prototype.update = function() {
+  QuestionRunView.prototype.update = function(event) {
     this.updateResult();
-    return this.updateValidity();
+    this.updateValidity();
+    return this.trigger("answer", event, this.model.get("order"));
   };
 
   QuestionRunView.prototype.updateResult = function() {
@@ -98,9 +99,9 @@ QuestionRunView = (function(_super) {
       html = "<div class='error_message'></div><div class='prompt'>" + (this.model.get('prompt')) + "</div>      <div class='hint'>" + (this.model.get('hint') || "") + "</div>";
       if (this.type === "open") {
         if (this.model.get("multiline")) {
-          html += "<div><textarea id='" + this.cid + "_" + this.name + "'></textarea></div>";
+          html += "<div><textarea id='" + this.cid + "_" + this.name + "' data-cid='" + this.cid + "'></textarea></div>";
         } else {
-          html += "<div><input id='" + this.cid + "_" + this.name + "'></div>";
+          html += "<div><input id='" + this.cid + "_" + this.name + "' data-cid='" + this.cid + "'></div>";
         }
         this.$el.html(html);
       } else {
@@ -108,7 +109,7 @@ QuestionRunView = (function(_super) {
         _ref = this.options;
         for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
           option = _ref[i];
-          html += "            <label for='" + this.cid + "_" + this.name + "_" + i + "'>" + option.label + "</label>            <input id='" + this.cid + "_" + this.name + "_" + i + "' class='" + this.cid + "_" + this.name + "' name='" + this.name + "' value='" + option.value + "' type='" + checkOrRadio + "'>          ";
+          html += "            <label for='" + this.cid + "_" + this.name + "_" + i + "'>" + option.label + "</label>            <input id='" + this.cid + "_" + this.name + "_" + i + "' class='" + this.cid + "_" + this.name + "'  data-cid='" + this.cid + "' name='" + this.name + "' value='" + option.value + "' type='" + checkOrRadio + "'>          ";
         }
         this.$el.html(html);
       }

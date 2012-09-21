@@ -9,7 +9,9 @@ class SurveyRunView extends Backbone.View
   initialize: (options) ->
     @model         = @options.model
     @parent        = @options.parent
+    @isObservation = @options.isObservation
     @questionViews = []
+    @answered      = []
     @questions     = new Questions
     @questions.fetch
       key: @model.get "assessmentId"
@@ -17,6 +19,15 @@ class SurveyRunView extends Backbone.View
         @questions = new Questions(@questions.where { subtestId : @model.id })
         @questions.sort()
         @render()
+
+  onQuestionAnswer: (event) =>
+    if @isObservation 
+      cid = $(event.target).attr("data-cid")
+      for view in @questionViews
+        if view.cid == cid
+          next = $(view.el).next()
+          if next.length != 0 then next.scrollTo()
+      
 
   questionResult: (label) =>
     # Should really return the label, not the value, too much indirection. Maybe the GUI will help.
@@ -108,19 +119,22 @@ class SurveyRunView extends Backbone.View
         required = parseInt(question.get("linkedGridScore")) || 0
 
         isNotAsked = (required != 0 && @parent.getGridScore() < required) || @parent.gridWasAutostopped()
+
         if isNotAsked then notAskedCount++
 
         oneView = new QuestionRunView 
-          model  : question
-          parent : @
-          notAsked : isNotAsked
+          model         : question
+          parent        : @
+          notAsked      : isNotAsked
         oneView.on "rendered", @onQuestionRendered
+        oneView.on "answer",   @onQuestionAnswer
+
         oneView.render()
         @questionViews[i] = oneView
         @$el.append oneView.el
 
     @updateSkipLogic()
-    if @questions.models.length == notAskedCount then @parent.next()
+    if @questions.length == notAskedCount then @parent.next?()
     @trigger "rendered"
 
   onQuestionRendered: =>

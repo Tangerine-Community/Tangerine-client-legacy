@@ -3,6 +3,7 @@
   <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
     <span class="vi">@model         = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">model</span>
     <span class="vi">@parent        = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">parent</span>
+    <span class="vi">@isObservation = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">isObservation</span>
     <span class="vi">@questionViews = </span><span class="p">[]</span>
     <span class="vi">@questions     = </span><span class="k">new</span> <span class="nx">Questions</span>
     <span class="nx">@questions</span><span class="p">.</span><span class="nx">fetch</span>
@@ -74,14 +75,14 @@
       <span class="k">for</span> <span class="nx">question</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@questions</span><span class="p">.</span><span class="nx">models</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>skip the rest if score not high enough</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nv">required = </span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">question</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;linkedGridScore&quot;</span><span class="p">))</span> <span class="o">||</span> <span class="mi">0</span>
 
         <span class="nv">isNotAsked = </span><span class="p">(</span><span class="nx">required</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">@parent</span><span class="p">.</span><span class="nx">getGridScore</span><span class="p">()</span> <span class="o">&lt;</span> <span class="nx">required</span><span class="p">)</span> <span class="o">||</span> <span class="nx">@parent</span><span class="p">.</span><span class="nx">gridWasAutostopped</span><span class="p">()</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;autostopped:&quot;</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@parent</span><span class="p">.</span><span class="nx">gridWasAutostopped</span><span class="p">()</span>
+
         <span class="k">if</span> <span class="nx">isNotAsked</span> <span class="k">then</span> <span class="nx">notAskedCount</span><span class="o">++</span>
 
         <span class="nv">oneView = </span><span class="k">new</span> <span class="nx">QuestionRunView</span> 
-          <span class="nv">model  : </span><span class="nx">question</span>
-          <span class="nv">parent : </span><span class="nx">@</span>
-          <span class="nv">notAsked : </span><span class="nx">isNotAsked</span>
+          <span class="nv">model         : </span><span class="nx">question</span>
+          <span class="nv">parent        : </span><span class="nx">@</span>
+          <span class="nv">notAsked      : </span><span class="nx">isNotAsked</span>
+          <span class="nv">isObservation : </span><span class="nx">@isObservation</span>
         <span class="nx">oneView</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;rendered&quot;</span><span class="p">,</span> <span class="nx">@onQuestionRendered</span>
         <span class="nx">oneView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
         <span class="nx">@questionViews</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">oneView</span>

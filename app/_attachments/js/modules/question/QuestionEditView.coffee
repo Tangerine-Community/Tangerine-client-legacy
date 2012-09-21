@@ -13,6 +13,18 @@ class QuestionEditView extends Backbone.View
     'click .delete_question'  : 'deleteQuestion'
     'keypress'                : 'hijackEnter'
     'change .option_select'   : 'templateFill'
+    'keypress .option_value'  : 'quickAddWithEnter'
+    'keypress .option_label'  : 'quickFocusValue'
+
+  quickAddWithEnter: (event) ->
+    if event.keyCode? && event.keyCode != 13 then return true
+    @addOption()
+
+  quickFocusValue: (event) ->
+    if event.keyCode? && event.keyCode != 13 then return true
+    $(event.target).parent().find(".option_value").focus()
+
+
 
   templateFill: (event) ->
     index = $(event.target).find("option:selected").attr('data-index')
@@ -51,8 +63,8 @@ class QuestionEditView extends Backbone.View
             </div>
             <img src='images/icon_delete.png' class='delete_option' data-index='#{i}'>
             <div class='confirmation delete_confirm_#{i}'>
-              <button class='delete_delete' data-index='#{i}'>Delete</button>
-              <button data-index='#{i}' class='delete_cancel'>Cancel</button>
+              <button class='delete_delete command_red' data-index='#{i}'>Delete</button>
+              <button data-index='#{i}' class='delete_cancel command'>Cancel</button>
             </div>
           </div>
         </td></tr></table>
@@ -69,12 +81,18 @@ class QuestionEditView extends Backbone.View
   #
   addOption: ->
     @updateModel()
+
     options = @model.get "options"
     options.push
       label : ""
       value : ""
     @model.set "options", options
+    
+    # focus on next
     @$el.find('#option_list_wrapper').html(@getOptionList())
+    optionListElements = @$el.find("#option_list_wrapper li")
+    if optionListElements.length != 0
+      $(optionListElements.pop()).scrollTo().find("input:first").focus()
 
 
   render: ->
@@ -222,6 +240,11 @@ class QuestionEditView extends Backbone.View
           label : label
           value : value
         i++
+    
+    # validate not empty
+    if options.length != 0 
+      last = options.pop()
+      if last.label != "" && last.value != "" then options.push last
 
     @model.set "options", options
 

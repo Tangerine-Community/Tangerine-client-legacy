@@ -71,7 +71,7 @@ class CSVView extends Backbone.View
             for surveyVariable, surveyValue of observationData
               keys.push "#{surveyVariable}_#{i}"
         else if prototype == "complete"
-          keys.push "additional_comments", "end_time", "gps"
+          keys.push "additional_comments", "end_time", "gps_latitude", "gps_longitude", "gps_accuracy"
 
       resultDataArray.push keys
 
@@ -147,7 +147,9 @@ class CSVView extends Backbone.View
 
           else if prototype == "complete"
             values[keys.indexOf("additional_comments")] = subtest.data.comment
-            values[keys.indexOf("gps")] = JSON.stringify(subtest.data.gps)
+            values[keys.indexOf("gps_latitude")]  = subtest.data.gps.latitude
+            values[keys.indexOf("gps_longitude")] = subtest.data.gps.longitude
+            values[keys.indexOf("gps_accuracy")]  = subtest.data.gps.accuracy
             values[keys.indexOf("end_time")] = subtest.data.end_time
 
         resultDataArray.push values
