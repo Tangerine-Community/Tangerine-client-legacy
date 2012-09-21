@@ -9,7 +9,7 @@ class QuestionRunView extends Backbone.View
   initialize: (options) ->
     @model = options.model
     @answer = {}
-    @name    = @model.escape "name"
+    @name    = @model.escape("name").replace /[^A-Za-z0-9]/g, "-"
     @type    = @model.get "type"
     @options = @model.get "options"
     @notAsked = options.notAsked
@@ -45,7 +45,6 @@ class QuestionRunView extends Backbone.View
       else
         for option, i in @options
           @answer[@options[i].value] = if @$el.find("##{@cid}_#{@name}_#{i}").is(":checked") then "checked" else "unchecked"
-
     @$el.attr "data-result", if _.isString(@answer) then @answer else JSON.stringify(@answer)
 
   updateValidity: ->
