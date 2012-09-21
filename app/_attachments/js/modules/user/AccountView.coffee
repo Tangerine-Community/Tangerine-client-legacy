@@ -27,7 +27,6 @@ class AccountView extends Backbone.View
   join: ->
     group = @$el.find("#group_name").val().replace(/\s|-/g, "_").replace(/[^a-zA-Z0-9_'"]/g,"")
     return if group.length == 0
-    
     @user.joinGroup group
     @joinToggle()
     @render()
@@ -53,7 +52,7 @@ class AccountView extends Backbone.View
         <ul>
     "
     for group in (@user.get("groups") || [])
-        html += "<li data-group='#{group}'>#{group} <button class='command leave'>Leave</button></li>"
+        html += "<li data-group='#{_.escape(group)}'>#{group} <button class='command leave'>Leave</button></li>"
     mobileChecked = if Tangerine.settings.context == "mobile" then " checked='checked'" else ""
     classChecked = if Tangerine.settings.context == "class" then " checked='checked'" else ""
 

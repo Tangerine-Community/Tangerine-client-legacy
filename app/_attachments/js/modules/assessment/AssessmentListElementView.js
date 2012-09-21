@@ -71,9 +71,10 @@ AssessmentListElementView = (function(_super) {
     } else {
       this.$el.find(".admin_name").removeClass("archived_assessment");
     }
-    return this.model.save({
+    this.model.save({
       archived: result
     });
+    return true;
   };
 
   AssessmentListElementView.prototype.copyToGroup = function() {
