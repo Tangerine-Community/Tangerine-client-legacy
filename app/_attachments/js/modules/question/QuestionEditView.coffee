@@ -90,7 +90,9 @@ class QuestionEditView extends Backbone.View
     
     # focus on next
     @$el.find('#option_list_wrapper').html(@getOptionList())
-    @$el.find("#option_list_wrapper li:last").scrollTo().find("input:first").focus()
+    optionListElements = @$el.find("#option_list_wrapper li")
+    if optionListElements.length != 0
+      $(optionListElements.pop()).scrollTo().find("input:first").focus()
 
 
   render: ->
@@ -240,8 +242,9 @@ class QuestionEditView extends Backbone.View
         i++
     
     # validate not empty
-    last = options.pop()
-    if last.label != "" && last.value != "" then options.push last
+    if options.length != 0 
+      last = options.pop()
+      if last.label != "" && last.value != "" then options.push last
 
     @model.set "options", options
 

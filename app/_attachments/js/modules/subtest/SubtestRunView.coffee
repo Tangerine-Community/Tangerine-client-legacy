@@ -31,7 +31,9 @@ class SubtestRunView extends Backbone.View
     @prototypeView = new window[@protoViews[@model.get 'prototype']['run']]
       model: @model
       parent: @
-    @prototypeView.on "rendered", @onPrototypeRendered
+    @prototypeView.on "rendered", => @trigger "rendered"
+    @prototypeView.on "subRendered", => @trigger "subRendered"
+
     @prototypeView.render()
     @$el.append @prototypeView.el
     @prototypeRendered = true
@@ -40,8 +42,6 @@ class SubtestRunView extends Backbone.View
 
     @trigger "rendered"
 
-  onPrototypeRendered: =>
-    @trigger "rendered"
 
   getGridScore: ->
     link = @model.get("gridLinkId") || ""

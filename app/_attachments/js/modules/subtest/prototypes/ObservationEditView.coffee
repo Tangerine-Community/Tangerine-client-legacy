@@ -41,3 +41,6 @@ class ObservationEditView extends Backbone.View
 
     @surveyView.setElement(@$el.find("#survey_editor"))
     @surveyView.render()
+
+    # remove the option for the grid link
+    @$el.find("#grid_link").remove()

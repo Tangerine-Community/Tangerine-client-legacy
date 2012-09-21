@@ -24,10 +24,10 @@ class QuestionRunView extends Backbone.View
       @isValid = true
       @updateResult()
     
-  update: ->
+  update: (event) ->
     @updateResult()
     @updateValidity()
-    @trigger "answer"
+    @trigger "answer", event, @model.get("order")
 
   updateResult: ->
     if @type == "open"
@@ -74,9 +74,9 @@ class QuestionRunView extends Backbone.View
 
       if @type == "open"
         if @model.get("multiline")
-          html += "<div><textarea id='#{@cid}_#{@name}'></textarea></div>"
+          html += "<div><textarea id='#{@cid}_#{@name}' data-cid='#{@cid}'></textarea></div>"
         else
-          html += "<div><input id='#{@cid}_#{@name}'></div>"
+          html += "<div><input id='#{@cid}_#{@name}' data-cid='#{@cid}'></div>"
         @$el.html html
 
       else
@@ -84,13 +84,12 @@ class QuestionRunView extends Backbone.View
         for option, i in @options
           html += "
             <label for='#{@cid}_#{@name}_#{i}'>#{option.label}</label>
-            <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}'>
+            <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}'  data-cid='#{@cid}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}'>
           "
         @$el.html html
 
     else
       @$el.hide()
-
     @trigger "rendered"
 
 

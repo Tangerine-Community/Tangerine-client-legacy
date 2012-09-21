@@ -22,7 +22,7 @@ class ObservationRunView extends Backbone.View
     @onClose() if @survey? # if we're REinitializing close the old views first
     
     attributes = $.extend(@model.get('surveyAttributes'), { "_id" : @model.id })
-    
+
     # makes an array of identical models based on the above attributes
     models = (new Backbone.Model attributes for i in [1..parseInt(@model.get('totalSeconds')/@model.get('intervalLength'))])
     
@@ -69,17 +69,18 @@ class ObservationRunView extends Backbone.View
     @my.time.elapsed = 0
 
   stopObservations: (e) ->
+    clearInterval @timerInterval
+
     isntPrematureStop = ! e?
     if isntPrematureStop && !@iHave.finished
       @renderSurvey()
     else
+      @$el.find(".stop_button_wrapper").addClass("confirmation")
       Utils.midAlert "Observations finished"
-      
     @$el.find(".next_display").addClass("confirmation")
     @iHave.finished = true
     @iHave.runOnce = true
     
-    clearInterval @timerInterval
 
   # runs every second the timer is running
   tick: =>
@@ -99,6 +100,9 @@ class ObservationRunView extends Backbone.View
     if @iAm.recording && @iHavent.warned && iShouldWarn && @my.observation.index != 0 # first one doesn't count
       Utils.midAlert "Observation ending soon"
       @iHavent.warned = false
+  
+  gridWasAutostopped: ->
+    return false
 
   checkIfOver: =>
     if @my.time.elapsed >= @model.get("totalSeconds")
@@ -120,10 +124,10 @@ class ObservationRunView extends Backbone.View
     @$el.find(".current_observation").html @my.observation.index
     @$el.find(".completed_count").html     @my.observation.completed
 
-    timeTillNext = ((@my.observation.index + 1) * @model.get('intervalLength')) - @my.time.elapsed
+    timeTillNext = Math.max(((@my.observation.index + 1) * @model.get('intervalLength')) - @my.time.elapsed, 0)
     @$el.find(".time_till_next").html timeTillNext
 
-    if not (@iAm.recording && @iHave.finished)
+    if not @iAm.recording && not @iHave.finished
       @$el.find(".next_display, .completed_display").removeClass "confirmation" 
 
   resetObservationFlags: ->
@@ -141,6 +145,7 @@ class ObservationRunView extends Backbone.View
         data              : @survey.view.getResult()
         saveTime          : @my.time.elapsed
       @survey.view.close()
+      @$el.find(".done").remove()
       if option == @FORCE && !@iHave.finished
         @renderSurvey()
 
@@ -171,6 +176,7 @@ class ObservationRunView extends Backbone.View
   renderSurvey: (e) ->
     if not @iAm.counting then return
     @iAm.recording = true
+    
     @survey.view  = new SurveyRunView
       "model"         : @survey.models[@my.observation.index]
       "parent"        : @
@@ -178,8 +184,7 @@ class ObservationRunView extends Backbone.View
     @survey.view.index = @my.observation.index # add an index for reference
 
     # listen for render events, pass them up
-    @survey.view.on "rendered", => @trigger "rendered"
-    @survey.view.on "subRendered", => @trigger "subRendered"
+    @survey.view.on "rendered subRendered", => @trigger "subRendered"
 
     @survey.view.render()
 
