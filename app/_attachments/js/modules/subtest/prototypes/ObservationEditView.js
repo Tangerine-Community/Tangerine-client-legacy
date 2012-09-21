@@ -24,9 +24,22 @@ ObservationEditView = (function(_super) {
   };
 
   ObservationEditView.prototype.save = function() {
+    var errors, intervalLength, totalSeconds;
+    errors = [];
+    totalSeconds = parseInt(this.$el.find("#total_seconds").val());
+    intervalLength = parseInt(this.$el.find("#interval_length").val());
+    if (totalSeconds === 0) {
+      errors.push("Total seconds needs to be non-zero value.");
+    }
+    if (intervalLength === 0) {
+      errors.push("Interval length needs to be a non-zero value.");
+    }
+    if (errors.length !== 0) {
+      alert("Warning\n\n" + (errors.join('\n')));
+    }
     return this.model.set({
-      totalSeconds: parseInt(this.$el.find("#total_seconds").val()),
-      intervalLength: parseInt(this.$el.find("#interval_length").val()),
+      totalSeconds: totalSeconds,
+      intervalLength: intervalLength,
       variableName: this.$el.find("#variable_name").val().safetyDance(),
       displayName: this.$el.find("#display_name").val().safetyDance(),
       surveyAttributes: this.surveyModel.attributes
