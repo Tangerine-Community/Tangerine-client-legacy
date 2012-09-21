@@ -10,7 +10,7 @@ class QuestionRunView extends Backbone.View
     @model = options.model
 
     @answer = {}
-    @name    = @model.escape("name").replace /[^A-Za-z0-9]/g, "-"
+    @name    = @model.escape("name").replace /[^A-Za-z0-9_]/g, "-"
     @type    = @model.get "type"
     @options = @model.get "options"
     @notAsked = options.notAsked
