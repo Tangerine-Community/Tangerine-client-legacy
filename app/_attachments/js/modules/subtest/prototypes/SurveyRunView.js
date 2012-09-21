@@ -58,8 +58,12 @@ SurveyRunView = (function(_super) {
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         view = _ref[_i];
-        if (view.cid === cid) {
+        if (view.cid === cid && view.type !== "multiple") {
           next = $(view.el).next();
+          while (next.length !== 0 && next.hasClass("disabled_skipped")) {
+            next = $(next).next();
+          }
+          console.log(next);
           if (next.length !== 0) {
             _results.push(next.scrollTo());
           } else {

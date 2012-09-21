@@ -20,14 +20,24 @@ class SurveyRunView extends Backbone.View
         @questions.sort()
         @render()
 
+  # when a question is answered
   onQuestionAnswer: (event) =>
-    if @isObservation 
+    if @isObservation
+
+      # find the view of the question
       cid = $(event.target).attr("data-cid")
       for view in @questionViews
-        if view.cid == cid
+        if view.cid == cid && view.type != "multiple" # if it's multiple don't go scrollin
+
+          # find last or next not skipped
           next = $(view.el).next()
-          if next.length != 0 then next.scrollTo()
-      
+          while next.length != 0 && next.hasClass("disabled_skipped")
+            next = $(next).next()
+
+          console.log next
+          # if it's not the last, scroll to it
+          if next.length != 0
+            next.scrollTo()
 
   questionResult: (label) =>
     # Should really return the label, not the value, too much indirection. Maybe the GUI will help.
