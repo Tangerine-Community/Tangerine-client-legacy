@@ -15,6 +15,8 @@ class QuestionRunView extends Backbone.View
     @options = @model.get "options"
     @notAsked = options.notAsked
 
+    @defineSpecialCaseResults()
+
     if @model.get("skippable") == "true" || @model.get("skippable") == true
       @isValid = true
     else
@@ -90,6 +92,17 @@ class QuestionRunView extends Backbone.View
     else
       @$el.hide()
     @trigger "rendered"
+  
+  defineSpecialCaseResults: ->
+    list = ["missing", "notAsked", "skipped"]
+    for element in list
+      if @type == "single" || @type == "open"
+        @[element+"Result"] = element
+      if @type == "multiple"
+        @[element+"Result"] = {}
+        @[element+"Result"][@options[i].value] = element for option, i in @options
+    return
+
 
 
 

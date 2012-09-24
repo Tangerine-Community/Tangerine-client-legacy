@@ -23,26 +23,16 @@ class ObservationEditView extends Backbone.View
     @model.set
       totalSeconds     : totalSeconds
       intervalLength   : intervalLength
-      variableName     : @$el.find("#variable_name").val().safetyDance()
-      displayName      : @$el.find("#display_name").val().safetyDance()
       surveyAttributes : @surveyModel.attributes
 
   render: ->
     totalSeconds   = @model.get("totalSeconds")   || 0
     intervalLength = @model.get("intervalLength") || 0
-    variableName   = @model.get("variableName")   || ""
-    displayName    = @model.get("displayName")    || ""
 
     @$el.html "
       <div class='label_value'>
-        <label for='variable_name'>Variable name</label>
-        <input id='variable_name' value='#{variableName}'><br>
-
-        <label for='display_name'>Display name</label>
-        <input id='display_name' value='#{displayName}'><br>
-
         <label for='total_seconds'>Total seconds</label>
-        <input id='total_seconds' value='#{totalSeconds}' type='number'>
+        <input id='total_seconds' value='#{totalSeconds}' type='number'><br>
 
         <label for='interval_length' title='In seconds'>Interval length</label>
         <input id='interval_length' value='#{intervalLength}' type='number'>

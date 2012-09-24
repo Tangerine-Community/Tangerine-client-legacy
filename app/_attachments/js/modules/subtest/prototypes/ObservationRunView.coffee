@@ -16,15 +16,16 @@ class ObservationRunView extends Backbone.View
 
     @initializeFlags()
     @initializeSurvey()
-    @initializeEventHandlers()
 
   initializeSurvey: ->
     @onClose() if @survey? # if we're REinitializing close the old views first
     
     attributes = $.extend(@model.get('surveyAttributes'), { "_id" : @model.id })
 
+    # 1-indexed array, convenient because the 0th observation doesn't take place, but the nth does.
     # makes an array of identical models based on the above attributes
     models = (new Backbone.Model attributes for i in [1..parseInt(@model.get('totalSeconds')/@model.get('intervalLength'))])
+    models.unshift("")
     
     @survey =
       "models"    : models
@@ -49,13 +50,6 @@ class ObservationRunView extends Backbone.View
         "completed" : 0
         "total"     : parseInt( @model.get('totalSeconds') / @model.get('intervalLength') )
 
-  initializeEventHandlers: ->
-    @on "tick", @checkIfOver
-    @on "tick", @updateObservationIndex
-    @on "tick", @updateProgressDisplay
-    @on "tick", @checkSurveyDisplay
-    @on "tick", @checkObservationPace
-    @on "tick", @checkWarning
 
   startObservations: ->
     # don't respond for these reasons
@@ -73,6 +67,10 @@ class ObservationRunView extends Backbone.View
 
     isntPrematureStop = ! e?
     if isntPrematureStop && !@iHave.finished
+      if @iAm.recording
+        @resetObservationFlags()
+        @saveCurrentSurvey()
+      @my.observation.index++
       @renderSurvey()
     else
       @$el.find(".stop_button_wrapper").addClass("confirmation")
@@ -85,13 +83,20 @@ class ObservationRunView extends Backbone.View
   # runs every second the timer is running
   tick: =>
     @my.time.elapsed = @getTime() - @my.time.start
-    @trigger "tick"
+    @checkIfOver()
+    @updateObservationIndex()
+    @updateProgressDisplay()
+    @checkSurveyDisplay()
+    @checkObservationPace()
+    @checkWarning()
 
   checkObservationPace: =>
     # if we're still entering observations and it's time for the next one
-    if @iAm.recording && @my.observation.completed < (@my.observation.index-1) && @my.observation.index > 1 # starts at 0, then goes to 1
+    if @iAm.recording && @my.observation.completed < (@my.observation.index-1) && @my.observation.index != 0 # starts at 0, then goes to 1
       @iHave.forcedProgression = true
-      @completeObservation @FORCE
+      @resetObservationFlags()
+      @saveCurrentSurvey()
+      @renderSurvey()
 
   checkWarning: =>
     projectedIndex = Math.floor( (@my.time.elapsed + @warningSeconds) / @model.get('intervalLength') )
@@ -110,7 +115,7 @@ class ObservationRunView extends Backbone.View
 
   checkSurveyDisplay: =>
     # change, needs to display new survey
-    if @my.observation.oldIndex != @my.observation.index && !@iHave.finished
+    if @my.observation.oldIndex != @my.observation.index && !@iHave.finished && !@iAm.recording
       @renderSurvey()
       @my.observation.oldIndex = @my.observation.index
 
@@ -137,22 +142,23 @@ class ObservationRunView extends Backbone.View
   getTime: -> parseInt( ( new Date() ).getTime() / 1000 )
 
   completeObservation: (option) ->
-    if @survey.view.isValid() || option == @FORCE
-      @resetObservationFlags()
-      @my.observation.completed++
-      @survey.results.push
-        observationNumber : @survey.view.index # view's index
-        data              : @survey.view.getResult()
-        saveTime          : @my.time.elapsed
-      @survey.view.close()
-      @$el.find(".done").remove()
-      if option == @FORCE && !@iHave.finished
-        @renderSurvey()
-
+    if @survey.view.isValid()
+      @saveCurrentSurvey()
     else
       @survey.view.showErrors()
 
-    @trigger "tick" # update displays
+    @tick() # update displays
+
+  saveCurrentSurvey: =>
+    @resetObservationFlags()
+    @my.observation.completed++
+    @survey.results.push
+      observationNumber : @survey.view.index # view's index
+      data              : @survey.view.getResult()
+      saveTime          : @my.time.elapsed
+    @survey.view.close()
+    @$el.find(".done").remove()
+
 
   render: ->
     totalSeconds = @model.get("totalSeconds")
@@ -181,7 +187,7 @@ class ObservationRunView extends Backbone.View
       "model"         : @survey.models[@my.observation.index]
       "parent"        : @
       "isObservation" : true
-    @survey.view.index = @my.observation.index # add an index for reference
+    @survey.view.index = do => @my.observation.index # add an index for reference
 
     # listen for render events, pass them up
     @survey.view.on "rendered subRendered", => @trigger "subRendered"
@@ -213,7 +219,9 @@ class ObservationRunView extends Backbone.View
     }
 
   getSum: ->
-    {}
+    {
+      "total" : @my.observation.completed 
+    }
 
   isValid: ->
     @iHave.finished

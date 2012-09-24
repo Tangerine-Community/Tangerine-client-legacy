@@ -15,6 +15,21 @@ class CSVView extends Backbone.View
     @disallowedKeys = ["mark_record"]
     @metaKeys = ["enumerator","starttime","timestamp"]
     
+  exportValueMap :
+    "correct" : 1
+    "checked" : 1
+
+    "incorrect" : 0
+    "unchecked" : 0
+
+    "missing"   : "."
+    "not_asked" : "."
+
+  exportValue: (databaseValue) ->
+    if @exportValueMap[databaseValue] != undefined
+      return @exportValueMap[databaseValue]
+    else
+      return databaseValue
 
   render: ->
     if @results? && @results[0]?
@@ -69,7 +84,14 @@ class CSVView extends Backbone.View
           for observations, i in subtest.data.surveys
             observationData = observations.data
             for surveyVariable, surveyValue of observationData
-              keys.push "#{surveyVariable}_#{i}"
+              if _.isObject(surveyValue)
+                for optionKey, optionValue of surveyValue
+                  keys.push "#{surveyVariable}_#{optionKey}_#{i+1}"
+              else
+                keys.push "#{surveyVariable}_#{i+1}"
+
+
+
         else if prototype == "complete"
           keys.push "additional_comments", "end_time", "gps_latitude", "gps_longitude", "gps_accuracy"
 
@@ -126,13 +148,7 @@ class CSVView extends Backbone.View
             for surveyVariable, surveyValue of subtest.data
               if _.isObject(surveyValue) # multiple type question
                 for optionKey, optionValue of surveyValue
-                  if optionValue == "checked"
-                    exportValue = 1
-                  else if optionValue == "unchecked"
-                    exportValue = 0
-                  else if optionValue == "not_asked"
-                    exportValue = "."
-                  values[keys.indexOf("#{surveyVariable}_#{optionKey}")] = exportValue
+                  values[keys.indexOf("#{surveyVariable}_#{optionKey}")] = @exportValue(optionValue)
               else # single type question or open
                 exportValue = if surveyValue == "not_asked" then "." else surveyValue # if open just show result, otherwise translate not_asked
                 values[keys.indexOf("#{surveyVariable}")] = exportValue
@@ -141,8 +157,11 @@ class CSVView extends Backbone.View
             for observations, i in subtest.data.surveys
               observationData = observations.data
               for surveyVariable, surveyValue of observationData
-                
-                values[keys.indexOf("#{surveyVariable}_#{i}")] = surveyValue
+                if _.isObject(surveyValue) # multiple type question
+                  for optionKey, optionValue of surveyValue
+                    values[keys.indexOf("#{surveyVariable}_#{optionKey}_#{i+1}")] = @exportValue(optionValue)
+                else # single type question or open
+                  values[keys.indexOf("#{surveyVariable}_#{i+1}")] = @exportValue(surveyValue)
               
 
           else if prototype == "complete"

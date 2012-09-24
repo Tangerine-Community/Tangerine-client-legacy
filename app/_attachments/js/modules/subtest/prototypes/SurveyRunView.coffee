@@ -34,7 +34,6 @@ class SurveyRunView extends Backbone.View
           while next.length != 0 && next.hasClass("disabled_skipped")
             next = $(next).next()
 
-          console.log next
           # if it's not the last, scroll to it
           if next.length != 0
             next.scrollTo()
@@ -78,7 +77,15 @@ class SurveyRunView extends Backbone.View
   getResult: =>
     result = {}
     for qv, i in @questionViews
-      result[@questions.models[i].get("name")] = qv.answer
+      result[@questions.models[i].get("name")] =
+        if qv.notAsked
+          qv.notAskedResult
+        else if qv.$el.hasClass("disabled_skipped")
+          qv.skippedResult
+        else if _.isEmpty(qv.answer)
+          qv.missingResult
+        else
+          qv.answer
     return result
 
   getSum: ->
