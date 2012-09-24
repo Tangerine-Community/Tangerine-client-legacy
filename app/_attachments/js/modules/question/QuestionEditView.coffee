@@ -92,7 +92,7 @@ class QuestionEditView extends Backbone.View
     @$el.find('#option_list_wrapper').html(@getOptionList())
     optionListElements = @$el.find("#option_list_wrapper li")
     if optionListElements.length != 0
-      $(optionListElements.pop()).scrollTo().find("input:first").focus()
+      $(optionListElements.last()).scrollTo().find("input:first").focus()
 
 
   render: ->
@@ -209,13 +209,13 @@ class QuestionEditView extends Backbone.View
     else
       Utils.midAlert "Save error"
     return false
-  
+
   deleteQuestion: ->
     @parent.questions.remove @model
     @model.destroy()
     @parentView.render()
     return false
-  
+
   updateModel: =>
     # basics
     @model.set
