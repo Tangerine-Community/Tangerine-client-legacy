@@ -166,10 +166,12 @@ class CSVView extends Backbone.View
 
           else if prototype == "complete"
             values[keys.indexOf("additional_comments")] = subtest.data.comment
-            values[keys.indexOf("gps_latitude")]  = subtest.data.gps.latitude
-            values[keys.indexOf("gps_longitude")] = subtest.data.gps.longitude
-            values[keys.indexOf("gps_accuracy")]  = subtest.data.gps.accuracy
             values[keys.indexOf("end_time")] = subtest.data.end_time
+            if subtest.data.gps?
+              values[keys.indexOf("gps_latitude")]  = subtest.data.gps.latitude
+              values[keys.indexOf("gps_longitude")] = subtest.data.gps.longitude
+              values[keys.indexOf("gps_accuracy")]  = subtest.data.gps.accuracy
+
 
         resultDataArray.push values
 
