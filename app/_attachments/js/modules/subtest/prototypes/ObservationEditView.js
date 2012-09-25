@@ -14,7 +14,8 @@ ObservationEditView = (function(_super) {
     var surveyAttributes;
     this.model = options.model;
     surveyAttributes = $.extend(this.model.get('surveyAttributes'), {
-      "_id": this.model.id
+      "_id": this.model.id,
+      "assessmentId": this.model.get("assessmentId")
     });
     this.surveyModel = new Backbone.Model(surveyAttributes);
     return this.surveyView = new SurveyEditView({

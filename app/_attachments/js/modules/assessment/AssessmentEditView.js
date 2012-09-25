@@ -103,7 +103,7 @@ AssessmentEditView = (function(_super) {
   AssessmentEditView.prototype.initialize = function(options) {
     this.model = options.model;
     this.subtestListEditView = new SubtestListEditView({
-      model: this.model
+      "assessment": this.model
     });
     return this.model.subtests.on("change remove", this.subtestListEditView.render);
   };

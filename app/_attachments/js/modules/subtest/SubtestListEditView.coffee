@@ -2,23 +2,24 @@ class SubtestListEditView extends Backbone.View
   tagName : "ul"
   
   initialize: (options) ->
-    @model = options.model
+    @assessment = options.assessment
     @views = []
 
   render: =>
     @closeViews()
-    @model.subtests.sort()
-    @model.subtests.each (subtest) =>
+    @assessment.subtests.sort()
+    @assessment.subtests.each (subtest) =>
       oneView = new SubtestListElementView
-        model : subtest
+        "subtest" : subtest
+        "group"   : @assessment.get "group"
       @views.push oneView
       oneView.render()
       oneView.on "subtest:delete", @deleteSubtest
       @$el.append oneView.el
 
-  deleteSubtest: (model) =>
-    @model.subtests.remove model
-    model.destroy()
+  deleteSubtest: (subtest) =>
+    @assessment.subtests.remove subtest
+    subtest.destroy()
     
   closeViews: ->
     for view in @views

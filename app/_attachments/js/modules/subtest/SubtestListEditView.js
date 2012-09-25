@@ -16,18 +16,19 @@ SubtestListEditView = (function(_super) {
   SubtestListEditView.prototype.tagName = "ul";
 
   SubtestListEditView.prototype.initialize = function(options) {
-    this.model = options.model;
+    this.assessment = options.assessment;
     return this.views = [];
   };
 
   SubtestListEditView.prototype.render = function() {
     var _this = this;
     this.closeViews();
-    this.model.subtests.sort();
-    return this.model.subtests.each(function(subtest) {
+    this.assessment.subtests.sort();
+    return this.assessment.subtests.each(function(subtest) {
       var oneView;
       oneView = new SubtestListElementView({
-        model: subtest
+        "subtest": subtest,
+        "group": _this.assessment.get("group")
       });
       _this.views.push(oneView);
       oneView.render();
@@ -36,9 +37,9 @@ SubtestListEditView = (function(_super) {
     });
   };
 
-  SubtestListEditView.prototype.deleteSubtest = function(model) {
-    this.model.subtests.remove(model);
-    return model.destroy();
+  SubtestListEditView.prototype.deleteSubtest = function(subtest) {
+    this.assessment.subtests.remove(subtest);
+    return subtest.destroy();
   };
 
   SubtestListEditView.prototype.closeViews = function() {
