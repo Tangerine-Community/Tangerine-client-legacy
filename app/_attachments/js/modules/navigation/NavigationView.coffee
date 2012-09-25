@@ -3,7 +3,7 @@ class NavigationView extends Backbone.View
   el : '#navigation'
 
   events :
-    'click span#logout_link'  : 'logout'
+    'click div#logout_link'  : 'logout'
     'click button'            : 'submenuHandler'
     'click #corner_logo'      : 'logoClick'
     'click #enumerator'       : 'enumeratorClick'
@@ -52,11 +52,12 @@ class NavigationView extends Backbone.View
   render: ->
     @$el.html "
     <img id='corner_logo' src='images/corner_logo.png'>
-    <nav id='submenu'></nav>
+    <div id='logout_link'>#{t('logout')}</div>
     <div id='enumerator_box'>
-      #{t('enumerator')} <span id='logout_link'>#{t('logout')}</span>
+      #{t('enumerator')}
       <div id='enumerator'></div>
     </div>
+
     <div id='current_student'>
       Student ID
       <div id='current_student_id'></div>

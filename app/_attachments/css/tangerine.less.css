@@ -665,6 +665,9 @@ nav#submenu {
   display: none;
 }
 #logout_link {
+  float: right;
+  margin: 0;
+  padding: 20px 10px 0 10px;
   color: black;
   cursor: pointer;
 }

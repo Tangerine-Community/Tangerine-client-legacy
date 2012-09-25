@@ -16,7 +16,7 @@ NavigationView = (function(_super) {
   NavigationView.prototype.el = '#navigation';
 
   NavigationView.prototype.events = {
-    'click span#logout_link': 'logout',
+    'click div#logout_link': 'logout',
     'click button': 'submenuHandler',
     'click #corner_logo': 'logoClick',
     'click #enumerator': 'enumeratorClick'
@@ -76,7 +76,7 @@ NavigationView = (function(_super) {
   };
 
   NavigationView.prototype.render = function() {
-    this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <nav id='submenu'></nav>    <div id='enumerator_box'>      " + (t('enumerator')) + " <span id='logout_link'>" + (t('logout')) + "</span>      <div id='enumerator'></div>    </div>    <div id='current_student'>      Student ID      <div id='current_student_id'></div>    </div>    <div id='version'>    version <br/>    <span id='version-uuid'></span><br/>    " + (Tangerine.user.isAdmin && Tangerine.settings.context !== "server" ? "<a href='#update'>" + (t('update')) + "</a>" : "") + "    </div>    ");
+    this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <div id='logout_link'>" + (t('logout')) + "</div>    <div id='enumerator_box'>      " + (t('enumerator')) + "      <div id='enumerator'></div>    </div>    <div id='current_student'>      Student ID      <div id='current_student_id'></div>    </div>    <div id='version'>    version <br/>    <span id='version-uuid'></span><br/>    " + (Tangerine.user.isAdmin && Tangerine.settings.context !== "server" ? "<a href='#update'>" + (t('update')) + "</a>" : "") + "    </div>    ");
     $.ajax("version", {
       dataType: "text",
       success: function(result) {
