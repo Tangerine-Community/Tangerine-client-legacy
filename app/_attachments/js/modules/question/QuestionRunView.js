@@ -15,7 +15,7 @@ QuestionRunView = (function(_super) {
   QuestionRunView.prototype.className = "question buttonset";
 
   QuestionRunView.prototype.events = {
-    'change input': 'update',
+    'click input': 'update',
     'change textarea': 'update'
   };
 
