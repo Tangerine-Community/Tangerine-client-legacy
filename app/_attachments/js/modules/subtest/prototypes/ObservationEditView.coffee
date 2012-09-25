@@ -3,7 +3,7 @@ class ObservationEditView extends Backbone.View
 
   initialize: ( options ) ->
     @model = options.model
-    surveyAttributes = $.extend(@model.get('surveyAttributes'), {"_id":@model.id})
+    surveyAttributes = $.extend(@model.get('surveyAttributes'), {"_id":@model.id,"assessmentId":@model.get("assessmentId")})
     @surveyModel = new Backbone.Model(surveyAttributes)
     @surveyView = new SurveyEditView
       "model" : @surveyModel
