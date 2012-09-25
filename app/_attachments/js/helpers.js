@@ -40,8 +40,8 @@ $.ajaxSetup({
       statusText = xhr.statusText;
       seeUnauthorized = ~xhr.responseText.indexOf("unauthorized");
       if (seeUnauthorized) {
-        Utils.midAlert("Error<br>You are not currently logged in");
-        return Tangerine.user.fetch();
+        Utils.midAlert("Session closed<br>Please log in and try again.");
+        return Tangerine.user.logout();
       }
     }
   }
