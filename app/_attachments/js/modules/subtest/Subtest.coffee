@@ -5,6 +5,13 @@ class Subtest extends Backbone.Model
   initialize: (options) ->
     @templates = Tangerine.templates.prototypeTemplates
 
+    # guarentee survey pseudo model for observations
+    if @has("surveyAttributes")
+      if @get("assessmentId") != @get("surveyAttributes").assessmentId
+        @save "surveyAttributes",
+          "_id" : @id
+          "assessmentId" : @get("assessmentId")
+
   loadPrototypeTemplate: (prototype) ->
     for key, value of @templates[prototype]
       @set key, value
@@ -17,6 +24,7 @@ class Subtest extends Backbone.Model
     if newSubtest.has("surveyAttributes")
       newSubtest.set "surveyAttributes",
         "_id" : newId
+        "assessmentId" : assessmentId
 
     newSubtest.save
       "_id"          : newId

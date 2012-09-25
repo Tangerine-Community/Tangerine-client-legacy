@@ -13,7 +13,15 @@ Subtest = (function(_super) {
   Subtest.prototype.url = "subtest";
 
   Subtest.prototype.initialize = function(options) {
-    return this.templates = Tangerine.templates.prototypeTemplates;
+    this.templates = Tangerine.templates.prototypeTemplates;
+    if (this.has("surveyAttributes")) {
+      if (this.get("assessmentId") !== this.get("surveyAttributes").assessmentId) {
+        return this.save("surveyAttributes", {
+          "_id": this.id,
+          "assessmentId": this.get("assessmentId")
+        });
+      }
+    }
   };
 
   Subtest.prototype.loadPrototypeTemplate = function(prototype) {
@@ -33,7 +41,8 @@ Subtest = (function(_super) {
     newId = Utils.guid();
     if (newSubtest.has("surveyAttributes")) {
       newSubtest.set("surveyAttributes", {
-        "_id": newId
+        "_id": newId,
+        "assessmentId": assessmentId
       });
     }
     newSubtest.save({
