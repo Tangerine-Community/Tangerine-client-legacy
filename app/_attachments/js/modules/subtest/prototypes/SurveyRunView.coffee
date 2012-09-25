@@ -38,10 +38,6 @@ class SurveyRunView extends Backbone.View
           if next.length != 0
             next.scrollTo()
 
-  questionResult: (label) =>
-    # Should really return the label, not the value, too much indirection. Maybe the GUI will help.
-    @getResult()[name]
-
   updateSkipLogic: =>
     @questions.each (question) ->
       skipLogic = question.get "skipLogic"

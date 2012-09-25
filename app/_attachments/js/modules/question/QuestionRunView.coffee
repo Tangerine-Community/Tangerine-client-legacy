@@ -3,7 +3,7 @@ class QuestionRunView extends Backbone.View
   className: "question buttonset"
 
   events:
-    'click input'    : 'update'
+    'change input'    : 'update'
     'change textarea' : 'update'
 
   initialize: (options) ->
