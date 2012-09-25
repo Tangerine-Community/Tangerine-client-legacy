@@ -68,6 +68,7 @@ Subtest = (function(_super) {
             "subtestId": newId
           });
         }
+        Tangerine.router.navigate("edit/" + assessmentId, true);
         return Utils.midAlert("Subtest copied");
       }
     });

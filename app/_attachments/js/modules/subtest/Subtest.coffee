@@ -44,5 +44,6 @@ class Subtest extends Backbone.Model
             "assessmentId" : assessmentId
             "_id"          : Utils.guid() 
             "subtestId"    : newId
-
+        # send user to edit page for reordering subtests
+        Tangerine.router.navigate "edit/#{assessmentId}", true
         Utils.midAlert "Subtest copied"
