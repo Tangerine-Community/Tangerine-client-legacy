@@ -37,7 +37,7 @@ SubtestListElementView = (function(_super) {
   };
 
   SubtestListElementView.prototype.initialize = function(options) {
-    this.model = options.model;
+    this.model = options.subtest;
     this.group = options.group;
     console.log("subtest list say " + this.group);
     return this.$el.attr("data-id", this.model.id);
@@ -47,19 +47,47 @@ SubtestListElementView = (function(_super) {
     var $select;
     $select = this.$el.find("copy_select");
     $select.removeClass("confirmation").append("<option disabled='disabled' selected='selected'>Loading assessments...</option>");
-    return this.populateAssessmentSelector();
+    return this.fetchAssessments();
+  };
+
+  fetchAsse;
+
+  SubtestListElementView.prototype.ssments = function() {
+    var allAssessments,
+      _this = this;
+    this.groupAssessments = [];
+    allAssessments = new Assessments;
+    return allAssessments.fetch({
+      success: function(collection) {
+        _this.groupAssessments = collection.where({
+          "group": _this.group
+        });
+        return _this.populateAssessmentSelector();
+      }
+    });
+  };
+
+  SubtestListElementView.prototype.populateAssessmentSelector = function() {
+    var $select, assessment, optionList, _i, _len, _ref;
+    optionList = "";
+    _ref = this.groupAssessments;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      assessment = _ref[_i];
+      optionList += "";
+    }
+    return $select = this.$el.find("copy_select").html(optionList);
   };
 
   SubtestListElementView.prototype.render = function() {
     var copyIcon, deleteConfirm, iconDelete, iconDrag, iconEdit, prototype, subtestName;
     subtestName = this.model.get("name");
     prototype = "[" + (this.model.get("prototype")) + "]";
-    iconDrag = "<img src='images/icon_drag.png' title='Drag to reorder' class='sortable_handle'>";
-    iconEdit = "<img src='images/icon_edit.png' title='Edit' class='icon_edit'>";
-    iconDelete = "<img src='images/icon_delete.png' title='Delete' class='icon_delete'>";
-    copyIcon = "<img src='images/icon_copy.png' title='Copy to...' class='icon_copy'><select class='copy_select confirmation'></select>";
+    iconDrag = "<img src='images/icon_drag.png' title='Drag to reorder' class='icon sortable_handle'>";
+    iconEdit = "<img src='images/icon_edit.png' title='Edit' class='icon icon_edit'>";
+    iconDelete = "<img src='images/icon_delete.png' title='Delete' class='icon icon_delete'>";
+    copyIcon = "<img src='images/icon_copy_to.png' title='Copy to...' class='icon icon_copy'><select class='copy_select confirmation'></select>";
     deleteConfirm = "<br><span class='delete_confirm'><div class='menu_box'>Confirm <button class='delete_delete command_red'>Delete</button> <button class='delete_cancel command'>Cancel</button></div></span>";
-    this.$el.html("      <table><tr>      <td>" + iconDrag + "</td>      <td>        " + subtestName + "        " + prototype + "        " + iconEdit + "        " + iconDelete + "        " + deleteConfirm + "      </td>      </tr></table>    ");
+    this.$el.html("      <table><tr>      <td>" + iconDrag + "</td>      <td>        " + subtestName + "        " + prototype + "        " + iconEdit + "        " + copyIcon + "        " + iconDelete + "        " + deleteConfirm + "      </td>      </tr></table>    ");
     return this.trigger("rendered");
   };
 

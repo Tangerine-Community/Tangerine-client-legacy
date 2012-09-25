@@ -329,22 +329,11 @@ body.flash{
   background-color: @yellow;
 }
 
-.disabled_skipped:after
+.icon 
 {
-    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQImWP4DwHPGP7////s/////wGOCw+/Sq1MagAAAABJRU5ErkJggg==") repeat scroll 0 0 transparent;
-    bottom: 0;
-    color: #DDDDDD;
-    content: "Skipped";
-    display: block;
-    float: left;
-    font-size: 50px;
-    left: 0;
-    padding: 10px;
-    position: absolute;
-    right: 0;
-    text-align: center;
-    top: 0;
+  cursor: pointer;
 }
+
 
 
 table.disabled,
@@ -356,29 +345,6 @@ div.disabled
   }
 }
 
-.disabled_cover:after {
-    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQImWP4////mf////9n+A8BZwCMhQ+LNDQxswAAAABJRU5ErkJggg==") repeat scroll 0 0 transparent;
-    bottom: 0;
-    content: "";
-    display: block;
-    float: left;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-}
-
-.disabled_cover:after {
-    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQImWP4////mf////9n+A8BZwCMhQ+LNDQxswAAAABJRU5ErkJggg==") repeat scroll 0 0 transparent;
-    bottom: 0;
-    content: "";
-    display: block;
-    float: left;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-}
 
 div.grid,
 table.grid
@@ -1011,6 +977,38 @@ label.ui-button
 
 
 }
+
+.disabled_skipped:after
+{
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQImWP4DwHPGP7////s/////wGOCw+/Sq1MagAAAABJRU5ErkJggg==") repeat scroll 0 0 transparent;
+    bottom: 0;
+    color: #DDDDDD;
+    content: "Skipped";
+    display: block;
+    float: left;
+    font-size: 50px;
+    left: 0;
+    padding: 10px;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+}
+
+.disabled_cover:after {
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQImWP4////mf////9n+A8BZwCMhQ+LNDQxswAAAABJRU5ErkJggg==") repeat scroll 0 0 transparent;
+    bottom: 0;
+    content: "";
+    display: block;
+    float: left;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+
+
 
 .subtest_element
 {
