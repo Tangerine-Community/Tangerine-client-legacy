@@ -80,7 +80,7 @@ class AssessmentEditView extends Backbone.View
   initialize: (options) ->
     @model = options.model
     @subtestListEditView = new SubtestListEditView
-      model : @model
+      "assessment" : @model
 
     @model.subtests.on "change remove", @subtestListEditView.render
 

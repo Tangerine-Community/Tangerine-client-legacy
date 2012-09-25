@@ -18,7 +18,8 @@ SubtestListElementView = (function(_super) {
     'click .icon_edit': 'edit',
     "click .icon_delete": "toggleDeleteConfirm",
     "click .delete_cancel": "toggleDeleteConfirm",
-    "click .delete_delete": "delete"
+    "click .delete_delete": "delete",
+    "click .icon_copy": "openCopyMenu"
   };
 
   SubtestListElementView.prototype.toggleDeleteConfirm = function() {
@@ -37,16 +38,26 @@ SubtestListElementView = (function(_super) {
 
   SubtestListElementView.prototype.initialize = function(options) {
     this.model = options.model;
+    this.group = options.group;
+    console.log("subtest list say " + this.group);
     return this.$el.attr("data-id", this.model.id);
   };
 
+  SubtestListElementView.prototype.openCopyMenu = function() {
+    var $select;
+    $select = this.$el.find("copy_select");
+    $select.removeClass("confirmation").append("<option disabled='disabled' selected='selected'>Loading assessments...</option>");
+    return this.populateAssessmentSelector();
+  };
+
   SubtestListElementView.prototype.render = function() {
-    var deleteConfirm, iconDelete, iconDrag, iconEdit, prototype, subtestName;
+    var copyIcon, deleteConfirm, iconDelete, iconDrag, iconEdit, prototype, subtestName;
     subtestName = this.model.get("name");
     prototype = "[" + (this.model.get("prototype")) + "]";
-    iconDrag = "<img src='images/icon_drag.png' class='sortable_handle'>";
-    iconEdit = "<img src='images/icon_edit.png' class='icon_edit'>";
-    iconDelete = "<img src='images/icon_delete.png' class='icon_delete'>";
+    iconDrag = "<img src='images/icon_drag.png' title='Drag to reorder' class='sortable_handle'>";
+    iconEdit = "<img src='images/icon_edit.png' title='Edit' class='icon_edit'>";
+    iconDelete = "<img src='images/icon_delete.png' title='Delete' class='icon_delete'>";
+    copyIcon = "<img src='images/icon_copy.png' title='Copy to...' class='icon_copy'><select class='copy_select confirmation'></select>";
     deleteConfirm = "<br><span class='delete_confirm'><div class='menu_box'>Confirm <button class='delete_delete command_red'>Delete</button> <button class='delete_cancel command'>Cancel</button></div></span>";
     this.$el.html("      <table><tr>      <td>" + iconDrag + "</td>      <td>        " + subtestName + "        " + prototype + "        " + iconEdit + "        " + iconDelete + "        " + deleteConfirm + "      </td>      </tr></table>    ");
     return this.trigger("rendered");
