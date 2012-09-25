@@ -26,6 +26,44 @@ Subtest = (function(_super) {
     return this.save();
   };
 
+  Subtest.prototype.copyTo = function(assessmentId) {
+    var newId, newSubtest, questions,
+      _this = this;
+    newSubtest = this.clone();
+    newId = Utils.guid();
+    if (newSubtest.has("surveyAttributes")) {
+      newSubtest.set("surveyAttributes", {
+        "_id": newId
+      });
+    }
+    newSubtest.save({
+      "_id": newId,
+      "assessmentId": assessmentId,
+      "order": 0,
+      "gridLinkId": ""
+    });
+    questions = new Questions;
+    return questions.fetch({
+      key: this.get("assessmentId"),
+      success: function(questionCollection) {
+        var newQuestion, question, subtestQuestions, _i, _len;
+        subtestQuestions = questionCollection.where({
+          "subtestId": _this.id
+        });
+        for (_i = 0, _len = subtestQuestions.length; _i < _len; _i++) {
+          question = subtestQuestions[_i];
+          newQuestion = question.clone();
+          newQuestion.save({
+            "assessmentId": assessmentId,
+            "_id": Utils.guid(),
+            "subtestId": newId
+          });
+        }
+        return Utils.midAlert("Subtest copied");
+      }
+    });
+  };
+
   return Subtest;
 
 })(Backbone.Model);
