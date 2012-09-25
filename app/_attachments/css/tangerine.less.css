@@ -771,6 +771,12 @@ ul.assessment_list .assessment_menu {
   color: #888888;
   font-size: 20px;
 }
+.small_grey {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 12px;
+  color: #999999;
+}
 /*
  * AssessmentElementView
  */

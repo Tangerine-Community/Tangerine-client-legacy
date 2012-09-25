@@ -71,11 +71,14 @@ class AssessmentListElementView extends Backbone.View
     archiveClass    = if (@model.get('archived') == true or @model.get('archived') == 'true') then " archived_assessment" else ""
     copyButton      = "<button class='copy command'>Copy to group</button>"
     toggleButton    = "<span class='assessment_menu_toggle icon_ryte'> </span>"
-    deleteButton    = "<img class='assessment_delete link_icon' title='Delete' src='images/icon_delete.png'><br><span class='assessment_delete_confirm'><div class='menu_box'>Confirm <button class='assessment_delete_yes command_red'>Delete</button> <button class='assessment_delete_cancel command'>Cancel</button></div></span>"
+    deleteButton    = "<img class='assessment_delete link_icon' title='Delete' src='images/icon_delete.png'>"
+    deleteConfirm   = "<span class='assessment_delete_confirm'><div class='menu_box'>Confirm <button class='assessment_delete_yes command_red'>Delete</button> <button class='assessment_delete_cancel command'>Cancel</button></div></span>"
     duplicateButton = "<img class='link_icon duplicate' title='Duplicate' src='images/icon_duplicate.png'>"
     editButton      = "<img class='link_icon edit' title='Edit' src='images/icon_edit.png'>"
     updateButton    = "<img class='link_icon update' title='Update' src='images/icon_sync.png'>"
 
+    downloadKey     = "<span class='small_grey'>Download key <b>#{@model.id.substr(-5,5)}</b></span>"
+    
     resultsButton   = "<img class='link_icon results' title='Results' src='images/icon_results.png'>"
     runButton       = "<img class='link_icon run' title='Run' src='images/icon_run.png'>"
     name            = "<span class='name clickable '>#{@model.get('name')}</span>"
@@ -124,6 +127,8 @@ class AssessmentListElementView extends Backbone.View
               #{editButton}
               #{duplicateButton}
               #{deleteButton}
+              #{downloadKey}
+              #{deleteConfirm}
             </div>
           "
     # enumerator user
