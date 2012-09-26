@@ -106,7 +106,6 @@ class AssessmentListElementView extends Backbone.View
             #{runButton}
             #{resultsButton}
             #{updateButton}
-            #{archiveSwitch}
           </div>
         "
       # not on mobile
