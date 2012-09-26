@@ -162,9 +162,9 @@ QuestionEditView = (function(_super) {
       "name": this.$el.find("#name").val(),
       "hint": this.$el.find("#hint").val(),
       "skipLogic": this.$el.find("#skip-logic").val(),
-      "linkedGridScore": this.$el.find("#linked_grid_score").val(),
+      "linkedGridScore": parseInt(this.$el.find("#linked_grid_score").val()),
       "type": this.$el.find("#question_type input:checked").val(),
-      "skippable": this.$el.find("#skip_radio input:radio[name=skippable]:checked").val()
+      "skippable": this.$el.find("#skip_radio input:radio[name=skippable]:checked").val() === "true"
     });
     options = [];
     i = 0;

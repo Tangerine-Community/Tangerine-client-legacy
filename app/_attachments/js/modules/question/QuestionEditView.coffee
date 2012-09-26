@@ -231,9 +231,9 @@ class QuestionEditView extends Backbone.View
       "name"            : @$el.find("#name").val()
       "hint"            : @$el.find("#hint").val()
       "skipLogic"       : @$el.find("#skip-logic").val()
-      "linkedGridScore" : @$el.find("#linked_grid_score").val()
+      "linkedGridScore" : parseInt(@$el.find("#linked_grid_score").val())
       "type"            : @$el.find("#question_type input:checked").val()
-      "skippable"       : @$el.find("#skip_radio input:radio[name=skippable]:checked").val()
+      "skippable"       : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
 
     # options
     options = []
