@@ -54,7 +54,7 @@ AssessmentImportView = (function(_super) {
     this.newAssessment = new Assessment;
     this.newAssessment.on("status", this.updateActivity);
     this.newAssessment.updateFromServer(dKey);
-    return this.activeTaskInterval = setInterval(this.updateFromActiveTasks, 500);
+    return this.activeTaskInterval = setInterval(this.updateFromActiveTasks, 3000);
   };
 
   AssessmentImportView.prototype.updateFromActiveTasks = function() {
@@ -88,8 +88,6 @@ AssessmentImportView = (function(_super) {
     } else if (status === "import error") {
       clearInterval(this.activeTaskInterval);
       this.activity = "Import error: " + message;
-    } else {
-      this.$el.find(".status").fadeOut(250);
     }
     return this.updateProgress();
   };
@@ -117,7 +115,7 @@ AssessmentImportView = (function(_super) {
   };
 
   AssessmentImportView.prototype.render = function() {
-    this.$el.html("    <button class='back navigation'>Back</button>    <h1>Tangerine Central Import</h1>    <div class='question'>      <label for='d_key'>Download key</label>      <input id='d_key' value=''>      <button class='import command'>Import</button><br>      <small>Server connection: <span id='server_connection'>" + this.serverStatus + "</span></small>    </div>    <div class='confirmation status'>      <h2>Status<h2>      <div class='info_box' id='progress'></div>    </div>    ");
+    this.$el.html("    <button class='back navigation'>Back</button>    <h1>Tangerine Central Import</h1>    <div class='question'>      <label for='d_key'>Download key</label>      <input id='d_key' value=''>      <button class='import command'>Import</button><br>      <small>Server connection: <span id='server_connection'>" + this.serverStatus + "</span></small>    </div>    <div class='confirmation status'>      <h2>status<h2>      <div class='info_box' id='progress'></div>    </div>    ");
     return this.trigger("rendered");
   };
 

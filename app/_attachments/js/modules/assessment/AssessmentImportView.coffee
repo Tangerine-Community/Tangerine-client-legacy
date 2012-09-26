@@ -58,8 +58,6 @@ class AssessmentImportView extends Backbone.View
     else if status == "import error"
       clearInterval @activeTaskInterval
       @activity = "Import error: #{message}"
-    else
-      @$el.find(".status").fadeOut(250)
 
     @updateProgress()
 
@@ -95,7 +93,7 @@ class AssessmentImportView extends Backbone.View
     </div>
 
     <div class='confirmation status'>
-      <h2>Status<h2>
+      <h2>status<h2>
       <div class='info_box' id='progress'></div>
     </div>
 
