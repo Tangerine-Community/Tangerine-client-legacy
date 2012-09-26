@@ -59,6 +59,7 @@ class SubtestEditView extends Backbone.View
 
   initialize: ( options ) ->
     @model = options.model
+    @assessment = options.assessment
     @config = Tangerine.config.subtest
     
     @prototypeViews  = Tangerine.config.prototypeViews
@@ -91,6 +92,7 @@ class SubtestEditView extends Backbone.View
         Utils.midAlert "Save error"
       
   render: ->
+    assessmentName = @assessment.escape "name"
     name      = @model.escape "name"
     prototype = @model.get "prototype"
     help      = @model.get("enumeratorHelp") || ""
@@ -100,8 +102,14 @@ class SubtestEditView extends Backbone.View
     @$el.html "
       <button class='back_button navigation'>Back</button><br>
       <h1>Subtest Editor</h1>
+      <table class='basic_info'>
+        <tr>
+          <th>Assessment</th>
+          <td>#{assessmentName}</td>
+        </tr>
+      </table>
       <button class='save_subtest command'>Done</button>
-      <div id='subtest_edit_form'>
+      <div id='subtest_edit_form' class='edit_form'>
         <div class='label_value'>
           <label for='subtest_name'>Name</label>
           <input id='subtest_name' value='#{name}'>

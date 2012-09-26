@@ -716,11 +716,20 @@ Router = (function(_super) {
         });
         return subtest.fetch({
           success: function(model, response) {
-            var view;
-            view = new SubtestEditView({
-              model: model
+            var assessment;
+            assessment = new Assessment({
+              "_id": subtest.get("assessmentId")
             });
-            return vm.show(view);
+            return assessment.fetch({
+              success: function() {
+                var view;
+                view = new SubtestEditView({
+                  model: model,
+                  assessment: assessment
+                });
+                return vm.show(view);
+              }
+            });
           }
         });
       },

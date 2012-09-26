@@ -123,7 +123,7 @@ class QuestionEditView extends Backbone.View
         </tr>
       </table>
       <button class='done command'>Done</button>
-      <div class='edit_form question'>
+      <div class='edit_form'>
         <div class='label_value'>
           <label for='name'>Variable name</label>
           <input id='name' type='text' value='#{name}'>

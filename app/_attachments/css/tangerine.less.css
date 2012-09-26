@@ -568,7 +568,7 @@ progress {
   display: inline-block;
   border: 2px solid #cccccc;
   margin: 0px 0 10px;
-  width: 100%;
+  width: 90%;
 }
 .info_box_wide td {
   vertical-align: bottom;
@@ -844,6 +844,14 @@ table.basic_info {
 table.basic_info th {
   text-align: left;
   padding-right: 5px;
+}
+.edit_form {
+  position: relative;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+  background: white;
+  margin: 0 0 40px;
+  padding: 5px 10px 15px;
+  border: 2px solid #cccccc;
 }
 .question {
   position: relative;
