@@ -60,6 +60,11 @@ NavigationView = (function(_super) {
         Tangerine.activity = "";
         return this.router.navigate('logout', true);
       }
+    } else {
+      if (confirm("Are you sure you want to logout?")) {
+        Tangerine.activity = "";
+        return this.router.navigate('logout', true);
+      }
     }
   };
 
