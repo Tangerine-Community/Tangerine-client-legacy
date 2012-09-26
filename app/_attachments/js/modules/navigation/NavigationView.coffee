@@ -70,7 +70,7 @@ class NavigationView extends Backbone.View
     </div>
     <div id='version'>
     version <br/>
-    <span id='version-uuid'></span><br/>
+    <span id='version-uuid'>#{Tangerine.version}</span><br/>
     #{
       if Tangerine.user.isAdmin && Tangerine.settings.context != "server"
         "<a href='#update'>#{t('update')}</a>"
@@ -79,13 +79,6 @@ class NavigationView extends Backbone.View
     }
     </div>
     "
-
-    $.ajax "version",
-      dataType: "text"
-      success: (result) ->
-        $("#version-uuid").html result
-      error:
-        $("#version-uuid").html "-"
 
 
     # Spin the logo on ajax calls

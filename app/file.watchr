@@ -1,5 +1,6 @@
 def push
-  `git log --pretty=format:'%h' -n 1 > _attachments/version`
+  version = `git log --pretty=format:'%h' -n 1`
+  File.open("_attachments/js/version.js", "w") {|f| f.write("window.Tangerine.version = \"#{version}\"\;") }
   `couchapp push`
 end
 
@@ -32,9 +33,11 @@ watch ( '.*\.less$' ) { |match|
   end
 }
 
-watch ( '.*\.css$|.*\.js$|.*\.html$|.*\.json$' ) { |match| 
-  puts "\nUpdating:\t\t#{match}\nPushing to couchapp\n\n"
-  push()
+watch ( '.*\.css$|.*\.js$|.*\.html$|.*\.json$' ) { |match|
+  if match.string().index("version.js") == nil
+    puts "\nUpdating:\t\t#{match}\nPushing to couchapp\n\n"
+    push()
+  end
 }
 
 push()
