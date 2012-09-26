@@ -38,6 +38,10 @@ class NavigationView extends Backbone.View
       if confirm("Assessment not finished. Continue to logout?")
         Tangerine.activity = ""
         @router.navigate 'logout', true
+    else
+      if confirm("Are you sure you want to logout?")
+        Tangerine.activity = ""
+        @router.navigate 'logout', true
 
 
   initialize: (options) =>
