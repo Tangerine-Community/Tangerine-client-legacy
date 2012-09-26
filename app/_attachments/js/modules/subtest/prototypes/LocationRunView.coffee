@@ -2,17 +2,21 @@ class LocationRunView extends Backbone.View
 
   events:
     "click .school_list li" : "autofill"
-    "keyup input" : "showOptions"
-    "click clear" : "clearInputs"
+    "keyup input"  : "showOptions"
+    "click .clear" : "clearInputs"
 
   initialize: (options) ->
     
     @model  = @options.model
     @parent = @options.parent
     
-    @levels = @model.get("levels") || []
-    
+    @levels = @model.get("levels")       || []
     @locations = @model.get("locations") || []
+
+    if @levels.length == 1 && @levels[0] == ""
+      @levels = []
+    if @locations.length == 1 && @locations[0] == ""
+      @locations = []
 
     @haystack = []
 
@@ -31,10 +35,10 @@ class LocationRunView extends Backbone.View
     @li = _.template(template)
 
   clearInputs: ->
-    @$el.find("#school_id, #district, #province, #name").val("")
+    for level, i in @levels
+      @$el.find("#level_#{i}").val("")
 
   autofill: (event) ->
-    console.log event.target
     @$el.find(".autofill").fadeOut(250)
     index = $(event.target).attr("data-index")
     location = @locations[index]
@@ -86,6 +90,7 @@ class LocationRunView extends Backbone.View
     html = "
       <button class='clear command'>Clear</button>
       ";
+
     for level, i in @levels
       html += "
         <div class='label_value'>

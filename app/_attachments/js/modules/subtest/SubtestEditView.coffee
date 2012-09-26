@@ -143,8 +143,9 @@ class SubtestEditView extends Backbone.View
             <button class='student_done command'>Save</button> <button class='student_cancel command'>Cancel</button>
           </div>
         </div>
-        <div id='prototype_attributes'></div>
       </div>
+      <div id='prototype_attributes'></div>
+
       <button class='save_subtest command'>Done</button>
       "
 

@@ -13,7 +13,7 @@ LocationRunView = (function(_super) {
   LocationRunView.prototype.events = {
     "click .school_list li": "autofill",
     "keyup input": "showOptions",
-    "click clear": "clearInputs"
+    "click .clear": "clearInputs"
   };
 
   LocationRunView.prototype.initialize = function(options) {
@@ -22,6 +22,10 @@ LocationRunView = (function(_super) {
     this.parent = this.options.parent;
     this.levels = this.model.get("levels") || [];
     this.locations = this.model.get("locations") || [];
+    if (this.levels.length === 1 && this.levels[0] === "") this.levels = [];
+    if (this.locations.length === 1 && this.locations[0] === "") {
+      this.locations = [];
+    }
     this.haystack = [];
     _ref = this.locations;
     for (i = 0, _len = _ref.length; i < _len; i++) {
@@ -44,12 +48,18 @@ LocationRunView = (function(_super) {
   };
 
   LocationRunView.prototype.clearInputs = function() {
-    return this.$el.find("#school_id, #district, #province, #name").val("");
+    var i, level, _len, _ref, _results;
+    _ref = this.levels;
+    _results = [];
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      level = _ref[i];
+      _results.push(this.$el.find("#level_" + i).val(""));
+    }
+    return _results;
   };
 
   LocationRunView.prototype.autofill = function(event) {
     var i, index, level, location, _len, _ref, _results;
-    console.log(event.target);
     this.$el.find(".autofill").fadeOut(250);
     index = $(event.target).attr("data-index");
     location = this.locations[index];
