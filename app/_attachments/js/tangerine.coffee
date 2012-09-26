@@ -457,9 +457,19 @@ class Router extends Backbone.Router
         question = new Question _id : id
         question.fetch
           success: (model, response) ->
-            view = new QuestionEditView
-              model : model
-            vm.show view
+            assessment = new Assessment
+              "_id" : question.get("assessmentId")
+            assessment.fetch
+              success: ->
+                subtest = new Subtest
+                  "_id" : question.get("subtestId")
+                subtest.fetch
+                  success: ->
+                    view = new QuestionEditView
+                      "question"   : question
+                      "subtest"    : subtest
+                      "assessment" : assessment
+                    vm.show view
       isUser: ->
         Tangerine.router.navigate "", true
       isUnregistered: ->

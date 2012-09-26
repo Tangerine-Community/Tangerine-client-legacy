@@ -10,7 +10,6 @@ class QuestionEditView extends Backbone.View
     'click .delete_cancel'    : 'hideDeleteConfirm'
     'click .delete_delete'    : 'deleteOption'
     'click #question_type input:radio'       : 'changeQuestionType'
-    'click .delete_question'  : 'deleteQuestion'
     'keypress'                : 'hijackEnter'
     'change .option_select'   : 'templateFill'
     'keypress .option_value'  : 'quickAddWithEnter'
@@ -24,24 +23,23 @@ class QuestionEditView extends Backbone.View
     if event.keyCode? && event.keyCode != 13 then return true
     $(event.target).parent().find(".option_value").focus()
 
-
-
   templateFill: (event) ->
     index = $(event.target).find("option:selected").attr('data-index')
-    @model.set "options", Tangerine.templates.optionTemplates[index].options
+    @question.set "options", Tangerine.templates.optionTemplates[index].options
     @$el.find('#option_list_wrapper').html @getOptionList()
     return false
 
   goBack: =>
-    Tangerine.router.navigate "subtest/#{@model.get 'subtestId'}", true
+    Tangerine.router.navigate "subtest/#{@question.get 'subtestId'}", true
     return false
 
   initialize: (options) ->
-    @parent = options.parent
-    @model  = options.model
+    @question   = options.question
+    @subtest    = options.subtest
+    @assessment = options.assessment
 
   getOptionList: ->
-    options = @model.get "options" 
+    options = @question.get "options" 
     html = "<div id='option_list_wrapper'>
       <h2>Options</h2>
       <div class='menu_box'>
@@ -82,11 +80,11 @@ class QuestionEditView extends Backbone.View
   addOption: ->
     @updateModel()
 
-    options = @model.get "options"
+    options = @question.get "options"
     options.push
       label : ""
       value : ""
-    @model.set "options", options
+    @question.set "options", options
     
     # focus on next
     @$el.find('#option_list_wrapper').html(@getOptionList())
@@ -96,20 +94,34 @@ class QuestionEditView extends Backbone.View
 
 
   render: ->
-    name            = @model.escape("name")      || ""
-    prompt          = @model.escape("prompt")    || ""
-    hint            = @model.escape("hint")      || ""
-    skipLogic       = @model.escape("skipLogic") || ""
-    type            = @model.get "type"
-    options         = @model.get "options"
-    linkedGridScore = @model.get("linkedGridScore") || 0
-    skippable       = @model.get("skippable") == true || @model.get("skippable") == "true"
+    
+    assessmentName  = @assessment.escape("name")
+    subtestName     = @subtest.escape("name")
+    
+    name            = @question.escape("name")      || ""
+    prompt          = @question.escape("prompt")    || ""
+    hint            = @question.escape("hint")      || ""
+    skipLogic       = @question.escape("skipLogic") || ""
+    type            = @question.get "type"
+    options         = @question.get "options"
+    linkedGridScore = @question.get("linkedGridScore") || 0
+    skippable       = @question.get("skippable") == true || @question.get("skippable") == "true"
 
     checkOrRadio = if type == "multiple" then "checkbox" else "radio"
 
     @$el.html "
       <button class='back navigation'>Back</button>
       <h1>Question Editor</h1>
+      <table class='basic_info'>
+        <tr>
+          <th>Subtest</th>
+          <td>#{subtestName}</td>
+        </tr>
+        <tr>
+          <th>Assessment</th>
+          <td>#{assessmentName}</td>
+        </tr>
+      </table>
       <button class='done command'>Done</button>
       <div class='edit_form question'>
         <div class='label_value'>
@@ -190,11 +202,13 @@ class QuestionEditView extends Backbone.View
       return false
 
   changeQuestionType: (event) ->
+
     $target = $(event.target)
     # if it changes, redo the rendering
-    if ($target.val() != "open" && @model.get("type") == "open") || ($target.val() == "open" && @model.get("type") != "open")
-      @model.set "type", $target.val()
-      @model.set "options", []
+    if ($target.val() != "open" && @question.get("type") == "open") || ($target.val() == "open" && @question.get("type") != "open")
+      @updateModel()
+      @question.set "type", $target.val()
+      @question.set "options", []
       @render()
 
   #
@@ -203,22 +217,16 @@ class QuestionEditView extends Backbone.View
   done: ->
     @updateModel()
     # show a message and any we've collected along the way
-    if @model.save()
+    if @question.save()
       Utils.midAlert "Question Saved"
       setTimeout @goBack, 500
     else
       Utils.midAlert "Save error"
     return false
 
-  deleteQuestion: ->
-    @parent.questions.remove @model
-    @model.destroy()
-    @parentView.render()
-    return false
-
   updateModel: =>
     # basics
-    @model.set
+    @question.set
       "prompt"          : @$el.find("#prompt").val()
       "name"            : @$el.find("#name").val()
       "hint"            : @$el.find("#hint").val()
@@ -246,7 +254,7 @@ class QuestionEditView extends Backbone.View
       last = options.pop()
       if last.label != "" && last.value != "" then options.push last
 
-    @model.set "options", options
+    @question.set "options", options
 
 
         
@@ -257,9 +265,9 @@ class QuestionEditView extends Backbone.View
   hideDeleteConfirm: (event) -> @$el.find(".delete_confirm_#{@$el.find(event.target).attr('data-index')}").fadeOut(250)
   deleteOption: (event) ->
     @updateModel()
-    options = @model.get "options"
+    options = @question.get "options"
     options.splice @$el.find(event.target).attr('data-index'), 1
-    @model.set "options", options
-    @model.save()
+    @question.set "options", options
+    @question.save()
     @render false
     return false

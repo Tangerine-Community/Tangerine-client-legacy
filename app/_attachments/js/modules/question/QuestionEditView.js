@@ -23,7 +23,6 @@ QuestionEditView = (function(_super) {
     'click .delete_cancel': 'hideDeleteConfirm',
     'click .delete_delete': 'deleteOption',
     'click #question_type input:radio': 'changeQuestionType',
-    'click .delete_question': 'deleteQuestion',
     'keypress': 'hijackEnter',
     'change .option_select': 'templateFill',
     'keypress .option_value': 'quickAddWithEnter',
@@ -43,24 +42,25 @@ QuestionEditView = (function(_super) {
   QuestionEditView.prototype.templateFill = function(event) {
     var index;
     index = $(event.target).find("option:selected").attr('data-index');
-    this.model.set("options", Tangerine.templates.optionTemplates[index].options);
+    this.question.set("options", Tangerine.templates.optionTemplates[index].options);
     this.$el.find('#option_list_wrapper').html(this.getOptionList());
     return false;
   };
 
   QuestionEditView.prototype.goBack = function() {
-    Tangerine.router.navigate("subtest/" + (this.model.get('subtestId')), true);
+    Tangerine.router.navigate("subtest/" + (this.question.get('subtestId')), true);
     return false;
   };
 
   QuestionEditView.prototype.initialize = function(options) {
-    this.parent = options.parent;
-    return this.model = options.model;
+    this.question = options.question;
+    this.subtest = options.subtest;
+    return this.assessment = options.assessment;
   };
 
   QuestionEditView.prototype.getOptionList = function() {
     var html, i, option, options, _len;
-    options = this.model.get("options");
+    options = this.question.get("options");
     html = "<div id='option_list_wrapper'>      <h2>Options</h2>      <div class='menu_box'>        <ul class='option_list'>";
     for (i = 0, _len = options.length; i < _len; i++) {
       option = options[i];
@@ -72,12 +72,12 @@ QuestionEditView = (function(_super) {
   QuestionEditView.prototype.addOption = function() {
     var optionListElements, options;
     this.updateModel();
-    options = this.model.get("options");
+    options = this.question.get("options");
     options.push({
       label: "",
       value: ""
     });
-    this.model.set("options", options);
+    this.question.set("options", options);
     this.$el.find('#option_list_wrapper').html(this.getOptionList());
     optionListElements = this.$el.find("#option_list_wrapper li");
     if (optionListElements.length !== 0) {
@@ -86,18 +86,20 @@ QuestionEditView = (function(_super) {
   };
 
   QuestionEditView.prototype.render = function() {
-    var checkOrRadio, hint, i, linkedGridScore, name, option, optionHTML, options, prompt, skipLogic, skippable, type, _len, _ref,
+    var assessmentName, checkOrRadio, hint, i, linkedGridScore, name, option, optionHTML, options, prompt, skipLogic, skippable, subtestName, type, _len, _ref,
       _this = this;
-    name = this.model.escape("name") || "";
-    prompt = this.model.escape("prompt") || "";
-    hint = this.model.escape("hint") || "";
-    skipLogic = this.model.escape("skipLogic") || "";
-    type = this.model.get("type");
-    options = this.model.get("options");
-    linkedGridScore = this.model.get("linkedGridScore") || 0;
-    skippable = this.model.get("skippable") === true || this.model.get("skippable") === "true";
+    assessmentName = this.assessment.escape("name");
+    subtestName = this.subtest.escape("name");
+    name = this.question.escape("name") || "";
+    prompt = this.question.escape("prompt") || "";
+    hint = this.question.escape("hint") || "";
+    skipLogic = this.question.escape("skipLogic") || "";
+    type = this.question.get("type");
+    options = this.question.get("options");
+    linkedGridScore = this.question.get("linkedGridScore") || 0;
+    skippable = this.question.get("skippable") === true || this.question.get("skippable") === "true";
     checkOrRadio = type === "multiple" ? "checkbox" : "radio";
-    this.$el.html("      <button class='back navigation'>Back</button>      <h1>Question Editor</h1>      <button class='done command'>Done</button>      <div class='edit_form question'>        <div class='label_value'>          <label for='name'>Variable name</label>          <input id='name' type='text' value='" + name + "'>        </div>        <div class='label_value'>          <label for='prompt'>Prompt</label>          <input id='prompt' type='text' value='" + prompt + "'>        </div>        <div class='label_value'>          <label for='hint'>Hint</label>          <input id='hint' type='text' value='" + hint + "'>        </div>        <div class='label_value'>          <label for='skip-logic'>Skip if <span style='font-size: small;font-weight:normal'>example: ResultOfQuestion(\"maze1\") isnt \"2\"</span></label>          <input id='skip-logic' type='text' value='" + skipLogic + "'>        </div>        <div class='label_value'>          <label>Skippable</label>          <div id='skip_radio' class='buttonset'>            <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' " + (skippable ? 'checked' : void 0) + ">            <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' " + (!skippable ? 'checked' : void 0) + ">          </div>        </div>        <div class='label_value'>          <label for='linked_grid_score'>Items attempted required on linked grid</label>          <input id='linked_grid_score' type='number' value='" + linkedGridScore + "'>        </div>        <div class='label_value' id='question_type' class='question_type'>          <label>Question Type</label>          <div class='buttonset'>            <label for='single'>single</label>            <input id='single' name='type' type='radio' value='single' " + (type === 'single' ? 'checked' : void 0) + ">            <label for='multiple'>multiple</label>            <input id='multiple' name='type'  type='radio' value='multiple' " + (type === 'multiple' ? 'checked' : void 0) + ">            <label for='open'>open</label>            <input id='open' name='type'  type='radio' value='open' " + (type === 'open' ? 'checked' : void 0) + ">          </div>        </div>        ");
+    this.$el.html("      <button class='back navigation'>Back</button>      <h1>Question Editor</h1>      <table class='basic_info'>        <tr>          <th>Subtest</th>          <td>" + subtestName + "</td>        </tr>        <tr>          <th>Assessment</th>          <td>" + assessmentName + "</td>        </tr>      </table>      <button class='done command'>Done</button>      <div class='edit_form question'>        <div class='label_value'>          <label for='name'>Variable name</label>          <input id='name' type='text' value='" + name + "'>        </div>        <div class='label_value'>          <label for='prompt'>Prompt</label>          <input id='prompt' type='text' value='" + prompt + "'>        </div>        <div class='label_value'>          <label for='hint'>Hint</label>          <input id='hint' type='text' value='" + hint + "'>        </div>        <div class='label_value'>          <label for='skip-logic'>Skip if <span style='font-size: small;font-weight:normal'>example: ResultOfQuestion(\"maze1\") isnt \"2\"</span></label>          <input id='skip-logic' type='text' value='" + skipLogic + "'>        </div>        <div class='label_value'>          <label>Skippable</label>          <div id='skip_radio' class='buttonset'>            <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' " + (skippable ? 'checked' : void 0) + ">            <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' " + (!skippable ? 'checked' : void 0) + ">          </div>        </div>        <div class='label_value'>          <label for='linked_grid_score'>Items attempted required on linked grid</label>          <input id='linked_grid_score' type='number' value='" + linkedGridScore + "'>        </div>        <div class='label_value' id='question_type' class='question_type'>          <label>Question Type</label>          <div class='buttonset'>            <label for='single'>single</label>            <input id='single' name='type' type='radio' value='single' " + (type === 'single' ? 'checked' : void 0) + ">            <label for='multiple'>multiple</label>            <input id='multiple' name='type'  type='radio' value='multiple' " + (type === 'multiple' ? 'checked' : void 0) + ">            <label for='open'>open</label>            <input id='open' name='type'  type='radio' value='open' " + (type === 'open' ? 'checked' : void 0) + ">          </div>        </div>        ");
     if (type !== "open") {
       optionHTML = "        <div class='label_value'>        <label for='question_template_select'>Fill from template</label><br>        <div class='menu_box'>          <select id='question_template_select' class='option_select'>            <option disabled selected>Select template</option>        ";
       _ref = Tangerine.templates.optionTemplates;
@@ -134,16 +136,17 @@ QuestionEditView = (function(_super) {
   QuestionEditView.prototype.changeQuestionType = function(event) {
     var $target;
     $target = $(event.target);
-    if (($target.val() !== "open" && this.model.get("type") === "open") || ($target.val() === "open" && this.model.get("type") !== "open")) {
-      this.model.set("type", $target.val());
-      this.model.set("options", []);
+    if (($target.val() !== "open" && this.question.get("type") === "open") || ($target.val() === "open" && this.question.get("type") !== "open")) {
+      this.updateModel();
+      this.question.set("type", $target.val());
+      this.question.set("options", []);
       return this.render();
     }
   };
 
   QuestionEditView.prototype.done = function() {
     this.updateModel();
-    if (this.model.save()) {
+    if (this.question.save()) {
       Utils.midAlert("Question Saved");
       setTimeout(this.goBack, 500);
     } else {
@@ -152,16 +155,9 @@ QuestionEditView = (function(_super) {
     return false;
   };
 
-  QuestionEditView.prototype.deleteQuestion = function() {
-    this.parent.questions.remove(this.model);
-    this.model.destroy();
-    this.parentView.render();
-    return false;
-  };
-
   QuestionEditView.prototype.updateModel = function() {
     var i, label, last, li, optionListElements, options, value, _i, _len;
-    this.model.set({
+    this.question.set({
       "prompt": this.$el.find("#prompt").val(),
       "name": this.$el.find("#name").val(),
       "hint": this.$el.find("#hint").val(),
@@ -189,7 +185,7 @@ QuestionEditView = (function(_super) {
       last = options.pop();
       if (last.label !== "" && last.value !== "") options.push(last);
     }
-    return this.model.set("options", options);
+    return this.question.set("options", options);
   };
 
   QuestionEditView.prototype.showDeleteConfirm = function(event) {
@@ -203,10 +199,10 @@ QuestionEditView = (function(_super) {
   QuestionEditView.prototype.deleteOption = function(event) {
     var options;
     this.updateModel();
-    options = this.model.get("options");
+    options = this.question.get("options");
     options.splice(this.$el.find(event.target).attr('data-index'), 1);
-    this.model.set("options", options);
-    this.model.save();
+    this.question.set("options", options);
+    this.question.save();
     this.render(false);
     return false;
   };

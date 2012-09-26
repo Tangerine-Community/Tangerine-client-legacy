@@ -834,6 +834,17 @@ label.ui-button {
 /*
  * Question
  */
+table.basic_info {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 12px;
+  color: #999999;
+  display: block;
+}
+table.basic_info th {
+  text-align: left;
+  padding-right: 5px;
+}
 .question {
   position: relative;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
