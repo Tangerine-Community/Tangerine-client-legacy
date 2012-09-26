@@ -26,7 +26,7 @@ class CSVView extends Backbone.View
     "not_asked" : "."
 
   exportValue: (databaseValue) ->
-    if @exportValueMap[databaseValue] != undefined
+    if @exportValueMap[databaseValue]?
       return @exportValueMap[databaseValue]
     else
       return databaseValue
@@ -91,7 +91,6 @@ class CSVView extends Backbone.View
                 keys.push "#{surveyVariable}_#{i+1}"
 
 
-
         else if prototype == "complete"
           keys.push "additional_comments", "end_time", "gps_latitude", "gps_longitude", "gps_accuracy"
 
@@ -136,13 +135,7 @@ class CSVView extends Backbone.View
             values[keys.indexOf("#{variableName}_correct_per_minute")]   = subtest.sum.correct_per_minute
 
             for item, i in subtest.data.items
-              if item.itemResult == "correct"
-                exportValue = 1
-              else if item.itemResult == "incorrect"
-                exportValue = 0
-              else if item.itemResult == "missing"
-                exportValue = "."
-              values[keys.indexOf("#{variableName}#{i+1}")] = exportValue
+              values[keys.indexOf("#{variableName}#{i+1}")] = @exportValue(item.itemResult)
 
           else if prototype == "survey"
             for surveyVariable, surveyValue of subtest.data
@@ -150,8 +143,7 @@ class CSVView extends Backbone.View
                 for optionKey, optionValue of surveyValue
                   values[keys.indexOf("#{surveyVariable}_#{optionKey}")] = @exportValue(optionValue)
               else # single type question or open
-                exportValue = if surveyValue == "not_asked" then "." else surveyValue # if open just show result, otherwise translate not_asked
-                values[keys.indexOf("#{surveyVariable}")] = exportValue
+                values[keys.indexOf("#{surveyVariable}")] = @exportValue(surveyValue) # if open just show result, otherwise translate not_asked
 
           else if prototype == "observation"
             for observations, i in subtest.data.surveys

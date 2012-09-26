@@ -164,6 +164,32 @@ LocationRunView = (function(_super) {
     };
   };
 
+  LocationRunView.prototype.getSkipped = function() {
+    var i, level;
+    return {
+      "labels": (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.levels;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          level = _ref[_i];
+          _results.push(level.replace(/[\s-]/g, "_"));
+        }
+        return _results;
+      }).call(this),
+      "location": (function() {
+        var _len, _ref, _results;
+        _ref = this.levels;
+        _results = [];
+        for (i = 0, _len = _ref.length; i < _len; i++) {
+          level = _ref[i];
+          _results.push("skipped");
+        }
+        return _results;
+      }).call(this)
+    };
+  };
+
   LocationRunView.prototype.isValid = function() {
     var input, _i, _len, _ref;
     this.$el.find(".message").remove();

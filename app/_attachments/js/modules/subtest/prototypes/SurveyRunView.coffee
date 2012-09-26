@@ -64,11 +64,9 @@ class SurveyRunView extends Backbone.View
     return true
 
   getSkipped: ->
-    if ( model.get("skippable") == "true" || model.get("skippable") == true )
-      result = {}
-      for qv, i in @questionViews
-        result[@questions.models[i].get("name")] = qv.answer
-      return result
+    result = {}
+    result[@questions.models[i].get("name")] = "skipped" for qv, i in @questionViews
+    return result
 
   getResult: =>
     result = {}

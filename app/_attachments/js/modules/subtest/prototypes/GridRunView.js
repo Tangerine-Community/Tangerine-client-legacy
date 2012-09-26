@@ -447,8 +447,29 @@ GridRunView = (function(_super) {
     };
   };
 
-  GridRunView.prototype.getSkippedResult = function() {
-    return "skipped";
+  GridRunView.prototype.getSkipped = function() {
+    var i, item, itemResults, result, _len, _ref;
+    itemResults = [];
+    _ref = this.items;
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      item = _ref[i];
+      itemResults[i] = {
+        itemResult: "skipped",
+        itemLabel: item
+      };
+    }
+    return result = {
+      "capture_last_attempted": "skipped",
+      "item_at_time": "skipped",
+      "time_intermediate_captured": "skipped",
+      "capture_item_at_time": "skipped",
+      "auto_stop": "skipped",
+      "attempted": "skipped",
+      "items": itemResults,
+      "time_remain": "skipped",
+      "mark_record": "skipped",
+      "variable_name": this.model.get("variableName")
+    };
   };
 
   GridRunView.prototype.onClose = function() {

@@ -413,9 +413,25 @@ class GridRunView extends Backbone.View
       "mark_record"   : @markRecord
       "variable_name" : @model.get("variableName")
 
+  getSkipped: ->
+    itemResults = []
 
-  getSkippedResult: ->
-    return "skipped"
+    for item, i in @items
+      itemResults[i] =
+        itemResult : "skipped"
+        itemLabel  : item
+
+    result =
+      "capture_last_attempted"     : "skipped"
+      "item_at_time"               : "skipped"
+      "time_intermediate_captured" : "skipped"
+      "capture_item_at_time"       : "skipped"
+      "auto_stop"     : "skipped"
+      "attempted"     : "skipped"
+      "items"         : itemResults
+      "time_remain"   : "skipped"
+      "mark_record"   : "skipped"
+      "variable_name" : @model.get("variableName")
 
   onClose: ->
     clearInterval(@interval)

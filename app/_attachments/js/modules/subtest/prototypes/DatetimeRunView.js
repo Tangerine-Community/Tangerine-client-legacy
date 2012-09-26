@@ -26,7 +26,7 @@ DatetimeRunView = (function(_super) {
     minutes = dateTime.getMinutes();
     if (minutes < 10) minutes = "0" + minutes;
     time = dateTime.getHours() + ":" + minutes;
-    this.$el.html("      <form>          <table>            <tr>              <td><label for='year'>Year</label><input id='year' name='year' value='" + year + "'></td>              <td><label for='month'>Month</label><input id='month' type='month' name='month' value='" + month + "'></td>              <td><label for='day'>Day</label><input id='day' type='day' name='day' value='" + day + "'></td>            </tr>          </table>          <label for='time'>Time</label><input type='text' id='time' name='time' value='" + time + "'>      </form>      ");
+    this.$el.html("      <form>          <table>            <tr>              <td><label for='year'>Year</label><input id='year' name='year' value='" + year + "'></td>              <td><label for='month'>Month</label><input id='month' type='month' name='month' value='" + month + "'></td>              <td><label for='day'>Day</label><input id='day' type='day' name='day' value='" + day + "'></td>            </tr>          </table>          <label for='time'>Time</label><br><input type='text' id='time' name='time' value='" + time + "'>      </form>      ");
     return this.trigger("rendered");
   };
 
@@ -36,6 +36,15 @@ DatetimeRunView = (function(_super) {
       "month": this.$el.find("#month").val(),
       "day": this.$el.find("#day").val(),
       "time": this.$el.find("#time").val()
+    };
+  };
+
+  DatetimeRunView.prototype.getSkipped = function() {
+    return {
+      "year": "skipped",
+      "month": "skipped",
+      "day": "skipped",
+      "time": "skipped"
     };
   };
 

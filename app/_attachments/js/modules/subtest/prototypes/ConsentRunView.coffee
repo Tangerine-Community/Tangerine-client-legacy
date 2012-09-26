@@ -53,6 +53,9 @@ class ConsentRunView extends Backbone.View
     @parent.abort()
     return false
   
+  getSkipped: ->
+    return "consent" : "skipped"
+  
   showErrors: ->
     answer = @$el.find("input[name=participant_consents]:checked").val()
     if answer == "no"

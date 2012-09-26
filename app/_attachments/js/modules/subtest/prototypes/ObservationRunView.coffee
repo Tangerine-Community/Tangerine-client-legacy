@@ -17,6 +17,7 @@ class ObservationRunView extends Backbone.View
     @initializeFlags()
     @initializeSurvey()
 
+
   initializeSurvey: ->
     @onClose() if @survey? # if we're REinitializing close the old views first
     
@@ -26,6 +27,12 @@ class ObservationRunView extends Backbone.View
     # makes an array of identical models based on the above attributes
     models = (new Backbone.Model attributes for i in [1..parseInt(@model.get('totalSeconds')/@model.get('intervalLength'))])
     models.unshift("")
+    
+    @skippableView = new SurveyRunView
+      "model"         : models[1]
+      "parent"        : @
+      "isObservation" : true
+
     
     @survey =
       "models"    : models
@@ -208,6 +215,7 @@ class ObservationRunView extends Backbone.View
 
   onClose: ->
     @survey.view?.close()
+    @skippableView.close()
 
   getResult: ->
     {
@@ -221,6 +229,23 @@ class ObservationRunView extends Backbone.View
   getSum: ->
     {
       "total" : @my.observation.completed 
+    }
+
+  getSkipped: ->
+    viewResult = @skippableView.getSkipped()
+    skippedResults = []
+    for i in [1..(@survey.models.length-1)]
+      skippedResults.push
+        observationNumber : i # view's index
+        data              : viewResult
+        saveTime          : "skipped"
+
+    return {
+      "surveys"               : skippedResults
+      "variableName"          : "skipped"
+      "totalTime"             : "skipped"
+      "intervalLength"        : "skipped"
+      "completedObservations" : "skipped"
     }
 
   isValid: ->

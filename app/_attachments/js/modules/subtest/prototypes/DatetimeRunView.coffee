@@ -24,7 +24,7 @@ class DatetimeRunView extends Backbone.View
               <td><label for='day'>Day</label><input id='day' type='day' name='day' value='#{day}'></td>
             </tr>
           </table>
-          <label for='time'>Time</label><input type='text' id='time' name='time' value='#{time}'>
+          <label for='time'>Time</label><br><input type='text' id='time' name='time' value='#{time}'>
       </form>
       "
     @trigger "rendered"
@@ -36,6 +36,15 @@ class DatetimeRunView extends Backbone.View
       "day"   : @$el.find("#day").val()
       "time"  : @$el.find("#time").val()
     }
+
+  getSkipped: ->
+    return {
+      "year"  : "skipped"
+      "month" : "skipped"
+      "day"   : "skipped"
+      "time"  : "skipped"
+    }
+
   
   getSum: ->
     return {

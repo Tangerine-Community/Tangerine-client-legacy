@@ -36,7 +36,7 @@ CSVView = (function(_super) {
   };
 
   CSVView.prototype.exportValue = function(databaseValue) {
-    if (this.exportValueMap[databaseValue] !== void 0) {
+    if (this.exportValueMap[databaseValue] != null) {
       return this.exportValueMap[databaseValue];
     } else {
       return databaseValue;
@@ -44,7 +44,7 @@ CSVView = (function(_super) {
   };
 
   CSVView.prototype.render = function() {
-    var count, csvFile, d, exportValue, i, index, item, keys, label, maxIndex, maxLength, metaKey, monthData, months, observationData, observations, optionKey, optionValue, prototype, result, resultDataArray, row, subtest, subtestName, surveyValue, surveyVariable, tableHTML, values, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len12, _len13, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
+    var count, csvFile, d, i, index, item, keys, label, maxIndex, maxLength, metaKey, monthData, months, observationData, observations, optionKey, optionValue, prototype, result, resultDataArray, row, subtest, subtestName, surveyValue, surveyVariable, tableHTML, values, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len12, _len13, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
       _this = this;
     if ((this.results != null) && (this.results[0] != null)) {
       tableHTML = "";
@@ -170,14 +170,7 @@ CSVView = (function(_super) {
             _ref12 = subtest.data.items;
             for (i = 0, _len11 = _ref12.length; i < _len11; i++) {
               item = _ref12[i];
-              if (item.itemResult === "correct") {
-                exportValue = 1;
-              } else if (item.itemResult === "incorrect") {
-                exportValue = 0;
-              } else if (item.itemResult === "missing") {
-                exportValue = ".";
-              }
-              values[keys.indexOf("" + variableName + (i + 1))] = exportValue;
+              values[keys.indexOf("" + variableName + (i + 1))] = this.exportValue(item.itemResult);
             }
           } else if (prototype === "survey") {
             _ref13 = subtest.data;
@@ -189,8 +182,7 @@ CSVView = (function(_super) {
                   values[keys.indexOf("" + surveyVariable + "_" + optionKey)] = this.exportValue(optionValue);
                 }
               } else {
-                exportValue = surveyValue === "not_asked" ? "." : surveyValue;
-                values[keys.indexOf("" + surveyVariable)] = exportValue;
+                values[keys.indexOf("" + surveyVariable)] = this.exportValue(surveyValue);
               }
             }
           } else if (prototype === "observation") {

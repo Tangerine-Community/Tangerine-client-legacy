@@ -54,6 +54,12 @@ ConsentRunView = (function(_super) {
     return false;
   };
 
+  ConsentRunView.prototype.getSkipped = function() {
+    return {
+      "consent": "skipped"
+    };
+  };
+
   ConsentRunView.prototype.showErrors = function() {
     var answer;
     answer = this.$el.find("input[name=participant_consents]:checked").val();

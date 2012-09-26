@@ -34,6 +34,12 @@ IdRunView = (function(_super) {
     };
   };
 
+  IdRunView.prototype.getSkipped = function() {
+    return {
+      'participant_id': "skipped"
+    };
+  };
+
   IdRunView.prototype.getSum = function() {
     return {
       correct: 1,

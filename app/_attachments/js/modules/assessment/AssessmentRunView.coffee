@@ -68,6 +68,8 @@ class AssessmentRunView extends Backbone.View
       name      : currentView.model.get "name"
       data      : currentView.getSkipped()
       subtestId : currentView.model.id
+      skipped   : true
+      prototype : currentView.model.get "prototype"
       sum       : currentView.getSum()
     currentView.close()
     @index++ unless @abortAssessment == true

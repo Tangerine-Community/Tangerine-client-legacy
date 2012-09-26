@@ -109,11 +109,17 @@ class LocationRunView extends Backbone.View
     @trigger "rendered"
 
   getResult: ->
-    
     return {
       "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
       "location" : ($.trim(@$el.find("#level_#{i}").val()) for level, i in @levels)
     }
+
+  getSkipped: ->
+    return {
+      "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
+      "location" : ("skipped" for level, i in @levels)
+    }
+
 
   isValid: ->
     @$el.find(".message").remove()

@@ -49,6 +49,11 @@ ObservationRunView = (function(_super) {
       return _results;
     }).call(this);
     models.unshift("");
+    this.skippableView = new SurveyRunView({
+      "model": models[1],
+      "parent": this,
+      "isObservation": true
+    });
     return this.survey = {
       "models": models,
       "results": []
@@ -243,7 +248,8 @@ ObservationRunView = (function(_super) {
 
   ObservationRunView.prototype.onClose = function() {
     var _ref;
-    return (_ref = this.survey.view) != null ? _ref.close() : void 0;
+    if ((_ref = this.survey.view) != null) _ref.close();
+    return this.skippableView.close();
   };
 
   ObservationRunView.prototype.getResult = function() {
@@ -259,6 +265,26 @@ ObservationRunView = (function(_super) {
   ObservationRunView.prototype.getSum = function() {
     return {
       "total": this.my.observation.completed
+    };
+  };
+
+  ObservationRunView.prototype.getSkipped = function() {
+    var i, skippedResults, viewResult, _ref;
+    viewResult = this.skippableView.getSkipped();
+    skippedResults = [];
+    for (i = 1, _ref = this.survey.models.length - 1; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
+      skippedResults.push({
+        observationNumber: i,
+        data: viewResult,
+        saveTime: "skipped"
+      });
+    }
+    return {
+      "surveys": skippedResults,
+      "variableName": "skipped",
+      "totalTime": "skipped",
+      "intervalLength": "skipped",
+      "completedObservations": "skipped"
     };
   };
 
