@@ -74,8 +74,10 @@ class SurveyRunView extends Backbone.View
       result[@questions.models[i].get("name")] =
         if qv.notAsked
           qv.notAskedResult
-        else if qv.$el.hasClass("disabled_skipped")
+        else if qv.skipped
           qv.skippedResult
+        else if qv.$el.hasClass("disabled_skipped")
+          qv.logicSkippedResult
         else if _.isEmpty(qv.answer)
           qv.missingResult
         else

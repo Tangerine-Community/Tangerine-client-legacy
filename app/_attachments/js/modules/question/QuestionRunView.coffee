@@ -9,18 +9,21 @@ class QuestionRunView extends Backbone.View
   initialize: (options) ->
     @model = options.model
 
-    @answer = {}
-    @name    = @model.escape("name").replace /[^A-Za-z0-9_]/g, "-"
-    @type    = @model.get "type"
-    @options = @model.get "options"
+    @answer   = {}
+    @name     = @model.escape("name").replace /[^A-Za-z0-9_]/g, "-"
+    @type     = @model.get "type"
+    @options  = @model.get "options"
     @notAsked = options.notAsked
+
 
     @defineSpecialCaseResults()
 
     if @model.get("skippable") == "true" || @model.get("skippable") == true
       @isValid = true
+      @skipped = true
     else
       @isValid = false
+      @skipped = false
     
     if @notAsked == true
       @isValid = true
@@ -54,11 +57,9 @@ class QuestionRunView extends Backbone.View
   updateValidity: ->
     if @model.get("skippable") is true or $("#question-#{@name}").hasClass("disabled_skipped")
       @isValid = true
+      @skipped = if _.isEmpty(@answer) then true else false
     else
-      if _.isEmpty(@answer)
-        @isValid = false
-      else
-        @isValid = true
+      @isValid = if _.isEmpty(@answer) then false else true
     
   setMessage: (message) =>
     @$el.find(".error_message").html message
@@ -94,7 +95,7 @@ class QuestionRunView extends Backbone.View
     @trigger "rendered"
   
   defineSpecialCaseResults: ->
-    list = ["missing", "notAsked", "skipped"]
+    list = ["missing", "notAsked", "skipped", "logicSkipped"]
     for element in list
       if @type == "single" || @type == "open"
         @[element+"Result"] = element

@@ -29,8 +29,10 @@ QuestionRunView = (function(_super) {
     this.defineSpecialCaseResults();
     if (this.model.get("skippable") === "true" || this.model.get("skippable") === true) {
       this.isValid = true;
+      this.skipped = true;
     } else {
       this.isValid = false;
+      this.skipped = false;
     }
     if (this.notAsked === true) {
       this.isValid = true;
@@ -78,13 +80,10 @@ QuestionRunView = (function(_super) {
 
   QuestionRunView.prototype.updateValidity = function() {
     if (this.model.get("skippable") === true || $("#question-" + this.name).hasClass("disabled_skipped")) {
-      return this.isValid = true;
+      this.isValid = true;
+      return this.skipped = _.isEmpty(this.answer) ? true : false;
     } else {
-      if (_.isEmpty(this.answer)) {
-        return this.isValid = false;
-      } else {
-        return this.isValid = true;
-      }
+      return this.isValid = _.isEmpty(this.answer) ? false : true;
     }
   };
 
@@ -121,7 +120,7 @@ QuestionRunView = (function(_super) {
 
   QuestionRunView.prototype.defineSpecialCaseResults = function() {
     var element, i, list, option, _i, _len, _len2, _ref;
-    list = ["missing", "notAsked", "skipped"];
+    list = ["missing", "notAsked", "skipped", "logicSkipped"];
     for (_i = 0, _len = list.length; _i < _len; _i++) {
       element = list[_i];
       if (this.type === "single" || this.type === "open") {

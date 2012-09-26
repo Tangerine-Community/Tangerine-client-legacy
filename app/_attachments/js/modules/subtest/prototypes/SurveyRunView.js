@@ -120,7 +120,7 @@ SurveyRunView = (function(_super) {
     _ref = this.questionViews;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       qv = _ref[i];
-      result[this.questions.models[i].get("name")] = qv.notAsked ? qv.notAskedResult : qv.$el.hasClass("disabled_skipped") ? qv.skippedResult : _.isEmpty(qv.answer) ? qv.missingResult : qv.answer;
+      result[this.questions.models[i].get("name")] = qv.notAsked ? qv.notAskedResult : qv.skipped ? qv.skippedResult : qv.$el.hasClass("disabled_skipped") ? qv.logicSkippedResult : _.isEmpty(qv.answer) ? qv.missingResult : qv.answer;
     }
     return result;
   };
