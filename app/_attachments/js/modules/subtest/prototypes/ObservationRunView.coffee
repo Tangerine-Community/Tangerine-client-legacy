@@ -9,6 +9,9 @@ class ObservationRunView extends Backbone.View
   @FORCE = 1
 
   initialize: (options) ->
+
+
+
     @model  = @options.model
     @parent = @options.parent
 
@@ -71,9 +74,12 @@ class ObservationRunView extends Backbone.View
 
   stopObservations: (e) ->
     clearInterval @timerInterval
-
+    fromClick = e?
     isntPrematureStop = ! e?
-    if isntPrematureStop && !@iHave.finished
+    if e? 
+      @trigger "showNext"
+
+    if isntPrematureStop && not @iHave.finished
       if @iAm.recording
         @resetObservationFlags()
         @saveCurrentSurvey()
@@ -149,12 +155,17 @@ class ObservationRunView extends Backbone.View
   getTime: -> parseInt( ( new Date() ).getTime() / 1000 )
 
   completeObservation: (option) ->
+
     if @survey.view.isValid()
       @saveCurrentSurvey()
+      @trigger "showNext" if @iHave.finished
     else
       @survey.view.showErrors()
 
     @tick() # update displays
+
+
+
 
   saveCurrentSurvey: =>
     @resetObservationFlags()
@@ -168,6 +179,7 @@ class ObservationRunView extends Backbone.View
 
 
   render: ->
+    @trigger "hideNext"
     totalSeconds = @model.get("totalSeconds")
 
     @$el.html "
@@ -178,7 +190,7 @@ class ObservationRunView extends Backbone.View
         </div>
         <div>
           <div class='start_button_wrapper'><button class='start_time command'>Start</button></div>
-          <div class='stop_button_wrapper confirmation'><button class='stop_time command'>Finish all observations</button></div>
+          <div class='stop_button_wrapper confirmation'><button class='stop_time command'>Abort <i>all</i> observations</button></div>
         </div>
       </div>
       <div id='current_survey'></div>
@@ -203,7 +215,7 @@ class ObservationRunView extends Backbone.View
 
     @$el.find("#current_survey").html("<span class='observation_display confirmation'>Observation <div class='info_box current_observation'>#{@my.observation.index}</div></span>")
     @$el.find("#current_survey").append @survey.view.el
-    @$el.find("#current_survey").append "<button class='command done'>Done observation</button>"
+    @$el.find("#current_survey").append "<button class='command done'>Done with <i>this</i> observation</button>"
     
     @$el.find("#current_survey").scrollTo 250, => 
       if @iHave.forcedProgression

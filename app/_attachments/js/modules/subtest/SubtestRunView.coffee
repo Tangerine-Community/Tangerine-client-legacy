@@ -25,22 +25,28 @@ class SubtestRunView extends Backbone.View
       <h2>#{@model.get 'name'}</h2>
       #{enumeratorHelp}
       #{studentDialog}
+      <div id='prototype_wrapper'></div>
+      <div class='controlls'>
+        <button class='next navigation'>Next</button>#{if skippable then skipButton else "" }
+      </div>
     "
-
+  
     # Use prototype specific views here
     @prototypeView = new window[@protoViews[@model.get 'prototype']['run']]
       model: @model
       parent: @
-    @prototypeView.on "rendered", => @trigger "rendered"
+    @prototypeView.on "rendered",    => @trigger "rendered"
     @prototypeView.on "subRendered", => @trigger "subRendered"
-
+    @prototypeView.on "showNext",    => @showNext()
+    @prototypeView.on "hideNext",    => @hideNext()
+    @prototypeView.setElement(@$el.find('#prototype_wrapper'))
     @prototypeView.render()
-    @$el.append @prototypeView.el
     @prototypeRendered = true
 
-    @$el.append "<button class='next navigation'>Next</button>#{if skippable then skipButton else "" }"
-
     @trigger "rendered"
+
+  showNext: => @$el.find(".controlls").show() 
+  hideNext: => @$el.find(".controlls").hide()
 
 
   getGridScore: ->

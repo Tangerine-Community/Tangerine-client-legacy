@@ -97,9 +97,11 @@ ObservationRunView = (function(_super) {
   };
 
   ObservationRunView.prototype.stopObservations = function(e) {
-    var isntPrematureStop;
+    var fromClick, isntPrematureStop;
     clearInterval(this.timerInterval);
+    fromClick = e != null;
     isntPrematureStop = !(e != null);
+    if (e != null) this.trigger("showNext");
     if (isntPrematureStop && !this.iHave.finished) {
       if (this.iAm.recording) {
         this.resetObservationFlags();
@@ -192,6 +194,7 @@ ObservationRunView = (function(_super) {
   ObservationRunView.prototype.completeObservation = function(option) {
     if (this.survey.view.isValid()) {
       this.saveCurrentSurvey();
+      if (this.iHave.finished) this.trigger("showNext");
     } else {
       this.survey.view.showErrors();
     }
@@ -212,8 +215,9 @@ ObservationRunView = (function(_super) {
 
   ObservationRunView.prototype.render = function() {
     var totalSeconds;
+    this.trigger("hideNext");
     totalSeconds = this.model.get("totalSeconds");
-    this.$el.html("      <div class='timer_wrapper'>        <div class='progress clearfix'>          <span class='completed_display confirmation'>Completed <div class='info_box completed_count'>" + this.my.observation.completed + "</div></span>          <span class='next_display confirmation'>Next observation <div class='info_box time_till_next'>" + (this.model.get('intervalLength')) + "</div></span>        </div>        <div>          <div class='start_button_wrapper'><button class='start_time command'>Start</button></div>          <div class='stop_button_wrapper confirmation'><button class='stop_time command'>Finish all observations</button></div>        </div>      </div>      <div id='current_survey'></div>    ");
+    this.$el.html("      <div class='timer_wrapper'>        <div class='progress clearfix'>          <span class='completed_display confirmation'>Completed <div class='info_box completed_count'>" + this.my.observation.completed + "</div></span>          <span class='next_display confirmation'>Next observation <div class='info_box time_till_next'>" + (this.model.get('intervalLength')) + "</div></span>        </div>        <div>          <div class='start_button_wrapper'><button class='start_time command'>Start</button></div>          <div class='stop_button_wrapper confirmation'><button class='stop_time command'>Abort <i>all</i> observations</button></div>        </div>      </div>      <div id='current_survey'></div>    ");
     return this.trigger("rendered");
   };
 
@@ -235,7 +239,7 @@ ObservationRunView = (function(_super) {
     this.survey.view.render();
     this.$el.find("#current_survey").html("<span class='observation_display confirmation'>Observation <div class='info_box current_observation'>" + this.my.observation.index + "</div></span>");
     this.$el.find("#current_survey").append(this.survey.view.el);
-    this.$el.find("#current_survey").append("<button class='command done'>Done observation</button>");
+    this.$el.find("#current_survey").append("<button class='command done'>Done with <i>this</i> observation</button>");
     return this.$el.find("#current_survey").scrollTo(250, function() {
       if (_this.iHave.forcedProgression) {
         Utils.midAlert("Please continue with the next observation.");
