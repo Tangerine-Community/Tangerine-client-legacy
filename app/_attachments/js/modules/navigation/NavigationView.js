@@ -44,6 +44,8 @@ NavigationView = (function(_super) {
         Tangerine.activity = "";
         return this.router.navigate('', true);
       }
+    } else {
+      return this.router.navigate('', true);
     }
   };
 
