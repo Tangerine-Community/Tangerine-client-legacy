@@ -34,6 +34,8 @@ class Router extends Backbone.Router
     'assessments/:group' : 'assessments'
 
     'run/:id'       : 'run'
+
+    'resume/:assessmentId/:resultId'    : 'resume'
     
     'restart/:id'   : 'restart'
     'edit/:id'      : 'edit'
@@ -321,6 +323,31 @@ class Router extends Backbone.Router
             vm.show view
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
+
+  resume: (assessmentId, resultId) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        assessment = new Assessment
+          "_id" : assessmentId
+        assessment.fetch
+          success : ( assessment ) ->
+            result = new Result
+              "_id" : resultId
+            result.fetch
+              success: (result) ->
+                view = new AssessmentRunView 
+                  model: assessment
+                view.result = result
+                view.subtestViews.pop()
+                view.subtestViews.push new ResultView
+                  model          : result
+                  assessment     : assessment
+                  assessmentView : view
+                view.index = result.get("subtestData").length
+                vm.show view
+      isUnregistered: (options) ->
+        Tangerine.router.navigate "login", true
+
 
   results: (assessmentId) ->
     Tangerine.user.verify

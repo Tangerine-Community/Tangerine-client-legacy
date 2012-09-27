@@ -15,7 +15,12 @@ ResultSumView = (function(_super) {
   ResultSumView.prototype.className = "info_box";
 
   ResultSumView.prototype.events = {
-    'click .details': 'toggleDetails'
+    'click .details': 'toggleDetails',
+    'click .resume': 'resume'
+  };
+
+  ResultSumView.prototype.resume = function() {
+    return Tangerine.router.navigate("resume/" + (this.result.get('assessmentId')) + "/" + this.result.id, true);
   };
 
   ResultSumView.prototype.toggleDetails = function() {
@@ -23,13 +28,15 @@ ResultSumView = (function(_super) {
   };
 
   ResultSumView.prototype.initialize = function(options) {
-    var prototype, subtest, _i, _len, _ref, _results;
+    var prototype, subtest, _i, _len, _ref, _ref2, _results;
     this.result = options.model;
+    this.finishCheck = options.finishCheck;
+    this.finished = ((_ref = _.last(this.result.attributes.subtestData)) != null ? _ref.data.end_time : void 0) != null ? true : false;
     this.studentId = "";
-    _ref = this.result.attributes.subtestData;
+    _ref2 = this.result.attributes.subtestData;
     _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      subtest = _ref[_i];
+    for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+      subtest = _ref2[_i];
       prototype = subtest.prototype;
       if (prototype === "id") {
         this.studentId = subtest.data.participant_id;
@@ -42,11 +49,26 @@ ResultSumView = (function(_super) {
   };
 
   ResultSumView.prototype.render = function() {
-    var datum, html, i, _len, _ref;
-    html = "<div>        " + this.studentId + "        " + (moment(new Date(this.result.get('timestamp'))).format('YYYY-MMM-DD HH:mm')) + "        (" + (moment(new Date(this.result.get('timestamp'))).fromNow()) + ")        <button class='details command'>details</button>      </div>      <div class='confirmation detail_box'>";
-    _ref = this.result.get("subtestData");
-    for (i = 0, _len = _ref.length; i < _len; i++) {
-      datum = _ref[i];
+    var datum, endTime, html, i, savedEnd, startTime, timestamp, _len, _ref, _ref2;
+    if (this.finished || !this.finishCheck) {
+      savedEnd = (_ref = _.last(this.result.attributes.subtestData)) != null ? _ref.data.end_time : void 0;
+      timestamp = this.result.get('timestamp');
+      if (timestamp != null) {
+        endTime = new Date(timestamp);
+      } else if (savedEnd != null) {
+        endTime = new Date(savedEnd);
+      } else {
+        endTime = new Date();
+      }
+      html = "        <div>          " + this.studentId + "          " + (moment(endTime).format('YYYY-MMM-DD HH:mm')) + "          (" + (moment(endTime).fromNow()) + ")          <button class='details command'>details</button>        </div>";
+    } else {
+      startTime = new Date(this.result.has('start_time') ? this.result.get("start_time") : this.result.get("starttime"));
+      html = "<div>Not finished ( " + (moment(startTime).fromNow()) + " ) <button class='command resume'>Resume</button></div>";
+    }
+    html += "<div class='confirmation detail_box'>";
+    _ref2 = this.result.get("subtestData");
+    for (i = 0, _len = _ref2.length; i < _len; i++) {
+      datum = _ref2[i];
       html += "<div><span id='" + this.cid + "_" + i + "'></span>" + datum.name + " - items " + datum.sum.total + "</div>";
     }
     html += "      </div>    ";

@@ -150,7 +150,9 @@ class ResultsView extends Backbone.View
       @$el.append "No results yet!"
     else
       for result in @results
-        view = new ResultSumView model: result
+        view = new ResultSumView
+          model: result
+          finishCheck : true
         view.render()
         @subViews.push view
         @$el.append view.el

@@ -34,6 +34,7 @@ Router = (function(_super) {
     'assessments': 'assessments',
     'assessments/:group': 'assessments',
     'run/:id': 'run',
+    'resume/:assessmentId/:resultId': 'resume',
     'restart/:id': 'restart',
     'edit/:id': 'edit',
     'csv/:id': 'csv',
@@ -504,6 +505,45 @@ Router = (function(_super) {
               model: model
             });
             return vm.show(view);
+          }
+        });
+      },
+      isUnregistered: function(options) {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.resume = function(assessmentId, resultId) {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var assessment;
+        assessment = new Assessment({
+          "_id": assessmentId
+        });
+        return assessment.fetch({
+          success: function(assessment) {
+            var result;
+            result = new Result({
+              "_id": resultId
+            });
+            return result.fetch({
+              success: function(result) {
+                var view;
+                view = new AssessmentRunView({
+                  model: assessment
+                });
+                view.result = result;
+                view.subtestViews.pop();
+                view.subtestViews.push(new ResultView({
+                  model: result,
+                  assessment: assessment,
+                  assessmentView: view
+                }));
+                view.index = result.get("subtestData").length;
+                return vm.show(view);
+              }
+            });
           }
         });
       },

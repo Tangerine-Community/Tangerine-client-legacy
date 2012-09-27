@@ -4,12 +4,20 @@ class ResultSumView extends Backbone.View
 
   events:
     'click .details' : 'toggleDetails'
+    'click .resume' : 'resume'
+
+
+  resume: ->
+    Tangerine.router.navigate "resume/#{@result.get('assessmentId')}/#{@result.id}", true
 
   toggleDetails: ->
     @$el.find('.detail_box').toggle(250)
 
   initialize: ( options ) ->
     @result = options.model
+    @finishCheck = options.finishCheck
+    @finished = if _.last(@result.attributes.subtestData)?.data.end_time? then true else false
+    
     @studentId = ""
     for subtest in @result.attributes.subtestData
       prototype = subtest.prototype
@@ -19,13 +27,28 @@ class ResultSumView extends Backbone.View
 
 
   render: ->
-    html = "<div>
-        #{@studentId}
-        #{moment(new Date(@result.get('timestamp'))).format( 'YYYY-MMM-DD HH:mm' )}
-        (#{moment(new Date(@result.get('timestamp'))).fromNow()})
-        <button class='details command'>details</button>
-      </div>
-      <div class='confirmation detail_box'>"
+    if @finished || !@finishCheck
+      savedEnd = _.last(@result.attributes.subtestData)?.data.end_time
+      timestamp = @result.get('timestamp')
+      if timestamp?
+        endTime = new Date(timestamp) 
+      else if savedEnd?
+        endTime = new Date(savedEnd)
+      else
+        endTime = new Date()
+
+      html = "
+        <div>
+          #{@studentId}
+          #{moment(endTime).format( 'YYYY-MMM-DD HH:mm' )}
+          (#{moment(endTime).fromNow()})
+          <button class='details command'>details</button>
+        </div>"
+    else
+      startTime = new Date(if @result.has('start_time') then @result.get("start_time") else @result.get("starttime"))
+      html = "<div>Not finished ( #{moment(startTime).fromNow()} ) <button class='command resume'>Resume</button></div>"
+    
+    html += "<div class='confirmation detail_box'>"
     for datum, i in @result.get("subtestData")
       html += "<div><span id='#{@cid}_#{i}'></span>#{datum.name} - items #{datum.sum.total}</div>"
     html += "

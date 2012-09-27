@@ -191,7 +191,8 @@ ResultsView = (function(_super) {
       for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
         result = _ref2[_i];
         view = new ResultSumView({
-          model: result
+          model: result,
+          finishCheck: true
         });
         view.render();
         this.subViews.push(view);
