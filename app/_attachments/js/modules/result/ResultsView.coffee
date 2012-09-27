@@ -7,24 +7,23 @@ class ResultsView extends Backbone.View
     'click .detect'  : 'detectOptions'
 
   cloud: ->
-    if not @available.cloud
+    if @available.cloud.ok
+      $.couch.replicate(
+        Tangerine.config.address.local.dbName,
+        Tangerine.config.address.cloud.host+"/"+Tangerine.config.address.cloud.dbName,
+          success:      =>
+            @$el.find(".status").find(".info_box").html "Results synced to cloud successfully"
+          error: (a, b) =>
+            @$el.find(".status").find(".info_box").html "<div>Sync error</div><div>#{a} #{b}</div>"
+        ,
+          doc_ids: @docList
+      )
+    else
       Utils.midAlert "Cannot detect cloud"
-      return false
-    @$el.find(".status").find(".info_box").html ""
-    ajaxOptions =
-      success: =>
-        @$el.find(".status").find(".info_box").html "Results uploaded successfully"
-      error: (res) =>
-        @$el.find(".status").find(".info_box").html "<div>Upload error</div><div>#{res}</div>"
-    replicationOptions =
-      filter: Tangerine.config.address.local.dbName+"/resultFilter"
-      query_params:
-        assessmentId: @assessment.id
-    $.couch.replicate(Tangerine.config.address.local.dbName, Tangerine.config.address.cloud.host+"/"+Tangerine.config.address.cloud.dbName, ajaxOptions, replicationOptions)
+    return false
 
 
   tablets: ->
-    console.log "Syncing to #{@available.tablets.okCount} tablets"
     if @available.tablets.okCount > 0
       for ip in @available.tablets.ips
         do (ip) =>
@@ -34,7 +33,7 @@ class ResultsView extends Backbone.View
               success:      =>
                 @$el.find(".status").find(".info_box").html "Results synced to #{@available.tablets.okCount} successfully"
               error: (a, b) =>
-                @$el.find(".status").find(".info_box").html "<div>Replication error</div><div>#{a} #{b}</div>"
+                @$el.find(".status").find(".info_box").html "<div>Sync error</div><div>#{a} #{b}</div>"
             ,
               doc_ids: @docList
           )
@@ -49,7 +48,7 @@ class ResultsView extends Backbone.View
 
   #  Tangerine.router.navigate "csv/"+@assessment.id, true
 
-  detectOptions: ->
+  initDetectOptions: ->
     @available = 
       cloud : 
         ok : false
@@ -59,7 +58,8 @@ class ResultsView extends Backbone.View
         okCount  : 0
         checked  : 0
         total : 256
-    
+
+  detectOptions: ->
     @detectCloud()
     @detectTablets()
     
@@ -101,7 +101,7 @@ class ResultsView extends Backbone.View
       message = "#{percentage}%"
     tabletMessage = "Searching for tablets: #{message}"
 
-    @$el.find(".checking_status").html "#{tabletMessage}"
+    @$el.find(".checking_status").html "#{tabletMessage}" if @available.tablets.checked > 0 
 
     if @available.cloud.checked && @available.tablets.checked == @available.tablets.total
       @$el.find(".status .info_box").html "Done detecting options"
@@ -122,6 +122,9 @@ class ResultsView extends Backbone.View
     @docList = []
     for result in @results
       @docList.push result.id
+
+    @initDetectOptions()
+    @detectCloud()
 
     
   render: ->

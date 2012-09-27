@@ -22,34 +22,27 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.cloud = function() {
-    var ajaxOptions, replicationOptions,
-      _this = this;
-    if (!this.available.cloud) {
+    var _this = this;
+    if (this.available.cloud.ok) {
+      $.couch.replicate(Tangerine.config.address.local.dbName, Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName, {
+        success: function() {
+          return _this.$el.find(".status").find(".info_box").html("Results synced to cloud successfully");
+        },
+        error: function(a, b) {
+          return _this.$el.find(".status").find(".info_box").html("<div>Sync error</div><div>" + a + " " + b + "</div>");
+        }
+      }, {
+        doc_ids: this.docList
+      });
+    } else {
       Utils.midAlert("Cannot detect cloud");
-      return false;
     }
-    this.$el.find(".status").find(".info_box").html("");
-    ajaxOptions = {
-      success: function() {
-        return _this.$el.find(".status").find(".info_box").html("Results uploaded successfully");
-      },
-      error: function(res) {
-        return _this.$el.find(".status").find(".info_box").html("<div>Upload error</div><div>" + res + "</div>");
-      }
-    };
-    replicationOptions = {
-      filter: Tangerine.config.address.local.dbName + "/resultFilter",
-      query_params: {
-        assessmentId: this.assessment.id
-      }
-    };
-    return $.couch.replicate(Tangerine.config.address.local.dbName, Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName, ajaxOptions, replicationOptions);
+    return false;
   };
 
   ResultsView.prototype.tablets = function() {
     var ip, _fn, _i, _len, _ref,
       _this = this;
-    console.log("Syncing to " + this.available.tablets.okCount + " tablets");
     if (this.available.tablets.okCount > 0) {
       _ref = this.available.tablets.ips;
       _fn = function(ip) {
@@ -58,7 +51,7 @@ ResultsView = (function(_super) {
             return _this.$el.find(".status").find(".info_box").html("Results synced to " + _this.available.tablets.okCount + " successfully");
           },
           error: function(a, b) {
-            return _this.$el.find(".status").find(".info_box").html("<div>Replication error</div><div>" + a + " " + b + "</div>");
+            return _this.$el.find(".status").find(".info_box").html("<div>Sync error</div><div>" + a + " " + b + "</div>");
           }
         }, {
           doc_ids: _this.docList
@@ -82,8 +75,8 @@ ResultsView = (function(_super) {
     return view.render();
   };
 
-  ResultsView.prototype.detectOptions = function() {
-    this.available = {
+  ResultsView.prototype.initDetectOptions = function() {
+    return this.available = {
       cloud: {
         ok: false,
         checked: false
@@ -95,6 +88,9 @@ ResultsView = (function(_super) {
         total: 256
       }
     };
+  };
+
+  ResultsView.prototype.detectOptions = function() {
     this.detectCloud();
     return this.detectTablets();
   };
@@ -154,7 +150,9 @@ ResultsView = (function(_super) {
       message = "" + percentage + "%";
     }
     tabletMessage = "Searching for tablets: " + message;
-    this.$el.find(".checking_status").html("" + tabletMessage);
+    if (this.available.tablets.checked > 0) {
+      this.$el.find(".checking_status").html("" + tabletMessage);
+    }
     if (this.available.cloud.checked && this.available.tablets.checked === this.available.tablets.total) {
       this.$el.find(".status .info_box").html("Done detecting options");
       this.$el.find(".checking_status").hide();
@@ -168,19 +166,19 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.initialize = function(options) {
-    var result, _i, _len, _ref, _results;
+    var result, _i, _len, _ref;
     this.subViews = [];
     this.results = options.results;
     this.model = options.model;
     this.assessment = options.assessment;
     this.docList = [];
     _ref = this.results;
-    _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       result = _ref[_i];
-      _results.push(this.docList.push(result.id));
+      this.docList.push(result.id);
     }
-    return _results;
+    this.initDetectOptions();
+    return this.detectCloud();
   };
 
   ResultsView.prototype.render = function() {
