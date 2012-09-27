@@ -16,7 +16,12 @@ QuestionRunView = (function(_super) {
 
   QuestionRunView.prototype.events = {
     'change input': 'update',
-    'change textarea': 'update'
+    'change textarea': 'update',
+    'click .autoscroll_icon': 'scroll'
+  };
+
+  QuestionRunView.prototype.scroll = function(event) {
+    return this.trigger("scroll", event, this.model.get("order"));
   };
 
   QuestionRunView.prototype.initialize = function(options) {
@@ -26,6 +31,7 @@ QuestionRunView = (function(_super) {
     this.type = this.model.get("type");
     this.options = this.model.get("options");
     this.notAsked = options.notAsked;
+    this.isObservation = options.isObservation;
     this.defineSpecialCaseResults();
     if (this.model.get("skippable") === "true" || this.model.get("skippable") === true) {
       this.isValid = true;
@@ -102,7 +108,6 @@ QuestionRunView = (function(_super) {
         } else {
           html += "<div><input id='" + this.cid + "_" + this.name + "' data-cid='" + this.cid + "'></div>";
         }
-        this.$el.html(html);
       } else {
         checkOrRadio = this.type === "multiple" ? "checkbox" : "radio";
         _ref = this.options;
@@ -110,8 +115,11 @@ QuestionRunView = (function(_super) {
           option = _ref[i];
           html += "            <label for='" + this.cid + "_" + this.name + "_" + i + "'>" + option.label + "</label>            <input id='" + this.cid + "_" + this.name + "_" + i + "' class='" + this.cid + "_" + this.name + "'  data-cid='" + this.cid + "' name='" + this.name + "' value='" + option.value + "' type='" + checkOrRadio + "'>          ";
         }
-        this.$el.html(html);
       }
+      if (this.isObservation) {
+        html += "<img src='images/icon_scroll.png' class='icon autoscroll_icon' data-cid='" + this.cid + "'>";
+      }
+      this.$el.html(html);
     } else {
       this.$el.hide();
     }

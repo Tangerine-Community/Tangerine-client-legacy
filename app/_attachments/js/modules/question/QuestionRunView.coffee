@@ -3,8 +3,13 @@ class QuestionRunView extends Backbone.View
   className: "question buttonset"
 
   events:
-    'change input'    : 'update'
-    'change textarea' : 'update'
+    'change input'           : 'update'
+    'change textarea'        : 'update'
+    'click .autoscroll_icon' : 'scroll'
+
+
+  scroll: (event) ->
+    @trigger "scroll", event, @model.get("order")
 
   initialize: (options) ->
     @model = options.model
@@ -14,6 +19,7 @@ class QuestionRunView extends Backbone.View
     @type     = @model.get "type"
     @options  = @model.get "options"
     @notAsked = options.notAsked
+    @isObservation = options.isObservation
 
 
     @defineSpecialCaseResults()
@@ -79,8 +85,7 @@ class QuestionRunView extends Backbone.View
           html += "<div><textarea id='#{@cid}_#{@name}' data-cid='#{@cid}'></textarea></div>"
         else
           html += "<div><input id='#{@cid}_#{@name}' data-cid='#{@cid}'></div>"
-        @$el.html html
-
+      
       else
         checkOrRadio = if @type == "multiple" then "checkbox" else "radio"
         for option, i in @options
@@ -88,10 +93,13 @@ class QuestionRunView extends Backbone.View
             <label for='#{@cid}_#{@name}_#{i}'>#{option.label}</label>
             <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}'  data-cid='#{@cid}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}'>
           "
-        @$el.html html
+      html += "<img src='images/icon_scroll.png' class='icon autoscroll_icon' data-cid='#{@cid}'>" if @isObservation
+      @$el.html html
 
     else
       @$el.hide()
+
+
     @trigger "rendered"
   
   defineSpecialCaseResults: ->

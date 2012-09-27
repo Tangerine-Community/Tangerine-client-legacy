@@ -13,7 +13,7 @@ class NavigationView extends Backbone.View
     'click #corner_logo'      : 'logoClick'
     'click #enumerator'       : 'enumeratorClick'
   }
-    
+
   enumeratorClick: -> Tangerine.router.navigate "account", true
 
   logoClick:-> 
@@ -43,6 +43,7 @@ class NavigationView extends Backbone.View
         Tangerine.activity = ""
         @router.navigate 'logout', true
 
+  onClose: ->
 
   initialize: (options) =>
     @render()

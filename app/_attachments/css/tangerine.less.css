@@ -927,6 +927,11 @@ table.basic_info th {
   right: 0;
   top: 0;
 }
+.autoscroll_icon {
+  position: absolute;
+  right: -40px;
+  bottom: 0;
+}
 .subtest_element td {
   padding-right: 10px;
   vertical-align: middle;

@@ -68,6 +68,8 @@ NavigationView = (function(_super) {
     }
   };
 
+  NavigationView.prototype.onClose = function() {};
+
   NavigationView.prototype.initialize = function(options) {
     this.render();
     this.user = options.user;

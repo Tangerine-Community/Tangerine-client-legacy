@@ -33,7 +33,7 @@ class SurveyRunView extends Backbone.View
           next = $(view.el).next()
           while next.length != 0 && next.hasClass("disabled_skipped")
             next = $(next).next()
-
+          
           # if it's not the last, scroll to it
           if next.length != 0
             next.scrollTo()
@@ -139,8 +139,9 @@ class SurveyRunView extends Backbone.View
           model         : question
           parent        : @
           notAsked      : isNotAsked
+          isObservation : @isObservation
         oneView.on "rendered", @onQuestionRendered
-        oneView.on "answer",   @onQuestionAnswer
+        oneView.on "answer scroll",   @onQuestionAnswer
 
         oneView.render()
         @questionViews[i] = oneView

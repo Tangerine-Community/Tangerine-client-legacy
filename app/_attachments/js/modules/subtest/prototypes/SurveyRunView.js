@@ -195,10 +195,11 @@ SurveyRunView = (function(_super) {
         oneView = new QuestionRunView({
           model: question,
           parent: this,
-          notAsked: isNotAsked
+          notAsked: isNotAsked,
+          isObservation: this.isObservation
         });
         oneView.on("rendered", this.onQuestionRendered);
-        oneView.on("answer", this.onQuestionAnswer);
+        oneView.on("answer scroll", this.onQuestionAnswer);
         oneView.render();
         this.questionViews[i] = oneView;
         this.$el.append(oneView.el);
