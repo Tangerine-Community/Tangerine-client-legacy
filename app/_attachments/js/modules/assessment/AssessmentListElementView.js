@@ -59,7 +59,17 @@ AssessmentListElementView = (function(_super) {
   };
 
   AssessmentListElementView.prototype.update = function() {
-    return this.model.updateFromServer();
+    var _this = this;
+    this.model.updateFromServer();
+    return this.model.on("status", function(message) {
+      if (message === "import success") {
+        Utils.midAlert("Updated");
+        return _this.parent.refresh();
+      } else if (message === "import error") {
+        Utils.midAlert("Update failed");
+        return _this.parent.refresh();
+      }
+    });
   };
 
   AssessmentListElementView.prototype.archive = function() {

@@ -34,7 +34,14 @@ class AssessmentListElementView extends Backbone.View
 
   update: ->
     @model.updateFromServer()
-  
+    @model.on "status", (message) =>
+      if message == "import success"
+        Utils.midAlert "Updated"
+        @parent.refresh()
+      else if message == "import error"
+        Utils.midAlert "Update failed"
+        @parent.refresh()
+      
   archive: ->
     result = @$el.find(".archive :selected").val() == "true"
     if result == true
