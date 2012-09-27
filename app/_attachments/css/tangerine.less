@@ -1001,6 +1001,12 @@ table.basic_info
 
 }
 
+.disabled_skipped
+{
+  height: 25px !important;
+  overflow: hidden;
+}
+
 .disabled_skipped:after
 {
     background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQImWP4DwHPGP7////s/////wGOCw+/Sq1MagAAAABJRU5ErkJggg==") repeat scroll 0 0 transparent;
@@ -1009,9 +1015,10 @@ table.basic_info
     content: "Skipped";
     display: block;
     float: left;
-    font-size: 50px;
+    font-size: 30px;
+    font-weight: bold;
     left: 0;
-    padding: 10px;
+    padding: 7px;
     position: absolute;
     right: 0;
     text-align: center;
