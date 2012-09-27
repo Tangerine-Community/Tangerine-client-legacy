@@ -298,6 +298,7 @@ class GridRunView extends Backbone.View
     
     if @layoutMode == "fixed"
       gridHTML += "<table class='grid #{disabling}'>"
+      firstRow = true
       loop
         break if done > @items.length
         gridHTML += "<tr>"
@@ -305,7 +306,13 @@ class GridRunView extends Backbone.View
           if done < @items.length
             gridHTML += @gridElement { label : _.escape(@items[@itemMap[done]]), i: done+1 }
           done++
-        gridHTML += @endOfGridLine({i:done}) if done < ( @items.length + 1 ) && @endOfLine
+        # don't show the skip row button for the first row
+        if firstRow
+          gridHTML += "<td></td>" if done < ( @items.length + 1 ) && @endOfLine
+          firstRow = false
+        else
+          gridHTML += @endOfGridLine({i:done}) if done < ( @items.length + 1 ) && @endOfLine
+
         gridHTML += "</tr>"
       gridHTML += "</table>"
     else
