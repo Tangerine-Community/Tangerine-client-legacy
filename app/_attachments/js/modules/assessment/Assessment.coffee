@@ -24,17 +24,23 @@ class Assessment extends Backbone.Model
   updateFromServer: ( dKey = @id.substr(-5,5)) =>
 
     @trigger "status", "import lookup"
-    repOps =
-      'filter' : 'tangerine/importFilter'
-      'create_target' : true
-      'query_params' :
-        'downloadKey' : dKey
-
-    opts =
-      success: =>     @trigger "status", "import success"
-      error: (a,b) => @trigger "status", "import error", "#{a} #{b}"
-    
-    $.couch.replicate Tangerine.config.address.cloud.host+":"+Tangerine.config.address.port+"/"+Tangerine.config.address.cloud.dbName, Tangerine.config.address.local.dbName, opts, repOps
+    dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g," ").split(/\s+/))
+    $.ajax "http://tangerine.iriscouch.com/tangerine/_design/tangerine/_view/byDKey",
+      type: "POST"
+      dataType: "jsonp"
+      data: keys: dKeys
+      success: (data) =>
+        docList = []
+        for datum in data.rows
+          docList.push datum.id
+        $.couch.replicate(
+          Tangerine.config.address.cloud.host+"/"+Tangerine.config.address.cloud.dbName,
+          Tangerine.config.address.local.dbName,
+            success:      => @trigger "status", "import success"
+            error: (a, b) => @trigger "status", "import error", "#{a} #{b}"
+          ,
+            doc_ids: docList
+        )
 
     false
 

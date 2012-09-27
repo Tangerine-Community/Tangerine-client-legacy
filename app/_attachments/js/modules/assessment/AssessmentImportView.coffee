@@ -41,7 +41,7 @@ class AssessmentImportView extends Backbone.View
       success: (tasks) => 
         for task in tasks
           if task.type.toLowerCase() == "replication"
-            @activity = task.status
+            if not _.isEmpty(task.status) then @activity = task.status
             @updateProgress()
 
 
@@ -68,16 +68,17 @@ class AssessmentImportView extends Backbone.View
         @importList[key]++
       else
         @importList[key] = 1
-
+  
     progressHTML = "<table>"
+
     for key, value of @importList
       progressHTML += "<tr><td>#{key.titleize().pluralize()}</td><td>#{value}</td></tr>"
-    
+
     if @activity?
       progressHTML += "<tr><td colspan='2'>#{@activity}</td></tr>"
-    
+
     progressHTML += "</table>"
-    
+
     @$el.find("#progress").html progressHTML
 
   render: ->
@@ -93,7 +94,7 @@ class AssessmentImportView extends Backbone.View
     </div>
 
     <div class='confirmation status'>
-      <h2>status<h2>
+      <h2>Status<h2>
       <div class='info_box' id='progress'></div>
     </div>
 

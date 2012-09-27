@@ -40,26 +40,37 @@ Assessment = (function(_super) {
   };
 
   Assessment.prototype.updateFromServer = function(dKey) {
-    var opts, repOps,
+    var dKeys,
       _this = this;
     if (dKey == null) dKey = this.id.substr(-5, 5);
     this.trigger("status", "import lookup");
-    repOps = {
-      'filter': 'tangerine/importFilter',
-      'create_target': true,
-      'query_params': {
-        'downloadKey': dKey
-      }
-    };
-    opts = {
-      success: function() {
-        return _this.trigger("status", "import success");
+    dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/));
+    $.ajax("http://tangerine.iriscouch.com/tangerine/_design/tangerine/_view/byDKey", {
+      type: "POST",
+      dataType: "jsonp",
+      data: {
+        keys: dKeys
       },
-      error: function(a, b) {
-        return _this.trigger("status", "import error", "" + a + " " + b);
+      success: function(data) {
+        var datum, docList, _i, _len, _ref;
+        docList = [];
+        _ref = data.rows;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          datum = _ref[_i];
+          docList.push(datum.id);
+        }
+        return $.couch.replicate(Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName, Tangerine.config.address.local.dbName, {
+          success: function() {
+            return _this.trigger("status", "import success");
+          },
+          error: function(a, b) {
+            return _this.trigger("status", "import error", "" + a + " " + b);
+          }
+        }, {
+          doc_ids: docList
+        });
       }
-    };
-    $.couch.replicate(Tangerine.config.address.cloud.host + ":" + Tangerine.config.address.port + "/" + Tangerine.config.address.cloud.dbName, Tangerine.config.address.local.dbName, opts, repOps);
+    });
     return false;
   };
 
