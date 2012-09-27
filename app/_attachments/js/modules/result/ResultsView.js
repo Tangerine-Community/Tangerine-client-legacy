@@ -47,28 +47,22 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.tablets = function() {
-    var ip, _fn, _i, _len, _ref;
-    console.log("Syncing to " + this.availableTablets + " tablets");
-    if (!this.available.tablets.okCount) {
+    var ip, _fn, _i, _len, _ref,
+      _this = this;
+    console.log("Syncing to " + this.available.tablets.okCount + " tablets");
+    if (this.available.tablets.okCount > 0) {
       _ref = this.available.tablets.ips;
       _fn = function(ip) {
-        var ajaxOptions, replicationOptions,
-          _this = this;
-        ajaxOptions = {
+        return $.couch.replicate(Tangerine.config.address.local.dbName, ("http://" + ip + ":5984/") + Tangerine.config.address.local.dbName, {
           success: function() {
-            return _this.$el.find(".status").find(".info_box").html("Results synced successfully");
+            return _this.$el.find(".status").find(".info_box").html("Results synced to " + _this.available.tablets.okCount + " successfully");
           },
-          error: function(res) {
-            return _this.$el.find(".status").find(".info_box").html("<div>Sync error</div><div>" + res + "</div>");
+          error: function(a, b) {
+            return _this.$el.find(".status").find(".info_box").html("<div>Replication error</div><div>" + a + " " + b + "</div>");
           }
-        };
-        replicationOptions = {
-          "filter": Tangerine.config.address.local.dbName + "/resultFilter",
-          "query_params": {
-            "assessmentId": this.assessment.id
-          }
-        };
-        return $.couch.replicate(Tangerine.config.address.local.dbName, ("http://" + ip + ":5984/") + Tangerine.config.address.local.dbName, ajaxOptions, replicationOptions);
+        }, {
+          doc_ids: _this.docList
+        });
       };
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         ip = _ref[_i];
@@ -117,6 +111,7 @@ ResultsView = (function(_super) {
         return _this.available.cloud.ok = false;
       },
       complete: function() {
+        _this.available.cloud.checked = true;
         return _this.updateOptions();
       }
     });
@@ -142,7 +137,7 @@ ResultsView = (function(_super) {
               _this.available.tablets.okCount++;
               _this.available.tablets.ips.push(ip);
             }
-            return _this.updateOptions;
+            return _this.updateOptions();
           }
         });
       })(local, port));
@@ -151,25 +146,41 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.updateOptions = function() {
-    var tabletMessage;
+    var message, percentage, tabletMessage;
+    percentage = Math.decimals((this.available.tablets.checked / this.available.tablets.total) * 100, 2);
+    if (percentage === 100) {
+      message = "finished";
+    } else {
+      message = "" + percentage + "%";
+    }
+    tabletMessage = "Searching for tablets: " + message;
+    this.$el.find(".checking_status").html("" + tabletMessage);
+    if (this.available.cloud.checked && this.available.tablets.checked === this.available.tablets.total) {
+      this.$el.find(".status .info_box").html("Done detecting options");
+      this.$el.find(".checking_status").hide();
+    }
     if (this.available.cloud.ok) {
       this.$el.find('button.cloud').removeAttr('disabled');
     }
-    if (this.available.tablets.okCount > 0) {
-      this.$el.find('button.tablets').removeAttr('disabled');
-    }
-    tabletMessage = "Tablet detection: " + (Math.decimals((this.available.tablets.checked / this.available.tablets.total) * 100, 2)) + "%";
-    this.$el.find(".checking_status").html("" + tabletMessage);
-    if (this.available.cloud.checked && this.available.tablets.checked === this.available.tablets.total) {
-      return this.$el.find(".status .info_box").html("Done detecting options");
+    if (this.available.tablets.okCount > 0 && percentage === 100) {
+      return this.$el.find('button.tablets').removeAttr('disabled');
     }
   };
 
   ResultsView.prototype.initialize = function(options) {
+    var result, _i, _len, _ref, _results;
     this.subViews = [];
     this.results = options.results;
     this.model = options.model;
-    return this.assessment = options.assessment;
+    this.assessment = options.assessment;
+    this.docList = [];
+    _ref = this.results;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      result = _ref[_i];
+      _results.push(this.docList.push(result.id));
+    }
+    return _results;
   };
 
   ResultsView.prototype.render = function() {
@@ -178,9 +189,9 @@ ResultsView = (function(_super) {
     cloudButton = "<button class='cloud command' disabled='disabled'>Cloud</button>";
     tabletButton = "<button class='tablets command' disabled='disabled'>Tablets</button>";
     csvButton = "<button class='csv command'>CSV</button>";
-    html = "      <h1>" + (this.assessment.get('name')) + "</h1>      <h2>Save options</h2>      <div class='menu_box'>        " + (Tangerine.settings.context === "mobile" ? cloudButton : "") + "        " + (Tangerine.settings.context === "mobile" ? tabletButton : "") + "        " + csvButton + "        <div class='checking_status'></div>      </div>";
+    html = "      <h1>" + (this.assessment.get('name')) + "</h1>      <h2>Save options</h2>      <div class='menu_box'>        " + (Tangerine.settings.context === "mobile" ? cloudButton : "") + "        " + (Tangerine.settings.context === "mobile" ? tabletButton : "") + "        " + csvButton + "      </div>";
     if (Tangerine.settings.context === "mobile") {
-      html += "        <button class='detect command'>Detect options</button>        <div class='status'>          <h2>Status</h2>          <div class='info_box'></div>        </div>        ";
+      html += "        <button class='detect command'>Detect options</button>        <div class='status'>          <h2>Status</h2>          <div class='info_box'></div>          <div class='checking_status'></div>        </div>        ";
     }
     html += "      <h2>Results</h2>    ";
     this.$el.html(html);

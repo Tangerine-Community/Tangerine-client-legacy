@@ -24,22 +24,20 @@ class ResultsView extends Backbone.View
 
 
   tablets: ->
-    console.log "Syncing to #{@availableTablets} tablets"
-    if not @available.tablets.okCount
+    console.log "Syncing to #{@available.tablets.okCount} tablets"
+    if @available.tablets.okCount > 0
       for ip in @available.tablets.ips
-        do (ip) ->
-          ajaxOptions =
-            success: =>
-              @$el.find(".status").find(".info_box").html "Results synced successfully"
-            error: (res) =>
-              @$el.find(".status").find(".info_box").html "<div>Sync error</div><div>#{res}</div>"
-
-          replicationOptions = 
-            "filter": Tangerine.config.address.local.dbName+"/resultFilter"
-            "query_params":
-              "assessmentId": @assessment.id
-          $.couch.replicate(Tangerine.config.address.local.dbName, "http://#{ip}:5984/"+Tangerine.config.address.local.dbName, ajaxOptions, replicationOptions)
-
+        do (ip) =>
+          $.couch.replicate(
+            Tangerine.config.address.local.dbName,
+            "http://#{ip}:5984/"+Tangerine.config.address.local.dbName,
+              success:      =>
+                @$el.find(".status").find(".info_box").html "Results synced to #{@available.tablets.okCount} successfully"
+              error: (a, b) =>
+                @$el.find(".status").find(".info_box").html "<div>Replication error</div><div>#{a} #{b}</div>"
+            ,
+              doc_ids: @docList
+          )
     else
       Utils.midAlert "Cannot detect tablets"
     return false
@@ -75,6 +73,7 @@ class ResultsView extends Backbone.View
       error: (a, b) =>
         @available.cloud.ok = false
       complete: =>
+        @available.cloud.checked = true
         @updateOptions()
 
   detectTablets: =>
@@ -92,20 +91,27 @@ class ResultsView extends Backbone.View
             if xhr.status == 200
               @available.tablets.okCount++
               @available.tablets.ips.push ip
-            @updateOptions
+            @updateOptions()
 
   updateOptions: =>
-    if @available.cloud.ok
-      @$el.find('button.cloud').removeAttr('disabled')
-    if @available.tablets.okCount > 0
-      @$el.find('button.tablets').removeAttr('disabled')
-
-    tabletMessage = "Tablet detection: #{Math.decimals((@available.tablets.checked / @available.tablets.total) * 100, 2)}%"
+    percentage = Math.decimals((@available.tablets.checked / @available.tablets.total) * 100, 2)
+    if percentage == 100
+      message = "finished"
+    else
+      message = "#{percentage}%"
+    tabletMessage = "Searching for tablets: #{message}"
 
     @$el.find(".checking_status").html "#{tabletMessage}"
 
     if @available.cloud.checked && @available.tablets.checked == @available.tablets.total
       @$el.find(".status .info_box").html "Done detecting options"
+      @$el.find(".checking_status").hide()
+
+    if @available.cloud.ok
+      @$el.find('button.cloud').removeAttr('disabled')
+    if @available.tablets.okCount > 0 && percentage == 100
+      @$el.find('button.tablets').removeAttr('disabled')
+
 
 
   initialize: ( options ) ->
@@ -113,6 +119,10 @@ class ResultsView extends Backbone.View
     @results = options.results
     @model = options.model
     @assessment = options.assessment
+    @docList = []
+    for result in @results
+      @docList.push result.id
+
     
   render: ->
 
@@ -129,7 +139,6 @@ class ResultsView extends Backbone.View
         #{if Tangerine.settings.context == "mobile" then cloudButton  else ""}
         #{if Tangerine.settings.context == "mobile" then tabletButton else ""}
         #{csvButton}
-        <div class='checking_status'></div>
       </div>"
 
     if Tangerine.settings.context == "mobile"
@@ -138,6 +147,8 @@ class ResultsView extends Backbone.View
         <div class='status'>
           <h2>Status</h2>
           <div class='info_box'></div>
+          <div class='checking_status'></div>
+
         </div>
         "
     html += "
