@@ -115,7 +115,7 @@ AssessmentImportView = (function(_super) {
   };
 
   AssessmentImportView.prototype.render = function() {
-    this.$el.html("    <button class='back navigation'>Back</button>    <h1>Tangerine Central Import</h1>    <div class='question'>      <label for='d_key'>Download key</label>      <input id='d_key' value=''>      <button class='import command'>Import</button><br>      <small>Server connection: <span id='server_connection'>" + this.serverStatus + "</span></small>    </div>    <div class='confirmation status'>      <h2>Status<h2>      <div class='info_box' id='progress'></div>    </div>    ");
+    this.$el.html("    <button class='back navigation'>Back</button>    <h1>Tangerine Central Import</h1>    <div class='question'>      <label for='d_key'>Download keys</label>      <input id='d_key' value=''>      <button class='import command'>Import</button><br>      <small>Server connection: <span id='server_connection'>" + this.serverStatus + "</span></small>    </div>    <div class='confirmation status'>      <h2>Status<h2>      <div class='info_box' id='progress'></div>    </div>    ");
     return this.trigger("rendered");
   };
 

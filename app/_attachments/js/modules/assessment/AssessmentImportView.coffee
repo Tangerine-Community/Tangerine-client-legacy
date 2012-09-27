@@ -87,7 +87,7 @@ class AssessmentImportView extends Backbone.View
 
     <h1>Tangerine Central Import</h1>
     <div class='question'>
-      <label for='d_key'>Download key</label>
+      <label for='d_key'>Download keys</label>
       <input id='d_key' value=''>
       <button class='import command'>Import</button><br>
       <small>Server connection: <span id='server_connection'>#{@serverStatus}</span></small>
