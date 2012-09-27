@@ -11,15 +11,11 @@ AssessmentRunView = (function(_super) {
   }
 
   AssessmentRunView.prototype.initialize = function(options) {
+    var resultView,
+      _this = this;
     this.abortAssessment = false;
     this.index = 0;
     this.model = options.model;
-    return this.initializeViews();
-  };
-
-  AssessmentRunView.prototype.initializeViews = function() {
-    var resultView,
-      _this = this;
     Tangerine.activity = "assessment run";
     this.subtestViews = [];
     this.model.subtests.sort();
@@ -32,8 +28,7 @@ AssessmentRunView = (function(_super) {
     this.result = new Result({
       assessmentId: this.model.id,
       assessmentName: this.model.get("name"),
-      blank: true,
-      starttime: (new Date()).getTime()
+      blank: true
     });
     resultView = new ResultView({
       model: this.result,
@@ -46,7 +41,6 @@ AssessmentRunView = (function(_super) {
   AssessmentRunView.prototype.render = function() {
     var currentView,
       _this = this;
-    if (this.index === 0 && (this.result != null)) this.initializeViews();
     currentView = this.subtestViews[this.index];
     if (this.model.subtests.length === 0) {
       this.$el.append("<h1>Oops...</h1><p>This assessment is blank. Perhaps you meant to add some subtests.</p>");

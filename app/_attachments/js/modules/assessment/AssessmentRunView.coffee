@@ -4,9 +4,7 @@ class AssessmentRunView extends Backbone.View
     @abortAssessment = false
     @index = 0
     @model = options.model
-    @initializeViews()
 
-  initializeViews: ->
     Tangerine.activity = "assessment run"
     @subtestViews = []
     @model.subtests.sort()
@@ -18,7 +16,6 @@ class AssessmentRunView extends Backbone.View
       assessmentId   : @model.id
       assessmentName : @model.get "name"
       blank          : true
-      starttime     : (new Date()).getTime()
     resultView = new ResultView
         model          : @result
         assessment     : @model
@@ -26,11 +23,7 @@ class AssessmentRunView extends Backbone.View
     @subtestViews.push resultView
   
   render: ->
-    # this prevents doubling up results
-    # the inefficiency is that it gets called twice the first time
-    if @index == 0 && @result?
-      @initializeViews()
-      
+ 
     currentView = @subtestViews[@index]
     
     if @model.subtests.length == 0
