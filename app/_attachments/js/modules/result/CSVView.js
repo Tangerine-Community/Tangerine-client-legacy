@@ -10,6 +10,15 @@ CSVView = (function(_super) {
     CSVView.__super__.constructor.apply(this, arguments);
   }
 
+  CSVView.prototype.exportValueMap = {
+    "correct": 1,
+    "checked": 1,
+    "incorrect": 0,
+    "unchecked": 0,
+    "missing": ".",
+    "not_asked": "."
+  };
+
   CSVView.prototype.initialize = function(options) {
     var allResults,
       _this = this;
@@ -22,17 +31,7 @@ CSVView = (function(_super) {
         return _this.render();
       }
     });
-    this.disallowedKeys = ["mark_record"];
-    return this.metaKeys = ["enumerator", "starttime", "timestamp"];
-  };
-
-  CSVView.prototype.exportValueMap = {
-    "correct": 1,
-    "checked": 1,
-    "incorrect": 0,
-    "unchecked": 0,
-    "missing": ".",
-    "not_asked": "."
+    return this.metaKeys = ["enumerator"];
   };
 
   CSVView.prototype.exportValue = function(databaseValue) {
@@ -44,107 +43,105 @@ CSVView = (function(_super) {
   };
 
   CSVView.prototype.render = function() {
-    var count, csvFile, d, i, index, item, keys, label, maxIndex, maxLength, metaKey, monthData, months, observationData, observations, optionKey, optionValue, prototype, result, resultDataArray, row, subtest, subtestName, surveyValue, surveyVariable, tableHTML, values, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len12, _len13, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
+    var columns, count, csvFile, csvRowData, d, i, index, item, keyBucket, keyChain, label, metaKey, monthData, months, observationData, observations, optionKey, optionValue, prototype, result, row, sI, subtest, subtestName, surveyValue, surveyVariable, tableHTML, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len12, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _ref, _ref10, _ref11, _ref12, _ref13, _ref14, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
       _this = this;
     if ((this.results != null) && (this.results[0] != null)) {
       tableHTML = "";
-      resultDataArray = [];
-      keys = [];
-      _ref = this.metaKeys;
+      csvRowData = [];
+      columns = [];
+      keyChain = [];
+      _ref = this.results;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        metaKey = _ref[_i];
-        keys.push(metaKey);
-      }
-      maxIndex = 0;
-      maxLength = 0;
-      _ref2 = this.results;
-      for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
-        subtest = _ref2[i];
-        if (subtest.attributes.subtestData.length > maxLength) {
-          maxIndex = i;
-          maxLength = subtest.attributes.subtestData.length;
-        }
-      }
-      _ref3 = this.results[maxIndex].attributes.subtestData;
-      for (_j = 0, _len3 = _ref3.length; _j < _len3; _j++) {
-        subtest = _ref3[_j];
-        subtestName = subtest.name.toLowerCase().dasherize();
-        prototype = subtest.prototype;
-        if (prototype === "id") {
-          keys.push("id");
-        } else if (prototype === "datetime") {
-          keys.push("year", "month", "date", "assess_time");
-        } else if (prototype === "location") {
-          _ref4 = subtest.data.labels;
-          for (_k = 0, _len4 = _ref4.length; _k < _len4; _k++) {
-            label = _ref4[_k];
-            keys.push(label);
-          }
-        } else if (prototype === "consent") {
-          keys.push("consent");
-        } else if (prototype === "grid") {
-          variableName = subtest.data.variable_name;
-          keys.push("" + variableName + "_auto_stop", "" + variableName + "_time_remain", "" + variableName + "_attempted", "" + variableName + "_item_at_time", "" + variableName + "_time_intermediate_captured", "" + variableName + "_correct_per_minute");
-          _ref5 = subtest.data.items;
-          for (i = 0, _len5 = _ref5.length; i < _len5; i++) {
-            item = _ref5[i];
-            keys.push("" + variableName + (i + 1));
-          }
-        } else if (prototype === "survey") {
-          _ref6 = subtest.data;
-          for (surveyVariable in _ref6) {
-            surveyValue = _ref6[surveyVariable];
-            if (_.isObject(surveyValue)) {
-              for (optionKey in surveyValue) {
-                optionValue = surveyValue[optionKey];
-                keys.push("" + surveyVariable + "_" + optionKey);
-              }
-            } else {
-              keys.push(surveyVariable);
+        result = _ref[_i];
+        _ref2 = result.attributes.subtestData;
+        for (sI = 0, _len2 = _ref2.length; sI < _len2; sI++) {
+          subtest = _ref2[sI];
+          subtestName = subtest.name.toLowerCase().dasherize();
+          prototype = subtest.prototype;
+          keyBucket = [];
+          if (prototype === "id") {
+            keyBucket.push("id");
+          } else if (prototype === "datetime") {
+            keyBucket.push("year", "month", "date", "assess_time");
+          } else if (prototype === "location") {
+            _ref3 = subtest.data.labels;
+            for (_j = 0, _len3 = _ref3.length; _j < _len3; _j++) {
+              label = _ref3[_j];
+              keyBucket.push(label);
             }
-          }
-        } else if (prototype === "observation") {
-          _ref7 = subtest.data.surveys;
-          for (i = 0, _len6 = _ref7.length; i < _len6; i++) {
-            observations = _ref7[i];
-            observationData = observations.data;
-            for (surveyVariable in observationData) {
-              surveyValue = observationData[surveyVariable];
+          } else if (prototype === "consent") {
+            keyBucket.push("consent");
+          } else if (prototype === "grid") {
+            variableName = subtest.data.variable_name;
+            keyBucket.push("" + variableName + "_auto_stop", "" + variableName + "_time_remain", "" + variableName + "_attempted", "" + variableName + "_item_at_time", "" + variableName + "_time_intermediate_captured", "" + variableName + "_correct_per_minute");
+            _ref4 = subtest.data.items;
+            for (i = 0, _len4 = _ref4.length; i < _len4; i++) {
+              item = _ref4[i];
+              keyBucket.push("" + variableName + (i + 1));
+            }
+          } else if (prototype === "survey") {
+            _ref5 = subtest.data;
+            for (surveyVariable in _ref5) {
+              surveyValue = _ref5[surveyVariable];
               if (_.isObject(surveyValue)) {
                 for (optionKey in surveyValue) {
                   optionValue = surveyValue[optionKey];
-                  keys.push("" + surveyVariable + "_" + optionKey + "_" + (i + 1));
+                  keyBucket.push("" + surveyVariable + "_" + optionKey);
                 }
               } else {
-                keys.push("" + surveyVariable + "_" + (i + 1));
+                keyBucket.push(surveyVariable);
               }
             }
+          } else if (prototype === "observation") {
+            _ref6 = subtest.data.surveys;
+            for (i = 0, _len5 = _ref6.length; i < _len5; i++) {
+              observations = _ref6[i];
+              observationData = observations.data;
+              for (surveyVariable in observationData) {
+                surveyValue = observationData[surveyVariable];
+                if (_.isObject(surveyValue)) {
+                  for (optionKey in surveyValue) {
+                    optionValue = surveyValue[optionKey];
+                    keyBucket.push("" + surveyVariable + "_" + optionKey + "_" + (i + 1));
+                  }
+                } else {
+                  keyBucket.push("" + surveyVariable + "_" + (i + 1));
+                }
+              }
+            }
+          } else if (prototype === "complete") {
+            keyBucket.push("additional_comments", "end_time", "gps_latitude", "gps_longitude", "gps_accuracy");
           }
-        } else if (prototype === "complete") {
-          keys.push("additional_comments", "end_time", "gps_latitude", "gps_longitude", "gps_accuracy");
+          if (!(keyChain[sI] != null)) keyChain[sI] = [];
+          if (keyChain[sI].length < keyBucket.length) keyChain[sI] = keyBucket;
         }
       }
-      resultDataArray.push(keys);
-      _ref8 = this.results;
-      for (d = 0, _len7 = _ref8.length; d < _len7; d++) {
-        result = _ref8[d];
-        values = [];
-        _ref9 = this.metaKeys;
-        for (_l = 0, _len8 = _ref9.length; _l < _len8; _l++) {
-          metaKey = _ref9[_l];
-          values.push(result.attributes[metaKey]);
+      this.metaKeys.push("start_time");
+      columns = this.metaKeys.concat(_.flatten(keyChain));
+      csvRowData.push(columns);
+      _ref7 = this.results;
+      for (d = 0, _len6 = _ref7.length; d < _len6; d++) {
+        result = _ref7[d];
+        row = [];
+        _ref8 = this.metaKeys;
+        for (_k = 0, _len7 = _ref8.length; _k < _len7; _k++) {
+          metaKey = _ref8[_k];
+          if (result.attributes[metaKey] != null) {
+            row.push(result.attributes[metaKey]);
+          }
         }
-        _ref10 = result.attributes.subtestData;
-        for (_m = 0, _len9 = _ref10.length; _m < _len9; _m++) {
-          subtest = _ref10[_m];
+        row[columns.indexOf("start_time")] = result.has('starttime') ? result.get('starttime') : result.get('start_time');
+        _ref9 = result.attributes.subtestData;
+        for (_l = 0, _len8 = _ref9.length; _l < _len8; _l++) {
+          subtest = _ref9[_l];
           prototype = subtest.prototype;
           if (prototype === "id") {
-            values[keys.indexOf("id")] = subtest.data.participant_id;
+            row[columns.indexOf("id")] = subtest.data.participant_id;
           } else if (prototype === "location") {
-            _ref11 = subtest.data.labels;
-            for (i = 0, _len10 = _ref11.length; i < _len10; i++) {
-              label = _ref11[i];
-              values[keys.indexOf(label)] = subtest.data.location[i];
+            _ref10 = subtest.data.labels;
+            for (i = 0, _len9 = _ref10.length; i < _len9; i++) {
+              label = _ref10[i];
+              row[columns.indexOf(label)] = subtest.data.location[i];
             }
           } else if (prototype === "datetime") {
             months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
@@ -153,77 +150,78 @@ CSVView = (function(_super) {
             } else {
               monthData = subtest.data.month;
             }
-            values[keys.indexOf("year")] = subtest.data.year;
-            values[keys.indexOf("month")] = monthData;
-            values[keys.indexOf("date")] = subtest.data.day;
-            values[keys.indexOf("assess_time")] = subtest.data.time;
+            row[columns.indexOf("year")] = subtest.data.year;
+            row[columns.indexOf("month")] = monthData;
+            row[columns.indexOf("date")] = subtest.data.day;
+            row[columns.indexOf("assess_time")] = subtest.data.time;
           } else if (prototype === "consent") {
-            values[keys.indexOf("consent")] = subtest.data.consent;
+            row[columns.indexOf("consent")] = subtest.data.consent;
           } else if (prototype === "grid") {
             variableName = subtest.data.variable_name;
-            values[keys.indexOf("" + variableName + "_auto_stop")] = subtest.data.auto_stop;
-            values[keys.indexOf("" + variableName + "_time_remain")] = subtest.data.time_remain;
-            values[keys.indexOf("" + variableName + "_attempted")] = subtest.data.attempted;
-            values[keys.indexOf("" + variableName + "_item_at_time")] = subtest.data.item_at_time;
-            values[keys.indexOf("" + variableName + "_time_intermediate_captured")] = subtest.data.time_intermediate_captured;
-            values[keys.indexOf("" + variableName + "_correct_per_minute")] = subtest.sum.correct_per_minute;
-            _ref12 = subtest.data.items;
-            for (i = 0, _len11 = _ref12.length; i < _len11; i++) {
-              item = _ref12[i];
-              values[keys.indexOf("" + variableName + (i + 1))] = this.exportValue(item.itemResult);
+            row[columns.indexOf("" + variableName + "_auto_stop")] = subtest.data.auto_stop;
+            row[columns.indexOf("" + variableName + "_time_remain")] = subtest.data.time_remain;
+            row[columns.indexOf("" + variableName + "_attempted")] = subtest.data.attempted;
+            row[columns.indexOf("" + variableName + "_item_at_time")] = subtest.data.item_at_time;
+            row[columns.indexOf("" + variableName + "_time_intermediate_captured")] = subtest.data.time_intermediate_captured;
+            row[columns.indexOf("" + variableName + "_correct_per_minute")] = subtest.sum.correct_per_minute;
+            _ref11 = subtest.data.items;
+            for (i = 0, _len10 = _ref11.length; i < _len10; i++) {
+              item = _ref11[i];
+              row[columns.indexOf("" + variableName + (i + 1))] = this.exportValue(item.itemResult);
             }
           } else if (prototype === "survey") {
-            _ref13 = subtest.data;
-            for (surveyVariable in _ref13) {
-              surveyValue = _ref13[surveyVariable];
+            _ref12 = subtest.data;
+            for (surveyVariable in _ref12) {
+              surveyValue = _ref12[surveyVariable];
               if (_.isObject(surveyValue)) {
                 for (optionKey in surveyValue) {
                   optionValue = surveyValue[optionKey];
-                  values[keys.indexOf("" + surveyVariable + "_" + optionKey)] = this.exportValue(optionValue);
+                  row[columns.indexOf("" + surveyVariable + "_" + optionKey)] = this.exportValue(optionValue);
                 }
               } else {
-                values[keys.indexOf("" + surveyVariable)] = this.exportValue(surveyValue);
+                row[columns.indexOf("" + surveyVariable)] = this.exportValue(surveyValue);
               }
             }
           } else if (prototype === "observation") {
-            _ref14 = subtest.data.surveys;
-            for (i = 0, _len12 = _ref14.length; i < _len12; i++) {
-              observations = _ref14[i];
+            _ref13 = subtest.data.surveys;
+            for (i = 0, _len11 = _ref13.length; i < _len11; i++) {
+              observations = _ref13[i];
               observationData = observations.data;
               for (surveyVariable in observationData) {
                 surveyValue = observationData[surveyVariable];
                 if (_.isObject(surveyValue)) {
                   for (optionKey in surveyValue) {
                     optionValue = surveyValue[optionKey];
-                    values[keys.indexOf("" + surveyVariable + "_" + optionKey + "_" + (i + 1))] = this.exportValue(optionValue);
+                    row[columns.indexOf("" + surveyVariable + "_" + optionKey + "_" + (i + 1))] = this.exportValue(optionValue);
                   }
                 } else {
-                  values[keys.indexOf("" + surveyVariable + "_" + (i + 1))] = this.exportValue(surveyValue);
+                  row[columns.indexOf("" + surveyVariable + "_" + (i + 1))] = this.exportValue(surveyValue);
                 }
               }
             }
           } else if (prototype === "complete") {
-            values[keys.indexOf("additional_comments")] = subtest.data.comment;
-            values[keys.indexOf("end_time")] = subtest.data.end_time;
+            row[columns.indexOf("additional_comments")] = subtest.data.comment;
+            row[columns.indexOf("end_time")] = subtest.data.end_time;
             if (subtest.data.gps != null) {
-              values[keys.indexOf("gps_latitude")] = subtest.data.gps.latitude;
-              values[keys.indexOf("gps_longitude")] = subtest.data.gps.longitude;
-              values[keys.indexOf("gps_accuracy")] = subtest.data.gps.accuracy;
+              row[columns.indexOf("gps_latitude")] = subtest.data.gps.latitude;
+              row[columns.indexOf("gps_longitude")] = subtest.data.gps.longitude;
+              row[columns.indexOf("gps_accuracy")] = subtest.data.gps.accuracy;
             }
           }
         }
-        resultDataArray.push(values);
+        csvRowData.push(row);
       }
-      for (i = 0, _len13 = resultDataArray.length; i < _len13; i++) {
-        row = resultDataArray[i];
+      for (i = 0, _len12 = csvRowData.length; i < _len12; i++) {
+        row = csvRowData[i];
         tableHTML += "<tr>";
         count = 0;
-        for (index = 0, _ref15 = row.length - 1; 0 <= _ref15 ? index <= _ref15 : index >= _ref15; 0 <= _ref15 ? index++ : index--) {
+        for (index = 0, _ref14 = row.length - 1; 0 <= _ref14 ? index <= _ref14 : index >= _ref14; 0 <= _ref14 ? index++ : index--) {
           tableHTML += "<td>" + row[index] + "</td>";
           count++;
         }
         tableHTML += "</tr>";
       }
+      tableHTML = tableHTML.replace(/undefined/g, "no_record");
       this.csv = $("<table>" + tableHTML + "</table>").table2CSV({
         "delivery": "value"
       });
