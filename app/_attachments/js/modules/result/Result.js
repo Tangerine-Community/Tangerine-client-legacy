@@ -15,7 +15,9 @@ Result = (function(_super) {
   Result.prototype.initialize = function(options) {
     if (options.blank === true) {
       this.set({
-        subtestData: []
+        'subtestData': [],
+        'start_time': (new Date()).getTime(),
+        'enumerator': Tangerine.user.name
       });
       return this.unset("blank");
     }
@@ -24,11 +26,10 @@ Result = (function(_super) {
   Result.prototype.add = function(subtestDataElement) {
     var subtestData;
     subtestData = this.get('subtestData');
+    subtestData['timestamp'] = (new Date()).getTime();
     subtestData.push(subtestDataElement);
-    return this.set({
-      'subtestData': subtestData,
-      'timestamp': (new Date()).getTime(),
-      'enumerator': Tangerine.user.name
+    return this.save({
+      'subtestData': subtestData
     });
   };
 

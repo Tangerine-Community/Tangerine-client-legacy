@@ -13,17 +13,18 @@ class Result extends Backbone.Model
     # could use defaults but it messes things up
     if options.blank == true
       @set
-        subtestData : []
+        'subtestData' : []
+        'start_time'  : (new Date()).getTime()
+        'enumerator'  : Tangerine.user.name
+
       @unset "blank" # options automatically get added to the model. Lame.
 
   add: ( subtestDataElement ) ->
     subtestData = @get 'subtestData'
+    subtestData['timestamp'] = (new Date()).getTime()
     subtestData.push subtestDataElement
-    @set 
+    @save
       'subtestData' : subtestData
-      'timestamp'   : (new Date()).getTime()
-      'enumerator'  : Tangerine.user.name
-
 
   getGridScore: (id) ->
     for datum in @get 'subtestData'
