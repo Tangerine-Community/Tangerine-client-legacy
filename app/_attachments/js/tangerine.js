@@ -279,27 +279,28 @@ Router = (function(_super) {
   Router.prototype.studentSubtest = function(studentId, subtestId) {
     return Tangerine.user.verify({
       isRegistered: function() {
-        var allResults;
-        allResults = new Results;
-        return allResults.fetch({
-          success: function(collection) {
-            var result, subtest;
-            result = collection.where({
-              "subtestId": subtestId,
-              "studentId": studentId
-            });
+        var student;
+        student = new Student({
+          "_id": studentId
+        });
+        return student.fetch({
+          success: function() {
+            var subtest;
             subtest = new Subtest({
               "_id": subtestId
             });
             return subtest.fetch({
               success: function() {
-                var student;
-                student = new Student({
-                  "_id": studentId
-                });
-                return student.fetch({
-                  success: function() {
-                    var view;
+                var allResults;
+                allResults = new Results;
+                return allResults.fetch({
+                  success: function(collection) {
+                    var result, view;
+                    result = collection.where({
+                      "subtestId": subtestId,
+                      "studentId": studentId,
+                      "klassId": student.get("klassId")
+                    });
                     view = new KlassSubtestResultView({
                       "result": result,
                       "subtest": subtest,
@@ -704,7 +705,7 @@ Router = (function(_super) {
           "_id": studentId
         });
         return student.fetch({
-          success: function() {
+          success: function(student) {
             var klass;
             klass = new Klass({
               "_id": student.get("klassId")

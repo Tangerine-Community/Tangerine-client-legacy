@@ -185,18 +185,19 @@ class Router extends Backbone.Router
   studentSubtest: (studentId, subtestId) ->
     Tangerine.user.verify
       isRegistered: ->
-        allResults = new Results 
-        allResults.fetch
-          success: (collection) ->
-            result = collection.where 
-              "subtestId" : subtestId
-              "studentId" : studentId
+        student = new Student "_id" : studentId
+        student.fetch
+          success: ->
             subtest = new Subtest "_id" : subtestId
             subtest.fetch
               success: ->
-                student = new Student "_id" : studentId
-                student.fetch
-                  success: ->
+                allResults = new Results 
+                allResults.fetch
+                  success: (collection) ->
+                    result = collection.where 
+                      "subtestId" : subtestId
+                      "studentId" : studentId
+                      "klassId" : student.get("klassId")
                     view = new KlassSubtestResultView
                       "result"  : result
                       "subtest" : subtest
@@ -433,7 +434,7 @@ class Router extends Backbone.Router
       isRegistered: ->
         student = new Student "_id" : studentId
         student.fetch
-          success: ->
+          success: (student) ->
             klass = new Klass "_id" : student.get("klassId")
             klass.fetch
               success: ->

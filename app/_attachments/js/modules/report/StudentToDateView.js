@@ -123,6 +123,7 @@ StudentToDateView = (function(_super) {
         }
       }
     }
+    console.log(this.percentagesByStudent);
     return this.warnings = Tangerine.ReportWarnings["StudentToDateView"]({
       percentages: this.percentagesByStudent,
       studentName: this.options.student.get("name")
