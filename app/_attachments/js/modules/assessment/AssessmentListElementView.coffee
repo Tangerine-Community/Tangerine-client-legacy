@@ -6,6 +6,7 @@ class AssessmentListElementView extends Backbone.View
     'click .edit'                      : 'gotoEdit'
     'click .results'                   : 'gotoResults'
     'click .run'                       : 'gotoRun'
+    'click .print'                     : 'gotoPrint'
     'click .assessment_menu_toggle'    : 'assessmentMenuToggle'
     'click .admin_name'                : 'assessmentMenuToggle'
     'click .assessment_delete'         : 'assessmentDeleteToggle'
@@ -25,6 +26,7 @@ class AssessmentListElementView extends Backbone.View
   gotoEdit: -> Tangerine.router.navigate "edit/#{@model.id}", true
   gotoResults: -> Tangerine.router.navigate "results/#{@model.id}", true
   gotoRun: -> Tangerine.router.navigate "run/#{@model.id}", true
+  gotoPrint: -> Tangerine.router.navigate "print/#{@model.id}", true
 
   duplicate: ->
     newName = "Copy of " + @model.get("name")
@@ -83,6 +85,7 @@ class AssessmentListElementView extends Backbone.View
     duplicateButton = "<img class='link_icon duplicate' title='Duplicate' src='images/icon_duplicate.png'>"
     editButton      = "<img class='link_icon edit' title='Edit' src='images/icon_edit.png'>"
     updateButton    = "<img class='link_icon update' title='Update' src='images/icon_sync.png'>"
+    printButton     = "<button class='print'>Print</button>"
 
     downloadKey     = "<span class='small_grey'>Download key <b>#{@model.id.substr(-5,5)}</b></span>"
     
@@ -135,6 +138,7 @@ class AssessmentListElementView extends Backbone.View
               #{deleteButton}
               #{downloadKey}
               #{deleteConfirm}
+              #{printButton}
             </div>
           "
     # enumerator user
