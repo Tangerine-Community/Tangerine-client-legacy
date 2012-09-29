@@ -16,12 +16,12 @@ class SubtestPrintView extends Backbone.View
 
     @$el.html "
       <h2>#{@model.get 'name'}</h2>
+      Enumerator Help:<br/>
       #{enumeratorHelp}
+      Student Dialog:<br/>
       #{studentDialog}
       <div id='prototype_wrapper'></div>
-      <div class='controlls'>
-        <button class='next navigation'>Next</button>#{if skippable then skipButton else "" }
-      </div>
+      <hr/>
     "
   
     # Use prototype specific views here

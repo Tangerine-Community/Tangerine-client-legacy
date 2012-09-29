@@ -15,21 +15,14 @@ class AssessmentPrintView extends Backbone.View
   
   render: ->
  
-    currentView = @subtestViews[@index]
     
     if @model.subtests.length == 0
       @$el.append "<h1>Oops...</h1><p>This assessment is blank. Perhaps you meant to add some subtests.</p>"
     else
-      @$el.html "
-        <h1>#{@model.get 'name'}</h1>
-        <div id='progress'></div>
-      "
-      @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
 
-      currentView.on "rendered", => @trigger "rendered"
-      currentView.on "subRendered", => @trigger "subRendered"
+      _.each @subtestViews , (subtestView) =>
 
-      currentView.render()
-      @$el.append currentView.el
+        subtestView.render()
+        @$el.append subtestView.el
 
     @trigger "rendered"

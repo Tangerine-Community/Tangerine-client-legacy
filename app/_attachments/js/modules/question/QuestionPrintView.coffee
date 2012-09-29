@@ -35,24 +35,19 @@ class QuestionPrintView extends Backbone.View
 
     if not @notAsked
 
-      html = "<div class='error_message'></div><div class='prompt'>#{@model.get 'prompt'}</div>
-      <div class='hint'>#{(@model.get('hint') || "")}</div>"
+      @$el.html "
+        Prompt: #{@model.get 'prompt'}<br/>
+        Variable Name: #{@model.get 'name'}<br/>
+        Hint: #{@model.get 'hint'}<br/>
+        Type: #{@model.get 'type'}<br/>
+        Options:<br/>
+        #{_.map(@model.get('options'), (option) ->
+          "Label: #{option.label}, Value: #{option.value}"
+        ).join("<br/>")
+        }<br/>
+      "
 
-      if @type == "open"
-        if @model.get("multiline")
-          html += "<div><textarea id='#{@cid}_#{@name}' data-cid='#{@cid}'></textarea></div>"
-        else
-          html += "<div><input id='#{@cid}_#{@name}' data-cid='#{@cid}'></div>"
-      
-      else
-        checkOrRadio = if @type == "multiple" then "checkbox" else "radio"
-        for option, i in @options
-          html += "
-            <label for='#{@cid}_#{@name}_#{i}'>#{option.label}</label>
-            <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}'  data-cid='#{@cid}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}'>
-          "
-      html += "<img src='images/icon_scroll.png' class='icon autoscroll_icon' data-cid='#{@cid}'>" if @isObservation
-      @$el.html html
+
 
     else
       @$el.hide()

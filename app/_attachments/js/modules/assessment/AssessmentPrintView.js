@@ -28,24 +28,14 @@ AssessmentPrintView = (function(_super) {
   };
 
   AssessmentPrintView.prototype.render = function() {
-    var currentView,
-      _this = this;
-    currentView = this.subtestViews[this.index];
+    var _this = this;
     if (this.model.subtests.length === 0) {
       this.$el.append("<h1>Oops...</h1><p>This assessment is blank. Perhaps you meant to add some subtests.</p>");
     } else {
-      this.$el.html("        <h1>" + (this.model.get('name')) + "</h1>        <div id='progress'></div>      ");
-      this.$el.find('#progress').progressbar({
-        value: (this.index + 1) / (this.model.subtests.length + 1) * 100
+      _.each(this.subtestViews, function(subtestView) {
+        subtestView.render();
+        return _this.$el.append(subtestView.el);
       });
-      currentView.on("rendered", function() {
-        return _this.trigger("rendered");
-      });
-      currentView.on("subRendered", function() {
-        return _this.trigger("subRendered");
-      });
-      currentView.render();
-      this.$el.append(currentView.el);
     }
     return this.trigger("rendered");
   };

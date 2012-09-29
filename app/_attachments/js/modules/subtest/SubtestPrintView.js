@@ -25,7 +25,7 @@ SubtestPrintView = (function(_super) {
     studentDialog = (this.model.get("studentDialog") || "") !== "" ? "<div class='student_dialog_print'>" + (this.model.get('studentDialog')) + "</div>" : "";
     skipButton = "<button class='skip navigation'>Skip</button>";
     skippable = this.model.get("skippable") === true || this.model.get("skippable") === "true";
-    this.$el.html("      <h2>" + (this.model.get('name')) + "</h2>      " + enumeratorHelp + "      " + studentDialog + "      <div id='prototype_wrapper'></div>      <div class='controlls'>        <button class='next navigation'>Next</button>" + (skippable ? skipButton : "") + "      </div>    ");
+    this.$el.html("      <h2>" + (this.model.get('name')) + "</h2>      Enumerator Help:<br/>      " + enumeratorHelp + "      Student Dialog:<br/>      " + studentDialog + "      <div id='prototype_wrapper'></div>      <hr/>    ");
     this.prototypeView = new window[this.model.get('prototype').humanize() + 'PrintView']({
       model: this.model,
       parent: this

@@ -11,78 +11,23 @@ GridPrintView = (function(_super) {
     return GridPrintView.__super__.constructor.apply(this, arguments);
   }
 
+  GridPrintView.prototype.initialize = function(options) {
+    this.model = this.options.model;
+    return this.parent = this.options.parent;
+  };
+
   GridPrintView.prototype.className = "grid_prototype";
 
   GridPrintView.prototype.render = function() {
-    var captureLastButton, disabling, done, firstRow, gridHTML, html, i, item, minuteItemButton, modeSelector, resetButton, startTimerHTML, stopTimerHTML, _i, _j, _len, _ref, _ref1;
-    this.$el.html("asdasd");
-    return "FPP";
-    done = 0;
-    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>Start</button><div class='timer'>" + this.timer + "</div></div>";
-    disabling = this.untimed ? "" : "disabled";
-    html = !this.untimed ? startTimerHTML : "";
-    gridHTML = "";
-    if (this.layoutMode === "fixed") {
-      gridHTML += "<table class='grid " + disabling + "'>";
-      firstRow = true;
-      while (true) {
-        if (done > this.items.length) {
-          break;
-        }
-        gridHTML += "<tr>";
-        for (i = _i = 1, _ref = this.columns; 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) {
-          if (done < this.items.length) {
-            gridHTML += this.gridElement({
-              label: _.escape(this.items[this.itemMap[done]]),
-              i: done + 1
-            });
-          }
-          done++;
-        }
-        if (firstRow) {
-          if (done < (this.items.length + 1) && this.endOfLine) {
-            gridHTML += "<td></td>";
-          }
-          firstRow = false;
-        } else {
-          if (done < (this.items.length + 1) && this.endOfLine) {
-            gridHTML += this.endOfGridLine({
-              i: done
-            });
-          }
-        }
-        gridHTML += "</tr>";
-      }
-      gridHTML += "</table>";
-    } else {
-      gridHTML += "<div class='grid " + disabling + "'>";
-      _ref1 = this.items;
-      for (i = _j = 0, _len = _ref1.length; _j < _len; i = ++_j) {
-        item = _ref1[i];
-        gridHTML += this.variableGridElement({
-          "label": _.escape(this.items[this.itemMap[i]]),
-          "i": i + 1
-        });
-      }
-      gridHTML += "</div>";
-    }
-    html += gridHTML;
-    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>";
-    resetButton = "    <div>      <button class='restart command'>Restart</button>      <br>    </div>";
-    modeSelector = "";
-    if (this.captureLastAttempted || this.captureItemAtTime) {
-      minuteItemButton = "";
-      if (this.captureItemAtTime) {
-        minuteItemButton = "          <label for='minute_item'>Item at " + this.captureAfterSeconds + " seconds</label>          <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>        ";
-      }
-      captureLastButton = "";
-      if (this.captureLastAttempted) {
-        captureLastButton = "          <label for='last_attempted'>Last attempted</label>          <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>        ";
-      }
-      modeSelector = "        <div id='grid_mode' class='question buttonset clearfix'>          <label>Input mode</label><br>          <label for='mark'>Mark</label>          <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark'>          " + minuteItemButton + "          " + captureLastButton + "        </div>      ";
-    }
-    html += "      " + (!this.untimed ? stopTimerHTML : "") + "      " + (!this.untimed ? resetButton : "") + "      " + modeSelector + "    ";
-    this.$el.html(html);
+    var fields,
+      _this = this;
+    fields = "autostop    captureAfterSeconds    captureItemAtTime    columns    endOfLine    fontSize    layoutMode    order    randomize    timer    variableName";
+    fields = fields.split(/\ +/);
+    this.$el.html("      Properties:<br/>      <table>      " + (_.map(fields, function(field) {
+      return "<tr><td>" + field + "</td><td>" + (_this.model.get(field)) + "</td></tr>";
+    }).join("")) + "      </table>      Items:<br/>      " + (_.map(this.model.get("items"), function(item) {
+      return item;
+    }).join(", ")) + "    ");
     return this.trigger("rendered");
   };
 

@@ -41,28 +41,11 @@ QuestionPrintView = (function(_super) {
   };
 
   QuestionPrintView.prototype.render = function() {
-    var checkOrRadio, html, i, option, _i, _len, _ref;
     this.$el.attr("id", "question-" + this.name);
     if (!this.notAsked) {
-      html = "<div class='error_message'></div><div class='prompt'>" + (this.model.get('prompt')) + "</div>      <div class='hint'>" + (this.model.get('hint') || "") + "</div>";
-      if (this.type === "open") {
-        if (this.model.get("multiline")) {
-          html += "<div><textarea id='" + this.cid + "_" + this.name + "' data-cid='" + this.cid + "'></textarea></div>";
-        } else {
-          html += "<div><input id='" + this.cid + "_" + this.name + "' data-cid='" + this.cid + "'></div>";
-        }
-      } else {
-        checkOrRadio = this.type === "multiple" ? "checkbox" : "radio";
-        _ref = this.options;
-        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-          option = _ref[i];
-          html += "            <label for='" + this.cid + "_" + this.name + "_" + i + "'>" + option.label + "</label>            <input id='" + this.cid + "_" + this.name + "_" + i + "' class='" + this.cid + "_" + this.name + "'  data-cid='" + this.cid + "' name='" + this.name + "' value='" + option.value + "' type='" + checkOrRadio + "'>          ";
-        }
-      }
-      if (this.isObservation) {
-        html += "<img src='images/icon_scroll.png' class='icon autoscroll_icon' data-cid='" + this.cid + "'>";
-      }
-      this.$el.html(html);
+      this.$el.html("        Prompt: " + (this.model.get('prompt')) + "<br/>        Variable Name: " + (this.model.get('name')) + "<br/>        Hint: " + (this.model.get('hint')) + "<br/>        Type: " + (this.model.get('type')) + "<br/>        Options:<br/>        " + (_.map(this.model.get('options'), function(option) {
+        return "Label: " + option.label + ", Value: " + option.value;
+      }).join("<br/>")) + "<br/>      ");
     } else {
       this.$el.hide();
     }
