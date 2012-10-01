@@ -51,6 +51,7 @@ class Router extends Backbone.Router
     'report/partByStudent/:subtestId' : 'partByStudent'
     'report/studentToDate/:studentId' : 'studentToDate'
     'report/masteryCheck/:studentId'  : 'masteryCheck'
+    'report/progress/:studentId'      : 'progressReport'
     'report/classToDate/:klassId'     : 'klassToDate'
 
   landing: ->
@@ -458,6 +459,27 @@ class Router extends Backbone.Router
                   success: ( collection ) ->
                     results = new Results collection.where "studentId" : studentId, "reportType" : "mastery"
                     view = new MasteryCheckView
+                      "student" : student
+                      "results" : results
+                      "klass"   : klass
+                    vm.show view
+
+  progressReport: (studentId) ->
+    console.log "ASDAS"
+    Tangerine.user.verify
+      isRegistered: ->
+        student = new Student "_id" : studentId
+        student.fetch
+          success: (student) ->
+            klass = new Klass
+              "_id" : student.get "klassId"
+            klass.fetch
+              success: (klass) ->
+                allResults = new Results
+                allResults.fetch
+                  success: ( collection ) ->
+                    results = new Results collection.where "studentId" : studentId, "reportType" : "progress"
+                    view = new ProgressView
                       "student" : student
                       "results" : results
                       "klass"   : klass

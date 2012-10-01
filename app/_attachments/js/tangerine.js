@@ -47,6 +47,7 @@ Router = (function(_super) {
     'report/partByStudent/:subtestId': 'partByStudent',
     'report/studentToDate/:studentId': 'studentToDate',
     'report/masteryCheck/:studentId': 'masteryCheck',
+    'report/progress/:studentId': 'progressReport',
     'report/classToDate/:klassId': 'klassToDate'
   };
 
@@ -752,6 +753,47 @@ Router = (function(_super) {
                       "reportType": "mastery"
                     }));
                     view = new MasteryCheckView({
+                      "student": student,
+                      "results": results,
+                      "klass": klass
+                    });
+                    return vm.show(view);
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+  };
+
+  Router.prototype.progressReport = function(studentId) {
+    console.log("ASDAS");
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var student;
+        student = new Student({
+          "_id": studentId
+        });
+        return student.fetch({
+          success: function(student) {
+            var klass;
+            klass = new Klass({
+              "_id": student.get("klassId")
+            });
+            return klass.fetch({
+              success: function(klass) {
+                var allResults;
+                allResults = new Results;
+                return allResults.fetch({
+                  success: function(collection) {
+                    var results, view;
+                    results = new Results(collection.where({
+                      "studentId": studentId,
+                      "reportType": "progress"
+                    }));
+                    view = new ProgressView({
                       "student": student,
                       "results": results,
                       "klass": klass
