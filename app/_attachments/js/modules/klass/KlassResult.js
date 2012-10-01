@@ -13,14 +13,8 @@ KlassResult = (function(_super) {
   KlassResult.prototype.url = "result";
 
   KlassResult.prototype.initialize = function(options) {
-    this.studentId = options.studentId;
-    this.klassId = options.klassId;
-    this.subtestId = options.subtestId;
     return this.set({
-      'timestamp': (new Date()).getTime(),
-      'studentId': this.studentId,
-      'subtestId': this.subtestId,
-      'klassId': this.klassId
+      'timestamp': (new Date()).getTime()
     });
   };
 

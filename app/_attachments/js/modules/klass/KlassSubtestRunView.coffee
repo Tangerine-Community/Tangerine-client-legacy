@@ -13,9 +13,12 @@ class KlassSubtestRunView extends Backbone.View
     @prototypeRendered = false
 
     @result = new KlassResult
-      studentId : options.student.id
-      subtestId : options.subtest.id
-      klassId   : options.student.get("klassId")
+      resultBucket : options.subtest.get("resultBucket")
+      reportType   : options.subtest.get("reportType")
+      studentId    : options.student.id
+      subtestId    : options.subtest.id
+      part         : options.subtest.get("part")
+      klassId      : options.student.get("klassId")
 
   render: ->
 
