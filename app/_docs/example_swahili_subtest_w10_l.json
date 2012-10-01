@@ -6,8 +6,8 @@
   "endOfLine" : false,
   "prototype": "grid",
   "part": 10,
-  "variableName": "letters",
-  "resultBucket" : "Letters",
+  "reportType" : "mastery",
+  "resultBucket" : "letters",
   "name": "Letters",
   "items": [
     "J",

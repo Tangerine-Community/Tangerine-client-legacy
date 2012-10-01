@@ -6,8 +6,8 @@
   "endOfLine" : false,
   "prototype": "grid",
   "part": 15,
-  "variableName": "familiarWords",
-  "resultBucket" : "Words",
+  "reportType" : "mastery",
+  "resultBucket" : "words",
   "name": "Words",
   "items": [
     "ua",

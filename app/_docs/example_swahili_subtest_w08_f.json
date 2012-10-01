@@ -8,8 +8,8 @@
   "part": 8,
   "columns": 3,
   "timer": 60,
-  "variableName" : "familiarWords",
-  "resultBucket" : "Progress words",
+  "reportType" : "progress",
+  "resultBucket" : "words",
   "name" : "Progress Monitor - words",
   "items" : [
        "Mto",

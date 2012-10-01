@@ -8,8 +8,8 @@
   "timer": 60,
   "part": 1,
   "columns": 3,
-  "variableName": "baseline_letters",
-  "resultBucket" : "Progress letters",
+  "reportType" : "progress",
+  "resultBucket" : "letters",
   "name": "Baseline letters",
   "items": [
        "g",
