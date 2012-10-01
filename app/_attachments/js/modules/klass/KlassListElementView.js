@@ -66,6 +66,11 @@ KlassListElementView = (function(_super) {
     return (_ref = this.subMenuView) != null ? _ref.close() : void 0;
   };
 
+  KlassListElementView.prototype.onClose = function() {
+    var _ref;
+    return (_ref = this.subMenuView) != null ? _ref.close() : void 0;
+  };
+
   KlassListElementView.prototype.run = function() {
     return Tangerine.router.navigate("class/" + this.options.klass.id, true);
   };

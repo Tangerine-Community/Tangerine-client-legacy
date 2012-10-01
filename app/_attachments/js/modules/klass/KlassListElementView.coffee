@@ -11,7 +11,7 @@ class KlassListElementView extends Backbone.View
     'click .delete'        : 'toggleDelete'
     'click .delete_cancel' : 'toggleDelete'
     'click .delete_delete' : 'delete'
-  
+
   initialize: (options) ->
     @availableReports = Tangerine.config.reports
     if options.klass.has "curriculumId"
@@ -19,10 +19,9 @@ class KlassListElementView extends Backbone.View
           "_id" : options.klass.get "curriculumId" || ""
       @curriculum.fetch
         success : @render
-  
+
     else
       @curriculum = new Curriculum 
-
 
   edit: ->
     Tangerine.router.navigate "class/edit/" + @options.klass.id, true
@@ -42,6 +41,10 @@ class KlassListElementView extends Backbone.View
     @$el.find('#report :nth-child(1)').attr('selected', 'selected')
     @$el.find(".report_select_container").addClass "confirmation"
     @subMenuView?.close()
+
+  onClose: ->
+    @subMenuView?.close()
+
     
   run: ->
     Tangerine.router.navigate "class/" + @options.klass.id, true
