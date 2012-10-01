@@ -34,6 +34,7 @@ class Router extends Backbone.Router
     'assessments/:group' : 'assessments'
 
     'run/:id'       : 'run'
+    'print/:id'       : 'print'
 
     'resume/:assessmentId/:resultId'    : 'resume'
     
@@ -322,6 +323,18 @@ class Router extends Backbone.Router
         assessment.fetch
           success : ( model ) ->
             view = new AssessmentRunView model: model
+            vm.show view
+      isUnregistered: (options) ->
+        Tangerine.router.navigate "login", true
+
+  print: (id) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        assessment = new Assessment
+          "_id" : id
+        assessment.fetch
+          success : ( model ) ->
+            view = new AssessmentPrintView model: model
             vm.show view
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
