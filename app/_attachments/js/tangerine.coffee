@@ -49,6 +49,7 @@ class Router extends Backbone.Router
 
     'report/partByStudent/:subtestId' : 'partByStudent'
     'report/studentToDate/:studentId' : 'studentToDate'
+    'report/masteryCheck/:studentId'  : 'masteryCheck'
     'report/classToDate/:klassId'     : 'klassToDate'
 
   landing: ->
@@ -428,6 +429,26 @@ class Router extends Backbone.Router
                         vm.show view
       isUnregistered: ->
         Tangerine.router.navigate "login", true
+
+  masteryCheck: (studentId) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        student = new Student "_id" : studentId
+        student.fetch
+          success: (student) ->
+            klass = new Klass
+              "_id" : student.get "klassId"
+            klass.fetch
+              success: (klass) ->
+                allResults = new Results
+                allResults.fetch
+                  success: ( collection ) ->
+                    results = new Results collection.where "studentId" : studentId, "reportType" : "mastery"
+                    view = new MasteryCheckView
+                      "student" : student
+                      "results" : results
+                      "klass"   : klass
+                    vm.show view
 
   studentToDate: (studentId) ->
     Tangerine.user.verify
