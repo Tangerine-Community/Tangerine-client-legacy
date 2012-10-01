@@ -36,16 +36,23 @@
 	"reports" : 
 	[
 		{
-			"name"     : "student progress report",
-			"menuView" : "StudentToDateMenuView"
+			"name"       : "student progress report",
+			"menuView"   : "StudentToDateMenuView",
+			"reportType" : "progress"
 		},
 		{
-			"name"     : "class progress report",
-			"menuView" : "KlassToDateMenuView"
+			"name"       : "class progress report",
+			"menuView"   : "KlassToDateMenuView",
+			"reportType" : "progress"
 		},
 		{
-			"name"     : "class grouping report",
-			"menuView" : "PartByStudentMenuView"
+			"name"       : "mastery check report",
+			"menuView"   : "MasteryCheckMenuView",
+			"reportType" : "mastery"
+		},
+		{
+			"name"       : "class grouping report",
+			"menuView"   : "PartByStudentMenuView"
 		}
 	]
 }
