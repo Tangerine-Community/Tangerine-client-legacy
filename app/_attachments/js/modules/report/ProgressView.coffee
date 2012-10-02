@@ -1,4 +1,4 @@
-class MasteryCheckView extends Backbone.View
+class ProgressView extends Backbone.View
 
   initialize: (options) ->
     @results = options.results
@@ -22,7 +22,7 @@ class MasteryCheckView extends Backbone.View
 
   render: ->
     html = "
-      <h1>Mastery check report</h1>
+      <h1>Progress table</h1>
       <h2>#{@student.get("name")}</h2>
       <table class='mastery_check'>
     "
@@ -35,10 +35,14 @@ class MasteryCheckView extends Backbone.View
         bucketName = bucketResult.attributes.resultBucket.titleize()
         correct = 0
         for item in bucketResult.attributes.subtestData.items
-          correct++ if item.itemResult == "correct" 
-        total   = bucketResult.attributes.subtestData.items.length
+          correct++ if item.itemResult == "correct"
+        attempted   = bucketResult.attributes.subtestData.attempted
+        timeRemain   = bucketResult.attributes.subtestData.time_remain
+        timeAllowed = 60 # TODO get this from the definition
+        itemsPerMinute = Math.round (correct/(timeAllowed - timeRemain))*timeAllowed
         
-        html += "<td>#{bucketName} correct</td><td>#{correct}/#{total}</td>"
+        html += "<td>#{bucketName} correct</td><td>#{correct}/#{attempted}</td>"
+        html += "<td>#{bucketName} per minute</td><td>#{itemsPerMinute}</td>"
       
     html += "</table>"
     @$el.html html

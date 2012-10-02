@@ -107,7 +107,7 @@ class StudentToDateView extends Backbone.View
         "data" : flotArray
       }
       
-      oneObject[bucketType[bucket]] = 
+      oneObject[bucketType[bucket]] =
         "show" : true
         "radius" : 4
         "width" : 4
@@ -115,8 +115,8 @@ class StudentToDateView extends Backbone.View
 
       @flotData.push oneObject
 
-    @flotOptions = 
-      "yaxis" : 
+    @flotOptions =
+      "yaxis" :
         min: 0
         max: 100
         ticks: 10
