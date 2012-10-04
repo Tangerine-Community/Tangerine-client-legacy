@@ -4,6 +4,8 @@ class AssessmentRunView extends Backbone.View
     @abortAssessment = false
     @index = 0
     @model = options.model
+    @orderMap = []
+
 
     Tangerine.activity = "assessment run"
     @subtestViews = []
@@ -12,6 +14,16 @@ class AssessmentRunView extends Backbone.View
       @subtestViews.push new SubtestRunView 
         model  : model
         parent : @
+
+    if @model.has("sequences")
+      sequences = @model.get("sequences")
+      @orderMap = sequences[Math.round(Math.random() * sequences.length)]
+      @orderMap[@orderMap.length] = @orderMap.length
+    else
+      for i in [0..@subtestViews.length]
+        @orderMap[i] = i
+
+
     @result = new Result
       assessmentId   : @model.id
       assessmentName : @model.get "name"
@@ -21,10 +33,12 @@ class AssessmentRunView extends Backbone.View
         assessment     : @model
         assessmentView : @
     @subtestViews.push resultView
+
   
   render: ->
- 
-    currentView = @subtestViews[@index]
+    
+    console.log @orderMap
+    currentView = @subtestViews[@orderMap[@index]]
     
     if @model.subtests.length == 0
       @$el.append "<h1>Oops...</h1><p>This assessment is blank. Perhaps you meant to add some subtests.</p>"
@@ -56,7 +70,7 @@ class AssessmentRunView extends Backbone.View
     @next()
 
   skip: ->
-    currentView = @subtestViews[@index]
+    currentView = @subtestViews[@orderMap[@index]]
     @result.add
       name      : currentView.model.get "name"
       data      : currentView.getSkipped()
@@ -71,7 +85,7 @@ class AssessmentRunView extends Backbone.View
     window.scrollTo 0, 0
 
   next: ->
-    currentView = @subtestViews[@index]
+    currentView = @subtestViews[@orderMap[@index]]
     if currentView.isValid()
       @result.add
         name      : currentView.model.get "name"
