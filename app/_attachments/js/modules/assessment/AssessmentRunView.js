@@ -42,7 +42,7 @@ AssessmentRunView = (function(_super) {
     });
     if (this.model.has("sequences") && this.model.get("sequences").length !== 0) {
       this.result.set({
-        "orderMap": this.orderMap
+        "order_map": this.orderMap
       });
     }
     resultView = new ResultView({

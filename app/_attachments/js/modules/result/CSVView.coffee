@@ -83,7 +83,7 @@ class CSVView extends Backbone.View
           if not keyChain[sI]?                      then keyChain[sI] = []
           if keyChain[sI].length < keyBucket.length then keyChain[sI] = keyBucket
 
-      @metaKeys.push "start_time"
+      @metaKeys.push "start_time", "order_map"
       columns = @metaKeys.concat(_.flatten(keyChain))
 
       # pop the columns into the first row
@@ -98,8 +98,9 @@ class CSVView extends Backbone.View
           if result.attributes[metaKey]? then row.push result.attributes[metaKey]
         # little backwards compatibility
         row[columns.indexOf("start_time")] = if result.has('starttime') then result.get('starttime') else result.get('start_time')
-        
-        
+
+        row[columns.indexOf("order_map")] =  if result.has('order_map') then result.get('order_map') else "no_record"
+
         # go through each subtest in this result
         for subtest in result.attributes.subtestData
           prototype = subtest.prototype
