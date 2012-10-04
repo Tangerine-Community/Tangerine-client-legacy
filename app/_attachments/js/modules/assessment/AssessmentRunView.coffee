@@ -15,9 +15,9 @@ class AssessmentRunView extends Backbone.View
         model  : model
         parent : @
 
-    if @model.has("sequences")
+    if @model.has("sequences") && @model.get("sequences").length != 0
       sequences = @model.get("sequences")
-      @orderMap = sequences[Math.round(Math.random() * sequences.length)]
+      @orderMap = sequences[Math.floor(Math.random() * sequences.length)]
       @orderMap[@orderMap.length] = @orderMap.length
     else
       for i in [0..@subtestViews.length]
@@ -28,6 +28,11 @@ class AssessmentRunView extends Backbone.View
       assessmentId   : @model.id
       assessmentName : @model.get "name"
       blank          : true
+    
+    if @model.has("sequences") && @model.get("sequences").length != 0
+      @result.set
+        "orderMap" : @orderMap
+      
     resultView = new ResultView
         model          : @result
         assessment     : @model
@@ -37,7 +42,6 @@ class AssessmentRunView extends Backbone.View
   
   render: ->
     
-    console.log @orderMap
     currentView = @subtestViews[@orderMap[@index]]
     
     if @model.subtests.length == 0
