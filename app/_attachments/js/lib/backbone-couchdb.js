@@ -116,7 +116,7 @@ Backbone.couch_connector = con = {
         _opts[option] = opts[option];
       }
     }
-	_opts.cacheBuster = parseInt(Math.random() * 1000);
+    _opts.cacheBuster = parseInt(Math.random() * 1000);
     if ((coll.db != null) && (coll.db.view != null) && !(coll.db.keys != null)) {
       delete _opts.keys;
     }
