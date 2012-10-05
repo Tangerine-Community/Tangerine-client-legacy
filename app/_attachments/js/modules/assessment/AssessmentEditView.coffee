@@ -13,6 +13,9 @@ class AssessmentEditView extends Backbone.View
 
     'keypress #basic input'        : 'showSave'
     'click .assessment_save'       : 'save'
+
+    'click .save'                  : 'save'
+
   
   save: =>
     if @updateModel()
@@ -29,6 +32,22 @@ class AssessmentEditView extends Backbone.View
     Tangerine.router.navigate "assessments/#{@model.get("group")}", true
 
   updateModel: =>
+    
+    # parse acceptable random sequences
+    sequencesValue = $.trim(@$el.find("#sequences").val())
+    sequences = sequencesValue.split("\n")
+
+    for sequence, i in sequences
+      sequence = sequence.split(",")
+      for element, j in sequence
+        sequence[j] = parseInt(element)
+      sequences[i] = sequence
+      if sequence.length != @model.subtests.models.length
+        lengthError = true
+    
+    if lengthError then alert "Warning\n\nSome sequences do not contain all subtests."
+
+    # wow, I have no idea what this does. This code is really old.
     groups = Tangerine.user.get("groups")
     if not ~groups.indexOf(@$el.find("#assessment_group").val())
       alert "Warning\n\nYou cannot join a group unless you are a member of that group."
@@ -37,10 +56,11 @@ class AssessmentEditView extends Backbone.View
       return false
     else
       @model.set
-        archived : @$el.find("#archive_buttons input:checked").val() == "true"
-        name     : @$el.find("#assessment_name").val()
-        group    : @$el.find("#assessment_group").val()
-        dKey     : @$el.find("#assessment_d_key").val()
+        sequences : sequences
+        archived  : @$el.find("#archive_buttons input:checked").val() == "true"
+        name      : @$el.find("#assessment_name").val()
+        group     : @$el.find("#assessment_group").val()
+        dKey      : @$el.find("#assessment_d_key").val()
         assessmentId : @model.id
       return true
 
@@ -85,10 +105,21 @@ class AssessmentEditView extends Backbone.View
     @model.subtests.on "change remove", @subtestListEditView.render
 
   render: =>
+    sequences = ""
+    if @model.has("sequences") 
+      sequences = @model.get("sequences")
+      sequences = sequences.join("\n")
+
+      if _.isArray(sequences)
+        for sequences, i in sequences 
+          sequences[i] = sequences.join(", ")
+
+    subtestLegend = @updateSubtestLegend()
+
     arch = @model.get('archived')
     archiveChecked    = if (arch == true or arch == 'true') then "checked" else ""
     notArchiveChecked = if archiveChecked then "" else "checked"
-    
+
     # list of "templates"
     subtestTypeSelect = "<select id='subtest_type_select'>
       <option value='none' disabled='disabled' selected='selected'>Please select a subtest type</option>"
@@ -138,7 +169,15 @@ class AssessmentEditView extends Backbone.View
             <button class='new_subtest_save command'>Add</button> <button class='new_subtest_cancel command'>Cancel</button>
           </div>
         </div>
-      </div>"
+      </div>
+      <h2>Options</h2>
+      <div class='label_value'>
+        <label for='sequences' title='This is a list of acceptable orders of subtests, which will be randomly selected each time an assessment is run. Subtest indicies are separated by commas, new lines separate sequences. '>Random Sequences</label>
+        <div id='subtest_legend'>#{subtestLegend}</div>
+        <textarea id='sequences'>#{sequences}</textarea>
+      </div>
+      <button class='save command'>Save</button>
+      "
 
     # render new subtest views
     @subtestListEditView.setElement(@$el.find("#subtest_list"))
@@ -152,8 +191,19 @@ class AssessmentEditView extends Backbone.View
       update : (event, ui) =>
         for id, i in ($(li).attr("data-id") for li in @$el.find("#subtest_list li"))
           @model.subtests.get(id).set({"order":i},{silent:true}).save(null,{silent:true})
+        @model.subtests.sort()
+        @updateSubtestLegend()
 
     @trigger "rendered"
+
+  
+  updateSubtestLegend: =>
+    subtestLegend = ""
+    @model.subtests.each (subtest, i) ->
+      subtestLegend += "<div class='small_grey'>#{i} - #{subtest.get("name")}</div><br>"
+    $subtestWrapper = @$el.find("#subtest_legend")
+    $subtestWrapper.html(subtestLegend) if $subtestWrapper.length != 0
+    return subtestLegend
 
   onClose: ->
     @subtestListEditView.close()

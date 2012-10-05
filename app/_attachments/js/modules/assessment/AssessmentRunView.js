@@ -11,11 +11,12 @@ AssessmentRunView = (function(_super) {
   }
 
   AssessmentRunView.prototype.initialize = function(options) {
-    var resultView,
+    var i, resultView, sequences, _ref,
       _this = this;
     this.abortAssessment = false;
     this.index = 0;
     this.model = options.model;
+    this.orderMap = [];
     Tangerine.activity = "assessment run";
     this.subtestViews = [];
     this.model.subtests.sort();
@@ -25,6 +26,15 @@ AssessmentRunView = (function(_super) {
         parent: _this
       }));
     });
+    if (this.model.has("sequences")) {
+      sequences = this.model.get("sequences");
+      this.orderMap = sequences[Math.round(Math.random() * sequences.length)];
+      this.orderMap[this.orderMap.length] = this.orderMap.length;
+    } else {
+      for (i = 0, _ref = this.subtestViews.length; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+        this.orderMap[i] = i;
+      }
+    }
     this.result = new Result({
       assessmentId: this.model.id,
       assessmentName: this.model.get("name"),
@@ -41,7 +51,8 @@ AssessmentRunView = (function(_super) {
   AssessmentRunView.prototype.render = function() {
     var currentView,
       _this = this;
-    currentView = this.subtestViews[this.index];
+    console.log(this.orderMap);
+    currentView = this.subtestViews[this.orderMap[this.index]];
     if (this.model.subtests.length === 0) {
       this.$el.append("<h1>Oops...</h1><p>This assessment is blank. Perhaps you meant to add some subtests.</p>");
     } else {
@@ -82,7 +93,7 @@ AssessmentRunView = (function(_super) {
 
   AssessmentRunView.prototype.skip = function() {
     var currentView;
-    currentView = this.subtestViews[this.index];
+    currentView = this.subtestViews[this.orderMap[this.index]];
     this.result.add({
       name: currentView.model.get("name"),
       data: currentView.getSkipped(),
@@ -100,7 +111,7 @@ AssessmentRunView = (function(_super) {
 
   AssessmentRunView.prototype.next = function() {
     var currentView;
-    currentView = this.subtestViews[this.index];
+    currentView = this.subtestViews[this.orderMap[this.index]];
     if (currentView.isValid()) {
       this.result.add({
         name: currentView.model.get("name"),
