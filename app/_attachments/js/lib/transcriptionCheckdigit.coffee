@@ -62,13 +62,17 @@ class CheckDigit
     return false if id.length != 6
     return (@get(id.slice(0,id.length-1))) == (id)
 
+  isNotValid: (id=@id) ->
+    return not @isValid(id)
+
   # return characters in id not allowed
   getErrors: ->
     errors = []
     result = []
     (result.push(@id[i]) if ch == -1) for ch, i in (@allowed.indexOf(ch) for ch in @id.split "" )
-    if result.length != 0 then errors.push "#{results[i]} not allowed." for i in results
-    if @id.length    != 6 then errors.push "Identifier must be 6 digits"
+    if result.length != 0 then errors.push "Error: '#{result}' is not a valid student id character. Only the following characters are allowed: #{@allowed}<br/>(this helps reduce errors while writing down student IDs)" for i in result
+    if @id.length    != 6 then errors.push "Error: Identifier must be 6 letters"
+    if errors.length is 0 and @isNotValid() then errors.push "Error: Invalid ID. Maybe it was written down incorrectly. Generate a new one then write down the old ID and the new one a piece of paper. Include both IDs in comments section at end of assessment."
 
     return errors
 
