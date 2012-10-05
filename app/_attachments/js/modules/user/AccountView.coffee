@@ -56,18 +56,6 @@ class AccountView extends Backbone.View
     mobileChecked = if Tangerine.settings.context == "mobile" then " checked='checked'" else ""
     classChecked = if Tangerine.settings.context == "class" then " checked='checked'" else ""
 
-    if Tangerine.settings.context != 'server'
-      modeSelector = "
-        <label title='This setting changes the mobile version of Tangerine to the class version of Tangerine.'>Tangerine</label><br>
-        <div id='mode_buttons' class='buttonset'>
-          <input type='radio' id='mode_class' name='mode' value='class' #{classChecked}><label for='mode_class'>Class</label>
-          <input type='radio' id='mode_mobile'  name='mode' value='mobile'  #{mobileChecked}><label for='mode_mobile'>Mobile</label>
-        </div>
-      "
-    else
-      modeSelector = ""
-      
-
     html += "
         </ul>
         <button class='command join'>Join or create a group</button>
@@ -80,7 +68,6 @@ class AccountView extends Backbone.View
           <button class='command join_cancel'>Cancel</button>
         </div>
       </div><br>
-      #{modeSelector}
       <!--button class='command confirmation'>Report a bug</button>
       <div class='confirmation' id='bug'>
         <label for='where'>What broke?
