@@ -39,12 +39,17 @@ ResultView = (function(_super) {
         total: 1
       }
     });
-    Tangerine.activity = "";
-    Utils.midAlert("Result saved");
-    this.$el.find('.save_status').html("saved");
-    this.$el.find('.save_status').removeClass('not_saved');
-    this.$el.find('button.save, .question').fadeOut(250);
-    return this.$el.find('.confirmation').removeClass('confirmation');
+    if (this.model.save()) {
+      Tangerine.activity = "";
+      Utils.midAlert("Result saved");
+      this.$el.find('.save_status').html("saved");
+      this.$el.find('.save_status').removeClass('not_saved');
+      this.$el.find('button.save, .question').fadeOut(250);
+      return this.$el.find('.confirmation').removeClass('confirmation');
+    } else {
+      Utils.midAlert("Save error");
+      return this.$el.find('.save_status').html("Results may not have saved");
+    }
   };
 
   ResultView.prototype.initialize = function(options) {

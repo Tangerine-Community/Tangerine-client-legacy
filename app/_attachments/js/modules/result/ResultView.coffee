@@ -24,13 +24,16 @@ class ResultView extends Backbone.View
         missing : 0
         total : 1
 
-    Tangerine.activity = ""
-    Utils.midAlert "Result saved"
-    @$el.find('.save_status').html "saved"
-    @$el.find('.save_status').removeClass('not_saved')
-    @$el.find('button.save, .question').fadeOut(250)
-    @$el.find('.confirmation').removeClass('confirmation')
-
+    if @model.save()
+      Tangerine.activity = ""
+      Utils.midAlert "Result saved"
+      @$el.find('.save_status').html "saved"
+      @$el.find('.save_status').removeClass('not_saved')
+      @$el.find('button.save, .question').fadeOut(250)
+      @$el.find('.confirmation').removeClass('confirmation')
+    else
+      Utils.midAlert "Save error"
+      @$el.find('.save_status').html "Results may not have saved"
 
   initialize: ( options ) ->
 
