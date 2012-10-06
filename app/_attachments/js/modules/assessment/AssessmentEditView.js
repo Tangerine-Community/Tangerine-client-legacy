@@ -55,7 +55,7 @@ AssessmentEditView = (function(_super) {
   };
 
   AssessmentEditView.prototype.updateModel = function() {
-    var element, groups, i, j, lengthError, sequence, sequences, sequencesValue, _len, _len2;
+    var doublesError, element, groups, i, j, sequence, sequenceErrors, sequences, sequencesValue, tooFewError, tooManyError, _len, _len2;
     sequencesValue = $.trim(this.$el.find("#sequences").val());
     sequences = sequencesValue.split("\n");
     for (i = 0, _len = sequences.length; i < _len; i++) {
@@ -66,12 +66,20 @@ AssessmentEditView = (function(_super) {
         sequence[j] = parseInt(element);
       }
       sequences[i] = sequence;
-      if (sequence.length !== this.model.subtests.models.length) {
-        lengthError = true;
-      }
+      if (sequence.length > this.model.subtests.models.length) tooManyError = true;
+      if (sequence.length < this.model.subtests.models.length) tooFewError = true;
+      if (sequence.length !== _.uniq(sequence).length) doublesError = true;
     }
-    if (lengthError) {
-      alert("Warning\n\nSome sequences do not contain all subtests.");
+    sequenceErrors = [];
+    if (tooManyError) {
+      sequenceErrors.push("Some sequences are longer than the total number of all subtests.");
+    }
+    if (tooFewError) {
+      sequenceErrors.push("Some sequences are shorter than the total number of all subtests.");
+    }
+    if (doublesError) sequenceErrors.push("Some sequences contain doubles.");
+    if (sequenceErrors.length !== 0) {
+      alert("Warning\n\n" + (sequenceErrors.join("\n")));
     }
     groups = Tangerine.user.get("groups");
     if (!~groups.indexOf(this.$el.find("#assessment_group").val())) {
@@ -125,7 +133,8 @@ AssessmentEditView = (function(_super) {
     this.subtestListEditView = new SubtestListEditView({
       "assessment": this.model
     });
-    return this.model.subtests.on("change remove", this.subtestListEditView.render);
+    this.model.subtests.on("change remove", this.subtestListEditView.render);
+    return this.model.subtests.on("all", this.updateSubtestLegend);
   };
 
   AssessmentEditView.prototype.render = function() {
@@ -191,8 +200,7 @@ AssessmentEditView = (function(_super) {
             silent: true
           });
         }
-        _this.model.subtests.sort();
-        return _this.updateSubtestLegend();
+        return _this.model.subtests.sort();
       }
     });
     return this.trigger("rendered");

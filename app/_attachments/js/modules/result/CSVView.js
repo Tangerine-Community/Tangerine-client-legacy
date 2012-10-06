@@ -124,7 +124,7 @@ CSVView = (function(_super) {
           }
         }
       }
-      this.metaKeys.push("start_time");
+      this.metaKeys.push("start_time", "order_map");
       columns = this.metaKeys.concat(_.flatten(keyChain));
       csvRowData.push(columns);
       _ref7 = this.results;
@@ -139,6 +139,7 @@ CSVView = (function(_super) {
           }
         }
         row[columns.indexOf("start_time")] = result.has('starttime') ? result.get('starttime') : result.get('start_time');
+        row[columns.indexOf("order_map")] = result.has('order_map') ? result.get('order_map') : "no_record";
         _ref9 = result.attributes.subtestData;
         for (_m = 0, _len8 = _ref9.length; _m < _len8; _m++) {
           subtest = _ref9[_m];
