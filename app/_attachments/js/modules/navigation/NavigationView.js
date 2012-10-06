@@ -32,40 +32,36 @@ NavigationView = (function(_super) {
   };
 
   NavigationView.prototype.logoClick = function() {
-    var _this = this;
-    this.user.verify({
-      isAdmin: function() {
-        Tangerine.activity = "";
-        return _this.router.navigate('', true);
-      }
-    });
-    if (Tangerine.activity === "assessment run") {
-      if (confirm("Assessment not finished. Continue to main screen?")) {
-        Tangerine.activity = "";
+    if (this.user.isAdmin()) {
+      Tangerine.activity = "";
+      return this.router.navigate('', true);
+    } else {
+      if (Tangerine.activity === "assessment run") {
+        if (confirm("Assessment not finished. Continue to main screen?")) {
+          Tangerine.activity = "";
+          return this.router.navigate('', true);
+        }
+      } else {
         return this.router.navigate('', true);
       }
-    } else {
-      return this.router.navigate('', true);
     }
   };
 
   NavigationView.prototype.logout = function() {
-    var _this = this;
-    this.user.verify({
-      isAdmin: function() {
-        Tangerine.activity = "";
-        return _this.router.navigate('logout', true);
-      }
-    });
-    if (Tangerine.activity === "assessment run") {
-      if (confirm("Assessment not finished. Continue to logout?")) {
-        Tangerine.activity = "";
-        return this.router.navigate('logout', true);
-      }
+    if (this.user.isAdmin()) {
+      Tangerine.activity = "";
+      return this.router.navigate('logout', true);
     } else {
-      if (confirm("Are you sure you want to logout?")) {
-        Tangerine.activity = "";
-        return this.router.navigate('logout', true);
+      if (Tangerine.activity === "assessment run") {
+        if (confirm("Assessment not finished. Continue to logout?")) {
+          Tangerine.activity = "";
+          return this.router.navigate('logout', true);
+        }
+      } else {
+        if (confirm("Are you sure you want to logout?")) {
+          Tangerine.activity = "";
+          return this.router.navigate('logout', true);
+        }
       }
     }
   };
@@ -90,7 +86,9 @@ NavigationView = (function(_super) {
   };
 
   NavigationView.prototype.render = function() {
-    this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <div id='logout_link'>" + (t('logout')) + "</div>    <div id='enumerator_box'>      " + (t('enumerator')) + "      <div id='enumerator'></div>    </div>    <div id='current_student'>      Student ID      <div id='current_student_id'></div>    </div>    <div id='version'>    version <br/>    <span id='version-uuid'>" + Tangerine.version + "</span><br/>    " + (Tangerine.user.isAdmin && Tangerine.settings.context !== "server" ? "<a href='#update'>" + (t('update')) + "</a>" : "") + "    </div>    ");
+    var updateButton;
+    updateButton = Tangerine.user.isAdmin() && Tangerine.settings.context !== "server" ? "<a href='#update'>" + (t('update')) + "</a>" : "";
+    this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <div id='logout_link'>" + (t('logout')) + "</div>    <div id='enumerator_box'>      " + (t('enumerator')) + "      <div id='enumerator'>" + (Tangerine.user.name || "") + "</div>    </div>    <div id='current_student'>      Student ID      <div id='current_student_id'></div>    </div>    <div id='version'>    version <br/>    <span id='version-uuid'>" + Tangerine.version + "</span><br/>    " + updateButton + "    </div>    ");
     $("body").ajaxStart(function() {
       return $("#corner_logo").attr("src", "images/spin_orange.gif");
     });
@@ -111,6 +109,7 @@ NavigationView = (function(_super) {
   };
 
   NavigationView.prototype.handleMenu = function(event) {
+    var _this = this;
     $('#enumerator').html(this.user.name);
     if (~window.location.toString().indexOf("name=")) {
       this.$el.find("#logout_link").hide();
@@ -119,9 +118,11 @@ NavigationView = (function(_super) {
     }
     return this.user.verify({
       isRegistered: function() {
+        _this.render();
         return $('#navigation').fadeIn(250);
       },
       isUnregistered: function() {
+        _this.render();
         return $('#navigation').fadeOut(250);
       }
     });

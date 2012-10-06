@@ -17,34 +17,31 @@ class NavigationView extends Backbone.View
   enumeratorClick: -> Tangerine.router.navigate "account", true
 
   logoClick:-> 
-    @user.verify
-      isAdmin: =>
-        Tangerine.activity = ""
-        @router.navigate '', true
-
-    if Tangerine.activity == "assessment run"
-      if confirm("Assessment not finished. Continue to main screen?")
-        Tangerine.activity = ""
-        @router.navigate '', true
+    if @user.isAdmin()
+      Tangerine.activity = ""
+      @router.navigate '', true
     else
-        @router.navigate '', true
+      if Tangerine.activity == "assessment run"
+        if confirm("Assessment not finished. Continue to main screen?")
+          Tangerine.activity = ""
+          @router.navigate '', true
+      else
+          @router.navigate '', true
 
       
   logout: ->
-    @user.verify
-      isAdmin: =>
-        Tangerine.activity = ""
-        @router.navigate 'logout', true
-
-      
-    if Tangerine.activity == "assessment run"
-      if confirm("Assessment not finished. Continue to logout?")
-        Tangerine.activity = ""
-        @router.navigate 'logout', true
+    if @user.isAdmin()
+      Tangerine.activity = ""
+      @router.navigate 'logout', true
     else
-      if confirm("Are you sure you want to logout?")
-        Tangerine.activity = ""
-        @router.navigate 'logout', true
+      if Tangerine.activity == "assessment run"
+        if confirm("Assessment not finished. Continue to logout?")
+          Tangerine.activity = ""
+          @router.navigate 'logout', true
+      else
+        if confirm("Are you sure you want to logout?")
+          Tangerine.activity = ""
+          @router.navigate 'logout', true
 
   onClose: ->
 
@@ -64,12 +61,14 @@ class NavigationView extends Backbone.View
     @$el.find("main_nav").empty()
 
   render: ->
+    updateButton = if Tangerine.user.isAdmin() && Tangerine.settings.context != "server" then "<a href='#update'>#{t('update')}</a>" else ""
+
     @$el.html "
     <img id='corner_logo' src='images/corner_logo.png'>
     <div id='logout_link'>#{t('logout')}</div>
     <div id='enumerator_box'>
       #{t('enumerator')}
-      <div id='enumerator'></div>
+      <div id='enumerator'>#{Tangerine.user.name || ""}</div>
     </div>
 
     <div id='current_student'>
@@ -79,20 +78,13 @@ class NavigationView extends Backbone.View
     <div id='version'>
     version <br/>
     <span id='version-uuid'>#{Tangerine.version}</span><br/>
-    #{
-      if Tangerine.user.isAdmin && Tangerine.settings.context != "server"
-        "<a href='#update'>#{t('update')}</a>"
-      else
-        ""
-    }
+    #{updateButton}
     </div>
     "
-
 
     # Spin the logo on ajax calls
     $("body").ajaxStart -> $("#corner_logo").attr "src", "images/spin_orange.gif"
     $("body").ajaxStop ->  $("#corner_logo").attr "src", "images/corner_logo.png"
-
 
   setStudent: ( id ) ->
     if id == ""
@@ -113,9 +105,11 @@ class NavigationView extends Backbone.View
     if ~window.location.toString().indexOf("name=") then @$el.find("#logout_link").hide() else  @$el.find("#logout_link").show()
     
     @user.verify
-      isRegistered: ->
+      isRegistered: =>
+        @render()
         $( '#navigation' ).fadeIn(250)
-      isUnregistered: ->
+      isUnregistered: =>
+        @render()
         $( '#navigation' ).fadeOut(250)
 
 
