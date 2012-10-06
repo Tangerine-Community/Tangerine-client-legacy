@@ -57,9 +57,6 @@ AssessmentRunView = (function(_super) {
   AssessmentRunView.prototype.render = function() {
     var currentView,
       _this = this;
-    console.log(this.orderMap);
-    console.log(this.index);
-    console.log(this.subtestViews);
     currentView = this.subtestViews[this.orderMap[this.index]];
     if (this.model.subtests.length === 0) {
       this.$el.append("<h1>Oops...</h1><p>This assessment is blank. Perhaps you meant to add some subtests.</p>");
