@@ -42,8 +42,8 @@ class CSVView extends Backbone.View
       # build column buckets, candidates win with length
       for result in @results
 
-        orderMap = result.get("order_map")
-
+        orderMap = if result.has("order_map") then result.get("order_map") else [0..result.attributes.subtestData.length-1]
+        
         for rawIndex in [0..result.attributes.subtestData.length-1]
           
           # use the order map for randomized subtests
