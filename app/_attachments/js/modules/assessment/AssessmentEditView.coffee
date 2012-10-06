@@ -32,7 +32,7 @@ class AssessmentEditView extends Backbone.View
     Tangerine.router.navigate "assessments/#{@model.get("group")}", true
 
   updateModel: =>
-    
+
     # parse acceptable random sequences
     sequencesValue = $.trim(@$el.find("#sequences").val())
     sequences = sequencesValue.split("\n")
@@ -42,10 +42,20 @@ class AssessmentEditView extends Backbone.View
       for element, j in sequence
         sequence[j] = parseInt(element)
       sequences[i] = sequence
-      if sequence.length != @model.subtests.models.length
-        lengthError = true
+      
+      # detect errors
+      tooManyError = true if sequence.length > @model.subtests.models.length
+      tooFewError  = true if sequence.length < @model.subtests.models.length
+      doublesError = true if sequence.length != _.uniq(sequence).length
     
-    if lengthError then alert "Warning\n\nSome sequences do not contain all subtests."
+    # show errors if they exist
+    sequenceErrors = []
+    if tooManyError then sequenceErrors.push "Some sequences are longer than the total number of all subtests."
+    if tooFewError  then sequenceErrors.push "Some sequences are shorter than the total number of all subtests."
+    if doublesError then sequenceErrors.push "Some sequences contain doubles."
+    if sequenceErrors.length != 0
+      alert "Warning\n\n#{sequenceErrors.join("\n")}"
+  
 
     # wow, I have no idea what this does. This code is really old.
     groups = Tangerine.user.get("groups")
@@ -103,6 +113,7 @@ class AssessmentEditView extends Backbone.View
       "assessment" : @model
 
     @model.subtests.on "change remove", @subtestListEditView.render
+    @model.subtests.on "all", @updateSubtestLegend
 
   render: =>
     sequences = ""
@@ -192,7 +203,6 @@ class AssessmentEditView extends Backbone.View
         for id, i in ($(li).attr("data-id") for li in @$el.find("#subtest_list li"))
           @model.subtests.get(id).set({"order":i},{silent:true}).save(null,{silent:true})
         @model.subtests.sort()
-        @updateSubtestLegend()
 
     @trigger "rendered"
 

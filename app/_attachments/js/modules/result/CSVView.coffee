@@ -41,8 +41,15 @@ class CSVView extends Backbone.View
 
       # build column buckets, candidates win with length
       for result in @results
-      
-        for subtest, sI in result.attributes.subtestData
+
+        orderMap = result.get("order_map")
+
+        for rawIndex in [0..result.attributes.subtestData.length-1]
+          
+          # use the order map for randomized subtests
+          subtestIndex = orderMap.indexOf(rawIndex)
+          subtest = result.attributes.subtestData[subtestIndex]
+
           subtestName = subtest.name.toLowerCase().dasherize()
           prototype = subtest.prototype
           keyBucket = []
@@ -80,15 +87,16 @@ class CSVView extends Backbone.View
           else if prototype == "complete"
             keyBucket.push "additional_comments", "end_time", "gps_latitude", "gps_longitude", "gps_accuracy"
         
-          if not keyChain[sI]?                      then keyChain[sI] = []
-          if keyChain[sI].length < keyBucket.length then keyChain[sI] = keyBucket
+          if not keyChain[rawIndex]?                      then keyChain[rawIndex] = []
+          if keyChain[rawIndex].length < keyBucket.length then keyChain[rawIndex] = keyBucket
 
-      @metaKeys.push "start_time"
+
+      @metaKeys.push "start_time", "order_map"
       columns = @metaKeys.concat(_.flatten(keyChain))
 
       # pop the columns into the first row
       csvRowData.push columns
-
+      
       # fill row array with all results
       for result, d in @results
         row = []
@@ -98,8 +106,9 @@ class CSVView extends Backbone.View
           if result.attributes[metaKey]? then row.push result.attributes[metaKey]
         # little backwards compatibility
         row[columns.indexOf("start_time")] = if result.has('starttime') then result.get('starttime') else result.get('start_time')
-        
-        
+
+        row[columns.indexOf("order_map")] =  if result.has('order_map') then result.get('order_map') else "no_record"
+
         # go through each subtest in this result
         for subtest in result.attributes.subtestData
           prototype = subtest.prototype

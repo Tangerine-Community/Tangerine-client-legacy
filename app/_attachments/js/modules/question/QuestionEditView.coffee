@@ -228,7 +228,7 @@ class QuestionEditView extends Backbone.View
     # basics
     @question.set
       "prompt"          : @$el.find("#prompt").val()
-      "name"            : @$el.find("#name").val()
+      "name"            : @$el.find("#name").val().safetyDance()
       "hint"            : @$el.find("#hint").val()
       "skipLogic"       : @$el.find("#skip-logic").val()
       "linkedGridScore" : parseInt(@$el.find("#linked_grid_score").val())
@@ -241,7 +241,7 @@ class QuestionEditView extends Backbone.View
     optionListElements = @$el.find(".option_list li")
     for li in optionListElements
       label = $(li).find(".option_label").val()
-      value = $(li).find(".option_value").val().replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g,"")
+      value = $(li).find(".option_value").val().safetyDance()
 
       if label? || value?
         options[i] =

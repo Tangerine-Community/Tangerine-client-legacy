@@ -11,7 +11,7 @@ AssessmentRunView = (function(_super) {
   }
 
   AssessmentRunView.prototype.initialize = function(options) {
-    var i, resultView, sequences, _ref,
+    var hasSequences, i, resultView, sequences, _ref,
       _this = this;
     this.abortAssessment = false;
     this.index = 0;
@@ -26,9 +26,10 @@ AssessmentRunView = (function(_super) {
         parent: _this
       }));
     });
-    if (this.model.has("sequences")) {
+    hasSequences = this.model.has("sequences") && !_.isEmpty(_.compact(_.flatten(this.model.get("sequences"))));
+    if (hasSequences) {
       sequences = this.model.get("sequences");
-      this.orderMap = sequences[Math.round(Math.random() * sequences.length)];
+      this.orderMap = sequences[Math.floor(Math.random() * sequences.length)];
       this.orderMap[this.orderMap.length] = this.orderMap.length;
     } else {
       for (i = 0, _ref = this.subtestViews.length; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
@@ -40,6 +41,11 @@ AssessmentRunView = (function(_super) {
       assessmentName: this.model.get("name"),
       blank: true
     });
+    if (hasSequences) {
+      this.result.set({
+        "order_map": this.orderMap
+      });
+    }
     resultView = new ResultView({
       model: this.result,
       assessment: this.model,
@@ -51,7 +57,6 @@ AssessmentRunView = (function(_super) {
   AssessmentRunView.prototype.render = function() {
     var currentView,
       _this = this;
-    console.log(this.orderMap);
     currentView = this.subtestViews[this.orderMap[this.index]];
     if (this.model.subtests.length === 0) {
       this.$el.append("<h1>Oops...</h1><p>This assessment is blank. Perhaps you meant to add some subtests.</p>");

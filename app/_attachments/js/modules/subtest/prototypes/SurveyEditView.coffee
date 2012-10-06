@@ -37,7 +37,7 @@ class SurveyEditView extends Backbone.View
       id           : Utils.guid()
       order        : @model.questions.length
       prompt       : @$el.find('#question_prompt').val()
-      name         : @$el.find('#question_name').val().replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g,"")
+      name         : @$el.find('#question_name').val().safetyDance()
 
     nq = @model.questions.create newAttributes
     @renderQuestions()
