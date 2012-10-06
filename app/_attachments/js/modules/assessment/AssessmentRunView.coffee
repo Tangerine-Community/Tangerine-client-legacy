@@ -1,11 +1,11 @@
 class AssessmentRunView extends Backbone.View
   
   initialize: (options) ->
+
     @abortAssessment = false
     @index = 0
     @model = options.model
     @orderMap = []
-
 
     Tangerine.activity = "assessment run"
     @subtestViews = []
@@ -15,7 +15,9 @@ class AssessmentRunView extends Backbone.View
         model  : model
         parent : @
 
-    if @model.has("sequences") && @model.get("sequences").length != 0
+    hasSequences = @model.has("sequences") && not _.isEmpty(_.compact(_.flatten(@model.get("sequences"))))
+
+    if hasSequences
       sequences = @model.get("sequences")
       @orderMap = sequences[Math.floor(Math.random() * sequences.length)]
       @orderMap[@orderMap.length] = @orderMap.length
@@ -23,15 +25,12 @@ class AssessmentRunView extends Backbone.View
       for i in [0..@subtestViews.length]
         @orderMap[i] = i
 
-
     @result = new Result
       assessmentId   : @model.id
       assessmentName : @model.get "name"
       blank          : true
     
-    if @model.has("sequences") && @model.get("sequences").length != 0
-      @result.set
-        "order_map" : @orderMap
+    if hasSequences then @result.set("order_map" : @orderMap)
       
     resultView = new ResultView
         model          : @result
@@ -39,9 +38,10 @@ class AssessmentRunView extends Backbone.View
         assessmentView : @
     @subtestViews.push resultView
 
-  
   render: ->
-    
+    console.log @orderMap
+    console.log @index
+    console.log @subtestViews
     currentView = @subtestViews[@orderMap[@index]]
     
     if @model.subtests.length == 0
