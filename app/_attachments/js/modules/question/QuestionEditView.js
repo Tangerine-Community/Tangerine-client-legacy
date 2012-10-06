@@ -159,7 +159,7 @@ QuestionEditView = (function(_super) {
     var i, label, last, li, optionListElements, options, value, _i, _len;
     this.question.set({
       "prompt": this.$el.find("#prompt").val(),
-      "name": this.$el.find("#name").val(),
+      "name": this.$el.find("#name").val().safetyDance(),
       "hint": this.$el.find("#hint").val(),
       "skipLogic": this.$el.find("#skip-logic").val(),
       "linkedGridScore": parseInt(this.$el.find("#linked_grid_score").val()),
@@ -172,7 +172,7 @@ QuestionEditView = (function(_super) {
     for (_i = 0, _len = optionListElements.length; _i < _len; _i++) {
       li = optionListElements[_i];
       label = $(li).find(".option_label").val();
-      value = $(li).find(".option_value").val().replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
+      value = $(li).find(".option_value").val().safetyDance();
       if ((label != null) || (value != null)) {
         options[i] = {
           label: label,

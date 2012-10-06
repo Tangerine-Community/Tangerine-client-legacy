@@ -15,7 +15,7 @@ class AssessmentRunView extends Backbone.View
         model  : model
         parent : @
 
-    if @model.has("sequences")
+    if @model.has("sequences") or ( @model.get("sequences").length != 1 || @model.get("sequences")?[0]?)
       sequences = @model.get("sequences")
       @orderMap = sequences[Math.round(Math.random() * sequences.length)]
       @orderMap[@orderMap.length] = @orderMap.length

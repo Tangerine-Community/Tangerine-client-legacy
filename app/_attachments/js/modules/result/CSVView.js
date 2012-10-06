@@ -43,7 +43,7 @@ CSVView = (function(_super) {
   };
 
   CSVView.prototype.render = function() {
-    var columns, count, csvFile, csvRowData, d, i, index, item, keyBucket, keyChain, label, metaKey, monthData, months, observationData, observations, optionKey, optionValue, prototype, result, row, sI, subtest, subtestName, surveyValue, surveyVariable, tableHTML, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len12, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _ref, _ref10, _ref11, _ref12, _ref13, _ref14, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
+    var chain, columns, count, csvFile, csvRowData, d, i, index, item, keyBucket, keyChain, label, metaKey, monthData, months, observationData, observations, optionKey, optionValue, orderMap, prototype, rawIndex, result, row, subtest, subtestIndex, subtestName, surveyValue, surveyVariable, tableHTML, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len12, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref13, _ref14, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
       _this = this;
     if ((this.results != null) && (this.results[0] != null)) {
       tableHTML = "";
@@ -53,9 +53,11 @@ CSVView = (function(_super) {
       _ref = this.results;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         result = _ref[_i];
-        _ref2 = result.attributes.subtestData;
-        for (sI = 0, _len2 = _ref2.length; sI < _len2; sI++) {
-          subtest = _ref2[sI];
+        orderMap = result.get("orderMap");
+        for (rawIndex = 0, _ref2 = result.attributes.subtestData.length - 1; 0 <= _ref2 ? rawIndex <= _ref2 : rawIndex >= _ref2; 0 <= _ref2 ? rawIndex++ : rawIndex--) {
+          subtestIndex = orderMap.indexOf(rawIndex);
+          subtest = result.attributes.subtestData[subtestIndex];
+          console.log(rawIndex + " " + subtestIndex + " " + subtest.name);
           subtestName = subtest.name.toLowerCase().dasherize();
           prototype = subtest.prototype;
           keyBucket = [];
@@ -65,7 +67,7 @@ CSVView = (function(_super) {
             keyBucket.push("year", "month", "date", "assess_time");
           } else if (prototype === "location") {
             _ref3 = subtest.data.labels;
-            for (_j = 0, _len3 = _ref3.length; _j < _len3; _j++) {
+            for (_j = 0, _len2 = _ref3.length; _j < _len2; _j++) {
               label = _ref3[_j];
               keyBucket.push(label);
             }
@@ -75,7 +77,7 @@ CSVView = (function(_super) {
             variableName = subtest.data.variable_name;
             keyBucket.push("" + variableName + "_auto_stop", "" + variableName + "_time_remain", "" + variableName + "_attempted", "" + variableName + "_item_at_time", "" + variableName + "_time_intermediate_captured", "" + variableName + "_correct_per_minute");
             _ref4 = subtest.data.items;
-            for (i = 0, _len4 = _ref4.length; i < _len4; i++) {
+            for (i = 0, _len3 = _ref4.length; i < _len3; i++) {
               item = _ref4[i];
               keyBucket.push("" + variableName + (i + 1));
             }
@@ -94,7 +96,7 @@ CSVView = (function(_super) {
             }
           } else if (prototype === "observation") {
             _ref6 = subtest.data.surveys;
-            for (i = 0, _len5 = _ref6.length; i < _len5; i++) {
+            for (i = 0, _len4 = _ref6.length; i < _len4; i++) {
               observations = _ref6[i];
               observationData = observations.data;
               for (surveyVariable in observationData) {
@@ -112,8 +114,14 @@ CSVView = (function(_super) {
           } else if (prototype === "complete") {
             keyBucket.push("additional_comments", "end_time", "gps_latitude", "gps_longitude", "gps_accuracy");
           }
-          if (!(keyChain[sI] != null)) keyChain[sI] = [];
-          if (keyChain[sI].length < keyBucket.length) keyChain[sI] = keyBucket;
+          if (!(keyChain[subtestIndex] != null)) keyChain[subtestIndex] = [];
+          if (keyChain[subtestIndex].length < keyBucket.length) {
+            keyChain[subtestIndex] = keyBucket;
+          }
+          for (_k = 0, _len5 = keyChain.length; _k < _len5; _k++) {
+            chain = keyChain[_k];
+            console.log(chain != null ? chain.slice(0, 3) : void 0);
+          }
         }
       }
       this.metaKeys.push("start_time");
@@ -124,16 +132,16 @@ CSVView = (function(_super) {
         result = _ref7[d];
         row = [];
         _ref8 = this.metaKeys;
-        for (_k = 0, _len7 = _ref8.length; _k < _len7; _k++) {
-          metaKey = _ref8[_k];
+        for (_l = 0, _len7 = _ref8.length; _l < _len7; _l++) {
+          metaKey = _ref8[_l];
           if (result.attributes[metaKey] != null) {
             row.push(result.attributes[metaKey]);
           }
         }
         row[columns.indexOf("start_time")] = result.has('starttime') ? result.get('starttime') : result.get('start_time');
         _ref9 = result.attributes.subtestData;
-        for (_l = 0, _len8 = _ref9.length; _l < _len8; _l++) {
-          subtest = _ref9[_l];
+        for (_m = 0, _len8 = _ref9.length; _m < _len8; _m++) {
+          subtest = _ref9[_m];
           prototype = subtest.prototype;
           if (prototype === "id") {
             row[columns.indexOf("id")] = subtest.data.participant_id;

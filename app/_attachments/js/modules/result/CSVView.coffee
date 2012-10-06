@@ -41,8 +41,16 @@ class CSVView extends Backbone.View
 
       # build column buckets, candidates win with length
       for result in @results
-      
-        for subtest, sI in result.attributes.subtestData
+
+        orderMap = result.get("orderMap")
+
+        for rawIndex in [0..result.attributes.subtestData.length-1]
+          
+          # use the order map for randomized subtests
+          subtestIndex = orderMap.indexOf(rawIndex)
+          subtest = result.attributes.subtestData[subtestIndex]
+          console.log rawIndex + " " + subtestIndex + " " + subtest.name
+
           subtestName = subtest.name.toLowerCase().dasherize()
           prototype = subtest.prototype
           keyBucket = []
@@ -80,15 +88,23 @@ class CSVView extends Backbone.View
           else if prototype == "complete"
             keyBucket.push "additional_comments", "end_time", "gps_latitude", "gps_longitude", "gps_accuracy"
         
-          if not keyChain[sI]?                      then keyChain[sI] = []
-          if keyChain[sI].length < keyBucket.length then keyChain[sI] = keyBucket
+          if not keyChain[subtestIndex]?                      then keyChain[subtestIndex] = []
+
+          if keyChain[subtestIndex].length < keyBucket.length then keyChain[subtestIndex] = keyBucket
+          # console.log subtestIndex
+          for chain in keyChain
+            console.log chain?[0..2]
+
 
       @metaKeys.push "start_time"
       columns = @metaKeys.concat(_.flatten(keyChain))
 
+      #console.log "final result"
+      #console.log columns
+
       # pop the columns into the first row
       csvRowData.push columns
-
+      
       # fill row array with all results
       for result, d in @results
         row = []
