@@ -2,9 +2,11 @@
 
 (function(head, req) {
   var columnName, columnNames, columns, csvRowData, key, row, rowData, value, _i, _j, _len, _len1, _ref;
+  log(req);
   start({
     "headers": {
-      "content-type": "text/csv"
+      "content-type": "text/csv",
+      "Content-Disposition": "attachment; filename=" + req.query.filename + ".csv"
     }
   });
   columns = {};

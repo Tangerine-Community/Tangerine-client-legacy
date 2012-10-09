@@ -142,6 +142,7 @@ class ResultsView extends Backbone.View
         #{if Tangerine.settings.context == "mobile" then cloudButton  else ""}
         #{if Tangerine.settings.context == "mobile" then tabletButton else ""}
         #{csvButton}
+        <button class='command'><a style='text-decoration: none; color:black' href='#csv_alpha/#{@assessment.id}'>CSV Beta</a></button>
       </div>"
 
     if Tangerine.settings.context == "mobile"

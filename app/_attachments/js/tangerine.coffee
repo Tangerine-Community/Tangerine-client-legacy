@@ -41,6 +41,7 @@ class Router extends Backbone.Router
     'restart/:id'   : 'restart'
     'edit/:id'      : 'edit'
     'csv/:id'       : 'csv'
+    'csv_alpha/:id'       : 'csv_alpha'
     'results/:name' : 'results'
     'import'        : 'import'
     
@@ -389,6 +390,22 @@ class Router extends Backbone.Router
         view = new CSVView
           assessmentId : id
         vm.show view
+      isUser: ->
+        errView = new ErrorView
+          message : "You're not an admin user"
+          details : "How did you get here?"
+        vm.show errView
+
+  csv_alpha: (id) ->
+    Tangerine.user.verify
+      isAdmin: ->
+        assessment = new Assessment
+          "_id" : id
+        assessment.fetch
+          success :  ->
+            filename = assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
+            document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{id}\"&filename=#{filename}"
+        
       isUser: ->
         errView = new ErrorView
           message : "You're not an admin user"

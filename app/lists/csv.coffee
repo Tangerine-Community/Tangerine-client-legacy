@@ -1,6 +1,10 @@
 (head, req) ->
+  log req
   start
-    "headers" : {"content-type": "text/csv"}
+    "headers" : {
+      "content-type": "text/csv"
+      "Content-Disposition": "attachment; filename=#{req.query.filename}.csv"
+    }
 
   columns = {}
   csvRowData = []
