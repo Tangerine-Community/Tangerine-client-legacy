@@ -168,38 +168,39 @@ class ResultsView extends Backbone.View
         </div>
         "
     html += "
-      <h2>Results</h2>
+      <h2 id='results-header'>Results (loading)</h2>
     "
     
     @$el.html html
-    
+
     if @results?.length == 0
-      @$el.append "No results yet!"
+      $('#results-header').html "No results yet!"
     else
       $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/resultSummaryByAssessmentId",
         key: @assessment.id
         descending: true
         success: (result) =>
-          for row in result.rows
-            @$el.append "
+          $('#results-header').html "Results (#{result.rows.length})"
+          # TODO pagination
+          maxResults = 500
+          if result.rows.length > maxResults
+            $('#results-header').html "Results (#{result.rows.length}) - more than #{maxResults} results, use CSV for analysis"
+            return
+          rowsRendered = for row in result.rows
+            "
               <div>
-                #{row.value.participant_id}
-                #{moment(row.value.end_time).format( 'YYYY-MMM-DD HH:mm' )}
-                (#{moment(row.value.end_time).fromNow()})
+                #{if row.value.participant_id then row.value.participant_id else ""}
+                #{
+                  if row.value.end_time
+                    moment(row.value.end_time).format( 'YYYY-MMM-DD HH:mm' ) + "(" + moment(row.value.end_time).fromNow() + ")"
+                  else
+                    ""
+                }
                 <button data-result-id='#{row.id}' class='details command'>details</button>
                 <div></div>
               </div>
             "
-
-      ###
-      for result in @results
-        view = new ResultSumView
-          model: result
-          finishCheck : true
-        view.render()
-        @subViews.push view
-        @$el.append view.el
-      ###
+          @$el.append rowsRendered.join("")
       
     @trigger "rendered"
   

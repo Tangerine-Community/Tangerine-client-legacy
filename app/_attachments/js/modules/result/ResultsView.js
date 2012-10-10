@@ -214,35 +214,35 @@ ResultsView = (function(_super) {
     if (Tangerine.settings.context === "mobile") {
       html += "        <button class='detect command'>Detect options</button>        <div class='status'>          <h2>Status</h2>          <div class='info_box'></div>          <div class='checking_status'></div>        </div>        ";
     }
-    html += "      <h2>Results</h2>    ";
+    html += "      <h2 id='results-header'>Results (loading)</h2>    ";
     this.$el.html(html);
     if (((_ref = this.results) != null ? _ref.length : void 0) === 0) {
-      this.$el.append("No results yet!");
+      $('#results-header').html("No results yet!");
     } else {
       $.couch.db(Tangerine.db_name).view("" + Tangerine.design_doc + "/resultSummaryByAssessmentId", {
         key: this.assessment.id,
         descending: true,
         success: function(result) {
-          var row, _i, _len, _ref1, _results;
-          _ref1 = result.rows;
-          _results = [];
-          for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-            row = _ref1[_i];
-            _results.push(_this.$el.append("              <div>                " + row.value.participant_id + "                " + (moment(row.value.end_time).format('YYYY-MMM-DD HH:mm')) + "                (" + (moment(row.value.end_time).fromNow()) + ")                <button data-result-id='" + row.id + "' class='details command'>details</button>                <div></div>              </div>            "));
+          var maxResults, row, rowsRendered;
+          $('#results-header').html("Results (" + result.rows.length + ")");
+          maxResults = 500;
+          if (result.rows.length > maxResults) {
+            $('#results-header').html("Results (" + result.rows.length + ") - more than " + maxResults + " results, use CSV for analysis");
+            return;
           }
-          return _results;
+          rowsRendered = (function() {
+            var _i, _len, _ref1, _results;
+            _ref1 = result.rows;
+            _results = [];
+            for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+              row = _ref1[_i];
+              _results.push("              <div>                " + (row.value.participant_id ? row.value.participant_id : "") + "                " + (row.value.end_time ? moment(row.value.end_time).format('YYYY-MMM-DD HH:mm') + "(" + moment(row.value.end_time).fromNow() + ")" : "") + "                <button data-result-id='" + row.id + "' class='details command'>details</button>                <div></div>              </div>            ");
+            }
+            return _results;
+          })();
+          return _this.$el.append(rowsRendered.join(""));
         }
       });
-      /*
-            for result in @results
-              view = new ResultSumView
-                model: result
-                finishCheck : true
-              view.render()
-              @subViews.push view
-              @$el.append view.el
-      */
-
     }
     return this.trigger("rendered");
   };
