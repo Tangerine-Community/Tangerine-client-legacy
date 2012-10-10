@@ -91,6 +91,7 @@ class QuestionEditView extends Backbone.View
     optionListElements = @$el.find("#option_list_wrapper li")
     if optionListElements.length != 0
       $(optionListElements.last()).scrollTo().find("input:first").focus()
+    @refreshSortable()
 
 
   render: ->
@@ -182,18 +183,20 @@ class QuestionEditView extends Backbone.View
         "
       @$el.append optionHTML
 
-      @$el.find(".option_list").sortable
-        handle : '.sortable_handle'
-        start: (event, ui) -> ui.item.addClass "drag_shadow"
-        stop:  (event, ui) -> ui.item.removeClass "drag_shadow"
-        update : (event, ui) =>
-          @updateModel()
-
+      @refreshSortable()
+      
     @$el.append "<button class='done command'>Done</button>
       </div>
       "
     @trigger "rendered"
 
+  refreshSortable: ->
+    @$el.find(".option_list").sortable
+      handle : '.sortable_handle'
+      start: (event, ui) -> ui.item.addClass "drag_shadow"
+      stop:  (event, ui) -> ui.item.removeClass "drag_shadow"
+      update : (event, ui) =>
+        @updateModel()
 
 
   hijackEnter: (event) ->

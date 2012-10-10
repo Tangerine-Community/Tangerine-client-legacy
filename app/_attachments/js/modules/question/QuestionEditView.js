@@ -81,13 +81,13 @@ QuestionEditView = (function(_super) {
     this.$el.find('#option_list_wrapper').html(this.getOptionList());
     optionListElements = this.$el.find("#option_list_wrapper li");
     if (optionListElements.length !== 0) {
-      return $(optionListElements.last()).scrollTo().find("input:first").focus();
+      $(optionListElements.last()).scrollTo().find("input:first").focus();
     }
+    return this.refreshSortable();
   };
 
   QuestionEditView.prototype.render = function() {
-    var assessmentName, checkOrRadio, hint, i, linkedGridScore, name, option, optionHTML, options, prompt, skipLogic, skippable, subtestName, type, _len, _ref,
-      _this = this;
+    var assessmentName, checkOrRadio, hint, i, linkedGridScore, name, option, optionHTML, options, prompt, skipLogic, skippable, subtestName, type, _len, _ref;
     assessmentName = this.assessment.escape("name");
     subtestName = this.subtest.escape("name");
     name = this.question.escape("name") || "";
@@ -109,21 +109,26 @@ QuestionEditView = (function(_super) {
       }
       optionHTML += "</select>        </div>        <div id='option_list_wrapper'>" + (this.getOptionList()) + "</div>        ";
       this.$el.append(optionHTML);
-      this.$el.find(".option_list").sortable({
-        handle: '.sortable_handle',
-        start: function(event, ui) {
-          return ui.item.addClass("drag_shadow");
-        },
-        stop: function(event, ui) {
-          return ui.item.removeClass("drag_shadow");
-        },
-        update: function(event, ui) {
-          return _this.updateModel();
-        }
-      });
+      this.refreshSortable();
     }
     this.$el.append("<button class='done command'>Done</button>      </div>      ");
     return this.trigger("rendered");
+  };
+
+  QuestionEditView.prototype.refreshSortable = function() {
+    var _this = this;
+    return this.$el.find(".option_list").sortable({
+      handle: '.sortable_handle',
+      start: function(event, ui) {
+        return ui.item.addClass("drag_shadow");
+      },
+      stop: function(event, ui) {
+        return ui.item.removeClass("drag_shadow");
+      },
+      update: function(event, ui) {
+        return _this.updateModel();
+      }
+    });
   };
 
   QuestionEditView.prototype.hijackEnter = function(event) {
