@@ -24,7 +24,7 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.csvBeta = function() {
-    return Tangerine.router.navigate('#csv_alpha/#{@assessment.id}', true);
+    return Tangerine.router.navigate("csv_alpha/" + this.assessment.id, true);
   };
 
   ResultsView.prototype.showResultSumView = function(event) {

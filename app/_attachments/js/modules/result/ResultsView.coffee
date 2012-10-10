@@ -9,7 +9,7 @@ class ResultsView extends Backbone.View
     'click .csv_beta' : 'csvBeta'
 
   csvBeta: ->
-    Tangerine.router.navigate '#csv_alpha/#{@assessment.id}', true
+    Tangerine.router.navigate "csv_alpha/#{@assessment.id}", true
 
   showResultSumView: (event) ->
     result = new Result
@@ -181,8 +181,8 @@ class ResultsView extends Backbone.View
       $('#results-header').html "No results yet!"
     else
       $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/resultSummaryByAssessmentId",
-        key: @assessment.id
-        descending: true
+        key        : @assessment.id
+        descending : true
         success: (result) =>
           $('#results-header').html "Results (#{result.rows.length})"
           # TODO pagination
