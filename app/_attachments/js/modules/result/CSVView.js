@@ -243,7 +243,7 @@ CSVView = (function(_super) {
             "csv": _this.csv
           }, {
             complete: function() {
-              return window.open("/tangerine/_design/tangerine/_show/csv/Tangerine-" + (_this.assessmentId.substr(-5, 5)) + ".csv", "_blank");
+              return _this.trigger("ready");
             }
           });
         }

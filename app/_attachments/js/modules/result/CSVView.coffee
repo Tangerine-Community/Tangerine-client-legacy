@@ -197,9 +197,6 @@ class CSVView extends Backbone.View
         complete: =>
           csvFile.save
             "csv" : @csv
-          , complete : =>
-            # point browser to file
-            # do it in a new window because otherwise it will cancel the fetching/updating of the file
-            window.open("/tangerine/_design/tangerine/_show/csv/Tangerine-#{@assessmentId.substr(-5, 5)}.csv","_blank")
+          , complete : => @trigger "ready"
 
     @trigger "rendered"

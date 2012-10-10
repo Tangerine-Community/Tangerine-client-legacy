@@ -59,9 +59,19 @@ class ResultsView extends Backbone.View
     return false
 
   csv: ->
+    @$el.find("button.csv").html "Preparing CSV..."
     view = new CSVView
       assessmentId : @assessment.id
     view.render()
+    view.on "ready", =>
+      filename = @assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
+      # point browser to file
+      # do it in a new window because otherwise it will cancel the fetching/updating of the file
+      csvLocation = "/#{Tangerine.config.address.cloud.dbName}/_design/#{Tangerine.config.address.designDoc}/_show/csv/Tangerine-#{@assessment.id.substr(-5, 5)}.csv?filename=#{filename}"
+      $button = @$el.find "button.csv"
+      $button.after "<a href='#{csvLocation}' class='command'>Download CSV</a>"
+      $button.remove()
+
 
   #  Tangerine.router.navigate "csv/"+@assessment.id, true
 
@@ -134,7 +144,6 @@ class ResultsView extends Backbone.View
   initialize: ( options ) ->
     @subViews = []
     @results = options.results
-    @model = options.model
     @assessment = options.assessment
     @docList = []
     for result in @results

@@ -1037,6 +1037,7 @@ button.navigation:hover {
   background-color: #f26f10;
 }
 .command {
+  text-decoration: none;
   display: inline-block;
   font-size: 20px;
   color: black;
@@ -1056,6 +1057,7 @@ button.navigation:hover {
   background-color: #f6ef9a;
 }
 .command_red {
+  text-decoration: none;
   display: inline-block;
   font-size: 20px;
   color: black;

@@ -92,11 +92,21 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.csv = function() {
-    var view;
+    var view,
+      _this = this;
+    this.$el.find("button.csv").html("Preparing CSV...");
     view = new CSVView({
       assessmentId: this.assessment.id
     });
-    return view.render();
+    view.render();
+    return view.on("ready", function() {
+      var $button, csvLocation, filename;
+      filename = _this.assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm");
+      csvLocation = "/" + Tangerine.config.address.cloud.dbName + "/_design/" + Tangerine.config.address.designDoc + "/_show/csv/Tangerine-" + (_this.assessment.id.substr(-5, 5)) + ".csv?filename=" + filename;
+      $button = _this.$el.find("button.csv");
+      $button.after("<a href='" + csvLocation + "' class='command'>Download CSV</a>");
+      return $button.remove();
+    });
   };
 
   ResultsView.prototype.initDetectOptions = function() {
@@ -193,7 +203,6 @@ ResultsView = (function(_super) {
     var result, _i, _len, _ref;
     this.subViews = [];
     this.results = options.results;
-    this.model = options.model;
     this.assessment = options.assessment;
     this.docList = [];
     _ref = this.results;
