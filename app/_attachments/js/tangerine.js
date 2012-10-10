@@ -599,8 +599,9 @@ Router = (function(_super) {
               _this = this;
             allResults = new Results;
             return allResults.fetch({
+              include_docs: false,
               key: assessmentId,
-              success: function() {
+              success: function(result) {
                 var view;
                 view = new ResultsView({
                   "assessment": assessment,

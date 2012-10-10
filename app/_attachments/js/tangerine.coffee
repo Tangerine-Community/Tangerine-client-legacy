@@ -375,9 +375,10 @@ class Router extends Backbone.Router
           success :  ->
             allResults = new Results
             allResults.fetch
+              include_docs: false
               key: assessmentId
-              success: =>
-                view = new ResultsView 
+              success: (result) =>
+                view = new ResultsView
                   "assessment" : assessment
                   "results"    : allResults.models
                 vm.show view

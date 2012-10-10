@@ -7,3 +7,9 @@ class Results extends Backbone.Collection
 
   comparator: (model) ->
     model.get('timestamp') || 0
+
+  # By default include the docs
+  fetch: (options) ->
+    options = {} unless options?
+    options.include_docs = true unless options.include_docs?
+    super(options)

@@ -6,7 +6,6 @@ class ResultSumView extends Backbone.View
     'click .details' : 'toggleDetails'
     'click .resume' : 'resume'
 
-
   resume: ->
     Tangerine.router.navigate "resume/#{@result.get('assessmentId')}/#{@result.id}", true
 
@@ -25,8 +24,8 @@ class ResultSumView extends Backbone.View
         @studentId = subtest.data.participant_id
         break
 
-
   render: ->
+    ###
     if @finished || !@finishCheck
       savedEnd = _.last(@result.attributes.subtestData)?.data.end_time
       timestamp = @result.get('timestamp')
@@ -47,8 +46,10 @@ class ResultSumView extends Backbone.View
     else
       startTime = new Date(if @result.has('start_time') then @result.get("start_time") else @result.get("starttime"))
       html = "<div>Not finished ( #{moment(startTime).fromNow()} ) <button class='command resume'>Resume</button></div>"
-    
-    html += "<div class='confirmation detail_box'>"
+    ###
+     
+    html = "<div class='detail_box'>"
+    html += "<div>Not finished<button class='command resume'>Resume</button></div>" unless @finished
     for datum, i in @result.get("subtestData")
       html += "<div><span id='#{@cid}_#{i}'></span>#{datum.name} - items #{datum.sum.total}</div>"
     html += "

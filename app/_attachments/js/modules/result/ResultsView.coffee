@@ -5,6 +5,19 @@ class ResultsView extends Backbone.View
     'click .csv'     : 'csv'
     'click .tablets' : 'tablets'
     'click .detect'  : 'detectOptions'
+    'click .details' : 'showResultSumView'
+
+  showResultSumView: (event) ->
+    result = new Result
+      _id: $(event.target).attr("data-result-id")
+    result.fetch
+      success: ->
+        view = new ResultSumView
+          model: result
+          finishCheck: true
+        view.render()
+        $(event.target).siblings().last().html view.el
+
 
   cloud: ->
     if @available.cloud.ok
@@ -121,8 +134,7 @@ class ResultsView extends Backbone.View
     @assessment = options.assessment
     @docList = []
     for result in @results
-      @docList.push result.id
-
+      @docList.push result.get "id"
     @initDetectOptions()
     @detectCloud()
 
@@ -164,6 +176,22 @@ class ResultsView extends Backbone.View
     if @results?.length == 0
       @$el.append "No results yet!"
     else
+      $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/resultSummaryByAssessmentId",
+        key: @assessment.id
+        descending: true
+        success: (result) =>
+          for row in result.rows
+            @$el.append "
+              <div>
+                #{row.value.participant_id}
+                #{moment(row.value.end_time).format( 'YYYY-MMM-DD HH:mm' )}
+                (#{moment(row.value.end_time).fromNow()})
+                <button data-result-id='#{row.id}' class='details command'>details</button>
+                <div></div>
+              </div>
+            "
+
+      ###
       for result in @results
         view = new ResultSumView
           model: result
@@ -171,6 +199,7 @@ class ResultsView extends Backbone.View
         view.render()
         @subViews.push view
         @$el.append view.el
+      ###
       
     @trigger "rendered"
   

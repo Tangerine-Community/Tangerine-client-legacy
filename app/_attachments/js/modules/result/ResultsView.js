@@ -21,7 +21,26 @@ ResultsView = (function(_super) {
     'click .cloud': 'cloud',
     'click .csv': 'csv',
     'click .tablets': 'tablets',
-    'click .detect': 'detectOptions'
+    'click .detect': 'detectOptions',
+    'click .details': 'showResultSumView'
+  };
+
+  ResultsView.prototype.showResultSumView = function(event) {
+    var result;
+    result = new Result({
+      _id: $(event.target).attr("data-result-id")
+    });
+    return result.fetch({
+      success: function() {
+        var view;
+        view = new ResultSumView({
+          model: result,
+          finishCheck: true
+        });
+        view.render();
+        return $(event.target).siblings().last().html(view.el);
+      }
+    });
   };
 
   ResultsView.prototype.cloud = function() {
@@ -178,14 +197,15 @@ ResultsView = (function(_super) {
     _ref = this.results;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       result = _ref[_i];
-      this.docList.push(result.id);
+      this.docList.push(result.get("id"));
     }
     this.initDetectOptions();
     return this.detectCloud();
   };
 
   ResultsView.prototype.render = function() {
-    var cloudButton, csvButton, html, result, tabletButton, view, _i, _len, _ref, _ref1;
+    var cloudButton, csvButton, html, tabletButton, _ref,
+      _this = this;
     this.clearSubViews();
     cloudButton = "<button class='cloud command' disabled='disabled'>Cloud</button>";
     tabletButton = "<button class='tablets command' disabled='disabled'>Tablets</button>";
@@ -199,17 +219,30 @@ ResultsView = (function(_super) {
     if (((_ref = this.results) != null ? _ref.length : void 0) === 0) {
       this.$el.append("No results yet!");
     } else {
-      _ref1 = this.results;
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        result = _ref1[_i];
-        view = new ResultSumView({
-          model: result,
-          finishCheck: true
-        });
-        view.render();
-        this.subViews.push(view);
-        this.$el.append(view.el);
-      }
+      $.couch.db(Tangerine.db_name).view("" + Tangerine.design_doc + "/resultSummaryByAssessmentId", {
+        key: this.assessment.id,
+        descending: true,
+        success: function(result) {
+          var row, _i, _len, _ref1, _results;
+          _ref1 = result.rows;
+          _results = [];
+          for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+            row = _ref1[_i];
+            _results.push(_this.$el.append("              <div>                " + row.value.participant_id + "                " + (moment(row.value.end_time).format('YYYY-MMM-DD HH:mm')) + "                (" + (moment(row.value.end_time).fromNow()) + ")                <button data-result-id='" + row.id + "' class='details command'>details</button>                <div></div>              </div>            "));
+          }
+          return _results;
+        }
+      });
+      /*
+            for result in @results
+              view = new ResultSumView
+                model: result
+                finishCheck : true
+              view.render()
+              @subViews.push view
+              @$el.append view.el
+      */
+
     }
     return this.trigger("rendered");
   };
