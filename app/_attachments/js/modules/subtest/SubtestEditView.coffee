@@ -66,6 +66,7 @@ class SubtestEditView extends Backbone.View
     @prototypeEditor = new window[@prototypeViews[@model.get 'prototype']['edit']]
       model: @model
       parent: @
+    @prototypeEditor.on "edit-save", => @save options:editSave:true
       
   goBack: =>
     Tangerine.router.navigate "edit/"+@model.get("assessmentId"), true
@@ -86,7 +87,7 @@ class SubtestEditView extends Backbone.View
     else
       if @model.save(null, {wait:true})
         Utils.midAlert "Subtest Saved"
-        setTimeout @goBack, 1000
+        setTimeout @goBack, 1000 unless event?.options?.editSave? == true
       else
         console.log "save error"
         Utils.midAlert "Save error"

@@ -87,13 +87,21 @@ SubtestEditView = (function(_super) {
   };
 
   SubtestEditView.prototype.initialize = function(options) {
+    var _this = this;
     this.model = options.model;
     this.assessment = options.assessment;
     this.config = Tangerine.config.subtest;
     this.prototypeViews = Tangerine.config.prototypeViews;
-    return this.prototypeEditor = new window[this.prototypeViews[this.model.get('prototype')]['edit']]({
+    this.prototypeEditor = new window[this.prototypeViews[this.model.get('prototype')]['edit']]({
       model: this.model,
       parent: this
+    });
+    return this.prototypeEditor.on("edit-save", function() {
+      return _this.save({
+        options: {
+          editSave: true
+        }
+      });
     });
   };
 
@@ -102,7 +110,7 @@ SubtestEditView = (function(_super) {
   };
 
   SubtestEditView.prototype.save = function(event) {
-    var prototype, _base, _base2;
+    var prototype, _base, _base2, _ref;
     prototype = this.model.get("prototype");
     this.model.set({
       name: this.$el.find("#subtest_name").val(),
@@ -119,7 +127,9 @@ SubtestEditView = (function(_super) {
         wait: true
       })) {
         Utils.midAlert("Subtest Saved");
-        return setTimeout(this.goBack, 1000);
+        if (((event != null ? (_ref = event.options) != null ? _ref.editSave : void 0 : void 0) != null) !== true) {
+          return setTimeout(this.goBack, 1000);
+        }
       } else {
         console.log("save error");
         return Utils.midAlert("Save error");

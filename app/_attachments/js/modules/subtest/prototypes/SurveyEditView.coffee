@@ -17,6 +17,7 @@ class SurveyEditView extends Backbone.View
         @model.questions.maintainOrder()
         @questionsEditView = new QuestionsEditView
           questions : @model.questions
+        @questionsEditView.on "edit-save", => @trigger "edit-save"
         @model.questions.on "change", @renderQuestions
         @renderQuestions()
 

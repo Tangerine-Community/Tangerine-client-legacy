@@ -35,6 +35,9 @@ SurveyEditView = (function(_super) {
         _this.questionsEditView = new QuestionsEditView({
           questions: _this.model.questions
         });
+        _this.questionsEditView.on("edit-save", function() {
+          return _this.trigger("edit-save");
+        });
         _this.model.questions.on("change", _this.renderQuestions);
         return _this.renderQuestions();
       }
