@@ -112,6 +112,10 @@ AssessmentEditView = (function(_super) {
   AssessmentEditView.prototype.saveNewSubtest = function(event) {
     var newAttributes, newSubtest, prototypeTemplate, useType, useTypeTemplate;
     if (event.type !== "click" && event.which !== 13) return true;
+    if (this.$el.find("#subtest_type_select option:selected").val() === "none") {
+      Utils.midAlert("Please select a subtest type");
+      return false;
+    }
     newAttributes = Tangerine.templates.subtestTemplate;
     prototypeTemplate = Tangerine.templates.prototypeTemplates[this.$el.find("#subtest_type_select").val()];
     useType = this.$el.find("#subtest_type_select :selected").attr('data-template');

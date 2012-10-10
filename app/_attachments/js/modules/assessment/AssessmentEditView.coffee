@@ -86,6 +86,11 @@ class AssessmentEditView extends Backbone.View
     if event.type != "click" && event.which != 13
       return true
     
+    # if no subtest type selected, show error
+    if @$el.find("#subtest_type_select option:selected").val() == "none"
+      Utils.midAlert "Please select a subtest type"
+      return false
+    
     # general template
     newAttributes = Tangerine.templates.subtestTemplate
     
