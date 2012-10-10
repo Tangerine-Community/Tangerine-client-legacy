@@ -1,11 +1,15 @@
 class ResultsView extends Backbone.View
 
   events:
-    'click .cloud'   : 'cloud'
-    'click .csv'     : 'csv'
-    'click .tablets' : 'tablets'
-    'click .detect'  : 'detectOptions'
-    'click .details' : 'showResultSumView'
+    'click .cloud'    : 'cloud'
+    'click .csv'      : 'csv'
+    'click .tablets'  : 'tablets'
+    'click .detect'   : 'detectOptions'
+    'click .details'  : 'showResultSumView'
+    'click .csv_beta' : 'csvBeta'
+
+  csvBeta: ->
+    Tangerine.router.navigate '#csv_alpha/#{@assessment.id}', true
 
   showResultSumView: (event) ->
     result = new Result
@@ -154,7 +158,7 @@ class ResultsView extends Backbone.View
         #{if Tangerine.settings.context == "mobile" then cloudButton  else ""}
         #{if Tangerine.settings.context == "mobile" then tabletButton else ""}
         #{csvButton}
-        <button class='command'><a style='text-decoration: none; color:black' href='#csv_alpha/#{@assessment.id}'>CSV Beta</a></button>
+        <button class='command csv_beta'>CSV Beta</button>
       </div>"
 
     if Tangerine.settings.context == "mobile"
