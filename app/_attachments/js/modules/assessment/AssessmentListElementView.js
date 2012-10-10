@@ -120,9 +120,13 @@ AssessmentListElementView = (function(_super) {
   };
 
   AssessmentListElementView.prototype.render = function() {
-    var adminName, archiveClass, archiveSwitch, copyButton, deleteButton, deleteConfirm, downloadKey, duplicateButton, editButton, html, name, printButton, resultCount, resultsButton, runButton, selected, toggleButton, updateButton;
+    var adminName, archiveClass, archiveSwitch, copyButton, deleteButton, deleteConfirm, downloadKey, duplicateButton, editButton, html, isArchived, name, printButton, resultCount, resultsButton, runButton, selected, toggleButton, updateButton;
+    isArchived = this.model.get('archived') === true || this.model.get('archived') === 'true';
+    if (!this.isAdmin && isArchived && Tangerine.settings.context === "mobile") {
+      return;
+    }
     selected = " selected='selected' ";
-    archiveClass = this.model.get('archived') === true || this.model.get('archived') === 'true' ? " archived_assessment" : "";
+    archiveClass = isArchived ? " archived_assessment" : "";
     copyButton = "<button class='copy command'>Copy to group</button>";
     toggleButton = "<span class='assessment_menu_toggle icon_ryte'> </span>";
     deleteButton = "<img class='assessment_delete link_icon' title='Delete' src='images/icon_delete.png'>";

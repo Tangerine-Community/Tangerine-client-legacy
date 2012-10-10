@@ -75,9 +75,15 @@ class AssessmentListElementView extends Backbone.View
 
           
   render: ->
-    selected        = " selected='selected' "
 
-    archiveClass    = if (@model.get('archived') == true or @model.get('archived') == 'true') then " archived_assessment" else ""
+    isArchived      = @model.get('archived') == true or @model.get('archived') == 'true'
+
+    # do not display archived assessments for enumerators
+    return if not @isAdmin and isArchived and Tangerine.settings.context == "mobile"
+
+
+    selected        = " selected='selected' "
+    archiveClass    = if isArchived then " archived_assessment" else ""
     copyButton      = "<button class='copy command'>Copy to group</button>"
     toggleButton    = "<span class='assessment_menu_toggle icon_ryte'> </span>"
     deleteButton    = "<img class='assessment_delete link_icon' title='Delete' src='images/icon_delete.png'>"
