@@ -379,6 +379,9 @@ class GridRunView extends Backbone.View
     @trigger "rendered"
     
   isValid: ->
+    # Stop timer if still running. Issue #240
+    @stopTimer() if @timeRunning
+
     if @captureLastAttempted && @lastAttempted == 0 then return false
     # might need to let it know if it's timed or untimed too ::shrug::
     if @timeRunning == true then return false

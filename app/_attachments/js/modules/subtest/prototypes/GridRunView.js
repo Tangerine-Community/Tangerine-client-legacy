@@ -407,6 +407,7 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.isValid = function() {
+    if (this.timeRunning) this.stopTimer();
     if (this.captureLastAttempted && this.lastAttempted === 0) return false;
     if (this.timeRunning === true) return false;
     return true;
