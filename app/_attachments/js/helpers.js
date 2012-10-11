@@ -311,6 +311,10 @@ Utils = (function() {
     return $(".scroll_pane").height($(window).height() - ($("#navigation").height() + $("#footer").height() + 100));
   };
 
+  Utils.askToLogout = function() {
+    if (confirm("Would you like to logout now?")) return Tangerine.user.logout();
+  };
+
   return Utils;
 
 })();

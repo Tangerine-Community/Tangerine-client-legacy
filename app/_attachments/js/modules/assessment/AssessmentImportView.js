@@ -85,6 +85,8 @@ AssessmentImportView = (function(_super) {
     } else if (status === "import success") {
       clearInterval(this.activeTaskInterval);
       this.activity = "Import successful";
+      this.updateProgress();
+      Utils.askToLogout();
     } else if (status === "import error") {
       clearInterval(this.activeTaskInterval);
       this.activity = "Import error: " + message;

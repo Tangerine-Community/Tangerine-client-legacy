@@ -628,6 +628,7 @@ class Router extends Backbone.Router
               $("#version-uuid").html("Successful update, now refreshing app...")
               _.delay ->
                 Tangerine.router.navigate "", false
+                Utils.askToLogout()
                 document.location.reload()
               , 2000
             error: (error) ->

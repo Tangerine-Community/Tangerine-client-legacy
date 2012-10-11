@@ -146,6 +146,9 @@ class Utils
   @resizeScrollPane: ->
     $(".scroll_pane").height( $(window).height() - ( $("#navigation").height() + $("#footer").height() + 100) ) 
 
+  @askToLogout: -> Tangerine.user.logout() if confirm("Would you like to logout now?")
+      
+
 ##UI helpers
 $ ->
   # ###.clear_message

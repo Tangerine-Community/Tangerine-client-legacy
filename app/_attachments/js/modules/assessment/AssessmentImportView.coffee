@@ -55,6 +55,8 @@ class AssessmentImportView extends Backbone.View
     else if status == "import success"
       clearInterval @activeTaskInterval
       @activity = "Import successful"
+      @updateProgress()
+      Utils.askToLogout()
     else if status == "import error"
       clearInterval @activeTaskInterval
       @activity = "Import error: #{message}"
