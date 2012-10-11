@@ -8,7 +8,8 @@
       "incorrect": 0,
       "unchecked": 0,
       "missing": ".",
-      "not_asked": "."
+      "not_asked": ".",
+      "skipped": 999
     };
     row = {};
     metaKeys = ["enumerator", "start_time", "order_map"];

@@ -10,6 +10,8 @@
 
       "missing"   : "."
       "not_asked" : "."
+      
+      "skipped"   : 999
     }
 
     row = {}
@@ -20,7 +22,7 @@
       "order_map"
     ]
 
-    exportValue =  (databaseValue) ->
+    exportValue = (databaseValue) ->
       if exportValueMap[databaseValue]?
         return exportValueMap[databaseValue]
       else
