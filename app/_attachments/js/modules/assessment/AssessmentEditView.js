@@ -55,8 +55,9 @@ AssessmentEditView = (function(_super) {
   };
 
   AssessmentEditView.prototype.updateModel = function() {
-    var doublesError, element, groups, i, j, sequence, sequenceErrors, sequences, sequencesValue, tooFewError, tooManyError, _len, _len2;
-    sequencesValue = $.trim(this.$el.find("#sequences").val());
+    var doublesError, element, emptyError, groups, i, j, rangeError, sequence, sequenceErrors, sequences, sequencesValue, subtestCount, tooFewError, tooManyError, validatedSequences, _len, _len2;
+    subtestCount = this.model.subtests.models.length;
+    sequencesValue = this.$el.find("#sequences").val().replace(/[^0-9,\n]/g, "");
     sequences = sequencesValue.split("\n");
     for (i = 0, _len = sequences.length; i < _len; i++) {
       sequence = sequences[i];
@@ -64,22 +65,45 @@ AssessmentEditView = (function(_super) {
       for (j = 0, _len2 = sequence.length; j < _len2; j++) {
         element = sequence[j];
         sequence[j] = parseInt(element);
+        if (sequence[j] < 0 || sequence[j] >= subtestCount) rangeError = true;
+        if (isNaN(sequence[j])) emptyError = true;
       }
       sequences[i] = sequence;
-      if (sequence.length > this.model.subtests.models.length) tooManyError = true;
-      if (sequence.length < this.model.subtests.models.length) tooFewError = true;
+      if (sequence.length > subtestCount) tooManyError = true;
+      if (sequence.length < subtestCount) tooFewError = true;
       if (sequence.length !== _.uniq(sequence).length) doublesError = true;
     }
-    sequenceErrors = [];
-    if (tooManyError) {
-      sequenceErrors.push("Some sequences are longer than the total number of all subtests.");
-    }
-    if (tooFewError) {
-      sequenceErrors.push("Some sequences are shorter than the total number of all subtests.");
-    }
-    if (doublesError) sequenceErrors.push("Some sequences contain doubles.");
-    if (sequenceErrors.length !== 0) {
-      alert("Warning\n\n" + (sequenceErrors.join("\n")));
+    if (!_.isEmpty(_.reject(_.flatten(sequences), function(e) {
+      return isNaN(e);
+    }))) {
+      sequenceErrors = [];
+      if (emptyError) sequenceErrors.push("Some sequences contain empty values.");
+      if (rangeError) {
+        sequenceErrors.push("Some numbers do not reference a subtest from the legend.");
+      }
+      if (tooManyError) {
+        sequenceErrors.push("Some sequences are longer than the total number of all subtests.");
+      }
+      if (tooFewError) {
+        sequenceErrors.push("Some sequences are shorter than the total number of all subtests.");
+      }
+      if (doublesError) sequenceErrors.push("Some sequences contain doubles.");
+      if (sequenceErrors.length === 0) {
+        validatedSequences = ((function() {
+          var _i, _len3, _results;
+          _results = [];
+          for (_i = 0, _len3 = sequences.length; _i < _len3; _i++) {
+            sequence = sequences[_i];
+            _results.push(sequence.join(", "));
+          }
+          return _results;
+        })()).join("\n");
+        this.$el.find("#sequences").val(validatedSequences);
+      } else {
+        alert("Warning\n\n" + (sequenceErrors.join("\n")));
+      }
+    } else {
+      this.$el.find("#sequences").val("");
     }
     groups = Tangerine.user.get("groups");
     if (!~groups.indexOf(this.$el.find("#assessment_group").val())) {

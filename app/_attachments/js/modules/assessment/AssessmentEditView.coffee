@@ -33,29 +33,51 @@ class AssessmentEditView extends Backbone.View
 
   updateModel: =>
 
+    #
     # parse acceptable random sequences
-    sequencesValue = $.trim(@$el.find("#sequences").val())
+    #
+
+    subtestCount = @model.subtests.models.length
+
+    # remove everything except numbers, commas and new lines
+    sequencesValue = @$el.find("#sequences").val().replace(/[^0-9,\n]/g,"")
     sequences = sequencesValue.split("\n")
 
+    # parse strings to numbers and collect errors
     for sequence, i in sequences
+
       sequence = sequence.split(",")
       for element, j in sequence
         sequence[j] = parseInt(element)
+        rangeError = true if sequence[j] < 0 or sequence[j] >= subtestCount
+        emptyError = true if isNaN(sequence[j])
+      
       sequences[i] = sequence
       
       # detect errors
-      tooManyError = true if sequence.length > @model.subtests.models.length
-      tooFewError  = true if sequence.length < @model.subtests.models.length
+      tooManyError = true if sequence.length > subtestCount
+      tooFewError  = true if sequence.length < subtestCount
       doublesError = true if sequence.length != _.uniq(sequence).length
     
-    # show errors if they exist
-    sequenceErrors = []
-    if tooManyError then sequenceErrors.push "Some sequences are longer than the total number of all subtests."
-    if tooFewError  then sequenceErrors.push "Some sequences are shorter than the total number of all subtests."
-    if doublesError then sequenceErrors.push "Some sequences contain doubles."
-    if sequenceErrors.length != 0
-      alert "Warning\n\n#{sequenceErrors.join("\n")}"
-  
+    # show errors if they exist and sequences exist
+    if not _.isEmpty _.reject( _.flatten(sequences), (e) -> return isNaN(e)) # remove unparsable empties, don't _.compact. will remove 0s
+      sequenceErrors = []
+      if emptyError   then sequenceErrors.push "Some sequences contain empty values."
+      if rangeError   then sequenceErrors.push "Some numbers do not reference a subtest from the legend."
+      if tooManyError then sequenceErrors.push "Some sequences are longer than the total number of all subtests."
+      if tooFewError  then sequenceErrors.push "Some sequences are shorter than the total number of all subtests."
+      if doublesError then sequenceErrors.push "Some sequences contain doubles."
+
+      if sequenceErrors.length == 0
+        # if there's no errors, clean up the textarea content
+        validatedSequences = (sequence.join(", ") for sequence in sequences).join("\n")
+        @$el.find("#sequences").val(validatedSequences)
+      else # if there's errors, they can still save. Just show a warning
+        alert "Warning\n\n#{sequenceErrors.join("\n")}"
+
+    # nothing resembling a valid sequence was found
+    else
+      @$el.find("#sequences").val("") # clean text area
 
     # wow, I have no idea what this does. This code is really old.
     groups = Tangerine.user.get("groups")
