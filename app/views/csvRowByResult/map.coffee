@@ -34,6 +34,7 @@
 
     row["order_map"] =  if doc['order_map']? then doc['order_map']? else "no_record"
 
+    datetimeCount = 0
 # go through each subtest in this result
     for subtest in doc.subtestData
       prototype = subtest.prototype
@@ -50,11 +51,13 @@
           monthData = months.indexOf(subtest.data.month.toLowerCase()) + 1
         else
           monthData = subtest.data.month
-        row["year"]        = subtest.data.year
-        row["month"]       = monthData
-        row["date"]        = subtest.data.day
-        row["assess_time"] = subtest.data.time
-        
+        datetimeSuffix = if datetimeCount > 0 then "_#{datetimeCount}" else ""
+        row["year"+datetimeSuffix]        = subtest.data.year
+        row["month"+datetimeSuffix]       = monthData
+        row["date"+datetimeSuffix]        = subtest.data.day
+        row["assess_time"+datetimeSuffix] = subtest.data.time
+
+        datetimeCount++
       else if prototype == "consent"
         row["consent"] = subtest.data.consent
       
