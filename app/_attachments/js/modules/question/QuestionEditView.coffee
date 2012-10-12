@@ -43,7 +43,7 @@ class QuestionEditView extends Backbone.View
     html = "<div id='option_list_wrapper'>
       <h2>Options</h2>
       <div class='menu_box'>
-        <ul class='option_list'>"
+        <ul id='option_list'>"
     for option, i in options
       
       html += "
@@ -78,6 +78,7 @@ class QuestionEditView extends Backbone.View
   # Adding an option
   #
   addOption: ->
+    console.log "adding option"
     @updateModel()
 
     options = @question.get "options"
@@ -183,7 +184,7 @@ class QuestionEditView extends Backbone.View
         "
       @$el.append optionHTML
 
-      @refreshSortable()
+      @initSortable()
       
     @$el.append "<button class='done command'>Done</button>
       </div>
@@ -191,7 +192,12 @@ class QuestionEditView extends Backbone.View
     @trigger "rendered"
 
   refreshSortable: ->
-    @$el.find(".option_list").sortable
+    console.log "refresh sortable"
+    @$el.find("#option_list").sortable().refresh()
+
+  initSortable: ->
+    console.log "initializing sortable"
+    @$el.find("#option_list").sortable
       handle : '.sortable_handle'
       start: (event, ui) -> ui.item.addClass "drag_shadow"
       stop:  (event, ui) -> ui.item.removeClass "drag_shadow"
@@ -241,7 +247,7 @@ class QuestionEditView extends Backbone.View
     # options
     options = []
     i = 0
-    optionListElements = @$el.find(".option_list li")
+    optionListElements = @$el.find("#option_list li")
     for li in optionListElements
       label = $(li).find(".option_label").val()
       value = $(li).find(".option_value").val().safetyDance()

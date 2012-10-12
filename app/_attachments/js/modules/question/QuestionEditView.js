@@ -61,7 +61,7 @@ QuestionEditView = (function(_super) {
   QuestionEditView.prototype.getOptionList = function() {
     var html, i, option, options, _len;
     options = this.question.get("options");
-    html = "<div id='option_list_wrapper'>      <h2>Options</h2>      <div class='menu_box'>        <ul class='option_list'>";
+    html = "<div id='option_list_wrapper'>      <h2>Options</h2>      <div class='menu_box'>        <ul id='option_list'>";
     for (i = 0, _len = options.length; i < _len; i++) {
       option = options[i];
       html += "      <li class='question'>        <table><tr><td>          <img src='images/icon_drag.png' class='sortable_handle'>        </td>        <td>          <div style='display: block;'>            <div class='option_label_value'>              <label class='edit' for='options." + i + ".label'>Label</label>              <input id='options." + i + ".label' value='" + (_.escape(option.label)) + "' placeholder='Option label' class='option_label'><br>              <label class='edit' for='options." + i + ".value' title='Allowed characters&#58; A-Z, a-z, 0-9, and underscores.'>Value</label>              <input id='options." + i + ".value' value='" + (_.escape(option.value)) + "' placeholder='Option value' class='option_value'><br>            </div>            <img src='images/icon_delete.png' class='delete_option' data-index='" + i + "'>            <div class='confirmation delete_confirm_" + i + "'>              <button class='delete_delete command_red' data-index='" + i + "'>Delete</button>              <button data-index='" + i + "' class='delete_cancel command'>Cancel</button>            </div>          </div>        </td></tr></table>      </li>      ";
@@ -71,6 +71,7 @@ QuestionEditView = (function(_super) {
 
   QuestionEditView.prototype.addOption = function() {
     var optionListElements, options;
+    console.log("adding option");
     this.updateModel();
     options = this.question.get("options");
     options.push({
@@ -109,15 +110,21 @@ QuestionEditView = (function(_super) {
       }
       optionHTML += "</select>        </div>        <div id='option_list_wrapper'>" + (this.getOptionList()) + "</div>        ";
       this.$el.append(optionHTML);
-      this.refreshSortable();
+      this.initSortable();
     }
     this.$el.append("<button class='done command'>Done</button>      </div>      ");
     return this.trigger("rendered");
   };
 
   QuestionEditView.prototype.refreshSortable = function() {
+    console.log("refresh sortable");
+    return this.$el.find("#option_list").sortable().refresh();
+  };
+
+  QuestionEditView.prototype.initSortable = function() {
     var _this = this;
-    return this.$el.find(".option_list").sortable({
+    console.log("initializing sortable");
+    return this.$el.find("#option_list").sortable({
       handle: '.sortable_handle',
       start: function(event, ui) {
         return ui.item.addClass("drag_shadow");
@@ -173,7 +180,7 @@ QuestionEditView = (function(_super) {
     });
     options = [];
     i = 0;
-    optionListElements = this.$el.find(".option_list li");
+    optionListElements = this.$el.find("#option_list li");
     for (_i = 0, _len = optionListElements.length; _i < _len; _i++) {
       li = optionListElements[_i];
       label = $(li).find(".option_label").val();
