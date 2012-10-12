@@ -416,19 +416,25 @@ Router = (function(_super) {
       group = decodeURIComponent(group);
       return Tangerine.user.verify({
         isRegistered: function() {
-          var curricula;
-          curricula = new Curricula;
-          return curricula.fetch({
-            success: function(collection) {
-              var assessments;
-              curricula = new Curricula(collection.where({
-                "group": group
-              }));
-              assessments = new AssessmentListView({
-                "curricula": curricula,
-                "group": group
+          var assessments;
+          assessments = new Assessments;
+          return assessments.fetch({
+            success: function(assessments) {
+              var curricula;
+              curricula = new Curricula;
+              return curricula.fetch({
+                success: function(collection) {
+                  curricula = new Curricula(collection.where({
+                    "group": group
+                  }));
+                  assessments = new AssessmentListView({
+                    "assessments": assessments,
+                    "curricula": curricula,
+                    "group": group
+                  });
+                  return vm.show(assessments);
+                }
               });
-              return vm.show(assessments);
             }
           });
         },

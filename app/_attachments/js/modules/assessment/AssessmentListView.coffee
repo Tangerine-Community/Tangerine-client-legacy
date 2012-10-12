@@ -8,53 +8,42 @@ class AssessmentListView extends Backbone.View
     'click .import'                 : 'import'
     'click .groups'                 : 'gotoGroups'
 
-  gotoGroups: ->
-    Tangerine.router.navigate "groups", true
-
-  import: ->
-    Tangerine.router.navigate "import", true
+  gotoGroups: -> Tangerine.router.navigate "groups", true
+  import:     -> Tangerine.router.navigate "import", true
 
   initialize:(options) ->
-    @group = options.group
+    @assessments = options.assessments
+    @group       = options.group
     @curriculaListView = new CurriculaListView
       "curricula" : options.curricula
     @isAdmin = Tangerine.user.isAdmin()
     @views = []
     @publicViews = []
-    @refresh()
-  
-  refresh: ->
-    allAssessments = new Assessments
-    allAssessments.fetch
-      success: (collection) =>
-        # maybe this isn't the best place for a filter
-        # only applies to this list
-        groupCollection = []
-        collection.each (model) =>
-          if Tangerine.settings.context == "server"
-            if model.get("group") == @group
-              groupCollection.push model
-          else
-            groupCollection.push model
-          
-        @collection = new Assessments groupCollection
-        @collection.on "add remove", @render
+    @sections = [@group, "public"]
+    @groupViews = []
+    # coffeescript nightmare, single line possible, but don't do it
+    for group in @sections
+      view = new AssessmentsView
+        "group"          : group
+        "allAssessments" : @assessments
+        "parent"         : @
+      @groupViews.push view
 
-        if Tangerine.settings.context == "server"
-          @public = new Assessments collection.where { group : "public" }
-        else
-          @public = null
-        @render()
 
-  # @TODO This can be refactored easily
-  # Take the two portions that make assessment lists, and make it one view that you can give options.
+  refresh: =>
+    @assessments = new Assessments
+    @assessments.fetch
+      success: =>
+        for view in @groupViews
+          view.assessments = @assessments
+          view.refresh true
+
+
   render: =>
-    @closeViews()
-    @views = []
-
     newButton    = "<button class='new_assessment command'>New</button>"
     importButton = "<button class='import command'>Import</button>"
     groupsButton = "<button class='navigation groups'>Groups</button>"
+
 
     html = "
       #{if Tangerine.settings.context == "server" then groupsButton else ""}
@@ -71,24 +60,21 @@ class AssessmentListView extends Backbone.View
             <button class='new_assessment_save command'>Save</button> <button class='new_assessment_cancel command'>Cancel</button>
           </div>
         </div>
-        <h2>Group assessments</h2>
       "
-    
+
     @$el.html html
 
-    if @collection?.models?.length > 0
-      groupList = $('<ul>').addClass('assessment_list')
-      for assessment in @collection?.models
-        oneView = new AssessmentListElementView
-          model  : assessment
-          parent : @
-        @views.push oneView
-        oneView.render()
-        groupList.append oneView.el
+    for view, i in @groupViews
+      @$el.append "<h2>#{@sections[i].titleize()} (#{view.assessments.length})</h2><ul id='group_#{view.cid}' class='assessment_list'></ul>"
 
-      @$el.append groupList
-    else
-      @$el.append "<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>"
+      view.setElement(@$el.find("#group_#{view.cid}"))
+      view.render()
+
+    @trigger "rendered"
+
+    return
+
+
 
     if @isAdmin && Tangerine.settings.context == "server"
 
@@ -149,7 +135,7 @@ class AssessmentListView extends Backbone.View
   # ViewManager
   closeViews: ->
     @curriculaListView.close?()
-    for view in @views
+    for view in @groupViews
       view.close()
 
   onClose: ->

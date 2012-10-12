@@ -31,8 +31,12 @@ AssessmentListElementView = (function(_super) {
   AssessmentListElementView.prototype.initialize = function(options) {
     this.parent = options.parent;
     this.isAdmin = Tangerine.user.isAdmin();
-    this.isPublic = options.isPublic;
+    this.isPublic = options.model.get("group") === "public";
     return this.model = options.model;
+  };
+
+  AssessmentListElementView.prototype.gotoRun = function() {
+    return Tangerine.router.navigate("run/" + this.model.id, true);
   };
 
   AssessmentListElementView.prototype.gotoEdit = function() {
@@ -43,24 +47,16 @@ AssessmentListElementView = (function(_super) {
     return Tangerine.router.navigate("results/" + this.model.id, true);
   };
 
-  AssessmentListElementView.prototype.gotoRun = function() {
-    return Tangerine.router.navigate("run/" + this.model.id, true);
-  };
-
   AssessmentListElementView.prototype.gotoPrint = function() {
     return Tangerine.router.navigate("print/" + this.model.id, true);
   };
 
   AssessmentListElementView.prototype.duplicate = function() {
-    var newName,
-      _this = this;
+    var newName;
     newName = "Copy of " + this.model.get("name");
     return this.model.duplicate({
       name: newName
-    }, null, null, function() {
-      _this.render();
-      return _this.parent.refresh();
-    });
+    }, null, null, this.parent.parent.refresh);
   };
 
   AssessmentListElementView.prototype.update = function() {
@@ -92,13 +88,9 @@ AssessmentListElementView = (function(_super) {
   };
 
   AssessmentListElementView.prototype.copyToGroup = function() {
-    var _this = this;
     return this.model.duplicate({
-      group: this.parent.group
-    }, null, null, function() {
-      _this.render();
-      return _this.parent.refresh();
-    });
+      group: this.parent.parent.group
+    }, null, null, this.parent.parent.refresh);
   };
 
   AssessmentListElementView.prototype.assessmentMenuToggle = function() {
@@ -114,7 +106,7 @@ AssessmentListElementView = (function(_super) {
   AssessmentListElementView.prototype.assessmentDelete = function() {
     var _this = this;
     return this.$el.fadeOut(250, function() {
-      _this.parent.collection.remove(_this.model);
+      _this.parent.assessments.remove(_this.model);
       return _this.model.destroy();
     });
   };

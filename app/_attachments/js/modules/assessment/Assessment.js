@@ -85,9 +85,7 @@ Assessment = (function(_super) {
       "_id": newId,
       "assessmentId": newId
     });
-    newModel.save(null, {
-      "wait": true
-    });
+    newModel.save();
     questions = new Questions;
     return questions.fetch({
       key: this.id,

@@ -20,19 +20,17 @@ class AssessmentListElementView extends Backbone.View
   initialize:(options) ->
     @parent = options.parent
     @isAdmin = Tangerine.user.isAdmin()
-    @isPublic = options.isPublic
+    @isPublic = options.model.get("group") == "public"
     @model = options.model
 
-  gotoEdit: -> Tangerine.router.navigate "edit/#{@model.id}", true
+  gotoRun:     -> Tangerine.router.navigate "run/#{@model.id}", true
+  gotoEdit:    -> Tangerine.router.navigate "edit/#{@model.id}", true
   gotoResults: -> Tangerine.router.navigate "results/#{@model.id}", true
-  gotoRun: -> Tangerine.router.navigate "run/#{@model.id}", true
-  gotoPrint: -> Tangerine.router.navigate "print/#{@model.id}", true
+  gotoPrint:   -> Tangerine.router.navigate "print/#{@model.id}", true
 
   duplicate: ->
     newName = "Copy of " + @model.get("name")
-    @model.duplicate { name : newName }, null, null, =>
-      @render()
-      @parent.refresh()
+    @model.duplicate { name : newName }, null, null, @parent.parent.refresh
 
   update: ->
     @model.updateFromServer()
@@ -56,9 +54,7 @@ class AssessmentListElementView extends Backbone.View
     return true
 
   copyToGroup: ->
-    @model.duplicate {group:@parent.group}, null, null, =>
-      @render()
-      @parent.refresh()
+    @model.duplicate {group:@parent.parent.group}, null, null, @parent.parent.refresh
 
   assessmentMenuToggle: ->
     @$el.find('.assessment_menu_toggle').toggleClass 'icon_down'
@@ -70,7 +66,7 @@ class AssessmentListElementView extends Backbone.View
   assessmentDelete: ->
     # remove from collection
     @$el.fadeOut 250, => 
-      @parent.collection.remove @model
+      @parent.assessments.remove @model
       @model.destroy()
 
           

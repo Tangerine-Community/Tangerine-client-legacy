@@ -10,6 +10,7 @@ AssessmentListView = (function(_super) {
   function AssessmentListView() {
     this.newAssessmentSave = __bind(this.newAssessmentSave, this);
     this.render = __bind(this.render, this);
+    this.refresh = __bind(this.refresh, this);
     AssessmentListView.__super__.constructor.apply(this, arguments);
   }
 
@@ -31,6 +32,8 @@ AssessmentListView = (function(_super) {
   };
 
   AssessmentListView.prototype.initialize = function(options) {
+    var group, view, _i, _len, _ref, _results;
+    this.assessments = options.assessments;
     this.group = options.group;
     this.curriculaListView = new CurriculaListView({
       "curricula": options.curricula
@@ -38,76 +41,66 @@ AssessmentListView = (function(_super) {
     this.isAdmin = Tangerine.user.isAdmin();
     this.views = [];
     this.publicViews = [];
-    return this.refresh();
+    this.sections = [this.group, "public"];
+    this.groupViews = [];
+    _ref = this.sections;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      group = _ref[_i];
+      view = new AssessmentsView({
+        "group": group,
+        "allAssessments": this.assessments,
+        "parent": this
+      });
+      _results.push(this.groupViews.push(view));
+    }
+    return _results;
   };
 
   AssessmentListView.prototype.refresh = function() {
-    var allAssessments,
-      _this = this;
-    allAssessments = new Assessments;
-    return allAssessments.fetch({
-      success: function(collection) {
-        var groupCollection;
-        groupCollection = [];
-        collection.each(function(model) {
-          if (Tangerine.settings.context === "server") {
-            if (model.get("group") === _this.group) {
-              return groupCollection.push(model);
-            }
-          } else {
-            return groupCollection.push(model);
-          }
-        });
-        _this.collection = new Assessments(groupCollection);
-        _this.collection.on("add remove", _this.render);
-        if (Tangerine.settings.context === "server") {
-          _this.public = new Assessments(collection.where({
-            group: "public"
-          }));
-        } else {
-          _this.public = null;
+    var _this = this;
+    this.assessments = new Assessments;
+    return this.assessments.fetch({
+      success: function() {
+        var view, _i, _len, _ref, _results;
+        _ref = _this.groupViews;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          view = _ref[_i];
+          view.assessments = _this.assessments;
+          _results.push(view.refresh(true));
         }
-        return _this.render();
+        return _results;
       }
     });
   };
 
   AssessmentListView.prototype.render = function() {
-    var assessment, groupList, groupsButton, html, importButton, newButton, oneView, publicList, _i, _j, _len, _len2, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
-    this.closeViews();
-    this.views = [];
+    var assessment, groupsButton, html, i, importButton, newButton, oneView, publicList, view, _i, _len, _len2, _ref, _ref2, _ref3, _ref4, _ref5;
     newButton = "<button class='new_assessment command'>New</button>";
     importButton = "<button class='import command'>Import</button>";
     groupsButton = "<button class='navigation groups'>Groups</button>";
     html = "      " + (Tangerine.settings.context === "server" ? groupsButton : "") + "      <h1>Assessments</h1>      ";
     if (this.isAdmin) {
-      html += "        " + (Tangerine.settings.context === "server" ? newButton : "") + "        " + (Tangerine.settings.context === "mobile" ? importButton : "") + "        <div class='new_assessment_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_assessment_name' placeholder='Assessment Name'>            <button class='new_assessment_save command'>Save</button> <button class='new_assessment_cancel command'>Cancel</button>          </div>        </div>        <h2>Group assessments</h2>      ";
+      html += "        " + (Tangerine.settings.context === "server" ? newButton : "") + "        " + (Tangerine.settings.context === "mobile" ? importButton : "") + "        <div class='new_assessment_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_assessment_name' placeholder='Assessment Name'>            <button class='new_assessment_save command'>Save</button> <button class='new_assessment_cancel command'>Cancel</button>          </div>        </div>      ";
     }
     this.$el.html(html);
-    if (((_ref = this.collection) != null ? (_ref2 = _ref.models) != null ? _ref2.length : void 0 : void 0) > 0) {
-      groupList = $('<ul>').addClass('assessment_list');
-      _ref4 = (_ref3 = this.collection) != null ? _ref3.models : void 0;
-      for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
-        assessment = _ref4[_i];
-        oneView = new AssessmentListElementView({
-          model: assessment,
-          parent: this
-        });
-        this.views.push(oneView);
-        oneView.render();
-        groupList.append(oneView.el);
-      }
-      this.$el.append(groupList);
-    } else {
-      this.$el.append("<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>");
+    _ref = this.groupViews;
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      view = _ref[i];
+      this.$el.append("<h2>" + (this.sections[i].titleize()) + " (" + view.assessments.length + ")</h2><ul id='group_" + view.cid + "' class='assessment_list'></ul>");
+      view.setElement(this.$el.find("#group_" + view.cid));
+      view.render();
     }
+    this.trigger("rendered");
+    return;
     if (this.isAdmin && Tangerine.settings.context === "server") {
       this.$el.append("<h2>Public assessments</h2>");
-      if (((_ref5 = this.public) != null ? (_ref6 = _ref5.models) != null ? _ref6.length : void 0 : void 0) > 0) {
+      if (((_ref2 = this.public) != null ? (_ref3 = _ref2.models) != null ? _ref3.length : void 0 : void 0) > 0) {
         publicList = $('<ul>').addClass('public_list assessment_list');
-        _ref8 = (_ref7 = this.public) != null ? _ref7.models : void 0;
-        for (_j = 0, _len2 = _ref8.length; _j < _len2; _j++) {
-          assessment = _ref8[_j];
+        _ref5 = (_ref4 = this.public) != null ? _ref4.models : void 0;
+        for (_i = 0, _len2 = _ref5.length; _i < _len2; _i++) {
+          assessment = _ref5[_i];
           oneView = new AssessmentListElementView({
             model: assessment,
             parent: this,
@@ -161,7 +154,7 @@ AssessmentListView = (function(_super) {
     if (typeof (_base = this.curriculaListView).close === "function") {
       _base.close();
     }
-    _ref = this.views;
+    _ref = this.groupViews;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       view = _ref[_i];

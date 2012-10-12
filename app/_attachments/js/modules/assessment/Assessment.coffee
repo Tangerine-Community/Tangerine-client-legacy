@@ -56,7 +56,7 @@ class Assessment extends Backbone.Model
       "_id"          : newId
       "assessmentId" : newId
 
-    newModel.save(null, {"wait":true})
+    newModel.save()
 
     questions = new Questions
     questions.fetch
@@ -96,7 +96,6 @@ class Assessment extends Backbone.Model
               newQuestion.set "subtestId", subtestIdMap[oldId]
               newQuestions.push newQuestion
               newQuestion.save()
-              
             callback()
 
   destroy: ->

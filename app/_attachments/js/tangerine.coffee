@@ -273,14 +273,18 @@ class Router extends Backbone.Router
       group = decodeURIComponent(group)
       Tangerine.user.verify
         isRegistered: ->
-          curricula = new Curricula
-          curricula.fetch
-            success: ( collection ) ->
-              curricula = new Curricula collection.where "group" : group
-              assessments = new AssessmentListView
-                "curricula" : curricula
-                "group"     : group
-              vm.show assessments
+          assessments = new Assessments
+          assessments.fetch
+            success: (assessments) ->
+              curricula = new Curricula
+              curricula.fetch
+                success: ( collection ) ->
+                  curricula = new Curricula collection.where "group" : group
+                  assessments = new AssessmentListView
+                    "assessments" : assessments
+                    "curricula"   : curricula
+                    "group"       : group
+                  vm.show assessments
         isUnregistered: ->
           Tangerine.router.navigate "login", true
 
