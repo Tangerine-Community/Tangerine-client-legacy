@@ -271,6 +271,5 @@ class QuestionEditView extends Backbone.View
     options = @question.get "options"
     options.splice @$el.find(event.target).attr('data-index'), 1
     @question.set "options", options
-    @question.save()
-    @render false
+    @refreshOptionList()
     return false

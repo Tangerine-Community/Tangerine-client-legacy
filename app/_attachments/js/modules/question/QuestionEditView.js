@@ -211,8 +211,7 @@ QuestionEditView = (function(_super) {
     options = this.question.get("options");
     options.splice(this.$el.find(event.target).attr('data-index'), 1);
     this.question.set("options", options);
-    this.question.save();
-    this.render(false);
+    this.refreshOptionList();
     return false;
   };
 
