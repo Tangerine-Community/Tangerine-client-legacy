@@ -567,7 +567,7 @@ class Router extends Backbone.Router
         id = Utils.cleanURL id
         question = new Question _id : id
         question.fetch
-          success: (model, response) ->
+          success: (question, response) ->
             assessment = new Assessment
               "_id" : question.get("assessmentId")
             assessment.fetch

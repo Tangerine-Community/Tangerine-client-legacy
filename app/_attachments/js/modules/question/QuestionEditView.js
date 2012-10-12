@@ -61,12 +61,12 @@ QuestionEditView = (function(_super) {
   QuestionEditView.prototype.getOptionList = function() {
     var html, i, option, options, _len;
     options = this.question.get("options");
-    html = "<div id='option_list_wrapper'>      <h2>Options</h2>      <div class='menu_box'>        <ul id='option_list'>";
+    html = "<h2>Options</h2>      <div class='menu_box'>        <ul id='option_list'>    ";
     for (i = 0, _len = options.length; i < _len; i++) {
       option = options[i];
       html += "      <li class='question'>        <table><tr><td>          <img src='images/icon_drag.png' class='sortable_handle'>        </td>        <td>          <div style='display: block;'>            <div class='option_label_value'>              <label class='edit' for='options." + i + ".label'>Label</label>              <input id='options." + i + ".label' value='" + (_.escape(option.label)) + "' placeholder='Option label' class='option_label'><br>              <label class='edit' for='options." + i + ".value' title='Allowed characters&#58; A-Z, a-z, 0-9, and underscores.'>Value</label>              <input id='options." + i + ".value' value='" + (_.escape(option.value)) + "' placeholder='Option value' class='option_value'><br>            </div>            <img src='images/icon_delete.png' class='delete_option' data-index='" + i + "'>            <div class='confirmation delete_confirm_" + i + "'>              <button class='delete_delete command_red' data-index='" + i + "'>Delete</button>              <button data-index='" + i + "' class='delete_cancel command'>Cancel</button>            </div>          </div>        </td></tr></table>      </li>      ";
     }
-    return html += "</ul>      <button class='add_option command'>Add option</button>      </div>    </div>";
+    return html += "</ul>      <button class='add_option command'>Add option</button>    </div>    ";
   };
 
   QuestionEditView.prototype.addOption = function() {
@@ -78,12 +78,11 @@ QuestionEditView = (function(_super) {
       value: ""
     });
     this.question.set("options", options);
-    this.$el.find('#option_list_wrapper').html(this.getOptionList());
+    this.refreshOptionList();
     optionListElements = this.$el.find("#option_list_wrapper li");
     if (optionListElements.length !== 0) {
-      $(optionListElements.last()).scrollTo().find("input:first").focus();
+      return $(optionListElements.last()).scrollTo().find("input:first").focus();
     }
-    return this.refreshSortable();
   };
 
   QuestionEditView.prototype.render = function() {
@@ -113,6 +112,11 @@ QuestionEditView = (function(_super) {
     }
     this.$el.append("<button class='done command'>Done</button>      </div>      ");
     return this.trigger("rendered");
+  };
+
+  QuestionEditView.prototype.refreshOptionList = function() {
+    this.$el.find("#option_list_wrapper").html(this.getOptionList());
+    return this.refreshSortable();
   };
 
   QuestionEditView.prototype.refreshSortable = function() {

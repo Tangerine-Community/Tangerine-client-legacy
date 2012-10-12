@@ -933,7 +933,7 @@ Router = (function(_super) {
           _id: id
         });
         return question.fetch({
-          success: function(model, response) {
+          success: function(question, response) {
             var assessment;
             assessment = new Assessment({
               "_id": question.get("assessmentId")

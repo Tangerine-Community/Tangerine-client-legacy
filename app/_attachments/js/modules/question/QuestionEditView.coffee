@@ -39,11 +39,12 @@ class QuestionEditView extends Backbone.View
     @assessment = options.assessment
 
   getOptionList: ->
-    options = @question.get "options" 
-    html = "<div id='option_list_wrapper'>
-      <h2>Options</h2>
+    options = @question.get "options"
+    html = "<h2>Options</h2>
       <div class='menu_box'>
-        <ul id='option_list'>"
+        <ul id='option_list'>
+    "
+
     for option, i in options
       
       html += "
@@ -71,8 +72,8 @@ class QuestionEditView extends Backbone.View
     html += "</ul>
 
       <button class='add_option command'>Add option</button>
-      </div>
-    </div>"
+    </div>
+    "
 
   #
   # Adding an option
@@ -85,20 +86,19 @@ class QuestionEditView extends Backbone.View
       label : ""
       value : ""
     @question.set "options", options
-    
+
+    @refreshOptionList()
+
     # focus on next
-    @$el.find('#option_list_wrapper').html(@getOptionList())
     optionListElements = @$el.find("#option_list_wrapper li")
     if optionListElements.length != 0
       $(optionListElements.last()).scrollTo().find("input:first").focus()
-    @refreshSortable()
-
 
   render: ->
-    
+
     assessmentName  = @assessment.escape("name")
     subtestName     = @subtest.escape("name")
-    
+
     name            = @question.escape("name")      || ""
     prompt          = @question.escape("prompt")    || ""
     hint            = @question.escape("hint")      || ""
@@ -190,6 +190,10 @@ class QuestionEditView extends Backbone.View
       "
     @trigger "rendered"
 
+  refreshOptionList: ->
+    @$el.find("#option_list_wrapper").html @getOptionList()
+    @refreshSortable()
+
   refreshSortable: ->
     @$el.find("#option_list").sortable
       handle : '.sortable_handle'
@@ -218,7 +222,6 @@ class QuestionEditView extends Backbone.View
   #
   done: ->
     @updateModel()
-    # show a message and any we've collected along the way
     if @question.save()
       Utils.midAlert "Question Saved"
       setTimeout @goBack, 500
@@ -258,8 +261,6 @@ class QuestionEditView extends Backbone.View
 
     @question.set "options", options
 
-
-        
   #
   # Deleting an option
   #
