@@ -71,7 +71,6 @@ QuestionEditView = (function(_super) {
 
   QuestionEditView.prototype.addOption = function() {
     var optionListElements, options;
-    console.log("adding option");
     this.updateModel();
     options = this.question.get("options");
     options.push({
@@ -110,20 +109,14 @@ QuestionEditView = (function(_super) {
       }
       optionHTML += "</select>        </div>        <div id='option_list_wrapper'>" + (this.getOptionList()) + "</div>        ";
       this.$el.append(optionHTML);
-      this.initSortable();
+      this.refreshSortable();
     }
     this.$el.append("<button class='done command'>Done</button>      </div>      ");
     return this.trigger("rendered");
   };
 
   QuestionEditView.prototype.refreshSortable = function() {
-    console.log("refresh sortable");
-    return this.$el.find("#option_list").sortable().refresh();
-  };
-
-  QuestionEditView.prototype.initSortable = function() {
     var _this = this;
-    console.log("initializing sortable");
     return this.$el.find("#option_list").sortable({
       handle: '.sortable_handle',
       start: function(event, ui) {

@@ -78,7 +78,6 @@ class QuestionEditView extends Backbone.View
   # Adding an option
   #
   addOption: ->
-    console.log "adding option"
     @updateModel()
 
     options = @question.get "options"
@@ -184,7 +183,7 @@ class QuestionEditView extends Backbone.View
         "
       @$el.append optionHTML
 
-      @initSortable()
+      @refreshSortable()
       
     @$el.append "<button class='done command'>Done</button>
       </div>
@@ -192,11 +191,6 @@ class QuestionEditView extends Backbone.View
     @trigger "rendered"
 
   refreshSortable: ->
-    console.log "refresh sortable"
-    @$el.find("#option_list").sortable().refresh()
-
-  initSortable: ->
-    console.log "initializing sortable"
     @$el.find("#option_list").sortable
       handle : '.sortable_handle'
       start: (event, ui) -> ui.item.addClass "drag_shadow"
@@ -211,7 +205,6 @@ class QuestionEditView extends Backbone.View
       return false
 
   changeQuestionType: (event) ->
-
     $target = $(event.target)
     # if it changes, redo the rendering
     if ($target.val() != "open" && @question.get("type") == "open") || ($target.val() == "open" && @question.get("type") != "open")
