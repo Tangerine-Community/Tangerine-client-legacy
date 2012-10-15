@@ -110,7 +110,7 @@ SubtestEditView = (function(_super) {
   };
 
   SubtestEditView.prototype.save = function(event) {
-    var prototype, _base, _base2, _ref;
+    var prototype, _base, _base2, _ref, _ref2, _ref3;
     prototype = this.model.get("prototype");
     this.model.set({
       name: this.$el.find("#subtest_name").val(),
@@ -118,8 +118,10 @@ SubtestEditView = (function(_super) {
       studentDialog: this.$el.find("#student_dialog").val(),
       skippable: this.$el.find("#skip_radio input:radio[name=skippable]:checked").val() === "true"
     });
-    if (typeof (_base = this.prototypeEditor).save === "function") _base.save();
-    if ((this.prototypeEditor.isValid != null) && this.prototypeEditor.isValid() === false) {
+    if (((event != null ? (_ref = event.options) != null ? _ref.editSave : void 0 : void 0) != null) !== true) {
+      if (typeof (_base = this.prototypeEditor).save === "function") _base.save();
+    }
+    if ((this.prototypeEditor.isValid != null) && this.prototypeEditor.isValid() === false && ((event != null ? (_ref2 = event.options) != null ? _ref2.editSave : void 0 : void 0) != null) !== true) {
       Utils.midAlert("There are errors on this page");
       return typeof (_base2 = this.prototypeEditor).showErrors === "function" ? _base2.showErrors() : void 0;
     } else {
@@ -127,7 +129,7 @@ SubtestEditView = (function(_super) {
         wait: true
       })) {
         Utils.midAlert("Subtest Saved");
-        if (((event != null ? (_ref = event.options) != null ? _ref.editSave : void 0 : void 0) != null) !== true) {
+        if (((event != null ? (_ref3 = event.options) != null ? _ref3.editSave : void 0 : void 0) != null) !== true) {
           return setTimeout(this.goBack, 1000);
         }
       } else {

@@ -79,9 +79,9 @@ class SubtestEditView extends Backbone.View
       studentDialog  : @$el.find("#student_dialog").val()
       skippable      : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
 
-    @prototypeEditor.save?()
+    @prototypeEditor.save?() unless event?.options?.editSave? == true
 
-    if @prototypeEditor.isValid? && @prototypeEditor.isValid() == false
+    if @prototypeEditor.isValid? && @prototypeEditor.isValid() == false && event?.options?.editSave? != true
       Utils.midAlert "There are errors on this page"
       @prototypeEditor.showErrors?()
     else
