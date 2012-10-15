@@ -49,7 +49,7 @@ class ResultSumView extends Backbone.View
     ###
      
     html = "<div class='detail_box'>"
-    html += "<div>Not finished<button class='command resume'>Resume</button></div>" unless @finished
+    html += "<div>Not finished<button class='command resume'>Resume</button></div>" unless @finished || !@finishCheck
     for datum, i in @result.get("subtestData")
       html += "<div><span id='#{@cid}_#{i}'></span>#{datum.name} - items #{datum.sum.total}</div>"
     html += "
