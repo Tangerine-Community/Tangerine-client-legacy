@@ -43,18 +43,26 @@ AssessmentListView = (function(_super) {
     this.publicViews = [];
     this.sections = [this.group, "public"];
     this.groupViews = [];
-    _ref = this.sections;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      group = _ref[_i];
-      view = new AssessmentsView({
-        "group": group,
+    if (Tangerine.settings.context === "server") {
+      _ref = this.sections;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        group = _ref[_i];
+        view = new AssessmentsView({
+          "group": group,
+          "allAssessments": this.assessments,
+          "parent": this
+        });
+        _results.push(this.groupViews.push(view));
+      }
+      return _results;
+    } else if (Tangerine.settings.context === "mobile") {
+      return this.listView = new AssessmentsView({
+        "group": false,
         "allAssessments": this.assessments,
         "parent": this
       });
-      _results.push(this.groupViews.push(view));
     }
-    return _results;
   };
 
   AssessmentListView.prototype.refresh = function() {
@@ -85,12 +93,18 @@ AssessmentListView = (function(_super) {
       html += "        " + (Tangerine.settings.context === "server" ? newButton : "") + "        " + (Tangerine.settings.context === "mobile" ? importButton : "") + "        <div class='new_assessment_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_assessment_name' placeholder='Assessment Name'>            <button class='new_assessment_save command'>Save</button> <button class='new_assessment_cancel command'>Cancel</button>          </div>        </div>      ";
     }
     this.$el.html(html);
-    _ref = this.groupViews;
-    for (i = 0, _len = _ref.length; i < _len; i++) {
-      view = _ref[i];
-      this.$el.append("<h2>" + (this.sections[i].titleize()) + " (" + view.assessments.length + ")</h2><ul id='group_" + view.cid + "' class='assessment_list'></ul>");
-      view.setElement(this.$el.find("#group_" + view.cid));
-      view.render();
+    if (Tangerine.settings.context === "server") {
+      _ref = this.groupViews;
+      for (i = 0, _len = _ref.length; i < _len; i++) {
+        view = _ref[i];
+        this.$el.append("<h2>" + (this.sections[i].titleize()) + " (" + view.assessments.length + ")</h2><ul id='group_" + view.cid + "' class='assessment_list'></ul>");
+        view.setElement(this.$el.find("#group_" + view.cid));
+        view.render();
+      }
+    } else if (Tangerine.settings.context === "mobile") {
+      this.$el.append("<ul class='assessment_list'></ul>");
+      this.listView.setElement(this.$el.find("ul.assessment_list"));
+      this.listView.render();
     }
     this.trigger("rendered");
     return;

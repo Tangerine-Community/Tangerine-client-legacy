@@ -3,12 +3,17 @@ class AssessmentsView extends Backbone.View
   tagName   : "ul"
 
   initialize: (options) ->
+    @group = options.group
     @allAssessments = options.allAssessments
     @parent      = options.parent
     @refresh()
 
   refresh: (doRender=false) ->
-    @assessments = new Assessments @allAssessments.where( { "group" : @options.group } )
+    if @group == false
+      @assessments = @allAssessments
+    else
+      @assessments = new Assessments @allAssessments.where( { "group" : @options.group } )
+
     @closeViews()
     @assessmentViews = ( new AssessmentListElementView( { "model" : assessment, "parent" : @ } ) for assessment in @assessments.models )
     if doRender then @render()

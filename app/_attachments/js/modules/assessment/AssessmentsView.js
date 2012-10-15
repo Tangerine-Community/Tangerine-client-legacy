@@ -13,6 +13,7 @@ AssessmentsView = (function(_super) {
   AssessmentsView.prototype.tagName = "ul";
 
   AssessmentsView.prototype.initialize = function(options) {
+    this.group = options.group;
     this.allAssessments = options.allAssessments;
     this.parent = options.parent;
     return this.refresh();
@@ -21,9 +22,13 @@ AssessmentsView = (function(_super) {
   AssessmentsView.prototype.refresh = function(doRender) {
     var assessment;
     if (doRender == null) doRender = false;
-    this.assessments = new Assessments(this.allAssessments.where({
-      "group": this.options.group
-    }));
+    if (this.group === false) {
+      this.assessments = this.allAssessments;
+    } else {
+      this.assessments = new Assessments(this.allAssessments.where({
+        "group": this.options.group
+      }));
+    }
     this.closeViews();
     this.assessmentViews = (function() {
       var _i, _len, _ref, _results;

@@ -21,14 +21,22 @@ class AssessmentListView extends Backbone.View
     @publicViews = []
     @sections = [@group, "public"]
     @groupViews = []
-    # coffeescript nightmare, single line possible, but don't do it
-    for group in @sections
-      view = new AssessmentsView
-        "group"          : group
+
+
+    if Tangerine.settings.context == "server"
+      # coffeescript nightmare, single line possible, but don't do it
+      for group in @sections
+        view = new AssessmentsView
+          "group"          : group
+          "allAssessments" : @assessments
+          "parent"         : @
+        @groupViews.push view
+    else if Tangerine.settings.context == "mobile"
+      @listView = new AssessmentsView
+        "group"          : false # all
         "allAssessments" : @assessments
         "parent"         : @
-      @groupViews.push view
-
+    
 
   refresh: =>
     @assessments = new Assessments
@@ -64,12 +72,16 @@ class AssessmentListView extends Backbone.View
 
     @$el.html html
 
-    for view, i in @groupViews
-      @$el.append "<h2>#{@sections[i].titleize()} (#{view.assessments.length})</h2><ul id='group_#{view.cid}' class='assessment_list'></ul>"
-
-      view.setElement(@$el.find("#group_#{view.cid}"))
-      view.render()
-
+    if Tangerine.settings.context == "server"
+      for view, i in @groupViews
+        @$el.append "<h2>#{@sections[i].titleize()} (#{view.assessments.length})</h2><ul id='group_#{view.cid}' class='assessment_list'></ul>"
+        view.setElement(@$el.find("#group_#{view.cid}"))
+        view.render()
+    else if Tangerine.settings.context == "mobile"
+      @$el.append "<ul class='assessment_list'></ul>"
+      @listView.setElement(@$el.find("ul.assessment_list"))
+      @listView.render()
+    
     @trigger "rendered"
 
     return
