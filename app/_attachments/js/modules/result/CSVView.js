@@ -43,7 +43,7 @@ CSVView = (function(_super) {
   };
 
   CSVView.prototype.render = function() {
-    var columns, count, csvFile, csvRowData, d, i, index, item, keyBucket, keyChain, label, metaKey, monthData, months, observationData, observations, optionKey, optionValue, orderMap, prototype, rawIndex, result, row, subtest, subtestIndex, subtestName, surveyValue, surveyVariable, tableHTML, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9, _results,
+    var columns, count, csvFile, csvRowData, d, i, index, item, keyBucket, keyChain, label, metaKey, monthData, months, observationData, observations, optionKey, optionValue, orderMap, prototype, rawIndex, result, row, subtest, subtestIndex, subtestName, surveyValue, surveyVariable, tableHTML, variableName, _i, _j, _k, _l, _len, _len10, _len11, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _ref, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9, _results,
       _this = this;
     if ((this.results != null) && (this.results[0] != null)) {
       tableHTML = "";
@@ -61,7 +61,12 @@ CSVView = (function(_super) {
         for (rawIndex = 0, _ref3 = result.attributes.subtestData.length - 1; 0 <= _ref3 ? rawIndex <= _ref3 : rawIndex >= _ref3; 0 <= _ref3 ? rawIndex++ : rawIndex--) {
           subtestIndex = orderMap.indexOf(rawIndex);
           subtest = result.attributes.subtestData[subtestIndex];
-          subtestName = subtest.name.toLowerCase().dasherize();
+          if (!(subtest != null)) {
+            console.log("" + rawIndex + " => " + subtestIndex);
+            console.log(subtest);
+            continue;
+          }
+          subtestName = (_ref4 = subtest.name) != null ? _ref4.toLowerCase().dasherize() : void 0;
           prototype = subtest.prototype;
           keyBucket = [];
           if (prototype === "id") {
@@ -69,9 +74,9 @@ CSVView = (function(_super) {
           } else if (prototype === "datetime") {
             keyBucket.push("year", "month", "date", "assess_time");
           } else if (prototype === "location") {
-            _ref4 = subtest.data.labels;
-            for (_k = 0, _len2 = _ref4.length; _k < _len2; _k++) {
-              label = _ref4[_k];
+            _ref5 = subtest.data.labels;
+            for (_k = 0, _len2 = _ref5.length; _k < _len2; _k++) {
+              label = _ref5[_k];
               keyBucket.push(label);
             }
           } else if (prototype === "consent") {
@@ -79,15 +84,15 @@ CSVView = (function(_super) {
           } else if (prototype === "grid") {
             variableName = subtest.data.variable_name;
             keyBucket.push("" + variableName + "_auto_stop", "" + variableName + "_time_remain", "" + variableName + "_attempted", "" + variableName + "_item_at_time", "" + variableName + "_time_intermediate_captured", "" + variableName + "_correct_per_minute");
-            _ref5 = subtest.data.items;
-            for (i = 0, _len3 = _ref5.length; i < _len3; i++) {
-              item = _ref5[i];
+            _ref6 = subtest.data.items;
+            for (i = 0, _len3 = _ref6.length; i < _len3; i++) {
+              item = _ref6[i];
               keyBucket.push("" + variableName + (i + 1));
             }
           } else if (prototype === "survey") {
-            _ref6 = subtest.data;
-            for (surveyVariable in _ref6) {
-              surveyValue = _ref6[surveyVariable];
+            _ref7 = subtest.data;
+            for (surveyVariable in _ref7) {
+              surveyValue = _ref7[surveyVariable];
               if (_.isObject(surveyValue)) {
                 for (optionKey in surveyValue) {
                   optionValue = surveyValue[optionKey];
@@ -98,9 +103,9 @@ CSVView = (function(_super) {
               }
             }
           } else if (prototype === "observation") {
-            _ref7 = subtest.data.surveys;
-            for (i = 0, _len4 = _ref7.length; i < _len4; i++) {
-              observations = _ref7[i];
+            _ref8 = subtest.data.surveys;
+            for (i = 0, _len4 = _ref8.length; i < _len4; i++) {
+              observations = _ref8[i];
               observationData = observations.data;
               for (surveyVariable in observationData) {
                 surveyValue = observationData[surveyVariable];
@@ -126,29 +131,29 @@ CSVView = (function(_super) {
       this.metaKeys.push("start_time", "order_map");
       columns = this.metaKeys.concat(_.flatten(keyChain));
       csvRowData.push(columns);
-      _ref8 = this.results;
-      for (d = 0, _len5 = _ref8.length; d < _len5; d++) {
-        result = _ref8[d];
+      _ref9 = this.results;
+      for (d = 0, _len5 = _ref9.length; d < _len5; d++) {
+        result = _ref9[d];
         row = [];
-        _ref9 = this.metaKeys;
-        for (_l = 0, _len6 = _ref9.length; _l < _len6; _l++) {
-          metaKey = _ref9[_l];
+        _ref10 = this.metaKeys;
+        for (_l = 0, _len6 = _ref10.length; _l < _len6; _l++) {
+          metaKey = _ref10[_l];
           if (result.attributes[metaKey] != null) {
             row.push(result.attributes[metaKey]);
           }
         }
         row[columns.indexOf("start_time")] = result.has('starttime') ? result.get('starttime') : result.get('start_time');
         row[columns.indexOf("order_map")] = result.has('order_map') ? result.get('order_map') : "no_record";
-        _ref10 = result.attributes.subtestData;
-        for (_m = 0, _len7 = _ref10.length; _m < _len7; _m++) {
-          subtest = _ref10[_m];
+        _ref11 = result.attributes.subtestData;
+        for (_m = 0, _len7 = _ref11.length; _m < _len7; _m++) {
+          subtest = _ref11[_m];
           prototype = subtest.prototype;
           if (prototype === "id") {
             row[columns.indexOf("id")] = subtest.data.participant_id;
           } else if (prototype === "location") {
-            _ref11 = subtest.data.labels;
-            for (i = 0, _len8 = _ref11.length; i < _len8; i++) {
-              label = _ref11[i];
+            _ref12 = subtest.data.labels;
+            for (i = 0, _len8 = _ref12.length; i < _len8; i++) {
+              label = _ref12[i];
               row[columns.indexOf(label)] = subtest.data.location[i];
             }
           } else if (prototype === "datetime") {
@@ -172,15 +177,15 @@ CSVView = (function(_super) {
             row[columns.indexOf("" + variableName + "_item_at_time")] = subtest.data.item_at_time;
             row[columns.indexOf("" + variableName + "_time_intermediate_captured")] = subtest.data.time_intermediate_captured;
             row[columns.indexOf("" + variableName + "_correct_per_minute")] = subtest.sum.correct_per_minute;
-            _ref12 = subtest.data.items;
-            for (i = 0, _len9 = _ref12.length; i < _len9; i++) {
-              item = _ref12[i];
+            _ref13 = subtest.data.items;
+            for (i = 0, _len9 = _ref13.length; i < _len9; i++) {
+              item = _ref13[i];
               row[columns.indexOf("" + variableName + (i + 1))] = this.exportValue(item.itemResult);
             }
           } else if (prototype === "survey") {
-            _ref13 = subtest.data;
-            for (surveyVariable in _ref13) {
-              surveyValue = _ref13[surveyVariable];
+            _ref14 = subtest.data;
+            for (surveyVariable in _ref14) {
+              surveyValue = _ref14[surveyVariable];
               if (_.isObject(surveyValue)) {
                 for (optionKey in surveyValue) {
                   optionValue = surveyValue[optionKey];
@@ -191,9 +196,9 @@ CSVView = (function(_super) {
               }
             }
           } else if (prototype === "observation") {
-            _ref14 = subtest.data.surveys;
-            for (i = 0, _len10 = _ref14.length; i < _len10; i++) {
-              observations = _ref14[i];
+            _ref15 = subtest.data.surveys;
+            for (i = 0, _len10 = _ref15.length; i < _len10; i++) {
+              observations = _ref15[i];
               observationData = observations.data;
               for (surveyVariable in observationData) {
                 surveyValue = observationData[surveyVariable];
@@ -223,7 +228,7 @@ CSVView = (function(_super) {
         row = csvRowData[i];
         tableHTML += "<tr>";
         count = 0;
-        for (index = 0, _ref15 = row.length - 1; 0 <= _ref15 ? index <= _ref15 : index >= _ref15; 0 <= _ref15 ? index++ : index--) {
+        for (index = 0, _ref16 = row.length - 1; 0 <= _ref16 ? index <= _ref16 : index >= _ref16; 0 <= _ref16 ? index++ : index--) {
           tableHTML += "<td>" + row[index] + "</td>";
           count++;
         }
