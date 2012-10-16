@@ -41,9 +41,9 @@ class AssessmentListView extends Backbone.View
   refresh: =>
     @assessments = new Assessments
     @assessments.fetch
-      success: =>
+      success: (assessments) =>
         for view in @groupViews
-          view.assessments = @assessments
+          view.allAssessments = assessments
           view.refresh true
 
 
@@ -137,8 +137,14 @@ class AssessmentListView extends Backbone.View
         '_id'          : newId
         'assessmentId' : newId
       
-      newAssessment.save()
-      @collection.add newAssessment
+      newAssessment.save( null, 
+        success : => 
+          @refresh() 
+          @$el.find('.new_assessment_form, .new_assessment').fadeToggle(250, => @$el.find('.new_assessment_name').val(""))
+      )
+
+      
+
       Utils.midAlert "#{name} saved"
     else
       Utils.midAlert "<span class='error'>Could not save <img src='images/icon_close.png' class='clear_message'></span>"

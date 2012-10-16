@@ -69,13 +69,13 @@ AssessmentListView = (function(_super) {
     var _this = this;
     this.assessments = new Assessments;
     return this.assessments.fetch({
-      success: function() {
+      success: function(assessments) {
         var view, _i, _len, _ref, _results;
         _ref = _this.groupViews;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           view = _ref[_i];
-          view.assessments = _this.assessments;
+          view.allAssessments = assessments;
           _results.push(view.refresh(true));
         }
         return _results;
@@ -143,7 +143,8 @@ AssessmentListView = (function(_super) {
   };
 
   AssessmentListView.prototype.newAssessmentSave = function(event) {
-    var name, newAssessment, newId;
+    var name, newAssessment, newId,
+      _this = this;
     if (event.type !== "click" && event.which !== 13) return true;
     name = this.$el.find('.new_assessment_name').val();
     if (name.length !== 0) {
@@ -154,8 +155,14 @@ AssessmentListView = (function(_super) {
         '_id': newId,
         'assessmentId': newId
       });
-      newAssessment.save();
-      this.collection.add(newAssessment);
+      newAssessment.save(null, {
+        success: function() {
+          _this.refresh();
+          return _this.$el.find('.new_assessment_form, .new_assessment').fadeToggle(250, function() {
+            return _this.$el.find('.new_assessment_name').val("");
+          });
+        }
+      });
       Utils.midAlert("" + name + " saved");
     } else {
       Utils.midAlert("<span class='error'>Could not save <img src='images/icon_close.png' class='clear_message'></span>");
