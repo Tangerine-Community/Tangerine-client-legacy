@@ -107,7 +107,8 @@ AssessmentListElementView = (function(_super) {
     var _this = this;
     return this.$el.fadeOut(250, function() {
       _this.parent.assessments.remove(_this.model);
-      return _this.model.destroy();
+      _this.model.destroy();
+      return _this.parent.parent.refresh();
     });
   };
 

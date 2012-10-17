@@ -50,8 +50,6 @@ AssessmentsView = (function(_super) {
         "archived": true
       }));
     }
-    console.log("" + this.group);
-    console.log(this.allAssessments);
     this.closeViews();
     this.assessmentViews = (function() {
       var _i, _len, _ref, _results;
@@ -87,6 +85,7 @@ AssessmentsView = (function(_super) {
     if (this.assessmentViews.length === 0) {
       this.$el.html("<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>");
     } else {
+      this.$el.html("");
       _ref = this.assessmentViews;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         view = _ref[_i];

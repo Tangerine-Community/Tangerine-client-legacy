@@ -27,9 +27,6 @@ class AssessmentsView extends Backbone.View
       @assessments = new Assessments @allAssessments.where( { "group" : @options.group, "archived" : false } )
       @hidden      = new Assessments @allAssessments.where( { "group" : @options.group, "archived" : true  } )
 
-    console.log "#{@group}"
-    console.log @allAssessments
-
     @closeViews()
     @assessmentViews = ( new AssessmentListElementView( { "model" : assessment, "parent" : @ } ) for assessment in @assessments.models )
     @hiddenViews = ( new AssessmentListElementView( { "model" : assessment, "parent" : @ } ) for assessment in @hidden.models )
@@ -39,6 +36,7 @@ class AssessmentsView extends Backbone.View
     if @assessmentViews.length == 0
       @$el.html "<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>"
     else
+      @$el.html ""
       for view in @assessmentViews
         view.render()
         @$el.append view.el

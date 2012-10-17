@@ -70,11 +70,15 @@ AssessmentListView = (function(_super) {
     this.assessments = new Assessments;
     return this.assessments.fetch({
       success: function(assessments) {
-        var view, _i, _len, _ref, _results;
+        var i, view, _len, _ref, _results;
         _ref = _this.groupViews;
         _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          view = _ref[_i];
+        for (i = 0, _len = _ref.length; i < _len; i++) {
+          view = _ref[i];
+          _this.$el.find(".header_" + view.cid).html("" + (_this.sections[i].titleize()) + " (" + (view.allAssessments.where({
+            "group": _this.sections[i],
+            "archived": false
+          }).length) + ")");
           view.allAssessments = assessments;
           _results.push(view.refresh(true));
         }
@@ -97,7 +101,7 @@ AssessmentListView = (function(_super) {
       _ref = this.groupViews;
       for (i = 0, _len = _ref.length; i < _len; i++) {
         view = _ref[i];
-        this.$el.append("<h2>" + (this.sections[i].titleize()) + " (" + view.assessments.length + ")</h2><ul id='group_" + view.cid + "' class='assessment_list'></ul>");
+        this.$el.append("<h2 class='header_" + view.cid + "'>" + (this.sections[i].titleize()) + " (" + view.assessments.length + ")</h2><ul id='group_" + view.cid + "' class='assessment_list'></ul>");
         view.setElement(this.$el.find("#group_" + view.cid));
         view.render();
       }
@@ -150,10 +154,11 @@ AssessmentListView = (function(_super) {
     if (name.length !== 0) {
       newId = Utils.guid();
       newAssessment = new Assessment({
-        'name': name,
-        'group': this.group,
-        '_id': newId,
-        'assessmentId': newId
+        "name": name,
+        "group": this.group,
+        "_id": newId,
+        "assessmentId": newId,
+        "archived": false
       });
       newAssessment.save(null, {
         success: function() {

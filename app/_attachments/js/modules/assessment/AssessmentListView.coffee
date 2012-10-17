@@ -42,7 +42,8 @@ class AssessmentListView extends Backbone.View
     @assessments = new Assessments
     @assessments.fetch
       success: (assessments) =>
-        for view in @groupViews
+        for view, i in @groupViews
+          @$el.find(".header_#{view.cid}").html "#{@sections[i].titleize()} (#{view.allAssessments.where({"group":@sections[i],"archived":false}).length})"
           view.allAssessments = assessments
           view.refresh true
 
@@ -74,7 +75,7 @@ class AssessmentListView extends Backbone.View
 
     if Tangerine.settings.context == "server"
       for view, i in @groupViews
-        @$el.append "<h2>#{@sections[i].titleize()} (#{view.assessments.length})</h2><ul id='group_#{view.cid}' class='assessment_list'></ul>"
+        @$el.append "<h2 class='header_#{view.cid}'>#{@sections[i].titleize()} (#{view.assessments.length})</h2><ul id='group_#{view.cid}' class='assessment_list'></ul>"
         view.setElement(@$el.find("#group_#{view.cid}"))
         view.render()
     else if Tangerine.settings.context == "mobile"
@@ -132,10 +133,11 @@ class AssessmentListView extends Backbone.View
     if name.length != 0
       newId = Utils.guid()
       newAssessment = new Assessment
-        'name'         : name
-        'group'        : @group
-        '_id'          : newId
-        'assessmentId' : newId
+        "name"         : name
+        "group"        : @group
+        "_id"          : newId
+        "assessmentId" : newId
+        "archived"     : false
       
       newAssessment.save( null, 
         success : => 
