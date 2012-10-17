@@ -12,6 +12,22 @@ AssessmentsView = (function(_super) {
 
   AssessmentsView.prototype.tagName = "ul";
 
+  AssessmentsView.prototype.events = {
+    "click .hidden_toggle": "toggleHidden"
+  };
+
+  AssessmentsView.prototype.toggleHidden = function() {
+    var $container;
+    $container = this.$el.find(".hidden_container");
+    if ($container.is(":visible")) {
+      $container.fadeOut(150);
+      return this.$el.find(".hidden_toggle").html("Show");
+    } else {
+      $container.fadeIn(150);
+      return this.$el.find(".hidden_toggle").html("Hide");
+    }
+  };
+
   AssessmentsView.prototype.initialize = function(options) {
     this.group = options.group;
     this.allAssessments = options.allAssessments;
@@ -26,9 +42,16 @@ AssessmentsView = (function(_super) {
       this.assessments = this.allAssessments;
     } else {
       this.assessments = new Assessments(this.allAssessments.where({
-        "group": this.options.group
+        "group": this.options.group,
+        "archived": false
+      }));
+      this.hidden = new Assessments(this.allAssessments.where({
+        "group": this.options.group,
+        "archived": true
       }));
     }
+    console.log("" + this.group);
+    console.log(this.allAssessments);
     this.closeViews();
     this.assessmentViews = (function() {
       var _i, _len, _ref, _results;
@@ -43,11 +66,24 @@ AssessmentsView = (function(_super) {
       }
       return _results;
     }).call(this);
+    this.hiddenViews = (function() {
+      var _i, _len, _ref, _results;
+      _ref = this.hidden.models;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        assessment = _ref[_i];
+        _results.push(new AssessmentListElementView({
+          "model": assessment,
+          "parent": this
+        }));
+      }
+      return _results;
+    }).call(this);
     if (doRender) return this.render();
   };
 
   AssessmentsView.prototype.render = function() {
-    var view, _i, _len, _ref;
+    var view, _i, _j, _len, _len2, _ref, _ref2;
     if (this.assessmentViews.length === 0) {
       this.$el.html("<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>");
     } else {
@@ -56,6 +92,15 @@ AssessmentsView = (function(_super) {
         view = _ref[_i];
         view.render();
         this.$el.append(view.el);
+      }
+      if (this.hiddenViews.length !== 0) {
+        this.$el.append("<h2>Archived (" + this.hiddenViews.length + ") <button class='command hidden_toggle'>Show</button></h2><div class='hidden_container confirmation'></div>");
+        _ref2 = this.hiddenViews;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          view = _ref2[_j];
+          view.render();
+          this.$el.find(".hidden_container").append(view.el);
+        }
       }
     }
     return this.trigger("rendered");
