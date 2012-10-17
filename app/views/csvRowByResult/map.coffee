@@ -14,8 +14,6 @@
       "skipped"   : 999
     }
 
-    row = {}
-
     metaKeys = [
       "enumerator"
       "start_time"
@@ -28,25 +26,50 @@
       else
         return databaseValue
 
-# meta columns go first
-    for metaKey in metaKeys
-      if doc[metaKey]? then row[metaKey] =  doc[metaKey]
-# little backwards compatibility
-    row["start_time"] = if doc['starttime']? then doc['starttime']? else doc['start_time']
+    # returns an object {key: value}
+    pair = (key, value) ->
+      o = {}
+      o[key] = value
+      return o
 
-    row["order_map"] =  if doc['order_map']? then doc['order_map']? else "no_record"
+    metaData = []
+    # meta columns go first
+    for metaKey in metaKeys
+      metaData.push pair(metaKey, doc[metaKey]) if doc[metaKey]?
+
+    # a little backwards compatibility
+    metaData.push pair("start_time", if doc['starttime']? then doc['starttime']? else doc['start_time'])
+    metaData.push pair("order_map",  if doc['order_map']? then doc['order_map']? else "no_record")
+
+
+    bySubtest = [metaData]
+
+    #
+    # Subtest loop
+    #
 
     datetimeCount = 0
-# go through each subtest in this result
-    for subtest in doc.subtestData
+    orderMap = if doc["order_map"]? then doc["order_map"] else [0..doc.subtestData.length-1]
+    # go through each subtest in this result
+    for rawIndex in [0..doc.subtestData.length-1]
+      row = []
+
+      # use the order map for randomized subtests
+      subtestIndex = orderMap.indexOf(rawIndex)
+      subtest = doc.subtestData[subtestIndex]
+
+      # continue if unfinished assessment
+      continue if not subtest?
+
+
       prototype = subtest.prototype
 
       # each prototype provides different data, handle them accordingly
       if prototype == "id"
-        row["id"] = subtest.data.participant_id
+        row.push pair("id", subtest.data.participant_id)
       else if prototype == "location"
         for label, i in subtest.data.labels
-          row[label] = subtest.data.location[i]
+          row.push pair(label, subtestData.data.location[i])
       else if prototype == "datetime"
         months = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
         if ~months.indexOf(subtest.data.month.toLowerCase())
@@ -54,34 +77,34 @@
         else
           monthData = subtest.data.month
         datetimeSuffix = if datetimeCount > 0 then "_#{datetimeCount}" else ""
-        row["year"+datetimeSuffix]        = subtest.data.year
-        row["month"+datetimeSuffix]       = monthData
-        row["date"+datetimeSuffix]        = subtest.data.day
-        row["assess_time"+datetimeSuffix] = subtest.data.time
-
+        row.push pair("year#{datetimeSuffix}",        subtest.data.year)
+        row.push pair("month#{datetimeSuffix}",       monthData)
+        row.push pair("date#{datetimeSuffix}",        subtest.data.day)
+        row.push pair("assess_time#{datetimeSuffix}", subtest.data.time)
+        
         datetimeCount++
       else if prototype == "consent"
-        row["consent"] = subtest.data.consent
+        row.push pair("consent", subtest.data.consent)
       
       else if prototype == "grid"
         variableName = subtest.data.variable_name
-        row["#{variableName}_auto_stop"]      = subtest.data.auto_stop
-        row["#{variableName}_time_remain"]    = subtest.data.time_remain
-        row["#{variableName}_attempted"]      = subtest.data.attempted
-        row["#{variableName}_item_at_time"]   = subtest.data.item_at_time
-        row["#{variableName}_time_intermediate_captured"]   = subtest.data.time_intermediate_captured
-        row["#{variableName}_correct_per_minute"]   = subtest.sum.correct_per_minute
+        row.push pair("#{variableName}_auto_stop",       subtest.data.auto_stop)
+        row.push pair("#{variableName}_time_remain",     subtest.data.time_remain)
+        row.push pair("#{variableName}_attempted",       subtest.data.attempted)
+        row.push pair("#{variableName}_item_at_time",    subtest.data.item_at_time)
+        row.push pair("#{variableName}_time_intermediate_captured",    subtest.data.time_intermediate_captured)
+        row.push pair("#{variableName}_correct_per_minute",  subtest.sum.correct_per_minute)
 
         for item, i in subtest.data.items
-          row["#{variableName}#{i+1}"] = exportValue(item.itemResult)
+          row.push pair("#{variableName}#{i+1}", exportValue(item.itemResult))
 
       else if prototype == "survey"
         for surveyVariable, surveyValue of subtest.data
           if surveyValue is Object(surveyValue) # multiple type question
             for optionKey, optionValue of surveyValue
-              row["#{surveyVariable}_#{optionKey}"] = exportValue(optionValue)
+              row.push pair("#{surveyVariable}_#{optionKey}", exportValue(optionValue))
           else # single type question or open
-            row["#{surveyVariable}"] = exportValue(surveyValue) # if open just show result, otherwise translate not_asked
+            row.push pair(surveyVariable, exportValue(surveyValue)) # if open just show result, otherwise translate not_asked
 
       else if prototype == "observation"
         for observations, i in subtest.data.surveys
@@ -89,18 +112,18 @@
           for surveyVariable, surveyValue of observationData
             if surveyValue is Object(surveyValue) # multiple type question
               for optionKey, optionValue of surveyValue
-                row["#{surveyVariable}_#{optionKey}_#{i+1}"] = exportValue(optionValue)
+                row.push pair("#{surveyVariable}_#{optionKey}_#{i+1}", exportValue(optionValue))
             else # single type question or open
-              row["#{surveyVariable}_#{i+1}"] = exportValue(surveyValue)
-          
+              row.push pair("#{surveyVariable}_#{i+1}", exportValue(surveyValue))
 
       else if prototype == "complete"
-        row["additional_comments"] = subtest.data.comment
-        row["end_time"]            = subtest.data.end_time
+        row.push pair("additional_comments", subtest.data.comment)
+        row.push pair("end_time"           , subtest.data.end_time)
         if subtest.data.gps?
-          row["gps_latitude"]  = subtest.data.gps.latitude
-          row["gps_longitude"] = subtest.data.gps.longitude
-          row["gps_accuracy"]  = subtest.data.gps.accuracy
+          row.push pair("gps_latitude",  subtest.data.gps.latitude)
+          row.push pair("gps_longitude", subtest.data.gps.longitude)
+          row.push pair("gps_accuracy",  subtest.data.gps.accuracy)
 
-
-    emit(doc.assessmentId,row)
+      bySubtest.push row
+      
+    emit(doc.assessmentId, bySubtest)
