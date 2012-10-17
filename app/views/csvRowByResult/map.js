@@ -31,7 +31,7 @@
       if (doc[metaKey] != null) metaData.push(pair(metaKey, doc[metaKey]));
     }
     metaData.push(pair("start_time", doc['starttime'] != null ? doc['starttime'] != null : doc['start_time']));
-    metaData.push(pair("order_map", doc['order_map'] != null ? doc['order_map'] != null : "no_record"));
+    metaData.push(pair("order_map", doc['order_map'] != null ? doc['order_map'].join(",") : "no_record"));
     bySubtest = [metaData];
     datetimeCount = 0;
     orderMap = doc["order_map"] != null ? doc["order_map"] : (function() {

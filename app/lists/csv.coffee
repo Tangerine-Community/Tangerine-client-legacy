@@ -37,7 +37,7 @@
   for row, i in rowData
     csvRow = []
     for columnName in columnNames
-      csvRow.push row[columnName]
+      csvRow.push  "\"" + String(row[columnName] || "").replace(/"/g,"\"") + "\""
 
     send csvRow.join(",")+"\n"
 

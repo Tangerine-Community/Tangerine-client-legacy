@@ -39,15 +39,14 @@
 
     # a little backwards compatibility
     metaData.push pair("start_time", if doc['starttime']? then doc['starttime']? else doc['start_time'])
-    metaData.push pair("order_map",  if doc['order_map']? then doc['order_map']? else "no_record")
+    metaData.push pair("order_map",  if doc['order_map']? then doc['order_map'].join(",") else "no_record")
 
-
+    # first "subtest" is always metadata
     bySubtest = [metaData]
 
     #
     # Subtest loop
     #
-
     datetimeCount = 0
     orderMap = if doc["order_map"]? then doc["order_map"] else [0..doc.subtestData.length-1]
     # go through each subtest in this result
@@ -58,9 +57,8 @@
       subtestIndex = orderMap.indexOf(rawIndex)
       subtest = doc.subtestData[subtestIndex]
 
-      # continue if unfinished assessment
+      # skip subtests with no data in unfinished assessments
       continue if not subtest?
-
 
       prototype = subtest.prototype
 
@@ -81,7 +79,6 @@
         row.push pair("month#{datetimeSuffix}",       monthData)
         row.push pair("date#{datetimeSuffix}",        subtest.data.day)
         row.push pair("assess_time#{datetimeSuffix}", subtest.data.time)
-        
         datetimeCount++
       else if prototype == "consent"
         row.push pair("consent", subtest.data.consent)

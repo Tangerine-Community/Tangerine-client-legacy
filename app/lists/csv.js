@@ -48,7 +48,7 @@
     csvRow = [];
     for (_l = 0, _len6 = columnNames.length; _l < _len6; _l++) {
       columnName = columnNames[_l];
-      csvRow.push(row[columnName]);
+      csvRow.push("\"" + String(row[columnName] || "").replace(/"/g, "\"") + "\"");
     }
     send(csvRow.join(",") + "\n");
   }
