@@ -1,12 +1,13 @@
 (doc) ->
+
   if doc.collection is "result"
 
     exportValueMap = {
       "correct" : 1
       "checked" : 1
 
-      "incorrect" : 0
-      "unchecked" : 0
+      "incorrect" : "0"
+      "unchecked" : "0"
 
       "missing"   : "."
       "not_asked" : "."
@@ -28,6 +29,7 @@
 
     # returns an object {key: value}
     pair = (key, value) ->
+      if value == undefined then value = "no_record"
       o = {}
       o[key] = value
       return o
@@ -38,7 +40,8 @@
       metaData.push pair(metaKey, doc[metaKey]) if doc[metaKey]?
 
     # a little backwards compatibility
-    metaData.push pair("start_time", if doc['starttime']? then doc['starttime']? else doc['start_time'])
+    startTime = doc['starttime'] || doc['start_time']
+    metaData.push pair("start_time", startTime)
     metaData.push pair("order_map",  if doc['order_map']? then doc['order_map'].join(",") else "no_record")
 
     # first "subtest" is always metadata
@@ -48,9 +51,10 @@
     # Subtest loop
     #
     datetimeCount = 0
-    orderMap = if doc["order_map"]? then doc["order_map"] else [0..doc.subtestData.length-1]
+    linearOrder = [0..doc.subtestData.length-1]
+    orderMap = if doc["order_map"]? then doc["order_map"] else linearOrder
     # go through each subtest in this result
-    for rawIndex in [0..doc.subtestData.length-1]
+    for rawIndex in linearOrder
       row = []
 
       # use the order map for randomized subtests
@@ -58,7 +62,10 @@
       subtest = doc.subtestData[subtestIndex]
 
       # skip subtests with no data in unfinished assessments
-      continue if not subtest?
+      if not subtest?
+        log "skipped empty subtest"
+        log doc
+        continue 
 
       prototype = subtest.prototype
 
@@ -67,7 +74,7 @@
         row.push pair("id", subtest.data.participant_id)
       else if prototype == "location"
         for label, i in subtest.data.labels
-          row.push pair(label, subtestData.data.location[i])
+          row.push pair(label, subtest.data.location[i])
       else if prototype == "datetime"
         months = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
         if ~months.indexOf(subtest.data.month.toLowerCase())
@@ -122,5 +129,5 @@
           row.push pair("gps_accuracy",  subtest.data.gps.accuracy)
 
       bySubtest.push row
-      
+
     emit(doc.assessmentId, bySubtest)

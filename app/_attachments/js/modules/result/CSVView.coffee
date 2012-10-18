@@ -10,6 +10,9 @@ class CSVView extends Backbone.View
 
     "missing"   : "."
     "not_asked" : "."
+    
+    "skipped"   : 999
+
 
   initialize: ( options ) ->
   

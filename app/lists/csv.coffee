@@ -1,5 +1,5 @@
 (head, req) ->
-  log req
+
   start
     "headers" : {
       "content-type": "text/csv"
@@ -8,12 +8,19 @@
     
   `unpack = function(tuple) { for (var key in tuple) {return [key, tuple[key]] }} `
     
+    
+  dump = (obj) -> 
+    out = ""
+    for i in obj
+        out += i + ": " + obj[i] + "\n";
 
+  columnKeys = []
   columnNames = []
   columnsBySubtest = []
   rowData = []
 
   rowIndex = 0
+
   while row = getRow()
     rowData[rowIndex] = []
     for subtest, subtestIndex in row.value
@@ -30,15 +37,19 @@
 
   for subtest in columnsBySubtest
     for key in subtest
-      columnNames.push key
+      columnKeys.push key
+      columnNames.push "\"" + key + "\""
 
   send columnNames.join(",") + "\n"
 
   for row, i in rowData
     csvRow = []
-    for columnName in columnNames
-      csvRow.push  "\"" + String(row[columnName] || "").replace(/"/g,"\"") + "\""
-
+    for columnKey in columnKeys
+      rawCell = row[columnKey]
+      if rawCell != undefined
+        csvRow.push  "\"" + String(rawCell).replace(/"/g,"\"") + "\""
+      else
+        csvRow.push null
     send csvRow.join(",")+"\n"
 
   return
