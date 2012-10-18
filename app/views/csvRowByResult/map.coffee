@@ -21,11 +21,11 @@
       "order_map"
     ]
 
-    exportValue = (databaseValue) ->
+    exportValue = (databaseValue="no_record") ->
       if exportValueMap[databaseValue]?
         return exportValueMap[databaseValue]
       else
-        return databaseValue
+        return String(databaseValue)
 
     # returns an object {key: value}
     pair = (key, value) ->

@@ -13,10 +13,11 @@
     };
     metaKeys = ["enumerator", "start_time", "order_map"];
     exportValue = function(databaseValue) {
+      if (databaseValue == null) databaseValue = "no_record";
       if (exportValueMap[databaseValue] != null) {
         return exportValueMap[databaseValue];
       } else {
-        return databaseValue;
+        return String(databaseValue);
       }
     };
     pair = function(key, value) {
