@@ -24,11 +24,8 @@ class AssessmentsView extends Backbone.View
     if @group == false
       @assessments = @allAssessments
     else
-      @assessments = new Assessments @allAssessments.where( { "group" : @options.group } )
-      @assessments.filter (a) -> return a.get("archived") == "false" or a.get("archived") == false
-
-      @hidden      = new Assessments @allAssessments.where( { "group" : @options.group, "archived" : true  } )
-      @hidden.filter (a) -> return a.get("archived") == "true" or a.get("archived") == true
+      @assessments = new Assessments _.filter( @allAssessments.where( { "group" : @options.group } ), (a) -> return a.get("archived") == "false" or a.get("archived") == false )
+      @hidden = new Assessments _.filter( @allAssessments.where( { "group" : @options.group  } ), (a) -> return a.get("archived") == "true" or a.get("archived") == true )
       
     @closeViews()
     @assessmentViews = ( new AssessmentListElementView( { "model" : assessment, "parent" : @ } ) for assessment in @assessments.models )

@@ -41,19 +41,16 @@ AssessmentsView = (function(_super) {
     if (this.group === false) {
       this.assessments = this.allAssessments;
     } else {
-      this.assessments = new Assessments(this.allAssessments.where({
+      this.assessments = new Assessments(_.filter(this.allAssessments.where({
         "group": this.options.group
-      }));
-      this.assessments.filter(function(a) {
+      }), function(a) {
         return a.get("archived") === "false" || a.get("archived") === false;
-      });
-      this.hidden = new Assessments(this.allAssessments.where({
-        "group": this.options.group,
-        "archived": true
       }));
-      this.hidden.filter(function(a) {
+      this.hidden = new Assessments(_.filter(this.allAssessments.where({
+        "group": this.options.group
+      }), function(a) {
         return a.get("archived") === "true" || a.get("archived") === true;
-      });
+      }));
     }
     this.closeViews();
     this.assessmentViews = (function() {
