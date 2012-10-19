@@ -42,13 +42,18 @@ AssessmentsView = (function(_super) {
       this.assessments = this.allAssessments;
     } else {
       this.assessments = new Assessments(this.allAssessments.where({
-        "group": this.options.group,
-        "archived": false
+        "group": this.options.group
       }));
+      this.assessments.filter(function(a) {
+        return a.get("archived") === "false" || a.get("archived") === false;
+      });
       this.hidden = new Assessments(this.allAssessments.where({
         "group": this.options.group,
         "archived": true
       }));
+      this.hidden.filter(function(a) {
+        return a.get("archived") === "true" || a.get("archived") === true;
+      });
     }
     this.closeViews();
     this.assessmentViews = (function() {

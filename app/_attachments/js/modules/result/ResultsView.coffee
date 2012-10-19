@@ -8,8 +8,38 @@ class ResultsView extends Backbone.View
     'click .details'  : 'showResultSumView'
     'click .csv_beta' : 'csvBeta'
 
+  postRequest: (path, params) ->
+    method = "post"
+    form = document.createElement("form")
+    form.setAttribute("method", method)
+    form.setAttribute("action", path)
+
+    for key, value of params
+      hiddenField = document.createElement("input")
+      hiddenField.setAttribute("type", "hidden")
+      hiddenField.setAttribute("name", key)
+      hiddenField.setAttribute("value", value)
+
+      form.appendChild(hiddenField)
+
+    document.body.appendChild(form)
+    form.submit()
+
   csvBeta: ->
-    Tangerine.router.navigate "csv_alpha/#{@assessment.id}", true
+    filename = @assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
+    document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}"
+
+    ###
+    $.post "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
+         data,
+         -> alert("Response: " + data)
+       );
+    @postRequest("/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
+      "key"      : @assessment.id
+      "filename" : filename
+      "columns"  : "\"#{columns}\""
+    )
+    ###
 
   showResultSumView: (event) ->
     result = new Result
@@ -140,6 +170,19 @@ class ResultsView extends Backbone.View
       @$el.find('button.tablets').removeAttr('disabled')
 
 
+  readyCSVBeta: ->
+    console.log "trying to ready"
+    $.ajax
+      dataType: "json"
+      contentType: "application/json;charset=utf-8",
+      url: "http://localhost:5984/tangerine/_design/tangerine/_list/csvHeaders/csvRowByResult"
+      data: {key:"\""+@assessment.id+"\""}
+      success:  (data) =>
+        $button = @$el.find(".csv_beta")
+        $button.removeAttr "disabled"
+        $button.html "CSV"
+        
+        @columnHeaders = data
 
   initialize: ( options ) ->
     @subViews = []
@@ -167,7 +210,7 @@ class ResultsView extends Backbone.View
         #{if Tangerine.settings.context == "mobile" then cloudButton  else ""}
         #{if Tangerine.settings.context == "mobile" then tabletButton else ""}
         #{csvButton}
-        <button class='command csv_beta'>CSV Beta</button>
+        <button class='command csv_beta'>CSV (beta)</button>
       </div>"
 
     if Tangerine.settings.context == "mobile"

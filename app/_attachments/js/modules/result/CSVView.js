@@ -16,7 +16,8 @@ CSVView = (function(_super) {
     "incorrect": 0,
     "unchecked": 0,
     "missing": ".",
-    "not_asked": "."
+    "not_asked": ".",
+    "skipped": 999
   };
 
   CSVView.prototype.initialize = function(options) {
