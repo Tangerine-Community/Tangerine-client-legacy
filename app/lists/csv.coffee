@@ -32,6 +32,8 @@
     if toSample == 48 then log row
 
     row = getRow()
+    break if not row?
+
     rowCache.push row
     for subtest, subtestIndex in row.value
       columnsBySubtest[subtestIndex] = [] if not columnsBySubtest[subtestIndex]?

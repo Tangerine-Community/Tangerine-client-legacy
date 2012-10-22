@@ -24,6 +24,7 @@
   while (true) {
     if (toSample === 48) log(row);
     row = getRow();
+    if (!(row != null)) break;
     rowCache.push(row);
     _ref = row.value;
     for (subtestIndex = 0, _len = _ref.length; subtestIndex < _len; subtestIndex++) {
