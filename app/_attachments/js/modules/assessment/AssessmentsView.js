@@ -40,6 +40,7 @@ AssessmentsView = (function(_super) {
     if (doRender == null) doRender = false;
     if (this.group === false) {
       this.assessments = this.allAssessments;
+      this.hidden = new Assessments;
     } else {
       this.assessments = new Assessments(_.filter(this.allAssessments.where({
         "group": this.options.group

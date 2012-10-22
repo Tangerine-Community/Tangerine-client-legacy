@@ -23,10 +23,11 @@ class AssessmentsView extends Backbone.View
   refresh: (doRender=false) ->
     if @group == false
       @assessments = @allAssessments
+      @hidden = new Assessments
     else
       @assessments = new Assessments _.filter( @allAssessments.where( { "group" : @options.group } ), (a) -> return a.get("archived") == "false" or a.get("archived") == false )
       @hidden = new Assessments _.filter( @allAssessments.where( { "group" : @options.group  } ), (a) -> return a.get("archived") == "true" or a.get("archived") == true )
-      
+
     @closeViews()
     @assessmentViews = ( new AssessmentListElementView( { "model" : assessment, "parent" : @ } ) for assessment in @assessments.models )
     @hiddenViews = ( new AssessmentListElementView( { "model" : assessment, "parent" : @ } ) for assessment in @hidden.models )
