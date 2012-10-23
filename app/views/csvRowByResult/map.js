@@ -42,7 +42,7 @@
       for (var _j = 0, _ref = doc.subtestData.length - 1; 0 <= _ref ? _j <= _ref : _j >= _ref; 0 <= _ref ? _j++ : _j--){ _results.push(_j); }
       return _results;
     }).apply(this);
-    orderMap = doc["order_map"] != null ? doc["order_map"] : linearOrder;
+    orderMap = doc["order_map"] != null ? doc["order_map"] : doc["orderMap"] ? doc["orderMap"] : linearOrder;
     for (_k = 0, _len2 = linearOrder.length; _k < _len2; _k++) {
       rawIndex = linearOrder[_k];
       row = [];

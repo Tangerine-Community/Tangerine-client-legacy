@@ -52,7 +52,8 @@
     #
     datetimeCount = 0
     linearOrder = [0..doc.subtestData.length-1]
-    orderMap = if doc["order_map"]? then doc["order_map"] else linearOrder
+    orderMap = if doc["order_map"]? then doc["order_map"] else if doc["orderMap"] then doc["orderMap"] else linearOrder
+
     # go through each subtest in this result
     for rawIndex in linearOrder
       row = []
