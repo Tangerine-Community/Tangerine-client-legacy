@@ -92,7 +92,7 @@ class GridRunView extends Backbone.View
     $target = $(event.target)
     index = $target.attr('data-index')
     if index - 1 >= @gridOutput.lastIndexOf("incorrect")
-      @$el.find("table.grid .element_last").removeClass "element_last"
+      @$el.find(".element_last").removeClass "element_last"
       $target.addClass "element_last"
       @lastAttempted = index
 
