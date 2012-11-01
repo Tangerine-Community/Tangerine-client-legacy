@@ -427,6 +427,7 @@ table.grid td {
 }
 div.grid .grid_element,
 table.grid .grid_element {
+  font-family: Verdana, Tahoma, Monaco, sans-serif;
   cursor: pointer;
   text-align: center;
   background: #cccccc;
@@ -809,7 +810,8 @@ div.subtest_edit td {
   vertical-align: middle;
 }
 div.subtest_edit .enumerator_help_preview,
-div.subtest_edit .student_dialog_preview {
+div.subtest_edit .student_dialog_preview,
+div.subtest_edit .transition_comment_preview {
   height: 70px;
   overflow: hidden;
 }
