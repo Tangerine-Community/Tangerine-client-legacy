@@ -166,10 +166,10 @@ SurveyRunView = (function(_super) {
       if (!_.isString(qv)) {
         message = "";
         if (!qv.isValid) {
-          message = "Please answer this question";
+          message = t("Please answer this question");
           if (first === true) {
             qv.$el.scrollTo();
-            Utils.midAlert("Please correct the errors on this page");
+            Utils.midAlert(t("Please correct the errors on this page"));
             first = false;
           }
         }

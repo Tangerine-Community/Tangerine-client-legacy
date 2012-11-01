@@ -24,7 +24,7 @@ IdRunView = (function(_super) {
   };
 
   IdRunView.prototype.render = function() {
-    this.$el.html("    <form>      <label for='participant_id'>Random Identifier</label>      <input id='participant_id' name='participant_id'>      <button id='generate' class='command'>Generate</button>      <div class='messages'></div>    </form>");
+    this.$el.html("    <form>      <label for='participant_id'>" + (t('random identifier')) + "</label>      <input id='participant_id' name='participant_id'>      <button id='generate' class='command'>" + (t('generate')) + "</button>      <div class='messages'></div>    </form>");
     return this.trigger("rendered");
   };
 

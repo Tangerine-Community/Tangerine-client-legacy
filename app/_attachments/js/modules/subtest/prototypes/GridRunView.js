@@ -166,7 +166,7 @@ GridRunView = (function(_super) {
         return Utils.topAlert(message);
       } else {
         if (this.captureLastAttempted) {
-          return Utils.midAlert("Please mark <br>last item attempted");
+          return Utils.midAlert(t('Please mark last item attempted'));
         }
       }
     }
@@ -182,7 +182,7 @@ GridRunView = (function(_super) {
     this.$el.find(".grid_element").slice(this.autostop - 1, this.autostop).addClass("element_last");
     this.lastAttempted = this.autostop;
     this.timeout = setTimeout(this.removeUndo, 3000);
-    return Utils.topAlert("Autostop activated. Discontinue test.");
+    return Utils.topAlert(t("autostop activated. discontinue test."));
   };
 
   GridRunView.prototype.removeUndo = function() {
@@ -199,7 +199,7 @@ GridRunView = (function(_super) {
     this.$el.find(".grid_element").slice(this.autostop - 1, this.autostop).removeClass("element_last");
     this.timeRunning = true;
     this.updateMode(null, "mark");
-    return Utils.topAlert("Autostop removed. Continue.");
+    return Utils.topAlert(t("autostop removed. continue."));
   };
 
   GridRunView.prototype.updateCountdown = function() {
@@ -207,11 +207,11 @@ GridRunView = (function(_super) {
     this.timeRemaining = this.timer - this.timeElapsed;
     this.$el.find(".timer").html(this.timeRemaining);
     if (this.timeRemaining <= 0 && this.timeRunning === true && this.captureLastAttempted) {
-      this.stopTimer(null, "Time<br><br>Please mark<br>last item attempted");
+      this.stopTimer(null, t("time. please mark last item attempted."));
     }
     if (this.captureItemAtTime && !this.gotIntermediate && !this.minuteMessage && this.timeElapsed >= this.captureAfterSeconds) {
       Utils.flash("yellow");
-      Utils.midAlert("Please select the item the child is currently attempting.");
+      Utils.midAlert(t("please select the item the child is currently attempting."));
       this.minuteMessage = true;
       return this.mode = "minuteItem";
     }
@@ -338,9 +338,9 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.render = function() {
-    var captureLastButton, disabling, done, firstRow, gridHTML, html, i, item, minuteItemButton, modeSelector, resetButton, startTimerHTML, stopTimerHTML, _len, _ref, _ref2;
+    var captureLastButton, disabling, done, firstRow, gridHTML, html, i, item, labelText, minuteItemButton, modeSelector, resetButton, startTimerHTML, stopTimerHTML, _len, _ref, _ref2;
     done = 0;
-    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>Start</button><div class='timer'>" + this.timer + "</div></div>";
+    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>" + (t('Start')) + "</button><div class='timer'>" + this.timer + "</div></div>";
     disabling = this.untimed ? "" : "disabled";
     html = !this.untimed ? startTimerHTML : "";
     gridHTML = "";
@@ -387,19 +387,22 @@ GridRunView = (function(_super) {
       gridHTML += "</div>";
     }
     html += gridHTML;
-    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>Stop</button><div class='timer'>" + this.timer + "</div></div>";
-    resetButton = "    <div>      <button class='restart command'>Restart</button>      <br>    </div>";
+    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>" + (t('stop')) + "</button><div class='timer'>" + this.timer + "</div></div>";
+    resetButton = "    <div>      <button class='restart command'>" + (t('restart')) + "</button>      <br>    </div>";
     modeSelector = "";
     if (this.captureLastAttempted || this.captureItemAtTime) {
       minuteItemButton = "";
       if (this.captureItemAtTime) {
-        minuteItemButton = "          <label for='minute_item'>Item at " + this.captureAfterSeconds + " seconds</label>          <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>        ";
+        labelText = t('item at __seconds__ seconds', {
+          seconds: this.captureAfterSeconds
+        });
+        minuteItemButton = "          <label for='minute_item'>" + labelText + "</label>          <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>        ";
       }
       captureLastButton = "";
       if (this.captureLastAttempted) {
-        captureLastButton = "          <label for='last_attempted'>Last attempted</label>          <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>        ";
+        captureLastButton = "          <label for='last_attempted'>" + (t('last attempted')) + "</label>          <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>        ";
       }
-      modeSelector = "        <div id='grid_mode' class='question buttonset clearfix'>          <label>Input mode</label><br>          <label for='mark'>Mark</label>          <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark'>          " + minuteItemButton + "          " + captureLastButton + "        </div>      ";
+      modeSelector = "        <div id='grid_mode' class='question buttonset clearfix'>          <label>" + (t('input mode')) + "</label><br>          <label for='mark'>" + (t('mark')) + "</label>          <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark'>          " + minuteItemButton + "          " + captureLastButton + "        </div>      ";
     }
     html += "      " + (!this.untimed ? stopTimerHTML : "") + "      " + (!this.untimed ? resetButton : "") + "      " + modeSelector + "    ";
     this.$el.html(html);
@@ -415,10 +418,10 @@ GridRunView = (function(_super) {
 
   GridRunView.prototype.showErrors = function() {
     if (this.captureLastAttempted && this.lastAttempted === 0) {
-      Utils.midAlert("Please touch<br>last item read.");
+      Utils.midAlert(t("please touch last item read."));
       this.updateMode(null, "last");
     }
-    if (this.timeRuning === true) return Utils.midAlert("Time still running.");
+    if (this.timeRuning === true) return Utils.midAlert(t("time still running."));
   };
 
   GridRunView.prototype.getResult = function() {

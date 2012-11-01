@@ -128,11 +128,11 @@ LocationRunView = (function(_super) {
   LocationRunView.prototype.render = function() {
     var html, i, level, schoolListElements, _len, _ref;
     schoolListElements = "";
-    html = "      <button class='clear command'>Clear</button>      ";
+    html = "      <button class='clear command'>" + (t('clear')) + "</button>      ";
     _ref = this.levels;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       level = _ref[i];
-      html += "        <div class='label_value'>          <label for='level_" + i + "'>" + level + "</label><br>          <input data-level='" + i + "' id='level_" + i + "' value=''>        </div>        <div id='autofill_" + i + "' class='autofill' style='display:none'>          <h2>Select one from autofill list</h2>          <ul class='school_list' id='school_list_" + i + "'>          </ul>        </div>    ";
+      html += "        <div class='label_value'>          <label for='level_" + i + "'>" + level + "</label><br>          <input data-level='" + i + "' id='level_" + i + "' value=''>        </div>        <div id='autofill_" + i + "' class='autofill' style='display:none'>          <h2>" + (t('select one from autofill list')) + "</h2>          <ul class='school_list' id='school_list_" + i + "'>          </ul>        </div>    ";
     }
     this.$el.html(html);
     return this.trigger("rendered");
@@ -208,7 +208,7 @@ LocationRunView = (function(_super) {
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       input = _ref[_i];
       if ($(input).val() === "") {
-        _results.push($(input).after(" <span class='message'>" + ($('label[for=' + $(input).attr('id') + ']').text()) + " cannot be empty</span>"));
+        _results.push($(input).after(" <span class='message'>" + ($('label[for=' + $(input).attr('id') + ']').text()) + " " + (t('cannot be empty')) + "</span>"));
       } else {
         _results.push(void 0);
       }

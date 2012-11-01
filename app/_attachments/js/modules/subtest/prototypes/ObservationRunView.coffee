@@ -87,7 +87,7 @@ class ObservationRunView extends Backbone.View
       @renderSurvey()
     else
       @$el.find(".stop_button_wrapper").addClass("confirmation")
-      Utils.midAlert "Observations finished"
+      Utils.midAlert t("observations finished.")
     @$el.find(".next_display").addClass("confirmation")
     @iHave.finished = true
     @iHave.runOnce = true
@@ -116,7 +116,7 @@ class ObservationRunView extends Backbone.View
     iShouldWarn = @my.observation.index < projectedIndex && ! @iHave.finished
     # if we're still entering observations, warn the user
     if @iAm.recording && @iHavent.warned && iShouldWarn && @my.observation.index != 0 # first one doesn't count
-      Utils.midAlert "Observation ending soon"
+      Utils.midAlert t("observation ending soon.")
       @iHavent.warned = false
   
   gridWasAutostopped: ->
@@ -185,12 +185,12 @@ class ObservationRunView extends Backbone.View
     @$el.html "
       <div class='timer_wrapper'>
         <div class='progress clearfix'>
-          <span class='completed_display confirmation'>Completed <div class='info_box completed_count'>#{@my.observation.completed}</div></span>
-          <span class='next_display confirmation'>Next observation <div class='info_box time_till_next'>#{@model.get('intervalLength')}</div></span>
+          <span class='completed_display confirmation'>#{t('completed')} <div class='info_box completed_count'>#{@my.observation.completed}</div></span>
+          <span class='next_display confirmation'>#{t('next observation')} <div class='info_box time_till_next'>#{@model.get('intervalLength')}</div></span>
         </div>
         <div>
-          <div class='start_button_wrapper'><button class='start_time command'>Start</button></div>
-          <div class='stop_button_wrapper confirmation'><button class='stop_time command'>Abort <i>all</i> observations</button></div>
+          <div class='start_button_wrapper'><button class='start_time command'>#{t('start')}</button></div>
+          <div class='stop_button_wrapper confirmation'><button class='stop_time command'>#{t('abort all observations')}</button></div>
         </div>
       </div>
       <div id='current_survey'></div>
@@ -213,16 +213,16 @@ class ObservationRunView extends Backbone.View
 
     @survey.view.render()
 
-    @$el.find("#current_survey").html("<span class='observation_display confirmation'>Observation <div class='info_box current_observation'>#{@my.observation.index}</div></span>")
+    @$el.find("#current_survey").html("<span class='observation_display confirmation'>#{t('observation')} <div class='info_box current_observation'>#{@my.observation.index}</div></span>")
     @$el.find("#current_survey").append @survey.view.el
-    @$el.find("#current_survey").append "<button class='command done'>Done with <i>this</i> observation</button>"
+    @$el.find("#current_survey").append "<button class='command done'>#{t('done with this observation.')}</button>"
     
     @$el.find("#current_survey").scrollTo 250, => 
       if @iHave.forcedProgression
-        Utils.midAlert "Please continue with the next observation."
+        Utils.midAlert t("please continue with the next observation.")
         @iHave.forcedProgression = false
       else if @iHave.finished
-        Utils.midAlert "Please enter last observation"
+        Utils.midAlert t("please enter last observation.")
 
 
   onClose: ->

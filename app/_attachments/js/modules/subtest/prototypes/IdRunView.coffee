@@ -14,9 +14,9 @@ class IdRunView extends Backbone.View
   render: ->
     @$el.html "
     <form>
-      <label for='participant_id'>Random Identifier</label>
+      <label for='participant_id'>#{t('random identifier')}</label>
       <input id='participant_id' name='participant_id'>
-      <button id='generate' class='command'>Generate</button>
+      <button id='generate' class='command'>#{t('generate')}</button>
       <div class='messages'></div>
     </form>"
     @trigger "rendered"

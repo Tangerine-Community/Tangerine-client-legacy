@@ -58,7 +58,7 @@ LoginView = (function(_super) {
     var values;
     values = Utils.getValues(this.el);
     if (values['login_password'] === "") {
-      this.model.showMessage("Please enter a password");
+      this.model.showMessage(t("please enter a password."));
       this.$el.find('#login_password').focus();
       return false;
     }
