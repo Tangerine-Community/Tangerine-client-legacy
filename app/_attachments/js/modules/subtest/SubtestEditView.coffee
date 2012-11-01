@@ -54,6 +54,28 @@ class SubtestEditView extends Backbone.View
     cleditor.$area.removeData("cleditor")
     cleditor.$main.remove()
 
+  editTransitionComment: ->
+    @$el.find(".transition_comment_preview, .edit_transition_comment, .transition_comment_save_buttons").fadeToggle(250)
+    @$el.find("textarea#transition_comment").html(@model.escape("transitionComment") || "").cleditor()
+
+  doneTransitionComment: ->
+    if @model.save( "transitionComment" : @$el.find("textarea#transition_comment").val(), wait : true )
+      @cancelStudent()
+    else
+      console.log ("save error")
+
+  cancelTransitionComment: ->
+    $preview = $("div.transition_comment_preview")
+    $preview.html @model.get("transitionComment") || ""
+    $preview.fadeIn(250)
+    @$el.find("button.edit_transition_comment, .transition_comment_save_buttons").fadeToggle(250)
+    cleditor = @$el.find("#transition_comment").cleditor()[0]
+    cleditor.$area.insertBefore(cleditor.$main)
+    cleditor.$area.removeData("cleditor")
+    cleditor.$main.remove()
+
+
+
   onClose: ->
     @prototypeEditor.close?()
 
@@ -77,6 +99,7 @@ class SubtestEditView extends Backbone.View
       name           : @$el.find("#subtest_name").val()
       enumeratorHelp : @$el.find("#enumerator_help").val()
       studentDialog  : @$el.find("#student_dialog").val()
+      transitionComment : @$el.find("#transition_comment").val()
       skippable      : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
 
     @prototypeEditor.save?() unless event?.options?.editSave? == true
@@ -98,6 +121,7 @@ class SubtestEditView extends Backbone.View
     prototype = @model.get "prototype"
     help      = @model.get("enumeratorHelp") || ""
     dialog    = @model.get("studentDialog")  || ""
+    transitionComment = @model.get("transitionComment")  || ""
     skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
 
     @$el.html "
@@ -144,6 +168,15 @@ class SubtestEditView extends Backbone.View
             <button class='student_done command'>Save</button> <button class='student_cancel command'>Cancel</button>
           </div>
         </div>
+        <div class='label_value'>
+          <label for='transition_comment' title='This will be displayed with a grey background above the next button, similar to the student dialog text. If you are pasting from Word it is recommended to paste into a plain text editor first, and then into this box.'>Transition Comment <button class='edit_transition_comment command'>Edit</button></label>
+          <div class='info_box_wide transition_comment_preview'>#{transitionComment}</div>
+          <textarea id='transition_comment' class='confirmation'>#{transitionComment}</textarea>
+          <div class='transition_comment_save_buttons confirmation'>
+            <button class='transition_comment_done command'>Save</button> <button class='transition_comment_cancel command'>Cancel</button>
+          </div>
+        </div>
+
       </div>
       <div id='prototype_attributes'></div>
 

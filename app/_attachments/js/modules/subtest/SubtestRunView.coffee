@@ -18,6 +18,8 @@ class SubtestRunView extends Backbone.View
       
     enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help'>#{@model.get 'enumeratorHelp'}</div>" else ""
     studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog'>#{@model.get 'studentDialog'}</div>" else ""
+    transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog'>#{@model.get 'transitionComment'}</div>" else ""
+
     skipButton = "<button class='skip navigation'>Skip</button>"
     skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
 
@@ -26,8 +28,10 @@ class SubtestRunView extends Backbone.View
       #{enumeratorHelp}
       #{studentDialog}
       <div id='prototype_wrapper'></div>
+
       <div class='controlls'>
-        <button class='next navigation'>Next</button>#{if skippable then skipButton else "" }
+        #{transitionComment}<br>
+        <button class='next navigation'>#{t('next')}</button>#{if skippable then skipButton else "" }
       </div>
     "
   
