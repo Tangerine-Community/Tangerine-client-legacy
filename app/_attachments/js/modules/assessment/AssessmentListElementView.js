@@ -106,7 +106,6 @@ AssessmentListElementView = (function(_super) {
   AssessmentListElementView.prototype.assessmentDelete = function() {
     var _this = this;
     return this.$el.fadeOut(250, function() {
-      _this.parent.assessments.remove(_this.model);
       _this.model.destroy();
       return _this.parent.parent.refresh();
     });
