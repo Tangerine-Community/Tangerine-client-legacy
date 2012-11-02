@@ -21,7 +21,6 @@ class QuestionRunView extends Backbone.View
     @notAsked = options.notAsked
     @isObservation = options.isObservation
 
-
     @defineSpecialCaseResults()
 
     if @model.get("skippable") == "true" || @model.get("skippable") == true
@@ -66,7 +65,12 @@ class QuestionRunView extends Backbone.View
       @skipped = if _.isEmpty(@answer) then true else false
     else
       @isValid = if _.isEmpty(@answer) then false else true
-    
+
+    customValidationCode = @model.get("customValidationCode")
+
+    if customValidationCode?
+      @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
+
   setMessage: (message) =>
     @$el.find(".error_message").html message
 
@@ -99,11 +103,10 @@ class QuestionRunView extends Backbone.View
     else
       @$el.hide()
 
-
     @trigger "rendered"
   
   defineSpecialCaseResults: ->
-    list = ["missing", "notAsked", "skipped", "logicSkipped"]
+    list = ["missing", "notAsked", "skipped", "logicSkipped", "notAskedAutostop"]
     for element in list
       if @type == "single" || @type == "open"
         @[element+"Result"] = element

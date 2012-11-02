@@ -50,7 +50,8 @@ class SurveyEditView extends Backbone.View
   save: ->
 
     @model.set
-      gridLinkId : @$el.find("#link_select option:selected").val()
+      "gridLinkId"    : @$el.find("#link_select option:selected").val()
+      "autostopLimit" : parseInt(@$el.find("#autostop_limit").val())
 
     # blank out our error queues
     notSaved = []
@@ -97,8 +98,13 @@ class SurveyEditView extends Backbone.View
 #    addQuestionSelect += "</select>"
 
     gridLinkId = @model.get("gridLinkId") || ""
+    autostopLimit = parseInt(@model.get("autostopLimit")) || 0
 
     @$el.html "
+      <div class='label_value'>
+        <label for='autostop_limit' title='The survey will discontinue after the first N questions have been answered with a &quot;0&quot; value option.'>Autostop after N incorrect</label><br>
+        <input id='autostop_limit' type='number' value='#{autostopLimit}'>
+      </div>
       <div id='grid_link'></div>
       <div id='questions'>
         <h2>Questions</h2>

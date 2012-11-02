@@ -25,8 +25,9 @@ class QuestionEditView extends Backbone.View
 
   templateFill: (event) ->
     index = $(event.target).find("option:selected").attr('data-index')
-    @question.set "options", Tangerine.templates.optionTemplates[index].options
-    @$el.find('#option_list_wrapper').html @getOptionList()
+    if Tangerine.templates.optionTemplates[index]?
+      @question.set "options", Tangerine.templates.optionTemplates[index].options
+      @$el.find('#option_list_wrapper').html @getOptionList()
     return false
 
   goBack: =>
@@ -103,6 +104,10 @@ class QuestionEditView extends Backbone.View
     prompt          = @question.escape("prompt")    || ""
     hint            = @question.escape("hint")      || ""
     skipLogic       = @question.escape("skipLogic") || ""
+
+    customValidationCode     = @question.escape("customValidationCode")    || ""
+    customValidationMessage  = @question.escape("customValidationMessage") || ""
+
     type            = @question.get "type"
     options         = @question.get "options"
     linkedGridScore = @question.get("linkedGridScore") || 0
@@ -138,9 +143,22 @@ class QuestionEditView extends Backbone.View
           <input id='hint' type='text' value='#{hint}'>
         </div>
         <div class='label_value'>
-          <label for='skip-logic'>Skip if <span style='font-size: small;font-weight:normal'>example: ResultOfQuestion(\"maze1\") isnt \"2\"</span></label>
+          <label for='skip-logic'>Skip if <span style='font-size: small;font-weight:normal'>example: ResultOfQuestion(\"maze1\") isnt \"2\" Example 2: \"red\" in ResultOfMultiple(\"fave_colors\")</span></label>
           <input id='skip-logic' type='text' value='#{skipLogic}'>
         </div>
+
+        <div class='menu_box'>
+          <label>Custom validation</label>
+          <div class='label_value'>
+            <label for='custom_validation_code' title='Intended for open questions. This code should evaluate to true or false. False will trigger an error message for this question. E.g. @answer == \"1\" will evaluate to false for any value other than 1.'>Valid when</label>
+            <input id='custom_validation_code' type='text' value='#{customValidationCode}'>
+          </div>
+          <div class='label_value'>
+            <label for='custom_validation_message'>Error message</label>
+            <input id='custom_validation_message' type='text' value='#{customValidationMessage}'>
+          </div>
+        </div>
+
         <div class='label_value'>
           <label>Skippable</label>
           <div id='skip_radio' class='buttonset'>
@@ -171,7 +189,7 @@ class QuestionEditView extends Backbone.View
         <label for='question_template_select'>Fill from template</label><br>
         <div class='menu_box'>
           <select id='question_template_select' class='option_select'>
-            <option disabled selected>Select template</option>
+            <option selected='selected'>Select template</option>
         "
       # ok to refernce things by index if not an object
       for option, i in Tangerine.templates.optionTemplates
@@ -239,7 +257,9 @@ class QuestionEditView extends Backbone.View
       "linkedGridScore" : parseInt(@$el.find("#linked_grid_score").val())
       "type"            : @$el.find("#question_type input:checked").val()
       "skippable"       : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
-
+      "customValidationCode"    : @$el.find("#custom_validation_code").val()
+      "customValidationMessage" : @$el.find("#custom_validation_message").val()
+      
     # options
     options = []
     i = 0

@@ -1,6 +1,12 @@
 ResultOfQuestion = (name) ->
   $("#question-#{name}").attr("data-result")
 
+ResultOfMultiple = (name) ->
+  result = []
+  for input in $("#question-#{name} input:checked")
+    result.push $(input).val()
+  return result
+
 class SurveyRunView extends Backbone.View
   events:
     'change input'        : 'updateSkipLogic'
@@ -37,6 +43,25 @@ class SurveyRunView extends Backbone.View
           # if it's not the last, scroll to it
           if next.length != 0
             next.scrollTo()
+
+    # auto stop after limit
+    autostopLimit = parseInt(@model.get("autostopLimit")) || 0
+    autostopCount = autostopLimit
+    console.log "limit: " + autostopLimit
+    if autostopLimit > 0
+      for i in [1..Math.min(autostopLimit, @questionViews.length)]
+        console.log  i
+        autostopCount-- if @questionViews[i-1].answer == "0"
+    @autostopped = autostopCount == 0 && autostopLimit != 0
+    console.log "stopped: " + @autostopped
+    @updateAutostop()
+  
+  updateAutostop: ->
+    autostopLimit = parseInt(@model.get("autostopLimit")) || 0
+    for view, i in @questionViews
+      if i > (autostopLimit - 1)
+        view.$el.addClass    "disabled_autostop" if @autostopped
+        view.$el.removeClass "disabled_autostop" if not @autostopped
 
   updateSkipLogic: =>
     @questions.each (question) ->
@@ -80,6 +105,8 @@ class SurveyRunView extends Backbone.View
           qv.skippedResult
         else if qv.$el.hasClass("disabled_skipped")
           qv.logicSkippedResult
+        else if qv.$el.hasClass("disabled_autostop")
+          qv.notAskedAutostopResult
         else
           qv.answer
     return result
@@ -114,7 +141,14 @@ class SurveyRunView extends Backbone.View
       if not _.isString(qv)
         message = ""
         if not qv.isValid
-          message = t("Please answer this question")
+
+          # handle custom validation error messages
+          customMessage = qv.model.get("customValidationMessage")
+          if not _.isEmpty(customMessage)
+            message = customMessage
+          else
+            message = t("Please answer this question")
+
           if first == true
             qv.$el.scrollTo()
             Utils.midAlert t("Please correct the errors on this page")

@@ -75,7 +75,8 @@ SurveyEditView = (function(_super) {
   SurveyEditView.prototype.save = function() {
     var emptyOptions, i, notSaved, plural, question, requiresGrid, _has, _len, _question, _ref, _require;
     this.model.set({
-      gridLinkId: this.$el.find("#link_select option:selected").val()
+      "gridLinkId": this.$el.find("#link_select option:selected").val(),
+      "autostopLimit": parseInt(this.$el.find("#autostop_limit").val())
     });
     notSaved = [];
     emptyOptions = [];
@@ -121,10 +122,11 @@ SurveyEditView = (function(_super) {
   };
 
   SurveyEditView.prototype.render = function() {
-    var gridLinkId, subtests,
+    var autostopLimit, gridLinkId, subtests,
       _this = this;
     gridLinkId = this.model.get("gridLinkId") || "";
-    this.$el.html("      <div id='grid_link'></div>      <div id='questions'>        <h2>Questions</h2>        <div class='menu_box'>          <div id='question_list_wrapper'><img class='loading' src='images/loading.gif'></div>          <button class='add_question command'>Add Question</button>          <div id='add_question_form' class='confirmation'>            <div class='menu_box'>              <h2>New Question</h2>              <label for='question_prompt'>Prompt</label>              <input id='question_prompt'>              <label for='question_name'>Variable name</label>              <input id='question_name' title='Allowed characters: A-Z, a-z, 0-9, and underscores.'><br>              <button class='add_question_add command'>Add</button><button class='add_question_cancel command'>Cancel</button>            </div>          </div>         </div>      </div>");
+    autostopLimit = parseInt(this.model.get("autostopLimit")) || 0;
+    this.$el.html("      <div class='label_value'>        <label for='autostop_limit' title='The survey will discontinue after the first N questions have been answered with a &quot;0&quot; value option.'>Autostop after N incorrect</label><br>        <input id='autostop_limit' type='number' value='" + autostopLimit + "'>      </div>      <div id='grid_link'></div>      <div id='questions'>        <h2>Questions</h2>        <div class='menu_box'>          <div id='question_list_wrapper'><img class='loading' src='images/loading.gif'></div>          <button class='add_question command'>Add Question</button>          <div id='add_question_form' class='confirmation'>            <div class='menu_box'>              <h2>New Question</h2>              <label for='question_prompt'>Prompt</label>              <input id='question_prompt'>              <label for='question_name'>Variable name</label>              <input id='question_name' title='Allowed characters: A-Z, a-z, 0-9, and underscores.'><br>              <button class='add_question_add command'>Add</button><button class='add_question_cancel command'>Cancel</button>            </div>          </div>         </div>      </div>");
     this.renderQuestions();
     subtests = new Subtests;
     return subtests.fetch({
