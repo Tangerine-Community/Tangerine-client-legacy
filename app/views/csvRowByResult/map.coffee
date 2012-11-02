@@ -98,7 +98,7 @@
         row.push pair("#{variableName}_attempted",       subtest.data.attempted)
         row.push pair("#{variableName}_item_at_time",    subtest.data.item_at_time)
         row.push pair("#{variableName}_time_intermediate_captured",    subtest.data.time_intermediate_captured)
-        row.push pair("#{variableName}_correct_per_minute",  subtest.sum.correct_per_minute)
+        # row.push pair("#{variableName}_correct_per_minute",  subtest.sum.correct_per_minute)
 
         for item, i in subtest.data.items
           row.push pair("#{variableName}#{i+1}", exportValue(item.itemResult))
