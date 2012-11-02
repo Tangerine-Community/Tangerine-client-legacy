@@ -25,7 +25,7 @@ class Assessment extends Backbone.Model
 
     @trigger "status", "import lookup"
     dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g," ").split(/\s+/))
-    $.ajax "http://tangerine.iriscouch.com/tangerine/_design/tangerine/_view/byDKey",
+    $.ajax Tangerine.config.address.cloud.host+"/"+Tangerine.config.address.cloud.dbName +"/_design/"+Tangerine.config.address.designDoc+"/_view/byDKey",
       type: "POST"
       dataType: "jsonp"
       data: keys: dKeys
