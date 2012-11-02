@@ -45,7 +45,7 @@ Assessment = (function(_super) {
     if (dKey == null) dKey = this.id.substr(-5, 5);
     this.trigger("status", "import lookup");
     dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/));
-    $.ajax(Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName(+"/_design/" + Tangerine.config.address.designDoc + "/_view/byDKey", {
+    $.ajax("" + Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName + "/_design/" + Tangerine.config.address.designDoc + "/_view/byDKey", {
       type: "POST",
       dataType: "jsonp",
       data: {
@@ -59,7 +59,7 @@ Assessment = (function(_super) {
           datum = _ref[_i];
           docList.push(datum.id);
         }
-        return $.couch.replicate(Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName, Tangerine.config.address.local.dbName, {
+        return $.couch.replicate("" + Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName, Tangerine.config.address.local.dbName, {
           success: function() {
             return _this.trigger("status", "import success");
           },
@@ -70,7 +70,7 @@ Assessment = (function(_super) {
           doc_ids: docList
         });
       }
-    }));
+    });
     return false;
   };
 
