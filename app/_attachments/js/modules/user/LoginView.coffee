@@ -46,7 +46,7 @@ class LoginView extends Backbone.View
   login: (event) ->
     values = Utils.getValues(@el)
     if values['login_password'] == ""
-      @model.showMessage t("please enter a password.")
+      @model.showMessage t("please enter a password")
       @$el.find('#login_password').focus()
       return false
     @model.login values["login_username"], values["login_password"]

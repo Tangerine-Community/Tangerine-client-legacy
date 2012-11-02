@@ -147,11 +147,11 @@ class SurveyRunView extends Backbone.View
           if not _.isEmpty(customMessage)
             message = customMessage
           else
-            message = t("Please answer this question")
+            message = t("please answer this question")
 
           if first == true
             qv.$el.scrollTo()
-            Utils.midAlert t("Please correct the errors on this page")
+            Utils.midAlert t("please correct the errors on this page")
             first = false
         qv.setMessage message
 

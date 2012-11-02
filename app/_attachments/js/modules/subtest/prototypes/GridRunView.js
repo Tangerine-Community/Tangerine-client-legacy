@@ -182,7 +182,7 @@ GridRunView = (function(_super) {
     this.$el.find(".grid_element").slice(this.autostop - 1, this.autostop).addClass("element_last");
     this.lastAttempted = this.autostop;
     this.timeout = setTimeout(this.removeUndo, 3000);
-    return Utils.topAlert(t("autostop activated. discontinue test."));
+    return Utils.topAlert(t("autostop activated discontinue test"));
   };
 
   GridRunView.prototype.removeUndo = function() {
@@ -199,7 +199,7 @@ GridRunView = (function(_super) {
     this.$el.find(".grid_element").slice(this.autostop - 1, this.autostop).removeClass("element_last");
     this.timeRunning = true;
     this.updateMode(null, "mark");
-    return Utils.topAlert(t("autostop removed. continue."));
+    return Utils.topAlert(t("autostop removed continue"));
   };
 
   GridRunView.prototype.updateCountdown = function() {
@@ -207,11 +207,11 @@ GridRunView = (function(_super) {
     this.timeRemaining = this.timer - this.timeElapsed;
     this.$el.find(".timer").html(this.timeRemaining);
     if (this.timeRemaining <= 0 && this.timeRunning === true && this.captureLastAttempted) {
-      this.stopTimer(null, t("time. please mark last item attempted."));
+      this.stopTimer(null, t("time please mark last item attempted"));
     }
     if (this.captureItemAtTime && !this.gotIntermediate && !this.minuteMessage && this.timeElapsed >= this.captureAfterSeconds) {
       Utils.flash("yellow");
-      Utils.midAlert(t("please select the item the child is currently attempting."));
+      Utils.midAlert(t("please select the item the child is currently attempting"));
       this.minuteMessage = true;
       return this.mode = "minuteItem";
     }
@@ -340,7 +340,7 @@ GridRunView = (function(_super) {
   GridRunView.prototype.render = function() {
     var captureLastButton, disabling, done, firstRow, gridHTML, html, i, item, labelText, minuteItemButton, modeSelector, resetButton, startTimerHTML, stopTimerHTML, _len, _ref, _ref2;
     done = 0;
-    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>" + (t('Start')) + "</button><div class='timer'>" + this.timer + "</div></div>";
+    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>" + (t('start')) + "</button><div class='timer'>" + this.timer + "</div></div>";
     disabling = this.untimed ? "" : "disabled";
     html = !this.untimed ? startTimerHTML : "";
     gridHTML = "";
@@ -418,10 +418,10 @@ GridRunView = (function(_super) {
 
   GridRunView.prototype.showErrors = function() {
     if (this.captureLastAttempted && this.lastAttempted === 0) {
-      Utils.midAlert(t("please touch last item read."));
+      Utils.midAlert(t("please touch last item read"));
       this.updateMode(null, "last");
     }
-    if (this.timeRuning === true) return Utils.midAlert(t("time still running."));
+    if (this.timeRuning === true) return Utils.midAlert(t("time still running"));
   };
 
   GridRunView.prototype.getResult = function() {

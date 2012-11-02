@@ -132,7 +132,7 @@ class GridRunView extends Backbone.View
     @$el.find(".grid_element").slice(@autostop-1,@autostop).addClass "element_last" #jquery is weird sometimes
     @lastAttempted = @autostop
     @timeout = setTimeout(@removeUndo, 3000) # give them 3 seconds to undo
-    Utils.topAlert t("autostop activated. discontinue test.")
+    Utils.topAlert t("autostop activated discontinue test")
 
   removeUndo: =>
     @undoable = false
@@ -147,7 +147,7 @@ class GridRunView extends Backbone.View
     @$el.find(".grid_element").slice(@autostop-1,@autostop).removeClass "element_last"
     @timeRunning = true
     @updateMode null, "mark"
-    Utils.topAlert t("autostop removed. continue.")
+    Utils.topAlert t("autostop removed continue")
 
   updateCountdown: =>
     # sometimes the "tick" doesn't happen within a second
@@ -156,10 +156,10 @@ class GridRunView extends Backbone.View
     @timeRemaining = @timer - @timeElapsed
     
     @$el.find(".timer").html @timeRemaining
-    if @timeRemaining <= 0 && @timeRunning == true && @captureLastAttempted then @stopTimer null, t("time. please mark last item attempted.")
+    if @timeRemaining <= 0 && @timeRunning == true && @captureLastAttempted then @stopTimer null, t("time please mark last item attempted")
     if @captureItemAtTime && !@gotIntermediate && !@minuteMessage && @timeElapsed >= @captureAfterSeconds
       Utils.flash "yellow"
-      Utils.midAlert t("please select the item the child is currently attempting.")
+      Utils.midAlert t("please select the item the child is currently attempting")
       @minuteMessage = true
       @mode = "minuteItem"
 
@@ -288,7 +288,7 @@ class GridRunView extends Backbone.View
   render: ->
     done = 0
 
-    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>#{t('Start')}</button><div class='timer'>#{@timer}</div></div>"
+    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>#{t('start')}</button><div class='timer'>#{@timer}</div></div>"
 
     disabling = if @untimed then "" else "disabled"
 
@@ -390,9 +390,9 @@ class GridRunView extends Backbone.View
     
   showErrors: ->
     if @captureLastAttempted && @lastAttempted == 0
-      Utils.midAlert t("please touch last item read.")
+      Utils.midAlert t("please touch last item read")
       @updateMode null, "last"
-    Utils.midAlert t("time still running.") if @timeRuning == true
+    Utils.midAlert t("time still running") if @timeRuning == true
   
   getResult: ->
     completeResults = []

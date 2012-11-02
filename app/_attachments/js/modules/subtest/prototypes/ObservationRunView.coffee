@@ -87,7 +87,7 @@ class ObservationRunView extends Backbone.View
       @renderSurvey()
     else
       @$el.find(".stop_button_wrapper").addClass("confirmation")
-      Utils.midAlert t("observations finished.")
+      Utils.midAlert t("observations finished")
     @$el.find(".next_display").addClass("confirmation")
     @iHave.finished = true
     @iHave.runOnce = true
@@ -116,7 +116,7 @@ class ObservationRunView extends Backbone.View
     iShouldWarn = @my.observation.index < projectedIndex && ! @iHave.finished
     # if we're still entering observations, warn the user
     if @iAm.recording && @iHavent.warned && iShouldWarn && @my.observation.index != 0 # first one doesn't count
-      Utils.midAlert t("observation ending soon.")
+      Utils.midAlert t("observation ending soon")
       @iHavent.warned = false
   
   gridWasAutostopped: ->
@@ -215,14 +215,14 @@ class ObservationRunView extends Backbone.View
 
     @$el.find("#current_survey").html("<span class='observation_display confirmation'>#{t('observation')} <div class='info_box current_observation'>#{@my.observation.index}</div></span>")
     @$el.find("#current_survey").append @survey.view.el
-    @$el.find("#current_survey").append "<button class='command done'>#{t('done with this observation.')}</button>"
+    @$el.find("#current_survey").append "<button class='command done'>#{t('done with this observation')}</button>"
     
     @$el.find("#current_survey").scrollTo 250, => 
       if @iHave.forcedProgression
-        Utils.midAlert t("please continue with the next observation.")
+        Utils.midAlert t("please continue with the next observation")
         @iHave.forcedProgression = false
       else if @iHave.finished
-        Utils.midAlert t("please enter last observation.")
+        Utils.midAlert t("please enter last observation")
 
 
   onClose: ->

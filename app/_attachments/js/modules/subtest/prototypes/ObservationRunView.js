@@ -111,7 +111,7 @@ ObservationRunView = (function(_super) {
       this.renderSurvey();
     } else {
       this.$el.find(".stop_button_wrapper").addClass("confirmation");
-      Utils.midAlert(t("observations finished."));
+      Utils.midAlert(t("observations finished"));
     }
     this.$el.find(".next_display").addClass("confirmation");
     this.iHave.finished = true;
@@ -142,7 +142,7 @@ ObservationRunView = (function(_super) {
     projectedIndex = Math.floor((this.my.time.elapsed + this.warningSeconds) / this.model.get('intervalLength'));
     iShouldWarn = this.my.observation.index < projectedIndex && !this.iHave.finished;
     if (this.iAm.recording && this.iHavent.warned && iShouldWarn && this.my.observation.index !== 0) {
-      Utils.midAlert(t("observation ending soon."));
+      Utils.midAlert(t("observation ending soon"));
       return this.iHavent.warned = false;
     }
   };
@@ -239,13 +239,13 @@ ObservationRunView = (function(_super) {
     this.survey.view.render();
     this.$el.find("#current_survey").html("<span class='observation_display confirmation'>" + (t('observation')) + " <div class='info_box current_observation'>" + this.my.observation.index + "</div></span>");
     this.$el.find("#current_survey").append(this.survey.view.el);
-    this.$el.find("#current_survey").append("<button class='command done'>" + (t('done with this observation.')) + "</button>");
+    this.$el.find("#current_survey").append("<button class='command done'>" + (t('done with this observation')) + "</button>");
     return this.$el.find("#current_survey").scrollTo(250, function() {
       if (_this.iHave.forcedProgression) {
-        Utils.midAlert(t("please continue with the next observation."));
+        Utils.midAlert(t("please continue with the next observation"));
         return _this.iHave.forcedProgression = false;
       } else if (_this.iHave.finished) {
-        return Utils.midAlert(t("please enter last observation."));
+        return Utils.midAlert(t("please enter last observation"));
       }
     });
   };
