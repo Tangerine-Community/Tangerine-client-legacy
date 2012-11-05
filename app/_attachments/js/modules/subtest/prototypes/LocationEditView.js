@@ -157,12 +157,12 @@ LocationEditView = (function(_super) {
     var i, levels, location, locations, _len;
     levels = this.model.get("levels") || [];
     locations = this.model.get("locations") || [];
-    levels = levels.join(", ");
+    levels = _.escape(levels.join(", "));
     locations = locations.join("\n");
     if (_.isArray(locations)) {
       for (i = 0, _len = locations.length; i < _len; i++) {
         location = locations[i];
-        locations[i] = location.join(", ");
+        locations[i] = _.escape(location.join(", "));
       }
     }
     this.$el.html("      <div class='label_value'>        <div class='menu_box'>          <label for='levels' title='This is a comma separated list of geographic levels. (E.g. Country, Province, District, School Id) These are the levels that you would consider individual fields on the location form.'>Geographic Levels</label>          <input id='levels' value='" + levels + "'>          <label title='Tangerine uses comma separated values. If you copy and paste from another program like Excel, the values will be tab separated. These buttons allow you to switch back and forth, however, Tangerine will always save the comma version.'>Format</label><br>          <div id='levels_format' class='buttonset'>            <label for='levels_tabs'>Tabs</label>            <input id='levels_tabs' name='levels_format' type='radio' value='Tabs'>            <label for='levels_commas'>Commas</label>            <input id='levels_commas' name='levels_format' type='radio' value='Commas'>          </div>        </div>      </div>      <div class='label_value'>        <div class='menu_box'>          <label for='data' title='Comma sperated values, with multiple rows separated by line. This information will be used to autofill the location data.'>Location data</label>          <textarea id='data'>" + locations + "</textarea><br>          <label title='Tangerine uses comma separated values. If you copy and paste from another program like Excel, the values will be tab separated. These buttons allow you to switch back and forth, however, Tangerine will always save the comma version.'>Format</label><br>        <div id='data_format' class='buttonset'>            <label for='data_tabs'>Tabs</label>            <input id='data_tabs' name='data_format' type='radio' value='Tabs'>            <label for='data_commas'>Commas</label>            <input id='data_commas' name='data_format' type='radio' value='Commas'>        </div>              </div>    ");
