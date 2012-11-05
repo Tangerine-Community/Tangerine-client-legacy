@@ -54,21 +54,25 @@ class GridRunView extends Backbone.View
       if @autostopped == true && autoCount < @autostop && @undoable == true then @unAutostopTest()
 
   markElement: (index, value = null) ->
-
+    console.log "Last attempted: #{@lastAttempted}"
+    # if last attempted has been set, and the click is above it, then cancel
     if @lastAttempted != 0 && index > @lastAttempted then return
-      
+    console.log "past first check"
     $target = @$el.find(".grid_element[data-index=#{index}]")
     @markRecord.push index
-    if value == null
-      @gridOutput[index-1] = if (@gridOutput[index-1] == "correct" || @autostopped) then "incorrect" else "correct"
-      $target.toggleClass "element_wrong"
-    else
-      if !@autostopped || value == "correct"
-        @gridOutput[index-1] = value
-        if value == "incorrect"
-          $target.addClass "element_wrong"
-        else if value == "correct"
-          $target.removeClass "element_wrong"
+
+    console.log "autostopped: #{@autostopped}"
+    if not @autostopped
+      if value == null # not specifying the value, just toggle
+          @gridOutput[index-1] = if (@gridOutput[index-1] == "correct") then "incorrect" else "correct"
+          $target.toggleClass "element_wrong"
+      else # value specified
+        if value == "correct"
+          @gridOutput[index-1] = value
+          if value == "incorrect"
+            $target.addClass "element_wrong"
+          else if value == "correct"
+            $target.removeClass "element_wrong"
         
   endOfGridLineClick: (event) ->
     if @mode == "mark"
