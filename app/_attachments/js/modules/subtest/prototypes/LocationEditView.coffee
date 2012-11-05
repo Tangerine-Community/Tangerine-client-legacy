@@ -113,13 +113,12 @@ class LocationEditView extends Backbone.View
     levels    = @model.get("levels")    || []
     locations = @model.get("locations") || []
 
-    levels = levels.join(", ")
+    levels = _.escape(levels.join(", "))
 
     locations = locations.join("\n")
-
     if _.isArray(locations)
       for location, i in locations 
-        locations[i] = location.join(", ")
+        locations[i] = _.escape(location.join(", "))
 
     @$el.html  "
       <div class='label_value'>
