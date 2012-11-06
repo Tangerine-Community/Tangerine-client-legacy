@@ -86,14 +86,14 @@ QuestionRunView = (function(_super) {
 
   QuestionRunView.prototype.updateValidity = function() {
     var customValidationCode;
-    if (this.model.get("skippable") === true || $("#question-" + this.name).hasClass("disabled_skipped")) {
+    if (this.model.get("skippable") === true || ($("#question-" + this.name).hasClass("disabled_skipped") || $("#question-" + this.name).hasClass("disabled_autostop"))) {
       this.isValid = true;
       this.skipped = _.isEmpty(this.answer) ? true : false;
     } else {
       this.isValid = _.isEmpty(this.answer) ? false : true;
     }
     customValidationCode = this.model.get("customValidationCode");
-    if (customValidationCode != null) {
+    if ((customValidationCode != null) && !_.isEmpty(customValidationCode)) {
       return this.isValid = CoffeeScript.eval.apply(this, [customValidationCode]);
     }
   };

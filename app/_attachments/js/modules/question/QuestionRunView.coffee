@@ -60,7 +60,7 @@ class QuestionRunView extends Backbone.View
     @$el.attr "data-result", if _.isString(@answer) then @answer else JSON.stringify(@answer)
 
   updateValidity: ->
-    if @model.get("skippable") is true or $("#question-#{@name}").hasClass("disabled_skipped")
+    if @model.get("skippable") is true or ($("#question-#{@name}").hasClass("disabled_skipped") or $("#question-#{@name}").hasClass("disabled_autostop"))
       @isValid = true
       @skipped = if _.isEmpty(@answer) then true else false
     else
@@ -68,7 +68,7 @@ class QuestionRunView extends Backbone.View
 
     customValidationCode = @model.get("customValidationCode")
 
-    if customValidationCode?
+    if customValidationCode? and not _.isEmpty(customValidationCode)
       @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
 
   setMessage: (message) =>
