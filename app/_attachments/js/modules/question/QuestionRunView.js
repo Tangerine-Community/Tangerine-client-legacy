@@ -93,8 +93,12 @@ QuestionRunView = (function(_super) {
       this.isValid = _.isEmpty(this.answer) ? false : true;
     }
     customValidationCode = this.model.get("customValidationCode");
-    if ((customValidationCode != null) && !_.isEmpty(customValidationCode)) {
-      return this.isValid = CoffeeScript.eval.apply(this, [customValidationCode]);
+    if (!_.isEmpty(customValidationCode)) {
+      try {
+        return this.isValid = CoffeeScript.eval.apply(this, [customValidationCode]);
+      } catch (e) {
+        return alert("Custom Validation error\n\n" + e);
+      }
     }
   };
 

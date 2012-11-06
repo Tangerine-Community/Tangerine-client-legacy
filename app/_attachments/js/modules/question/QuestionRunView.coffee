@@ -68,12 +68,14 @@ class QuestionRunView extends Backbone.View
 
     customValidationCode = @model.get("customValidationCode")
 
-    if customValidationCode? and not _.isEmpty(customValidationCode)
-      @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
+    if not _.isEmpty(customValidationCode)
+      try
+        @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
+      catch e
+        alert "Custom Validation error\n\n#{e}"
 
   setMessage: (message) =>
     @$el.find(".error_message").html message
-
 
   render: ->
 

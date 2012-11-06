@@ -26,7 +26,26 @@ QuestionEditView = (function(_super) {
     'keypress': 'hijackEnter',
     'change .option_select': 'templateFill',
     'keypress .option_value': 'quickAddWithEnter',
-    'keypress .option_label': 'quickFocusValue'
+    'keypress .option_label': 'quickFocusValue',
+    'change #custom_validation_code': 'validateSyntax'
+  };
+
+  QuestionEditView.prototype.validateSyntax = function() {
+    var customValidationCode, oldAnswer;
+    if (!_.isEmpty(customValidationCode = this.$el.find("#custom_validation_code").val())) {
+      try {
+        oldAnswer = this.answer;
+        this.answer = {};
+        this.isValid = CoffeeScript.eval.apply(this, [customValidationCode]);
+        if (oldAnswer != null) {
+          return this.answer = oldAnswer;
+        } else {
+          return delete this["answer"];
+        }
+      } catch (e) {
+        return alert("Custom Validation error for " + this.name + " \n\n" + e);
+      }
+    }
   };
 
   QuestionEditView.prototype.quickAddWithEnter = function(event) {

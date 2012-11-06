@@ -14,6 +14,18 @@ class QuestionEditView extends Backbone.View
     'change .option_select'   : 'templateFill'
     'keypress .option_value'  : 'quickAddWithEnter'
     'keypress .option_label'  : 'quickFocusValue'
+    'change #custom_validation_code' : 'validateSyntax'
+
+  validateSyntax: ->
+    if not _.isEmpty(customValidationCode = @$el.find("#custom_validation_code").val())
+      try
+        oldAnswer = @answer
+        @answer = {}
+        @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
+        if oldAnswer? then @answer = oldAnswer else delete this["answer"]
+      catch e
+        alert "Custom Validation error for #{@name} \n\n#{e}"
+
 
   quickAddWithEnter: (event) ->
     if event.keyCode? && event.keyCode != 13 then return true
