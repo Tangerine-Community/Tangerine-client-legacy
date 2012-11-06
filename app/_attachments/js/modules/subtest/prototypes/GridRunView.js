@@ -131,7 +131,7 @@ GridRunView = (function(_super) {
     $target = $(event.target);
     index = $target.attr('data-index');
     if (index - 1 >= this.gridOutput.lastIndexOf("incorrect")) {
-      this.$el.find("table.grid .element_last").removeClass("element_last");
+      this.$el.find(".element_last").removeClass("element_last");
       $target.addClass("element_last");
       return this.lastAttempted = index;
     }
