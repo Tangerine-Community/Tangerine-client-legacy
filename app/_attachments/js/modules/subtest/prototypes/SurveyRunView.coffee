@@ -47,13 +47,10 @@ class SurveyRunView extends Backbone.View
     # auto stop after limit
     autostopLimit = parseInt(@model.get("autostopLimit")) || 0
     autostopCount = autostopLimit
-    console.log "limit: " + autostopLimit
     if autostopLimit > 0
       for i in [1..Math.min(autostopLimit, @questionViews.length)]
-        console.log  i
         autostopCount-- if @questionViews[i-1].answer == "0"
     @autostopped = autostopCount == 0 && autostopLimit != 0
-    console.log "stopped: " + @autostopped
     @updateAutostop()
   
   updateAutostop: ->
