@@ -249,22 +249,6 @@ Utils = (function() {
     }
   };
 
-  Utils.importAssessmentFromIris = function(dKey) {
-    var repOps;
-    repOps = {
-      'filter': 'tangerine/downloadFilter',
-      'create_target': true,
-      'query_params': {
-        'dKey': dKey
-      }
-    };
-    return $.couch.replicate(Tangerine.iris.host + "/tangerine", "tangerine", {
-      success: function(a, b) {
-        return console.log([" success", a, b]);
-      }
-    }, repOps);
-  };
-
   Utils.topAlert = function(alert_text) {
     return $("<div class='disposable_alert'>" + alert_text + "</div>").appendTo("#content").topCenter().delay(2000).fadeOut(250, function() {
       return $(this).remove();

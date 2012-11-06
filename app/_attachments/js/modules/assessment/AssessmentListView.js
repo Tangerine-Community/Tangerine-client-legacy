@@ -70,15 +70,17 @@ AssessmentListView = (function(_super) {
     this.assessments = new Assessments;
     return this.assessments.fetch({
       success: function(assessments) {
-        var i, view, _len, _ref, _results;
+        var assessmentCount, groupName, i, view, _len, _ref, _results;
         _ref = _this.groupViews;
         _results = [];
         for (i = 0, _len = _ref.length; i < _len; i++) {
           view = _ref[i];
-          _this.$el.find(".header_" + view.cid).html("" + (_this.sections[i].titleize()) + " (" + (view.allAssessments.where({
+          assessmentCount = assessments.where({
             "group": _this.sections[i],
             "archived": false
-          }).length) + ")");
+          }).length;
+          groupName = _this.sections[i] === "public" ? "Public" : _this.sections[i];
+          _this.$el.find(".header_" + view.cid).html("" + groupName + " (" + assessmentCount + ")");
           view.allAssessments = assessments;
           _results.push(view.refresh(true));
         }
@@ -88,7 +90,7 @@ AssessmentListView = (function(_super) {
   };
 
   AssessmentListView.prototype.render = function() {
-    var assessment, groupsButton, html, i, importButton, newButton, oneView, publicList, view, _i, _len, _len2, _ref, _ref2, _ref3, _ref4, _ref5;
+    var assessment, assessmentCount, groupName, groupsButton, html, i, importButton, newButton, oneView, publicList, view, _i, _len, _len2, _ref, _ref2, _ref3, _ref4, _ref5;
     newButton = "<button class='new_assessment command'>New</button>";
     importButton = "<button class='import command'>Import</button>";
     groupsButton = "<button class='navigation groups'>Groups</button>";
@@ -101,7 +103,12 @@ AssessmentListView = (function(_super) {
       _ref = this.groupViews;
       for (i = 0, _len = _ref.length; i < _len; i++) {
         view = _ref[i];
-        this.$el.append("<h2 class='header_" + view.cid + "'>" + (this.sections[i].titleize()) + " (" + view.assessments.length + ")</h2><ul id='group_" + view.cid + "' class='assessment_list'></ul>");
+        assessmentCount = this.assessments.where({
+          "group": this.sections[i],
+          "archived": false
+        }).length;
+        groupName = this.sections[i] === "public" ? "Public" : this.sections[i];
+        this.$el.append("<h2 class='header_" + view.cid + "'>" + groupName + " (" + assessmentCount + ")</h2><ul id='group_" + view.cid + "' class='assessment_list'></ul>");
         view.setElement(this.$el.find("#group_" + view.cid));
         view.render();
       }

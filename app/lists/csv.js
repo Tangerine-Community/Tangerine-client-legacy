@@ -3,7 +3,7 @@
   var columnKey, columnKeys, columnNames, columnsBySubtest, csvRow, dump, key, oneRow, pair, rawCell, row, rowCache, subtest, subtestIndex, toSample, undone, value, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _len7, _m, _ref, _ref2;
   start({
     "headers": {
-      "content-type": "text/csv",
+      "content-type": "text/csv; charset=UTF-8",
       "Content-Disposition": "attachment; filename=\"" + req.query.filename + ".csv\""
     }
   });

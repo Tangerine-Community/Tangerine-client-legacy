@@ -84,7 +84,6 @@
         row.push(pair("" + variableName + "_attempted", subtest.data.attempted));
         row.push(pair("" + variableName + "_item_at_time", subtest.data.item_at_time));
         row.push(pair("" + variableName + "_time_intermediate_captured", subtest.data.time_intermediate_captured));
-        row.push(pair("" + variableName + "_correct_per_minute", subtest.sum.correct_per_minute));
         _ref3 = subtest.data.items;
         for (i = 0, _len4 = _ref3.length; i < _len4; i++) {
           item = _ref3[i];

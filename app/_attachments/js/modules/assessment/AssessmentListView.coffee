@@ -43,7 +43,9 @@ class AssessmentListView extends Backbone.View
     @assessments.fetch
       success: (assessments) =>
         for view, i in @groupViews
-          @$el.find(".header_#{view.cid}").html "#{@sections[i].titleize()} (#{view.allAssessments.where({"group":@sections[i],"archived":false}).length})"
+          assessmentCount = assessments.where({"group":@sections[i],"archived":false}).length
+          groupName = if @sections[i] == "public" then "Public" else @sections[i]          
+          @$el.find(".header_#{view.cid}").html "#{groupName} (#{assessmentCount})"
           view.allAssessments = assessments
           view.refresh true
 
@@ -75,7 +77,9 @@ class AssessmentListView extends Backbone.View
 
     if Tangerine.settings.context == "server"
       for view, i in @groupViews
-        @$el.append "<h2 class='header_#{view.cid}'>#{@sections[i].titleize()} (#{view.assessments.length})</h2><ul id='group_#{view.cid}' class='assessment_list'></ul>"
+        assessmentCount = @assessments.where({"group":@sections[i],"archived":false}).length
+        groupName = if @sections[i] == "public" then "Public" else @sections[i]          
+        @$el.append "<h2 class='header_#{view.cid}'>#{groupName} (#{assessmentCount})</h2><ul id='group_#{view.cid}' class='assessment_list'></ul>"
         view.setElement(@$el.find("#group_#{view.cid}"))
         view.render()
     else if Tangerine.settings.context == "mobile"

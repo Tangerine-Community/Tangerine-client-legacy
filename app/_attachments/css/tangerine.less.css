@@ -427,6 +427,7 @@ table.grid td {
 }
 div.grid .grid_element,
 table.grid .grid_element {
+  font-family: Verdana, Tahoma, Monaco, sans-serif;
   cursor: pointer;
   text-align: center;
   background: #cccccc;
@@ -809,7 +810,8 @@ div.subtest_edit td {
   vertical-align: middle;
 }
 div.subtest_edit .enumerator_help_preview,
-div.subtest_edit .student_dialog_preview {
+div.subtest_edit .student_dialog_preview,
+div.subtest_edit .transition_comment_preview {
   height: 70px;
   overflow: hidden;
 }
@@ -896,15 +898,16 @@ table.basic_info th {
   color: #999999;
   font-weight: bold;
 }
-.disabled_skipped {
+.disabled_skipped,
+.disabled_autostop {
   height: 25px !important;
   overflow: hidden;
 }
-.disabled_skipped:after {
+.disabled_skipped:after,
+.disabled_autostop:after {
   background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQImWP4DwHPGP7////s/////wGOCw+/Sq1MagAAAABJRU5ErkJggg==") repeat scroll 0 0 transparent;
   bottom: 0;
   color: #DDDDDD;
-  content: "Skipped";
   display: block;
   float: left;
   font-size: 30px;
@@ -915,6 +918,12 @@ table.basic_info th {
   right: 0;
   text-align: center;
   top: 0;
+}
+.disabled_skipped:after {
+  content: "Skipped";
+}
+.disabled_autostop:after {
+  content: "Auto skipped";
 }
 .disabled_cover:after {
   background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQImWP4////mf////9n+A8BZwCMhQ+LNDQxswAAAABJRU5ErkJggg==") repeat scroll 0 0 transparent;

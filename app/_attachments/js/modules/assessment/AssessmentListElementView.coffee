@@ -66,7 +66,6 @@ class AssessmentListElementView extends Backbone.View
   assessmentDelete: ->
     # remove from collection
     @$el.fadeOut 250, => 
-      @parent.assessments.remove @model
       @model.destroy()
       @parent.parent.refresh()
       

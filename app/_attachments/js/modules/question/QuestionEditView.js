@@ -42,8 +42,10 @@ QuestionEditView = (function(_super) {
   QuestionEditView.prototype.templateFill = function(event) {
     var index;
     index = $(event.target).find("option:selected").attr('data-index');
-    this.question.set("options", Tangerine.templates.optionTemplates[index].options);
-    this.$el.find('#option_list_wrapper').html(this.getOptionList());
+    if (Tangerine.templates.optionTemplates[index] != null) {
+      this.question.set("options", Tangerine.templates.optionTemplates[index].options);
+      this.$el.find('#option_list_wrapper').html(this.getOptionList());
+    }
     return false;
   };
 
@@ -86,21 +88,23 @@ QuestionEditView = (function(_super) {
   };
 
   QuestionEditView.prototype.render = function() {
-    var assessmentName, checkOrRadio, hint, i, linkedGridScore, name, option, optionHTML, options, prompt, skipLogic, skippable, subtestName, type, _len, _ref;
+    var assessmentName, checkOrRadio, customValidationCode, customValidationMessage, hint, i, linkedGridScore, name, option, optionHTML, options, prompt, skipLogic, skippable, subtestName, type, _len, _ref;
     assessmentName = this.assessment.escape("name");
     subtestName = this.subtest.escape("name");
     name = this.question.escape("name") || "";
     prompt = this.question.escape("prompt") || "";
     hint = this.question.escape("hint") || "";
     skipLogic = this.question.escape("skipLogic") || "";
+    customValidationCode = this.question.escape("customValidationCode") || "";
+    customValidationMessage = this.question.escape("customValidationMessage") || "";
     type = this.question.get("type");
     options = this.question.get("options");
     linkedGridScore = this.question.get("linkedGridScore") || 0;
     skippable = this.question.get("skippable") === true || this.question.get("skippable") === "true";
     checkOrRadio = type === "multiple" ? "checkbox" : "radio";
-    this.$el.html("      <button class='back navigation'>Back</button>      <h1>Question Editor</h1>      <table class='basic_info'>        <tr>          <th>Subtest</th>          <td>" + subtestName + "</td>        </tr>        <tr>          <th>Assessment</th>          <td>" + assessmentName + "</td>        </tr>      </table>      <button class='done command'>Done</button>      <div class='edit_form'>        <div class='label_value'>          <label for='name'>Variable name</label>          <input id='name' type='text' value='" + name + "'>        </div>        <div class='label_value'>          <label for='prompt'>Prompt</label>          <input id='prompt' type='text' value='" + prompt + "'>        </div>        <div class='label_value'>          <label for='hint'>Hint</label>          <input id='hint' type='text' value='" + hint + "'>        </div>        <div class='label_value'>          <label for='skip-logic'>Skip if <span style='font-size: small;font-weight:normal'>example: ResultOfQuestion(\"maze1\") isnt \"2\"</span></label>          <input id='skip-logic' type='text' value='" + skipLogic + "'>        </div>        <div class='label_value'>          <label>Skippable</label>          <div id='skip_radio' class='buttonset'>            <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' " + (skippable ? 'checked' : void 0) + ">            <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' " + (!skippable ? 'checked' : void 0) + ">          </div>        </div>        <div class='label_value'>          <label for='linked_grid_score'>Items attempted required on linked grid</label>          <input id='linked_grid_score' type='number' value='" + linkedGridScore + "'>        </div>        <div class='label_value' id='question_type' class='question_type'>          <label>Question Type</label>          <div class='buttonset'>            <label for='single'>single</label>            <input id='single' name='type' type='radio' value='single' " + (type === 'single' ? 'checked' : void 0) + ">            <label for='multiple'>multiple</label>            <input id='multiple' name='type'  type='radio' value='multiple' " + (type === 'multiple' ? 'checked' : void 0) + ">            <label for='open'>open</label>            <input id='open' name='type'  type='radio' value='open' " + (type === 'open' ? 'checked' : void 0) + ">          </div>        </div>        ");
+    this.$el.html("      <button class='back navigation'>Back</button>      <h1>Question Editor</h1>      <table class='basic_info'>        <tr>          <th>Subtest</th>          <td>" + subtestName + "</td>        </tr>        <tr>          <th>Assessment</th>          <td>" + assessmentName + "</td>        </tr>      </table>      <button class='done command'>Done</button>      <div class='edit_form'>        <div class='label_value'>          <label for='name'>Variable name</label>          <input id='name' type='text' value='" + name + "'>        </div>        <div class='label_value'>          <label for='prompt'>Prompt</label>          <input id='prompt' type='text' value='" + prompt + "'>        </div>        <div class='label_value'>          <label for='hint'>Hint</label>          <input id='hint' type='text' value='" + hint + "'>        </div>        <div class='label_value'>          <label for='skip-logic'>Skip if <span style='font-size: small;font-weight:normal'>example: ResultOfQuestion(\"maze1\") isnt \"2\" Example 2: \"red\" in ResultOfMultiple(\"fave_colors\")</span></label>          <input id='skip-logic' type='text' value='" + skipLogic + "'>        </div>        <div class='menu_box'>          <label>Custom validation</label>          <div class='label_value'>            <label for='custom_validation_code' title='Intended for open questions. This code should evaluate to true or false. False will trigger an error message for this question. E.g. @answer == \"1\" will evaluate to false for any value other than 1.'>Valid when</label>            <input id='custom_validation_code' type='text' value='" + customValidationCode + "'>          </div>          <div class='label_value'>            <label for='custom_validation_message'>Error message</label>            <input id='custom_validation_message' type='text' value='" + customValidationMessage + "'>          </div>        </div>        <div class='label_value'>          <label>Skippable</label>          <div id='skip_radio' class='buttonset'>            <label for='skip_true'>Yes</label><input name='skippable' type='radio' value='true' id='skip_true' " + (skippable ? 'checked' : void 0) + ">            <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' " + (!skippable ? 'checked' : void 0) + ">          </div>        </div>        <div class='label_value'>          <label for='linked_grid_score'>Items attempted required on linked grid</label>          <input id='linked_grid_score' type='number' value='" + linkedGridScore + "'>        </div>        <div class='label_value' id='question_type' class='question_type'>          <label>Question Type</label>          <div class='buttonset'>            <label for='single'>single</label>            <input id='single' name='type' type='radio' value='single' " + (type === 'single' ? 'checked' : void 0) + ">            <label for='multiple'>multiple</label>            <input id='multiple' name='type'  type='radio' value='multiple' " + (type === 'multiple' ? 'checked' : void 0) + ">            <label for='open'>open</label>            <input id='open' name='type'  type='radio' value='open' " + (type === 'open' ? 'checked' : void 0) + ">          </div>        </div>        ");
     if (type !== "open") {
-      optionHTML = "        <div class='label_value'>        <label for='question_template_select'>Fill from template</label><br>        <div class='menu_box'>          <select id='question_template_select' class='option_select'>            <option disabled selected>Select template</option>        ";
+      optionHTML = "        <div class='label_value'>        <label for='question_template_select'>Fill from template</label><br>        <div class='menu_box'>          <select id='question_template_select' class='option_select'>            <option selected='selected'>Select template</option>        ";
       _ref = Tangerine.templates.optionTemplates;
       for (i = 0, _len = _ref.length; i < _len; i++) {
         option = _ref[i];
@@ -173,7 +177,9 @@ QuestionEditView = (function(_super) {
       "skipLogic": this.$el.find("#skip-logic").val(),
       "linkedGridScore": parseInt(this.$el.find("#linked_grid_score").val()),
       "type": this.$el.find("#question_type input:checked").val(),
-      "skippable": this.$el.find("#skip_radio input:radio[name=skippable]:checked").val() === "true"
+      "skippable": this.$el.find("#skip_radio input:radio[name=skippable]:checked").val() === "true",
+      "customValidationCode": this.$el.find("#custom_validation_code").val(),
+      "customValidationMessage": this.$el.find("#custom_validation_message").val()
     });
     options = [];
     i = 0;

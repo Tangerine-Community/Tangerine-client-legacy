@@ -121,52 +121,48 @@
   },
   "optionTemplates" : [
     {
-      "name" : "Blank",
-      "options" : []
-    },
-    {
-      "name" : "Binary boolean",
+      "name" : "True/False",
       "options" : [
         {"label":"True","value":"1"},
         {"label":"False","value":"0"}
       ]
     },
     {
-      "name" : "Binary agreement",
+      "name" : "Yes/No ",
       "options" : [
         {"label":"Yes","value":"1"},
         {"label":"No","value":"0"}
       ]
     },
     {
-      "name" : "Binary validity",
+      "name" : "Correct/Incorrect",
       "options" : [
         {"label":"Correct","value":"1"},
         {"label":"Incorrect","value":"0"}
       ]
     },
     {
-      "name" : "Trinary boolean",
+      "name" : "True/False/No Response",
       "options" : [
         {"label":"True","value":"1"},
         {"label":"False","value":"0"},
-        {"label":"No response","value":"."}
+        {"label":"No response","value":"3"}
       ]
     },
     {
-      "name" : "Trinary agreement",
+      "name" : "Yes/No/No Response",
       "options" : [
         {"label":"Yes","value":"1"},
         {"label":"No","value":"0"},
-        {"label":"No response","value":"."}
+        {"label":"No response","value":"3"}
       ]
     },
     {
-      "name" : "Trinary validity",
+      "name" : "Correct/Incorrect/No Response",
       "options" : [
         {"label":"Correct","value":"1"},
         {"label":"Incorrect","value":"0"},
-        {"label":"No response","value":"."}
+        {"label":"No response","value":"3"}
       ]
     },
     {
@@ -182,9 +178,9 @@
         {"label":"July","value":"7"},
         {"label":"August","value":"8"},
         {"label":"September","value":"9"},
-        {"label":"November","value":"10"},
-        {"label":"December","value":"11"},
-        {"label":"January","value":"12"}
+        {"label":"October","value":"10"},
+        {"label":"November","value":"11"},
+        {"label":"December","value":"12"}
       ]
       
     }

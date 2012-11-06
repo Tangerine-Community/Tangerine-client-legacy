@@ -85,11 +85,16 @@ QuestionRunView = (function(_super) {
   };
 
   QuestionRunView.prototype.updateValidity = function() {
-    if (this.model.get("skippable") === true || $("#question-" + this.name).hasClass("disabled_skipped")) {
+    var customValidationCode;
+    if (this.model.get("skippable") === true || ($("#question-" + this.name).hasClass("disabled_skipped") || $("#question-" + this.name).hasClass("disabled_autostop"))) {
       this.isValid = true;
-      return this.skipped = _.isEmpty(this.answer) ? true : false;
+      this.skipped = _.isEmpty(this.answer) ? true : false;
     } else {
-      return this.isValid = _.isEmpty(this.answer) ? false : true;
+      this.isValid = _.isEmpty(this.answer) ? false : true;
+    }
+    customValidationCode = this.model.get("customValidationCode");
+    if ((customValidationCode != null) && !_.isEmpty(customValidationCode)) {
+      return this.isValid = CoffeeScript.eval.apply(this, [customValidationCode]);
     }
   };
 
@@ -128,7 +133,7 @@ QuestionRunView = (function(_super) {
 
   QuestionRunView.prototype.defineSpecialCaseResults = function() {
     var element, i, list, option, _i, _len, _len2, _ref;
-    list = ["missing", "notAsked", "skipped", "logicSkipped"];
+    list = ["missing", "notAsked", "skipped", "logicSkipped", "notAskedAutostop"];
     for (_i = 0, _len = list.length; _i < _len; _i++) {
       element = list[_i];
       if (this.type === "single" || this.type === "open") {

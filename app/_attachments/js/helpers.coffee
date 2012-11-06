@@ -105,16 +105,6 @@ class Utils
     else
       url
 
-  # Should this go another place?
-  @importAssessmentFromIris: (dKey) ->
-    repOps = 
-      'filter' : 'tangerine/downloadFilter'
-      'create_target' : true
-      'query_params' :
-        'dKey' : dKey
-    $.couch.replicate Tangerine.iris.host + "/tangerine", "tangerine", { success: (a, b) -> console.log [" success",a, b];}, repOps
-    # console.log @importSubtestsFromIris() 
-
   # Disposable alerts
   @topAlert: (alert_text) ->
     $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").topCenter().delay(2000).fadeOut(250, -> $(this).remove())

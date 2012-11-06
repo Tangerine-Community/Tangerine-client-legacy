@@ -88,7 +88,7 @@ class LocationRunView extends Backbone.View
     schoolListElements = ""
 
     html = "
-      <button class='clear command'>Clear</button>
+      <button class='clear command'>#{t('clear')}</button>
       ";
 
     for level, i in @levels
@@ -98,7 +98,7 @@ class LocationRunView extends Backbone.View
           <input data-level='#{i}' id='level_#{i}' value=''>
         </div>
         <div id='autofill_#{i}' class='autofill' style='display:none'>
-          <h2>Select one from autofill list</h2>
+          <h2>#{t('select one from autofill list')}</h2>
           <ul class='school_list' id='school_list_#{i}'>
           </ul>
         </div>
@@ -130,7 +130,7 @@ class LocationRunView extends Backbone.View
   showErrors: ->
     for input in @$el.find("input")
       if $(input).val() == ""
-        $(input).after " <span class='message'>#{$('label[for='+$(input).attr('id')+']').text()} cannot be empty</span>"
+        $(input).after " <span class='message'>#{$('label[for='+$(input).attr('id')+']').text()} #{t('cannot be empty')}</span>"
 
   getSum: ->
     counts =

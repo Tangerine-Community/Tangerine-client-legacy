@@ -2,7 +2,7 @@
 
   start
     "headers" : {
-      "content-type": "text/csv"
+      "content-type": "text/csv; charset=UTF-8"
       "Content-Disposition": "attachment; filename=\"#{req.query.filename}.csv\""
     }
 

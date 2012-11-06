@@ -31,13 +31,14 @@ SubtestRunView = (function(_super) {
   };
 
   SubtestRunView.prototype.render = function() {
-    var enumeratorHelp, skipButton, skippable, studentDialog,
+    var enumeratorHelp, skipButton, skippable, studentDialog, transitionComment,
       _this = this;
     enumeratorHelp = (this.model.get("enumeratorHelp") || "") !== "" ? "<button class='subtest_help command'>help</button><div class='enumerator_help'>" + (this.model.get('enumeratorHelp')) + "</div>" : "";
     studentDialog = (this.model.get("studentDialog") || "") !== "" ? "<div class='student_dialog'>" + (this.model.get('studentDialog')) + "</div>" : "";
+    transitionComment = (this.model.get("transitionComment") || "") !== "" ? "<div class='student_dialog'>" + (this.model.get('transitionComment')) + "</div>" : "";
     skipButton = "<button class='skip navigation'>Skip</button>";
     skippable = this.model.get("skippable") === true || this.model.get("skippable") === "true";
-    this.$el.html("      <h2>" + (this.model.get('name')) + "</h2>      " + enumeratorHelp + "      " + studentDialog + "      <div id='prototype_wrapper'></div>      <div class='controlls'>        <button class='next navigation'>Next</button>" + (skippable ? skipButton : "") + "      </div>    ");
+    this.$el.html("      <h2>" + (this.model.get('name')) + "</h2>      " + enumeratorHelp + "      " + studentDialog + "      <div id='prototype_wrapper'></div>      <div class='controlls'>        " + transitionComment + "<br>        <button class='next navigation'>" + (t('next')) + "</button>" + (skippable ? skipButton : "") + "      </div>    ");
     this.prototypeView = new window[this.protoViews[this.model.get('prototype')]['run']]({
       model: this.model,
       parent: this

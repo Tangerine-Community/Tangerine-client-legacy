@@ -1,10 +1,21 @@
-var ResultOfQuestion, SurveyRunView,
+var ResultOfMultiple, ResultOfQuestion, SurveyRunView,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
 ResultOfQuestion = function(name) {
   return $("#question-" + name).attr("data-result");
+};
+
+ResultOfMultiple = function(name) {
+  var input, result, _i, _len, _ref;
+  result = [];
+  _ref = $("#question-" + name + " input:checked");
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    input = _ref[_i];
+    result.push($(input).val());
+  }
+  return result;
 };
 
 SurveyRunView = (function(_super) {
@@ -45,11 +56,10 @@ SurveyRunView = (function(_super) {
   };
 
   SurveyRunView.prototype.onQuestionAnswer = function(event) {
-    var cid, next, view, _i, _len, _ref, _results;
+    var autostopCount, autostopLimit, cid, i, next, view, _i, _len, _ref, _ref2;
     if (this.isObservation) {
       cid = $(event.target).attr("data-cid");
       _ref = this.questionViews;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         view = _ref[_i];
         if (view.cid === cid && view.type !== "multiple") {
@@ -57,17 +67,43 @@ SurveyRunView = (function(_super) {
           while (next.length !== 0 && next.hasClass("disabled_skipped")) {
             next = $(next).next();
           }
-          if (next.length !== 0) {
-            _results.push(next.scrollTo());
-          } else {
-            _results.push(void 0);
-          }
+          if (next.length !== 0) next.scrollTo();
+        }
+      }
+    }
+    autostopLimit = parseInt(this.model.get("autostopLimit")) || 0;
+    autostopCount = autostopLimit;
+    console.log("limit: " + autostopLimit);
+    if (autostopLimit > 0) {
+      for (i = 1, _ref2 = Math.min(autostopLimit, this.questionViews.length); 1 <= _ref2 ? i <= _ref2 : i >= _ref2; 1 <= _ref2 ? i++ : i--) {
+        console.log(i);
+        if (this.questionViews[i - 1].answer === "0") autostopCount--;
+      }
+    }
+    this.autostopped = autostopCount === 0 && autostopLimit !== 0;
+    console.log("stopped: " + this.autostopped);
+    return this.updateAutostop();
+  };
+
+  SurveyRunView.prototype.updateAutostop = function() {
+    var autostopLimit, i, view, _len, _ref, _results;
+    autostopLimit = parseInt(this.model.get("autostopLimit")) || 0;
+    _ref = this.questionViews;
+    _results = [];
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      view = _ref[i];
+      if (i > (autostopLimit - 1)) {
+        if (this.autostopped) view.$el.addClass("disabled_autostop");
+        if (!this.autostopped) {
+          _results.push(view.$el.removeClass("disabled_autostop"));
         } else {
           _results.push(void 0);
         }
+      } else {
+        _results.push(void 0);
       }
-      return _results;
     }
+    return _results;
   };
 
   SurveyRunView.prototype.updateSkipLogic = function() {
@@ -120,7 +156,7 @@ SurveyRunView = (function(_super) {
     _ref = this.questionViews;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       qv = _ref[i];
-      result[this.questions.models[i].get("name")] = qv.notAsked ? qv.notAskedResult : !_.isEmpty(qv.answer) ? qv.answer : qv.skipped ? qv.skippedResult : qv.$el.hasClass("disabled_skipped") ? qv.logicSkippedResult : qv.answer;
+      result[this.questions.models[i].get("name")] = qv.notAsked ? qv.notAskedResult : !_.isEmpty(qv.answer) ? qv.answer : qv.skipped ? qv.skippedResult : qv.$el.hasClass("disabled_skipped") ? qv.logicSkippedResult : qv.$el.hasClass("disabled_autostop") ? qv.notAskedAutostopResult : qv.answer;
     }
     return result;
   };
@@ -156,7 +192,7 @@ SurveyRunView = (function(_super) {
   };
 
   SurveyRunView.prototype.showErrors = function() {
-    var first, i, message, qv, _len, _ref, _results;
+    var customMessage, first, i, message, qv, _len, _ref, _results;
     this.$el.find('.message').remove();
     first = true;
     _ref = this.questionViews;
@@ -166,10 +202,15 @@ SurveyRunView = (function(_super) {
       if (!_.isString(qv)) {
         message = "";
         if (!qv.isValid) {
-          message = "Please answer this question";
+          customMessage = qv.model.get("customValidationMessage");
+          if (!_.isEmpty(customMessage)) {
+            message = customMessage;
+          } else {
+            message = t("please answer this question");
+          }
           if (first === true) {
             qv.$el.scrollTo();
-            Utils.midAlert("Please correct the errors on this page");
+            Utils.midAlert(t("please correct the errors on this page"));
             first = false;
           }
         }
