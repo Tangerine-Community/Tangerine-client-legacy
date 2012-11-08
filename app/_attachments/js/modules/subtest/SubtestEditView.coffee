@@ -14,6 +14,10 @@ class SubtestEditView extends Backbone.View
     'click .student_done'        : 'doneStudent'
     'click .student_cancel'      : 'cancelStudent'
 
+    'click .edit_transition_comment'        : 'editTransitionComment'
+    'click .transition_comment_done'        : 'doneTransitionComment'
+    'click .transition_comment_cancel'      : 'cancelTransitionComment'
+
   editEnumerator: ->
     @$el.find(".enumerator_help_preview, .edit_enumerator, .enumerator_save_buttons").fadeToggle(250)
     @$el.find("textarea#enumerator_help").html(@model.escape("enumeratorHelp") || "").cleditor()
@@ -60,7 +64,7 @@ class SubtestEditView extends Backbone.View
 
   doneTransitionComment: ->
     if @model.save( "transitionComment" : @$el.find("textarea#transition_comment").val(), wait : true )
-      @cancelStudent()
+      @cancelTransitionComment()
     else
       console.log ("save error")
 

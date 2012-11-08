@@ -22,7 +22,10 @@ SubtestEditView = (function(_super) {
     'click .enumerator_cancel': 'cancelEnumerator',
     'click .edit_student': 'editStudent',
     'click .student_done': 'doneStudent',
-    'click .student_cancel': 'cancelStudent'
+    'click .student_cancel': 'cancelStudent',
+    'click .edit_transition_comment': 'editTransitionComment',
+    'click .transition_comment_done': 'doneTransitionComment',
+    'click .transition_comment_cancel': 'cancelTransitionComment'
   };
 
   SubtestEditView.prototype.editEnumerator = function() {
@@ -91,7 +94,7 @@ SubtestEditView = (function(_super) {
       "transitionComment": this.$el.find("textarea#transition_comment").val(),
       wait: true
     })) {
-      return this.cancelStudent();
+      return this.cancelTransitionComment();
     } else {
       return console.log("save error");
     }
