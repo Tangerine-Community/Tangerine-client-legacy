@@ -82,6 +82,7 @@ class AssessmentListView extends Backbone.View
         @$el.append "<h2 class='header_#{view.cid}'>#{groupName} (#{assessmentCount})</h2><ul id='group_#{view.cid}' class='assessment_list'></ul>"
         view.setElement(@$el.find("#group_#{view.cid}"))
         view.render()
+        
     else if Tangerine.settings.context == "mobile"
       @$el.append "<ul class='assessment_list'></ul>"
       @listView.setElement(@$el.find("ul.assessment_list"))
@@ -90,33 +91,6 @@ class AssessmentListView extends Backbone.View
     @trigger "rendered"
 
     return
-
-
-
-    if @isAdmin && Tangerine.settings.context == "server"
-
-      @$el.append "<h2>Public assessments</h2>"
-
-      if @public?.models?.length > 0
-        publicList = $('<ul>').addClass('public_list assessment_list')
-        for assessment in @public?.models
-          oneView = new AssessmentListElementView
-            model    : assessment
-            parent   : @
-            isPublic : true
-          @publicViews.push oneView
-          oneView.render()
-          publicList.append oneView.el
-      else
-        @$el.append "<p>No assessments available.</p>"
-
-      @$el.append publicList
-      if @options.curricula.length != 0
-        @curriculaListView.render()
-        @$el.append "<h2>Curricula</h2>"
-        @$el.append @curriculaListView.el
-
-    @trigger "rendered"
 
   # Making a new assessment
   newAssessmentToggle: -> @$el.find('.new_assessment_form, .new_assessment').fadeToggle(250); false

@@ -90,7 +90,7 @@ AssessmentListView = (function(_super) {
   };
 
   AssessmentListView.prototype.render = function() {
-    var assessment, assessmentCount, groupName, groupsButton, html, i, importButton, newButton, oneView, publicList, view, _i, _len, _len2, _ref, _ref2, _ref3, _ref4, _ref5;
+    var assessmentCount, groupName, groupsButton, html, i, importButton, newButton, view, _len, _ref;
     newButton = "<button class='new_assessment command'>New</button>";
     importButton = "<button class='import command'>Import</button>";
     groupsButton = "<button class='navigation groups'>Groups</button>";
@@ -118,34 +118,6 @@ AssessmentListView = (function(_super) {
       this.listView.render();
     }
     this.trigger("rendered");
-    return;
-    if (this.isAdmin && Tangerine.settings.context === "server") {
-      this.$el.append("<h2>Public assessments</h2>");
-      if (((_ref2 = this.public) != null ? (_ref3 = _ref2.models) != null ? _ref3.length : void 0 : void 0) > 0) {
-        publicList = $('<ul>').addClass('public_list assessment_list');
-        _ref5 = (_ref4 = this.public) != null ? _ref4.models : void 0;
-        for (_i = 0, _len2 = _ref5.length; _i < _len2; _i++) {
-          assessment = _ref5[_i];
-          oneView = new AssessmentListElementView({
-            model: assessment,
-            parent: this,
-            isPublic: true
-          });
-          this.publicViews.push(oneView);
-          oneView.render();
-          publicList.append(oneView.el);
-        }
-      } else {
-        this.$el.append("<p>No assessments available.</p>");
-      }
-      this.$el.append(publicList);
-      if (this.options.curricula.length !== 0) {
-        this.curriculaListView.render();
-        this.$el.append("<h2>Curricula</h2>");
-        this.$el.append(this.curriculaListView.el);
-      }
-    }
-    return this.trigger("rendered");
   };
 
   AssessmentListView.prototype.newAssessmentToggle = function() {
