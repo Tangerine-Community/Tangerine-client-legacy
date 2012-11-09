@@ -1,9 +1,11 @@
-var Tangerine;
+var Tangerine, path;
 
 Tangerine = {};
 
+path = String(window.location.pathname).split("/");
+
 Tangerine = {
-  "db_name": "tangerine",
+  "db_name": path[1],
   "design_doc": "tangerine"
 };
 
