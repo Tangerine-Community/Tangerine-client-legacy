@@ -76,7 +76,7 @@ SurveyEditView = (function(_super) {
     var emptyOptions, i, notSaved, plural, question, requiresGrid, _has, _len, _question, _ref, _require;
     this.model.set({
       "gridLinkId": this.$el.find("#link_select option:selected").val(),
-      "autostopLimit": parseInt(this.$el.find("#autostop_limit").val())
+      "autostopLimit": parseInt(this.$el.find("#autostop_limit").val()) || 0
     });
     notSaved = [];
     emptyOptions = [];

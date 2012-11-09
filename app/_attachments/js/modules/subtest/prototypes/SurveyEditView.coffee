@@ -51,7 +51,7 @@ class SurveyEditView extends Backbone.View
 
     @model.set
       "gridLinkId"    : @$el.find("#link_select option:selected").val()
-      "autostopLimit" : parseInt(@$el.find("#autostop_limit").val())
+      "autostopLimit" : parseInt(@$el.find("#autostop_limit").val()) || 0
 
     # blank out our error queues
     notSaved = []

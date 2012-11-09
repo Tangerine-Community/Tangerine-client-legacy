@@ -56,7 +56,7 @@ SurveyRunView = (function(_super) {
   };
 
   SurveyRunView.prototype.onQuestionAnswer = function(event) {
-    var autostopCount, autostopLimit, cid, i, next, view, _i, _len, _ref, _ref2;
+    var autostopCount, autostopLimit, cid, i, longestSequence, next, view, _i, _len, _ref, _ref2;
     if (this.isObservation) {
       cid = $(event.target).attr("data-cid");
       _ref = this.questionViews;
@@ -71,17 +71,23 @@ SurveyRunView = (function(_super) {
         }
       }
     }
+    this.autostopped = false;
     autostopLimit = parseInt(this.model.get("autostopLimit")) || 0;
-    autostopCount = autostopLimit;
-    console.log("limit: " + autostopLimit);
+    longestSequence = 0;
     if (autostopLimit > 0) {
-      for (i = 1, _ref2 = Math.min(autostopLimit, this.questionViews.length); 1 <= _ref2 ? i <= _ref2 : i >= _ref2; 1 <= _ref2 ? i++ : i--) {
-        console.log(i);
-        if (this.questionViews[i - 1].answer === "0") autostopCount--;
+      for (i = 1, _ref2 = this.questionViews.length; 1 <= _ref2 ? i <= _ref2 : i >= _ref2; 1 <= _ref2 ? i++ : i--) {
+        if (this.questionViews[i - 1].answer === "0") {
+          autostopCount++;
+        } else {
+          autostopCount = 0;
+        }
+        longestSequence = Math.max(longestSequence, autostopCount);
+        if (autostopLimit !== 0 && longestSequence >= autostopLimit && !this.autostopped) {
+          this.autostopped = true;
+          this.autostopIndex = i;
+        }
       }
     }
-    this.autostopped = autostopCount === 0 && autostopLimit !== 0;
-    console.log("stopped: " + this.autostopped);
     return this.updateAutostop();
   };
 
@@ -92,7 +98,7 @@ SurveyRunView = (function(_super) {
     _results = [];
     for (i = 0, _len = _ref.length; i < _len; i++) {
       view = _ref[i];
-      if (i > (autostopLimit - 1)) {
+      if (i > (this.autostopIndex - 1)) {
         if (this.autostopped) view.$el.addClass("disabled_autostop");
         if (!this.autostopped) {
           _results.push(view.$el.removeClass("disabled_autostop"));

@@ -106,19 +106,19 @@ class SubtestEditView extends Backbone.View
       transitionComment : @$el.find("#transition_comment").val()
       skippable      : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
 
-    @prototypeEditor.save?() unless event?.options?.editSave? == true
+    @prototypeEditor.save?()
 
-    if @prototypeEditor.isValid? && @prototypeEditor.isValid() == false && event?.options?.editSave? != true
+    if @prototypeEditor.isValid? && @prototypeEditor.isValid() == false && event?.options?.editSave != true
       Utils.midAlert "There are errors on this page"
       @prototypeEditor.showErrors?()
     else
-      if @model.save(null, {wait:true})
+      if @model.save()
         Utils.midAlert "Subtest Saved"
-        setTimeout @goBack, 1000 unless event?.options?.editSave? == true
+        setTimeout @goBack, 1000 unless event?.options?.editSave == true
       else
         console.log "save error"
         Utils.midAlert "Save error"
-      
+
   render: ->
     assessmentName = @assessment.escape "name"
     name      = @model.escape "name"

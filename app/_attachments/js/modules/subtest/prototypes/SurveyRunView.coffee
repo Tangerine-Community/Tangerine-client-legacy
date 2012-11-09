@@ -45,18 +45,26 @@ class SurveyRunView extends Backbone.View
             next.scrollTo()
 
     # auto stop after limit
+    @autostopped = false
     autostopLimit = parseInt(@model.get("autostopLimit")) || 0
-    autostopCount = autostopLimit
+    longestSequence = 0
     if autostopLimit > 0
-      for i in [1..Math.min(autostopLimit, @questionViews.length)]
-        autostopCount-- if @questionViews[i-1].answer == "0"
-    @autostopped = autostopCount == 0 && autostopLimit != 0
+      for i in [1..@questionViews.length] # just in case they can't count
+        if @questionViews[i-1].answer == "0"
+          autostopCount++
+        else
+          autostopCount = 0
+        longestSequence = Math.max(longestSequence, autostopCount)
+        # if the value is set, we've got a threshold exceeding run, and it's not already autostopped
+        if autostopLimit != 0 && longestSequence >= autostopLimit && not @autostopped
+          @autostopped = true
+          @autostopIndex = i
     @updateAutostop()
   
   updateAutostop: ->
     autostopLimit = parseInt(@model.get("autostopLimit")) || 0
     for view, i in @questionViews
-      if i > (autostopLimit - 1)
+      if i > (@autostopIndex - 1)
         view.$el.addClass    "disabled_autostop" if @autostopped
         view.$el.removeClass "disabled_autostop" if not @autostopped
 
