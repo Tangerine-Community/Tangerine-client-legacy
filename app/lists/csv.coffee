@@ -29,8 +29,6 @@
   toSample = 50
   while true
 
-    if toSample == 48 then log row
-
     row = getRow()
     break if not row?
 

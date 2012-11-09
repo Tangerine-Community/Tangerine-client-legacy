@@ -26,7 +26,7 @@ class ResultsView extends Backbone.View
     form.submit()
 
   csvBeta: ->
-    filename = @assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
+    filename = @assessment.get("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
     document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}"
 
     ###

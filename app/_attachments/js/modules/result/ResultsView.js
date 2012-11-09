@@ -43,7 +43,7 @@ ResultsView = (function(_super) {
 
   ResultsView.prototype.csvBeta = function() {
     var filename;
-    filename = this.assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm");
+    filename = this.assessment.get("name");
     return document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + ("/_list/csv/csvRowByResult?key=\"" + this.assessment.id + "\"&filename=" + filename);
     /*
         $.post "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",

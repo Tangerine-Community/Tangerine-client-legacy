@@ -22,7 +22,6 @@
   columnsBySubtest = [];
   toSample = 50;
   while (true) {
-    if (toSample === 48) log(row);
     row = getRow();
     if (!(row != null)) break;
     rowCache.push(row);
