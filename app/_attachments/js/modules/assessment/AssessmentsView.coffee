@@ -34,7 +34,7 @@ class AssessmentsView extends Backbone.View
     if doRender then @render()
 
   render: ->
-    if @assessmentViews.length == 0
+    if @assessmentViews.length == 0 && @hiddenViews.length == 0
       @$el.html "<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>"
     else
       @$el.html ""

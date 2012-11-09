@@ -85,7 +85,7 @@ AssessmentsView = (function(_super) {
 
   AssessmentsView.prototype.render = function() {
     var view, _i, _j, _len, _len2, _ref, _ref2;
-    if (this.assessmentViews.length === 0) {
+    if (this.assessmentViews.length === 0 && this.hiddenViews.length === 0) {
       this.$el.html("<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>");
     } else {
       this.$el.html("");
