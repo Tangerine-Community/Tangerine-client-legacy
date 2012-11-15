@@ -98,6 +98,9 @@ class SubtestEditView extends Backbone.View
     Tangerine.router.navigate "edit/"+@model.get("assessmentId"), true
 
   save: (event) ->
+    
+    isEditSave = event?.options?.editSave == true
+    
     prototype = @model.get("prototype")
     @model.set
       name           : @$el.find("#subtest_name").val()
@@ -106,15 +109,18 @@ class SubtestEditView extends Backbone.View
       transitionComment : @$el.find("#transition_comment").val()
       skippable      : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
 
-    @prototypeEditor.save?()
-
-    if @prototypeEditor.isValid? && @prototypeEditor.isValid() == false && event?.options?.editSave != true
+    @prototypeEditor.save?(
+      "options" :
+        "isEditSave" : isEditSave
+    )
+    
+    if @prototypeEditor.isValid? && @prototypeEditor.isValid() == false && not isEditSave
       Utils.midAlert "There are errors on this page"
       @prototypeEditor.showErrors?()
     else
       if @model.save()
         Utils.midAlert "Subtest Saved"
-        setTimeout @goBack, 1000 unless event?.options?.editSave == true
+        setTimeout @goBack, 1000 unless isEditSave
       else
         console.log "save error"
         Utils.midAlert "Save error"

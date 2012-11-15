@@ -47,7 +47,9 @@ class SurveyEditView extends Backbone.View
 
     return false
 
-  save: ->
+  save: (options) ->
+
+    isEditSave = options?.isEditSave
 
     @model.set
       "gridLinkId"    : @$el.find("#link_select option:selected").val()
@@ -62,10 +64,14 @@ class SurveyEditView extends Backbone.View
     for question, i in @model.questions.models
       if question.get("type") != "open" && question.get("options").length == 0
         emptyOptions.push i + 1
-      if not question.save()
-        notSaved.push i
-      if question.has("linkedGridScore") && question.get("linkedGridScore") != ""  && question.get("linkedGridScore") != 0 && @model.has("gridLinkId") == "" && @model.get("gridLinkId") == ""
-        requiresGrid.push i
+      
+        console.log isEditSave
+        unless isEditSave
+          console.log "saving questions"
+          if not question.save()
+            notSaved.push i
+          if question.has("linkedGridScore") && question.get("linkedGridScore") != "" && question.get("linkedGridScore") != 0 && @model.has("gridLinkId") == "" && @model.get("gridLinkId") == ""
+            requiresGrid.push i
         
     # display errors
     if notSaved.length != 0

@@ -72,8 +72,9 @@ SurveyEditView = (function(_super) {
     return false;
   };
 
-  SurveyEditView.prototype.save = function() {
-    var emptyOptions, i, notSaved, plural, question, requiresGrid, _has, _len, _question, _ref, _require;
+  SurveyEditView.prototype.save = function(options) {
+    var emptyOptions, i, isEditSave, notSaved, plural, question, requiresGrid, _has, _len, _question, _ref, _require;
+    isEditSave = options != null ? options.isEditSave : void 0;
     this.model.set({
       "gridLinkId": this.$el.find("#link_select option:selected").val(),
       "autostopLimit": parseInt(this.$el.find("#autostop_limit").val()) || 0
@@ -86,10 +87,14 @@ SurveyEditView = (function(_super) {
       question = _ref[i];
       if (question.get("type") !== "open" && question.get("options").length === 0) {
         emptyOptions.push(i + 1);
-      }
-      if (!question.save()) notSaved.push(i);
-      if (question.has("linkedGridScore") && question.get("linkedGridScore") !== "" && question.get("linkedGridScore") !== 0 && this.model.has("gridLinkId") === "" && this.model.get("gridLinkId") === "") {
-        requiresGrid.push(i);
+        console.log(isEditSave);
+        if (!isEditSave) {
+          console.log("saving questions");
+          if (!question.save()) notSaved.push(i);
+          if (question.has("linkedGridScore") && question.get("linkedGridScore") !== "" && question.get("linkedGridScore") !== 0 && this.model.has("gridLinkId") === "" && this.model.get("gridLinkId") === "") {
+            requiresGrid.push(i);
+          }
+        }
       }
     }
     if (notSaved.length !== 0) {
