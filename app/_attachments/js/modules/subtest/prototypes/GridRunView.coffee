@@ -19,7 +19,10 @@ class GridRunView extends Backbone.View
   }
   
   restartTimer: ->
+    @stopTimer(simpleStop:true) if @timeRunning
+
     @resetVariables()
+
     @$el.find(".element_wrong").removeClass "element_wrong"
 
   gridClick: (event) =>
@@ -113,13 +116,19 @@ class GridRunView extends Backbone.View
     @$el.find("table.disabled, div.disabled").removeClass("disabled")
 
   stopTimer: (event, message = false) ->
-    if @timeRunning == true
+
+    return if @timeRunning != true # stop only if needed
+
+    # do these always
+    clearInterval @interval
+    @stopTime = @getTime()
+    @timeRunning = false
+    @timerStopped = true
+    @updateCountdown()
+
+    # do these if it's not a simple stop
+    if not event?.simpleStop
       Utils.flash()
-      clearInterval @interval
-      @stopTime = @getTime()
-      @timeRunning = false
-      @timerStopped = true
-      @updateCountdown()
       @updateMode null, "last" if @captureLastAttempted
       if message
         Utils.topAlert message
