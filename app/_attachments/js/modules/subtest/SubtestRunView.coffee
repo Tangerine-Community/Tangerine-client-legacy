@@ -91,7 +91,13 @@ class SubtestRunView extends Backbone.View
     @parent.abort()
 
   getResult: ->
-    return @prototypeView.getResult()
+    result = @prototypeView.getResult()
+    hash = @model.get("hash") if @model.has("hash")
+    return { 
+      'body' : result
+      'meta' : 
+        'hash' : hash
+    }
 
   getSkipped: ->
     if @prototypeView.getSkipped?

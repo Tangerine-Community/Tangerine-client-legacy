@@ -89,12 +89,14 @@ class AssessmentRunView extends Backbone.View
   next: ->
     currentView = @subtestViews[@orderMap[@index]]
     if currentView.isValid()
+      subtestResult = currentView.getResult()
       @result.add
-        name      : currentView.model.get "name"
-        data      : currentView.getResult()
-        subtestId : currentView.model.id
-        prototype : currentView.model.get "prototype"
-        sum       : currentView.getSum()
+        name        : currentView.model.get "name"
+        data        : subtestResult.body
+        subtestHash : subtestResult.meta.hash
+        subtestId   : currentView.model.id
+        prototype   : currentView.model.get "prototype"
+        sum         : currentView.getSum()
       currentView.close()
       @index++ unless @abortAssessment == true
       @index = @subtestViews.length-1 if @abortAssessment == true

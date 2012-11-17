@@ -123,7 +123,15 @@ SubtestRunView = (function(_super) {
   };
 
   SubtestRunView.prototype.getResult = function() {
-    return this.prototypeView.getResult();
+    var hash, result;
+    result = this.prototypeView.getResult();
+    if (this.model.has("hash")) hash = this.model.get("hash");
+    return {
+      'body': result,
+      'meta': {
+        'hash': hash
+      }
+    };
   };
 
   SubtestRunView.prototype.getSkipped = function() {

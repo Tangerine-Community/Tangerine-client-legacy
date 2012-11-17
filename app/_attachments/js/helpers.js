@@ -6,6 +6,24 @@ Backbone.View.prototype.close = function() {
   return typeof this.onClose === "function" ? this.onClose() : void 0;
 };
 
+Backbone.Model.prototype.toHash = function() {
+  var key, significantAttributes, value, _ref;
+  significantAttributes = {};
+  _ref = this.attributes;
+  for (key in _ref) {
+    value = _ref[key];
+    if (!~['_rev', '_id', 'hash', 'updated'].indexOf(key)) {
+      significantAttributes[key] = value;
+    }
+  }
+  return b64_sha1(JSON.stringify(significantAttributes));
+};
+
+Backbone.Model.prototype.beforeSave = function() {
+  this.set("updated", (new Date()).toString());
+  return this.set("hash", this.toHash());
+};
+
 (function($) {
   $.fn.scrollTo = function(speed, callback) {
     if (speed == null) speed = 250;
@@ -207,6 +225,25 @@ Math.decimals = function(num, decimals) {
 Utils = (function() {
 
   function Utils() {}
+
+  Utils.working = function(isWorking) {
+    var timer;
+    if (isWorking) {
+      if (!(Tangerine.loadingTimers != null)) Tangerine.loadingTimers = [];
+      return Tangerine.loadingTimers.push(setTimeout(Utils.showLoadingIndicator, 3000));
+    } else {
+      if (Tangerine.loadingTimers != null) {
+        while (timer = Tangerine.loadingTimers.pop()) {
+          clearTimeout(timer);
+        }
+      }
+      return $(".loading_bar").remove();
+    }
+  };
+
+  Utils.showLoadingIndicator = function() {
+    return $("<div class='loading_bar'><img class='loading' src='images/loading.gif'></div>").appendTo("body").middleCenter();
+  };
 
   Utils.confirm = function(message, options) {
     var _ref;
