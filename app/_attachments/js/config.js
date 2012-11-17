@@ -26,7 +26,7 @@ Tangerine.$db.openDoc("TangerineSettings", {
       return Tangerine.$db.openDoc("TangerineSettingsDefault", {
         success: function(doc) {
           doc._id = "TangerineSettings";
-          doc._rev = void 0;
+          delete doc._rev;
           Tangerine.settings = doc;
           return Tangerine.$db.saveDoc(doc);
         }

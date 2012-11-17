@@ -28,7 +28,7 @@ Tangerine.$db.openDoc "TangerineSettings", {
       Tangerine.$db.openDoc "TangerineSettingsDefault", {
         success: (doc) ->
           doc._id = "TangerineSettings"
-          doc._rev = undefined
+          delete doc._rev
           Tangerine.settings = doc
           Tangerine.$db.saveDoc doc
       }, { async: false }
