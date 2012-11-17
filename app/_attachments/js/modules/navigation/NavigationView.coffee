@@ -104,6 +104,8 @@ class NavigationView extends Backbone.View
     # @TODO This needs fixing
     if ~window.location.toString().indexOf("name=") then @$el.find("#logout_link").hide() else  @$el.find("#logout_link").show()
     
+    Utils.working true
+    
     @user.verify
       isRegistered: =>
         @render()

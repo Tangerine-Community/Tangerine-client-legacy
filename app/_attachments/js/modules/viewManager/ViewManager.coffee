@@ -12,6 +12,7 @@ class ViewManager extends Backbone.View
     @currentView = view
 
     @currentView.on "rendered", =>
+      Utils.working false
       $("#content").append @currentView.el
       @currentView.$el.find(".buttonset").buttonset()
       @currentView.afterRender?()
@@ -23,10 +24,10 @@ class ViewManager extends Backbone.View
       # Utils.resizeScrollPane()
 
     @currentView.on "start_work", =>
-      $("#content").prepend "<div id='loading_bar'><img class='loading' src='images/loading.gif'></div>"
+      Utils.working true
 
     @currentView.on "end_work", =>
-      $("#loading_bar").remove()
+      Utils.working false
 
     @currentView.render()
     
