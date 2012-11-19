@@ -20,7 +20,11 @@ Tangerine.$db.openDoc "Config",            { success:(data) -> Tangerine.config 
 Tangerine.$db.openDoc "TangerineSettings", {
 
   # If the doc is there, use the settings
-  success:(data) -> Tangerine.settings = data
+  success:(data) ->
+    Tangerine.settings = data
+    # initialize i18next.js
+    $.i18n.init "lng" : Tangerine.settings.language
+    window.t = $.t # give us a nice handle
 
   # if the docs's there, use default settings, save as normal settings
   error: (code) ->
@@ -42,9 +46,6 @@ Backbone.couch_connector.config.db_name   = Tangerine.db_name
 Backbone.couch_connector.config.ddoc_name = Tangerine.design_doc
 Backbone.couch_connector.config.global_changes = false
 
-# initialize i18next.js
-$.i18n.init "lng" : Tangerine.settings.language
-window.t = $.t # give us a nice handle
 
 # set underscore's template engine to accept handlebar-style variables
 _.templateSettings = 
