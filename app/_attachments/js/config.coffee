@@ -5,16 +5,14 @@
 
 Tangerine = {}
 
-path = String(window.location.pathname).split("/")
-
 Tangerine = 
-  "db_name"    : path[1]
-  "design_doc" : "tangerine"
+  "dbName"    : String(window.location.pathname).split("/")[1] # get the db name from the path
+  "designDoc" : "tangerine"
 
-Tangerine.$db = $.couch.db(Tangerine.db_name)
+Tangerine.$db = $.couch.db(Tangerine.dbName)
 
 # Grab our system config doc
-Tangerine.$db.openDoc "Config",            { success:(data) -> Tangerine.config    = data }, { async: false }
+Tangerine.$db.openDoc "Config", { success:(data) -> Tangerine.config = data }, { async: false }
 
 #
 # get our Tangerine settings
@@ -37,11 +35,11 @@ Tangerine.$db.openDoc "TangerineSettings", {
 }, { async: false }
 
 # Template files for ease of use in grids
-Tangerine.$db.openDoc "Templates",         { success:(data) -> Tangerine.templates = data }, { async: false }
+Tangerine.$db.openDoc "Templates", { success:(data) -> Tangerine.templates = data }, { async: false }
 
 # Backbone configuration
-Backbone.couch_connector.config.db_name   = Tangerine.db_name
-Backbone.couch_connector.config.ddoc_name = Tangerine.design_doc
+Backbone.couch_connector.config.db_name   = Tangerine.dbName
+Backbone.couch_connector.config.ddoc_name = Tangerine.designDoc
 Backbone.couch_connector.config.global_changes = false
 
 # initialize i18next.js

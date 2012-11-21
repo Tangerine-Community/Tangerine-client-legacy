@@ -8,7 +8,7 @@ LoginView = (function(_super) {
   __extends(LoginView, _super);
 
   function LoginView() {
-    this.renderMessages = __bind(this.renderMessages, this);
+    this.showMessage = __bind(this.showMessage, this);
     this.render = __bind(this.render, this);
     LoginView.__super__.constructor.apply(this, arguments);
   }
@@ -22,8 +22,8 @@ LoginView = (function(_super) {
 
   LoginView.prototype.initialize = function(options) {
     this.model = Tangerine.user;
-    this.model.on("change:messages", this.renderMessages);
-    return this.model.on("change:authentication", this.goOn);
+    this.model.on("login", this.goOn);
+    return this.model.on("all", this.showMessage);
   };
 
   LoginView.prototype.goOn = function() {
@@ -36,7 +36,7 @@ LoginView = (function(_super) {
     parentWidth = $('#content').offsetParent().width();
     this.oldWidth = 100 * width / parentWidth;
     $("#content").css("width", "100%");
-    this.$el.html("      <img src='images/tangerine_logo.png' id='login_logo'>      <div class='messages'></div>      <label for='login_username'>" + (t('enumerator name')) + "</label>      <input id='login_username' name='login_username'>      <label for='login_password'>" + (t('password')) + "</label>      <input id='login_password' name='login_username' type='password'>      <button class='login'>" + (t('login')) + "</button>    ");
+    this.$el.html("      <img src='images/tangerine_logo.png' id='login_logo'>      <div class='form'>        <div class='messages'></div>        <label for='login_username'>" + (t('enumerator name')) + "</label>        <input id='login_username' name='login_username'>        <label for='login_password'>" + (t('password')) + "</label>        <input id='login_password' name='login_username' type='password'>        <button class='login'>" + (t('login')) + "</button>      </div>    ");
     return this.trigger("rendered");
   };
 
@@ -65,16 +65,10 @@ LoginView = (function(_super) {
     return this.model.login(values["login_username"], values["login_password"]);
   };
 
-  LoginView.prototype.renderMessages = function() {
-    var html, message, messages, _i, _len;
-    messages = this.model.get("messages") || [];
-    html = "<ul>";
-    for (_i = 0, _len = messages.length; _i < _len; _i++) {
-      message = messages[_i];
-      html += "<li>" + message + "</li>";
-    }
-    html += "</ul>";
-    return this.$el.find(".messages").html(html);
+  LoginView.prototype.showMessage = function(eventName, options) {
+    var message;
+    message = eventName === "pass-incorrect" ? t("app.login.msg." + eventName) : void 0;
+    return this.$el.find(".messages").html(message);
   };
 
   return LoginView;

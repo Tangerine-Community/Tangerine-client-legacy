@@ -27,14 +27,14 @@ class ResultsView extends Backbone.View
 
   csvBeta: ->
     filename = @assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
-    document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}"
+    document.location = "/" + Tangerine.dbName + "/_design/" + Tangerine.designDoc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}"
 
     ###
-    $.post "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
+    $.post "/" + Tangerine.dbName + "/_design/" + Tangerine.designDoc + "/_list/csv/csvRowByResult",
          data,
          -> alert("Response: " + data)
        );
-    @postRequest("/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
+    @postRequest("/" + Tangerine.dbName + "/_design/" + Tangerine.designDoc + "/_list/csv/csvRowByResult",
       "key"      : @assessment.id
       "filename" : filename
       "columns"  : "\"#{columns}\""
@@ -232,7 +232,7 @@ class ResultsView extends Backbone.View
     if @results?.length == 0
       $('#results-header').html "No results yet!"
     else
-      $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/resultSummaryByAssessmentId",
+      $.couch.db(Tangerine.dbName).view "#{Tangerine.designDoc}/resultSummaryByAssessmentId",
         key        : @assessment.id
         descending : true
         success: (result) =>

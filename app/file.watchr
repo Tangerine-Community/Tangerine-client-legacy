@@ -10,9 +10,22 @@ def notify(type,message)
 end
 
 watch ( '.*\.coffee$' ) { |match|
-  puts "\nCompiling:\t\t#{match}"
-  result = `coffee --bare --compile #{match} 2>&1`
-  if result.index "In"
+  match = String(match)
+  if match.index "translation.coffee"
+    path = match.split("/")
+    newFile = path[0..path.length-2].join("/")+"/translation.json"
+
+    puts "\nCompiling translation file for language: #{path[-2]}"
+    result = `coffee --bare --compile --print #{match}`
+    bareJson = result.gsub(/[\;\(\)]/, '')
+    puts bareJson
+    File.open(newFile, "w") {|f| f.write(bareJson) }
+  else
+    puts "\nCompiling:\t\t#{match}"
+    result = `coffee --bare --compile #{match} 2>&1`
+  end
+
+  if result.index "Error: In"
     notify("CoffeeScript error", result)
     puts "\n\nCoffeescript error\n******************\n#{result}"
   else
@@ -20,6 +33,7 @@ watch ( '.*\.coffee$' ) { |match|
 #    puts "\nDocco-menting:\t\t#{match}\n"
     push()
   end
+
 }
 
 watch ( '.*\.less$' ) { |match| 

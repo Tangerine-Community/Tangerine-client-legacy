@@ -44,13 +44,13 @@ ResultsView = (function(_super) {
   ResultsView.prototype.csvBeta = function() {
     var filename;
     filename = this.assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm");
-    return document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + ("/_list/csv/csvRowByResult?key=\"" + this.assessment.id + "\"&filename=" + filename);
+    return document.location = "/" + Tangerine.dbName + "/_design/" + Tangerine.designDoc + ("/_list/csv/csvRowByResult?key=\"" + this.assessment.id + "\"&filename=" + filename);
     /*
-        $.post "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
+        $.post "/" + Tangerine.dbName + "/_design/" + Tangerine.designDoc + "/_list/csv/csvRowByResult",
              data,
              -> alert("Response: " + data)
            );
-        @postRequest("/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
+        @postRequest("/" + Tangerine.dbName + "/_design/" + Tangerine.designDoc + "/_list/csv/csvRowByResult",
           "key"      : @assessment.id
           "filename" : filename
           "columns"  : "\"#{columns}\""
@@ -281,7 +281,7 @@ ResultsView = (function(_super) {
     if (((_ref = this.results) != null ? _ref.length : void 0) === 0) {
       $('#results-header').html("No results yet!");
     } else {
-      $.couch.db(Tangerine.db_name).view("" + Tangerine.design_doc + "/resultSummaryByAssessmentId", {
+      $.couch.db(Tangerine.dbName).view("" + Tangerine.designDoc + "/resultSummaryByAssessmentId", {
         key: this.assessment.id,
         descending: true,
         success: function(result) {

@@ -3,7 +3,7 @@
 	{
 		"cloud" :
 		{
-			"host"    : "http://tangerine.iriscouch.com",
+			"host"    : "http://localhost:5984",
 			"login"   : "tangerine:tangytangerine",
 			"dbName"  : "tangerine"
 		},
@@ -18,8 +18,13 @@
 			"login"  : "tangerine:tangytangerine",
 			"dbName" : "tangerine"
 		},
+		"robbert"         :
+		{
+			"url" : "http://localhost:80/index.php"
+		},
 		"designDoc"       : "tangerine",
-		"port"            : 5984
+		"port"            : 5984,
+		"groupPrefix"     : "group-"
 	},
 
 	"prototypeViews" : 
