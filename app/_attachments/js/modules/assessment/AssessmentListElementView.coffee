@@ -93,7 +93,7 @@ class AssessmentListElementView extends Backbone.View
     downloadKey     = "<span class='small_grey'>Download key <b>#{@model.id.substr(-5,5)}</b></span>"
     
     resultsButton   = "<img class='link_icon results' title='Results' src='images/icon_results.png'>"
-    runButton       = "<img class='link_icon run' title='Run' src='images/icon_run.png'>"
+    runButton       = "<img data-doc-id='#{@model.id}' class='link_icon run' title='Run' src='images/icon_run.png'>"
     name            = "<span class='name clickable '>#{@model.get('name')}</span>"
     adminName       = "<span class='admin_name clickable #{archiveClass}'>#{@model.get('name')}</span>"
     resultCount     = "<span class='resultCount'>#{@model.get('resultCount') || '0'} results</span>"
