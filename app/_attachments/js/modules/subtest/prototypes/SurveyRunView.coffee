@@ -1,3 +1,5 @@
+# these could easily be refactored into one.
+
 ResultOfQuestion = (name) ->
   $("#question-#{name}").attr("data-result")
 
@@ -6,6 +8,9 @@ ResultOfMultiple = (name) ->
   for input in $("#question-#{name} input:checked")
     result.push $(input).val()
   return result
+
+ResultOfPrevious = (name) ->
+  return vm.currentView.result.getVariable(name)
 
 class SurveyRunView extends Backbone.View
   events:

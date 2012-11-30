@@ -33,6 +33,34 @@ Result = (function(_super) {
     });
   };
 
+  Result.prototype.getVariable = function(key) {
+    var data, name, state, subtest, value, variable, _i, _len, _ref;
+    _ref = this.get("subtestData");
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      subtest = _ref[_i];
+      data = subtest.data;
+      for (variable in data) {
+        value = data[variable];
+        if (variable === key) {
+          if (_.isObject(value)) {
+            return _.compact((function() {
+              var _results;
+              _results = [];
+              for (name in value) {
+                state = value[name];
+                _results.push(state === "checked" ? name : void 0);
+              }
+              return _results;
+            })());
+          } else {
+            return value;
+          }
+        }
+      }
+    }
+    return null;
+  };
+
   Result.prototype.getGridScore = function(id) {
     var datum, _i, _len, _ref;
     _ref = this.get('subtestData');

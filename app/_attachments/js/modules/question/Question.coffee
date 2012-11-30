@@ -1,5 +1,4 @@
-# This RISC requires view that prefills with common configurations
-# binary trinary agreement, validity, boolean
+# @TODO I think this can be removed. url should stay 
 class Question extends Backbone.Model
 
   url: "question"

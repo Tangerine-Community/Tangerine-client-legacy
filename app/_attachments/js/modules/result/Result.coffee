@@ -26,6 +26,17 @@ class Result extends Backbone.Model
     @save
       'subtestData' : subtestData
 
+  getVariable: ( key ) ->
+    for subtest in @get("subtestData")
+      data = subtest.data
+      for variable, value of data
+        if variable == key
+          if _.isObject(value)
+            return _.compact(((name if state == "checked") for name, state of value))
+          else
+            return value
+    return null
+
   getGridScore: (id) ->
     for datum in @get 'subtestData'
       return parseInt(datum.data.attempted) if datum.subtestId == id
