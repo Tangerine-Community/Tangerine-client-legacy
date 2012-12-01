@@ -4,6 +4,18 @@ Backbone.View.prototype.close = ->
   @unbind()
   @onClose?()
 
+
+# Returns an object hashed by a given attribute.
+Backbone.Collection.prototype.indexBy = ( attr ) ->
+  result = {}
+  for oneModel in @models
+    if oneModel.has(attr)
+      key = oneModel.get(attr)
+      result[key] = [] if not result[key]?
+      result[key].push(oneModel)
+  return result
+
+
 #
 # handy jquery functions
 #
@@ -68,8 +80,11 @@ Math.isInt = -> return typeof n == 'number' && parseFloat(n) == parseInt(n, 10) 
 
 Math.decimals = (num, decimals) -> m = Math.pow( 10, decimals ); num *= m; num =  num+(num<0?-0.5:+0.5)>>0; num /= m
 
-
 class Utils
+
+  @log: (self, error) ->
+    className = self.constructor.toString().match(/function\s*(\w+)/)[1]
+    console.log "#{className}: #{error}"
 
   # asks for confirmation in the browser, and uses phonegap for cool confirmation
   @confirm: (message, options) ->

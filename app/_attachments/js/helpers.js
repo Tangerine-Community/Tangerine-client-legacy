@@ -6,6 +6,21 @@ Backbone.View.prototype.close = function() {
   return typeof this.onClose === "function" ? this.onClose() : void 0;
 };
 
+Backbone.Collection.prototype.indexBy = function(attr) {
+  var key, oneModel, result, _i, _len, _ref;
+  result = {};
+  _ref = this.models;
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    oneModel = _ref[_i];
+    if (oneModel.has(attr)) {
+      key = oneModel.get(attr);
+      if (!(result[key] != null)) result[key] = [];
+      result[key].push(oneModel);
+    }
+  }
+  return result;
+};
+
 (function($) {
   $.fn.scrollTo = function(speed, callback) {
     if (speed == null) speed = 250;
@@ -207,6 +222,12 @@ Math.decimals = function(num, decimals) {
 Utils = (function() {
 
   function Utils() {}
+
+  Utils.log = function(self, error) {
+    var className;
+    className = self.constructor.toString().match(/function\s*(\w+)/)[1];
+    return console.log("" + className + ": " + error);
+  };
 
   Utils.confirm = function(message, options) {
     var _ref;
