@@ -12,7 +12,7 @@ KlassResults = (function(_super) {
 
   KlassResults.prototype.url = "result";
 
-  KlassResults.prototype.model = Result;
+  KlassResults.prototype.model = KlassResult;
 
   return KlassResults;
 
