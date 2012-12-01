@@ -7,7 +7,7 @@
   "prototype": "grid",
   "part": 12,
   "reportType" : "mastery",
-  "resultBucket" : "words",
+  "itemType" : "words",
   "name": "Words",
   "items": [
     "nyavu",

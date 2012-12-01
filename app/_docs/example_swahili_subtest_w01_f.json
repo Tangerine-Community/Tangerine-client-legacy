@@ -9,7 +9,7 @@
   "part": 1,
   "columns": 3,
   "reportType" : "progress",
-  "resultBucket" : "words",
+  "itemType" : "words",
   "name": "Baseline Words",
   "items": [
        "Tai",

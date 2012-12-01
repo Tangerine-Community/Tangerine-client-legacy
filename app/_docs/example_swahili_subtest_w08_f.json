@@ -9,8 +9,8 @@
   "columns": 3,
   "timer": 60,
   "reportType" : "progress",
-  "resultBucket" : "words",
-  "name" : "Progress Monitor - words",
+  "itemType" : "words",
+  "name" : "End of term 1",
   "items" : [
        "Mto",
        "Keema",

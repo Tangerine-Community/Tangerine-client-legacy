@@ -7,7 +7,7 @@
   "prototype": "grid",
   "part": 5,
   "reportType" : "mastery",
-  "resultBucket" : "letters",
+  "itemType" : "letters",
   "name": "Letters",
   "items": [
     "k",
