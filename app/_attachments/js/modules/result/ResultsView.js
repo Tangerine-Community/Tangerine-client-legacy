@@ -23,39 +23,10 @@ ResultsView = (function(_super) {
     'click .csv_beta': 'csvBeta'
   };
 
-  ResultsView.prototype.postRequest = function(path, params) {
-    var form, hiddenField, key, method, value;
-    method = "post";
-    form = document.createElement("form");
-    form.setAttribute("method", method);
-    form.setAttribute("action", path);
-    for (key in params) {
-      value = params[key];
-      hiddenField = document.createElement("input");
-      hiddenField.setAttribute("type", "hidden");
-      hiddenField.setAttribute("name", key);
-      hiddenField.setAttribute("value", value);
-      form.appendChild(hiddenField);
-    }
-    document.body.appendChild(form);
-    return form.submit();
-  };
-
   ResultsView.prototype.csvBeta = function() {
     var filename;
     filename = this.assessment.get("name");
     return document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + ("/_list/csv/csvRowByResult?key=\"" + this.assessment.id + "\"&filename=" + filename);
-    /*
-        $.post "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
-             data,
-             -> alert("Response: " + data)
-           );
-        @postRequest("/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
-          "key"      : @assessment.id
-          "filename" : filename
-          "columns"  : "\"#{columns}\""
-        )
-    */
   };
 
   ResultsView.prototype.showResultSumView = function(event) {
@@ -232,7 +203,6 @@ ResultsView = (function(_super) {
 
   ResultsView.prototype.readyCSVBeta = function() {
     var _this = this;
-    console.log("trying to ready");
     return $.ajax({
       dataType: "json",
       contentType: "application/json;charset=utf-8",

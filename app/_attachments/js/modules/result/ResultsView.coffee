@@ -8,38 +8,9 @@ class ResultsView extends Backbone.View
     'click .details'  : 'showResultSumView'
     'click .csv_beta' : 'csvBeta'
 
-  postRequest: (path, params) ->
-    method = "post"
-    form = document.createElement("form")
-    form.setAttribute("method", method)
-    form.setAttribute("action", path)
-
-    for key, value of params
-      hiddenField = document.createElement("input")
-      hiddenField.setAttribute("type", "hidden")
-      hiddenField.setAttribute("name", key)
-      hiddenField.setAttribute("value", value)
-
-      form.appendChild(hiddenField)
-
-    document.body.appendChild(form)
-    form.submit()
-
   csvBeta: ->
     filename = @assessment.get("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
     document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}"
-
-    ###
-    $.post "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
-         data,
-         -> alert("Response: " + data)
-       );
-    @postRequest("/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
-      "key"      : @assessment.id
-      "filename" : filename
-      "columns"  : "\"#{columns}\""
-    )
-    ###
 
   showResultSumView: (event) ->
     result = new Result
@@ -89,11 +60,11 @@ class ResultsView extends Backbone.View
     return false
 
   csv: ->
-    @$el.find("button.csv").html "Preparing CSV..."
-    view = new CSVView
+    @$el.find("button.csv").html "Preparing CSV..." # show message
+    view = new CSVView # make a new CSV view, but don't show it, just let it work
       assessmentId : @assessment.id
     view.render()
-    view.on "ready", =>
+    view.on "ready", => # when it's ready, get a link to the doc it saved
       filename = @assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
       # point browser to file
       # do it in a new window because otherwise it will cancel the fetching/updating of the file
@@ -101,9 +72,6 @@ class ResultsView extends Backbone.View
       $button = @$el.find "button.csv"
       $button.after "<a href='#{csvLocation}' class='command'>Download CSV</a>"
       $button.remove()
-
-
-  #  Tangerine.router.navigate "csv/"+@assessment.id, true
 
   initDetectOptions: ->
     @available = 
@@ -171,7 +139,6 @@ class ResultsView extends Backbone.View
 
 
   readyCSVBeta: ->
-    console.log "trying to ready"
     $.ajax
       dataType: "json"
       contentType: "application/json;charset=utf-8",
