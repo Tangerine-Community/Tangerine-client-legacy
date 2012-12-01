@@ -1,10 +1,10 @@
-class PartByStudentMenuView extends Backbone.View
+class KlassGroupingMenuView extends Backbone.View
 
   events:
-    'change .part_selector' : 'gotoPartByStudentReport'
+    'change .part_selector' : 'gotoKlassGroupingReport'
 
-  gotoPartByStudentReport: (event) ->
-    Tangerine.router.navigate "report/partByStudent/" + @$el.find(event.target).find(":selected").attr("data-subtestId"), true
+  gotoKlassGroupingReport: (event) ->
+    Tangerine.router.navigate "report/klassGrouping/#{@klass.id}/" + @$el.find(event.target).find(":selected").attr("data-part"), true
 
   initialize: (options) ->
     @parent    = options.parent
@@ -32,7 +32,7 @@ class PartByStudentMenuView extends Backbone.View
       for subtestId, part in @parts
         if subtestId?
           flagForCurrent = if @currentPart == part then "**" else ''
-          html += "<option data-subtestId='#{subtestId}'>#{part}#{flagForCurrent}</option>"
+          html += "<option data-part='#{part}' data-subtestId='#{subtestId}'>#{part}#{flagForCurrent}</option>"
       html += "</select>"
           
       @$el.html html

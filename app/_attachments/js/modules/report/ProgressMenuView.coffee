@@ -4,7 +4,7 @@ class ProgressMenuView extends Backbone.View
     'change .student_selector' : 'gotoProgressTable'
 
   gotoProgressTable: (event) ->
-    Tangerine.router.navigate "report/progress/" + @$el.find(event.target).find(":selected").attr("data-studentId"), true
+    Tangerine.router.navigate "report/progress/" + @$el.find(event.target).find(":selected").attr("data-studentId") + "/#{@klass.id}", true
 
   initialize: (options) ->
     @parent    = options.parent
@@ -23,7 +23,9 @@ class ProgressMenuView extends Backbone.View
       html = "
         <select class='student_selector'>
           <option disabled='disabled' selected='selected'>#{t('select a student')}</option>
-          "
+          <option data-studentId='all'>#{t("all students")}</option>
+      "
+
       for student in @students
         html += "<option data-studentId='#{student.id}'>#{student.get('name')}</option>"
       html += "</select>"

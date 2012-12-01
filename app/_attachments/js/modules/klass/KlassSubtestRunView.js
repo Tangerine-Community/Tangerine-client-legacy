@@ -26,12 +26,13 @@ KlassSubtestRunView = (function(_super) {
     this.protoViews = Tangerine.config.prototypeViews;
     this.prototypeRendered = false;
     return this.result = new KlassResult({
-      resultBucket: options.subtest.get("resultBucket"),
+      itemType: options.subtest.get("itemType"),
       reportType: options.subtest.get("reportType"),
       studentId: options.student.id,
       subtestId: options.subtest.id,
       part: options.subtest.get("part"),
-      klassId: options.student.get("klassId")
+      klassId: options.student.get("klassId"),
+      timeAllowed: options.subtest.get("timer")
     });
   };
 

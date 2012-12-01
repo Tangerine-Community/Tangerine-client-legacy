@@ -49,11 +49,9 @@ class Router extends Backbone.Router
 
     'question/:id' : 'editQuestion'
 
-    'report/partByStudent/:subtestId' : 'partByStudent'
-    'report/studentToDate/:studentId' : 'studentToDate'
-    'report/masteryCheck/:studentId'  : 'masteryCheck'
-    'report/progress/:studentId'      : 'progressReport'
-    'report/classToDate/:klassId'     : 'klassToDate'
+    'report/klassGrouping/:klassId/:part' : 'klassGrouping'
+    'report/masteryCheck/:studentId'      : 'masteryCheck'
+    'report/progress/:studentId/:klassId' : 'progressReport'
 
   landing: ->
     if Tangerine.settings.context == "server"
@@ -417,25 +415,25 @@ class Router extends Backbone.Router
           details : "How did you get here?"
         vm.show errView
 
-  partByStudent: (subtestId) ->
+  klassGrouping: (klassId, part) ->
+    part = parseInt(part)
     Tangerine.user.verify
       isRegistered: ->
-        subtest = new Subtest "_id" : subtestId
-        subtest.fetch
-          success: ->
-            allResults = new Results
-            allResults.fetch
-              success: (collection) ->
-                results = collection.where "subtestId" : subtest.id
-                
-                students = new Students
-                students.fetch
-                  success: ->
-                    view = new PartByStudentView
-                      "students"   : students
-                      "subtest"    : subtest
-                      "results"    : results
-                    vm.show view
+          allSubtests = new Subtests
+          allSubtests.fetch
+            success: ( collection ) ->
+              subtests = new Subtests collection.where "part" : part
+              allResults = new KlassResults
+              allResults.fetch
+                success: ( results ) ->
+                  students = new Students
+                  students.fetch
+                    success: ->
+                      view = new KlassGroupingView
+                        "students" : students
+                        "subtests" : subtests
+                        "results"  : results
+                      vm.show view
       isUnregistered: ->
         Tangerine.router.navigate "login", true
 
@@ -472,40 +470,49 @@ class Router extends Backbone.Router
         student = new Student "_id" : studentId
         student.fetch
           success: (student) ->
-            klass = new Klass
-              "_id" : student.get "klassId"
+            klass = new Klass "_id" : student.get "klassId"
             klass.fetch
               success: (klass) ->
-                allResults = new Results
+                allResults = new KlassResults
                 allResults.fetch
                   success: ( collection ) ->
-                    results = new Results collection.where "studentId" : studentId, "reportType" : "mastery"
+                    results = new KlassResults collection.where "studentId" : studentId, "reportType" : "mastery"
                     view = new MasteryCheckView
                       "student" : student
                       "results" : results
                       "klass"   : klass
                     vm.show view
 
-  progressReport: (studentId) ->
-    console.log "ASDAS"
+  progressReport: (studentId, klassId) ->
     Tangerine.user.verify
       isRegistered: ->
-        student = new Student "_id" : studentId
-        student.fetch
-          success: (student) ->
-            klass = new Klass
-              "_id" : student.get "klassId"
-            klass.fetch
-              success: (klass) ->
-                allResults = new Results
-                allResults.fetch
-                  success: ( collection ) ->
-                    results = new Results collection.where "studentId" : studentId, "reportType" : "progress"
-                    view = new ProgressView
-                      "student" : student
-                      "results" : results
-                      "klass"   : klass
-                    vm.show view
+        # save this crazy function for later
+        # studentId can have the value "all", in which case student should == null
+        afterFetch = (student) ->
+          klass = new Klass
+            "_id" : klassId
+          klass.fetch
+            success: (klass) ->
+              allSubtests = new Subtests
+              allSubtests.fetch
+                success: ( allSubtests ) ->
+                  subtests = new Subtests allSubtests.where "curriculumId" : klass.get("curriculumId"), "reportType" : "progress"
+                  allResults = new KlassResults
+                  allResults.fetch
+                    success: ( collection ) ->
+                      results = new KlassResults collection.where "reportType" : "progress"
+                      view = new ProgressView
+                        "subtests" : subtests
+                        "student"  : student
+                        "results"  : results
+                        "klass"    : klass
+                      vm.show view
+        if studentId != "all"
+          student = new Student "_id" : studentId
+          student.fetch
+            success: afterFetch
+        else
+          afterFetch null
 
   studentToDate: (studentId) ->
     Tangerine.user.verify

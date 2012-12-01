@@ -7,7 +7,7 @@
   "prototype": "grid",
   "part": 2,
   "reportType" : "mastery",
-  "resultBucket" : "words",
+  "itemType" : "words",
   "name": "Words",
   "items": [
     "utu",

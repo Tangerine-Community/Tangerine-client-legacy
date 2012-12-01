@@ -7,7 +7,7 @@
   "prototype": "grid",
   "part": 7,
   "reportType" : "mastery",
-  "resultBucket" : "words",
+  "itemType" : "words",
   "name": "Words",
   "items": [
     "kisa",

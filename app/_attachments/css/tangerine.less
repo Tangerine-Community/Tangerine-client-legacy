@@ -282,9 +282,16 @@ textarea[contenteditable] {-webkit-appearance: none;}
 @orange-4: #F6EF9A;
 @grey: #888;
 
+@concerning: rgb(222, 156, 117);
+@poor:       rgb(229, 208, 149);
+@good:       rgb(201, 220, 136);
+@great:      rgb(135, 219, 144);
+
+@grey-0: #EEE;
 @grey-1: #CCC;
 @grey-2: #999;
-@grey-3: #333;
+@grey-3: #666;
+@grey-4: #333;
 
 @green: #8CC63F;
 
@@ -1377,16 +1384,34 @@ label[title]
  * Tangerine Class
  */
 
-table.mastery_check
+.MasteryCheckView
 {
-  border: 1px solid black;
+
+  table
+  {
+    margin: 1em 0;
+    border: 0;
+    width: 100%;
+  }
+  
   td
   {
-    padding: 5px 10px 5px 10px;
-    border: 2px solid white;
+    padding: 0.25em 0;
+    color: @grey-3;
+    border: 0;
+    border-bottom: 1px solid @grey-1;
   }
-  tr:nth-child(even) { background-color: #fff; }
-  tr:nth-child(odd) { background-color: #eee; }
+  
+  th
+  {
+    padding: 0.25em 0;
+    font-weight: normal;
+    color: black;
+    text-align: left;
+  }
+
+  //tr:nth-child(odd)  { background-color: #fff; }
+  //tr:nth-child(even) { background-color: #eee; }
 }
 
 ul.klass_list li
@@ -1430,6 +1455,76 @@ body[rtl]
   direction: rtl !important;
 }
 
+
+/*
+ * Progress
+ */
+
+.ProgressView
+{
+
+  table.tabular
+  {
+    margin: 1em 0;
+    border: 0;
+    width: 100%;
+
+  
+    td
+    {
+      padding: 0.25em 0;
+      color: @grey-3;
+      border: 0;
+      border-bottom: 1px solid @grey-1;
+    }
+  
+    th
+    {
+      padding: 0.25em 0;
+      font-weight: normal;
+      color: black;
+      text-align: left;
+    }
+
+  }
+
+}
+
+/*
+ * KlassGroupingView
+ */
+
+.KlassGroupingView
+{
+
+  .concerning { background-color: @concerning !important; }
+  .poor       { background-color: @poor       !important; }
+  .good       { background-color: @good       !important; }
+  .great      { background-color: @great      !important; }
+
+  table
+  {
+    border: 2px solid white;
+    background-color: #eee;
+    margin-bottom: 2em;
+
+    td, th
+    {
+      padding: 0.2em;
+      border: 2px solid white;
+    }
+
+    th
+    {
+      font-weight: normal;
+      background-color: white;
+      text-align: left;
+      border: 1px solid black
+    }
+
+  }
+
+}
 
 /*
  * cleditor

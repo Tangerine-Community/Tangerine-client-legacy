@@ -7,7 +7,7 @@
   "prototype": "grid",
   "part": 5,
   "reportType" : "mastery",
-  "resultBucket" : "words",
+  "itemType" : "words",
   "name": "Words",
   "items": [
     "papa",
