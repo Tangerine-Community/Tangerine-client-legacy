@@ -1172,18 +1172,22 @@ label[title] {
 /*
  * Tangerine Class
  */
-table.mastery_check {
-  border: 1px solid black;
+.MasteryCheckView table {
+  margin: 1em 0;
+  border: 0;
+  width: 100%;
 }
-table.mastery_check td {
-  padding: 5px 10px 5px 10px;
-  border: 2px solid white;
+.MasteryCheckView td {
+  padding: 0.25em 0;
+  color: #666666;
+  border: 0;
+  border-bottom: 1px solid #cccccc;
 }
-table.mastery_check tr:nth-child(even) {
-  background-color: #fff;
-}
-table.mastery_check tr:nth-child(odd) {
-  background-color: #eee;
+.MasteryCheckView th {
+  padding: 0.25em 0;
+  font-weight: normal;
+  color: black;
+  text-align: left;
 }
 ul.klass_list li {
   padding: 5px 0;
@@ -1209,6 +1213,57 @@ ul.klass_list li {
 }
 body[rtl] {
   direction: rtl !important;
+}
+/*
+ * Progress
+ */
+.ProgressView table.tabular {
+  margin: 1em 0;
+  border: 0;
+  width: 100%;
+}
+.ProgressView table.tabular td {
+  padding: 0.25em 0;
+  color: #666666;
+  border: 0;
+  border-bottom: 1px solid #cccccc;
+}
+.ProgressView table.tabular th {
+  padding: 0.25em 0;
+  font-weight: normal;
+  color: black;
+  text-align: left;
+}
+/*
+ * KlassGroupingView
+ */
+.KlassGroupingView .concerning {
+  background-color: #de9c75 !important;
+}
+.KlassGroupingView .poor {
+  background-color: #e5d095 !important;
+}
+.KlassGroupingView .good {
+  background-color: #c9dc88 !important;
+}
+.KlassGroupingView .great {
+  background-color: #87db90 !important;
+}
+.KlassGroupingView table {
+  border: 2px solid white;
+  background-color: #eee;
+  margin-bottom: 2em;
+}
+.KlassGroupingView table td,
+.KlassGroupingView table th {
+  padding: 0.2em;
+  border: 2px solid white;
+}
+.KlassGroupingView table th {
+  font-weight: normal;
+  background-color: white;
+  text-align: left;
+  border: 1px solid #000000;
 }
 /*
  * cleditor
@@ -1463,12 +1518,12 @@ table.tablesorter thead tr .headerSortUp {
 .ui-state-hover,
 .ui-widget-content .ui-state-hover,
 .ui-widget-header .ui-state-hover {
-  color: #333333;
+  color: #666666;
 }
 .ui-state-focus,
 .ui-widget-content .ui-state-focus,
 .ui-widget-header .ui-state-focus {
-  color: #333333;
+  color: #666666;
 }
 .ui-state-hover a,
 .ui-state-hover a:hover {
