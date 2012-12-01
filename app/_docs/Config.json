@@ -36,7 +36,7 @@
 	"reports" : 
 	[
 		{
-			"name"       : "student progress table",
+			"name"       : "progress graph",
 			"menuView"   : "ProgressMenuView",
 			"reportType" : "progress"
 		},
@@ -47,17 +47,7 @@
 		},
 		{
 			"name"       : "class grouping table",
-			"menuView"   : "PartByStudentMenuView"
-		},
-		{
-			"name"       : "student progress graph",
-			"menuView"   : "StudentToDateMenuView",
-			"reportType" : "progress"
-		},
-		{
-			"name"       : "class progress graph",
-			"menuView"   : "KlassToDateMenuView",
-			"reportType" : "progress"
+			"menuView"   : "KlassGroupingMenuView"
 		}
 	]
 }
