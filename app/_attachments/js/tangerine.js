@@ -636,6 +636,32 @@ Router = (function(_super) {
     });
   };
 
+  Router.prototype.csv_alpha = function(id) {
+    return Tangerine.user.verify({
+      isAdmin: function() {
+        var assessment;
+        assessment = new Assessment({
+          "_id": id
+        });
+        return assessment.fetch({
+          success: function() {
+            var filename;
+            filename = assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm");
+            return document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + ("/_list/csv/csvRowByResult?key=\"" + id + "\"&filename=" + filename);
+          }
+        });
+      },
+      isUser: function() {
+        var errView;
+        errView = new ErrorView({
+          message: "You're not an admin user",
+          details: "How did you get here?"
+        });
+        return vm.show(errView);
+      }
+    });
+  };
+
   Router.prototype.klassGrouping = function(klassId, part) {
     part = parseInt(part);
     return Tangerine.user.verify({

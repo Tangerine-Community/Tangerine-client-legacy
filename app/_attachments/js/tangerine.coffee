@@ -398,6 +398,22 @@ class Router extends Backbone.Router
           details : "How did you get here?"
         vm.show errView
 
+  csv_alpha: (id) ->
+    Tangerine.user.verify
+      isAdmin: ->
+        assessment = new Assessment
+          "_id" : id
+        assessment.fetch
+          success :  ->
+            filename = assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
+            document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{id}\"&filename=#{filename}"
+        
+      isUser: ->
+        errView = new ErrorView
+          message : "You're not an admin user"
+          details : "How did you get here?"
+        vm.show errView
+
   #
   # Reports
   #
@@ -448,8 +464,7 @@ class Router extends Backbone.Router
         # save this crazy function for later
         # studentId can have the value "all", in which case student should == null
         afterFetch = ( student ) ->
-          klass = new Klass
-            "_id" : klassId
+          klass = new Klass "_id" : klassId
           klass.fetch
             success: (klass) ->
               allSubtests = new Subtests
