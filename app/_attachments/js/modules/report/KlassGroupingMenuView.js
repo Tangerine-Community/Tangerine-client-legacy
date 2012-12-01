@@ -1,24 +1,24 @@
-var PartByStudentMenuView,
+var KlassGroupingMenuView,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-PartByStudentMenuView = (function(_super) {
+KlassGroupingMenuView = (function(_super) {
 
-  __extends(PartByStudentMenuView, _super);
+  __extends(KlassGroupingMenuView, _super);
 
-  function PartByStudentMenuView() {
-    PartByStudentMenuView.__super__.constructor.apply(this, arguments);
+  function KlassGroupingMenuView() {
+    KlassGroupingMenuView.__super__.constructor.apply(this, arguments);
   }
 
-  PartByStudentMenuView.prototype.events = {
-    'change .part_selector': 'gotoPartByStudentReport'
+  KlassGroupingMenuView.prototype.events = {
+    'change .part_selector': 'gotoKlassGroupingReport'
   };
 
-  PartByStudentMenuView.prototype.gotoPartByStudentReport = function(event) {
-    return Tangerine.router.navigate("report/partByStudent/" + this.$el.find(event.target).find(":selected").attr("data-subtestId"), true);
+  KlassGroupingMenuView.prototype.gotoKlassGroupingReport = function(event) {
+    return Tangerine.router.navigate(("report/klassGrouping/" + this.klass.id + "/") + this.$el.find(event.target).find(":selected").attr("data-part"), true);
   };
 
-  PartByStudentMenuView.prototype.initialize = function(options) {
+  KlassGroupingMenuView.prototype.initialize = function(options) {
     var allSubtests, milisecondsPerPart,
       _this = this;
     this.parent = options.parent;
@@ -44,7 +44,7 @@ PartByStudentMenuView = (function(_super) {
     });
   };
 
-  PartByStudentMenuView.prototype.render = function() {
+  KlassGroupingMenuView.prototype.render = function() {
     var flagForCurrent, html, part, subtestId, _len, _ref;
     if (this.ready) {
       html = "        <select class='part_selector'>          <option disabled='disabled' selected='selected'>Select an assessment</option>          ";
@@ -53,7 +53,7 @@ PartByStudentMenuView = (function(_super) {
         subtestId = _ref[part];
         if (subtestId != null) {
           flagForCurrent = this.currentPart === part ? "**" : '';
-          html += "<option data-subtestId='" + subtestId + "'>" + part + flagForCurrent + "</option>";
+          html += "<option data-part='" + part + "' data-subtestId='" + subtestId + "'>" + part + flagForCurrent + "</option>";
         }
       }
       html += "</select>";
@@ -63,6 +63,6 @@ PartByStudentMenuView = (function(_super) {
     }
   };
 
-  return PartByStudentMenuView;
+  return KlassGroupingMenuView;
 
 })(Backbone.View);
