@@ -12,14 +12,6 @@ KlassResult = (function(_super) {
 
   KlassResult.prototype.url = "result";
 
-  KlassResult.prototype.initialize = function(options) {
-    if (options["new"] != null) {
-      return this.set({
-        'timestamp': (new Date()).getTime()
-      });
-    }
-  };
-
   KlassResult.prototype.add = function(subtestDataElement) {
     return this.save({
       'subtestData': subtestDataElement

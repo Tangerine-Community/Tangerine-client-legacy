@@ -26,6 +26,7 @@ KlassSubtestRunView = (function(_super) {
     this.protoViews = Tangerine.config.prototypeViews;
     this.prototypeRendered = false;
     return this.result = new KlassResult({
+      startTime: (new Date()).getTime(),
       itemType: options.subtest.get("itemType"),
       reportType: options.subtest.get("reportType"),
       studentId: options.student.id,
