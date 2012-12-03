@@ -15,6 +15,26 @@ Backbone.Collection.prototype.indexBy = ( attr ) ->
       result[key].push(oneModel)
   return result
 
+# Returns an object hashed by a given attribute.
+Backbone.Collection.prototype.indexArrayBy = ( attr ) ->
+  result = []
+  for oneModel in @models
+    if oneModel.has(attr)
+      key = oneModel.get(attr)
+      result[key] = [] if not result[key]?
+      result[key].push(oneModel)
+  return result
+
+
+#
+# This series of functions returns properties with default values if no property is found
+# @gotcha be mindful of the default "blank" values set here
+#
+Backbone.Model.prototype.getNumber =        (key) -> return if @has(key) then parseInt(@get(key)) else 0
+Backbone.Model.prototype.getArray =         (key) -> return if @has(key) then @get(key)           else []
+Backbone.Model.prototype.getString =        (key) -> return if @has(key) then @get(key)           else ""
+Backbone.Model.prototype.getEscapedString = (key) -> return if @has(key) then @escape(key)        else ""
+
 
 #
 # handy jquery functions

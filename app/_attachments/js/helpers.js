@@ -21,6 +21,53 @@ Backbone.Collection.prototype.indexBy = function(attr) {
   return result;
 };
 
+Backbone.Collection.prototype.indexArrayBy = function(attr) {
+  var key, oneModel, result, _i, _len, _ref;
+  result = [];
+  _ref = this.models;
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    oneModel = _ref[_i];
+    if (oneModel.has(attr)) {
+      key = oneModel.get(attr);
+      if (!(result[key] != null)) result[key] = [];
+      result[key].push(oneModel);
+    }
+  }
+  return result;
+};
+
+Backbone.Model.prototype.getNumber = function(key) {
+  if (this.has(key)) {
+    return parseInt(this.get(key));
+  } else {
+    return 0;
+  }
+};
+
+Backbone.Model.prototype.getArray = function(key) {
+  if (this.has(key)) {
+    return this.get(key);
+  } else {
+    return [];
+  }
+};
+
+Backbone.Model.prototype.getString = function(key) {
+  if (this.has(key)) {
+    return this.get(key);
+  } else {
+    return "";
+  }
+};
+
+Backbone.Model.prototype.getEscapedString = function(key) {
+  if (this.has(key)) {
+    return this.escape(key);
+  } else {
+    return "";
+  }
+};
+
 (function($) {
   $.fn.scrollTo = function(speed, callback) {
     if (speed == null) speed = 250;
