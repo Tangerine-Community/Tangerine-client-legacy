@@ -1172,18 +1172,43 @@ label[title] {
 /*
  * Tangerine Class
  */
-.MasteryCheckView table {
+.edit_in_place {
+  cursor: pointer;
+}
+.edit_in_place input {
+  width: 90%;
+}
+.class_table {
   margin: 1em 0;
   border: 0;
   width: 100%;
 }
-.MasteryCheckView td {
+.class_table td {
   padding: 0.25em 0;
   color: #666666;
   border: 0;
   border-bottom: 1px solid #cccccc;
 }
-.MasteryCheckView th {
+.class_table th {
+  vertical-align: top;
+  padding: 0.25em 0;
+  font-weight: normal;
+  color: black;
+  text-align: left;
+}
+.MasteryCheckView table {
+  margin: 1em 0;
+  border: 0;
+  width: 100%;
+}
+.MasteryCheckView table td {
+  padding: 0.25em 0;
+  color: #666666;
+  border: 0;
+  border-bottom: 1px solid #cccccc;
+}
+.MasteryCheckView table th {
+  vertical-align: top;
   padding: 0.25em 0;
   font-weight: normal;
   color: black;
@@ -1217,18 +1242,19 @@ body[rtl] {
 /*
  * Progress
  */
-.ProgressView table.tabular {
+.ProgressView table.tablar {
   margin: 1em 0;
   border: 0;
   width: 100%;
 }
-.ProgressView table.tabular td {
+.ProgressView table.tablar td {
   padding: 0.25em 0;
   color: #666666;
   border: 0;
   border-bottom: 1px solid #cccccc;
 }
-.ProgressView table.tabular th {
+.ProgressView table.tablar th {
+  vertical-align: top;
   padding: 0.25em 0;
   font-weight: normal;
   color: black;
@@ -1264,6 +1290,33 @@ body[rtl] {
   background-color: white;
   text-align: left;
   border: 1px solid #000000;
+}
+/*
+ * Curriculum editor
+ */
+.CurriculumView table {
+  border: 2px solid white !important;
+  margin: 1em 0;
+  border: 0;
+  width: 100%;
+}
+.CurriculumView table td {
+  padding: 0.25em 0;
+  color: #666666;
+  border: 0;
+  border-bottom: 1px solid #cccccc;
+}
+.CurriculumView table th {
+  vertical-align: top;
+  padding: 0.25em 0;
+  font-weight: normal;
+  color: black;
+  text-align: left;
+}
+.CurriculumView table td,
+.CurriculumView table th {
+  border-left: 1px solid #cccccc;
+  padding: 0 0.25em;
 }
 /*
  * cleditor

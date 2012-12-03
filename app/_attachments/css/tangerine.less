@@ -1384,16 +1384,24 @@ label[title]
  * Tangerine Class
  */
 
-.MasteryCheckView
+.edit_in_place
+{
+  cursor: pointer;
+
+  input
+  {
+    width: 90%;
+  }
+
+}
+
+.class_table
 {
 
-  table
-  {
-    margin: 1em 0;
-    border: 0;
-    width: 100%;
-  }
-  
+  margin: 1em 0;
+  border: 0;
+  width: 100%;
+
   td
   {
     padding: 0.25em 0;
@@ -1401,13 +1409,25 @@ label[title]
     border: 0;
     border-bottom: 1px solid @grey-1;
   }
-  
+
   th
   {
+    vertical-align: top;
     padding: 0.25em 0;
     font-weight: normal;
     color: black;
     text-align: left;
+  }
+
+}
+
+
+.MasteryCheckView
+{
+
+  table
+  {
+    .class_table;
   }
 
   //tr:nth-child(odd)  { background-color: #fff; }
@@ -1462,32 +1482,10 @@ body[rtl]
 
 .ProgressView
 {
-
-  table.tabular
+  table.tablar
   {
-    margin: 1em 0;
-    border: 0;
-    width: 100%;
-
-  
-    td
-    {
-      padding: 0.25em 0;
-      color: @grey-3;
-      border: 0;
-      border-bottom: 1px solid @grey-1;
-    }
-  
-    th
-    {
-      padding: 0.25em 0;
-      font-weight: normal;
-      color: black;
-      text-align: left;
-    }
-
+    .class_table;
   }
-
 }
 
 /*
@@ -1525,6 +1523,27 @@ body[rtl]
   }
 
 }
+
+/*
+ * Curriculum editor
+ */
+.CurriculumView
+{
+  table
+  {
+
+    border: 2px solid white !important;
+
+    .class_table;
+    td, th
+    {
+      border-left: 1px solid @grey-1;
+      padding: 0 0.25em
+    }
+
+  }
+}
+
 
 /*
  * cleditor
