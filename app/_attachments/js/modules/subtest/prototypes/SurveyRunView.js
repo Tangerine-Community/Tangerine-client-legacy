@@ -78,6 +78,7 @@ SurveyRunView = (function(_super) {
     this.autostopped = false;
     autostopLimit = parseInt(this.model.get("autostopLimit")) || 0;
     longestSequence = 0;
+    autostopCount = 0;
     if (autostopLimit > 0) {
       for (i = 1, _ref2 = this.questionViews.length; 1 <= _ref2 ? i <= _ref2 : i >= _ref2; 1 <= _ref2 ? i++ : i--) {
         if (this.questionViews[i - 1].answer === "0") {

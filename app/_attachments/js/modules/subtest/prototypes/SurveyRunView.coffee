@@ -53,6 +53,7 @@ class SurveyRunView extends Backbone.View
     @autostopped = false
     autostopLimit = parseInt(@model.get("autostopLimit")) || 0
     longestSequence = 0
+    autostopCount = 0
     if autostopLimit > 0
       for i in [1..@questionViews.length] # just in case they can't count
         if @questionViews[i-1].answer == "0"
