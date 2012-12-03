@@ -7,6 +7,12 @@
 			"login"   : "tangerine:tangytangerine",
 			"dbName"  : "tangerine"
 		},
+		"class" :
+		{
+			"host"    : "http://tangerineclass.iriscouch.com",
+			"login"   : "tangerine:classytangerine",
+			"dbName"  : "tangerine"
+		},
 		"subnet" :
 		{
 			"base"   : "http://192.168.1.",
