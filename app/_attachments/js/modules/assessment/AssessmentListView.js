@@ -8,17 +8,17 @@ AssessmentListView = (function(_super) {
   __extends(AssessmentListView, _super);
 
   function AssessmentListView() {
-    this.newAssessmentSave = __bind(this.newAssessmentSave, this);
+    this.newSave = __bind(this.newSave, this);
     this.render = __bind(this.render, this);
     this.refresh = __bind(this.refresh, this);
     AssessmentListView.__super__.constructor.apply(this, arguments);
   }
 
   AssessmentListView.prototype.events = {
-    'keypress .new_assessment_name': 'newAssessmentSave',
-    'click .new_assessment_save': 'newAssessmentSave',
-    'click .new_assessment_cancel': 'newAssessmentToggle',
-    'click .new_assessment': 'newAssessmentToggle',
+    'keypress .new_name': 'newSave',
+    'click .new_save': 'newSave',
+    'click .new_cancel': 'newToggle',
+    'click .new': 'newToggle',
     'click .import': 'import',
     'click .groups': 'gotoGroups'
   };
@@ -35,6 +35,7 @@ AssessmentListView = (function(_super) {
     var group, view, _i, _len, _ref, _results;
     this.assessments = options.assessments;
     this.group = options.group;
+    this.curricula = options.curricula;
     this.curriculaListView = new CurriculaListView({
       "curricula": options.curricula
     });
@@ -67,6 +68,16 @@ AssessmentListView = (function(_super) {
 
   AssessmentListView.prototype.refresh = function() {
     var _this = this;
+    this.curricula.fetch({
+      success: function(collection) {
+        var curricula;
+        curricula = new Curricula(collection.where({
+          "group": _this.group
+        }));
+        _this.curriculaListView.curricula = curricula;
+        return _this.curriculaListView.render();
+      }
+    });
     this.assessments = new Assessments;
     return this.assessments.fetch({
       success: function(assessments) {
@@ -91,12 +102,12 @@ AssessmentListView = (function(_super) {
 
   AssessmentListView.prototype.render = function() {
     var assessmentCount, groupName, groupsButton, html, i, importButton, newButton, view, _len, _ref;
-    newButton = "<button class='new_assessment command'>New</button>";
+    newButton = "<button class='new command'>New</button>";
     importButton = "<button class='import command'>Import</button>";
     groupsButton = "<button class='navigation groups'>Groups</button>";
-    html = "      " + (Tangerine.settings.context === "server" ? groupsButton : "") + "      <h1>Assessments</h1>      ";
+    html = "      " + (Tangerine.settings.context === "server" ? groupsButton : "") + "      <h1>Assessments</h1>    ";
     if (this.isAdmin) {
-      html += "        " + (Tangerine.settings.context === "server" ? newButton : "") + "        " + (Tangerine.settings.context === "mobile" ? importButton : "") + "        <div class='new_assessment_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_assessment_name' placeholder='Assessment Name'>            <button class='new_assessment_save command'>Save</button> <button class='new_assessment_cancel command'>Cancel</button>          </div>        </div>      ";
+      html += "        " + (Tangerine.settings.context === "server" ? newButton : "") + "        " + (Tangerine.settings.context === "mobile" ? importButton : "") + "        <div class='new_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_name' placeholder='Name'>            <select id='new_type'>              <option value='assessment'>Assessment</option>              <option value='curriculum'>Curriculum</option>            </select><br>            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>          </div>        </div>      ";
     }
     this.$el.html(html);
     if (Tangerine.settings.context === "server") {
@@ -112,6 +123,9 @@ AssessmentListView = (function(_super) {
         view.setElement(this.$el.find("#group_" + view.cid));
         view.render();
       }
+      this.$el.append("<div id='curricula_container'></div>");
+      this.curriculaListView.setElement(this.$el.find("#curricula_container"));
+      this.curriculaListView.render();
     } else if (Tangerine.settings.context === "mobile") {
       this.$el.append("<ul class='assessment_list'></ul>");
       this.listView.setElement(this.$el.find("ul.assessment_list"));
@@ -120,37 +134,54 @@ AssessmentListView = (function(_super) {
     this.trigger("rendered");
   };
 
-  AssessmentListView.prototype.newAssessmentToggle = function() {
-    this.$el.find('.new_assessment_form, .new_assessment').fadeToggle(250);
+  AssessmentListView.prototype.newToggle = function() {
+    this.$el.find('.new_form, .new').fadeToggle(250);
     return false;
   };
 
-  AssessmentListView.prototype.newAssessmentSave = function(event) {
-    var name, newAssessment, newId,
+  AssessmentListView.prototype.newSave = function(event) {
+    var name, newId, newObject, newType,
       _this = this;
     if (event.type !== "click" && event.which !== 13) return true;
-    name = this.$el.find('.new_assessment_name').val();
-    if (name.length !== 0) {
-      newId = Utils.guid();
-      newAssessment = new Assessment({
+    name = this.$el.find('.new_name').val();
+    newType = this.$el.find("#new_type option:selected").val();
+    newId = Utils.guid();
+    if (name.length === 0) {
+      Utils.midAlert("<span class='error'>Could not save <img src='images/icon_close.png' class='clear_message'></span>");
+      return false;
+    }
+    if (newType === "assessment") {
+      newObject = new Assessment({
         "name": name,
         "group": this.group,
         "_id": newId,
         "assessmentId": newId,
         "archived": false
       });
-      newAssessment.save(null, {
-        success: function() {
-          _this.refresh();
-          return _this.$el.find('.new_assessment_form, .new_assessment').fadeToggle(250, function() {
-            return _this.$el.find('.new_assessment_name').val("");
-          });
-        }
+    } else if (newType === "curriculum") {
+      newObject = new Curriculum({
+        "name": name,
+        "group": this.group,
+        "_id": newId,
+        "curriculumId": newId
       });
-      Utils.midAlert("" + name + " saved");
-    } else {
-      Utils.midAlert("<span class='error'>Could not save <img src='images/icon_close.png' class='clear_message'></span>");
     }
+    newObject.save(null, {
+      success: function() {
+        _this.refresh();
+        _this.$el.find('.new_form, .new').fadeToggle(250, function() {
+          return _this.$el.find('.new_name').val("");
+        });
+        return Utils.midAlert("" + name + " saved");
+      },
+      error: function() {
+        _this.refresh();
+        _this.$el.find('.new_form, .new').fadeToggle(250, function() {
+          return _this.$el.find('.new_name').val("");
+        });
+        return Utils.midAlert("Please try again. Error saving.");
+      }
+    });
     return false;
   };
 

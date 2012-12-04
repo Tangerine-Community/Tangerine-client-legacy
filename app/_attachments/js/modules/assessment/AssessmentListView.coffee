@@ -1,12 +1,12 @@
 class AssessmentListView extends Backbone.View
 
   events:
-    'keypress .new_assessment_name' : 'newAssessmentSave'
-    'click .new_assessment_save'    : 'newAssessmentSave'
-    'click .new_assessment_cancel'  : 'newAssessmentToggle'
-    'click .new_assessment'         : 'newAssessmentToggle'
-    'click .import'                 : 'import'
-    'click .groups'                 : 'gotoGroups'
+    'keypress .new_name' : 'newSave'
+    'click .new_save'    : 'newSave'
+    'click .new_cancel'  : 'newToggle'
+    'click .new'         : 'newToggle'
+    'click .import'      : 'import'
+    'click .groups'      : 'gotoGroups'
 
   gotoGroups: -> Tangerine.router.navigate "groups", true
   import:     -> Tangerine.router.navigate "import", true
@@ -14,6 +14,7 @@ class AssessmentListView extends Backbone.View
   initialize:(options) ->
     @assessments = options.assessments
     @group       = options.group
+    @curricula   = options.curricula
     @curriculaListView = new CurriculaListView
       "curricula" : options.curricula
     @isAdmin = Tangerine.user.isAdmin()
@@ -39,6 +40,12 @@ class AssessmentListView extends Backbone.View
     
 
   refresh: =>
+    @curricula.fetch
+      success: ( collection ) =>
+        curricula = new Curricula collection.where "group" : @group
+        @curriculaListView.curricula = curricula
+        @curriculaListView.render()
+        
     @assessments = new Assessments
     @assessments.fetch
       success: (assessments) =>
@@ -49,26 +56,28 @@ class AssessmentListView extends Backbone.View
           view.allAssessments = assessments
           view.refresh true
 
-
   render: =>
-    newButton    = "<button class='new_assessment command'>New</button>"
+    newButton    = "<button class='new command'>New</button>"
     importButton = "<button class='import command'>Import</button>"
     groupsButton = "<button class='navigation groups'>Groups</button>"
-
 
     html = "
       #{if Tangerine.settings.context == "server" then groupsButton else ""}
       <h1>Assessments</h1>
-      "
+    "
     if @isAdmin
       html += "
         #{if Tangerine.settings.context == "server" then newButton else "" }
         #{if Tangerine.settings.context == "mobile" then importButton else ""}
 
-        <div class='new_assessment_form confirmation'>
+        <div class='new_form confirmation'>
           <div class='menu_box_wide'>
-            <input type='text' class='new_assessment_name' placeholder='Assessment Name'>
-            <button class='new_assessment_save command'>Save</button> <button class='new_assessment_cancel command'>Cancel</button>
+            <input type='text' class='new_name' placeholder='Name'>
+            <select id='new_type'>
+              <option value='assessment'>Assessment</option>
+              <option value='curriculum'>Curriculum</option>
+            </select><br>
+            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>
           </div>
         </div>
       "
@@ -82,6 +91,9 @@ class AssessmentListView extends Backbone.View
         @$el.append "<h2 class='header_#{view.cid}'>#{groupName} (#{assessmentCount})</h2><ul id='group_#{view.cid}' class='assessment_list'></ul>"
         view.setElement(@$el.find("#group_#{view.cid}"))
         view.render()
+      @$el.append("<div id='curricula_container'></div>")
+      @curriculaListView.setElement(@$el.find("#curricula_container"))
+      @curriculaListView.render()
         
     else if Tangerine.settings.context == "mobile"
       @$el.append "<ul class='assessment_list'></ul>"
@@ -93,41 +105,52 @@ class AssessmentListView extends Backbone.View
     return
 
   # Making a new assessment
-  newAssessmentToggle: -> @$el.find('.new_assessment_form, .new_assessment').fadeToggle(250); false
+  newToggle: -> @$el.find('.new_form, .new').fadeToggle(250); false
 
-  newAssessmentSave: (event) =>
+  newSave: (event) =>
 
     # this handles ambiguous events
     # the idea is to support clicks and the enter key
     # logic:
     # it it's a keystroke and it's not enter, act normally, just a key stroke
     # if it's a click or enter, process the form
-    
+
     if event.type != "click" && event.which != 13
       return true
-    
-    name = @$el.find('.new_assessment_name').val()
-  
-    if name.length != 0
-      newId = Utils.guid()
-      newAssessment = new Assessment
+
+    name    = @$el.find('.new_name').val()
+    newType = @$el.find("#new_type option:selected").val()
+    newId   = Utils.guid()
+
+    if name.length == 0
+      Utils.midAlert "<span class='error'>Could not save <img src='images/icon_close.png' class='clear_message'></span>"
+      return false
+
+    if newType == "assessment"
+      newObject = new Assessment
         "name"         : name
         "group"        : @group
         "_id"          : newId
         "assessmentId" : newId
         "archived"     : false
-      
-      newAssessment.save( null, 
-        success : => 
-          @refresh() 
-          @$el.find('.new_assessment_form, .new_assessment').fadeToggle(250, => @$el.find('.new_assessment_name').val(""))
-      )
+    else if newType == "curriculum"
+      newObject = new Curriculum
+        "name"         : name
+        "group"        : @group
+        "_id"          : newId
+        "curriculumId" : newId
 
-      
+    newObject.save null,
+      success : => 
+        @refresh() 
+        @$el.find('.new_form, .new').fadeToggle(250, => @$el.find('.new_name').val(""))
+        Utils.midAlert "#{name} saved"
+      error: =>
+        @refresh() 
+        @$el.find('.new_form, .new').fadeToggle(250, => @$el.find('.new_name').val(""))
+        Utils.midAlert "Please try again. Error saving."
 
-      Utils.midAlert "#{name} saved"
-    else
-      Utils.midAlert "<span class='error'>Could not save <img src='images/icon_close.png' class='clear_message'></span>"
+
     return false
 
   # ViewManager
