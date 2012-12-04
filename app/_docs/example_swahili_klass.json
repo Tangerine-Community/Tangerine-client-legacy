@@ -4,6 +4,7 @@
    "year": "2012",
    "grade": "1",
    "stream": "A",
+   "curriculumId" : "example_swahili_curriculum",
    "captureLastAttempted" : false,
    "endOfLine" : false,
    "collection": "klass",
