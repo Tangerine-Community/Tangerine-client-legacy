@@ -23,13 +23,14 @@ Router = (function(_super) {
     'class/edit/:id': 'klassEdit',
     'class/student/:studentId': 'studentEdit',
     'class/student/report/:studentId': 'studentReport',
+    'class/subtest/:id': 'editKlassSubtest',
     'class/:id/:part': 'klassPartly',
     'class/:id': 'klassPartly',
     'class/run/:studentId/:subtestId': 'runSubtest',
     'class/result/student/subtest/:studentId/:subtestId': 'studentSubtest',
     'curricula': 'curricula',
     'curriculum/:id': 'curriculum',
-    'curriculum/import': 'curriculumImport',
+    'curriculumImport': 'curriculumImport',
     'report/klassGrouping/:klassId/:part': 'klassGrouping',
     'report/masteryCheck/:studentId': 'masteryCheck',
     'report/progress/:studentId/:klassId': 'progressReport',
@@ -97,6 +98,39 @@ Router = (function(_super) {
   };
 
   Router.prototype.curriculum = function(curriculumId) {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var curriculum;
+        curriculum = new Curriculum({
+          "_id": curriculumId
+        });
+        return curriculum.fetch({
+          success: function() {
+            var allSubtests;
+            allSubtests = new Subtests;
+            return allSubtests.fetch({
+              success: function() {
+                var subtests, view;
+                subtests = new Subtests(allSubtests.where({
+                  "curriculumId": curriculumId
+                }));
+                view = new CurriculumView({
+                  "curriculum": curriculum,
+                  "subtests": subtests
+                });
+                return vm.show(view);
+              }
+            });
+          }
+        });
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.curriculumEdit = function(curriculumId) {
     return Tangerine.user.verify({
       isRegistered: function() {
         var curriculum;
@@ -816,6 +850,42 @@ Router = (function(_super) {
                 view = new SubtestEditView({
                   model: model,
                   assessment: assessment
+                });
+                return vm.show(view);
+              }
+            });
+          }
+        });
+      },
+      isUser: function() {
+        return Tangerine.router.navigate("", true);
+      },
+      isUnregistereded: function() {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.editKlassSubtest = function(id) {
+    return Tangerine.user.verify({
+      isAdmin: function() {
+        var subtest;
+        id = Utils.cleanURL(id);
+        subtest = new Subtest({
+          _id: id
+        });
+        return subtest.fetch({
+          success: function(model, response) {
+            var curriculum;
+            curriculum = new Curriculum({
+              "_id": subtest.get("curriculumId")
+            });
+            return curriculum.fetch({
+              success: function() {
+                var view;
+                view = new KlassSubtestEditView({
+                  model: model,
+                  curriculum: curriculum
                 });
                 return vm.show(view);
               }

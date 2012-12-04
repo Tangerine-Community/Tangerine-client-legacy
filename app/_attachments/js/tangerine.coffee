@@ -17,6 +17,7 @@ class Router extends Backbone.Router
     'class/edit/:id' : 'klassEdit'
     'class/student/:studentId'        : 'studentEdit'
     'class/student/report/:studentId' : 'studentReport'
+    'class/subtest/:id' : 'editKlassSubtest'
 
     'class/:id/:part' : 'klassPartly'
     'class/:id'       : 'klassPartly'
@@ -27,7 +28,7 @@ class Router extends Backbone.Router
 
     'curricula'         : 'curricula'
     'curriculum/:id'    : 'curriculum'
-    'curriculum/import' : 'curriculumImport'
+    'curriculumImport'  : 'curriculumImport'
 
     'report/klassGrouping/:klassId/:part' : 'klassGrouping'
     'report/masteryCheck/:studentId'      : 'masteryCheck'
@@ -49,7 +50,7 @@ class Router extends Backbone.Router
     'results/:name' : 'results'
     'import'        : 'import'
     
-    'subtest/:id' : 'editSubtest'
+    'subtest/:id'       : 'editSubtest'
 
     'question/:id' : 'editQuestion'
 
@@ -89,6 +90,24 @@ class Router extends Backbone.Router
         Tangerine.router.navigate "login", true
 
   curriculum: (curriculumId) ->
+    Tangerine.user.verify
+      isRegistered: ->
+        curriculum = new Curriculum "_id" : curriculumId
+        curriculum.fetch
+          success: ->
+            allSubtests = new Subtests
+            allSubtests.fetch
+              success: ->
+                subtests = new Subtests allSubtests.where "curriculumId" : curriculumId
+                view = new CurriculumView
+                  "curriculum" : curriculum
+                  "subtests"   : subtests
+                vm.show view
+      isUnregistered: ->
+        Tangerine.router.navigate "login", true
+
+
+  curriculumEdit: (curriculumId) ->
     Tangerine.user.verify
       isRegistered: ->
         curriculum = new Curriculum "_id" : curriculumId
@@ -510,6 +529,27 @@ class Router extends Backbone.Router
         Tangerine.router.navigate "", true
       isUnregistereded: ->
         Tangerine.router.navigate "login", true
+
+  editKlassSubtest: (id) ->
+    Tangerine.user.verify
+      isAdmin: ->
+        id = Utils.cleanURL id
+        subtest = new Subtest _id : id
+        subtest.fetch
+          success: (model, response) ->
+            curriculum = new Curriculum
+              "_id" : subtest.get("curriculumId")
+            curriculum.fetch
+              success: ->
+                view = new KlassSubtestEditView
+                  model      : model
+                  curriculum : curriculum
+                vm.show view
+      isUser: ->
+        Tangerine.router.navigate "", true
+      isUnregistereded: ->
+        Tangerine.router.navigate "login", true
+
 
   #
   # Question
