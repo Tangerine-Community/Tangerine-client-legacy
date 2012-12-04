@@ -20,7 +20,7 @@ CurriculaView = (function(_super) {
   };
 
   CurriculaView.prototype.gotoImport = function() {
-    return Tangerine.router.navigate("curriculum/import", true);
+    return Tangerine.router.navigate("curriculumImport", true);
   };
 
   CurriculaView.prototype.initialize = function(options) {

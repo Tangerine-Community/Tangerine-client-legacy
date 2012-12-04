@@ -2,29 +2,29 @@ class CurriculaView extends Backbone.View
 
   events :
     'click .import' : 'gotoImport'
-    'click .back' : 'goBack'
+    'click .back'   : 'goBack'
 
   goBack: -> history.back()
 
   gotoImport: ->
-    Tangerine.router.navigate "curriculum/import", true
+    Tangerine.router.navigate "curriculumImport", true
 
   initialize: (options )->
     @subView = new CurriculaListView
       curricula : options.curricula
-    @subView.on "render", @render
-    @subView.render()
-
-
+    options.curricula.on "all", => @subView.render()
 
   render: ->
     @$el.html "
-    <button class='back navigation'>#{t('back')}</button>
-    <h2>#{t('loaded curricula')}</h2>
+    <button class='back navigation'>#{t('back')}</button><br>
     <button class='command import'>#{t('import')}</button>
     <br>
     <div id='klass_list'></div>
     "
-    @$el.find('#klass_list').append @subView.el
-    
+
+    @subView.setElement @$el.find('#klass_list')
+
     @trigger "rendered"
+
+  onClose: ->
+    @subView?.close()
