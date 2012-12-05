@@ -12,7 +12,7 @@ Tangerine =
 Tangerine.$db = $.couch.db(Tangerine.db_name)
 
 # Grab our system config doc
-Tangerine.$db.openDoc "Config",            { success:(data) -> Tangerine.config    = data }, { async: false }
+Tangerine.$db.openDoc "Config",            { success:(data) -> Tangerine.config = data }, { async: false }
 
 #
 # get our Tangerine settings
