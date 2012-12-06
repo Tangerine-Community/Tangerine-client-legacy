@@ -39,6 +39,10 @@ MasteryCheckMenuView = (function(_super) {
   MasteryCheckMenuView.prototype.render = function() {
     var html, student, _i, _len, _ref;
     if (this.ready) {
+      if (this.students.length === 0) {
+        this.$el.html("Please add students to this class.");
+        return;
+      }
       html = "        <select class='student_selector'>          <option disabled='disabled' selected='selected'>" + (t('select a student')) + "</option>          ";
       _ref = this.students;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {

@@ -10,8 +10,7 @@ class KlassGroupingMenuView extends Backbone.View
     @parent    = options.parent
     @klass     = @parent.options.klass
     @curricula = @parent.options.curricula
-    milisecondsPerPart = 604800000
-    @currentPart = Math.round(((new Date()).getTime() - @klass.get("startDate")) / milisecondsPerPart)
+    @currentPart = @klass.calcCurrentPart()
     allSubtests = new Subtests
     allSubtests.fetch
       success: (collection) =>
@@ -24,7 +23,14 @@ class KlassGroupingMenuView extends Backbone.View
         @render()
 
   render: ->
-    if (@ready)
+
+    if @ready
+
+      # quick data check
+      if @students.length == 0
+        @$el.html "Please add students to this class."
+        return
+
       html = "
         <select class='part_selector'>
           <option disabled='disabled' selected='selected'>Select an assessment</option>

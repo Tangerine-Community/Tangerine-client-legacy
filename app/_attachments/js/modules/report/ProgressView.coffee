@@ -224,18 +224,9 @@ class ProgressView extends Backbone.View
             "to"   : @selected.week + 0.5
             "from" : @selected.week - 0.5
 
-          
-
     displayData = [ @flotData[@selected.itemType], @benchmarkData[@selected.itemType] ]
     @flot = $.plot @$el.find("#flot-container"), displayData, @flotOptions
 
-  getCurrentPart: ->
-    milliseconds          = 1000
-    millisecondsPerMinute = 60 * milliseconds
-    millisecondsPerHour   = 60 * millisecondsPerMinute
-    millisecondsPerDay    = 24 * millisecondsPerHour
-    millisecondsPerWeek   = 7  * millisecondsPerDay
-    return Math.round(((new Date()).getTime() - @klass.get("startDate")) / millisecondsPerWeek)
 
   # Takes the results for each itemType and replaces them with an average
   aggregate: (oldRows) ->

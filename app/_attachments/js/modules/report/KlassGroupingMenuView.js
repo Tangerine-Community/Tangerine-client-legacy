@@ -19,13 +19,12 @@ KlassGroupingMenuView = (function(_super) {
   };
 
   KlassGroupingMenuView.prototype.initialize = function(options) {
-    var allSubtests, milisecondsPerPart,
+    var allSubtests,
       _this = this;
     this.parent = options.parent;
     this.klass = this.parent.options.klass;
     this.curricula = this.parent.options.curricula;
-    milisecondsPerPart = 604800000;
-    this.currentPart = Math.round(((new Date()).getTime() - this.klass.get("startDate")) / milisecondsPerPart);
+    this.currentPart = this.klass.calcCurrentPart();
     allSubtests = new Subtests;
     return allSubtests.fetch({
       success: function(collection) {
@@ -47,6 +46,10 @@ KlassGroupingMenuView = (function(_super) {
   KlassGroupingMenuView.prototype.render = function() {
     var flagForCurrent, html, part, subtestId, _len, _ref;
     if (this.ready) {
+      if (this.students.length === 0) {
+        this.$el.html("Please add students to this class.");
+        return;
+      }
       html = "        <select class='part_selector'>          <option disabled='disabled' selected='selected'>Select an assessment</option>          ";
       _ref = this.parts;
       for (part = 0, _len = _ref.length; part < _len; part++) {

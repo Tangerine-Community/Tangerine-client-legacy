@@ -225,16 +225,6 @@ ProgressView = (function(_super) {
     return this.flot = $.plot(this.$el.find("#flot-container"), displayData, this.flotOptions);
   };
 
-  ProgressView.prototype.getCurrentPart = function() {
-    var milliseconds, millisecondsPerDay, millisecondsPerHour, millisecondsPerMinute, millisecondsPerWeek;
-    milliseconds = 1000;
-    millisecondsPerMinute = 60 * milliseconds;
-    millisecondsPerHour = 60 * millisecondsPerMinute;
-    millisecondsPerDay = 24 * millisecondsPerHour;
-    millisecondsPerWeek = 7 * millisecondsPerDay;
-    return Math.round(((new Date()).getTime() - this.klass.get("startDate")) / millisecondsPerWeek);
-  };
-
   ProgressView.prototype.aggregate = function(oldRows) {
     var i, mean, newRows, result, results, row, _i, _j, _len, _len2, _len3, _ref;
     newRows = [];

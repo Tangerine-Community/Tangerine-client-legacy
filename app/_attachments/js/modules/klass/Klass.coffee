@@ -26,3 +26,11 @@ class Klass extends Backbone.Model
           result.destroy()
     
     super()
+    
+    calcCurrentPart: ->
+      milliseconds          = 1000
+      millisecondsPerMinute = 60 * milliseconds
+      millisecondsPerHour   = 60 * millisecondsPerMinute
+      millisecondsPerDay    = 24 * millisecondsPerHour
+      millisecondsPerWeek   = 7  * millisecondsPerDay
+      return Math.round(((new Date()).getTime() - @get("startDate")) / millisecondsPerWeek)

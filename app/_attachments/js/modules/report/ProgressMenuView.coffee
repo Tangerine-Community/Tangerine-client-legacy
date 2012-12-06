@@ -19,7 +19,14 @@ class ProgressMenuView extends Backbone.View
         @render()
 
   render: ->
-    if (@ready)
+
+    if @ready
+
+      # quick data check
+      if @students.length == 0
+        @$el.html "Please add students to this class."
+        return
+
       html = "
         <select class='student_selector'>
           <option disabled='disabled' selected='selected'>#{t('select a student')}</option>
