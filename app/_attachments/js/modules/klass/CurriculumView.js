@@ -205,11 +205,13 @@ CurriculumView = (function(_super) {
           value = prop.escape ? subtest.escape(prop.key) : value;
           if (prop.count != null) value = value.length;
           if (!(value != null)) value = "";
-          editOrNot = prop.editable ? "class='edit_in_place'" : "";
+          editOrNot = prop.editable && Tangerine.settings.context === "server" ? "class='edit_in_place'" : "";
           numberOrNot = _.isNumber(value) ? "data-isNumber='true'" : "data-isNumber='false'";
           html += "<td data-subtestId='" + subtest.id + "' data-key='" + prop.key + "' data-value='" + value + "' " + editOrNot + " " + numberOrNot + ">" + value + "</td>";
         }
-        html += "          <td>            <img class='link_icon edit' title='Edit' data-subtestId='" + subtest.id + "' src='images/icon_edit.png'>            <img class='link_icon delete_subtest' title='Delete' data-subtestId='" + subtest.id + "' src='images/icon_delete.png'>          </td>";
+        if (Tangerine.settings.context === "server") {
+          html += "            <td>              <img class='link_icon edit' title='Edit' data-subtestId='" + subtest.id + "' src='images/icon_edit.png'>              <img class='link_icon delete_subtest' title='Delete' data-subtestId='" + subtest.id + "' src='images/icon_delete.png'>            </td>";
+        }
         html += "</tr>";
       }
     }
@@ -218,9 +220,10 @@ CurriculumView = (function(_super) {
   };
 
   CurriculumView.prototype.render = function() {
-    var html, subtestTable;
+    var deleteButton, html, subtestTable;
     subtestTable = this.getSubtestTable();
-    html = "      <button class='navigation back'>" + (t('back')) + "</button>      <h1>" + (this.options.curriculum.get('name')) + "</h1>      <div class='small_grey'>Download key <b>" + (this.curriculum.id.substr(-5, 5)) + "</b></div>            <div id='subtest_table_container'>        " + subtestTable + "      </div>      <button class='command new_subtest'>New Subtest</button>      <br><br>      <button class='command_red delete'>Delete</button>    ";
+    deleteButton = Tangerine.settings.context === "server" ? "<button class='command_red delete'>Delete</button>" : "";
+    html = "      <button class='navigation back'>" + (t('back')) + "</button>      <h1>" + (this.options.curriculum.get('name')) + "</h1>      <div class='small_grey'>Download key <b>" + (this.curriculum.id.substr(-5, 5)) + "</b></div>            <div id='subtest_table_container'>        " + subtestTable + "      </div>      <button class='command new_subtest'>New Subtest</button>      <br><br>            " + deleteButton + "    ";
     this.$el.html(html);
     return this.trigger("rendered");
   };

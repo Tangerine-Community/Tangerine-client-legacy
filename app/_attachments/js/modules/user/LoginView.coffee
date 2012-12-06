@@ -26,7 +26,7 @@ class LoginView extends Backbone.View
       <img src='images/tangerine_logo.png' id='login_logo'>
       <div class='messages'></div>
       <label for='login_username'>#{t('enumerator name')}</label>
-      <input id='login_username' name='login_username'>
+      <input type='text' id='login_username' name='login_username'>
       <label for='login_password'>#{t('password')}</label>
       <input id='login_password' name='login_username' type='password'>
       <button class='login'>#{t('login')}</button>

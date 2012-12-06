@@ -128,31 +128,36 @@ class Utils
     return 0
 
   # this function is a lot like jQuery.serializeArray, except that it returns useful output
+  # works on textareas, input type text and password
   @getValues: ( selector ) ->
     values = {}
-    $(selector).find("input, textarea").each ( index, element ) -> 
+    $(selector).find("input[type=text], input[type=password], textarea").each ( index, element ) -> 
       values[element.id] = element.value
     return values
 
+  # converts url escaped characters
   @cleanURL: (url) ->
-    if url.indexOf?("%") != -1 
+    if url.indexOf?("%") != -1
       url = decodeURIComponent url
     else
       url
 
+
   # Disposable alerts
   @topAlert: (alert_text) ->
     $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").topCenter().delay(2000).fadeOut(250, -> $(this).remove())
-
   @midAlert: (alert_text) ->
     $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").middleCenter().delay(2000).fadeOut(250, -> $(this).remove())
 
+
+  # returns a GUID
+  @guid: ->
+   return @S4()+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+@S4()+@S4()
   @S4: ->
    return ( ( ( 1 + Math.random() ) * 0x10000 ) | 0 ).toString(16).substring(1)
 
-  @guid: ->
-   return @S4()+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+@S4()+@S4()
 
+  # turns the body background a color and then returns to white
   @flash: (color="red") ->
     $("body").css "backgroundColor" : color
     setTimeout ->
@@ -160,7 +165,9 @@ class Utils
     , 1000
 
 
-  @$_GET: (q,s) ->
+  # Retrieves GET variables
+  # http://ejohn.org/blog/search-and-dont-replace/
+  @$_GET: (q, s) ->
     vars = {}
     parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m,key,value) ->
         value = if ~value.indexOf("#") then value.split("#")[0] else value
@@ -168,9 +175,12 @@ class Utils
     )
     vars
 
+
+  # not currently implemented but working
   @resizeScrollPane: ->
     $(".scroll_pane").height( $(window).height() - ( $("#navigation").height() + $("#footer").height() + 100) ) 
 
+  # asks user if they want to logout
   @askToLogout: -> Tangerine.user.logout() if confirm("Would you like to logout now?")
       
 

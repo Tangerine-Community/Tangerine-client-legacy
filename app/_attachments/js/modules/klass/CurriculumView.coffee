@@ -203,16 +203,20 @@ class CurriculumView extends Backbone.View
           value = "" if not value?
 
           # what is it
-          editOrNot   = if prop.editable then "class='edit_in_place'" else ""
+          editOrNot   = if prop.editable && Tangerine.settings.context == "server" then "class='edit_in_place'" else ""
+
           numberOrNot = if _.isNumber(value) then "data-isNumber='true'" else "data-isNumber='false'" 
 
           html += "<td data-subtestId='#{subtest.id}' data-key='#{prop.key}' data-value='#{value}' #{editOrNot} #{numberOrNot}>#{value}</td>"
-        # buttons
-        html += "
-          <td>
-            <img class='link_icon edit' title='Edit' data-subtestId='#{subtest.id}' src='images/icon_edit.png'>
-            <img class='link_icon delete_subtest' title='Delete' data-subtestId='#{subtest.id}' src='images/icon_delete.png'>
-          </td>"
+
+        # add buttons for serverside editing
+        if Tangerine.settings.context == "server"
+          html += "
+            <td>
+              <img class='link_icon edit' title='Edit' data-subtestId='#{subtest.id}' src='images/icon_edit.png'>
+              <img class='link_icon delete_subtest' title='Delete' data-subtestId='#{subtest.id}' src='images/icon_delete.png'>
+            </td>"
+
         html += "</tr>"
 
     html += "
@@ -227,6 +231,8 @@ class CurriculumView extends Backbone.View
 
     subtestTable = @getSubtestTable()
 
+    deleteButton = if Tangerine.settings.context == "server" then "<button class='command_red delete'>Delete</button>" else ""
+
     html = "
 
       <button class='navigation back'>#{t('back')}</button>
@@ -239,7 +245,8 @@ class CurriculumView extends Backbone.View
       </div>
       <button class='command new_subtest'>New Subtest</button>
       <br><br>
-      <button class='command_red delete'>Delete</button>
+      
+      #{deleteButton}
 
 
     "

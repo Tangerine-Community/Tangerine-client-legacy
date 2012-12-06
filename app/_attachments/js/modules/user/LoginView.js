@@ -36,7 +36,7 @@ LoginView = (function(_super) {
     parentWidth = $('#content').offsetParent().width();
     this.oldWidth = 100 * width / parentWidth;
     $("#content").css("width", "100%");
-    this.$el.html("      <img src='images/tangerine_logo.png' id='login_logo'>      <div class='messages'></div>      <label for='login_username'>" + (t('enumerator name')) + "</label>      <input id='login_username' name='login_username'>      <label for='login_password'>" + (t('password')) + "</label>      <input id='login_password' name='login_username' type='password'>      <button class='login'>" + (t('login')) + "</button>    ");
+    this.$el.html("      <img src='images/tangerine_logo.png' id='login_logo'>      <div class='messages'></div>      <label for='login_username'>" + (t('enumerator name')) + "</label>      <input type='text' id='login_username' name='login_username'>      <label for='login_password'>" + (t('password')) + "</label>      <input id='login_password' name='login_username' type='password'>      <button class='login'>" + (t('login')) + "</button>    ");
     return this.trigger("rendered");
   };
 

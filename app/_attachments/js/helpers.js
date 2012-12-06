@@ -303,7 +303,7 @@ Utils = (function() {
   Utils.getValues = function(selector) {
     var values;
     values = {};
-    $(selector).find("input, textarea").each(function(index, element) {
+    $(selector).find("input[type=text], input[type=password], textarea").each(function(index, element) {
       return values[element.id] = element.value;
     });
     return values;
@@ -329,12 +329,12 @@ Utils = (function() {
     });
   };
 
-  Utils.S4 = function() {
-    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-  };
-
   Utils.guid = function() {
     return this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4();
+  };
+
+  Utils.S4 = function() {
+    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
   };
 
   Utils.flash = function(color) {
