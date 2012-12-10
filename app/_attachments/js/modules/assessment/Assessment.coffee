@@ -6,6 +6,20 @@ class Assessment extends Backbone.Model
     # this collection doesn't get saved
     # changes update the subtest view, it keeps order
     @subtests = new Subtests
+    @getResultCount()
+
+  getResultCount: =>
+    $.ajax "#{Tangerine.config.address.local.host}:#{Tangerine.config.address.port}/#{Tangerine.config.address.cloud.dbName}/_design/#{Tangerine.config.address.designDoc}/_view/resultCount",
+      type: "GET"
+      dataType: "json"
+      data: 
+        group       : true
+        group_level : 1
+        key         : JSON.stringify(@id)
+      success: (data) =>
+        @resultCount = data.rows[0].value
+        @trigger "resultCount"
+
 
   # Hijacked success() for later
   # fetchs all subtests for the assessment
@@ -21,14 +35,13 @@ class Assessment extends Backbone.Model
             oldSuccess? @
     Assessment.__super__.fetch.call @, options
 
-  updateFromServer: ( dKey = @id.substr(-5,5)) =>
+  updateFromServer: ( dKey = @id.substr(-5, 5) ) =>
 
     @trigger "status", "import lookup"
-    dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g," ").split(/\s+/))
     $.ajax "#{Tangerine.config.address.cloud.host}/#{Tangerine.config.address.cloud.dbName}/_design/#{Tangerine.config.address.designDoc}/_view/byDKey",
       type: "POST"
       dataType: "jsonp"
-      data: keys: dKeys
+      data: keys: JSON.stringify([dKey])
       success: (data) =>
         docList = []
         for datum in data.rows
@@ -113,4 +126,10 @@ class Assessment extends Backbone.Model
 
     # remove model
     super()
+
+  isActive: -> return not @isArchived()
+
+  isArchived: ->
+    archived = @get("archived")
+    return archived == "true" or archived == true
 

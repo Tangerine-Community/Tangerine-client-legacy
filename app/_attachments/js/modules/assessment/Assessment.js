@@ -10,6 +10,7 @@ Assessment = (function(_super) {
   function Assessment() {
     this.updateFromServer = __bind(this.updateFromServer, this);
     this.fetch = __bind(this.fetch, this);
+    this.getResultCount = __bind(this.getResultCount, this);
     Assessment.__super__.constructor.apply(this, arguments);
   }
 
@@ -17,7 +18,25 @@ Assessment = (function(_super) {
 
   Assessment.prototype.initialize = function(options) {
     if (options == null) options = {};
-    return this.subtests = new Subtests;
+    this.subtests = new Subtests;
+    return this.getResultCount();
+  };
+
+  Assessment.prototype.getResultCount = function() {
+    var _this = this;
+    return $.ajax("" + Tangerine.config.address.local.host + ":" + Tangerine.config.address.port + "/" + Tangerine.config.address.cloud.dbName + "/_design/" + Tangerine.config.address.designDoc + "/_view/resultCount", {
+      type: "GET",
+      dataType: "json",
+      data: {
+        group: true,
+        group_level: 1,
+        key: JSON.stringify(this.id)
+      },
+      success: function(data) {
+        _this.resultCount = data.rows[0].value;
+        return _this.trigger("resultCount");
+      }
+    });
   };
 
   Assessment.prototype.fetch = function(options) {
@@ -40,16 +59,14 @@ Assessment = (function(_super) {
   };
 
   Assessment.prototype.updateFromServer = function(dKey) {
-    var dKeys,
-      _this = this;
+    var _this = this;
     if (dKey == null) dKey = this.id.substr(-5, 5);
     this.trigger("status", "import lookup");
-    dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/));
     $.ajax("" + Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName + "/_design/" + Tangerine.config.address.designDoc + "/_view/byDKey", {
       type: "POST",
       dataType: "jsonp",
       data: {
-        keys: dKeys
+        keys: JSON.stringify([dKey])
       },
       success: function(data) {
         var datum, docList, _i, _len, _ref;
@@ -163,6 +180,16 @@ Assessment = (function(_super) {
       }
     });
     return Assessment.__super__.destroy.call(this);
+  };
+
+  Assessment.prototype.isActive = function() {
+    return !this.isArchived();
+  };
+
+  Assessment.prototype.isArchived = function() {
+    var archived;
+    archived = this.get("archived");
+    return archived === "true" || archived === true;
   };
 
   return Assessment;
