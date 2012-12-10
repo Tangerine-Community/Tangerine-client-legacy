@@ -739,6 +739,7 @@ ul.assessment_list .assessment_menu {
   font-size: 20px;
 }
 .small_grey {
+  font-weight: normal;
   display: inline-block;
   vertical-align: middle;
   font-size: 12px;
@@ -837,6 +838,7 @@ label.ui-button {
  * Question
  */
 table.basic_info {
+  font-weight: normal;
   display: inline-block;
   vertical-align: middle;
   font-size: 12px;
@@ -1059,6 +1061,12 @@ button.navigation:hover {
   -webkit-border-radius: 10px;
   font-weight: normal;
 }
+.command a,
+.command a:visited,
+.command a:hover {
+  text-decoration: none;
+  color: black;
+}
 .command:active {
   background-color: #f6c637;
 }
@@ -1081,6 +1089,12 @@ button.navigation:hover {
   background-color: #c33;
   color: #fff;
 }
+.command_red a,
+.command_red a:visited,
+.command_red a:hover {
+  text-decoration: none;
+  color: black;
+}
 .command_red:active {
   background-color: #f6c637;
 }
@@ -1098,6 +1112,10 @@ label[title] {
   clear: right;
   padding: 0 30px 0 0;
   background: url("../images/icon_help.png") center right no-repeat;
+}
+label.no_help {
+  padding: 0;
+  background: inherit !important;
 }
 /*
  * Prototypes

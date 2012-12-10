@@ -751,6 +751,7 @@ ul.assessment_list
 
 .small_grey
 {
+  font-weight: normal;
   display: inline-block;
   vertical-align: middle;
   font-size: 12px;
@@ -1229,6 +1230,13 @@ button.navigation
   padding: 7px 25px !important;
   .border-radius(10px);
   font-weight: normal;
+
+  a, a:visited, a:hover
+  {
+    text-decoration: none;
+    color: black;
+  }
+
   &:active
   {
     background-color: @orange-3;
@@ -1262,6 +1270,12 @@ label[title]
   clear: right;
   padding: 0 30px 0 0;
   background: url("../images/icon_help.png") center right no-repeat;
+}
+
+label.no_help
+{
+  padding: 0;
+  background: inherit !important;
 }
 
 /*
