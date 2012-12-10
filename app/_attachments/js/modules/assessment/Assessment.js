@@ -24,7 +24,7 @@ Assessment = (function(_super) {
 
   Assessment.prototype.getResultCount = function() {
     var _this = this;
-    return $.ajax("" + Tangerine.config.address.local.host + ":" + Tangerine.config.address.port + "/" + Tangerine.config.address.cloud.dbName + "/_design/" + Tangerine.config.address.designDoc + "/_view/resultCount", {
+    return $.ajax("/" + Tangerine.config.address.cloud.dbName + "/_design/" + Tangerine.config.address.designDoc + "/_view/resultCount", {
       type: "GET",
       dataType: "json",
       data: {

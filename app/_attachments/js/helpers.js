@@ -208,6 +208,10 @@ Math.decimals = function(num, decimals) {
   return num /= m;
 };
 
+Math.commas = function(num) {
+  return parseInt(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 Utils = (function() {
 
   function Utils() {}

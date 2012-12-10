@@ -40,6 +40,7 @@ AssessmentListElementView = (function(_super) {
     this.homeGroup = options.homeGroup;
     this.isPublic = options.model.get("group") === "public" && this.homeGroup !== "public";
     this.resultCount = this.model.resultCount != null ? this.model.resultCount : this.blankResultCount;
+    this.resultCount = Math.commas(this.resultCount);
     return this.isAdmin = Tangerine.user.isAdmin();
   };
 
@@ -82,7 +83,8 @@ AssessmentListElementView = (function(_super) {
   };
 
   AssessmentListElementView.prototype.updateResultCount = function() {
-    return this.$el.find(".result_count").html("Results <b>" + this.model.resultCount + "</b>");
+    this.resultCount = Math.commas(this.model.resultCount);
+    return this.$el.find(".result_count").html("Results <b>" + this.resultCount + "</b>");
   };
 
   AssessmentListElementView.prototype.archive = function() {

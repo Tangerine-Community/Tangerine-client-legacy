@@ -66,10 +66,9 @@ Math.ave = ->
   result /= arguments.length
   return result
 
-Math.isInt = -> return typeof n == 'number' && parseFloat(n) == parseInt(n, 10) && !isNaN(n)
-
+Math.isInt    = -> return typeof n == 'number' && parseFloat(n) == parseInt(n, 10) && !isNaN(n)
 Math.decimals = (num, decimals) -> m = Math.pow( 10, decimals ); num *= m; num =  num+(num<0?-0.5:+0.5)>>0; num /= m
-
+Math.commas   = (num) -> parseInt(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 
 class Utils
 

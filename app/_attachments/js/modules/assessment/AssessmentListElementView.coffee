@@ -33,6 +33,7 @@ class AssessmentListElementView extends Backbone.View
 
     # switches and things
     @resultCount = if @model.resultCount? then @model.resultCount else @blankResultCount
+    @resultCount = Math.commas @resultCount
     @isAdmin     = Tangerine.user.isAdmin()
 
   duplicate: ->
@@ -58,7 +59,8 @@ class AssessmentListElementView extends Backbone.View
     @model.getResultCount()
 
   updateResultCount: =>
-    @$el.find(".result_count").html "Results <b>#{@model.resultCount}</b>" 
+    @resultCount = Math.commas @model.resultCount
+    @$el.find(".result_count").html "Results <b>#{@resultCount}</b>" 
 
   archive: ->
     result = @$el.find(".archive :selected").val() == "true"

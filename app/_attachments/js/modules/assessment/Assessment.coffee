@@ -9,7 +9,7 @@ class Assessment extends Backbone.Model
     @getResultCount()
 
   getResultCount: =>
-    $.ajax "#{Tangerine.config.address.local.host}:#{Tangerine.config.address.port}/#{Tangerine.config.address.cloud.dbName}/_design/#{Tangerine.config.address.designDoc}/_view/resultCount",
+    $.ajax "/#{Tangerine.config.address.cloud.dbName}/_design/#{Tangerine.config.address.designDoc}/_view/resultCount",
       type: "GET"
       dataType: "json"
       data: 
