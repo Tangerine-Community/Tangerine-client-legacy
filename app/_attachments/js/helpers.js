@@ -6,6 +6,10 @@ Backbone.View.prototype.close = function() {
   return typeof this.onClose === "function" ? this.onClose() : void 0;
 };
 
+Backbone.Model.prototype.getBoolean = function(key) {
+  return this.get(key) === true || this.get(key) === 'true';
+};
+
 (function($) {
   $.fn.scrollTo = function(speed, callback) {
     if (speed == null) speed = 250;

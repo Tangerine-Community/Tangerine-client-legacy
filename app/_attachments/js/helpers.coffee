@@ -4,6 +4,8 @@ Backbone.View.prototype.close = ->
   @unbind()
   @onClose?()
 
+Backbone.Model.prototype.getBoolean = (key) -> @get(key) == true or @get(key) == 'true'
+
 #
 # handy jquery functions
 #
