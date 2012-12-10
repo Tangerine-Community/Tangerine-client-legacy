@@ -13,11 +13,11 @@ class SurveyEditView extends Backbone.View
     @model.questions.fetch
       key: @model.get "assessmentId"
       success: =>
-        @model.questions = new Questions(@model.questions.where {subtestId : @model.id })
+        @model.questions = new Questions(@model.questions.where {subtestId : @model.id  })
         @model.questions.maintainOrder()
         @questionsEditView = new QuestionsEditView
           questions : @model.questions
-        @questionsEditView.on "edit-save", => @trigger "edit-save"
+        @questionsEditView.on "question-edit", (questionId) => @trigger "question-edit", questionId
         @model.questions.on "change", @renderQuestions
         @renderQuestions()
 
@@ -47,9 +47,11 @@ class SurveyEditView extends Backbone.View
 
     return false
 
+  isValid: -> true
+
   save: (options) ->
 
-    isEditSave = options?.isEditSave
+    options.questionSave = if options.questionSave then options.questionSave else true
 
     @model.set
       "gridLinkId"    : @$el.find("#link_select option:selected").val()
@@ -65,9 +67,7 @@ class SurveyEditView extends Backbone.View
       if question.get("type") != "open" && question.get("options").length == 0
         emptyOptions.push i + 1
       
-        console.log isEditSave
-        unless isEditSave
-          console.log "saving questions"
+        if options.questionSave
           if not question.save()
             notSaved.push i
           if question.has("linkedGridScore") && question.get("linkedGridScore") != "" && question.get("linkedGridScore") != 0 && @model.has("gridLinkId") == "" && @model.get("gridLinkId") == ""

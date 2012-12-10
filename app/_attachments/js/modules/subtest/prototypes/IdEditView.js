@@ -15,6 +15,12 @@ IdEditView = (function(_super) {
     return this.parent = options.parent;
   };
 
+  IdEditView.prototype.isValid = function() {
+    return true;
+  };
+
+  IdEditView.prototype.save = function() {};
+
   return IdEditView;
 
 })(Backbone.View);

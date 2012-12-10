@@ -1,60 +1,121 @@
+# Displays a group header and a list of assessments
+# events
+# re-renders on @assessments "add destroy"
+#
 class AssessmentsView extends Backbone.View
 
-  tagName   : "ul"
-  events : 
-    "click .hidden_toggle" : "toggleHidden"
+  tagName : "div"
 
-  toggleHidden: ->
-    $container = @$el.find(".hidden_container")
-    if $container.is(":visible")
-      $container.fadeOut(150)
-      @$el.find(".hidden_toggle").html "Show"
+  events : 
+    "click .toggle_archived" : "toggleArchived"
+
+  toggleArchived: (event) ->
+
+    if @archivedIsVisible
+      @archivedIsVisible = false
+      $container = @$el.find(".archived_list").addClass "confirmation"
+      @$el.find(".toggle_archived").html "Show"
     else
-      $container.fadeIn(150)
-      @$el.find(".hidden_toggle").html "Hide"
-    
+      @archivedIsVisible = true
+      $container = @$el.find(".archived_list").removeClass "confirmation"
+      @$el.find(".toggle_archived").html "Hide"
+
+    $container.fadeToggle 150
 
   initialize: (options) ->
-    @group = options.group
-    @allAssessments = options.allAssessments
-    @parent         = options.parent
-    @refresh()
 
-  refresh: (doRender=false) ->
-    if @group == false
-      @assessments = @allAssessments
-      @hidden = new Assessments
-    else
-      @assessments = new Assessments _.filter( @allAssessments.where( { "group" : @options.group } ), (a) -> return a.get("archived") == "false" or a.get("archived") == false )
-      @hidden = new Assessments _.filter( @allAssessments.where( { "group" : @options.group  } ), (a) -> return a.get("archived") == "true" or a.get("archived") == true )
+    options.assessments.on "add destroy update", @render
+
+    @parent      = options.parent
+    @group       = options.group
+    @assessments = options.assessments
+    @homeGroup   = options.homeGroup
+
+    @isPublic       = @group == "public" 
+    @ignoringGroups = @group == false
+    @groupName      = if @isPublic then "Public" else @group
+
+    @subviews          = [] # used to keep track of views to close
+    @archivedIsVisible = false # toggled
+    
+
+  render: (event) =>
 
     @closeViews()
-    @assessmentViews = ( new AssessmentListElementView( { "model" : assessment, "parent" : @ } ) for assessment in @assessments.models )
-    @hiddenViews = ( new AssessmentListElementView( { "model" : assessment, "parent" : @ } ) for assessment in @hidden.models )
-    if doRender then @render()
 
-  render: ->
-    if @assessmentViews.length == 0 && @hiddenViews.length == 0
-      @$el.html "<p class='grey'>No assessments yet. Click <b>new</b> to start making one.</p>"
+    # give us an array. show all if group == false
+    if @group != false
+      assessments = @assessments.where "group" : @group
     else
-      @$el.html ""
-      for view in @assessmentViews
+      assessments = @assessments.models
+
+    # create archived and active arrays of <li>
+    activeViews   = []
+    archivedViews = []
+    for assessment in assessments
+
+      newView = new AssessmentListElementView
+        "model"     : assessment
+        "homeGroup" : @homeGroup
+        "group"     : @group
+        "showAll"   : @showAll
+
+      if assessment.isArchived() && Tangerine.settings.context == "server"
+        archivedViews.push newView 
+      else
+        activeViews.push newView
+    
+    @subviews = archivedViews.concat activeViews
+
+    # escape if no assessments in non-public list
+    if @subviews.length == 0 && not @isPublic
+      @$el.html "<p class='grey'>No assessments yet. Click <b>new</b> to get started.</p>"
+      @trigger "rendered"
+      return
+
+
+    # templating and components
+
+    header = "
+      <h2 class='header_#{@cid}'>#{@groupName} (#{activeViews.length})</h2>
+    "
+
+    archivedContainer = "
+      <div class='archived_container'>
+        <h2>Archived (#{archivedViews.length}) <button class='command toggle_archived'>Show</button></h2>
+        <ul class='archived_list confirmation'></ul>
+      </div>
+    "
+
+
+    showArchived  = archivedViews.length != 0 && !@isPublic
+    showGroupName = not @ignoringGroups
+    @$el.html "
+      #{ if showGroupName then header else "" }
+      <ul class='active_list assessment_list'></ul>
+      #{ if showArchived then archivedContainer else "" }
+      
+    "
+
+
+    # fill containers
+    $ul = @$el.find(".active_list")
+    for view in activeViews
+      view.render()
+      $ul.append view.el
+    if showArchived
+      $ul = @$el.find(".archived_list")
+      for view in archivedViews
         view.render()
-        @$el.append view.el
+        $ul.append view.el
 
-      if @hiddenViews.length != 0
-        @$el.append "<h2>Archived (#{@hiddenViews.length}) <button class='command hidden_toggle'>Show</button></h2><div class='hidden_container confirmation'></div>"
-        for view in @hiddenViews
-          view.render()
-          @$el.find(".hidden_container").append view.el
-
-
+    # all done
     @trigger "rendered"
 
   closeViews: ->
-    if @assessmentViews?
-      for view in @assessmentViews
-        view.close()
+    for view in @subviews
+      view.close()
+    @subviews = []
 
   onClose: ->
     @closeViews()

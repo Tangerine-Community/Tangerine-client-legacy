@@ -22,6 +22,10 @@ GridEditView = (function(_super) {
     return this.model = options.model;
   };
 
+  GridEditView.prototype.isValid = function() {
+    return true;
+  };
+
   GridEditView.prototype.save = function() {
     if (/\t|,/.test(this.$el.find("#subtest_items").val())) {
       alert("Please remember\n\nGrid items are space \" \" delimited");

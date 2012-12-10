@@ -15,6 +15,12 @@ DatetimeEditView = (function(_super) {
     return this.parent = options.parent;
   };
 
+  DatetimeEditView.prototype.save = function() {};
+
+  DatetimeEditView.prototype.isValid = function() {
+    return true;
+  };
+
   return DatetimeEditView;
 
 })(Backbone.View);

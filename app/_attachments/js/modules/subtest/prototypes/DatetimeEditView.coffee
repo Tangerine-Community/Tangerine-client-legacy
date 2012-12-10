@@ -4,3 +4,6 @@ class DatetimeEditView extends Backbone.View
     @model = options.model
     @parent = options.parent
 
+  save: -> #do nothing
+  
+  isValid: -> true

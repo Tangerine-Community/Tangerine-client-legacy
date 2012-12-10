@@ -22,8 +22,7 @@ QuestionsEditListElementView = (function(_super) {
   };
 
   QuestionsEditListElementView.prototype.edit = function(event) {
-    this.trigger("edit-save");
-    Tangerine.router.navigate("question/" + this.question.id, true);
+    this.trigger("question-edit", this.question.id);
     return false;
   };
 

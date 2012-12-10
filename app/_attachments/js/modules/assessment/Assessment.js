@@ -33,7 +33,7 @@ Assessment = (function(_super) {
         key: JSON.stringify(this.id)
       },
       success: function(data) {
-        _this.resultCount = data.rows[0].value;
+        _this.resultCount = data.rows.length !== 0 ? data.rows[0].value : 0;
         return _this.trigger("resultCount");
       }
     });
@@ -59,14 +59,16 @@ Assessment = (function(_super) {
   };
 
   Assessment.prototype.updateFromServer = function(dKey) {
-    var _this = this;
+    var dKeys,
+      _this = this;
     if (dKey == null) dKey = this.id.substr(-5, 5);
+    dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/));
     this.trigger("status", "import lookup");
     $.ajax("" + Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName + "/_design/" + Tangerine.config.address.designDoc + "/_view/byDKey", {
       type: "POST",
       dataType: "jsonp",
       data: {
-        keys: JSON.stringify([dKey])
+        keys: dKeys
       },
       success: function(data) {
         var datum, docList, _i, _len, _ref;
@@ -78,7 +80,20 @@ Assessment = (function(_super) {
         }
         return $.couch.replicate("" + Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName, Tangerine.config.address.local.dbName, {
           success: function() {
-            return _this.trigger("status", "import success");
+            _this.trigger("status", "import success");
+            try {
+              return _this.fetch({
+                success: function() {
+                  return _this.trigger("update");
+                },
+                error: function() {
+                  return console.log("error fetching after update");
+                }
+              });
+            } catch (e) {
+              console.log("error fetching after update");
+              return console.log(e);
+            }
           },
           error: function(a, b) {
             return _this.trigger("status", "import error", "" + a + " " + b);
@@ -92,60 +107,63 @@ Assessment = (function(_super) {
   };
 
   Assessment.prototype.duplicate = function(assessmentAttributes, subtestAttributes, questionAttributes, callback) {
-    var newId, newModel, originalId, questions,
-      _this = this;
+    var newId, newModel, originalId;
     originalId = this.id;
     newModel = this.clone();
     newModel.set(assessmentAttributes);
     newId = Utils.guid();
-    newModel.set({
+    return newModel.save({
       "_id": newId,
       "assessmentId": newId
-    });
-    newModel.save();
-    questions = new Questions;
-    return questions.fetch({
-      key: this.id,
-      success: function(questions) {
-        var subtests;
-        subtests = new Subtests;
-        return subtests.fetch({
-          key: originalId,
-          success: function(subtests) {
-            var filteredSubtests, gridId, i, model, newQuestion, newQuestions, newSubtest, newSubtestId, newSubtests, oldId, question, subtestIdMap, _i, _len, _len2, _len3, _ref;
-            filteredSubtests = subtests.models;
-            subtestIdMap = {};
-            newSubtests = [];
-            for (i = 0, _len = filteredSubtests.length; i < _len; i++) {
-              model = filteredSubtests[i];
-              newSubtest = model.clone();
-              newSubtest.set("assessmentId", newModel.id);
-              newSubtestId = Utils.guid();
-              subtestIdMap[newSubtest.id] = newSubtestId;
-              newSubtest.set("_id", newSubtestId);
-              newSubtests.push(newSubtest);
-            }
-            for (i = 0, _len2 = newSubtests.length; i < _len2; i++) {
-              model = newSubtests[i];
-              gridId = model.get("gridLinkId");
-              if ((gridId || "") !== "") {
-                model.set("gridLinkId", subtestIdMap[gridId]);
+    }, {
+      success: function() {
+        var questions,
+          _this = this;
+        questions = new Questions;
+        return questions.fetch({
+          key: this.id,
+          success: function(questions) {
+            var subtests;
+            subtests = new Subtests;
+            return subtests.fetch({
+              key: originalId,
+              success: function(subtests) {
+                var filteredSubtests, gridId, i, model, newQuestion, newQuestions, newSubtest, newSubtestId, newSubtests, oldId, question, subtestIdMap, _i, _len, _len2, _len3, _ref;
+                filteredSubtests = subtests.models;
+                subtestIdMap = {};
+                newSubtests = [];
+                for (i = 0, _len = filteredSubtests.length; i < _len; i++) {
+                  model = filteredSubtests[i];
+                  newSubtest = model.clone();
+                  newSubtest.set("assessmentId", newModel.id);
+                  newSubtestId = Utils.guid();
+                  subtestIdMap[newSubtest.id] = newSubtestId;
+                  newSubtest.set("_id", newSubtestId);
+                  newSubtests.push(newSubtest);
+                }
+                for (i = 0, _len2 = newSubtests.length; i < _len2; i++) {
+                  model = newSubtests[i];
+                  gridId = model.get("gridLinkId");
+                  if ((gridId || "") !== "") {
+                    model.set("gridLinkId", subtestIdMap[gridId]);
+                  }
+                  model.save();
+                }
+                newQuestions = [];
+                _ref = questions.models;
+                for (_i = 0, _len3 = _ref.length; _i < _len3; _i++) {
+                  question = _ref[_i];
+                  newQuestion = question.clone();
+                  oldId = newQuestion.get("subtestId");
+                  newQuestion.set("assessmentId", newModel.id);
+                  newQuestion.set("_id", Utils.guid());
+                  newQuestion.set("subtestId", subtestIdMap[oldId]);
+                  newQuestions.push(newQuestion);
+                  newQuestion.save();
+                }
+                return callback(newModel);
               }
-              model.save();
-            }
-            newQuestions = [];
-            _ref = questions.models;
-            for (_i = 0, _len3 = _ref.length; _i < _len3; _i++) {
-              question = _ref[_i];
-              newQuestion = question.clone();
-              oldId = newQuestion.get("subtestId");
-              newQuestion.set("assessmentId", newModel.id);
-              newQuestion.set("_id", Utils.guid());
-              newQuestion.set("subtestId", subtestIdMap[oldId]);
-              newQuestions.push(newQuestion);
-              newQuestion.save();
-            }
-            return callback();
+            });
           }
         });
       }

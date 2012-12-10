@@ -1,20 +1,20 @@
-var AssessmentListView,
+var AssessmentsMenuView,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-AssessmentListView = (function(_super) {
+AssessmentsMenuView = (function(_super) {
 
-  __extends(AssessmentListView, _super);
+  __extends(AssessmentsMenuView, _super);
 
-  function AssessmentListView() {
+  function AssessmentsMenuView() {
     this.newAssessmentSave = __bind(this.newAssessmentSave, this);
+    this.addToCollection = __bind(this.addToCollection, this);
     this.render = __bind(this.render, this);
-    this.refresh = __bind(this.refresh, this);
-    AssessmentListView.__super__.constructor.apply(this, arguments);
+    AssessmentsMenuView.__super__.constructor.apply(this, arguments);
   }
 
-  AssessmentListView.prototype.events = {
+  AssessmentsMenuView.prototype.events = {
     'keypress .new_assessment_name': 'newAssessmentSave',
     'click .new_assessment_save': 'newAssessmentSave',
     'click .new_assessment_cancel': 'newAssessmentToggle',
@@ -23,25 +23,28 @@ AssessmentListView = (function(_super) {
     'click .groups': 'gotoGroups'
   };
 
-  AssessmentListView.prototype.gotoGroups = function() {
+  AssessmentsMenuView.prototype.gotoGroups = function() {
     return Tangerine.router.navigate("groups", true);
   };
 
-  AssessmentListView.prototype["import"] = function() {
+  AssessmentsMenuView.prototype["import"] = function() {
     return Tangerine.router.navigate("import", true);
   };
 
-  AssessmentListView.prototype.initialize = function(options) {
-    var group, view, _i, _len, _ref, _results;
+  AssessmentsMenuView.prototype.initialize = function(options) {
+    var group, view, _i, _len, _ref, _results,
+      _this = this;
     this.assessments = options.assessments;
     this.group = options.group;
+    this.assessments.each(function(assessment) {
+      return assessment.on("new", _this.addToCollection);
+    });
+    this.isAdmin = Tangerine.user.isAdmin();
+    this.sections = [this.group, "public"];
+    if (this.group === "public") this.sections.pop();
     this.curriculaListView = new CurriculaListView({
       "curricula": options.curricula
     });
-    this.isAdmin = Tangerine.user.isAdmin();
-    this.views = [];
-    this.publicViews = [];
-    this.sections = [this.group, "public"];
     this.groupViews = [];
     if (Tangerine.settings.context === "server") {
       _ref = this.sections;
@@ -50,7 +53,8 @@ AssessmentListView = (function(_super) {
         group = _ref[_i];
         view = new AssessmentsView({
           "group": group,
-          "allAssessments": this.assessments,
+          "homeGroup": this.group,
+          "assessments": this.assessments,
           "parent": this
         });
         _results.push(this.groupViews.push(view));
@@ -59,38 +63,15 @@ AssessmentListView = (function(_super) {
     } else if (Tangerine.settings.context === "mobile") {
       return this.listView = new AssessmentsView({
         "group": false,
-        "allAssessments": this.assessments,
+        "homeGroup": this.group,
+        "assessments": this.assessments,
         "parent": this
       });
     }
   };
 
-  AssessmentListView.prototype.refresh = function() {
-    var _this = this;
-    this.assessments = new Assessments;
-    return this.assessments.fetch({
-      success: function(assessments) {
-        var assessmentCount, groupName, i, view, _len, _ref, _results;
-        _ref = _this.groupViews;
-        _results = [];
-        for (i = 0, _len = _ref.length; i < _len; i++) {
-          view = _ref[i];
-          assessmentCount = assessments.where({
-            "group": _this.sections[i],
-            "archived": false
-          }).length;
-          groupName = _this.sections[i] === "public" ? "Public" : _this.sections[i];
-          _this.$el.find(".header_" + view.cid).html("" + groupName + " (" + assessmentCount + ")");
-          view.allAssessments = assessments;
-          _results.push(view.refresh(true));
-        }
-        return _results;
-      }
-    });
-  };
-
-  AssessmentListView.prototype.render = function() {
-    var assessmentCount, groupName, groupsButton, html, i, importButton, newButton, view, _len, _ref;
+  AssessmentsMenuView.prototype.render = function() {
+    var groupsButton, html, i, importButton, newButton, view, _len, _ref;
     newButton = "<button class='new_assessment command'>New</button>";
     importButton = "<button class='import command'>Import</button>";
     groupsButton = "<button class='navigation groups'>Groups</button>";
@@ -103,58 +84,56 @@ AssessmentListView = (function(_super) {
       _ref = this.groupViews;
       for (i = 0, _len = _ref.length; i < _len; i++) {
         view = _ref[i];
-        assessmentCount = this.assessments.where({
-          "group": this.sections[i],
-          "archived": false
-        }).length;
-        groupName = this.sections[i] === "public" ? "Public" : this.sections[i];
-        this.$el.append("<h2 class='header_" + view.cid + "'>" + groupName + " (" + assessmentCount + ")</h2><ul id='group_" + view.cid + "' class='assessment_list'></ul>");
-        view.setElement(this.$el.find("#group_" + view.cid));
         view.render();
+        this.$el.append(view.el);
       }
     } else if (Tangerine.settings.context === "mobile") {
-      this.$el.append("<ul class='assessment_list'></ul>");
-      this.listView.setElement(this.$el.find("ul.assessment_list"));
       this.listView.render();
+      this.$el.append(this.listView.el);
     }
     this.trigger("rendered");
   };
 
-  AssessmentListView.prototype.newAssessmentToggle = function() {
+  AssessmentsMenuView.prototype.addToCollection = function(newAssessment) {
+    this.assessments.add(newAssessment);
+    return newAssessment.on("new", this.addToCollection);
+  };
+
+  AssessmentsMenuView.prototype.newAssessmentToggle = function() {
     this.$el.find('.new_assessment_form, .new_assessment').fadeToggle(250);
     return false;
   };
 
-  AssessmentListView.prototype.newAssessmentSave = function(event) {
+  AssessmentsMenuView.prototype.newAssessmentSave = function(event) {
     var name, newAssessment, newId,
       _this = this;
     if (event.type !== "click" && event.which !== 13) return true;
     name = this.$el.find('.new_assessment_name').val();
     if (name.length !== 0) {
       newId = Utils.guid();
-      newAssessment = new Assessment({
-        "name": name,
-        "group": this.group,
+      newAssessment = new Assessment;
+      newAssessment.save({
         "_id": newId,
         "assessmentId": newId,
-        "archived": false
-      });
-      newAssessment.save(null, {
-        success: function() {
-          _this.refresh();
-          return _this.$el.find('.new_assessment_form, .new_assessment').fadeToggle(250, function() {
+        "archived": false,
+        "name": name,
+        "group": this.group
+      }, {
+        success: function(assessment) {
+          _this.assessments.add(newAssessment);
+          _this.$el.find('.new_assessment_form, .new_assessment').fadeToggle(250, function() {
             return _this.$el.find('.new_assessment_name').val("");
           });
+          return Utils.midAlert("" + name + " saved");
         }
       });
-      Utils.midAlert("" + name + " saved");
     } else {
       Utils.midAlert("<span class='error'>Could not save <img src='images/icon_close.png' class='clear_message'></span>");
     }
     return false;
   };
 
-  AssessmentListView.prototype.closeViews = function() {
+  AssessmentsMenuView.prototype.closeViews = function() {
     var view, _base, _i, _len, _ref, _results;
     if (typeof (_base = this.curriculaListView).close === "function") {
       _base.close();
@@ -168,10 +147,10 @@ AssessmentListView = (function(_super) {
     return _results;
   };
 
-  AssessmentListView.prototype.onClose = function() {
+  AssessmentsMenuView.prototype.onClose = function() {
     return this.closeViews();
   };
 
-  return AssessmentListView;
+  return AssessmentsMenuView;
 
 })(Backbone.View);

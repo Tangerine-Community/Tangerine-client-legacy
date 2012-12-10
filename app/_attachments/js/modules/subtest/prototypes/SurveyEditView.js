@@ -35,8 +35,8 @@ SurveyEditView = (function(_super) {
         _this.questionsEditView = new QuestionsEditView({
           questions: _this.model.questions
         });
-        _this.questionsEditView.on("edit-save", function() {
-          return _this.trigger("edit-save");
+        _this.questionsEditView.on("question-edit", function(questionId) {
+          return _this.trigger("question-edit", questionId);
         });
         _this.model.questions.on("change", _this.renderQuestions);
         return _this.renderQuestions();
@@ -72,9 +72,13 @@ SurveyEditView = (function(_super) {
     return false;
   };
 
+  SurveyEditView.prototype.isValid = function() {
+    return true;
+  };
+
   SurveyEditView.prototype.save = function(options) {
-    var emptyOptions, i, isEditSave, notSaved, plural, question, requiresGrid, _has, _len, _question, _ref, _require;
-    isEditSave = options != null ? options.isEditSave : void 0;
+    var emptyOptions, i, notSaved, plural, question, requiresGrid, _has, _len, _question, _ref, _require;
+    options.questionSave = options.questionSave ? options.questionSave : true;
     this.model.set({
       "gridLinkId": this.$el.find("#link_select option:selected").val(),
       "autostopLimit": parseInt(this.$el.find("#autostop_limit").val()) || 0
@@ -87,9 +91,7 @@ SurveyEditView = (function(_super) {
       question = _ref[i];
       if (question.get("type") !== "open" && question.get("options").length === 0) {
         emptyOptions.push(i + 1);
-        console.log(isEditSave);
-        if (!isEditSave) {
-          console.log("saving questions");
+        if (options.questionSave) {
           if (!question.save()) notSaved.push(i);
           if (question.has("linkedGridScore") && question.get("linkedGridScore") !== "" && question.get("linkedGridScore") !== 0 && this.model.has("gridLinkId") === "" && this.model.get("gridLinkId") === "") {
             requiresGrid.push(i);

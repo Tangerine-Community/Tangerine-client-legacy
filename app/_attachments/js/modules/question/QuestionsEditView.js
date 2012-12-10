@@ -48,8 +48,8 @@ QuestionsEditView = (function(_super) {
       });
       this.views.push(view);
       view.on("deleted", this.render);
-      view.on("edit-save", function() {
-        return _this.trigger("edit-save");
+      view.on("question-edit", function(questionId) {
+        return _this.trigger("question-edit", questionId);
       });
       view.render();
       this.$el.append(view.el);

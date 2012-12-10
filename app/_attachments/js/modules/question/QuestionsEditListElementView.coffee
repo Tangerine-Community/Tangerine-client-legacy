@@ -10,8 +10,7 @@ class QuestionsEditListElementView extends Backbone.View
     'click .delete_delete' : 'delete'
 
   edit: (event) ->
-    @trigger "edit-save"
-    Tangerine.router.navigate "question/#{@question.id}", true
+    @trigger "question-edit", @question.id
     return false
 
   toggleDelete: ->

@@ -16,7 +16,7 @@ class Subtest extends Backbone.Model
     for key, value of @templates[prototype]
       @set key, value
     @save()
-      
+
   copyTo: (assessmentId) ->
     newSubtest = @clone()
     newId = Utils.guid()
@@ -31,7 +31,6 @@ class Subtest extends Backbone.Model
       "assessmentId" : assessmentId
       "order"        : 0
       "gridLinkId"   : ""
-
 
     questions = new Questions
     questions.fetch

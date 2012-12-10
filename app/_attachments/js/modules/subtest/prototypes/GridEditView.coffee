@@ -9,6 +9,8 @@ class GridEditView extends Backbone.View
   initialize: ( options ) ->
     @model = options.model
 
+  isValid: -> true
+
   save: ->
     # validation can be done on models, perhaps there is a better palce to do it
     if /\t|,/.test(@$el.find("#subtest_items").val()) then alert "Please remember\n\nGrid items are space \" \" delimited"

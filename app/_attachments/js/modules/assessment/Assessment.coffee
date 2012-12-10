@@ -17,7 +17,7 @@ class Assessment extends Backbone.Model
         group_level : 1
         key         : JSON.stringify(@id)
       success: (data) =>
-        @resultCount = data.rows[0].value
+        @resultCount = if data.rows.length != 0 then data.rows[0].value else 0
         @trigger "resultCount"
 
 
@@ -37,11 +37,13 @@ class Assessment extends Backbone.Model
 
   updateFromServer: ( dKey = @id.substr(-5, 5) ) =>
 
+    dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g," ").split(/\s+/))
+
     @trigger "status", "import lookup"
     $.ajax "#{Tangerine.config.address.cloud.host}/#{Tangerine.config.address.cloud.dbName}/_design/#{Tangerine.config.address.designDoc}/_view/byDKey",
       type: "POST"
       dataType: "jsonp"
-      data: keys: JSON.stringify([dKey])
+      data: keys: dKeys
       success: (data) =>
         docList = []
         for datum in data.rows
@@ -49,7 +51,15 @@ class Assessment extends Backbone.Model
         $.couch.replicate(
           "#{Tangerine.config.address.cloud.host}/#{Tangerine.config.address.cloud.dbName}",
           Tangerine.config.address.local.dbName,
-            success:      => @trigger "status", "import success"
+            success: => 
+              @trigger "status", "import success"
+              try
+                @fetch
+                  success: => @trigger "update"
+                  error: => console.log "error fetching after update"
+              catch e
+                console.log "error fetching after update"
+                console.log e
             error: (a, b) => @trigger "status", "import error", "#{a} #{b}"
           ,
             doc_ids: docList
@@ -65,51 +75,50 @@ class Assessment extends Backbone.Model
     newModel.set assessmentAttributes
     newId = Utils.guid()
 
-    newModel.set 
+    newModel.save
       "_id"          : newId
       "assessmentId" : newId
+    ,
+      success: ->
+        questions = new Questions
+        questions.fetch
+          key: @id
+          success: ( questions ) =>
+            subtests = new Subtests
+            subtests.fetch
+              key: originalId
+              success: ( subtests ) =>
+                filteredSubtests = subtests.models
+                subtestIdMap = {}
+                newSubtests = []
+                # link new subtests to new assessment
+                for model, i in filteredSubtests
+                  newSubtest = model.clone()
+                  newSubtest.set "assessmentId", newModel.id
+                  newSubtestId = Utils.guid()
+                  subtestIdMap[newSubtest.id] = newSubtestId
+                  newSubtest.set "_id", newSubtestId
+                  newSubtests.push newSubtest
 
-    newModel.save()
 
-    questions = new Questions
-    questions.fetch
-      key: @id
-      success: ( questions ) =>
-        subtests = new Subtests
-        subtests.fetch
-          key: originalId
-          success: ( subtests ) =>
-            filteredSubtests = subtests.models
-            subtestIdMap = {}
-            newSubtests = []
-            # link new subtests to new assessment
-            for model, i in filteredSubtests
-              newSubtest = model.clone()
-              newSubtest.set "assessmentId", newModel.id
-              newSubtestId = Utils.guid()
-              subtestIdMap[newSubtest.id] = newSubtestId
-              newSubtest.set "_id", newSubtestId
-              newSubtests.push newSubtest
+                # update the links to other subtests
+                for model, i in newSubtests
+                  gridId = model.get( "gridLinkId" )
+                  if ( gridId || "" ) != ""
+                    model.set "gridLinkId", subtestIdMap[gridId]
+                  model.save()
 
-
-            # update the links to other subtests
-            for model, i in newSubtests
-              gridId = model.get( "gridLinkId" )
-              if ( gridId || "" ) != ""
-                model.set "gridLinkId", subtestIdMap[gridId]
-              model.save()
-
-            newQuestions = []
-            # link questions to new subtest
-            for question in questions.models
-              newQuestion = question.clone()
-              oldId = newQuestion.get "subtestId"
-              newQuestion.set "assessmentId", newModel.id
-              newQuestion.set "_id", Utils.guid() 
-              newQuestion.set "subtestId", subtestIdMap[oldId]
-              newQuestions.push newQuestion
-              newQuestion.save()
-            callback()
+                newQuestions = []
+                # link questions to new subtest
+                for question in questions.models
+                  newQuestion = question.clone()
+                  oldId = newQuestion.get "subtestId"
+                  newQuestion.set "assessmentId", newModel.id
+                  newQuestion.set "_id", Utils.guid() 
+                  newQuestion.set "subtestId", subtestIdMap[oldId]
+                  newQuestions.push newQuestion
+                  newQuestion.save()
+                callback newModel
 
   destroy: ->
 

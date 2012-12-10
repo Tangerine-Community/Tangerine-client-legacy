@@ -4,138 +4,142 @@ class SubtestEditView extends Backbone.View
     
   events:
     'click .back_button'         : 'goBack'
-    'click .save_subtest'        : 'save'
+    'click .save_subtest'        : 'saveSubtest'
 
-    'click .edit_enumerator'     : 'editEnumerator'
-    'click .enumerator_done'     : 'doneEnumerator'
-    'click .enumerator_cancel'   : 'cancelEnumerator'
+    'click .richtext_edit'     : 'richtextEdit'
+    'click .richtext_save'     : 'richtextSave'
+    'click .richtext_cancel'   : 'richtextCancel'
 
-    'click .edit_student'        : 'editStudent'
-    'click .student_done'        : 'doneStudent'
-    'click .student_cancel'      : 'cancelStudent'
-
-    'click .edit_transition_comment'        : 'editTransitionComment'
-    'click .transition_comment_done'        : 'doneTransitionComment'
-    'click .transition_comment_cancel'      : 'cancelTransitionComment'
-
-  editEnumerator: ->
-    @$el.find(".enumerator_help_preview, .edit_enumerator, .enumerator_save_buttons").fadeToggle(250)
-    @$el.find("textarea#enumerator_help").html(@model.escape("enumeratorHelp") || "").cleditor()
-
-  doneEnumerator: ->
-    if @model.save( "enumeratorHelp" : @$el.find("textarea#enumerator_help").val(), wait : true )
-      @cancelEnumerator()
-    else
-      console.log ("save error")
-
-  cancelEnumerator: ->
-    $preview = $("div.enumerator_help_preview")
-    $preview.html @model.get("enumeratorHelp") || ""
-    $preview.fadeIn(250)
-    @$el.find("button.edit_enumerator, .enumerator_save_buttons").fadeToggle(250)
-    cleditor = @$el.find("#enumerator_help").cleditor()[0]
-    cleditor.$area.insertBefore(cleditor.$main)
-    cleditor.$area.removeData("cleditor")
-    cleditor.$main.remove()
-
-  editStudent: ->
-    @$el.find(".student_dialog_preview, .edit_student, .student_save_buttons").fadeToggle(250)
-    @$el.find("textarea#student_dialog").html(@model.escape("studentDialog") || "").cleditor()
-
-  doneStudent: ->
-    if @model.save( "studentDialog" : @$el.find("textarea#student_dialog").val(), wait : true )
-      @cancelStudent()
-    else
-      console.log ("save error")
-
-  cancelStudent: ->
-    $preview = $("div.student_dialog_preview")
-    $preview.html @model.get("studentDialog") || ""
-    $preview.fadeIn(250)
-    @$el.find("button.edit_student, .student_save_buttons").fadeToggle(250)
-    cleditor = @$el.find("#student_dialog").cleditor()[0]
-    cleditor.$area.insertBefore(cleditor.$main)
-    cleditor.$area.removeData("cleditor")
-    cleditor.$main.remove()
-
-  editTransitionComment: ->
-    @$el.find(".transition_comment_preview, .edit_transition_comment, .transition_comment_save_buttons").fadeToggle(250)
-    @$el.find("textarea#transition_comment").html(@model.escape("transitionComment") || "").cleditor()
-
-  doneTransitionComment: ->
-    if @model.save( "transitionComment" : @$el.find("textarea#transition_comment").val(), wait : true )
-      @cancelTransitionComment()
-    else
-      console.log ("save error")
-
-  cancelTransitionComment: ->
-    $preview = $("div.transition_comment_preview")
-    $preview.html @model.get("transitionComment") || ""
-    $preview.fadeIn(250)
-    @$el.find("button.edit_transition_comment, .transition_comment_save_buttons").fadeToggle(250)
-    cleditor = @$el.find("#transition_comment").cleditor()[0]
-    cleditor.$area.insertBefore(cleditor.$main)
-    cleditor.$area.removeData("cleditor")
-    cleditor.$main.remove()
-
-
-
-  onClose: ->
-    @prototypeEditor.close?()
+  richtextConfig: [
+    {
+      "key"           : "enumerator"
+      "attributeName" : "enumeratorHelp"
+    },
+    {
+      "key"           : "dialog"
+      "attributeName" : "studentDialog"
+    },
+    {
+      "key"           : "transition"
+      "attributeName" : "transitionComment"
+    }
+  ]
 
   initialize: ( options ) ->
-    @model = options.model
+
+    @richtextKeys = _.pluck(@richtextConfig, "key")
+
+    @model      = options.model
     @assessment = options.assessment
-    @config = Tangerine.config.subtest
-    
+    @config     = Tangerine.config.subtest
+
     @prototypeViews  = Tangerine.config.prototypeViews
     @prototypeEditor = new window[@prototypeViews[@model.get 'prototype']['edit']]
       model: @model
       parent: @
-    @prototypeEditor.on "edit-save", => @save options:editSave:true
-      
-  goBack: =>
-    Tangerine.router.navigate "edit/"+@model.get("assessmentId"), true
 
-  save: (event) ->
+    @prototypeEditor.on "question-edit", (questionId) =>
+      @save
+        questionSave  : false
+        success       : -> Tangerine.router.navigate "question/#{questionId}", true
+
+
+  getRichtextConfig: (event) ->
+
+    if _.isString event
+      dataKey = event
+    else
+      $target = $(event.target)
+      dataKey = $target.parent().attr("data-richtextKey") || $target.parent().parent().attr("data-richtextKey")
+
+    attributeName = _.where(@richtextConfig, "key":dataKey)[0].attributeName
+
+    return {
+      "dataKey"       : dataKey
+      "attributeName" : attributeName
+    }
+
+
+  richtextEdit: (event) ->
+
+    config = @getRichtextConfig event
+
+    @$el.find(".#{config.dataKey}_preview, .#{config.dataKey}_edit, .#{config.dataKey}_buttons").fadeToggle(250)
+    @$el.find("textarea##{config.dataKey}_textarea").html(@model.escape(config.attributeName) || "").cleditor()
+
+  richtextSave: (event) ->
+
+    config = @getRichtextConfig event
     
-    isEditSave = event?.options?.editSave == true
-    
+    newAttributes = {}
+    newAttributes[config.attributeName] = @$el.find("textarea##{config.dataKey}_textarea").val()
+
+    @model.save 
+    @model.save newAttributes, 
+      success: =>
+        @richtextCancel(config.dataKey)
+      error: =>
+        alert "Save error. Please try again."
+
+  richtextCancel: (event) ->
+
+    config = @getRichtextConfig event
+
+    $preview = $("div.#{config.dataKey}_preview")
+    $preview.html @model.get(config.attributeName) || ""
+    $preview.fadeIn(250)
+    @$el.find("button.#{config.dataKey}_edit, .#{config.dataKey}_buttons").fadeToggle(250)
+    cleditor = @$el.find("##{config.dataKey}_textarea").cleditor()[0]
+    cleditor.$area.insertBefore(cleditor.$main)
+    cleditor.$area.removeData("cleditor")
+    cleditor.$main.remove()
+
+  saveSubtest: -> @save()
+
+  save: ( options={} ) ->
+
+    # by default save prototype as well
+    options.prototypeSave = if options.prototypeSave? then options.prorotypeSave else true
+
     prototype = @model.get("prototype")
+
     @model.set
       name           : @$el.find("#subtest_name").val()
-      enumeratorHelp : @$el.find("#enumerator_help").val()
-      studentDialog  : @$el.find("#student_dialog").val()
-      transitionComment : @$el.find("#transition_comment").val()
       skippable      : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
 
-    @prototypeEditor.save?(
-      "options" :
-        "isEditSave" : isEditSave
-    )
-    
-    if @prototypeEditor.isValid? && @prototypeEditor.isValid() == false && not isEditSave
+      enumeratorHelp    : @$el.find("#enumerator_help").val()
+      studentDialog     : @$el.find("#student_dialog").val()
+      transitionComment : @$el.find("#transition_comment").val()
+
+    # important not to let prototypes use success or error
+    @prototypeEditor.save(options)
+
+    if @prototypeEditor.isValid() == false && not isEditSave
       Utils.midAlert "There are errors on this page"
       @prototypeEditor.showErrors?()
     else
-      if @model.save()
-        Utils.midAlert "Subtest Saved"
-        setTimeout @goBack, 1000 unless isEditSave
-      else
-        console.log "save error"
-        Utils.midAlert "Save error"
+      @model.save null,
+        success: =>
+          # prefer the success callback
+          return options.success() if options.success
+          Utils.midAlert "Subtest Saved"
+          setTimeout @goBack, 1000
+
+        error: ->
+          return options.error() if options.error?
+          Utils.midAlert "Save error"
+
 
   render: ->
     assessmentName = @assessment.escape "name"
-    name      = @model.escape "name"
-    prototype = @model.get "prototype"
-    help      = @model.get("enumeratorHelp") || ""
-    dialog    = @model.get("studentDialog")  || ""
-    transitionComment = @model.get("transitionComment")  || ""
-    skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+    name        = @model.escape "name"
+    prototype   = @model.get "prototype"
+    enummerator = @model.get("enumeratorHelp") || ""
+    dialog      = @model.get("studentDialog")  || ""
+    transition  = @model.get("transitionComment")  || ""
+    skippable   = @model.getBoolean("skippable")
 
     @$el.html "
-      <button class='back_button navigation'>Back</button><br>
       <h1>Subtest Editor</h1>
       <table class='basic_info'>
         <tr>
@@ -162,28 +166,31 @@ class SubtestEditView extends Backbone.View
             </div>
           </div>
         </div>
-        <div class='label_value'>
-          <label for='enumerator_help' title='If text is supplied, a help button will appear at the top of the subtest as a reference for the enumerator. If you are pasting from word it is recommended to paste into a plain text editor first, and then into this box.'>Enumerator help <button class='edit_enumerator command'>Edit</button></label>
-          <div class='info_box_wide enumerator_help_preview'>#{help}</div>
-          <textarea id='enumerator_help' class='confirmation'>#{help}</textarea>
-          <div class='enumerator_save_buttons confirmation'>
-            <button class='enumerator_done command'>Save</button> <button class='enumerator_cancel command'>Cancel</button>
+        <div class='label_value' data-richtextKey='enumerator'>
+          <label for='enumerator_textarea' title='If text is supplied, a help button will appear at the top of the subtest as a reference for the enumerator. If you are pasting from word it is recommended to paste into a plain text editor first, and then into this box.'>Enumerator help <button class='richtext_edit command'>Edit</button></label>
+          <div class='info_box_wide enumerator_preview'>#{enummerator}</div>
+          <textarea id='enumerator_textarea' class='confirmation'>#{enummerator}</textarea>
+          <div class='enumerator_buttons confirmation'>
+            <button class='richtext_save command'>Save</button>
+            <button class='richtext_cancel command'>Cancel</button>
           </div>
         </div>
-        <div class='label_value'>
-          <label for='student_dialog' title='Generally this is a script that will be read to the student. If you are pasting from word it is recommended to paste into a plain text editor first, and then into this box.'>Student Dialog <button class='edit_student command'>Edit</button></label>
-          <div class='info_box_wide student_dialog_preview'>#{dialog}</div>
-          <textarea id='student_dialog' class='confirmation'>#{dialog}</textarea>
-          <div class='student_save_buttons confirmation'>
-            <button class='student_done command'>Save</button> <button class='student_cancel command'>Cancel</button>
+        <div class='label_value' data-richtextKey='dialog'>
+          <label for='dialog_textarea' title='Generally this is a script that will be read to the student. If you are pasting from word it is recommended to paste into a plain text editor first, and then into this box.'>Student Dialog <button class='richtext_edit command'>Edit</button></label>
+          <div class='info_box_wide dialog_preview'>#{dialog}</div>
+          <textarea id='dialog_textarea' class='confirmation'>#{dialog}</textarea>
+          <div class='dialog_buttons confirmation'>
+            <button class='richtext_save command'>Save</button>
+            <button class='richtext_cancel command'>Cancel</button>
           </div>
         </div>
-        <div class='label_value'>
-          <label for='transition_comment' title='This will be displayed with a grey background above the next button, similar to the student dialog text. If you are pasting from Word it is recommended to paste into a plain text editor first, and then into this box.'>Transition Comment <button class='edit_transition_comment command'>Edit</button></label>
-          <div class='info_box_wide transition_comment_preview'>#{transitionComment}</div>
-          <textarea id='transition_comment' class='confirmation'>#{transitionComment}</textarea>
-          <div class='transition_comment_save_buttons confirmation'>
-            <button class='transition_comment_done command'>Save</button> <button class='transition_comment_cancel command'>Cancel</button>
+        <div class='label_value' data-richtextKey='transition'>
+          <label for='transition_testarea' title='This will be displayed with a grey background above the next button, similar to the student dialog text. If you are pasting from Word it is recommended to paste into a plain text editor first, and then into this box.'>Transition Comment <button class='richtext_edit command'>Edit</button></label>
+          <div class='info_box_wide transition_preview'>#{transition}</div>
+          <textarea id='transition_textarea' class='confirmation'>#{transition}</textarea>
+          <div class='transition_buttons confirmation'>
+            <button class='richtext_save command'>Save</button>
+            <button class='richtext_cancel command'>Cancel</button>
           </div>
         </div>
 
@@ -198,4 +205,9 @@ class SubtestEditView extends Backbone.View
     
     @trigger "rendered"
 
+  onClose: ->
+    @prototypeEditor.close?()
+
+  goBack: =>
+    Tangerine.router.navigate "edit/" + @model.get("assessmentId"), true
 

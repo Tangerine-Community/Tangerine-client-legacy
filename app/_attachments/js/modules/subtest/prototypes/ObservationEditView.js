@@ -23,6 +23,10 @@ ObservationEditView = (function(_super) {
     });
   };
 
+  ObservationEditView.prototype.isValid = function() {
+    return true;
+  };
+
   ObservationEditView.prototype.save = function() {
     var errors, intervalLength, totalSeconds;
     errors = [];

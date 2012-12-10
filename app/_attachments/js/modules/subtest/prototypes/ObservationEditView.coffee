@@ -8,6 +8,8 @@ class ObservationEditView extends Backbone.View
     @surveyView = new SurveyEditView
       "model" : @surveyModel
 
+  isValid: -> true
+
   save: ->
     
     errors = []
