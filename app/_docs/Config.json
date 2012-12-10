@@ -15,6 +15,7 @@
 		},
 		"local" :
 		{
+		    "host"   : "http://localhost",
 			"login"  : "tangerine:tangytangerine",
 			"dbName" : "tangerine"
 		},
