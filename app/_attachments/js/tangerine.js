@@ -413,7 +413,7 @@ Router = (function(_super) {
     if (group === null && Tangerine.settings.context === "server") {
       return Tangerine.router.navigate("groups", true);
     } else {
-      group = decodeURIComponent(group);
+      if (group != null) group = decodeURIComponent(group);
       return Tangerine.user.verify({
         isRegistered: function() {
           var assessments;
@@ -421,13 +421,20 @@ Router = (function(_super) {
           return assessments.fetch({
             success: function(assessments) {
               var curricula;
+              if (group != null) {
+                assessments = new Assessments(assessments.where({
+                  "group": group
+                }).concat(assessments.where({
+                  "group": "public"
+                })));
+              }
               curricula = new Curricula;
               return curricula.fetch({
                 success: function(collection) {
                   curricula = new Curricula(collection.where({
                     "group": group
                   }));
-                  assessments = new AssessmentListView({
+                  assessments = new AssessmentsMenuView({
                     "assessments": assessments,
                     "curricula": curricula,
                     "group": group

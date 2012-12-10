@@ -270,17 +270,19 @@ class Router extends Backbone.Router
     if group == null && Tangerine.settings.context == "server"
       Tangerine.router.navigate "groups", true
     else
-      group = decodeURIComponent(group)
+      group = decodeURIComponent(group) if group?
       Tangerine.user.verify
         isRegistered: ->
           assessments = new Assessments
           assessments.fetch
             success: (assessments) ->
+              if group?
+                assessments = new Assessments(assessments.where({"group":group}).concat(assessments.where({"group":"public"})))
               curricula = new Curricula
               curricula.fetch
                 success: ( collection ) ->
                   curricula = new Curricula collection.where "group" : group
-                  assessments = new AssessmentListView
+                  assessments = new AssessmentsMenuView
                     "assessments" : assessments
                     "curricula"   : curricula
                     "group"       : group
