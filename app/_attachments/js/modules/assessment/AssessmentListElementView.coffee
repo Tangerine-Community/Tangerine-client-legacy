@@ -116,7 +116,6 @@ class AssessmentListElementView extends Backbone.View
     updateButton    = "<img class='link_icon update' title='Update' src='images/icon_sync.png'>"
 
     downloadKey     = "<span class='download_key small_grey'>Download key <b>#{@model.id.substr(-5,5)}</b></span>"
-    
     archiveSwitch   = "
     <select class='archive'>
       <option value='false' #{if isArchived then selected else ''}>Active</option>
