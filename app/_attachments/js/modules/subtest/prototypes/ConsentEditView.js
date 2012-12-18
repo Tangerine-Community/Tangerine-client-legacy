@@ -15,6 +15,10 @@ ConsentEditView = (function(_super) {
     return this.parent = options.parent;
   };
 
+  ConsentEditView.prototype.isValid = function() {
+    return true;
+  };
+
   ConsentEditView.prototype.save = function() {
     return this.model.set({
       "prompt": this.$el.find("#consent_prompt").val()

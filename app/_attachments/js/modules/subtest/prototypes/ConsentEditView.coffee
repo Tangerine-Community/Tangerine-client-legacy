@@ -4,6 +4,8 @@ class ConsentEditView extends Backbone.View
     @model = options.model
     @parent = options.parent
 
+  isValid: -> true
+
   save: ->
     @model.set
       "prompt" : @$el.find("#consent_prompt").val()

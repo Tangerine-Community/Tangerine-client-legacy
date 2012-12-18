@@ -123,9 +123,9 @@ SubtestEditView = (function(_super) {
     this.model.set({
       name: this.$el.find("#subtest_name").val(),
       skippable: this.$el.find("#skip_radio input:radio[name=skippable]:checked").val() === "true",
-      enumeratorHelp: this.$el.find("#enumerator_help").val(),
-      studentDialog: this.$el.find("#student_dialog").val(),
-      transitionComment: this.$el.find("#transition_comment").val()
+      enumeratorHelp: this.$el.find("#enumerator_textarea").val(),
+      studentDialog: this.$el.find("#dialog_textarea").val(),
+      transitionComment: this.$el.find("#transition_textarea").val()
     });
     this.prototypeEditor.save(options);
     if (this.prototypeEditor.isValid() === false && !isEditSave) {

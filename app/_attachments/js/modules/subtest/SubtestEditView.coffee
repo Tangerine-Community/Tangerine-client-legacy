@@ -107,9 +107,9 @@ class SubtestEditView extends Backbone.View
       name           : @$el.find("#subtest_name").val()
       skippable      : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
 
-      enumeratorHelp    : @$el.find("#enumerator_help").val()
-      studentDialog     : @$el.find("#student_dialog").val()
-      transitionComment : @$el.find("#transition_comment").val()
+      enumeratorHelp    : @$el.find("#enumerator_textarea").val()
+      studentDialog     : @$el.find("#dialog_textarea").val()
+      transitionComment : @$el.find("#transition_textarea").val()
 
     # important not to let prototypes use success or error
     @prototypeEditor.save(options)
