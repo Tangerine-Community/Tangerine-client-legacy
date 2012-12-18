@@ -289,7 +289,7 @@ ResultsView = (function(_super) {
           $('#results-header').html("Results (" + result.rows.length + ")");
           maxResults = 500;
           if (result.rows.length > maxResults) {
-            $('#results-header').html("Results (" + result.rows.length + ") - more than " + maxResults + " results, use CSV for analysis");
+            $('#results-header').html("Results (" + result.rows.length + ") - more than " + maxResults + " results, use CSV (beta)for analysis");
             return;
           }
           rowsRendered = (function() {

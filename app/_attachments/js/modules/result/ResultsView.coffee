@@ -240,7 +240,7 @@ class ResultsView extends Backbone.View
           # TODO pagination
           maxResults = 500
           if result.rows.length > maxResults
-            $('#results-header').html "Results (#{result.rows.length}) - more than #{maxResults} results, use CSV for analysis"
+            $('#results-header').html "Results (#{result.rows.length}) - more than #{maxResults} results, use CSV (beta)for analysis"
             return
           rowsRendered = for row in result.rows
             "
