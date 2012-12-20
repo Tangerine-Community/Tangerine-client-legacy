@@ -23,7 +23,7 @@ KlassSubtestRunView = (function(_super) {
   };
 
   KlassSubtestRunView.prototype.initialize = function(options) {
-    this.protoViews = Tangerine.config.prototypeViews;
+    this.protoViews = Tangerine.config.get("prototypeViews");
     this.prototypeRendered = false;
     return this.result = new KlassResult({
       startTime: (new Date()).getTime(),
