@@ -19,8 +19,8 @@ class KlassResult extends Backbone.Model
     if options == "time_remain" then return @getTimeRemain()
 
     # if no special properties detected let's go with super
-    result = KlassResult.__super__.get.apply @, arguments
-    return result
+    # result = KlassResult.__super__.get.apply @, arguments
+    return super(options)
 
   gridCount: (value) ->
     if not @get("subtestData").items? then throw "No items"

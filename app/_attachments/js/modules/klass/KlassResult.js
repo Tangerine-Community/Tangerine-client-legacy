@@ -19,7 +19,6 @@ KlassResult = (function(_super) {
   };
 
   KlassResult.prototype.get = function(options) {
-    var result;
     this.assertSubtestData();
     if (options === "correct") return this.gridCount("correct");
     if (options === "incorrect") return this.gridCount("incorrect");
@@ -27,8 +26,7 @@ KlassResult = (function(_super) {
     if (options === "total") return this.attributes.subtestData.items.length;
     if (options === "attempted") return this.getAttempted();
     if (options === "time_remain") return this.getTimeRemain();
-    result = KlassResult.__super__.get.apply(this, arguments);
-    return result;
+    return KlassResult.__super__.get.call(this, options);
   };
 
   KlassResult.prototype.gridCount = function(value) {
