@@ -1,12 +1,12 @@
-<!DOCTYPE html> 
-<html> 
-	<head> 
-    <title>Tangerine</title> 
-    <meta name="viewport" content="width=device-width, user-scalable=no"> 
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>Tangerine</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
     <meta charset="utf-8">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="apple-touch-icon-precomposed" href="images/TangerineIcon.png"/> 
+    <link rel="apple-touch-icon-precomposed" href="images/TangerineIcon.png"/>
 
     <link rel="stylesheet" href="css/tangerine.less.css">
     <link rel="stylesheet" href="css/style.css">
@@ -15,8 +15,7 @@
     <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
     <script src="js/lib/modernizr-custom.js"></script>
     <script>Modernizr.mq('(min-width:0)') || document.write('<script src="js/lib/respond.min.js">\x3C/script>')</script>
-
-  </head> 
+  </head>
   <body>
     <div id='navigation' class="clearfix"></div>
     <div id='content'></div>
@@ -43,9 +42,6 @@
     <script src="js/lib/coffee-script.js"></script>
 
     <script src="js/helpers.js"></script>
-    <script src="js/config.js"></script>
-    <script src="js/version.js"></script>
-
 
     <script src="js/modules/assessment/Assessment.js"></script>
     <script src="js/modules/assessment/Assessments.js"></script>
@@ -91,9 +87,6 @@
     <script src="js/modules/result/ResultSumView.js"></script>
     <script src="js/modules/result/CSVView.js"></script>
 
-    <script src="js/modules/settings/Settings.js"></script>
-    <script src="js/modules/settings/SettingsView.js"></script>
-
     <script src="js/modules/question/Question.js"></script>
     <script src="js/modules/question/Questions.js"></script>
     <script src="js/modules/question/QuestionRunView.js"></script>
@@ -124,8 +117,6 @@
     <script src="js/modules/report/ProgressView.js"></script>
     <script src="js/modules/report/ProgressMenuView.js"></script>
 
-    <script src="js/modules/report/ReportWarnings.js"></script>
-
     <script src="js/modules/klass/Curriculum.js"></script>
     <script src="js/modules/klass/CurriculumView.js"></script>
     <script src="js/modules/klass/Curricula.js"></script>
@@ -147,7 +138,7 @@
 
     <script src="js/modules/error/ErrorView.js"></script>
 
-    <!-- Print view -->
+    <!-- PrintViews -->
     <script src="js/modules/assessment/AssessmentPrintView.js"></script>
     <script src="js/modules/question/QuestionPrintView.js"></script>
     <script src="js/modules/subtest/prototypes/GridPrintView.js"></script>
@@ -158,17 +149,25 @@
     <script src="js/modules/subtest/prototypes/SurveyPrintView.js"></script>
     <script src="js/modules/subtest/prototypes/ObservationPrintView.js"></script>
     <script src="js/modules/subtest/SubtestPrintView.js"></script>
-
-
-    <!-- -->
+    <!-- END of PrintViews -->
 
     <script src="js/modules/log/Log.js"></script>
+
+    <script src="js/modules/template/Template.js"></script>
+    <script src="js/modules/config/Config.js"></script>
+    <script src="js/modules/settings/Settings.js"></script>
+    <script src="js/modules/settings/SettingsView.js"></script>
 
     <script src="js/modules/viewManager/ViewManager.js"></script>
 
     <script src="js/modules/navigation/NavigationView.js"></script>
 
-    <script src="js/tangerine.js"></script>
+    <script src="js/router.js"></script>
+
+    <script src="js/boot.js"></script>
+
+    <script src="js/version.js"></script>
+
 
     <script>MBP.scaleFix();</script>
 
