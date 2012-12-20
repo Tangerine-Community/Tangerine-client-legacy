@@ -46,7 +46,7 @@ KlassGroupingMenuView = (function(_super) {
   KlassGroupingMenuView.prototype.render = function() {
     var flagForCurrent, html, part, subtestId, _len, _ref;
     if (this.ready) {
-      if (this.students.length === 0) {
+      if (!(this.students != null) || this.students.length === 0) {
         this.$el.html("Please add students to this class.");
         return;
       }
