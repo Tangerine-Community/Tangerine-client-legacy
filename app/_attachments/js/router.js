@@ -1019,7 +1019,7 @@ Router = (function(_super) {
     return Tangerine.user.verify({
       isAdmin: function() {
         $("#version-uuid").html("Updating...");
-        return $.couch.replicate(Tangerine.settings.urlDB("cloud"), Tangerine.settings.urlDB("local"), {
+        return $.couch.replicate(Tangerine.settings.urlDB("group"), Tangerine.settings.urlDB("local"), {
           success: function() {
             $("#version-uuid").html("Successful update, now refreshing app...");
             return _.delay(function() {
