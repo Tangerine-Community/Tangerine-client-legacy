@@ -6,10 +6,10 @@ class Settings extends Backbone.Model
   initialize: ->
 
     @config = Tangerine.config
-    @update()
+    @on "all", => @update()
 
 
-  update: ->
+  update: =>
 
     groupHost = @get "groupHost"
     groupName = @get "groupName"
@@ -23,7 +23,7 @@ class Settings extends Backbone.Model
     @location =
       local:
         url : "#{local.host}:#{port}/"
-        db  : "#{local.dbName}/"
+        db  : "/#{local.dbName}/"
       group:
         url : "#{groupHost}:#{port}/"
         db  : "#{groupHost}:#{port}/#{prefix}#{groupName}/"
@@ -35,15 +35,15 @@ class Settings extends Backbone.Model
         db  : ("#{subnetBase}.#{x}:#{port}/#{prefix}#{groupName}/" for x in [0..255])
 
     @couch = 
-      view : "#{designDoc}/_view/"
-      show : "#{designDoc}/_show/"
-      list : "#{designDoc}/_list/"
+      view : "_design/#{designDoc}/_view/"
+      show : "_design/#{designDoc}/_show/"
+      list : "_design/#{designDoc}/_list/"
 
   urlHost: ( location )       -> "#{@location[location].url}"
   urlDB  : ( location )       -> "#{@location[location].db}"
-  urlView: ( location, view ) -> "#{@location[location].url}#{@couch.view}#{view}"
-  urlList: ( location, list ) -> "#{@location[location].url}#{@couch.show}#{list}"
-  urlShow: ( location, show ) -> "#{@location[location].url}#{@couch.list}#{show}"
+  urlView: ( location, view ) -> "#{@location[location].db}#{@couch.view}#{view}"
+  urlList: ( location, list ) -> "#{@location[location].db}#{@couch.show}#{list}"
+  urlShow: ( location, show ) -> "#{@location[location].db}#{@couch.list}#{show}"
 
   # these two are a little weird. I feel like subnetAddress should be a class with properties IP, URL and index
   urlSubnet: ( ip ) -> 

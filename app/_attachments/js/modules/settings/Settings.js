@@ -1,4 +1,5 @@
 var Settings,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -7,14 +8,18 @@ Settings = (function(_super) {
   __extends(Settings, _super);
 
   function Settings() {
+    this.update = __bind(this.update, this);
     Settings.__super__.constructor.apply(this, arguments);
   }
 
   Settings.prototype.url = "settings";
 
   Settings.prototype.initialize = function() {
+    var _this = this;
     this.config = Tangerine.config;
-    return this.update();
+    return this.on("all", function() {
+      return _this.update();
+    });
   };
 
   Settings.prototype.update = function() {
@@ -29,7 +34,7 @@ Settings = (function(_super) {
     this.location = {
       local: {
         url: "" + local.host + ":" + port + "/",
-        db: "" + local.dbName + "/"
+        db: "/" + local.dbName + "/"
       },
       group: {
         url: "" + groupHost + ":" + port + "/",
@@ -73,9 +78,9 @@ Settings = (function(_super) {
       }
     };
     return this.couch = {
-      view: "" + designDoc + "/_view/",
-      show: "" + designDoc + "/_show/",
-      list: "" + designDoc + "/_list/"
+      view: "_design/" + designDoc + "/_view/",
+      show: "_design/" + designDoc + "/_show/",
+      list: "_design/" + designDoc + "/_list/"
     };
   };
 
@@ -88,15 +93,15 @@ Settings = (function(_super) {
   };
 
   Settings.prototype.urlView = function(location, view) {
-    return "" + this.location[location].url + this.couch.view + view;
+    return "" + this.location[location].db + this.couch.view + view;
   };
 
   Settings.prototype.urlList = function(location, list) {
-    return "" + this.location[location].url + this.couch.show + list;
+    return "" + this.location[location].db + this.couch.show + list;
   };
 
   Settings.prototype.urlShow = function(location, show) {
-    return "" + this.location[location].url + this.couch.list + show;
+    return "" + this.location[location].db + this.couch.list + show;
   };
 
   Settings.prototype.urlSubnet = function(ip) {
