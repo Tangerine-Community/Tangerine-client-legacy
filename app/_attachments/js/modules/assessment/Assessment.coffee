@@ -6,10 +6,10 @@ class Assessment extends Backbone.Model
     # this collection doesn't get saved
     # changes update the subtest view, it keeps order
     @subtests = new Subtests
-    @getResultCount()
+    #@getResultCount()
 
   getResultCount: =>
-    $.ajax "/#{Tangerine.config.address.cloud.dbName}/_design/#{Tangerine.config.address.designDoc}/_view/resultCount",
+    $.ajax Tangerine.settings.urlView "local", "resultCount"
       type: "GET"
       dataType: "json"
       data: 

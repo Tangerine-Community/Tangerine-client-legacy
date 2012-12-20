@@ -18,13 +18,12 @@ Assessment = (function(_super) {
 
   Assessment.prototype.initialize = function(options) {
     if (options == null) options = {};
-    this.subtests = new Subtests;
-    return this.getResultCount();
+    return this.subtests = new Subtests;
   };
 
   Assessment.prototype.getResultCount = function() {
     var _this = this;
-    return $.ajax("/" + Tangerine.config.address.cloud.dbName + "/_design/" + Tangerine.config.address.designDoc + "/_view/resultCount", {
+    return $.ajax(Tangerine.settings.urlView("local", "resultCount", {
       type: "GET",
       dataType: "json",
       data: {
@@ -36,7 +35,7 @@ Assessment = (function(_super) {
         _this.resultCount = data.rows.length !== 0 ? data.rows[0].value : 0;
         return _this.trigger("resultCount");
       }
-    });
+    }));
   };
 
   Assessment.prototype.fetch = function(options) {
