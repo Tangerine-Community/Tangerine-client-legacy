@@ -87,10 +87,43 @@ Backbone.Model.prototype.getEscapedString = function(key) {
     this.css("top", $(window).scrollTop() + "px");
     return this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
   };
-  return $.fn.middleCenter = function() {
+  $.fn.middleCenter = function() {
     this.css("position", "absolute");
     this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
     return this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
+  };
+  $.fn.widthPercentage = function() {
+    return Math.round(100 * this.outerWidth() / this.offsetParent().width()) + '%';
+  };
+  $.fn.heightPercentage = function() {
+    return Math.round(100 * this.outerHeight() / this.offsetParent().height()) + '%';
+  };
+  return $.fn.getStyleObject = function() {
+    var camel, camelize, dom, prop, returns, style, val, _i, _j, _len, _len2;
+    dom = this.get(0);
+    returns = {};
+    if (window.getComputedStyle) {
+      camelize = function(a, b) {
+        return b.toUpperCase();
+      };
+      style = window.getComputedStyle(dom, null);
+      for (_i = 0, _len = style.length; _i < _len; _i++) {
+        prop = style[_i];
+        camel = prop.replace(/\-([a-z])/g, camelize);
+        val = style.getPropertyValue(prop);
+        returns[camel] = val;
+      }
+      return returns;
+    }
+    if (dom.currentStyle) {
+      style = dom.currentStyle;
+      for (_j = 0, _len2 = style.length; _j < _len2; _j++) {
+        prop = style[_j];
+        returns[prop] = style[prop];
+      }
+      return returns;
+    }
+    return this.css();
   };
 })(jQuery);
 
@@ -365,6 +398,34 @@ Utils = (function() {
 
   Utils.askToLogout = function() {
     if (confirm("Would you like to logout now?")) return Tangerine.user.logout();
+  };
+
+  Utils.oldConsoleLog = null;
+
+  Utils.enableConsoleLog = function() {
+    if (typeof oldConsoleLog === "undefined" || oldConsoleLog === null) return;
+    return window.console.log = oldConsoleLog;
+  };
+
+  Utils.disableConsoleLog = function() {
+    var oldConsoleLog;
+    oldConsoleLog = console.log;
+    return window.console.log = $.noop;
+  };
+
+  Utils.oldConsoleAssert = null;
+
+  Utils.enableConsoleAssert = function() {
+    if (typeof oldConsoleAssert === "undefined" || oldConsoleAssert === null) {
+      return;
+    }
+    return window.console.assert = oldConsoleAssert;
+  };
+
+  Utils.disableConsoleAssert = function() {
+    var oldConsoleAssert;
+    oldConsoleAssert = console.assert;
+    return window.console.assert = $.noop;
   };
 
   return Utils;

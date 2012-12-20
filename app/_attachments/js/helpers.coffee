@@ -41,7 +41,7 @@ Backbone.Model.prototype.getEscapedString = (key) -> return if @has(key) then @e
 #
 ( ($) -> 
 
-  $.fn.scrollTo = (speed=250, callback)->
+  $.fn.scrollTo = (speed = 250, callback) ->
     try
       $('html, body').animate {
         scrollTop: $(@).offset().top + 'px'
@@ -64,6 +64,46 @@ Backbone.Model.prototype.getEscapedString = (key) -> return if @has(key) then @e
     @css "position", "absolute"
     @css "top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px"
     @css "left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px"
+
+  $.fn.widthPercentage = ->
+    return Math.round(100 * @outerWidth() / @offsetParent().width()) + '%'
+
+  $.fn.heightPercentage = ->
+    return Math.round(100 * @outerHeight() / @offsetParent().height()) + '%'
+
+
+  $.fn.getStyleObject = ->
+
+      dom = this.get(0)
+
+      returns = {}
+
+      if window.getComputedStyle
+
+          camelize = (a, b) -> b.toUpperCase()
+
+          style = window.getComputedStyle dom, null
+
+          for prop in style
+              camel = prop.replace /\-([a-z])/g, camelize
+              val = style.getPropertyValue prop
+              returns[camel] = val
+
+          return returns
+
+      if dom.currentStyle
+
+          style = dom.currentStyle
+
+          for prop in style
+
+              returns[prop] = style[prop]
+
+          return returns
+
+      return this.css()
+
+
 
 )(jQuery)
 
@@ -182,7 +222,15 @@ class Utils
 
   # asks user if they want to logout
   @askToLogout: -> Tangerine.user.logout() if confirm("Would you like to logout now?")
-      
+
+  @oldConsoleLog = null
+  @enableConsoleLog: -> return unless oldConsoleLog? ; window.console.log = oldConsoleLog
+  @disableConsoleLog: -> oldConsoleLog = console.log ; window.console.log = $.noop
+
+  @oldConsoleAssert = null
+  @enableConsoleAssert: -> return unless oldConsoleAssert?    ; window.console.assert = oldConsoleAssert
+  @disableConsoleAssert: -> oldConsoleAssert = console.assert ; window.console.assert = $.noop
+
 
 ##UI helpers
 $ ->
