@@ -32,13 +32,16 @@ AssessmentEditView = (function(_super) {
 
   AssessmentEditView.prototype.save = function() {
     if (this.updateModel()) {
-      if (this.model.save(null, {
-        wait: true
-      })) {
-        Utils.midAlert("Assessment saved");
-        Tangerine.router.navigate("edit/" + this.model.id, true);
-        return this.hideSave();
-      }
+      return this.model.save(null, {
+        success: function() {
+          Utils.midAlert("Assessment saved");
+          Tangerine.router.navigate("edit/" + this.model.id, true);
+          return this.hideSave();
+        },
+        error: function() {
+          return Utils.midAlert("Please try again. Assessment save error.");
+        }
+      });
     }
   };
 
@@ -140,10 +143,10 @@ AssessmentEditView = (function(_super) {
       Utils.midAlert("Please select a subtest type");
       return false;
     }
-    newAttributes = Tangerine.templates.subtestTemplate;
-    prototypeTemplate = Tangerine.templates.prototypeTemplates[this.$el.find("#subtest_type_select").val()];
+    newAttributes = Tangerine.templates.get("subtest");
+    prototypeTemplate = Tangerine.templates.get("prototypes")[this.$el.find("#subtest_type_select").val()];
     useType = this.$el.find("#subtest_type_select :selected").attr('data-template');
-    useTypeTemplate = Tangerine.templates.subtestTemplates[this.$el.find("#subtest_type_select").val()][useType];
+    useTypeTemplate = Tangerine.templates.get("subtestTemplates")[this.$el.find("#subtest_type_select").val()][useType];
     newAttributes = $.extend(newAttributes, prototypeTemplate);
     newAttributes = $.extend(newAttributes, useTypeTemplate);
     newAttributes = $.extend(newAttributes, {
@@ -184,7 +187,7 @@ AssessmentEditView = (function(_super) {
     archiveChecked = arch === true || arch === 'true' ? "checked" : "";
     notArchiveChecked = archiveChecked ? "" : "checked";
     subtestTypeSelect = "<select id='subtest_type_select'>      <option value='none' disabled='disabled' selected='selected'>Please select a subtest type</option>";
-    _ref = Tangerine.templates.subtestTemplates;
+    _ref = Tangerine.templates.get("subtestTemplates");
     for (key in _ref) {
       value = _ref[key];
       subtestTypeSelect += "<optgroup label='" + key + "'>";

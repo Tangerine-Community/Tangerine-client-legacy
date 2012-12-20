@@ -26,7 +26,7 @@ AssessmentImportView = (function(_super) {
     this.serverStatus = "checking...";
     return $.ajax({
       dataType: "jsonp",
-      url: Tangerine.config.address.cloud.host + ":" + Tangerine.config.address.port + "/",
+      url: Tangerine.settings.urlHost("group"),
       success: function(a, b) {
         _this.serverStatus = "Ok";
         return _this.updateServerStatus();

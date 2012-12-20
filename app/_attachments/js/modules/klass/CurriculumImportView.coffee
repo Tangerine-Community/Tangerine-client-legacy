@@ -9,7 +9,7 @@ class CurriculumImportView extends Backbone.View
     @serverStatus = "checking..."
     $.ajax
       dataType: "jsonp"
-      url: Tangerine.config.address.class.host+":"+Tangerine.config.address.port+"/"
+      url: Tangerine.settings.urlHost("group")
       success: =>
         @serverStatus = "Ok"
         @updateServerStatus()

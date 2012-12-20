@@ -1,3 +1,4 @@
+# Harry Potter
 class CurriculumView extends Backbone.View
 
   className: "CurriculumView"
@@ -7,115 +8,12 @@ class CurriculumView extends Backbone.View
     "click .delete"         : "deleteCurriculum"
     "click .delete_subtest" : "deleteSubtest"
     "click .edit_in_place"  : "editInPlace"
-    "click .edit"           : "gotoEdit"
     'click .new_subtest'    : "newSubtest"
 
-
-
-  deleteSubtest: (event) ->
-    subtestId = $(event.target).attr("data-subtestId")
-    subtest = @subtests.get(subtestId)
-    if confirm("Delete subtest\n#{subtest.get('name')}?")
-      subtest.destroy
-        success: =>
-          @subtests.remove(subtestId)
-          @updateTable()
-        error: =>
-          alert "Please try again, could not delete subtest."
-
-  newSubtest: ->
-    guid = Utils.guid()
-
-    subtestAttributes = 
-      "_id"          : guid
-      "curriculumId" : @curriculum.id
-      "prototype"    : "grid"
-      "captureLastAttempted" : false,
-      "endOfLine" : false,
-
-    subtestAttributes = $.extend(Tangerine.templates.prototypeTemplates["grid"], subtestAttributes)
-
-    subtest = new Subtest subtestAttributes
-    subtest.save null,
-      success: ->
-        Tangerine.router.navigate "class/subtest/#{guid}", true
-      error: ->
-        alert "Please try again. There was a problem creating the new subtest."
-
-  deleteCurriculum: ->
-    if confirm("Delete curriculum\n#{@curriculum.get('name')}?")
-      group = @curriculum.get("group")
-      @curriculum.destroy => Tangerine.router.navigate "assessments/#{group}", true
-          
-      
-
-  gotoEdit: (event) ->
-    subtestId = $(event.target).attr("data-subtestId")
-    Tangerine.router.navigate "class/subtest/#{subtestId}", true
-
-  editInPlace: (event) ->
-
-    $td = $(event.target)
-
-    guid      = Utils.guid()
-
-    previousHTML = $td.html()
-    key          = $td.attr("data-key")
-    subtest      = @subtests.get($td.attr("data-subtestId"))
-    oldValue     = subtest.get(key)
-    isNumber     = $td.attr("data-isNumber") == "true"
-
-    #special case
-    oldValue = oldValue.join " " if key == 'items'
-
-    $td.html "<input id='#{guid}' value='#{oldValue}'>"
-
-    $input = $("##{guid}")
-    $input.focus()
-    $input.on "blur keyup", (event) =>
-
-      if event.which == 27 
-        $input.off "blur keyup"
-        $td.empty().html(previousHTML)
-        return
-
-      # act normal, unless it's an enter key
-      return true if event.which != 13
-
-      # escape if escape
-      $input.off "blur keyup"
-
-      newValue = $input.val()
-      newValue = if isNumber then parseInt(newValue) else newValue
-
-      #special case
-      if key == "items"
-        # clean whitespace, give reminder if tabs or commas found, convert back to array
-        newValue = newValue.replace(/\s+/g, ' ')
-        if /\t|,/.test(newValue) then alert "Please remember\n\nGrid items are space \" \" delimited"
-        newValue = _.compact newValue.split(" ")
-
-
-
-      # If there was a change
-      if String(newValue) != String(oldValue)
-        attributes = {}
-        attributes[key] = newValue
-        subtest.save attributes,
-          success: =>
-            $td.empty().html(oldValue)
-            subtest.fetch 
-              success: =>
-                @updateTable()
-          error: =>
-            subtest.fetch 
-              success: =>
-                @updateTable()
-                alert "Please try to save again, it didn't work that time."
-
-
-
-  goBack: -> history.back()
+    "focusout .editing" : "editing"
+    "keyup    .editing" : "editing"
+    "keydown  .editing" : "editing"
+    
 
   initialize: (options) ->
     
@@ -129,7 +27,7 @@ class CurriculumView extends Backbone.View
     @subtestProperties = 
       [
         {
-          "key"      : null
+          "key"      : "part"
           "label"    : "Assessment"
           "editable" : true
         },
@@ -151,87 +49,17 @@ class CurriculumView extends Backbone.View
           "editable" : true
         },
         {
-          "key"      : "part"
-          "label"    : "Assessment"
-          "editable" : true
-        },
-        {
           "key"      : "reportType"
           "label"    : "Report"
           "editable" : true
         }
       ]
 
-  updateTable: ->
-    @$el.find("#subtest_table_container").html @getSubtestTable()
-
-  getSubtestTable: ->
-    
-    html = "<table class='subtests'>"
-      
-      
-    html += "
-      <thead>
-        <tr>
-    "
-    for prop in @subtestProperties
-      html += "<th>#{prop.label}</th>"
-
-    html += "
-        </tr>
-      </thead>
-    "
-
-
-    html += "
-      <tbody>
-    "
-    @subtestsByPart = @subtests.indexArrayBy "part"
-    for part, subtests of @subtestsByPart
-      html += "<tr class='auto_fixed'><th>#{part}</th></tr>"
-
-      for subtest in subtests
-
-
-        html += "<tr>"
-        for prop in @subtestProperties
-
-          # cook the value
-          value = if prop.key?   then subtest.get(prop.key)    else "&nbsp;"
-          value = if prop.escape then subtest.escape(prop.key) else value
-          value = value.length if prop.count?
-          value = "" if not value?
-
-          # what is it
-          editOrNot   = if prop.editable && Tangerine.settings.context == "server" then "class='edit_in_place'" else ""
-
-          numberOrNot = if _.isNumber(value) then "data-isNumber='true'" else "data-isNumber='false'" 
-
-          html += "<td data-subtestId='#{subtest.id}' data-key='#{prop.key}' data-value='#{value}' #{editOrNot} #{numberOrNot}>#{value}</td>"
-
-        # add buttons for serverside editing
-        if Tangerine.settings.context == "server"
-          html += "
-            <td>
-              <img class='link_icon edit' title='Edit' data-subtestId='#{subtest.id}' src='images/icon_edit.png'>
-              <img class='link_icon delete_subtest' title='Delete' data-subtestId='#{subtest.id}' src='images/icon_delete.png'>
-            </td>"
-
-        html += "</tr>"
-
-    html += "
-      </tbody>
-    </table>
-    "
-
-    return html
-
-
   render: ->
 
     subtestTable = @getSubtestTable()
 
-    deleteButton = if Tangerine.settings.context == "server" then "<button class='command_red delete'>Delete</button>" else ""
+    deleteButton = if Tangerine.settings.get("context") == "server" then "<button class='command_red delete'>Delete</button>" else ""
 
     html = "
 
@@ -253,3 +81,199 @@ class CurriculumView extends Backbone.View
 
     @$el.html html
     @trigger "rendered"
+
+  updateTable: -> @$el.find("#subtest_table_container").html @getSubtestTable()
+
+  getSubtestTable: ->
+
+    html = "<table class='subtests'>"
+
+    html += "
+      <thead class='auto_fixed'>
+        <tr>
+    "
+
+    html += "<th>#{prop.label}</th>" for prop in @subtestProperties
+
+    html += "
+        </tr>
+      </thead>
+    "
+
+
+    html += "
+      <tbody>
+    "
+    @subtestsByPart = @subtests.indexArrayBy "part"
+    for part, subtests of @subtestsByPart
+      html += "<tr><td>&nbsp;</td></tr>"
+      for subtest in subtests
+
+
+        html += "<tr>"
+        for prop in @subtestProperties
+
+          # cook the value
+          value = if prop.key?   then subtest.get(prop.key)    else "&nbsp;"
+          value = if prop.escape then subtest.escape(prop.key) else value
+          value = value.length if prop.count?
+          value = "" if not value?
+
+          # what is it
+          editOrNot   = if prop.editable && Tangerine.settings.get("context") == "server" then "class='edit_in_place'" else ""
+
+          numberOrNot = if _.isNumber(value) then "data-isNumber='true'" else "data-isNumber='false'" 
+
+          html += "<td class='edit_in_place'><span data-subtestId='#{subtest.id}' data-key='#{prop.key}' data-value='#{value}' #{editOrNot} #{numberOrNot}>#{value}</div></td>"
+
+        # add buttons for serverside editing
+        if Tangerine.settings.get("context") == "server"
+          html += "
+            <td>
+              <a href='#class/subtest/#{subtest.id}'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>
+              <img class='link_icon delete_subtest' title='Delete' data-subtestId='#{subtest.id}' src='images/icon_delete.png'>
+            </td>"
+
+        html += "</tr>"
+
+    html += "
+      </tbody>
+    </table>
+    "
+
+    return html
+
+  editInPlace: (event) ->
+
+    return if @alreadyEditing
+    @alreadyEditing = true
+
+    # save state
+    # replace with text area
+    # on save, save and re-replace
+    $span = $(event.target)
+
+    if $span.prop("tagName") == "TD"
+      $span = $span.find("span")
+      return if $span.length == 0
+    $td  = $span.parent()
+
+    @$oldSpan = $span.clone()
+
+    return if $span.prop("tagName") == "TEXTAREA"
+
+
+    guid         = Utils.guid()
+
+    key          = $span.attr("data-key")
+    isNumber     = $span.attr("data-isNumber") == "true"
+
+    subtestId    = $span.attr("data-subtestId")
+    subtest      = @subtests.get(subtestId)
+    oldValue     = subtest.get(key)
+
+    #special case
+    oldValue = oldValue.join " " if key == 'items'
+
+    transferVariables = "data-isNumber='#{}' data-key='#{key}' data-subtestId='#{subtestId}' "
+
+    # sets width/height with style attribute
+    $td.html("<textarea id='#{guid}' #{transferVariables} class='editing'>#{oldValue}</textarea>")
+    # style='width:#{oldWidth}px; height: #{oldHeight}px;'
+    $textarea = $("##{guid}")
+    $textarea.focus()
+
+  editing: (event) ->
+
+    $target = $(event.target)
+    $td = $target.parent()
+
+    if event.which == 27 or event.type == "focusout"
+      $target.remove()
+      $td.html(@$oldSpan)
+      @alreadyEditing = false
+      return
+
+    # act normal, unless it's an enter key on keydown
+    return true unless event.which == 13 and event.type == "keydown"
+
+    @alreadyEditing = false
+
+    key          = $target.attr("data-key")
+    isNumber     = $target.attr("data-isNumber") == "true"
+
+    subtestId    = $target.attr("data-subtestId")
+    subtest      = @subtests.get(subtestId)
+    oldValue     = subtest.get(key)
+
+    newValue = $target.val()
+    newValue = if isNumber then parseInt(newValue) else newValue
+
+    #special case
+
+    # this is not DRY. repeated in grid prototype.
+    if key == "items"
+      # clean whitespace, give reminder if tabs or commas found, convert back to array
+      newValue = newValue.replace(/\s+/g, ' ')
+      if /\t|,/.test(newValue) then alert "Please remember\n\nGrid items are space \" \" delimited"
+      newValue = _.compact newValue.split(" ")
+
+    # If there was a change, save it
+    if String(newValue) != String(oldValue)
+      attributes = {}
+      attributes[key] = newValue
+      subtest.save attributes,
+        success: =>
+          subtest.fetch 
+            success: =>
+              @updateTable()
+        error: =>
+          subtest.fetch 
+            success: =>
+              @updateTable()
+              # ideally we wouldn't have to save this but conflicts happen sometimes
+              # @TODO make the model try again when unsuccessful.
+              alert "Please try to save again, it didn't work that time."
+    
+    # this ensures we do not insert a newline character when we press enter
+    return false
+
+  goBack: -> history.back()
+
+  deleteCurriculum: ->
+    if confirm("Delete curriculum\n#{@curriculum.get('name')}?")
+      group = @curriculum.get("group")
+      @curriculum.destroy => Tangerine.router.navigate "assessments/#{group}", true
+
+  #
+  # Subtest new and destroy
+  #
+  newSubtest: ->
+    guid = Utils.guid()
+
+    subtestAttributes = 
+      "_id"          : guid
+      "curriculumId" : @curriculum.id
+      "prototype"    : "grid"
+      "captureLastAttempted" : false,
+      "endOfLine" : false,
+
+    subtestAttributes = $.extend(Tangerine.templates.prototypeTemplates["grid"], subtestAttributes)
+
+    subtest = new Subtest subtestAttributes
+    subtest.save null,
+      success: ->
+        Tangerine.router.navigate "class/subtest/#{guid}", true
+      error: ->
+        alert "Please try again. There was a problem creating the new subtest."
+
+  deleteSubtest: (event) ->
+    subtestId = $(event.target).attr("data-subtestId")
+    subtest = @subtests.get(subtestId)
+    if confirm("Delete subtest\n#{subtest.get('name')}?")
+      subtest.destroy
+        success: =>
+          @subtests.remove(subtestId)
+          @updateTable()
+        error: =>
+          alert "Please try again, could not delete subtest."

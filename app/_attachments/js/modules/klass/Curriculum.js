@@ -20,7 +20,7 @@ Curriculum = (function(_super) {
     if (dKey == null) dKey = this.id.substr(-5, 5);
     this.trigger("status", "import lookup");
     dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/));
-    $.ajax("" + Tangerine.config.address["class"].host + "/" + Tangerine.config.address["class"].dbName + "/_design/" + Tangerine.config.address.designDoc + "/_view/byDKey", {
+    $.ajax(Tangerine.settings.urlView("group", "byDKey"), {
       type: "POST",
       dataType: "jsonp",
       data: {
@@ -34,7 +34,7 @@ Curriculum = (function(_super) {
           datum = _ref[_i];
           docList.push(datum.id);
         }
-        return $.couch.replicate("" + Tangerine.config.address["class"].host + "/" + Tangerine.config.address["class"].dbName, Tangerine.config.address.local.dbName, {
+        return $.couch.replicate(Tangerine.settings.urlDB("group", Tangerine.settings.urlDB("local", {
           success: function() {
             return _this.trigger("status", "import success");
           },
@@ -43,7 +43,7 @@ Curriculum = (function(_super) {
           }
         }, {
           doc_ids: docList
-        });
+        })));
       }
     });
     return false;

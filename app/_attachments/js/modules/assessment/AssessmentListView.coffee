@@ -23,8 +23,7 @@ class AssessmentListView extends Backbone.View
     @sections = [@group, "public"]
     @groupViews = []
 
-
-    if Tangerine.settings.context == "server"
+    if Tangerine.settings.get("context") == "server"
       # coffeescript nightmare, single line possible, but don't do it
       for group in @sections
         view = new AssessmentsView
@@ -32,12 +31,11 @@ class AssessmentListView extends Backbone.View
           "allAssessments" : @assessments
           "parent"         : @
         @groupViews.push view
-    else if Tangerine.settings.context == "mobile"
+    else if Tangerine.settings.get("context") == "mobile"
       @listView = new AssessmentsView
         "group"          : false # all
         "allAssessments" : @assessments
         "parent"         : @
-    
 
   refresh: =>
     @curricula.fetch
@@ -62,13 +60,13 @@ class AssessmentListView extends Backbone.View
     groupsButton = "<button class='navigation groups'>Groups</button>"
 
     html = "
-      #{if Tangerine.settings.context == "server" then groupsButton else ""}
+      #{if Tangerine.settings.get("context") == "server" then groupsButton else ""}
       <h1>Assessments</h1>
     "
     if @isAdmin
       html += "
-        #{if Tangerine.settings.context == "server" then newButton else "" }
-        #{if Tangerine.settings.context == "mobile" then importButton else ""}
+        #{if Tangerine.settings.get("context") == "server" then newButton else "" }
+        #{if Tangerine.settings.get("context") == "mobile" then importButton else ""}
 
         <div class='new_form confirmation'>
           <div class='menu_box_wide'>
@@ -84,7 +82,7 @@ class AssessmentListView extends Backbone.View
 
     @$el.html html
 
-    if Tangerine.settings.context == "server"
+    if Tangerine.settings.get("context") == "server"
       for view, i in @groupViews
         assessmentCount = @assessments.where({"group":@sections[i],"archived":false}).length
         groupName = if @sections[i] == "public" then "Public" else @sections[i]          
@@ -95,7 +93,7 @@ class AssessmentListView extends Backbone.View
       @curriculaListView.setElement(@$el.find("#curricula_container"))
       @curriculaListView.render()
         
-    else if Tangerine.settings.context == "mobile"
+    else if Tangerine.settings.get("context") == "mobile"
       @$el.append "<ul class='assessment_list'></ul>"
       @listView.setElement(@$el.find("ul.assessment_list"))
       @listView.render()

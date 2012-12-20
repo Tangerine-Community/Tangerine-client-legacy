@@ -1,6 +1,6 @@
 class AssessmentsView extends Backbone.View
 
-  tagName   : "ul"
+  tagName : "ul"
   events : 
     "click .hidden_toggle" : "toggleHidden"
 

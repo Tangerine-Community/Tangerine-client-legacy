@@ -44,7 +44,7 @@ AssessmentListView = (function(_super) {
     this.publicViews = [];
     this.sections = [this.group, "public"];
     this.groupViews = [];
-    if (Tangerine.settings.context === "server") {
+    if (Tangerine.settings.get("context") === "server") {
       _ref = this.sections;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -57,7 +57,7 @@ AssessmentListView = (function(_super) {
         _results.push(this.groupViews.push(view));
       }
       return _results;
-    } else if (Tangerine.settings.context === "mobile") {
+    } else if (Tangerine.settings.get("context") === "mobile") {
       return this.listView = new AssessmentsView({
         "group": false,
         "allAssessments": this.assessments,
@@ -105,12 +105,12 @@ AssessmentListView = (function(_super) {
     newButton = "<button class='new command'>New</button>";
     importButton = "<button class='import command'>Import</button>";
     groupsButton = "<button class='navigation groups'>Groups</button>";
-    html = "      " + (Tangerine.settings.context === "server" ? groupsButton : "") + "      <h1>Assessments</h1>    ";
+    html = "      " + (Tangerine.settings.get("context") === "server" ? groupsButton : "") + "      <h1>Assessments</h1>    ";
     if (this.isAdmin) {
-      html += "        " + (Tangerine.settings.context === "server" ? newButton : "") + "        " + (Tangerine.settings.context === "mobile" ? importButton : "") + "        <div class='new_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_name' placeholder='Name'>            <select id='new_type'>              <option value='assessment'>Assessment</option>              <option value='curriculum'>Curriculum</option>            </select><br>            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>          </div>        </div>      ";
+      html += "        " + (Tangerine.settings.get("context") === "server" ? newButton : "") + "        " + (Tangerine.settings.get("context") === "mobile" ? importButton : "") + "        <div class='new_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_name' placeholder='Name'>            <select id='new_type'>              <option value='assessment'>Assessment</option>              <option value='curriculum'>Curriculum</option>            </select><br>            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>          </div>        </div>      ";
     }
     this.$el.html(html);
-    if (Tangerine.settings.context === "server") {
+    if (Tangerine.settings.get("context") === "server") {
       _ref = this.groupViews;
       for (i = 0, _len = _ref.length; i < _len; i++) {
         view = _ref[i];
@@ -126,7 +126,7 @@ AssessmentListView = (function(_super) {
       this.$el.append("<div id='curricula_container'></div>");
       this.curriculaListView.setElement(this.$el.find("#curricula_container"));
       this.curriculaListView.render();
-    } else if (Tangerine.settings.context === "mobile") {
+    } else if (Tangerine.settings.get("context") === "mobile") {
       this.$el.append("<ul class='assessment_list'></ul>");
       this.listView.setElement(this.$el.find("ul.assessment_list"));
       this.listView.render();

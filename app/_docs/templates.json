@@ -1,11 +1,13 @@
 {
-  "subtestTemplate": {
-      "enumeratorHelp" : "",
-      "studentDialog" : "",
-      "order": 0,
-      "skippable": false
+  "collection": "template",
+  "subtest": {
+      "enumeratorHelp"    : "",
+      "studentDialog"     : "",
+      "transitionComment" : "",
+      "order"             : 0,
+      "skippable"         : false
   },
-  "prototypeTemplates" : {
+  "prototypes" : {
     "grid" : {
       "prototype" : "grid",
       "items" : [],

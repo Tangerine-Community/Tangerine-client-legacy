@@ -26,7 +26,7 @@ CurriculumImportView = (function(_super) {
     this.serverStatus = "checking...";
     return $.ajax({
       dataType: "jsonp",
-      url: Tangerine.config.address["class"].host + ":" + Tangerine.config.address.port + "/",
+      url: Tangerine.settings.urlHost("group"),
       success: function() {
         _this.serverStatus = "Ok";
         return _this.updateServerStatus();

@@ -8,36 +8,55 @@ class SettingsView extends Backbone.View
 
   updateModel: ->
     @settings.set
-      context          : @$el.find('#context').val()
-      generalThreshold : parseFloat(@$el.find('#generalThreshold').val())
-      language         : @$el.find('#language').val()
+      context   : @$el.find('#context').val()
+      language  : @$el.find('#language').val()
+      groupName : @$el.find("#group_name").val()
+      groupHost : @$el.find("#group_host").val()
+      upPass    : @$el.find("#up_pass").val()
+      log       : @$el.find("#log").val().split(/[\s,]+/)
 
   save: ->
     @updateModel()
-    if @settings.save()
-      Utils.midAlert "Settings saved"
-    else
-      Utils.midAlert "Error. Settings weren't saved"
+    @settings.save
+      success: ->
+        Utils.midAlert "Settings saved"
+      error: ->
+        Utils.midAlert "Error. Settings weren't saved"
 
   render: ->
-    context = @settings.escape "context"
-    generalThreshold = @settings.escape "generalThreshold"
-    language = @settings.escape "language"
+    context   = @settings.escape "context"
+    language  = @settings.escape "language"
+    groupName = @settings.escape "groupName"
+    groupHost = @settings.escape "groupHost"
+    upPass    = @settings.escape "upPass"
+    log       = _.escape( @settings.getArray("log").join(", ") )
 
     @$el.html "<h1>#{t("settings")}</h1>
-    <p>Please be careful with the following settings.</p>
+    <p><img src='images/icon_warn.png' title='Warning'>Please be careful with the following settings.</p>
     <div class='menu_box'>
       <div class='label_value'>
         <label for='context'>Context</label><br>
         <input id='context' type='text' value='#{context}'>
       </div>
       <div class='label_value'>
-        <label for='context'>General Threshold</label><br>
-        <input id='generalThreshold' type='number' value='#{generalThreshold}'>
+        <label for='language'>Language code</label><br>
+        <input id='language' type='text' value='#{language}'>
       </div>
       <div class='label_value'>
-        <label for='context'>Language</label><br>
-        <input id='language' type='number' value='#{language}'>
+        <label for='group_name'>Group name</label><br>
+        <input id='group_name' type='text' value='#{groupName}' disabled='disabled'>
+      </div>
+      <div class='label_value'>
+        <label for='group_host'>Group host</label><br>
+        <input id='group_host' type='text' value='#{groupHost}'>
+      </div>
+      <div class='label_value'>
+        <label for='up_pass'>Upload password</label><br>
+        <input id='up_pass' type='text' value='#{upPass}'>
+      </div>
+      <div class='label_value'>
+        <label for='context' title='app, ui, db, err'>Log events</label><br>
+        <input id='language' value='#{log}'>
       </div>
     </div><br>
     
