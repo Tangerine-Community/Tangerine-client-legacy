@@ -49,18 +49,17 @@ Klass = (function(_super) {
         return _results;
       }
     });
-    Klass.__super__.destroy.call(this);
-    return {
-      calcCurrentPart: function() {
-        var milliseconds, millisecondsPerDay, millisecondsPerHour, millisecondsPerMinute, millisecondsPerWeek;
-        milliseconds = 1000;
-        millisecondsPerMinute = 60 * milliseconds;
-        millisecondsPerHour = 60 * millisecondsPerMinute;
-        millisecondsPerDay = 24 * millisecondsPerHour;
-        millisecondsPerWeek = 7 * millisecondsPerDay;
-        return Math.round(((new Date()).getTime() - this.get("startDate")) / millisecondsPerWeek);
-      }
-    };
+    return Klass.__super__.destroy.call(this);
+  };
+
+  Klass.prototype.calcCurrentPart = function() {
+    var milliseconds, millisecondsPerDay, millisecondsPerHour, millisecondsPerMinute, millisecondsPerWeek;
+    milliseconds = 1000;
+    millisecondsPerMinute = 60 * milliseconds;
+    millisecondsPerHour = 60 * millisecondsPerMinute;
+    millisecondsPerDay = 24 * millisecondsPerHour;
+    millisecondsPerWeek = 7 * millisecondsPerDay;
+    return Math.round(((new Date()).getTime() - this.get("startDate")) / millisecondsPerWeek);
   };
 
   return Klass;
