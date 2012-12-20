@@ -11,18 +11,14 @@ class SubtestEditView extends Backbone.View
     'click .richtext_cancel'   : 'richtextCancel'
 
   richtextConfig: [
-    {
       "key"           : "enumerator"
       "attributeName" : "enumeratorHelp"
-    },
-    {
+    ,
       "key"           : "dialog"
       "attributeName" : "studentDialog"
-    },
-    {
+    ,
       "key"           : "transition"
       "attributeName" : "transitionComment"
-    }
   ]
 
   initialize: ( options ) ->
@@ -33,7 +29,7 @@ class SubtestEditView extends Backbone.View
     @assessment = options.assessment
     @config     = Tangerine.config.subtest
 
-    @prototypeViews  = Tangerine.config.prototypeViews
+    @prototypeViews  = Tangerine.config.get "prototypeViews"
     @prototypeEditor = new window[@prototypeViews[@model.get 'prototype']['edit']]
       model: @model
       parent: @
@@ -101,25 +97,6 @@ class SubtestEditView extends Backbone.View
     # by default save prototype as well
     options.prototypeSave = if options.prototypeSave? then options.prorotypeSave else true
 
-
-  initialize: ( options ) ->
-    @model = options.model
-    @assessment = options.assessment
-    @config = Tangerine.config.subtest
-    
-    @prototypeViews  = Tangerine.config.get "prototypeViews"
-    @prototypeEditor = new window[@prototypeViews[@model.get 'prototype']['edit']]
-      model: @model
-      parent: @
-    @prototypeEditor.on "edit-save", => @save options:editSave:true
-      
-  goBack: =>
-    Tangerine.router.navigate "edit/"+@model.get("assessmentId"), true
-
-  save: (event) ->
-    
-    isEditSave = event?.options?.editSave == true
-    
     prototype = @model.get("prototype")
 
     @model.set
@@ -136,7 +113,8 @@ class SubtestEditView extends Backbone.View
     # important not to let prototypes use success or error
     @prototypeEditor.save(options)
 
-    if @prototypeEditor.isValid() == false && not isEditSave
+    # only care about errors if it's not an "on edit" save
+    if @prototypeEditor.isValid() == false
       Utils.midAlert "There are errors on this page"
       @prototypeEditor.showErrors?()
     else
