@@ -177,13 +177,17 @@ QuestionEditView = (function(_super) {
   };
 
   QuestionEditView.prototype.done = function() {
+    var _this = this;
     this.updateModel();
-    if (this.question.save()) {
-      Utils.midAlert("Question Saved");
-      setTimeout(this.goBack, 500);
-    } else {
-      Utils.midAlert("Save error");
-    }
+    this.question.save(null, {
+      success: function() {
+        Utils.midAlert("Question Saved");
+        return setTimeout(_this.goBack, 500);
+      },
+      error: function() {
+        return Utils.midAlert("Save error");
+      }
+    });
     return false;
   };
 
