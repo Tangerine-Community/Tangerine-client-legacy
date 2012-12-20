@@ -1,0 +1,29 @@
+{
+  "_id" : "example_swahili_subtest_w06_f",
+  "collection": "subtest",
+  "curriculumId" : "example_swahili_curriculum",
+  "captureLastAttempted" : false,
+  "endOfLine" : false,
+  "prototype": "grid",
+  "part": 6,
+  "reportType" : "mastery",
+  "itemType" : "words",
+  "name": "Words",
+  "items": [
+    "mana",
+    "mwetu",
+    "teke",
+    "mwendo",
+    "tano",
+    "mpata",
+    "mnono",
+    "mtini",
+    "ndiwe",
+    "pande",
+    "pana",
+    "nipo",
+    "tendo",
+    "nini",
+    "nu"
+  ]
+}

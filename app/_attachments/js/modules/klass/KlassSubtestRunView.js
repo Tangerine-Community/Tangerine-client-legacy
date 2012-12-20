@@ -23,15 +23,17 @@ KlassSubtestRunView = (function(_super) {
   };
 
   KlassSubtestRunView.prototype.initialize = function(options) {
-    this.protoViews = Tangerine.config.prototypeViews;
+    this.protoViews = Tangerine.config.get("prototypeViews");
     this.prototypeRendered = false;
     return this.result = new KlassResult({
-      resultBucket: options.subtest.get("resultBucket"),
+      startTime: (new Date()).getTime(),
+      itemType: options.subtest.get("itemType"),
       reportType: options.subtest.get("reportType"),
       studentId: options.student.id,
       subtestId: options.subtest.id,
       part: options.subtest.get("part"),
-      klassId: options.student.get("klassId")
+      klassId: options.student.get("klassId"),
+      timeAllowed: options.subtest.get("timer")
     });
   };
 

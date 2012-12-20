@@ -89,7 +89,7 @@ class AssessmentListElementView extends Backbone.View
     isArchived = @model.getBoolean('archived')
 
     # do not display archived assessments for enumerators
-    return if not @isAdmin and isArchived and Tangerine.settings.context == "mobile"
+    return if not @isAdmin and isArchived and Tangerine.settings.get("context") == "mobile"
 
 
     # commands
@@ -132,7 +132,7 @@ class AssessmentListElementView extends Backbone.View
         </div>
       "
       # Admin on mobile
-      if Tangerine.settings.context == "mobile"
+      if Tangerine.settings.get("context") == "mobile"
         html += "
           <div class='assessment_menu'>
             #{runButton}

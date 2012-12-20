@@ -8,38 +8,9 @@ class ResultsView extends Backbone.View
     'click .details'  : 'showResultSumView'
     'click .csv_beta' : 'csvBeta'
 
-  postRequest: (path, params) ->
-    method = "post"
-    form = document.createElement("form")
-    form.setAttribute("method", method)
-    form.setAttribute("action", path)
-
-    for key, value of params
-      hiddenField = document.createElement("input")
-      hiddenField.setAttribute("type", "hidden")
-      hiddenField.setAttribute("name", key)
-      hiddenField.setAttribute("value", value)
-
-      form.appendChild(hiddenField)
-
-    document.body.appendChild(form)
-    form.submit()
-
   csvBeta: ->
     filename = @assessment.get("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
     document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}"
-
-    ###
-    $.post "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
-         data,
-         -> alert("Response: " + data)
-       );
-    @postRequest("/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
-      "key"      : @assessment.id
-      "filename" : filename
-      "columns"  : "\"#{columns}\""
-    )
-    ###
 
   showResultSumView: (event) ->
     result = new Result
@@ -56,8 +27,8 @@ class ResultsView extends Backbone.View
   cloud: ->
     if @available.cloud.ok
       $.couch.replicate(
-        Tangerine.config.address.local.dbName,
-        Tangerine.config.address.cloud.host+"/"+Tangerine.config.address.cloud.dbName,
+        Tangerine.settings.urlDB "local",
+        Tangerine.settings.urlDB "group",
           success:      =>
             @$el.find(".status").find(".info_box").html "Results synced to cloud successfully"
           error: (a, b) =>
@@ -75,8 +46,8 @@ class ResultsView extends Backbone.View
       for ip in @available.tablets.ips
         do (ip) =>
           $.couch.replicate(
-            Tangerine.config.address.local.dbName,
-            "http://#{ip}:5984/"+Tangerine.config.address.local.dbName,
+            Tangerine.settings.urlDB "local",
+            Tangerine.settings.urlSubnet ip,
               success:      =>
                 @$el.find(".status").find(".info_box").html "Results synced to #{@available.tablets.okCount} successfully"
               error: (a, b) =>
@@ -89,21 +60,18 @@ class ResultsView extends Backbone.View
     return false
 
   csv: ->
-    @$el.find("button.csv").html "Preparing CSV..."
-    view = new CSVView
+    @$el.find("button.csv").html "Preparing CSV..." # show message
+    view = new CSVView # make a new CSV view, but don't show it, just let it work
       assessmentId : @assessment.id
     view.render()
-    view.on "ready", =>
+    view.on "ready", => # when it's ready, get a link to the doc it saved
       filename = @assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
       # point browser to file
       # do it in a new window because otherwise it will cancel the fetching/updating of the file
-      csvLocation = "/#{Tangerine.config.address.cloud.dbName}/_design/#{Tangerine.config.address.designDoc}/_show/csv/Tangerine-#{@assessment.id.substr(-5, 5)}.csv?filename=#{filename}"
+      csvLocation = Tangerine.settings.urlShow "local", "csv/Tangerine-#{@assessment.id.substr(-5, 5)}.csv?filename=#{filename}"
       $button = @$el.find "button.csv"
       $button.after "<a href='#{csvLocation}' class='command'>Download CSV</a>"
       $button.remove()
-
-
-  #  Tangerine.router.navigate "csv/"+@assessment.id, true
 
   initDetectOptions: ->
     @available = 
@@ -124,7 +92,7 @@ class ResultsView extends Backbone.View
     # Detect Cloud
     $.ajax
       dataType: "jsonp"
-      url: Tangerine.config.address.cloud.host+":"+Tangerine.config.address.port+"/"
+      url: Tangerine.settings.urlHost "group"
       success: (a, b) =>
         @available.cloud.ok = true
       error: (a, b) =>
@@ -134,15 +102,14 @@ class ResultsView extends Backbone.View
         @updateOptions()
 
   detectTablets: =>
-    port = Tangerine.config.address.port
     for local in [0..255]
-      do (local, port) =>
-        ip = "192.168.1.#{local}"
+      do (local) =>
+        ip = Tangerine.settings.subnetIP local
         $.ajax
           dataType: "jsonp"
           contentType: "application/json;charset=utf-8",
           timeout: 30000
-          url: "http://#{ip}:#{port}/"
+          url: urlSubnet(ip)
           complete:  (xhr, error) =>
             @available.tablets.checked++
             if xhr.status == 200
@@ -171,7 +138,6 @@ class ResultsView extends Backbone.View
 
 
   readyCSVBeta: ->
-    console.log "trying to ready"
     $.ajax
       dataType: "json"
       contentType: "application/json;charset=utf-8",
@@ -207,13 +173,13 @@ class ResultsView extends Backbone.View
       <h1>#{@assessment.get('name')}</h1>
       <h2>Save options</h2>
       <div class='menu_box'>
-        #{if Tangerine.settings.context == "mobile" then cloudButton  else ""}
-        #{if Tangerine.settings.context == "mobile" then tabletButton else ""}
+        #{if Tangerine.settings.get("context") == "mobile" then cloudButton  else ""}
+        #{if Tangerine.settings.get("context") == "mobile" then tabletButton else ""}
         #{csvButton}
         <button class='command csv_beta'>CSV (beta)</button>
       </div>"
 
-    if Tangerine.settings.context == "mobile"
+    if Tangerine.settings.get("context") == "mobile"
       html += "
         <button class='detect command'>Detect options</button>
         <div class='status'>
@@ -232,6 +198,7 @@ class ResultsView extends Backbone.View
     if @results?.length == 0
       $('#results-header').html "No results yet!"
     else
+      # TODO convert this to local, settings
       $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/resultSummaryByAssessmentId",
         key        : @assessment.id
         descending : true

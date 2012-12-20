@@ -19,10 +19,13 @@ class AssessmentEditView extends Backbone.View
   
   save: =>
     if @updateModel()
-      if @model.save(null, {wait:true}) 
-        Utils.midAlert "Assessment saved" 
-        Tangerine.router.navigate "edit/"+@model.id, true
-        @hideSave()
+      @model.save null,
+        success: ->
+          Utils.midAlert "Assessment saved" 
+          Tangerine.router.navigate "edit/"+@model.id, true
+          @hideSave()
+        error: ->
+          Utils.midAlert "Please try again. Assessment save error." 
 
   showSave: -> @$el.find('.assessment_save').fadeIn(250)
   
@@ -114,14 +117,14 @@ class AssessmentEditView extends Backbone.View
       return false
     
     # general template
-    newAttributes = Tangerine.templates.subtestTemplate
+    newAttributes = Tangerine.templates.get("subtest")
     
     # prototype template
-    prototypeTemplate = Tangerine.templates.prototypeTemplates[@$el.find("#subtest_type_select").val()]
+    prototypeTemplate = Tangerine.templates.get("prototypes")[@$el.find("#subtest_type_select").val()]
     
     # bit more specific template
     useType = @$el.find("#subtest_type_select :selected").attr 'data-template'
-    useTypeTemplate = Tangerine.templates.subtestTemplates[@$el.find("#subtest_type_select").val()][useType]
+    useTypeTemplate = Tangerine.templates.get("subtestTemplates")[@$el.find("#subtest_type_select").val()][useType]
 
     newAttributes = $.extend newAttributes, prototypeTemplate
     newAttributes = $.extend newAttributes, useTypeTemplate
@@ -161,7 +164,7 @@ class AssessmentEditView extends Backbone.View
     # list of "templates"
     subtestTypeSelect = "<select id='subtest_type_select'>
       <option value='none' disabled='disabled' selected='selected'>Please select a subtest type</option>"
-    for key, value of Tangerine.templates.subtestTemplates
+    for key, value of Tangerine.templates.get("subtestTemplates")
       subtestTypeSelect += "<optgroup label='#{key}'>"
       for subKey, subValue of value
         subtestTypeSelect += "<option value='#{key}' data-template='#{subKey}'>#{subKey}</option>"

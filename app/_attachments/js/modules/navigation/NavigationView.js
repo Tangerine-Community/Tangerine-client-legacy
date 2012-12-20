@@ -10,6 +10,7 @@ NavigationView = (function(_super) {
   function NavigationView() {
     this.handleMenu = __bind(this.handleMenu, this);
     this.initialize = __bind(this.initialize, this);
+    this.calcWhoAmI = __bind(this.calcWhoAmI, this);
     NavigationView.__super__.constructor.apply(this, arguments);
   }
 
@@ -25,6 +26,16 @@ NavigationView = (function(_super) {
     'click button': 'submenuHandler',
     'click #corner_logo': 'logoClick',
     'click #enumerator': 'enumeratorClick'
+  };
+
+  NavigationView.prototype.calcWhoAmI = function() {
+    if (Tangerine.settings.get("context") === "class") {
+      return this.whoAmI = t("teacher");
+    } else if (Tangerine.settings.get("context") === "server") {
+      return this.whoAmI = t("user");
+    } else if (Tangerine.settings.get("context") === "mobile") {
+      return this.whoAmI = t("enumerator");
+    }
   };
 
   NavigationView.prototype.enumeratorClick = function() {
@@ -72,6 +83,7 @@ NavigationView = (function(_super) {
     this.render();
     this.user = options.user;
     this.router = options.router;
+    this.calcWhoAmI();
     this.router.on('all', this.handleMenu);
     return this.user.on('change:authentication', this.handleMenu);
   };
@@ -87,8 +99,8 @@ NavigationView = (function(_super) {
 
   NavigationView.prototype.render = function() {
     var updateButton;
-    updateButton = Tangerine.user.isAdmin() && Tangerine.settings.context !== "server" ? "<a href='#update'>" + (t('update')) + "</a>" : "";
-    this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <div id='logout_link'>" + (t('logout')) + "</div>    <div id='enumerator_box'>      " + (t('enumerator')) + "      <div id='enumerator'>" + (Tangerine.user.name || "") + "</div>    </div>    <div id='current_student'>      Student ID      <div id='current_student_id'></div>    </div>    <div id='version'>    version <br/>    <span id='version-uuid'>" + Tangerine.version + "</span><br/>    " + updateButton + "    </div>    ");
+    updateButton = Tangerine.user.isAdmin() && Tangerine.settings.get("context") !== "server" ? "<a href='#update'>" + (t('update')) + "</a>" : "";
+    this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <div id='logout_link'>" + (t('logout')) + "</div>    <div id='enumerator_box'>      <span id='enumerator_label'>" + this.whoAmI + "</span>      <div id='enumerator'>" + (Tangerine.user.name || "") + "</div>    </div>    <div id='current_student'>      Student ID      <div id='current_student_id'></div>    </div>    <div id='version'>    version <br/>    <span id='version-uuid'>" + Tangerine.version + "</span><br/>    " + updateButton + "    </div>    ");
     $("body").ajaxStart(function() {
       return $("#corner_logo").attr("src", "images/spin_orange.gif");
     });
@@ -110,6 +122,8 @@ NavigationView = (function(_super) {
 
   NavigationView.prototype.handleMenu = function(event) {
     var _this = this;
+    this.calcWhoAmI();
+    $("#enumerator_label").html(this.whoAmI);
     $('#enumerator').html(this.user.name);
     if (~window.location.toString().indexOf("name=")) {
       this.$el.find("#logout_link").hide();

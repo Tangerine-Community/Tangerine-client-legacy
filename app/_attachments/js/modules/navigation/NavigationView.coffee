@@ -14,6 +14,15 @@ class NavigationView extends Backbone.View
     'click #enumerator'       : 'enumeratorClick'
   }
 
+  calcWhoAmI: =>
+    # who am I
+    if Tangerine.settings.get("context") == "class"
+      @whoAmI = t "teacher"
+    else if Tangerine.settings.get("context") == "server"
+      @whoAmI = t "user"
+    else if Tangerine.settings.get("context") == "mobile"
+      @whoAmI = t "enumerator"
+
   enumeratorClick: -> Tangerine.router.navigate "account", true
 
   logoClick:-> 
@@ -28,7 +37,6 @@ class NavigationView extends Backbone.View
       else
           @router.navigate '', true
 
-      
   logout: ->
     if @user.isAdmin()
       Tangerine.activity = ""
@@ -43,13 +51,15 @@ class NavigationView extends Backbone.View
           Tangerine.activity = ""
           @router.navigate 'logout', true
 
-  onClose: ->
+  onClose: -> # do nothing
 
   initialize: (options) =>
     @render()
 
     @user   = options.user
     @router = options.router
+
+    @calcWhoAmI()
 
     @router.on 'all', @handleMenu
     @user.on   'change:authentication', @handleMenu
@@ -61,13 +71,13 @@ class NavigationView extends Backbone.View
     @$el.find("main_nav").empty()
 
   render: ->
-    updateButton = if Tangerine.user.isAdmin() && Tangerine.settings.context != "server" then "<a href='#update'>#{t('update')}</a>" else ""
+    updateButton = if Tangerine.user.isAdmin() && Tangerine.settings.get("context") != "server" then "<a href='#update'>#{t('update')}</a>" else ""
 
     @$el.html "
     <img id='corner_logo' src='images/corner_logo.png'>
     <div id='logout_link'>#{t('logout')}</div>
     <div id='enumerator_box'>
-      #{t('enumerator')}
+      <span id='enumerator_label'>#{@whoAmI}</span>
       <div id='enumerator'>#{Tangerine.user.name || ""}</div>
     </div>
 
@@ -97,6 +107,10 @@ class NavigationView extends Backbone.View
   # Admins get a manage button 
   # triggered on user changes
   handleMenu: (event) =>
+    @calcWhoAmI()
+
+    $("#enumerator_label").html @whoAmI
+
     $('#enumerator').html @user.name
     # @todo put version number someplace
     #$.ajax {method: 'GET', dataType: 'text', url: 'version', success: (a, b, c) -> $("#corner_logo").attr("title", c.responseText)

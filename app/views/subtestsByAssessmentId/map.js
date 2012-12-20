@@ -1,5 +1,11 @@
 function(doc) {
   if (doc.collection == 'subtest') {
-    emit(doc.assessmentId, doc);
+	if (doc.assessmentId)
+	{    
+		emit(doc.assessmentId, doc);
+	} else if (doc.curriculumId)
+	{
+		emit(doc.curriculumId, doc);
+	}
   }
 }

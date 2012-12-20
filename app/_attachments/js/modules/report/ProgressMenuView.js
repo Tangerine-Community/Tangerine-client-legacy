@@ -15,7 +15,7 @@ ProgressMenuView = (function(_super) {
   };
 
   ProgressMenuView.prototype.gotoProgressTable = function(event) {
-    return Tangerine.router.navigate("report/progress/" + this.$el.find(event.target).find(":selected").attr("data-studentId"), true);
+    return Tangerine.router.navigate("report/progress/" + this.$el.find(event.target).find(":selected").attr("data-studentId") + ("/" + this.klass.id), true);
   };
 
   ProgressMenuView.prototype.initialize = function(options) {
@@ -39,7 +39,11 @@ ProgressMenuView = (function(_super) {
   ProgressMenuView.prototype.render = function() {
     var html, student, _i, _len, _ref;
     if (this.ready) {
-      html = "        <select class='student_selector'>          <option disabled='disabled' selected='selected'>" + (t('select a student')) + "</option>          ";
+      if (this.students.length === 0) {
+        this.$el.html("Please add students to this class.");
+        return;
+      }
+      html = "        <select class='student_selector'>          <option disabled='disabled' selected='selected'>" + (t('select a student')) + "</option>          <option data-studentId='all'>" + (t("all students")) + "</option>      ";
       _ref = this.students;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         student = _ref[_i];

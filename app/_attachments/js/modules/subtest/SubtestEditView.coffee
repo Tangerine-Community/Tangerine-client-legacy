@@ -101,11 +101,33 @@ class SubtestEditView extends Backbone.View
     # by default save prototype as well
     options.prototypeSave = if options.prototypeSave? then options.prorotypeSave else true
 
+
+  initialize: ( options ) ->
+    @model = options.model
+    @assessment = options.assessment
+    @config = Tangerine.config.subtest
+    
+    @prototypeViews  = Tangerine.config.get "prototypeViews"
+    @prototypeEditor = new window[@prototypeViews[@model.get 'prototype']['edit']]
+      model: @model
+      parent: @
+    @prototypeEditor.on "edit-save", => @save options:editSave:true
+      
+  goBack: =>
+    Tangerine.router.navigate "edit/"+@model.get("assessmentId"), true
+
+  save: (event) ->
+    
+    isEditSave = event?.options?.editSave == true
+    
     prototype = @model.get("prototype")
 
     @model.set
-      name           : @$el.find("#subtest_name").val()
-      skippable      : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
+      name              : @$el.find("#subtest_name").val()
+      enumeratorHelp    : @$el.find("#enumerator_help").val()
+      studentDialog     : @$el.find("#student_dialog").val()
+      transitionComment : @$el.find("#transition_comment").val()
+      skippable         : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
 
       enumeratorHelp    : @$el.find("#enumerator_textarea").val()
       studentDialog     : @$el.find("#dialog_textarea").val()

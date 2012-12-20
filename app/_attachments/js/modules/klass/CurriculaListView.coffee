@@ -8,7 +8,8 @@ class CurriculaListView extends Backbone.View
 
 
   render: =>
-
+    return if @curricula.length == 0 
+    @$el.html "<h2>Curricula</h2>"
     @closeViews
     @curricula.each (curriculum) =>
       view = new CurriculumListElementView

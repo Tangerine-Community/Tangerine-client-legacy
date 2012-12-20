@@ -12,16 +12,49 @@ KlassResult = (function(_super) {
 
   KlassResult.prototype.url = "result";
 
-  KlassResult.prototype.initialize = function(options) {
-    return this.set({
-      'timestamp': (new Date()).getTime()
-    });
-  };
-
   KlassResult.prototype.add = function(subtestDataElement) {
     return this.save({
       'subtestData': subtestDataElement
     });
+  };
+
+  KlassResult.prototype.get = function(options) {
+    this.assertSubtestData();
+    if (options === "correct") return this.gridCount("correct");
+    if (options === "incorrect") return this.gridCount("incorrect");
+    if (options === "missing") return this.gridCount("missing");
+    if (options === "total") return this.attributes.subtestData.items.length;
+    if (options === "attempted") return this.getAttempted();
+    if (options === "time_remain") return this.getTimeRemain();
+    return KlassResult.__super__.get.call(this, options);
+  };
+
+  KlassResult.prototype.gridCount = function(value) {
+    var count, item, _i, _len, _ref;
+    if (!(this.get("subtestData").items != null)) throw "No items";
+    count = 0;
+    _ref = this.get("subtestData").items;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      item = _ref[_i];
+      if (item.itemResult === value) count++;
+    }
+    return count;
+  };
+
+  KlassResult.prototype.getAttempted = function() {
+    return parseInt(this.get("subtestData").attempted);
+  };
+
+  KlassResult.prototype.getTimeRemain = function() {
+    return parseInt(this.get("subtestData").time_remain);
+  };
+
+  KlassResult.prototype.getCorrectPerSeconds = function(secondsAllowed) {
+    return Math.round(this.get("correct") / (secondsAllowed - this.getTimeRemain())) * secondsAllowed;
+  };
+
+  KlassResult.prototype.assertSubtestData = function() {
+    if (!(this.attributes.subtestData != null)) throw "No subtest data.";
   };
 
   return KlassResult;

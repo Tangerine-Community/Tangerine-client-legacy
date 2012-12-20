@@ -9,16 +9,18 @@ class KlassSubtestRunView extends Backbone.View
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
   initialize: (options) ->
-    @protoViews  = Tangerine.config.prototypeViews
+    @protoViews  = Tangerine.config.get("prototypeViews")
     @prototypeRendered = false
 
     @result = new KlassResult
-      resultBucket : options.subtest.get("resultBucket")
+      startTime    : (new Date()).getTime()
+      itemType     : options.subtest.get("itemType")
       reportType   : options.subtest.get("reportType")
       studentId    : options.student.id
       subtestId    : options.subtest.id
       part         : options.subtest.get("part")
       klassId      : options.student.get("klassId")
+      timeAllowed  : options.subtest.get("timer")
 
   render: ->
 

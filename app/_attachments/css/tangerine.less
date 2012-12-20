@@ -282,9 +282,16 @@ textarea[contenteditable] {-webkit-appearance: none;}
 @orange-4: #F6EF9A;
 @grey: #888;
 
+@concerning: rgb(222, 156, 117);
+@poor:       rgb(229, 208, 149);
+@good:       rgb(201, 220, 136);
+@great:      rgb(135, 219, 144);
+
+@grey-0: #EEE;
 @grey-1: #CCC;
 @grey-2: #999;
-@grey-3: #333;
+@grey-3: #666;
+@grey-4: #333;
 
 @green: #8CC63F;
 
@@ -1391,16 +1398,59 @@ label.no_help
  * Tangerine Class
  */
 
-table.mastery_check
+.edit_in_place
 {
-  border: 1px solid black;
+  cursor: pointer;
+
+}
+
+.editing
+{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: #eee;
+  vertical-align: bottom !important;
+}
+
+.class_table
+{
+
+  margin: 1em 0;
+  border: 0;
+  width: 100%;
+
   td
   {
-    padding: 5px 10px 5px 10px;
-    border: 2px solid white;
+    padding: 0.25em 0;
+    color: @grey-3;
+    border: 0;
+    border-bottom: 1px solid @grey-1;
   }
-  tr:nth-child(even) { background-color: #fff; }
-  tr:nth-child(odd) { background-color: #eee; }
+
+  th
+  {
+    vertical-align: top;
+    padding: 0.25em 0;
+    font-weight: normal;
+    color: black;
+    text-align: left;
+  }
+
+}
+
+
+.MasteryCheckView
+{
+
+  table
+  {
+    .class_table;
+  }
+
+  //tr:nth-child(odd)  { background-color: #fff; }
+  //tr:nth-child(even) { background-color: #eee; }
 }
 
 ul.klass_list li
@@ -1442,6 +1492,84 @@ ul.klass_list li
 body[rtl]
 {
   direction: rtl !important;
+}
+
+
+/*
+ * Progress
+ */
+
+.ProgressView
+{
+  table.tabular
+  {
+    .class_table;
+  }
+}
+
+/*
+ * KlassGroupingView
+ */
+
+.KlassGroupingView
+{
+
+  .concerning { background-color: @concerning !important; }
+  .poor       { background-color: @poor       !important; }
+  .good       { background-color: @good       !important; }
+  .great      { background-color: @great      !important; }
+
+  table
+  {
+    border: 2px solid white;
+    background-color: #eee;
+    margin-bottom: 2em;
+
+    td, th
+    {
+      padding: 0.2em;
+      border: 2px solid white;
+    }
+
+    th
+    {
+      font-weight: normal;
+      background-color: white;
+      text-align: left;
+      border: 1px solid black
+    }
+
+  }
+
+}
+
+/*
+ * Curriculum editor
+ */
+.CurriculumView
+{
+  table
+  {
+
+    border: 2px solid white !important;
+    
+    thead
+    {
+      position:relative;
+    }
+
+    .class_table;
+    td, th
+    {
+      border-left: 1px solid @grey-1;
+      padding: 0 0.25em
+    }
+
+    th
+    {
+      vertical-align: text-top;
+    }
+  }
 }
 
 

@@ -23,39 +23,10 @@ ResultsView = (function(_super) {
     'click .csv_beta': 'csvBeta'
   };
 
-  ResultsView.prototype.postRequest = function(path, params) {
-    var form, hiddenField, key, method, value;
-    method = "post";
-    form = document.createElement("form");
-    form.setAttribute("method", method);
-    form.setAttribute("action", path);
-    for (key in params) {
-      value = params[key];
-      hiddenField = document.createElement("input");
-      hiddenField.setAttribute("type", "hidden");
-      hiddenField.setAttribute("name", key);
-      hiddenField.setAttribute("value", value);
-      form.appendChild(hiddenField);
-    }
-    document.body.appendChild(form);
-    return form.submit();
-  };
-
   ResultsView.prototype.csvBeta = function() {
     var filename;
     filename = this.assessment.get("name");
     return document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + ("/_list/csv/csvRowByResult?key=\"" + this.assessment.id + "\"&filename=" + filename);
-    /*
-        $.post "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
-             data,
-             -> alert("Response: " + data)
-           );
-        @postRequest("/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult",
-          "key"      : @assessment.id
-          "filename" : filename
-          "columns"  : "\"#{columns}\""
-        )
-    */
   };
 
   ResultsView.prototype.showResultSumView = function(event) {
@@ -79,7 +50,7 @@ ResultsView = (function(_super) {
   ResultsView.prototype.cloud = function() {
     var _this = this;
     if (this.available.cloud.ok) {
-      $.couch.replicate(Tangerine.config.address.local.dbName, Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName, {
+      $.couch.replicate(Tangerine.settings.urlDB("local", Tangerine.settings.urlDB("group", {
         success: function() {
           return _this.$el.find(".status").find(".info_box").html("Results synced to cloud successfully");
         },
@@ -88,7 +59,7 @@ ResultsView = (function(_super) {
         }
       }, {
         doc_ids: this.docList
-      });
+      })));
     } else {
       Utils.midAlert("Cannot detect cloud");
     }
@@ -101,7 +72,7 @@ ResultsView = (function(_super) {
     if (this.available.tablets.okCount > 0) {
       _ref = this.available.tablets.ips;
       _fn = function(ip) {
-        return $.couch.replicate(Tangerine.config.address.local.dbName, ("http://" + ip + ":5984/") + Tangerine.config.address.local.dbName, {
+        return $.couch.replicate(Tangerine.settings.urlDB("local", Tangerine.settings.urlSubnet(ip, {
           success: function() {
             return _this.$el.find(".status").find(".info_box").html("Results synced to " + _this.available.tablets.okCount + " successfully");
           },
@@ -110,7 +81,7 @@ ResultsView = (function(_super) {
           }
         }, {
           doc_ids: _this.docList
-        });
+        })));
       };
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         ip = _ref[_i];
@@ -133,7 +104,7 @@ ResultsView = (function(_super) {
     return view.on("ready", function() {
       var $button, csvLocation, filename;
       filename = _this.assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm");
-      csvLocation = "/" + Tangerine.config.address.cloud.dbName + "/_design/" + Tangerine.config.address.designDoc + "/_show/csv/Tangerine-" + (_this.assessment.id.substr(-5, 5)) + ".csv?filename=" + filename;
+      csvLocation = Tangerine.settings.urlShow("local", "csv/Tangerine-" + (_this.assessment.id.substr(-5, 5)) + ".csv?filename=" + filename);
       $button = _this.$el.find("button.csv");
       $button.after("<a href='" + csvLocation + "' class='command'>Download CSV</a>");
       return $button.remove();
@@ -164,7 +135,7 @@ ResultsView = (function(_super) {
     var _this = this;
     return $.ajax({
       dataType: "jsonp",
-      url: Tangerine.config.address.cloud.host + ":" + Tangerine.config.address.port + "/",
+      url: Tangerine.settings.urlHost("group"),
       success: function(a, b) {
         return _this.available.cloud.ok = true;
       },
@@ -179,19 +150,18 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.detectTablets = function() {
-    var local, port, _results,
+    var local, _results,
       _this = this;
-    port = Tangerine.config.address.port;
     _results = [];
     for (local = 0; local <= 255; local++) {
-      _results.push((function(local, port) {
+      _results.push((function(local) {
         var ip;
-        ip = "192.168.1." + local;
+        ip = Tangerine.settings.subnetIP(local);
         return $.ajax({
           dataType: "jsonp",
           contentType: "application/json;charset=utf-8",
           timeout: 30000,
-          url: "http://" + ip + ":" + port + "/",
+          url: urlSubnet(ip),
           complete: function(xhr, error) {
             _this.available.tablets.checked++;
             if (xhr.status === 200) {
@@ -201,7 +171,7 @@ ResultsView = (function(_super) {
             return _this.updateOptions();
           }
         });
-      })(local, port));
+      })(local));
     }
     return _results;
   };
@@ -232,7 +202,6 @@ ResultsView = (function(_super) {
 
   ResultsView.prototype.readyCSVBeta = function() {
     var _this = this;
-    console.log("trying to ready");
     return $.ajax({
       dataType: "json",
       contentType: "application/json;charset=utf-8",
@@ -272,8 +241,8 @@ ResultsView = (function(_super) {
     cloudButton = "<button class='cloud command' disabled='disabled'>Cloud</button>";
     tabletButton = "<button class='tablets command' disabled='disabled'>Tablets</button>";
     csvButton = "<button class='csv command'>CSV</button>";
-    html = "      <h1>" + (this.assessment.get('name')) + "</h1>      <h2>Save options</h2>      <div class='menu_box'>        " + (Tangerine.settings.context === "mobile" ? cloudButton : "") + "        " + (Tangerine.settings.context === "mobile" ? tabletButton : "") + "        " + csvButton + "        <button class='command csv_beta'>CSV (beta)</button>      </div>";
-    if (Tangerine.settings.context === "mobile") {
+    html = "      <h1>" + (this.assessment.get('name')) + "</h1>      <h2>Save options</h2>      <div class='menu_box'>        " + (Tangerine.settings.get("context") === "mobile" ? cloudButton : "") + "        " + (Tangerine.settings.get("context") === "mobile" ? tabletButton : "") + "        " + csvButton + "        <button class='command csv_beta'>CSV (beta)</button>      </div>";
+    if (Tangerine.settings.get("context") === "mobile") {
       html += "        <button class='detect command'>Detect options</button>        <div class='status'>          <h2>Status</h2>          <div class='info_box'></div>          <div class='checking_status'></div>        </div>        ";
     }
     html += "      <h2 id='results-header'>Results (loading)</h2>    ";

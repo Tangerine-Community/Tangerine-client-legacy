@@ -8,7 +8,7 @@ class SubtestRunView extends Backbone.View
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
   initialize: (options) ->
-    @protoViews  = Tangerine.config.prototypeViews
+    @protoViews  = Tangerine.config.get "prototypeViews"
     @model       = options.model
     @parent      = options.parent
 

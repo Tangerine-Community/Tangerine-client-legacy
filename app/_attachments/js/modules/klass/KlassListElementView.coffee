@@ -13,7 +13,7 @@ class KlassListElementView extends Backbone.View
     'click .delete_delete' : 'delete'
 
   initialize: (options) ->
-    @availableReports = Tangerine.config.reports
+    @availableReports = Tangerine.config.get("reports")
     if options.klass.has "curriculumId"
       @curriculum = new Curriculum 
           "_id" : options.klass.get "curriculumId" || ""

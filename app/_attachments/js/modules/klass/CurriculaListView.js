@@ -23,6 +23,8 @@ CurriculaListView = (function(_super) {
 
   CurriculaListView.prototype.render = function() {
     var _this = this;
+    if (this.curricula.length === 0) return;
+    this.$el.html("<h2>Curricula</h2>");
     this.closeViews;
     this.curricula.each(function(curriculum) {
       var view;

@@ -1,0 +1,62 @@
+{
+
+	"local" :
+	{
+		"host"   : "http://localhost",
+		"login"  : "localuser:localpass",
+		"dbName" : "tangerine"
+	},
+
+	"subnet" :
+	{
+		"base"   : "192.168.1."
+	},
+
+	"designDoc"       : "ojai",
+	"port"            : 5984,
+	"groupDBPrefix"   : "group-",
+
+	"prototypeViews" : 
+	{
+		"observation": {"run" : "ObservationRunView", "edit" : "ObservationEditView" },
+		"consent":     {"run" : "ConsentRunView",     "edit" : "ConsentEditView" },
+		"datetime":    {"run" : "DatetimeRunView",    "edit" : "DatetimeEditView" },
+		"location":    {"run" : "LocationRunView",    "edit" : "LocationEditView" },
+		"survey":      {"run" : "SurveyRunView",      "edit" : "SurveyEditView" },
+		"grid":        {"run" : "GridRunView",        "edit" : "GridEditView" },
+		"id":          {"run" : "IdRunView",          "edit" : "IdEditView" }
+	},
+
+	"reports" : 
+	[
+		{
+			"name"       : "progress graph",
+			"menuView"   : "ProgressMenuView",
+			"reportType" : "progress"
+		},
+		{
+			"name"       : "mastery check table",
+			"menuView"   : "MasteryCheckMenuView",
+			"reportType" : "mastery"
+		},
+		{
+			"name"       : "class grouping table",
+			"menuView"   : "KlassGroupingMenuView"
+		}
+	],
+	
+	"defaults" :
+	{
+		"settings" : 
+		{
+			"context"          : "server",
+			"language"         : "en",
+			"groupName"        : "tangerine",
+			"groupHost"        : "http://tangerine.iriscouch.com",
+			"upPass"           : "pass",
+			"log"              : ["app"]
+		}
+	},
+	
+	"collection" : "config"
+}

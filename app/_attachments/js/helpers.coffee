@@ -4,14 +4,45 @@ Backbone.View.prototype.close = ->
   @unbind()
   @onClose?()
 
-Backbone.Model.prototype.getBoolean = (key) -> @get(key) == true or @get(key) == 'true'
+
+# Returns an object hashed by a given attribute.
+Backbone.Collection.prototype.indexBy = ( attr ) ->
+  result = {}
+  for oneModel in @models
+    if oneModel.has(attr)
+      key = oneModel.get(attr)
+      result[key] = [] if not result[key]?
+      result[key].push(oneModel)
+  return result
+
+# Returns an object hashed by a given attribute.
+Backbone.Collection.prototype.indexArrayBy = ( attr ) ->
+  result = []
+  for oneModel in @models
+    if oneModel.has(attr)
+      key = oneModel.get(attr)
+      result[key] = [] if not result[key]?
+      result[key].push(oneModel)
+  return result
+
+
+#
+# This series of functions returns properties with default values if no property is found
+# @gotcha be mindful of the default "blank" values set here
+#
+Backbone.Model.prototype.getNumber =        (key) -> return if @has(key) then parseInt(@get(key)) else 0
+Backbone.Model.prototype.getArray =         (key) -> return if @has(key) then @get(key)           else []
+Backbone.Model.prototype.getString =        (key) -> return if @has(key) then @get(key)           else ""
+Backbone.Model.prototype.getEscapedString = (key) -> return if @has(key) then @escape(key)        else ""
+Backbone.Model.prototype.getBoolean =       (key) -> return if @has(key) then (@get(key) == true or @get(key) == 'true')
+
 
 #
 # handy jquery functions
 #
 ( ($) -> 
 
-  $.fn.scrollTo = (speed=250, callback)->
+  $.fn.scrollTo = (speed = 250, callback) ->
     try
       $('html, body').animate {
         scrollTop: $(@).offset().top + 'px'
@@ -34,6 +65,46 @@ Backbone.Model.prototype.getBoolean = (key) -> @get(key) == true or @get(key) ==
     @css "position", "absolute"
     @css "top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px"
     @css "left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px"
+
+  $.fn.widthPercentage = ->
+    return Math.round(100 * @outerWidth() / @offsetParent().width()) + '%'
+
+  $.fn.heightPercentage = ->
+    return Math.round(100 * @outerHeight() / @offsetParent().height()) + '%'
+
+
+  $.fn.getStyleObject = ->
+
+      dom = this.get(0)
+
+      returns = {}
+
+      if window.getComputedStyle
+
+          camelize = (a, b) -> b.toUpperCase()
+
+          style = window.getComputedStyle dom, null
+
+          for prop in style
+              camel = prop.replace /\-([a-z])/g, camelize
+              val = style.getPropertyValue prop
+              returns[camel] = val
+
+          return returns
+
+      if dom.currentStyle
+
+          style = dom.currentStyle
+
+          for prop in style
+
+              returns[prop] = style[prop]
+
+          return returns
+
+      return this.css()
+
+
 
 )(jQuery)
 
@@ -72,6 +143,10 @@ Math.commas   = (num) -> parseInt(num).toString().replace(/\B(?=(\d{3})+(?!\d))/
 
 class Utils
 
+  @log: (self, error) ->
+    className = self.constructor.toString().match(/function\s*(\w+)/)[1]
+    console.log "#{className}: #{error}"
+
   # asks for confirmation in the browser, and uses phonegap for cool confirmation
   @confirm: (message, options) ->
     if navigator.notification?.confirm?
@@ -94,31 +169,36 @@ class Utils
     return 0
 
   # this function is a lot like jQuery.serializeArray, except that it returns useful output
+  # works on textareas, input type text and password
   @getValues: ( selector ) ->
     values = {}
-    $(selector).find("input, textarea").each ( index, element ) -> 
+    $(selector).find("input[type=text], input[type=password], textarea").each ( index, element ) -> 
       values[element.id] = element.value
     return values
 
+  # converts url escaped characters
   @cleanURL: (url) ->
-    if url.indexOf?("%") != -1 
+    if url.indexOf?("%") != -1
       url = decodeURIComponent url
     else
       url
 
+
   # Disposable alerts
   @topAlert: (alert_text) ->
     $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").topCenter().delay(2000).fadeOut(250, -> $(this).remove())
-
   @midAlert: (alert_text) ->
     $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").middleCenter().delay(2000).fadeOut(250, -> $(this).remove())
 
+
+  # returns a GUID
+  @guid: ->
+   return @S4()+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+@S4()+@S4()
   @S4: ->
    return ( ( ( 1 + Math.random() ) * 0x10000 ) | 0 ).toString(16).substring(1)
 
-  @guid: ->
-   return @S4()+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+"-"+@S4()+@S4()+@S4()
 
+  # turns the body background a color and then returns to white
   @flash: (color="red") ->
     $("body").css "backgroundColor" : color
     setTimeout ->
@@ -126,7 +206,9 @@ class Utils
     , 1000
 
 
-  @$_GET: (q,s) ->
+  # Retrieves GET variables
+  # http://ejohn.org/blog/search-and-dont-replace/
+  @$_GET: (q, s) ->
     vars = {}
     parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m,key,value) ->
         value = if ~value.indexOf("#") then value.split("#")[0] else value
@@ -134,11 +216,22 @@ class Utils
     )
     vars
 
+
+  # not currently implemented but working
   @resizeScrollPane: ->
     $(".scroll_pane").height( $(window).height() - ( $("#navigation").height() + $("#footer").height() + 100) ) 
 
+  # asks user if they want to logout
   @askToLogout: -> Tangerine.user.logout() if confirm("Would you like to logout now?")
-      
+
+  @oldConsoleLog = null
+  @enableConsoleLog: -> return unless oldConsoleLog? ; window.console.log = oldConsoleLog
+  @disableConsoleLog: -> oldConsoleLog = console.log ; window.console.log = $.noop
+
+  @oldConsoleAssert = null
+  @enableConsoleAssert: -> return unless oldConsoleAssert?    ; window.console.assert = oldConsoleAssert
+  @disableConsoleAssert: -> oldConsoleAssert = console.assert ; window.console.assert = $.noop
+
 
 ##UI helpers
 $ ->

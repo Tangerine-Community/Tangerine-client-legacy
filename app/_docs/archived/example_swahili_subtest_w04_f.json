@@ -1,0 +1,20 @@
+{
+  "_id" : "example_swahili_subtest_w04_f",
+  "collection": "subtest",
+  "curriculumId" : "example_swahili_curriculum",
+  "captureLastAttempted" : false,
+  "endOfLine" : false,
+  "prototype": "grid",
+  "part": 4,
+  "reportType" : "mastery",
+  "itemType" : "words",
+  "name": "Words",
+  "items": [
+    "mita",
+    "mpana",
+    "mito",
+    "ma",
+    "papo",
+    "umo"
+  ]
+}

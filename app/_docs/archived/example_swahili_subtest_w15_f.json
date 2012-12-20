@@ -1,0 +1,26 @@
+{
+  "_id" : "example_swahili_subtest_w15_f",
+  "collection": "subtest",
+  "curriculumId" : "example_swahili_curriculum",
+  "captureLastAttempted" : false,
+  "endOfLine" : false,
+  "prototype": "grid",
+  "part": 15,
+  "reportType" : "mastery",
+  "itemType" : "words",
+  "name": "Words",
+  "items": [
+    "ua",
+    "au",
+    "u",
+    "na",
+    "njia",
+    "pigo",
+    "nina",
+    "njano",
+    "mtego",
+    "ni",
+    "njozi",
+    "mgeni"
+  ]
+}

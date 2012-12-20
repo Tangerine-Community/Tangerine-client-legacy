@@ -40,7 +40,7 @@ class Assessment extends Backbone.Model
     dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g," ").split(/\s+/))
 
     @trigger "status", "import lookup"
-    $.ajax "#{Tangerine.config.address.cloud.host}/#{Tangerine.config.address.cloud.dbName}/_design/#{Tangerine.config.address.designDoc}/_view/byDKey",
+    $.ajax Tangerine.settings.urlView("group", "dKey"),
       type: "POST"
       dataType: "jsonp"
       data: keys: dKeys
@@ -49,17 +49,9 @@ class Assessment extends Backbone.Model
         for datum in data.rows
           docList.push datum.id
         $.couch.replicate(
-          "#{Tangerine.config.address.cloud.host}/#{Tangerine.config.address.cloud.dbName}",
-          Tangerine.config.address.local.dbName,
-            success: => 
-              @trigger "status", "import success"
-              try
-                @fetch
-                  success: => @trigger "update"
-                  error: => console.log "error fetching after update"
-              catch e
-                console.log "error fetching after update"
-                console.log e
+          Tangerine.settings.urlDB "group",
+          Tangerine.settings.urlDB "local",
+            success:      => @trigger "status", "import success"
             error: (a, b) => @trigger "status", "import error", "#{a} #{b}"
           ,
             doc_ids: docList

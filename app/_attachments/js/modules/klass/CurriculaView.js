@@ -20,21 +20,28 @@ CurriculaView = (function(_super) {
   };
 
   CurriculaView.prototype.gotoImport = function() {
-    return Tangerine.router.navigate("curriculum/import", true);
+    return Tangerine.router.navigate("curriculumImport", true);
   };
 
   CurriculaView.prototype.initialize = function(options) {
+    var _this = this;
     this.subView = new CurriculaListView({
       curricula: options.curricula
     });
-    this.subView.on("render", this.render);
-    return this.subView.render();
+    return options.curricula.on("all", function() {
+      return _this.subView.render();
+    });
   };
 
   CurriculaView.prototype.render = function() {
-    this.$el.html("    <button class='back navigation'>" + (t('back')) + "</button>    <h2>" + (t('loaded curricula')) + "</h2>    <button class='command import'>" + (t('import')) + "</button>    <br>    <div id='klass_list'></div>    ");
-    this.$el.find('#klass_list').append(this.subView.el);
+    this.$el.html("    <button class='back navigation'>" + (t('back')) + "</button><br>    <button class='command import'>" + (t('import')) + "</button>    <br>    <div id='klass_list'></div>    ");
+    this.subView.setElement(this.$el.find('#klass_list'));
     return this.trigger("rendered");
+  };
+
+  CurriculaView.prototype.onClose = function() {
+    var _ref;
+    return (_ref = this.subView) != null ? _ref.close() : void 0;
   };
 
   return CurriculaView;

@@ -64,7 +64,7 @@ Assessment = (function(_super) {
     if (dKey == null) dKey = this.id.substr(-5, 5);
     dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/));
     this.trigger("status", "import lookup");
-    $.ajax("" + Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName + "/_design/" + Tangerine.config.address.designDoc + "/_view/byDKey", {
+    $.ajax(Tangerine.settings.urlView("group", "dKey"), {
       type: "POST",
       dataType: "jsonp",
       data: {
@@ -78,29 +78,16 @@ Assessment = (function(_super) {
           datum = _ref[_i];
           docList.push(datum.id);
         }
-        return $.couch.replicate("" + Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.cloud.dbName, Tangerine.config.address.local.dbName, {
+        return $.couch.replicate(Tangerine.settings.urlDB("group", Tangerine.settings.urlDB("local", {
           success: function() {
-            _this.trigger("status", "import success");
-            try {
-              return _this.fetch({
-                success: function() {
-                  return _this.trigger("update");
-                },
-                error: function() {
-                  return console.log("error fetching after update");
-                }
-              });
-            } catch (e) {
-              console.log("error fetching after update");
-              return console.log(e);
-            }
+            return _this.trigger("status", "import success");
           },
           error: function(a, b) {
             return _this.trigger("status", "import error", "" + a + " " + b);
           }
         }, {
           doc_ids: docList
-        });
+        })));
       }
     });
     return false;

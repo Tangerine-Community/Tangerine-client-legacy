@@ -43,6 +43,7 @@ class AccountView extends Backbone.View
     html = "
       <button class='back navigation'>Back</button>
       <h1>Account</h1>
+      <a href='#settings' class='navigation'><button class='navigation'>Settings</button></a>
       <div class='label_value'>
         <label>Name</label>
         <p>#{@user.name}</p>
@@ -53,8 +54,8 @@ class AccountView extends Backbone.View
     "
     for group in (@user.get("groups") || [])
         html += "<li data-group='#{_.escape(group)}'>#{group} <button class='command leave'>Leave</button></li>"
-    mobileChecked = if Tangerine.settings.context == "mobile" then " checked='checked'" else ""
-    classChecked = if Tangerine.settings.context == "class" then " checked='checked'" else ""
+    mobileChecked = if Tangerine.settings.get("context") == "mobile" then " checked='checked'" else ""
+    classChecked  = if Tangerine.settings.get("context") == "class" then " checked='checked'" else ""
 
     html += "
         </ul>

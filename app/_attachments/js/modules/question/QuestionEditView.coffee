@@ -252,11 +252,12 @@ class QuestionEditView extends Backbone.View
   #
   done: ->
     @updateModel()
-    if @question.save()
-      Utils.midAlert "Question Saved"
-      setTimeout @goBack, 500
-    else
-      Utils.midAlert "Save error"
+    @question.save null,
+      success: =>
+        Utils.midAlert "Question Saved"
+        setTimeout @goBack, 500
+      error: ->
+        Utils.midAlert "Save error"
     return false
 
   updateModel: =>

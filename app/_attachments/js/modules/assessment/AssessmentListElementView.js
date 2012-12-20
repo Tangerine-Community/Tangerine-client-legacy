@@ -118,7 +118,7 @@ AssessmentListElementView = (function(_super) {
   AssessmentListElementView.prototype.render = function() {
     var adminName, adminResultCount, archiveClass, archiveSwitch, copyButton, deleteButton, deleteConfirm, downloadKey, duplicateButton, editButton, html, isArchived, name, printButton, resultCount, resultsButton, runButton, selected, toggleButton, updateButton;
     isArchived = this.model.getBoolean('archived');
-    if (!this.isAdmin && isArchived && Tangerine.settings.context === "mobile") {
+    if (!this.isAdmin && isArchived && Tangerine.settings.get("context") === "mobile") {
       return;
     }
     toggleButton = "<span class='assessment_menu_toggle icon_ryte'> </span>";
@@ -141,7 +141,7 @@ AssessmentListElementView = (function(_super) {
     archiveSwitch = "    <select class='archive'>      <option value='false' " + (isArchived ? selected : '') + ">Active</option>      <option value='true'  " + (isArchived ? selected : '') + ">Archived</option>    </select>    ";
     if (this.isAdmin) {
       html = "        <div>          " + toggleButton + "          " + adminName + "        </div>      ";
-      if (Tangerine.settings.context === "mobile") {
+      if (Tangerine.settings.get("context") === "mobile") {
         html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + resultCount + "            " + updateButton + "          </div>        ";
       } else {
         if (this.isPublic) {

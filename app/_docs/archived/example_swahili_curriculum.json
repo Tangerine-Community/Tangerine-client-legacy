@@ -1,0 +1,7 @@
+{
+  "_id" : "example_swahili_curriculum",
+  "curriculumId" : "example_swahili_curriculum",
+  "name" : "Example Swahili",
+  "group" : "public",
+  "collection" : "curriculum"
+}

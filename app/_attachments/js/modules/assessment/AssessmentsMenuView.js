@@ -8,17 +8,17 @@ AssessmentsMenuView = (function(_super) {
   __extends(AssessmentsMenuView, _super);
 
   function AssessmentsMenuView() {
-    this.newAssessmentSave = __bind(this.newAssessmentSave, this);
+    this.newSave = __bind(this.newSave, this);
     this.addToCollection = __bind(this.addToCollection, this);
     this.render = __bind(this.render, this);
     AssessmentsMenuView.__super__.constructor.apply(this, arguments);
   }
 
   AssessmentsMenuView.prototype.events = {
-    'keypress .new_assessment_name': 'newAssessmentSave',
-    'click .new_assessment_save': 'newAssessmentSave',
-    'click .new_assessment_cancel': 'newAssessmentToggle',
-    'click .new_assessment': 'newAssessmentToggle',
+    'keypress .new_name': 'newSave',
+    'click .new_save': 'newSave',
+    'click .new_cancel': 'newToggle',
+    'click .new': 'newToggle',
     'click .import': 'import',
     'click .groups': 'gotoGroups'
   };
@@ -46,7 +46,7 @@ AssessmentsMenuView = (function(_super) {
       "curricula": options.curricula
     });
     this.groupViews = [];
-    if (Tangerine.settings.context === "server") {
+    if (Tangerine.settings.get("context") === "server") {
       _ref = this.sections;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -60,7 +60,7 @@ AssessmentsMenuView = (function(_super) {
         _results.push(this.groupViews.push(view));
       }
       return _results;
-    } else if (Tangerine.settings.context === "mobile") {
+    } else if (Tangerine.settings.get("context") === "mobile") {
       return this.listView = new AssessmentsView({
         "group": false,
         "homeGroup": this.group,
@@ -72,15 +72,15 @@ AssessmentsMenuView = (function(_super) {
 
   AssessmentsMenuView.prototype.render = function() {
     var groupsButton, html, i, importButton, newButton, view, _len, _ref;
-    newButton = "<button class='new_assessment command'>New</button>";
+    newButton = "<button class='new command'>New</button>";
     importButton = "<button class='import command'>Import</button>";
     groupsButton = "<button class='navigation groups'>Groups</button>";
-    html = "      " + (Tangerine.settings.context === "server" ? groupsButton : "") + "      <h1>Assessments</h1>      ";
+    html = "      " + (Tangerine.settings.get("context") === "server" ? groupsButton : "") + "      <h1>Assessments</h1>    ";
     if (this.isAdmin) {
-      html += "        " + (Tangerine.settings.context === "server" ? newButton : "") + "        " + (Tangerine.settings.context === "mobile" ? importButton : "") + "        <div class='new_assessment_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_assessment_name' placeholder='Assessment Name'>            <button class='new_assessment_save command'>Save</button> <button class='new_assessment_cancel command'>Cancel</button>          </div>        </div>      ";
+      html += "        " + (Tangerine.settings.get("context") === "server" ? newButton : "") + "        " + (Tangerine.settings.get("context") === "mobile" ? importButton : "") + "        <div class='new_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_name' placeholder='Name'>            <select id='new_type'>              <option value='assessment'>Assessment</option>              <option value='curriculum'>Curriculum</option>            </select><br>            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>          </div>        </div>      ";
     }
     this.$el.html(html);
-    if (Tangerine.settings.context === "server") {
+    if (Tangerine.settings.get("context") === "server") {
       _ref = this.groupViews;
       for (i = 0, _len = _ref.length; i < _len; i++) {
         view = _ref[i];
@@ -99,37 +99,54 @@ AssessmentsMenuView = (function(_super) {
     return newAssessment.on("new", this.addToCollection);
   };
 
-  AssessmentsMenuView.prototype.newAssessmentToggle = function() {
-    this.$el.find('.new_assessment_form, .new_assessment').fadeToggle(250);
+  AssessmentsMenuView.prototype.newToggle = function() {
+    this.$el.find('.new_form, .new').fadeToggle(250);
     return false;
   };
 
-  AssessmentsMenuView.prototype.newAssessmentSave = function(event) {
-    var name, newAssessment, newId,
+  AssessmentsMenuView.prototype.newSave = function(event) {
+    var name, newId, newObject, newType,
       _this = this;
     if (event.type !== "click" && event.which !== 13) return true;
-    name = this.$el.find('.new_assessment_name').val();
-    if (name.length !== 0) {
-      newId = Utils.guid();
-      newAssessment = new Assessment;
-      newAssessment.save({
+    name = this.$el.find('.new_name').val();
+    newType = this.$el.find("#new_type option:selected").val();
+    newId = Utils.guid();
+    if (name.length === 0) {
+      Utils.midAlert("<span class='error'>Could not save <img src='images/icon_close.png' class='clear_message'></span>");
+      return false;
+    }
+    if (newType === "assessment") {
+      newObject = new Assessment({
+        "name": name,
+        "group": this.group,
         "_id": newId,
         "assessmentId": newId,
-        "archived": false,
-        "name": name,
-        "group": this.group
-      }, {
-        success: function(assessment) {
-          _this.assessments.add(newAssessment);
-          _this.$el.find('.new_assessment_form, .new_assessment').fadeToggle(250, function() {
-            return _this.$el.find('.new_assessment_name').val("");
-          });
-          return Utils.midAlert("" + name + " saved");
-        }
+        "archived": false
       });
-    } else {
-      Utils.midAlert("<span class='error'>Could not save <img src='images/icon_close.png' class='clear_message'></span>");
+    } else if (newType === "curriculum") {
+      newObject = new Curriculum({
+        "name": name,
+        "group": this.group,
+        "_id": newId,
+        "curriculumId": newId
+      });
     }
+    newObject.save(null, {
+      success: function() {
+        _this.refresh();
+        _this.$el.find('.new_form, .new').fadeToggle(250, function() {
+          return _this.$el.find('.new_name').val("");
+        });
+        return Utils.midAlert("" + name + " saved");
+      },
+      error: function() {
+        _this.refresh();
+        _this.$el.find('.new_form, .new').fadeToggle(250, function() {
+          return _this.$el.find('.new_name').val("");
+        });
+        return Utils.midAlert("Please try again. Error saving.");
+      }
+    });
     return false;
   };
 
