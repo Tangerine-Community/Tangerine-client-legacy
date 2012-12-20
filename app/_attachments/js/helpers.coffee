@@ -140,6 +140,8 @@ Math.ave = ->
 Math.isInt    = -> return typeof n == 'number' && parseFloat(n) == parseInt(n, 10) && !isNaN(n)
 Math.decimals = (num, decimals) -> m = Math.pow( 10, decimals ); num *= m; num =  num+(num<0?-0.5:+0.5)>>0; num /= m
 Math.commas   = (num) -> parseInt(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+Math.limit    = (min, num, max) -> Math.max(min, Math.min(num, max))
+
 
 class Utils
 

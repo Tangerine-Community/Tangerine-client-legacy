@@ -8,6 +8,9 @@ class ResultsView extends Backbone.View
     'click .details'  : 'showResultSumView'
     'click .csv_beta' : 'csvBeta'
 
+    'change .limit' : "setLimit"
+    'change .page' : "setOffset"
+
   csvBeta: ->
     filename = @assessment.get("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
     document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}"
@@ -151,6 +154,10 @@ class ResultsView extends Backbone.View
         @columnHeaders = data
 
   initialize: ( options ) ->
+
+    @resultLimit  = 100
+    @resultOffset = 0
+
     @subViews = []
     @results = options.results
     @assessment = options.assessment
@@ -190,42 +197,84 @@ class ResultsView extends Backbone.View
         </div>
         "
     html += "
-      <h2 id='results-header'>Results (loading)</h2>
+      <h2 id='results_header'>Results (loading)</h2>
+      <div id='results_container'></div>
     "
     
     @$el.html html
 
-    if @results?.length == 0
-      $('#results-header').html "No results yet!"
-    else
-      # TODO convert this to local, settings
-      $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/resultSummaryByAssessmentId",
-        key        : @assessment.id
-        descending : true
-        success: (result) =>
-          $('#results-header').html "Results (#{result.rows.length})"
-          # TODO pagination
-          maxResults = 500
-          if result.rows.length > maxResults
-            $('#results-header').html "Results (#{result.rows.length}) - more than #{maxResults} results, use CSV (beta)for analysis"
-            return
-          rowsRendered = for row in result.rows
-            "
-              <div>
-                #{if row.value.participant_id then row.value.participant_id else ""}
-                #{
-                  if row.value.end_time
-                    moment(row.value.end_time).format( 'YYYY-MMM-DD HH:mm' ) + "(" + moment(row.value.end_time).fromNow() + ")"
-                  else
-                    ""
-                }
-                <button data-result-id='#{row.id}' class='details command'>details</button>
-                <div></div>
-              </div>
-            "
-          @$el.append rowsRendered.join("")
-      
+    @updateResults()
+
     @trigger "rendered"
+
+  setLimit: (event) ->
+    @resultLimit = parseInt($(event.target).val()) || 100 # default 100
+    @updateResults()
+
+  setOffset: (event) ->
+    val = parseInt($(event.target).val()) || 1 
+    calculated = (val - 1) * @resultLimit
+    maxPage = Math.floor(@results.length / @resultLimit ) + 1
+
+    @resultOffset = Math.limit(0, calculated, maxPage) # default page 1 == 0_offset
+
+    @updateResults()
+
+  updateResults: =>
+    if @results?.length == 0
+      @$el.find('#results_header').html "No results yet!"
+      return
+
+    $.ajax 
+      url: Tangerine.settings.urlView "local", "resultSummaryByAssessmentId"
+      type: "POST"
+      dataType: "json"
+      contentType: "application/json"
+      data: JSON.stringify
+        keys        : [@assessment.id]
+        descenting  : true
+        limit       : @resultLimit
+        skip        : @resultOffset
+      success: ( data ) =>
+
+        rows  = data.rows
+        count = rows.length
+
+        $('#results_header').html "Results (#{count})"
+
+        maxResults  = 100
+        currentPage = Math.floor( @resultOffset / @resultLimit ) + 1 
+
+        htmlMenu = ""
+        htmlMenu = "
+          <br>
+          <div>
+            <label for='page' class='small_grey'>Page</label><input id='page' type='number' value='#{currentPage}'>
+            <label for='limit' class='small_grey'>Per page</label><input id='limit' type='number' value='#{@resultLimit}'>
+          </div>
+        " if count > maxResults
+
+
+        @$el.find('#results_header').html "
+          Results (#{count})
+          #{htmlMenu}
+        "
+
+        htmlRows = ""
+        for row in rows
+          id      = row.value?.participant_id || ""
+          long    = moment(row.value.end_time).format('YYYY-MMM-DD HH:mm')
+          fromNow = moment(row.value.end_time).fromNow()
+          time    = "#{long} (#{fromNow})"
+          htmlRows += "
+            <div>
+              #{ time }
+              <button data-result-id='#{row.id}' class='details command'>details</button>
+              <div></div>
+            </div>
+          "
+
+        @$el.find("#results_container").html htmlRows
   
   afterRender: =>
     for view in @subViews

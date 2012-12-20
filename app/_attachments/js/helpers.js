@@ -307,6 +307,10 @@ Math.commas = function(num) {
   return parseInt(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
+Math.limit = function(min, num, max) {
+  return Math.max(min, Math.min(num, max));
+};
+
 Utils = (function() {
 
   function Utils() {}

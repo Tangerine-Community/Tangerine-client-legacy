@@ -9,6 +9,7 @@ ResultsView = (function(_super) {
 
   function ResultsView() {
     this.afterRender = __bind(this.afterRender, this);
+    this.updateResults = __bind(this.updateResults, this);
     this.updateOptions = __bind(this.updateOptions, this);
     this.detectTablets = __bind(this.detectTablets, this);
     ResultsView.__super__.constructor.apply(this, arguments);
@@ -20,7 +21,9 @@ ResultsView = (function(_super) {
     'click .tablets': 'tablets',
     'click .detect': 'detectOptions',
     'click .details': 'showResultSumView',
-    'click .csv_beta': 'csvBeta'
+    'click .csv_beta': 'csvBeta',
+    'change .limit': "setLimit",
+    'change .page': "setOffset"
   };
 
   ResultsView.prototype.csvBeta = function() {
@@ -221,6 +224,8 @@ ResultsView = (function(_super) {
 
   ResultsView.prototype.initialize = function(options) {
     var result, _i, _len, _ref;
+    this.resultLimit = 100;
+    this.resultOffset = 0;
     this.subViews = [];
     this.results = options.results;
     this.assessment = options.assessment;
@@ -235,8 +240,7 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.render = function() {
-    var cloudButton, csvButton, html, tabletButton, _ref,
-      _this = this;
+    var cloudButton, csvButton, html, tabletButton;
     this.clearSubViews();
     cloudButton = "<button class='cloud command' disabled='disabled'>Cloud</button>";
     tabletButton = "<button class='tablets command' disabled='disabled'>Tablets</button>";
@@ -245,37 +249,68 @@ ResultsView = (function(_super) {
     if (Tangerine.settings.get("context") === "mobile") {
       html += "        <button class='detect command'>Detect options</button>        <div class='status'>          <h2>Status</h2>          <div class='info_box'></div>          <div class='checking_status'></div>        </div>        ";
     }
-    html += "      <h2 id='results-header'>Results (loading)</h2>    ";
+    html += "      <h2 id='results_header'>Results (loading)</h2>      <div id='results_container'></div>    ";
     this.$el.html(html);
-    if (((_ref = this.results) != null ? _ref.length : void 0) === 0) {
-      $('#results-header').html("No results yet!");
-    } else {
-      $.couch.db(Tangerine.db_name).view("" + Tangerine.design_doc + "/resultSummaryByAssessmentId", {
-        key: this.assessment.id,
-        descending: true,
-        success: function(result) {
-          var maxResults, row, rowsRendered;
-          $('#results-header').html("Results (" + result.rows.length + ")");
-          maxResults = 500;
-          if (result.rows.length > maxResults) {
-            $('#results-header').html("Results (" + result.rows.length + ") - more than " + maxResults + " results, use CSV (beta)for analysis");
-            return;
-          }
-          rowsRendered = (function() {
-            var _i, _len, _ref2, _results;
-            _ref2 = result.rows;
-            _results = [];
-            for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-              row = _ref2[_i];
-              _results.push("              <div>                " + (row.value.participant_id ? row.value.participant_id : "") + "                " + (row.value.end_time ? moment(row.value.end_time).format('YYYY-MMM-DD HH:mm') + "(" + moment(row.value.end_time).fromNow() + ")" : "") + "                <button data-result-id='" + row.id + "' class='details command'>details</button>                <div></div>              </div>            ");
-            }
-            return _results;
-          })();
-          return _this.$el.append(rowsRendered.join(""));
-        }
-      });
-    }
+    this.updateResults();
     return this.trigger("rendered");
+  };
+
+  ResultsView.prototype.setLimit = function(event) {
+    this.resultLimit = parseInt($(event.target).val()) || 100;
+    return this.updateResults();
+  };
+
+  ResultsView.prototype.setOffset = function(event) {
+    var calculated, maxPage, val;
+    val = parseInt($(event.target).val()) || 1;
+    calculated = (val - 1) * this.resultLimit;
+    maxPage = Math.floor(this.results.length / this.resultLimit) + 1;
+    this.resultOffset = Math.limit(0, calculated, maxPage);
+    return this.updateResults();
+  };
+
+  ResultsView.prototype.updateResults = function() {
+    var _ref,
+      _this = this;
+    if (((_ref = this.results) != null ? _ref.length : void 0) === 0) {
+      this.$el.find('#results_header').html("No results yet!");
+      return;
+    }
+    return $.ajax({
+      url: Tangerine.settings.urlView("local", "resultSummaryByAssessmentId"),
+      type: "POST",
+      dataType: "json",
+      contentType: "application/json",
+      data: JSON.stringify({
+        keys: [this.assessment.id],
+        descenting: true,
+        limit: this.resultLimit,
+        skip: this.resultOffset
+      }),
+      success: function(data) {
+        var count, currentPage, fromNow, htmlMenu, htmlRows, id, long, maxResults, row, rows, time, _i, _len, _ref2;
+        rows = data.rows;
+        count = rows.length;
+        $('#results_header').html("Results (" + count + ")");
+        maxResults = 100;
+        currentPage = Math.floor(_this.resultOffset / _this.resultLimit) + 1;
+        htmlMenu = "";
+        if (count > maxResults) {
+          htmlMenu = "          <br>          <div>            <label for='page' class='small_grey'>Page</label><input id='page' type='number' value='" + currentPage + "'>            <label for='limit' class='small_grey'>Per page</label><input id='limit' type='number' value='" + _this.resultLimit + "'>          </div>        ";
+        }
+        _this.$el.find('#results_header').html("          Results (" + count + ")          " + htmlMenu + "        ");
+        htmlRows = "";
+        for (_i = 0, _len = rows.length; _i < _len; _i++) {
+          row = rows[_i];
+          id = ((_ref2 = row.value) != null ? _ref2.participant_id : void 0) || "";
+          long = moment(row.value.end_time).format('YYYY-MMM-DD HH:mm');
+          fromNow = moment(row.value.end_time).fromNow();
+          time = "" + long + " (" + fromNow + ")";
+          htmlRows += "            <div>              " + time + "              <button data-result-id='" + row.id + "' class='details command'>details</button>              <div></div>            </div>          ";
+        }
+        return _this.$el.find("#results_container").html(htmlRows);
+      }
+    });
   };
 
   ResultsView.prototype.afterRender = function() {
