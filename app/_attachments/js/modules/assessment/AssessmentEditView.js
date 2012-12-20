@@ -31,12 +31,13 @@ AssessmentEditView = (function(_super) {
   };
 
   AssessmentEditView.prototype.save = function() {
+    var _this = this;
     if (this.updateModel()) {
       return this.model.save(null, {
         success: function() {
           Utils.midAlert("Assessment saved");
-          Tangerine.router.navigate("edit/" + this.model.id, true);
-          return this.hideSave();
+          Tangerine.router.navigate("edit/" + _this.model.id, true);
+          return _this.hideSave();
         },
         error: function() {
           return Utils.midAlert("Please try again. Assessment save error.");

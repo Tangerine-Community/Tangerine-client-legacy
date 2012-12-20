@@ -20,11 +20,11 @@ class AssessmentEditView extends Backbone.View
   save: =>
     if @updateModel()
       @model.save null,
-        success: ->
+        success: =>
           Utils.midAlert "Assessment saved" 
           Tangerine.router.navigate "edit/"+@model.id, true
           @hideSave()
-        error: ->
+        error: =>
           Utils.midAlert "Please try again. Assessment save error." 
 
   showSave: -> @$el.find('.assessment_save').fadeIn(250)
