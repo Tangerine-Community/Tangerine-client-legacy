@@ -19,7 +19,7 @@ require 'logger'
 #
 #
 
-$character_set = "123467890AaCDdEeFfGHhJmNnpQRtuvwxyz".split("")
+$character_set = "abcdeghikmnoprstuwxyz".split("") # optimized for mobiles and human error
 $logger = Logger.new "tree.log"
 $couchdb_path = File.join( `locate tangerine.couch`.split("/")[0..-2] )
 
@@ -100,8 +100,10 @@ post "/production/:group" do
     #
     `unzip tangerine.apk -d blank/`
     group_db = File.join( $couch_db_path, "group-#{params[:group]}.couch" )
-    target_directory = File.join("blank", "assets")
-    `cp #{group_db} #{target_directory}`
+
+    # standardize all groups DBs here as tangerine.couch
+    target_file = File.join("blank", "assets", "tangerine.couch")
+    `cp #{group_db} #{target_file}`
 
   rescue Exception => e
     log.error "Could not copy #{param[:group]}'s database into assets. #{e}"
