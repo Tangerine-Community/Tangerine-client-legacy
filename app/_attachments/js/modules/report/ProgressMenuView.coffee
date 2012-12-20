@@ -7,9 +7,12 @@ class ProgressMenuView extends Backbone.View
     Tangerine.router.navigate "report/progress/" + @$el.find(event.target).find(":selected").attr("data-studentId") + "/#{@klass.id}", true
 
   initialize: (options) ->
+
     @parent    = options.parent
+
     @klass     = @parent.options.klass
     @curricula = @parent.options.curricula
+
     allStudents = new Students
     allStudents.fetch
       success: (collection) =>

@@ -95,7 +95,7 @@ class ProgressView extends Backbone.View
           "correct"        : result.get "correct"
           "attempted"      : result.get "attempted"
           "itemsPerMinute" : result.getCorrectPerSeconds(60)
-        
+
         @benchmarkScore[itemType] = @subtests.get(result.get("subtestId")).get("benchmarkScore") || 60
 
       # each row is one week/part
@@ -182,9 +182,8 @@ class ProgressView extends Backbone.View
     html += "
     <div id='table_container'></div>
     <button class='navigation back'>#{t('back')}</button>
-
     "
-    
+
     @$el.html html
     @updateTable()
     @trigger "rendered"
@@ -249,7 +248,7 @@ class ProgressView extends Backbone.View
         # add
         for result in results
           mean.name           = result.name
-          mean.key           = result.key
+          mean.key            = result.key
           mean.correct        += result.correct
           mean.attempted      += result.attempted
           mean.itemsPerMinute += result.itemsPerMinute

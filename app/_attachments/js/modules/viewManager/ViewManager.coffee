@@ -6,8 +6,10 @@
 # all the time in between a loading bar should appear. 
 class ViewManager extends Backbone.View
 
-  show: (view) ->
+  show: (view) =>
+
     window.scrollTo 0, 0
+
     @currentView?.close()
     @currentView = view
 
@@ -19,8 +21,7 @@ class ViewManager extends Backbone.View
     @currentView.on "subRendered", =>
       @currentView.$el.find(".buttonset").buttonset() # button set everything
 
-
-      # Utils.resizeScrollPane()
+    # Utils.resizeScrollPane()
 
     @currentView.on "start_work", =>
       $("#content").prepend "<div id='loading_bar'><img class='loading' src='images/loading.gif'></div>"
@@ -29,4 +30,3 @@ class ViewManager extends Backbone.View
       $("#loading_bar").remove()
 
     @currentView.render()
-    
