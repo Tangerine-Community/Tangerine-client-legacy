@@ -1388,11 +1388,16 @@ label[title]
 {
   cursor: pointer;
 
-  input
-  {
-    width: 90%;
-  }
+}
 
+.editing
+{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: #eee;
+  vertical-align: bottom !important;
 }
 
 .class_table
@@ -1482,7 +1487,7 @@ body[rtl]
 
 .ProgressView
 {
-  table.tablar
+  table.tabular
   {
     .class_table;
   }
@@ -1533,6 +1538,11 @@ body[rtl]
   {
 
     border: 2px solid white !important;
+    
+    thead
+    {
+      position:relative;
+    }
 
     .class_table;
     td, th
@@ -1541,6 +1551,10 @@ body[rtl]
       padding: 0 0.25em
     }
 
+    th
+    {
+      vertical-align: text-top;
+    }
   }
 }
 
