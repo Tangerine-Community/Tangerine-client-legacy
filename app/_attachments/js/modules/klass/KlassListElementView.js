@@ -26,7 +26,7 @@ KlassListElementView = (function(_super) {
   };
 
   KlassListElementView.prototype.initialize = function(options) {
-    this.availableReports = Tangerine.config.reports;
+    this.availableReports = Tangerine.config.get("reports");
     if (options.klass.has("curriculumId")) {
       this.curriculum = new Curriculum({
         "_id": options.klass.get("curriculumId" || "")

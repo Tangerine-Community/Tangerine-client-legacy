@@ -24,7 +24,7 @@ SubtestRunView = (function(_super) {
   };
 
   SubtestRunView.prototype.initialize = function(options) {
-    this.protoViews = Tangerine.config.prototypeViews;
+    this.protoViews = Tangerine.config.get("prototypeViews");
     this.model = options.model;
     this.parent = options.parent;
     return this.prototypeRendered = false;

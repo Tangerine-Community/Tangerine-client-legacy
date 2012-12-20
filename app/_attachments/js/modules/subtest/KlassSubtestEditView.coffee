@@ -10,11 +10,11 @@ class KlassSubtestEditView extends Backbone.View
     @prototypeEditor.close?()
 
   initialize: ( options ) ->
-    @model = options.model
+    @model      = options.model
     @curriculum = options.curriculum
-    @config = Tangerine.config.subtest
-    
-    @prototypeViews  = Tangerine.config.prototypeViews
+    @config     = Tangerine.templates.get "subtest"
+
+    @prototypeViews  = Tangerine.config.get "prototypeViews"
     @prototypeEditor = new window[@prototypeViews[@model.get 'prototype']['edit']]
       model: @model
       parent: @

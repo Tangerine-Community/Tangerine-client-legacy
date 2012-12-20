@@ -88,7 +88,7 @@ class SubtestEditView extends Backbone.View
     @assessment = options.assessment
     @config = Tangerine.config.subtest
     
-    @prototypeViews  = Tangerine.config.prototypeViews
+    @prototypeViews  = Tangerine.config.get "prototypeViews"
     @prototypeEditor = new window[@prototypeViews[@model.get 'prototype']['edit']]
       model: @model
       parent: @
@@ -103,11 +103,11 @@ class SubtestEditView extends Backbone.View
     
     prototype = @model.get("prototype")
     @model.set
-      name           : @$el.find("#subtest_name").val()
-      enumeratorHelp : @$el.find("#enumerator_help").val()
-      studentDialog  : @$el.find("#student_dialog").val()
+      name              : @$el.find("#subtest_name").val()
+      enumeratorHelp    : @$el.find("#enumerator_help").val()
+      studentDialog     : @$el.find("#student_dialog").val()
       transitionComment : @$el.find("#transition_comment").val()
-      skippable      : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
+      skippable         : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
 
     @prototypeEditor.save?(
       "options" :
@@ -126,13 +126,13 @@ class SubtestEditView extends Backbone.View
         Utils.midAlert "Save error"
 
   render: ->
-    assessmentName = @assessment.escape "name"
-    name      = @model.escape "name"
-    prototype = @model.get "prototype"
-    help      = @model.get("enumeratorHelp") || ""
-    dialog    = @model.get("studentDialog")  || ""
+    assessmentName    = @assessment.escape "name"
+    name              = @model.escape "name"
+    prototype         = @model.get "prototype"
+    help              = @model.get("enumeratorHelp") || ""
+    dialog            = @model.get("studentDialog")  || ""
     transitionComment = @model.get("transitionComment")  || ""
-    skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+    skippable         = @model.get("skippable") == true || @model.get("skippable") == "true"
 
     @$el.html "
       <button class='back_button navigation'>Back</button><br>

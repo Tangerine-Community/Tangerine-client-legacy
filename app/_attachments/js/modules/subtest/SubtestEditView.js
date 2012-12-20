@@ -122,7 +122,7 @@ SubtestEditView = (function(_super) {
     this.model = options.model;
     this.assessment = options.assessment;
     this.config = Tangerine.config.subtest;
-    this.prototypeViews = Tangerine.config.prototypeViews;
+    this.prototypeViews = Tangerine.config.get("prototypeViews");
     this.prototypeEditor = new window[this.prototypeViews[this.model.get('prototype')]['edit']]({
       model: this.model,
       parent: this
