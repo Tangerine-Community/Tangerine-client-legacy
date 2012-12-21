@@ -161,7 +161,6 @@ class AssessmentListElementView extends Backbone.View
               #{deleteButton}
               #{downloadKey}
               #{deleteConfirm}
-              #{adminResultCount}
             </div>
           "
     # enumerator user

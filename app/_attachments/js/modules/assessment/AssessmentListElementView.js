@@ -147,7 +147,7 @@ AssessmentListElementView = (function(_super) {
         if (this.isPublic) {
           html += "            <div class='assessment_menu'>              " + copyButton + "            </div>          ";
         } else {
-          html += "            <div class='assessment_menu'>              " + runButton + "              " + resultsButton + "              " + editButton + "              " + printButton + "              " + duplicateButton + "              " + deleteButton + "              " + downloadKey + "              " + deleteConfirm + "              " + adminResultCount + "            </div>          ";
+          html += "            <div class='assessment_menu'>              " + runButton + "              " + resultsButton + "              " + editButton + "              " + printButton + "              " + duplicateButton + "              " + deleteButton + "              " + downloadKey + "              " + deleteConfirm + "            </div>          ";
         }
       }
     } else {
