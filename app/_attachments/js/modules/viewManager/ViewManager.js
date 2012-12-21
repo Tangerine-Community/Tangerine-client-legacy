@@ -20,6 +20,7 @@ ViewManager = (function(_super) {
     this.currentView = view;
     this.currentView.on("rendered", function() {
       var _base;
+      Utils.working(false);
       $("#content").append(_this.currentView.el);
       _this.currentView.$el.find(".buttonset").buttonset();
       return typeof (_base = _this.currentView).afterRender === "function" ? _base.afterRender() : void 0;
@@ -28,10 +29,10 @@ ViewManager = (function(_super) {
       return _this.currentView.$el.find(".buttonset").buttonset();
     });
     this.currentView.on("start_work", function() {
-      return $("#content").prepend("<div id='loading_bar'><img class='loading' src='images/loading.gif'></div>");
+      return Utils.working(true);
     });
     this.currentView.on("end_work", function() {
-      return $("#loading_bar").remove();
+      return Utils.working(false);
     });
     return this.currentView.render();
   };

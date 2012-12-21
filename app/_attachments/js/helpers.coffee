@@ -1,9 +1,8 @@
-# extend every view
+# Extend every view with a close method, used by ViewManager
 Backbone.View.prototype.close = ->
   @remove()
   @unbind()
   @onClose?()
-
 
 # Returns an object hashed by a given attribute.
 Backbone.Collection.prototype.indexBy = ( attr ) ->
@@ -25,6 +24,17 @@ Backbone.Collection.prototype.indexArrayBy = ( attr ) ->
       result[key].push(oneModel)
   return result
 
+# hash the attributes of a model
+Backbone.Model.prototype.toHash = ->
+  significantAttributes = {}
+  for key, value of @attributes
+    significantAttributes[key] = value if !~['_rev', '_id','hash','updated'].indexOf(key)
+  b64_sha1(JSON.stringify(significantAttributes))
+
+# by default all models will save a timestamp and hash of significant attributes
+Backbone.Model.prototype.beforeSave = ->
+  @set "updated", (new Date()).toString()
+  @set "hash", @toHash()
 
 #
 # This series of functions returns properties with default values if no property is found
@@ -148,6 +158,19 @@ class Utils
   @log: (self, error) ->
     className = self.constructor.toString().match(/function\s*(\w+)/)[1]
     console.log "#{className}: #{error}"
+
+  @working: (isWorking) ->
+    if isWorking
+      Tangerine.loadingTimers = [] if not Tangerine.loadingTimers?
+      Tangerine.loadingTimers.push(setTimeout(Utils.showLoadingIndicator, 3000))
+    else
+      if Tangerine.loadingTimers?
+        clearTimeout timer while timer = Tangerine.loadingTimers.pop()
+          
+      $(".loading_bar").remove()
+
+  @showLoadingIndicator: ->
+    $("<div class='loading_bar'><img class='loading' src='images/loading.gif'></div>").appendTo("body").middleCenter()
 
   # asks for confirmation in the browser, and uses phonegap for cool confirmation
   @confirm: (message, options) ->

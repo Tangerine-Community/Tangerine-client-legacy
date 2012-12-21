@@ -36,6 +36,24 @@ Backbone.Collection.prototype.indexArrayBy = function(attr) {
   return result;
 };
 
+Backbone.Model.prototype.toHash = function() {
+  var key, significantAttributes, value, _ref;
+  significantAttributes = {};
+  _ref = this.attributes;
+  for (key in _ref) {
+    value = _ref[key];
+    if (!~['_rev', '_id', 'hash', 'updated'].indexOf(key)) {
+      significantAttributes[key] = value;
+    }
+  }
+  return b64_sha1(JSON.stringify(significantAttributes));
+};
+
+Backbone.Model.prototype.beforeSave = function() {
+  this.set("updated", (new Date()).toString());
+  return this.set("hash", this.toHash());
+};
+
 Backbone.Model.prototype.getNumber = function(key) {
   if (this.has(key)) {
     return parseInt(this.get(key));
@@ -319,6 +337,25 @@ Utils = (function() {
     var className;
     className = self.constructor.toString().match(/function\s*(\w+)/)[1];
     return console.log("" + className + ": " + error);
+  };
+
+  Utils.working = function(isWorking) {
+    var timer;
+    if (isWorking) {
+      if (!(Tangerine.loadingTimers != null)) Tangerine.loadingTimers = [];
+      return Tangerine.loadingTimers.push(setTimeout(Utils.showLoadingIndicator, 3000));
+    } else {
+      if (Tangerine.loadingTimers != null) {
+        while (timer = Tangerine.loadingTimers.pop()) {
+          clearTimeout(timer);
+        }
+      }
+      return $(".loading_bar").remove();
+    }
+  };
+
+  Utils.showLoadingIndicator = function() {
+    return $("<div class='loading_bar'><img class='loading' src='images/loading.gif'></div>").appendTo("body").middleCenter();
   };
 
   Utils.confirm = function(message, options) {

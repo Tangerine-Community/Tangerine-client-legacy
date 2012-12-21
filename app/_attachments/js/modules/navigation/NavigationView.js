@@ -130,6 +130,7 @@ NavigationView = (function(_super) {
     } else {
       this.$el.find("#logout_link").show();
     }
+    Utils.working(true);
     return this.user.verify({
       isRegistered: function() {
         _this.render();

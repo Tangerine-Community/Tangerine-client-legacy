@@ -13,20 +13,33 @@ Result = (function(_super) {
   Result.prototype.url = "result";
 
   Result.prototype.initialize = function(options) {
+    var device, deviceInfo;
     if (options.blank === true) {
+      device = device || Device || {};
+      deviceInfo = {
+        'name': device.name,
+        'platform': device.platform,
+        'uuid': device.uuid,
+        'version': device.version,
+        'userAgent': navigator.userAgent
+      };
       this.set({
         'subtestData': [],
         'start_time': (new Date()).getTime(),
-        'enumerator': Tangerine.user.name
+        'enumerator': Tangerine.user.name,
+        'tangerine_version': Tangerine.version,
+        'device': deviceInfo
       });
       return this.unset("blank");
     }
   };
 
+  Result.prototype.beforeSave = function() {};
+
   Result.prototype.add = function(subtestDataElement) {
     var subtestData;
+    subtestDataElement['timestamp'] = (new Date()).getTime();
     subtestData = this.get('subtestData');
-    subtestData['timestamp'] = (new Date()).getTime();
     subtestData.push(subtestDataElement);
     return this.save({
       'subtestData': subtestData

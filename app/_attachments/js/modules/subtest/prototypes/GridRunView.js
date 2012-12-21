@@ -37,6 +37,11 @@ GridRunView = (function(_super) {
   };
 
   GridRunView.prototype.restartTimer = function() {
+    if (this.timeRunning) {
+      this.stopTimer({
+        simpleStop: true
+      });
+    }
     this.resetVariables();
     return this.$el.find(".element_wrong").removeClass("element_wrong");
   };
@@ -85,19 +90,24 @@ GridRunView = (function(_super) {
   GridRunView.prototype.markElement = function(index, value) {
     var $target;
     if (value == null) value = null;
+    console.log("Last attempted: " + this.lastAttempted);
     if (this.lastAttempted !== 0 && index > this.lastAttempted) return;
+    console.log("past first check");
     $target = this.$el.find(".grid_element[data-index=" + index + "]");
     this.markRecord.push(index);
-    if (value === null) {
-      this.gridOutput[index - 1] = this.gridOutput[index - 1] === "correct" || this.autostopped ? "incorrect" : "correct";
-      return $target.toggleClass("element_wrong");
-    } else {
-      if (!this.autostopped || value === "correct") {
-        this.gridOutput[index - 1] = value;
-        if (value === "incorrect") {
-          return $target.addClass("element_wrong");
-        } else if (value === "correct") {
-          return $target.removeClass("element_wrong");
+    console.log("autostopped: " + this.autostopped);
+    if (!this.autostopped) {
+      if (value === null) {
+        this.gridOutput[index - 1] = this.gridOutput[index - 1] === "correct" ? "incorrect" : "correct";
+        return $target.toggleClass("element_wrong");
+      } else {
+        if (value === "correct") {
+          this.gridOutput[index - 1] = value;
+          if (value === "incorrect") {
+            return $target.addClass("element_wrong");
+          } else if (value === "correct") {
+            return $target.removeClass("element_wrong");
+          }
         }
       }
     }
@@ -154,13 +164,14 @@ GridRunView = (function(_super) {
 
   GridRunView.prototype.stopTimer = function(event, message) {
     if (message == null) message = false;
-    if (this.timeRunning === true) {
+    if (this.timeRunning !== true) return;
+    clearInterval(this.interval);
+    this.stopTime = this.getTime();
+    this.timeRunning = false;
+    this.timerStopped = true;
+    this.updateCountdown();
+    if (!(event != null ? event.simpleStop : void 0)) {
       Utils.flash();
-      clearInterval(this.interval);
-      this.stopTime = this.getTime();
-      this.timeRunning = false;
-      this.timerStopped = true;
-      this.updateCountdown();
       if (this.captureLastAttempted) this.updateMode(null, "last");
       if (message) {
         return Utils.topAlert(message);

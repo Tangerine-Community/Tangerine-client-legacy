@@ -115,12 +115,14 @@ AssessmentRunView = (function(_super) {
   };
 
   AssessmentRunView.prototype.next = function() {
-    var currentView;
+    var currentView, subtestResult;
     currentView = this.subtestViews[this.orderMap[this.index]];
     if (currentView.isValid()) {
+      subtestResult = currentView.getResult();
       this.result.add({
         name: currentView.model.get("name"),
-        data: currentView.getResult(),
+        data: subtestResult.body,
+        subtestHash: subtestResult.meta.hash,
         subtestId: currentView.model.id,
         prototype: currentView.model.get("prototype"),
         sum: currentView.getSum()
