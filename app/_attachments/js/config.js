@@ -3,11 +3,11 @@ var Tangerine;
 Tangerine = {};
 
 Tangerine = {
-  "db_name": "tangerine",
-  "design_doc": "tangerine"
+  "dbName": String(window.location.pathname).split("/")[1],
+  "designDoc": "tangerine"
 };
 
-Tangerine.$db = $.couch.db(Tangerine.db_name);
+Tangerine.$db = $.couch.db(Tangerine.dbName);
 
 Tangerine.$db.openDoc("Config", {
   success: function(data) {
@@ -51,9 +51,9 @@ Tangerine.$db.openDoc("Templates", {
   async: false
 });
 
-Backbone.couch_connector.config.db_name = Tangerine.db_name;
+Backbone.couch_connector.config.db_name = Tangerine.dbName;
 
-Backbone.couch_connector.config.ddoc_name = Tangerine.design_doc;
+Backbone.couch_connector.config.ddoc_name = Tangerine.designDoc;
 
 Backbone.couch_connector.config.global_changes = false;
 

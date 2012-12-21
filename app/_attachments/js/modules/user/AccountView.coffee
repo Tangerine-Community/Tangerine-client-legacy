@@ -25,49 +25,54 @@ class AccountView extends Backbone.View
     @$el.find("#group_name").val ""
 
   join: ->
-    group = @$el.find("#group_name").val().replace(/\s|-/g, "_").replace(/[^a-zA-Z0-9_'"]/g,"")
+    group = @$el.find("#group_name").val().databaseSafetyDance()
     return if group.length == 0
     @user.joinGroup group
     @joinToggle()
-    @render()
 
   leaveGroup: (event) ->
     group = $(event.target).parent().attr('data-group')
     @user.leaveGroup group
-    @render()
 
   initialize: ( options ) ->
     @user = options.user
+    @user.on "group-join group-leave group-refresh", @renderGroups
+  
+  renderGroups: =>
+    html = "<ul>"
+    for group in (@user.get("groups") || [])
+      html += "<li data-group='#{_.escape(group)}'>#{group} <button class='command leave'>Leave</button></li>"
+    html += "</ul>"
+    @$el.find("#group_wrapper").html html
+
   
   render: ->
     html = "
       <button class='back navigation'>Back</button>
       <h1>Account</h1>
       <a href='#settings' class='navigation'><button class='navigation'>Settings</button></a>
-      <div class='label_value'>
-        <label>Name</label>
-        <p>#{@user.name}</p>
-      </div>
-      <div class='label_value menu_box'>
-        <label>Groups</label>
-        <ul>
-    "
-    for group in (@user.get("groups") || [])
-        html += "<li data-group='#{_.escape(group)}'>#{group} <button class='command leave'>Leave</button></li>"
-    mobileChecked = if Tangerine.settings.get("context") == "mobile" then " checked='checked'" else ""
-    classChecked  = if Tangerine.settings.get("context") == "class" then " checked='checked'" else ""
-
-    html += "
-        </ul>
-        <button class='command join'>Join or create a group</button>
-        <div class='confirmation join_confirmation'>
-          <input id='group_name' placeholder='Group name'>
-          <small>Please be specific.<br>
-          Good examples: MalawiJun2012, MikeTestGroup2012, EGRAGroup2012<br>
-          Bad examples: group, test, mine</small><br>
-          <button class='command join_group'>Join Group</button>
-          <button class='command join_cancel'>Cancel</button>
+      <section>
+        <div class='label_value'>
+          <label>Name</label>
+          <div>#{@user.name}</div>
         </div>
+      </section>
+      <section>
+        <div class='label_value'>
+          <label>Groups</label>
+          <div id='group_wrapper'></div>
+          <button class='command join'>Join or create a group</button>
+          <div class='confirmation join_confirmation'>
+            <div class='menu_box'>
+              <input id='group_name' placeholder='Group name'>
+              <div class='small_grey'>Please be specific.<br>
+              Good examples: malawi_jun_2012, mike_test_group_2012, egra_group_aug-2012<br>
+              Bad examples: group, test, mine</div><br>
+              <button class='command join_group'>Join Group</button>
+              <button class='command join_cancel'>Cancel</button>
+            </div>
+          </div>
+        </section>
       </div><br>
       <!--button class='command confirmation'>Report a bug</button>
       <div class='confirmation' id='bug'>
@@ -81,4 +86,6 @@ class AccountView extends Backbone.View
       </div-->
       "
     @$el.html html
+    @renderGroups()
+
     @trigger "rendered"

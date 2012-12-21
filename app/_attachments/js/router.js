@@ -60,9 +60,9 @@ Router = (function(_super) {
 
   Router.prototype.groups = function() {
     return Tangerine.user.verify({
-      isAdmin: function() {
+      isRegistered: function() {
         var groups, view;
-        groups = Tangerine.user.get("groups");
+        groups = Tangerine.user.get("groups") || [];
         if (groups.length === 1 && window.location.hash === "") {
           return Tangerine.router.navigate("assessments/" + groups[0], true);
         } else {
@@ -688,7 +688,7 @@ Router = (function(_super) {
           success: function() {
             var filename;
             filename = assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm");
-            return document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + ("/_list/csv/csvRowByResult?key=\"" + id + "\"&filename=" + filename);
+            return document.location = "/" + Tangerine.dbName + "/_design/" + Tangerine.designDoc + ("/_list/csv/csvRowByResult?key=\"" + id + "\"&filename=" + filename);
           }
         });
       },

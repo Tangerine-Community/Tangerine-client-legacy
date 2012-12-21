@@ -4,62 +4,55 @@ class User extends Backbone.Model
 
   url: 'user'
 
-  default:
-    name        : null
-    roles       : []
-    groups      : ["default"]
-
   initialize: (options) ->
-
-    # these aren't `set` because we don't want them to save with the model
-    # they're handled by couchdb, so we have to load them manually
-    @name = @default.name
-    @roles = @default.roles
-
-    # these aren't `set` because they're temporary
-    @messages = []
-    @temp = {}
+    @roles = []
+    @dbAdmins = []
+    @name = null
 
   signup: ( name, pass ) ->
     $.couch.signup { name : name }, pass,
-      success: (a, b, c) =>
-        if @temp.intent == "login"
-          @temp.intent = "retry_login"
-          @login @temp.name, @temp.pass
+      success: =>
+        if @intent == "login"
+          @intent = "retry_login"
+          @login name, pass
         else
-          @addMessage "New user #{temp['name']} created. Welcome to Tangerine."
-        @unset "messages"
-        @save()
+          @trigger "created"
       error: ( status, error, message ) =>
-        if @temp.intent? && @temp.intent == "login"
-          @showMessage "Password incorrect, please try again."
+        if @intent == "login"
+          @trigger "pass-incorrect"
         else
-          @showMessage "Error username #{@temp.name} already taken. Please try another name."
-
+          @trigger "user-taken"
 
   login: ( name, pass ) ->
-    @temp =
-      name : name
-      pass : pass
     $.couch.login
-      name     : @temp.name
-      password : @temp.pass
+      name     : name
+      password : pass
       success: ( user ) =>
-        @name   = @temp.name
+        @name   = name
         @roles  = user.roles
-        @fetch
-          success: (model) =>
-            @clearAttempt()
-            @trigger "change:authentication"
-
+        @clearAttempt()
+        @trigger "login"
       error: ( status, error, message ) =>
-        @name  = @default.name
-        @roles = @default.roles
-        if @temp.intent? && @temp.intent == "retry_login"
-          @addMessage message
+        if @intent == "retry_login"
+          @trigger "error", message
         else 
-          @temp.intent = "login"
-          @signup @temp.name, @temp.pass
+          @intent = "login"
+          @signup name, pass
+
+  sessionRefresh: (callbacks) ->
+    $.couch.session
+      success: (response) =>
+        if response.userCtx.name?
+          @name  = response.userCtx.name
+          @roles = response.userCtx.roles
+          @fetch
+            success: ->
+              @trigger "login"
+              callbacks['success'].apply(@, arguments)
+        else
+          callbacks['success'].apply(@, arguments)
+      error: ->
+        alert "Couch session error.\n\n#{arguments.join("\n")}"
 
   # @callbacks Supports isAdmin, isUser, isRegistered, isUnregistered
   verify: ( callbacks ) ->
@@ -75,81 +68,84 @@ class User extends Backbone.Model
       else
         callbacks?.isUser?()
 
-  fetch: (options={}) ->
-    $.couch.session
-      success: ( resp ) =>
-        if resp.userCtx.name != null
-          @id = "tangerine.user:"+resp.userCtx.name
-          @name = resp.userCtx.name
-          @roles = []
-
-          for role in resp.userCtx.roles
-            if !~role.indexOf("group.")
-              @roles.push role
-          User.__super__.fetch.call(@, 
-            success: (a,b,c) =>
-              options.success?()
-            error: (a,b,c) =>
-              @unset "messages"
-              @save
-                "_id"    : @id
-                "groups" : []
-              ,
-                "wait"   : true
-              User.__super__.fetch.call(@,
-                success: =>
-                  options.success?()
-                error: =>
-                  location.reload()
-              )
-          )
-        else
-          options.success?()
-          @logout()
-
-      error: ( status, error, reason ) ->
-        @trigger "change:authentication"
-        throw "#{status} Session Error\n#{error}\n#{reason}"
-
-
-
-  isAdmin: ->
-    '_admin' in @roles
+  isAdmin: -> '_admin' in @roles or @name in @dbAdmins
 
   logout: ->
     $.couch.logout
       success: =>
         $.cookie "AuthSession", null
-        @name  = @default.name
-        @roles = @default.roles
+        @name  = null
+        @roles = []
         @clear()
-        @trigger "change:authentication"
+        @trigger "logout"
         Tangerine.router.navigate "login", true
 
   clearAttempt: ->
-    @temp = @default.temp
+    @temp = ""
+
+  ###
+    Saves to the `_users` database
+    usage: either `@save("key", "value", options)` or `@save({"key":"value"}, options)`
+    @override (Backbone.Model.save)
+  ###
+  save: (keyObject, valueOptions ) ->
+    attrs = {}
+    if _.isObject keyObject
+      attrs = $.extend attrs, keyObject 
+      options = valueOptions
+    else 
+      attrs[keyObject] = value
+    # get user DB
+    $.couch.userDb (db) =>
+      db.saveDoc $.extend(@attributes, attrs)
+      options.success?.apply(@, arguments)
+
+  ###
+    Fetches user's doc from _users, loads into @attributes
+  ###
+  fetch: ( callbacks={} ) =>
+    $.couch.userDb (db) =>
+      db.openDoc "org.couchdb.user:#{@name}",
+        success: ( userDoc ) =>
+          Tangerine.$db.openDoc "_security",
+            success: (securityDoc) =>
+              @dbAdmins = securityDoc?.admins?.names || []
+              @attributes = userDoc
+              callbacks.success?.apply(@, arguments)
+              @trigger 'group-refresh'
+            , {async:false}
+        error: =>
+          callbacks.error?.apply(@, arguments)
+        , {async:false}
+
+
+
+  ###
   
-  #
-  # Groups
-  #
+  Groups
+  
+  ###
 
   joinGroup: (group) ->
-    groups = @get "groups"
-    if !~groups.indexOf(group)
-      groups.push group
-      @unset "messages"
-      @save "groups" : groups
-  
-  leaveGroup: (group) ->
-    groups = @get "groups"
-    if ~groups.indexOf(group)
-      groups = _.without groups, group
-      @save "groups" : groups
+    oldGroups = @get("groups") || []
+    if !~oldGroups.indexOf(group)
+      newGroups = oldGroups.concat [group]
 
-  #
-  # Mensajes
-  #
-  
-  addMessage:    ( content ) -> @set "messages", @get("messages").push content
-  showMessage:   ( content ) -> @set "messages", [ content ]
-  clearMessages: ( content ) -> @set "messages", [ ]
+      $.ajax
+        "type" : "GET"
+        'url'  : Tangerine.config.address.robbert.url
+        'data' : 
+          "action" : "new_group"
+          "user"   : @name
+          "group"  : group
+        dataType: "jsonp"
+        success: =>
+          @save({"groups" : newGroups}, { success: => @trigger "group-join" }, async:false)
+        error: (error) =>
+          alert "Error creating group\n\n#{error[1]}\n#{error[2]}"
+
+  leaveGroup: (group) ->
+    oldGroups = @get("groups") || []
+    if ~oldGroups.indexOf(group)
+      newGroups = _.without oldGroups, group
+      @save({"groups" : newGroups}, {success:=>@trigger("group-leave")}, async:false)

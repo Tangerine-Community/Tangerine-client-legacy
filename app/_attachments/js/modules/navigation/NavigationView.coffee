@@ -62,7 +62,7 @@ class NavigationView extends Backbone.View
     @calcWhoAmI()
 
     @router.on 'all', @handleMenu
-    @user.on   'change:authentication', @handleMenu
+    @user.on   'login logout', @handleMenu
 
   submenuHandler: (event) ->
     vm.currentView.submenuHandler? event

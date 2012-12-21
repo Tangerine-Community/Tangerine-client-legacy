@@ -85,7 +85,7 @@ NavigationView = (function(_super) {
     this.router = options.router;
     this.calcWhoAmI();
     this.router.on('all', this.handleMenu);
-    return this.user.on('change:authentication', this.handleMenu);
+    return this.user.on('login logout', this.handleMenu);
   };
 
   NavigationView.prototype.submenuHandler = function(event) {

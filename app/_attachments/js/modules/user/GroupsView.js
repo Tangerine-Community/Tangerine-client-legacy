@@ -22,12 +22,12 @@ GroupsView = (function(_super) {
   GroupsView.prototype.gotoGroup = function(event) {
     var group;
     group = $(event.target).attr("data-group");
-    return Tangerine.router.navigate("assessments/" + group, true);
+    return window.location = Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.groupPrefix + group + "/_design/" + Tangerine.config.address.designDoc + "/index.html";
   };
 
   GroupsView.prototype.render = function() {
     var group, groups, html, i, _len;
-    groups = Tangerine.user.get("groups");
+    groups = Tangerine.user.get("groups") || [];
     html = "      <button class='account navigation'>Account</button>      <h1>Groups</h1>    ";
     if (groups.length === 0) {
       html += "You are not yet a member of a group. Go to Account to join a group.";

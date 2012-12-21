@@ -64,8 +64,8 @@ class Router extends Backbone.Router
 
   groups: ->
     Tangerine.user.verify
-      isAdmin: ->
-        groups = Tangerine.user.get("groups")
+      isRegistered: ->
+        groups = Tangerine.user.get("groups") || []
         if groups.length == 1 && window.location.hash == ""
           Tangerine.router.navigate "assessments/#{groups[0]}", true
         else
@@ -427,7 +427,7 @@ class Router extends Backbone.Router
         assessment.fetch
           success :  ->
             filename = assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
-            document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{id}\"&filename=#{filename}"
+            document.location = "/" + Tangerine.dbName + "/_design/" + Tangerine.designDoc + "/_list/csv/csvRowByResult?key=\"#{id}\"&filename=#{filename}"
         
       isUser: ->
         errView = new ErrorView

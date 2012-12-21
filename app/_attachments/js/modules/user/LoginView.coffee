@@ -8,12 +8,11 @@ class LoginView extends Backbone.View
 
   initialize: (options) ->
     @model = Tangerine.user
-    @model.on "change:messages", @renderMessages
-    @model.on "change:authentication", @goOn
+    @model.on "login", @goOn
+    @model.on "all", @showMessage
 
   goOn: ->
     Tangerine.router.navigate "", true
-
 
   render: =>
     width = $('#content').width()
@@ -51,11 +50,9 @@ class LoginView extends Backbone.View
       return false
     @model.login values["login_username"], values["login_password"]
 
-  renderMessages: =>
-    messages = @model.get("messages") || []
-    html = "<ul>"
-    for message in messages
-      html += "<li>#{message}</li>"
-    html += "</ul>"
-    @$el.find(".messages").html html 
+  showMessage: (eventName, options) =>
+    message = 
+      if eventName == "pass-incorrect"
+        t("app.login.msg.#{eventName}")
+    @$el.find(".messages").html message
     

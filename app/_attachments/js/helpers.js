@@ -296,6 +296,10 @@ String.prototype.safetyDance = function() {
   return this.replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
 };
 
+String.prototype.databaseSafetyDance = function() {
+  return this.replace(/\s/g, "_").replace(/[^a-z0-9_-]/g, "");
+};
+
 Math.ave = function() {
   var result, x, _i, _len;
   result = 0;

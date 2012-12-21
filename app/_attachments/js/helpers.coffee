@@ -139,7 +139,10 @@ sks = [ { q : (km["0100ser"[i]] for i in [0..6]), i : 0, c : -> settings = new S
         { q : (km["0100mob"[i]] for i in [0..6]), i : 0, c : -> settings = new Settings "_id" : "TangerineSettings"; settings.fetch({ success: (settings) -> settings.set({"context": "mobile"}); settings.save();  Tangerine.router.navigate("", true);}) },
         { q : (km["0100cla"[i]] for i in [0..6]), i : 0, c : -> settings = new Settings "_id" : "TangerineSettings"; settings.fetch({ success: (settings) -> settings.set({"context": "class"}); settings.save(); Tangerine.router.navigate("", true);}) } ]
 $(document).keydown (e) -> ( if e.keyCode == sks[j].q[sks[j].i++] then sks[j]['c']() if sks[j].i == sks[j].q.length else sks[j].i = 0 ) for sk, j in sks 
+
+
 String.prototype.safetyDance = -> this.replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g,"")
+String.prototype.databaseSafetyDance = -> this.replace(/\s/g, "_").replace(/[^a-z0-9_-]/g,"")
 
 Math.ave = ->
   result = 0

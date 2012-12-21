@@ -9,11 +9,11 @@ class GroupsView extends Backbone.View
   
   gotoGroup: (event) ->
     group = $(event.target).attr("data-group")
-    Tangerine.router.navigate "assessments/#{group}", true
-    
+    #Tangerine.router.navigate "assessments/#{group}", true
+    window.location = Tangerine.config.address.cloud.host + "/" + Tangerine.config.address.groupPrefix + group + "/_design/" + Tangerine.config.address.designDoc + "/index.html"
 
   render: ->
-    groups = Tangerine.user.get("groups")
+    groups = Tangerine.user.get("groups") || []
     html = "
       <button class='account navigation'>Account</button>
       <h1>Groups</h1>
@@ -24,7 +24,6 @@ class GroupsView extends Backbone.View
     else 
       for group, i in groups
         html += "<button class='command goto' data-group='#{_.escape(group)}'>#{group}</button>"
-
 
     @$el.html html
     @trigger "rendered"

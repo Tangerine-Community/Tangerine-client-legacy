@@ -404,6 +404,11 @@ body {
 p {
   text-indent: 10px;
 }
+section {
+  box-shadow: 0 2px 2.5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  margin-bottom: 10px;
+}
 body.flash {
   background-color: #f7c942;
 }
@@ -579,7 +584,7 @@ progress {
   font-size: 20px;
   padding: 10px;
   display: inline-block;
-  border: 2px solid #cccccc;
+  border: 2px solid #eeeeee;
   border-radius: 10px;
   margin: 10px 0;
 }
@@ -587,7 +592,7 @@ progress {
   font-size: 20px;
   padding: 10px;
   display: inline-block;
-  border: 2px solid #cccccc;
+  border: 2px solid #eeeeee;
   border-radius: 10px;
   margin: 10px 0;
   width: 100%;
@@ -1173,13 +1178,7 @@ label.no_help {
   width: 300px;
   height: 283px;
 }
-.messages div {
-  display: block;
-  clear: both;
-  margin: 0;
-  padding: 0;
-}
-.messages li {
+.messages {
   font-weight: bold;
   font-size: 16px;
   color: #888888;
