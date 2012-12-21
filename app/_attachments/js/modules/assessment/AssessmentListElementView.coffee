@@ -137,7 +137,6 @@ class AssessmentListElementView extends Backbone.View
           <div class='assessment_menu'>
             #{runButton}
             #{resultsButton}
-            #{resultCount}
             #{updateButton}
           </div>
         "

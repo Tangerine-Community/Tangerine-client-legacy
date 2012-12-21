@@ -18,8 +18,7 @@ Assessment = (function(_super) {
 
   Assessment.prototype.initialize = function(options) {
     if (options == null) options = {};
-    this.subtests = new Subtests;
-    return this.getResultCount();
+    return this.subtests = new Subtests;
   };
 
   Assessment.prototype.getResultCount = function() {
