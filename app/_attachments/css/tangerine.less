@@ -386,7 +386,7 @@ table.grid
     color: black;
     margin: 5px;
     padding:10px;
-    border-radius: 10px;
+    .border-radius(10px);
     font-size: 40px;
   }
   
@@ -407,7 +407,7 @@ table.grid
     font-size: 40px;
     border: 5px solid @orange-3;
     text-align: center;
-    border-radius: 10px;
+    .border-radius(10px);
   }
 
   .element_wrong
@@ -513,6 +513,27 @@ progress
   font-size: 30px;
   .box-shadow (0, 0, 5px, rgba(0,0,0,0.3));
   z-index: 9999999;
+}
+
+#simplemodal-overlay
+{
+  background-color: #000;
+}
+
+#simplemodal-container
+{
+  background-color: white;
+  border: none;
+  padding: 12px;
+  width: 300px;
+  height: 130px;
+  .border-radius(10px);
+  .box-shadow (0, 0, 10px, rgba(100,0,0,0.2));
+
+  .simplemodal-close
+  {
+  }
+
 }
 
 .result_view
@@ -1207,7 +1228,7 @@ img.loading
 {
   padding: 8px 20px;
   background: #8CC63F;
-  border-radius: 10px;
+  .border-radius(10px);
   margin: 20px;
 }
 
@@ -1571,6 +1592,27 @@ body[rtl]
   }
 }
 
+/*
+ * Users Menu View 
+ */
+
+.UsersMenuView
+{
+  input
+  {
+    width: 50% !important;
+  }
+  .command
+  {
+    padding-left: 10px !important;
+    padding-right: 10px !important; 
+  }
+  th
+  {
+    text-align: left;
+    font-weight: normal;
+  }
+}
 
 /*
  * cleditor

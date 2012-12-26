@@ -440,6 +440,8 @@ table.grid .grid_element {
   margin: 5px;
   padding: 10px;
   border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
   font-size: 40px;
 }
 div.grid span.grid_element,
@@ -459,6 +461,8 @@ table.grid .end_of_grid_line {
   border: 5px solid #f6c637;
   text-align: center;
   border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
 }
 div.grid .element_wrong,
 table.grid .element_wrong {
@@ -542,6 +546,22 @@ progress {
   -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   z-index: 9999999;
+}
+#simplemodal-overlay {
+  background-color: #000;
+}
+#simplemodal-container {
+  background-color: white;
+  border: none;
+  padding: 12px;
+  width: 300px;
+  height: 130px;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-box-shadow: 0 0 10px rgba(100, 0, 0, 0.2);
+  -webkit-box-shadow: 0 0 10px rgba(100, 0, 0, 0.2);
+  box-shadow: 0 0 10px rgba(100, 0, 0, 0.2);
 }
 .result_view .save_status {
   color: #8cc63f;
@@ -1031,6 +1051,8 @@ img.loading {
   padding: 8px 20px;
   background: #8CC63F;
   border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
   margin: 20px;
 }
 button.navigation {
@@ -1345,6 +1367,20 @@ body[rtl] {
 }
 .CurriculumView table th {
   vertical-align: text-top;
+}
+/*
+ * Users Menu View 
+ */
+.UsersMenuView input {
+  width: 50% !important;
+}
+.UsersMenuView .command {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+.UsersMenuView th {
+  text-align: left;
+  font-weight: normal;
 }
 /*
  * cleditor
