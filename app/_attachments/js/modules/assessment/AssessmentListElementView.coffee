@@ -110,8 +110,7 @@ class AssessmentListElementView extends Backbone.View
       <option value='true'  #{if isArchived then selected else ''}>Archived</option>
     </select>
     "
-    console.log @isAdmin
-    console.log Tangerine.settings.get("context")
+
     if @isAdmin
       # admin standard
       html = "

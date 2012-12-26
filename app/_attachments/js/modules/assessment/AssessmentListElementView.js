@@ -125,8 +125,6 @@ AssessmentListElementView = (function(_super) {
     updateButton = "<img class='link_icon update' title='Update' src='images/icon_sync.png'>";
     downloadKey = "<span class='download_key small_grey'>Download key <b>" + (this.model.id.substr(-5, 5)) + "</b></span>";
     archiveSwitch = "    <select class='archive'>      <option value='false' " + (isArchived ? selected : '') + ">Active</option>      <option value='true'  " + (isArchived ? selected : '') + ">Archived</option>    </select>    ";
-    console.log(this.isAdmin);
-    console.log(Tangerine.settings.get("context"));
     if (this.isAdmin) {
       html = "        <div>          " + toggleButton + "          " + adminName + "        </div>      ";
       if (Tangerine.settings.get("context") === "mobile") {
