@@ -36,7 +36,6 @@ Router = (function(_super) {
     'report/progress/:studentId/:klassId': 'progressReport',
     'groups': 'groups',
     'assessments': 'assessments',
-    'assessments/:group': 'assessments',
     'run/:id': 'run',
     'print/:id': 'print',
     'resume/:assessmentId/:resultId': 'resume',
@@ -61,14 +60,9 @@ Router = (function(_super) {
   Router.prototype.groups = function() {
     return Tangerine.user.verify({
       isRegistered: function() {
-        var groups, view;
-        groups = Tangerine.user.get("groups") || [];
-        if (groups.length === 1 && window.location.hash === "") {
-          return Tangerine.router.navigate("assessments/" + groups[0], true);
-        } else {
-          view = new GroupsView;
-          return vm.show(view);
-        }
+        var view;
+        view = new GroupsView;
+        return vm.show(view);
       },
       isUnregistered: function() {
         return Tangerine.router.navigate("login", true);
@@ -438,48 +432,31 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.assessments = function(group) {
-    if (group == null) group = null;
-    if (group === null && Tangerine.settings.get("context") === "server") {
-      return Tangerine.router.navigate("groups", true);
-    } else {
-      if (group != null) group = decodeURIComponent(group);
-      return Tangerine.user.verify({
-        isRegistered: function() {
-          var assessments;
-          assessments = new Assessments;
-          return assessments.fetch({
-            success: function(assessments) {
-              var curricula;
-              if (group != null) {
-                assessments = new Assessments(assessments.where({
-                  "group": group
-                }).concat(assessments.where({
-                  "group": "public"
-                })));
+  Router.prototype.assessments = function() {
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var assessments;
+        assessments = new Assessments;
+        return assessments.fetch({
+          success: function(assessments) {
+            var curricula;
+            curricula = new Curricula;
+            return curricula.fetch({
+              success: function(curricula) {
+                assessments = new AssessmentsMenuView({
+                  "assessments": assessments,
+                  "curricula": curricula
+                });
+                return vm.show(assessments);
               }
-              curricula = new Curricula;
-              return curricula.fetch({
-                success: function(collection) {
-                  curricula = new Curricula(collection.where({
-                    "group": group
-                  }));
-                  assessments = new AssessmentsMenuView({
-                    "assessments": assessments,
-                    "curricula": curricula,
-                    "group": group
-                  });
-                  return vm.show(assessments);
-                }
-              });
-            }
-          });
-        },
-        isUnregistered: function() {
-          return Tangerine.router.navigate("login", true);
-        }
-      });
-    }
+            });
+          }
+        });
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
   };
 
   Router.prototype.editId = function(id) {
@@ -978,18 +955,22 @@ Router = (function(_super) {
   };
 
   Router.prototype.account = function() {
-    return Tangerine.user.verify({
-      isRegistered: function() {
-        var view;
-        view = new AccountView({
-          user: Tangerine.user
-        });
-        return vm.show(view);
-      },
-      isUnregistered: function(options) {
-        return Tangerine.router.navigate("login", true);
-      }
-    });
+    if (Tangerine.db_name !== "tangerine") {
+      return window.location = Tangerine.settings.urlIndex("tangerine", "account");
+    } else {
+      return Tangerine.user.verify({
+        isRegistered: function() {
+          var view;
+          view = new AccountView({
+            user: Tangerine.user
+          });
+          return vm.show(view);
+        },
+        isUnregistered: function(options) {
+          return Tangerine.router.navigate("login", true);
+        }
+      });
+    }
   };
 
   Router.prototype.settings = function() {

@@ -38,7 +38,6 @@ class Router extends Backbone.Router
     'groups' : 'groups'
 
     'assessments'        : 'assessments'
-    'assessments/:group' : 'assessments'
 
     'run/:id'       : 'run'
     'print/:id'       : 'print'
@@ -65,12 +64,8 @@ class Router extends Backbone.Router
   groups: ->
     Tangerine.user.verify
       isRegistered: ->
-        groups = Tangerine.user.get("groups") || []
-        if groups.length == 1 && window.location.hash == ""
-          Tangerine.router.navigate "assessments/#{groups[0]}", true
-        else
-          view = new GroupsView
-          vm.show view
+        view = new GroupsView
+        vm.show view
       isUnregistered: ->
         Tangerine.router.navigate "login", true
 
@@ -280,26 +275,18 @@ class Router extends Backbone.Router
       isUnregistered: ->
         Tangerine.router.navigate "login", true
 
-  assessments: (group = null) ->
-    if group == null && Tangerine.settings.get("context") == "server"
-      Tangerine.router.navigate "groups", true
-    else
-      group = decodeURIComponent(group) if group?
+  assessments: ->
       Tangerine.user.verify
         isRegistered: ->
           assessments = new Assessments
           assessments.fetch
-            success: (assessments) ->
-              if group?
-                assessments = new Assessments(assessments.where({"group":group}).concat(assessments.where({"group":"public"})))
+            success: ( assessments ) ->
               curricula = new Curricula
               curricula.fetch
-                success: ( collection ) ->
-                  curricula = new Curricula collection.where "group" : group
+                success: ( curricula ) ->
                   assessments = new AssessmentsMenuView
                     "assessments" : assessments
                     "curricula"   : curricula
-                    "group"       : group
                   vm.show assessments
         isUnregistered: ->
           Tangerine.router.navigate "login", true
@@ -599,12 +586,15 @@ class Router extends Backbone.Router
     Tangerine.user.logout()
 
   account: ->
-    Tangerine.user.verify
-      isRegistered: ->
-        view = new AccountView user : Tangerine.user
-        vm.show view
-      isUnregistered: (options) ->
-        Tangerine.router.navigate "login", true
+    if Tangerine.db_name != "tangerine"
+      window.location = Tangerine.settings.urlIndex("tangerine", "account")
+    else
+      Tangerine.user.verify
+        isRegistered: ->
+          view = new AccountView user : Tangerine.user
+          vm.show view
+        isUnregistered: (options) ->
+          Tangerine.router.navigate "login", true
 
   settings: ->
     Tangerine.user.verify
