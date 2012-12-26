@@ -218,6 +218,40 @@ class Utils
   @midAlert: (alert_text) ->
     $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").middleCenter().delay(2000).fadeOut(250, -> $(this).remove())
 
+  @passwordPrompt: (callback) ->
+    html = "
+      <div id='pass_form' title='User verification'>
+        <label for='password'>Please re-enter your password</label>
+        <input id='pass_val' type='password' name='password' id='password' value=''>
+        <button class='command' >Verify</button>
+        <button class='command' data-cancel='true'>Cancel</button>
+      </div>
+    "
+
+    d = $.modal html
+
+    $pass = $("#pass_val")
+    $button = $("#pass_form button")
+
+    $pass.on "change", (event) ->
+      $button.off "click"
+      $pass.off "change"
+
+      callback $pass.val()
+      $.modal.close()
+
+    $button.on "click", (event) ->
+      $button.off "click"
+      $pass.off "change"
+
+      if $(event.target).attr("data-cancel") == "true"
+        $.modal.close()
+        return
+
+      callback $pass.val()
+      $.modal.close()
+
+
 
   # returns a GUID
   @guid: ->
@@ -260,6 +294,26 @@ class Utils
   @enableConsoleAssert: -> return unless oldConsoleAssert?    ; window.console.assert = oldConsoleAssert
   @disableConsoleAssert: -> oldConsoleAssert = console.assert ; window.console.assert = $.noop
 
+# Robbert interface
+class Robbert
+  
+  @request: (options) ->
+
+    success = options.success
+    error   = options.error
+
+    delete options.success
+    delete options.error
+
+    $.ajax
+      url      : Tangerine.config.get("robbert")
+      type     : "POST"
+      dataType : "json"
+      data : options
+      success: ( data ) =>
+        success data
+      error: ( data ) =>
+        error data
 
 ##UI helpers
 $ ->

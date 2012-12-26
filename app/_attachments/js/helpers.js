@@ -1,4 +1,4 @@
-var Utils, i, km, sks;
+var Robbert, Utils, i, km, sks;
 
 Backbone.View.prototype.close = function() {
   this.remove();
@@ -415,6 +415,30 @@ Utils = (function() {
     });
   };
 
+  Utils.passwordPrompt = function(callback) {
+    var $button, $pass, d, html;
+    html = "      <div id='pass_form' title='User verification'>        <label for='password'>Please re-enter your password</label>        <input id='pass_val' type='password' name='password' id='password' value=''>        <button class='command' >Verify</button>        <button class='command' data-cancel='true'>Cancel</button>      </div>    ";
+    d = $.modal(html);
+    $pass = $("#pass_val");
+    $button = $("#pass_form button");
+    $pass.on("change", function(event) {
+      $button.off("click");
+      $pass.off("change");
+      callback($pass.val());
+      return $.modal.close();
+    });
+    return $button.on("click", function(event) {
+      $button.off("click");
+      $pass.off("change");
+      if ($(event.target).attr("data-cancel") === "true") {
+        $.modal.close();
+        return;
+      }
+      callback($pass.val());
+      return $.modal.close();
+    });
+  };
+
   Utils.guid = function() {
     return this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4();
   };
@@ -482,6 +506,35 @@ Utils = (function() {
   };
 
   return Utils;
+
+})();
+
+Robbert = (function() {
+
+  function Robbert() {}
+
+  Robbert.request = function(options) {
+    var error, success,
+      _this = this;
+    success = options.success;
+    error = options.error;
+    delete options.success;
+    delete options.error;
+    return $.ajax({
+      url: Tangerine.config.get("robbert"),
+      type: "POST",
+      dataType: "json",
+      data: options,
+      success: function(data) {
+        return success(data);
+      },
+      error: function(data) {
+        return error(data);
+      }
+    });
+  };
+
+  return Robbert;
 
 })();
 
