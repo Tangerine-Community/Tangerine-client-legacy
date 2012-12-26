@@ -35,34 +35,21 @@ AssessmentsView = (function(_super) {
   AssessmentsView.prototype.initialize = function(options) {
     options.assessments.on("add destroy update", this.render);
     this.parent = options.parent;
-    this.group = options.group;
     this.assessments = options.assessments;
-    this.homeGroup = options.homeGroup;
-    this.isPublic = this.group === "public";
-    this.ignoringGroups = this.group === false;
-    this.groupName = this.isPublic ? "Public" : this.group;
     this.subviews = [];
     return this.archivedIsVisible = false;
   };
 
   AssessmentsView.prototype.render = function(event) {
-    var $ul, activeViews, archivedContainer, archivedViews, assessment, assessments, header, newView, showArchived, showGroupName, view, _i, _j, _k, _len, _len2, _len3;
+    var $ul, activeViews, archivedContainer, archivedViews, assessment, assessments, newView, showArchived, view, _i, _j, _k, _len, _len2, _len3;
     this.closeViews();
-    if (this.group !== false) {
-      assessments = this.assessments.where({
-        "group": this.group
-      });
-    } else {
-      assessments = this.assessments.models;
-    }
+    assessments = this.assessments.models;
     activeViews = [];
     archivedViews = [];
     for (_i = 0, _len = assessments.length; _i < _len; _i++) {
       assessment = assessments[_i];
       newView = new AssessmentListElementView({
         "model": assessment,
-        "homeGroup": this.homeGroup,
-        "group": this.group,
         "showAll": this.showAll
       });
       if (assessment.isArchived() && Tangerine.settings.context === "server") {
@@ -77,11 +64,11 @@ AssessmentsView = (function(_super) {
       this.trigger("rendered");
       return;
     }
-    header = "      <h2 class='header_" + this.cid + "'>" + this.groupName + " (" + activeViews.length + ")</h2>    ";
     archivedContainer = "      <div class='archived_container'>        <h2>Archived (" + archivedViews.length + ") <button class='command toggle_archived'>Show</button></h2>        <ul class='archived_list confirmation'></ul>      </div>    ";
-    showArchived = archivedViews.length !== 0 && !this.isPublic;
-    showGroupName = !this.ignoringGroups;
-    this.$el.html("      " + (showGroupName ? header : "") + "      <ul class='active_list assessment_list'></ul>      " + (showArchived ? archivedContainer : "") + "          ");
+    showArchived = archivedViews.length !== 0 && Tangerine.get("context") === "server";
+    this.$el.html("      <ul class='active_list assessment_list'></ul>      " + (showArchived ? archivedContainer : "") + "    ");
+    console.log(activeViews);
+    console.log(archivedViews);
     $ul = this.$el.find(".active_list");
     for (_j = 0, _len2 = activeViews.length; _j < _len2; _j++) {
       view = activeViews[_j];

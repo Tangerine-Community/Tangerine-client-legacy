@@ -15,36 +15,20 @@ class AssessmentsMenuView extends Backbone.View
   initialize: (options) ->
 
     @assessments = options.assessments
-    @group       = options.group
 
     @assessments.each (assessment) =>
       assessment.on "new", @addToCollection
 
     @isAdmin = Tangerine.user.isAdmin()
 
-    @sections = [@group, "public"]
-    @sections.pop() if @group == "public"
-
     @curriculaListView = new CurriculaListView
       "curricula" : options.curricula
 
-    @groupViews = []
+    @assessmentsView = new AssessmentsView
+      "assessments" : @assessments
+      "parent"      : @
 
-    if Tangerine.settings.get("context") == "server"
-      # coffeescript nightmare, single line possible, but don't do it
-      for group in @sections
-        view = new AssessmentsView
-          "group"       : group
-          "homeGroup"   : @group
-          "assessments" : @assessments
-          "parent"      : @
-        @groupViews.push view
-    else if Tangerine.settings.get("context") == "mobile"
-      @listView = new AssessmentsView
-        "group"       : false # all
-        "homeGroup"   : @group
-        "assessments" : @assessments
-        "parent"      : @
+    @usersMenuView = new UsersMenuView
 
   render: =>
     newButton    = "<button class='new command'>New</button>"
@@ -70,17 +54,22 @@ class AssessmentsMenuView extends Backbone.View
             <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>
           </div>
         </div>
+        <div id='assessments_container'></div>
+        <div id='users_menu_container' class='UsersMenuView'></div>
+
       "
+    else
+      html += "<div id='assessments_container'></div>"
+
 
     @$el.html html
 
-    if Tangerine.settings.get("context") == "server"
-      for view, i in @groupViews
-        view.render()
-        @$el.append view.el
-    else if Tangerine.settings.context == "mobile"
-      @listView.render()
-      @$el.append @listView.el
+    @assessmentsView.setElement( @$el.find("#assessments_container") )
+    @assessmentsView.render()
+
+    @usersMenuView.setElement( @$el.find("#users_menu_container") )
+    @usersMenuView.render()
+    
 
     @trigger "rendered"
 
@@ -115,24 +104,22 @@ class AssessmentsMenuView extends Backbone.View
     if newType == "assessment"
       newObject = new Assessment
         "name"         : name
-        "group"        : @group
         "_id"          : newId
         "assessmentId" : newId
         "archived"     : false
     else if newType == "curriculum"
       newObject = new Curriculum
         "name"         : name
-        "group"        : @group
         "_id"          : newId
         "curriculumId" : newId
 
     newObject.save null,
       success : => 
-        @refresh() 
+        @addToCollection(newObject)
         @$el.find('.new_form, .new').fadeToggle(250, => @$el.find('.new_name').val(""))
         Utils.midAlert "#{name} saved"
       error: =>
-        @refresh() 
+        @addToCollection(newObject)
         @$el.find('.new_form, .new').fadeToggle(250, => @$el.find('.new_name').val(""))
         Utils.midAlert "Please try again. Error saving."
 
@@ -140,9 +127,7 @@ class AssessmentsMenuView extends Backbone.View
 
   # ViewManager
   closeViews: ->
-    @curriculaListView.close?()
-    for view in @groupViews
-      view.close()
+    @assessmentsView.close()
 
   onClose: ->
     @closeViews()

@@ -10,11 +10,10 @@ class AssessmentListElementView extends Backbone.View
     'click .assessment_delete'         : 'assessmentDeleteToggle'
     'click .assessment_delete_cancel'  : 'assessmentDeleteToggle'
     'click .assessment_delete_confirm' : 'assessmentDelete'
-    'click .copy'                      : 'copyToGroup'
+    'click .copy'                      : 'copyTo'
     'click .duplicate'                 : 'duplicate'
     'click .archive'                   : 'archive'
     'click .update'                    : 'update'
-    'click .result_count'              : 'getResultCount'
 
   blankResultCount: "-"
 
@@ -26,14 +25,8 @@ class AssessmentListElementView extends Backbone.View
     #arguments
     @model    = options.model
     @parent   = options.parent
-    @group    = options.group
-    @homeGroup = options.homeGroup
-
-    @isPublic = options.model.get("group") == "public" && @homeGroup != "public"
 
     # switches and things
-    @resultCount = if @model.resultCount? then @model.resultCount else @blankResultCount
-    @resultCount = Math.commas @resultCount
     @isAdmin     = Tangerine.user.isAdmin()
 
   duplicate: ->
@@ -41,9 +34,9 @@ class AssessmentListElementView extends Backbone.View
     @model.duplicate { name : newName }, null, null, (assessment) => 
       @model.trigger "new", assessment
 
-  copyToGroup: ->
-    @model.duplicate {group:@homeGroup}, null, null, (assessment) => 
-      @model.trigger "new", assessment
+  copyTo: (group) ->
+    @model.replicate group, =>
+      window.location = Tangerine.settings.urlIndex(group, "assessments")
 
   update: ->
     @model.updateFromServer()
@@ -52,11 +45,6 @@ class AssessmentListElementView extends Backbone.View
         Utils.midAlert "Updated"
       else if message == "import error"
         Utils.midAlert "Update failed"
-
-  getResultCount: ->
-    return if Tangerine.settings.context == "mobile"
-    @$el.find(".result_count").html "Results <b>#{@blankResultCount}</b>"
-    @model.getResultCount()
 
   updateResultCount: =>
     @resultCount = Math.commas @model.resultCount
@@ -109,7 +97,7 @@ class AssessmentListElementView extends Backbone.View
     resultsButton   = "<a href='#results/#{@model.id}'><img class='link_icon results' title='Results' src='images/icon_results.png'></a>"
     printButton     = "<a href='#print/#{@model.id}'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>"
 
-    copyButton      = "<button class='copy command'>Copy to group</button>"
+    copyButton      = "<img class='link_icon copy' title='Copy to' src='images/icon_copy_to.png'>"
     deleteButton    = "<img class='assessment_delete link_icon' title='Delete' src='images/icon_delete.png'>"
     deleteConfirm   = "<span class='assessment_delete_confirm'><div class='menu_box'>Confirm <button class='assessment_delete_yes command_red'>Delete</button> <button class='assessment_delete_cancel command'>Cancel</button></div></span>"
     duplicateButton = "<img class='link_icon duplicate' title='Duplicate' src='images/icon_duplicate.png'>"
@@ -122,7 +110,8 @@ class AssessmentListElementView extends Backbone.View
       <option value='true'  #{if isArchived then selected else ''}>Archived</option>
     </select>
     "
-
+    console.log @isAdmin
+    console.log Tangerine.settings.get("context")
     if @isAdmin
       # admin standard
       html = "
@@ -143,30 +132,25 @@ class AssessmentListElementView extends Backbone.View
       ##{resultCount}
       # not on mobile
       else
-        # admin and public
-        if @isPublic
-          html += "
-            <div class='assessment_menu'>
-              #{copyButton}
-            </div>
-          "
         # admin and group
-        else
-          html += "
-            <div class='assessment_menu'>
-              #{runButton}
-              #{resultsButton}
-              #{editButton}
-              #{printButton}
-              #{duplicateButton}
-              #{deleteButton}
-              #{downloadKey}
-              #{deleteConfirm}
-              #{adminResultCount}
-            </div>
-          "
+        html += "
+          <div class='assessment_menu'>
+            #{runButton}
+            #{resultsButton}
+            #{editButton}
+            #{printButton}
+            #{duplicateButton}
+            #{deleteButton}
+            #{downloadKey}
+            #{deleteConfirm}
+            #{adminResultCount}
+          </div>
+        "
     # enumerator user
     else
+      console.log "gone here now"
       html = "<div>#{runButton}#{name} #{resultsButton}</div>"
 
     @$el.html html
+
+    @trigger "rendered"

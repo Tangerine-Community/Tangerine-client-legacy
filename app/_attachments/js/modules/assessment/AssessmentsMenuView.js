@@ -32,65 +32,38 @@ AssessmentsMenuView = (function(_super) {
   };
 
   AssessmentsMenuView.prototype.initialize = function(options) {
-    var group, view, _i, _len, _ref, _results,
-      _this = this;
+    var _this = this;
     this.assessments = options.assessments;
-    this.group = options.group;
     this.assessments.each(function(assessment) {
       return assessment.on("new", _this.addToCollection);
     });
     this.isAdmin = Tangerine.user.isAdmin();
-    this.sections = [this.group, "public"];
-    if (this.group === "public") this.sections.pop();
     this.curriculaListView = new CurriculaListView({
       "curricula": options.curricula
     });
-    this.groupViews = [];
-    if (Tangerine.settings.get("context") === "server") {
-      _ref = this.sections;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        group = _ref[_i];
-        view = new AssessmentsView({
-          "group": group,
-          "homeGroup": this.group,
-          "assessments": this.assessments,
-          "parent": this
-        });
-        _results.push(this.groupViews.push(view));
-      }
-      return _results;
-    } else if (Tangerine.settings.get("context") === "mobile") {
-      return this.listView = new AssessmentsView({
-        "group": false,
-        "homeGroup": this.group,
-        "assessments": this.assessments,
-        "parent": this
-      });
-    }
+    this.assessmentsView = new AssessmentsView({
+      "assessments": this.assessments,
+      "parent": this
+    });
+    return this.usersMenuView = new UsersMenuView;
   };
 
   AssessmentsMenuView.prototype.render = function() {
-    var groupsButton, html, i, importButton, newButton, view, _len, _ref;
+    var groupsButton, html, importButton, newButton;
     newButton = "<button class='new command'>New</button>";
     importButton = "<button class='import command'>Import</button>";
     groupsButton = "<button class='navigation groups'>Groups</button>";
     html = "      " + (Tangerine.settings.get("context") === "server" ? groupsButton : "") + "      <h1>Assessments</h1>    ";
     if (this.isAdmin) {
-      html += "        " + (Tangerine.settings.get("context") === "server" ? newButton : "") + "        " + (Tangerine.settings.get("context") === "mobile" ? importButton : "") + "        <div class='new_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_name' placeholder='Name'>            <select id='new_type'>              <option value='assessment'>Assessment</option>              <option value='curriculum'>Curriculum</option>            </select><br>            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>          </div>        </div>      ";
+      html += "        " + (Tangerine.settings.get("context") === "server" ? newButton : "") + "        " + (Tangerine.settings.get("context") === "mobile" ? importButton : "") + "        <div class='new_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_name' placeholder='Name'>            <select id='new_type'>              <option value='assessment'>Assessment</option>              <option value='curriculum'>Curriculum</option>            </select><br>            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>          </div>        </div>        <div id='assessments_container'></div>        <div id='users_menu_container' class='UsersMenuView'></div>      ";
+    } else {
+      html += "<div id='assessments_container'></div>";
     }
     this.$el.html(html);
-    if (Tangerine.settings.get("context") === "server") {
-      _ref = this.groupViews;
-      for (i = 0, _len = _ref.length; i < _len; i++) {
-        view = _ref[i];
-        view.render();
-        this.$el.append(view.el);
-      }
-    } else if (Tangerine.settings.context === "mobile") {
-      this.listView.render();
-      this.$el.append(this.listView.el);
-    }
+    this.assessmentsView.setElement(this.$el.find("#assessments_container"));
+    this.assessmentsView.render();
+    this.usersMenuView.setElement(this.$el.find("#users_menu_container"));
+    this.usersMenuView.render();
     this.trigger("rendered");
   };
 
@@ -118,7 +91,6 @@ AssessmentsMenuView = (function(_super) {
     if (newType === "assessment") {
       newObject = new Assessment({
         "name": name,
-        "group": this.group,
         "_id": newId,
         "assessmentId": newId,
         "archived": false
@@ -126,21 +98,20 @@ AssessmentsMenuView = (function(_super) {
     } else if (newType === "curriculum") {
       newObject = new Curriculum({
         "name": name,
-        "group": this.group,
         "_id": newId,
         "curriculumId": newId
       });
     }
     newObject.save(null, {
       success: function() {
-        _this.refresh();
+        _this.addToCollection(newObject);
         _this.$el.find('.new_form, .new').fadeToggle(250, function() {
           return _this.$el.find('.new_name').val("");
         });
         return Utils.midAlert("" + name + " saved");
       },
       error: function() {
-        _this.refresh();
+        _this.addToCollection(newObject);
         _this.$el.find('.new_form, .new').fadeToggle(250, function() {
           return _this.$el.find('.new_name').val("");
         });
@@ -151,17 +122,7 @@ AssessmentsMenuView = (function(_super) {
   };
 
   AssessmentsMenuView.prototype.closeViews = function() {
-    var view, _base, _i, _len, _ref, _results;
-    if (typeof (_base = this.curriculaListView).close === "function") {
-      _base.close();
-    }
-    _ref = this.groupViews;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      view = _ref[_i];
-      _results.push(view.close());
-    }
-    return _results;
+    return this.assessmentsView.close();
   };
 
   AssessmentsMenuView.prototype.onClose = function() {

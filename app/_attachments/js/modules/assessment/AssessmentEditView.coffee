@@ -32,7 +32,7 @@ class AssessmentEditView extends Backbone.View
   hideSave: -> @$el.find('.assessment_save').fadeToggle(250)
   
   back: ->
-    Tangerine.router.navigate "assessments/#{@model.get("group")}", true
+    Tangerine.router.navigate "assessments", true
 
   updateModel: =>
 
@@ -94,7 +94,6 @@ class AssessmentEditView extends Backbone.View
         sequences : sequences
         archived  : @$el.find("#archive_buttons input:checked").val() == "true"
         name      : @$el.find("#assessment_name").val()
-        group     : @$el.find("#assessment_group").val()
         dKey      : @$el.find("#assessment_d_key").val()
         assessmentId : @model.id
       return true
@@ -178,9 +177,6 @@ class AssessmentEditView extends Backbone.View
       <div id='basic'>
         <label for='assessment_name'>Name</label>
         <input id='assessment_name' value='#{@model.escape("name")}'>
-
-        <label for='assessment_group'>Group</label>
-        <input id='assessment_group' value='#{@model.escape("group")}'>
 
         <button class='assessment_save confirmation'>Save</button><br>
 

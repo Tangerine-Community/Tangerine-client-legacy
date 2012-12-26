@@ -27,27 +27,17 @@ class AssessmentsView extends Backbone.View
     options.assessments.on "add destroy update", @render
 
     @parent      = options.parent
-    @group       = options.group
     @assessments = options.assessments
-    @homeGroup   = options.homeGroup
-
-    @isPublic       = @group == "public" 
-    @ignoringGroups = @group == false
-    @groupName      = if @isPublic then "Public" else @group
 
     @subviews          = [] # used to keep track of views to close
     @archivedIsVisible = false # toggled
-    
+
 
   render: (event) =>
 
     @closeViews()
 
-    # give us an array. show all if group == false
-    if @group != false
-      assessments = @assessments.where "group" : @group
-    else
-      assessments = @assessments.models
+    assessments = @assessments.models
 
     # create archived and active arrays of <li>
     activeViews   = []
@@ -56,8 +46,6 @@ class AssessmentsView extends Backbone.View
 
       newView = new AssessmentListElementView
         "model"     : assessment
-        "homeGroup" : @homeGroup
-        "group"     : @group
         "showAll"   : @showAll
 
       if assessment.isArchived() && Tangerine.settings.context == "server"
@@ -73,12 +61,7 @@ class AssessmentsView extends Backbone.View
       @trigger "rendered"
       return
 
-
     # templating and components
-
-    header = "
-      <h2 class='header_#{@cid}'>#{@groupName} (#{activeViews.length})</h2>
-    "
 
     archivedContainer = "
       <div class='archived_container'>
@@ -87,16 +70,15 @@ class AssessmentsView extends Backbone.View
       </div>
     "
 
+    showArchived  = archivedViews.length != 0 && Tangerine.get("context") == "server"
 
-    showArchived  = archivedViews.length != 0 && !@isPublic
-    showGroupName = not @ignoringGroups
     @$el.html "
-      #{ if showGroupName then header else "" }
       <ul class='active_list assessment_list'></ul>
       #{ if showArchived then archivedContainer else "" }
-      
     "
 
+    console.log activeViews
+    console.log archivedViews
 
     # fill containers
     $ul = @$el.find(".active_list")

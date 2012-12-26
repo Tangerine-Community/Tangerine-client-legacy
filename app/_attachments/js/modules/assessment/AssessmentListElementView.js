@@ -23,11 +23,10 @@ AssessmentListElementView = (function(_super) {
     'click .assessment_delete': 'assessmentDeleteToggle',
     'click .assessment_delete_cancel': 'assessmentDeleteToggle',
     'click .assessment_delete_confirm': 'assessmentDelete',
-    'click .copy': 'copyToGroup',
+    'click .copy': 'copyTo',
     'click .duplicate': 'duplicate',
     'click .archive': 'archive',
-    'click .update': 'update',
-    'click .result_count': 'getResultCount'
+    'click .update': 'update'
   };
 
   AssessmentListElementView.prototype.blankResultCount = "-";
@@ -36,11 +35,6 @@ AssessmentListElementView = (function(_super) {
     options.model.on("resultCount", this.updateResultCount);
     this.model = options.model;
     this.parent = options.parent;
-    this.group = options.group;
-    this.homeGroup = options.homeGroup;
-    this.isPublic = options.model.get("group") === "public" && this.homeGroup !== "public";
-    this.resultCount = this.model.resultCount != null ? this.model.resultCount : this.blankResultCount;
-    this.resultCount = Math.commas(this.resultCount);
     return this.isAdmin = Tangerine.user.isAdmin();
   };
 
@@ -55,12 +49,10 @@ AssessmentListElementView = (function(_super) {
     });
   };
 
-  AssessmentListElementView.prototype.copyToGroup = function() {
+  AssessmentListElementView.prototype.copyTo = function(group) {
     var _this = this;
-    return this.model.duplicate({
-      group: this.homeGroup
-    }, null, null, function(assessment) {
-      return _this.model.trigger("new", assessment);
+    return this.model.replicate(group, function() {
+      return window.location = Tangerine.settings.urlIndex(group, "assessments");
     });
   };
 
@@ -74,12 +66,6 @@ AssessmentListElementView = (function(_super) {
         return Utils.midAlert("Update failed");
       }
     });
-  };
-
-  AssessmentListElementView.prototype.getResultCount = function() {
-    if (Tangerine.settings.context === "mobile") return;
-    this.$el.find(".result_count").html("Results <b>" + this.blankResultCount + "</b>");
-    return this.model.getResultCount();
   };
 
   AssessmentListElementView.prototype.updateResultCount = function() {
@@ -132,28 +118,28 @@ AssessmentListElementView = (function(_super) {
     runButton = "<a href='#run/" + this.model.id + "'><img class='link_icon run' title='Run' src='images/icon_run.png'></a>";
     resultsButton = "<a href='#results/" + this.model.id + "'><img class='link_icon results' title='Results' src='images/icon_results.png'></a>";
     printButton = "<a href='#print/" + this.model.id + "'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>";
-    copyButton = "<button class='copy command'>Copy to group</button>";
+    copyButton = "<img class='link_icon copy' title='Copy to' src='images/icon_copy_to.png'>";
     deleteButton = "<img class='assessment_delete link_icon' title='Delete' src='images/icon_delete.png'>";
     deleteConfirm = "<span class='assessment_delete_confirm'><div class='menu_box'>Confirm <button class='assessment_delete_yes command_red'>Delete</button> <button class='assessment_delete_cancel command'>Cancel</button></div></span>";
     duplicateButton = "<img class='link_icon duplicate' title='Duplicate' src='images/icon_duplicate.png'>";
     updateButton = "<img class='link_icon update' title='Update' src='images/icon_sync.png'>";
     downloadKey = "<span class='download_key small_grey'>Download key <b>" + (this.model.id.substr(-5, 5)) + "</b></span>";
     archiveSwitch = "    <select class='archive'>      <option value='false' " + (isArchived ? selected : '') + ">Active</option>      <option value='true'  " + (isArchived ? selected : '') + ">Archived</option>    </select>    ";
+    console.log(this.isAdmin);
+    console.log(Tangerine.settings.get("context"));
     if (this.isAdmin) {
       html = "        <div>          " + toggleButton + "          " + adminName + "        </div>      ";
       if (Tangerine.settings.get("context") === "mobile") {
         html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + updateButton + "          </div>        ";
       } else {
-        if (this.isPublic) {
-          html += "            <div class='assessment_menu'>              " + copyButton + "            </div>          ";
-        } else {
-          html += "            <div class='assessment_menu'>              " + runButton + "              " + resultsButton + "              " + editButton + "              " + printButton + "              " + duplicateButton + "              " + deleteButton + "              " + downloadKey + "              " + deleteConfirm + "              " + adminResultCount + "            </div>          ";
-        }
+        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + editButton + "            " + printButton + "            " + duplicateButton + "            " + deleteButton + "            " + downloadKey + "            " + deleteConfirm + "            " + adminResultCount + "          </div>        ";
       }
     } else {
+      console.log("gone here now");
       html = "<div>" + runButton + name + " " + resultsButton + "</div>";
     }
-    return this.$el.html(html);
+    this.$el.html(html);
+    return this.trigger("rendered");
   };
 
   return AssessmentListElementView;
