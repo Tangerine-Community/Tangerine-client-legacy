@@ -1,7 +1,7 @@
 var Tangerine;
 
 Tangerine = {
-  "db_name": "tangerine",
+  "db_name": window.location.pathname.split("/")[1],
   "design_doc": "ojai"
 };
 
@@ -66,11 +66,8 @@ Tangerine.onSettingsLoad = function() {
           user: Tangerine.user,
           router: Tangerine.router
         });
-        return Tangerine.user.fetch({
+        return Tangerine.user.sessionRefresh({
           success: function() {
-            return Backbone.history.start();
-          },
-          error: function() {
             return Backbone.history.start();
           }
         });

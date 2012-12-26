@@ -10,8 +10,11 @@
 # Utils.disableConsoleLog()
 # Utils.disableConsoleAssert()
 
+
+
+
 Tangerine = 
-  "db_name"    : "tangerine"
+  "db_name"    : window.location.pathname.split("/")[1]
   "design_doc" : "ojai"
 
 # global tangerine database handle
@@ -68,7 +71,7 @@ Tangerine.onSettingsLoad = ->
           user   : Tangerine.user
           router : Tangerine.router
 
-        Tangerine.user.fetch
-          success : -> Backbone.history.start()
-          error   : -> Backbone.history.start()
+        Tangerine.user.sessionRefresh 
+          success: -> 
+            Backbone.history.start()
 
