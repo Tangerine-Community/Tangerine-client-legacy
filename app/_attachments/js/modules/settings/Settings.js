@@ -80,8 +80,19 @@ Settings = (function(_super) {
     return this.couch = {
       view: "_design/" + designDoc + "/_view/",
       show: "_design/" + designDoc + "/_show/",
-      list: "_design/" + designDoc + "/_list/"
+      list: "_design/" + designDoc + "/_list/",
+      index: "_design/" + designDoc + "/index.html"
     };
+  };
+
+  Settings.prototype.urlIndex = function(groupName, hash) {
+    var groupHost, port, prefix;
+    if (hash == null) hash = null;
+    groupHost = this.get("groupHost");
+    port = this.config.get("port");
+    prefix = groupName !== "tangerine" ? this.config.get("groupDBPrefix") : "";
+    hash = hash != null ? "#" + hash : "";
+    return "" + groupHost + ":" + port + "/" + prefix + groupName + "/" + this.couch.index + hash;
   };
 
   Settings.prototype.urlHost = function(location) {

@@ -10,7 +10,6 @@ class Settings extends Backbone.Model
 
 
   update: =>
-
     groupHost = @get "groupHost"
     groupName = @get "groupName"
 
@@ -25,8 +24,8 @@ class Settings extends Backbone.Model
         url : "#{local.host}:#{port}/"
         db  : "/#{local.dbName}/"
       group:
-        url : "#{groupHost}:#{port}/"
-        db  : "#{groupHost}:#{port}/#{prefix}#{groupName}/"
+        url   : "#{groupHost}:#{port}/"
+        db    : "#{groupHost}:#{port}/#{prefix}#{groupName}/"
       subnet : 
         url : ("http://#{subnetBase}.#{x}:#{port}/"                 for x in [0..255])
         db  : ("http://#{subnetBase}.#{x}:#{port}/#{local.dbName}/" for x in [0..255])
@@ -35,16 +34,26 @@ class Settings extends Backbone.Model
         db  : ("#{subnetBase}.#{x}:#{port}/#{prefix}#{groupName}/" for x in [0..255])
 
     @couch = 
-      view : "_design/#{designDoc}/_view/"
-      show : "_design/#{designDoc}/_show/"
-      list : "_design/#{designDoc}/_list/"
+      view  : "_design/#{designDoc}/_view/"
+      show  : "_design/#{designDoc}/_show/"
+      list  : "_design/#{designDoc}/_list/"
+      index : "_design/#{designDoc}/index.html"
 
-  urlHost: ( location )       -> "#{@location[location].url}"
-  urlDB  : ( location )       -> "#{@location[location].db}"
-  urlView: ( location, view ) -> "#{@location[location].db}#{@couch.view}#{view}"
-  urlList: ( location, list ) -> "#{@location[location].db}#{@couch.show}#{list}"
-  urlShow: ( location, show ) -> "#{@location[location].db}#{@couch.list}#{show}"
 
+  urlIndex : ( groupName, hash = null ) ->
+    groupHost = @get "groupHost"
+    port      = @config.get "port"
+    prefix    = if groupName != "tangerine" then @config.get "groupDBPrefix" else ""
+    hash      = if hash? then "##{hash}" else ""
+    return "#{groupHost}:#{port}/#{prefix}#{groupName}/#{@couch.index}#{hash}"
+
+  urlHost  : ( location )       -> "#{@location[location].url}"
+  urlDB    : ( location )       -> "#{@location[location].db}"
+
+  urlView  : ( location, view ) -> "#{@location[location].db}#{@couch.view}#{view}"
+  urlList  : ( location, list ) -> "#{@location[location].db}#{@couch.show}#{list}"
+  urlShow  : ( location, show ) -> "#{@location[location].db}#{@couch.list}#{show}"
+  
   # these two are a little weird. I feel like subnetAddress should be a class with properties IP, URL and index
   urlSubnet: ( ip ) -> 
     port   = @config.get "port"
