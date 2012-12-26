@@ -25,7 +25,7 @@ class NavigationView extends Backbone.View
 
   enumeratorClick: -> Tangerine.router.navigate "account", true
 
-  logoClick:-> 
+  logoClick: -> 
     if @user.isAdmin()
       Tangerine.activity = ""
       @router.navigate '', true
@@ -117,9 +117,7 @@ class NavigationView extends Backbone.View
     
     # @TODO This needs fixing
     if ~window.location.toString().indexOf("name=") then @$el.find("#logout_link").hide() else  @$el.find("#logout_link").show()
-    
-    Utils.working true
-    
+
     @user.verify
       isRegistered: =>
         @render()
