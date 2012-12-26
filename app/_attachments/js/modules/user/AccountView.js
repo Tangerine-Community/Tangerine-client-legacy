@@ -38,7 +38,7 @@ AccountView = (function(_super) {
   };
 
   AccountView.prototype.goBack = function() {
-    return window.history.back();
+    return Tangerine.router.navigate("groups", true);
   };
 
   AccountView.prototype.joinToggle = function() {
@@ -47,11 +47,13 @@ AccountView = (function(_super) {
   };
 
   AccountView.prototype.join = function() {
-    var group;
+    var group,
+      _this = this;
     group = this.$el.find("#group_name").val().databaseSafetyDance();
     if (group.length === 0) return;
-    this.user.joinGroup(group);
-    return this.joinToggle();
+    return this.user.joinGroup(group, function() {
+      return _this.joinToggle();
+    });
   };
 
   AccountView.prototype.leaveGroup = function(event) {

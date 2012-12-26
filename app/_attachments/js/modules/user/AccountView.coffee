@@ -18,17 +18,18 @@ class AccountView extends Backbone.View
         settingsModel.save()
 
   goBack: ->
-    window.history.back()
+    Tangerine.router.navigate "groups", true
 
   joinToggle: ->
     @$el.find(".join, .join_confirmation").fadeToggle(0)
     @$el.find("#group_name").val ""
 
   join: ->
+
     group = @$el.find("#group_name").val().databaseSafetyDance()
     return if group.length == 0
-    @user.joinGroup group
-    @joinToggle()
+    @user.joinGroup group, =>
+      @joinToggle()
 
   leaveGroup: (event) ->
     group = $(event.target).parent().attr('data-group')
