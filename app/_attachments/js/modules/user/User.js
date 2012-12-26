@@ -10,6 +10,8 @@ User = (function(_super) {
 
   function User() {
     this.fetch = __bind(this.fetch, this);
+    this.sessionRefresh = __bind(this.sessionRefresh, this);
+    this.login = __bind(this.login, this);
     User.__super__.constructor.apply(this, arguments);
   }
 
@@ -23,29 +25,27 @@ User = (function(_super) {
 
   User.prototype.signup = function(name, pass) {
     var _this = this;
-    return $.couch.signup({
-      name: name
-    }, pass, {
-      success: function() {
+    return $.ajax({
+      url: Tangerine.config.get("robbert"),
+      type: "POST",
+      dataType: "json",
+      data: {
+        action: "new_user",
+        auth_u: name,
+        auth_p: pass
+      },
+      success: function(data) {
         if (_this.intent === "login") {
           _this.intent = "retry_login";
           return _this.login(name, pass);
-        } else {
-          return _this.trigger("created");
-        }
-      },
-      error: function(status, error, message) {
-        if (_this.intent === "login") {
-          return _this.trigger("pass-incorrect");
-        } else {
-          return _this.trigger("user-taken");
         }
       }
     });
   };
 
-  User.prototype.login = function(name, pass) {
+  User.prototype.login = function(name, pass, callbacks) {
     var _this = this;
+    if (callbacks == null) callbacks = {};
     return $.couch.login({
       name: name,
       password: pass,
@@ -53,7 +53,12 @@ User = (function(_super) {
         _this.name = name;
         _this.roles = user.roles;
         _this.clearAttempt();
-        return _this.trigger("login");
+        return _this.fetch({
+          success: function() {
+            if (typeof callbacks.success === "function") callbacks.success();
+            return _this.trigger("login");
+          }
+        });
       },
       error: function(status, error, message) {
         if (_this.intent === "retry_login") {
@@ -75,8 +80,8 @@ User = (function(_super) {
           _this.roles = response.userCtx.roles;
           return _this.fetch({
             success: function() {
-              this.trigger("login");
-              return callbacks['success'].apply(this, arguments);
+              _this.trigger("login");
+              return callbacks['success'].apply(_this, arguments);
             }
           });
         } else {
@@ -110,7 +115,7 @@ User = (function(_super) {
 
   User.prototype.isAdmin = function() {
     var _ref;
-    return __indexOf.call(this.roles, '_admin') >= 0 || (_ref = this.name, __indexOf.call(this.dbAdmins, _ref) >= 0);
+    return (_ref = this.name, __indexOf.call(this.dbAdmins, _ref) >= 0) || __indexOf.call(this.roles, "_admin") >= 0;
   };
 
   User.prototype.logout = function() {
@@ -122,6 +127,7 @@ User = (function(_super) {
         _this.roles = [];
         _this.clear();
         _this.trigger("logout");
+        window.location = Tangerine.settings.urlIndex("tangerine");
         return Tangerine.router.navigate("login", true);
       }
     });
@@ -166,24 +172,24 @@ User = (function(_super) {
         success: function(userDoc) {
           return Tangerine.$db.openDoc("_security", {
             success: function(securityDoc) {
-              var _ref, _ref2;
+              var _ref, _ref2, _ref3;
               _this.dbAdmins = (securityDoc != null ? (_ref = securityDoc.admins) != null ? _ref.names : void 0 : void 0) || [];
-              _this.attributes = userDoc;
-              if ((_ref2 = callbacks.success) != null) {
-                _ref2.apply(_this, arguments);
+              _this.dbReaders = (securityDoc != null ? (_ref2 = securityDoc.members) != null ? _ref2.names : void 0 : void 0) || [];
+              _this.dbReaders = _.filter(_this.dbReaders, function(a) {
+                return a.substr(0, 8) !== "uploader";
+              });
+              _this.set(userDoc);
+              if ((_ref3 = callbacks.success) != null) {
+                _ref3.apply(_this, arguments);
               }
               return _this.trigger('group-refresh');
             }
-          }, {
-            async: false
           });
         },
         error: function() {
           var _ref;
           return (_ref = callbacks.error) != null ? _ref.apply(_this, arguments) : void 0;
         }
-      }, {
-        async: false
       });
     });
   };
@@ -193,55 +199,53 @@ User = (function(_super) {
     Groups
   */
 
-  User.prototype.joinGroup = function(group) {
-    var newGroups, oldGroups,
-      _this = this;
-    oldGroups = this.get("groups") || [];
-    if (!~oldGroups.indexOf(group)) {
-      newGroups = oldGroups.concat([group]);
-      return $.ajax({
-        "type": "GET",
-        'url': Tangerine.config.address.robbert.url,
-        'data': {
-          "action": "new_group",
-          "user": this.name,
-          "group": group
-        },
-        dataType: "jsonp",
-        success: function() {
-          return _this.save({
-            "groups": newGroups
-          }, {
-            success: function() {
-              return _this.trigger("group-join");
-            }
-          }, {
-            async: false
+  User.prototype.joinGroup = function(group, callback) {
+    var _this = this;
+    if (callback == null) callback = {};
+    return Utils.passwordPrompt(function(auth_p) {
+      return Robbert.request({
+        action: "new_group",
+        group: group,
+        auth_u: Tangerine.user.get("name"),
+        auth_p: auth_p,
+        success: function(response) {
+          _this.login(_this.get("name"), auth_p, {
+            success: callback
           });
+          if (response.status === "success") return _this.trigger("group-join");
         },
         error: function(error) {
-          return alert("Error creating group\n\n" + error[1] + "\n" + error[2]);
+          Utils.midAlert("Error creating group\n\n" + error[1] + "\n" + error[2]);
+          return _this.fetch({
+            success: callback
+          });
         }
       });
-    }
+    });
   };
 
-  User.prototype.leaveGroup = function(group) {
-    var newGroups, oldGroups,
-      _this = this;
-    oldGroups = this.get("groups") || [];
-    if (~oldGroups.indexOf(group)) {
-      newGroups = _.without(oldGroups, group);
-      return this.save({
-        "groups": newGroups
-      }, {
-        success: function() {
-          return _this.trigger("group-leave");
+  User.prototype.leaveGroup = function(group, callback) {
+    var _this = this;
+    if (callback == null) callback = {};
+    return Utils.passwordPrompt(function(auth_p) {
+      return Robbert.request({
+        action: "remove_group",
+        user: _this.get("name"),
+        group: group,
+        auth_u: Tangerine.user.get("name"),
+        auth_p: auth_p,
+        success: function(response) {
+          var _ref;
+          _this.login(_this.get("name"), auth_p, {
+            success: callback
+          });
+          return _this.trigger(("group-leave" === (_ref = response.status) && _ref === "success"));
+        },
+        error: function(response) {
+          return typeof callbacks.error === "function" ? callbacks.error(response) : void 0;
         }
-      }, {
-        async: false
       });
-    }
+    });
   };
 
   return User;

@@ -10,20 +10,21 @@ class User extends Backbone.Model
     @name = null
 
   signup: ( name, pass ) ->
-    $.couch.signup { name : name }, pass,
-      success: =>
+    $.ajax
+      url         : Tangerine.config.get("robbert")
+      type        : "POST"
+      dataType    : "json"
+      data :
+        action : "new_user"
+        auth_u : name
+        auth_p : pass
+      success: ( data ) =>
         if @intent == "login"
           @intent = "retry_login"
           @login name, pass
-        else
-          @trigger "created"
-      error: ( status, error, message ) =>
-        if @intent == "login"
-          @trigger "pass-incorrect"
-        else
-          @trigger "user-taken"
 
-  login: ( name, pass ) ->
+
+  login: ( name, pass, callbacks = {}) =>
     $.couch.login
       name     : name
       password : pass
@@ -31,7 +32,10 @@ class User extends Backbone.Model
         @name   = name
         @roles  = user.roles
         @clearAttempt()
-        @trigger "login"
+        @fetch
+          success: =>
+            callbacks.success?()
+            @trigger "login"
       error: ( status, error, message ) =>
         if @intent == "retry_login"
           @trigger "error", message
@@ -39,14 +43,15 @@ class User extends Backbone.Model
           @intent = "login"
           @signup name, pass
 
-  sessionRefresh: (callbacks) ->
+  # attempt to restore a user's login state from couch session
+  sessionRefresh: (callbacks) =>
     $.couch.session
       success: (response) =>
         if response.userCtx.name?
           @name  = response.userCtx.name
           @roles = response.userCtx.roles
           @fetch
-            success: ->
+            success: =>
               @trigger "login"
               callbacks['success'].apply(@, arguments)
         else
@@ -68,7 +73,7 @@ class User extends Backbone.Model
       else
         callbacks?.isUser?()
 
-  isAdmin: -> '_admin' in @roles or @name in @dbAdmins
+  isAdmin: -> @name in @dbAdmins or "_admin" in @roles
 
   logout: ->
     $.couch.logout
@@ -78,6 +83,7 @@ class User extends Backbone.Model
         @roles = []
         @clear()
         @trigger "logout"
+        window.location = Tangerine.settings.urlIndex "tangerine"
         Tangerine.router.navigate "login", true
 
   clearAttempt: ->
@@ -109,14 +115,15 @@ class User extends Backbone.Model
         success: ( userDoc ) =>
           Tangerine.$db.openDoc "_security",
             success: (securityDoc) =>
-              @dbAdmins = securityDoc?.admins?.names || []
-              @attributes = userDoc
+              @dbAdmins  = securityDoc?.admins?.names  || []
+              @dbReaders = securityDoc?.members?.names || []
+              @dbReaders = _.filter(@dbReaders,(a)=>a.substr(0, 8)!="uploader")
+              @set userDoc
               callbacks.success?.apply(@, arguments)
               @trigger 'group-refresh'
-            , {async:false}
+
         error: =>
           callbacks.error?.apply(@, arguments)
-        , {async:false}
 
 
 
@@ -126,26 +133,41 @@ class User extends Backbone.Model
   
   ###
 
-  joinGroup: (group) ->
-    oldGroups = @get("groups") || []
-    if !~oldGroups.indexOf(group)
-      newGroups = oldGroups.concat [group]
+  joinGroup: (group, callback = {}) ->
+    Utils.passwordPrompt (auth_p) =>
+        Robbert.request
+          action : "new_group"
+          group  : group
+          auth_u : Tangerine.user.get("name")
+          auth_p : auth_p
+          success : ( response ) =>
+            # @TODO
+            # We should not have to log back in here.
+            # After Robbert creates a group, THIS session ends.
+            # Robbert does not interact with the session.
+            @login @get("name"), auth_p, success:callback
+            @trigger "group-join" if response.status == "success"
+          error : (error) =>
+            Utils.midAlert "Error creating group\n\n#{error[1]}\n#{error[2]}"
+            @fetch success:callback
 
-      $.ajax
-        "type" : "GET"
-        'url'  : Tangerine.config.address.robbert.url
-        'data' : 
-          "action" : "new_group"
-          "user"   : @name
-          "group"  : group
-        dataType: "jsonp"
-        success: =>
-          @save({"groups" : newGroups}, { success: => @trigger "group-join" }, async:false)
-        error: (error) =>
-          alert "Error creating group\n\n#{error[1]}\n#{error[2]}"
+  leaveGroup: (group, callback = {}) ->
+    Utils.passwordPrompt ( auth_p ) =>
+      Robbert.request
+        action : "remove_group" # attempts to leave first, if last person, deletes group
+        user   : @get("name")
+        group  : group
+        auth_u : Tangerine.user.get("name")
+        auth_p : auth_p
+        success : (response) =>
+          # @TODO
+          # We should not have to log back in here.
+          # After Robbert creates a group, THIS session ends.
+          # Robbert does not interact with the session.
+          @login @get("name"), auth_p, success:callback
 
-  leaveGroup: (group) ->
-    oldGroups = @get("groups") || []
-    if ~oldGroups.indexOf(group)
-      newGroups = _.without oldGroups, group
-      @save({"groups" : newGroups}, {success:=>@trigger("group-leave")}, async:false)
+          @trigger "group-leave" is response.status == "success"
+
+        error : (response) =>
+          callbacks.error?( response )
+
