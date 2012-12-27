@@ -416,17 +416,17 @@ Router = (function(_super) {
       if (group != null) group = decodeURIComponent(group);
       return Tangerine.user.verify({
         isRegistered: function() {
-          var assessments;
-          assessments = new Assessments;
-          return assessments.fetch({
-            success: function(assessments) {
-              var curricula;
+          var groupAssessments, publicAssessments;
+          publicAssessments = new Assessments;
+          return publicAssessments.fetch({
+            key: "public",
+            success: function() {}
+          }, groupAssessments = new Assessments, groupAssessments.fetch({
+            key: group,
+            success: function() {
+              var assessments, curricula;
               if (group != null) {
-                assessments = new Assessments(assessments.where({
-                  "group": group
-                }).concat(assessments.where({
-                  "group": "public"
-                })));
+                assessments = new Assessments(groupAssessments.models.concat(publicAssessments.models));
               }
               curricula = new Curricula;
               return curricula.fetch({
@@ -443,7 +443,7 @@ Router = (function(_super) {
                 }
               });
             }
-          });
+          }));
         },
         isUnregistered: function() {
           return Tangerine.router.navigate("login", true);

@@ -2,6 +2,9 @@ class Assessments extends Backbone.Collection
   model: Assessment
   url: 'assessment'
 
+  db :
+    view : "assessmentsByGroup"
+
   comparator : (model) ->
     model.get "name"
 

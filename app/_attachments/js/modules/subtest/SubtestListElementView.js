@@ -1,4 +1,5 @@
 var SubtestListElementView,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -7,6 +8,8 @@ SubtestListElementView = (function(_super) {
   __extends(SubtestListElementView, _super);
 
   function SubtestListElementView() {
+    this.populateAssessmentSelector = __bind(this.populateAssessmentSelector, this);
+    this.fetchAssessments = __bind(this.fetchAssessments, this);
     SubtestListElementView.__super__.constructor.apply(this, arguments);
   }
 
@@ -51,15 +54,11 @@ SubtestListElementView = (function(_super) {
   };
 
   SubtestListElementView.prototype.fetchAssessments = function() {
-    var allAssessments,
-      _this = this;
-    this.groupAssessments = [];
-    allAssessments = new Assessments;
-    return allAssessments.fetch({
-      success: function(collection) {
-        _this.groupAssessments = collection.where({
-          "group": _this.group
-        });
+    var _this = this;
+    this.groupAssessments = new Assessments;
+    return this.groupAssessments.fetch({
+      key: this.group,
+      success: function() {
         return _this.populateAssessmentSelector();
       }
     });
@@ -68,7 +67,7 @@ SubtestListElementView = (function(_super) {
   SubtestListElementView.prototype.populateAssessmentSelector = function() {
     var $select, assessment, optionList, _i, _len, _ref;
     optionList = "";
-    _ref = this.groupAssessments;
+    _ref = this.groupAssessments.models;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       assessment = _ref[_i];
       optionList += "<option data-assessmentId='" + assessment.id + "'>" + (assessment.get("name")) + "</option>";

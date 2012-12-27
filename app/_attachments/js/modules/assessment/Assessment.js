@@ -8,6 +8,7 @@ Assessment = (function(_super) {
   __extends(Assessment, _super);
 
   function Assessment() {
+    this.duplicate = __bind(this.duplicate, this);
     this.updateFromServer = __bind(this.updateFromServer, this);
     this.fetch = __bind(this.fetch, this);
     this.getResultCount = __bind(this.getResultCount, this);
@@ -106,7 +107,8 @@ Assessment = (function(_super) {
   };
 
   Assessment.prototype.duplicate = function(assessmentAttributes, subtestAttributes, questionAttributes, callback) {
-    var newId, newModel, originalId;
+    var newId, newModel, originalId,
+      _this = this;
     originalId = this.id;
     newModel = this.clone();
     newModel.set(assessmentAttributes);
@@ -116,11 +118,10 @@ Assessment = (function(_super) {
       "assessmentId": newId
     }, {
       success: function() {
-        var questions,
-          _this = this;
+        var questions;
         questions = new Questions;
         return questions.fetch({
-          key: this.id,
+          key: originalId,
           success: function(questions) {
             var subtests;
             subtests = new Subtests;

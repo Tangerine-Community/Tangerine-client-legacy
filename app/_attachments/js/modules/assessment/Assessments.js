@@ -14,6 +14,10 @@ Assessments = (function(_super) {
 
   Assessments.prototype.url = 'assessment';
 
+  Assessments.prototype.db = {
+    view: "assessmentsByGroup"
+  };
+
   Assessments.prototype.comparator = function(model) {
     return model.get("name");
   };
