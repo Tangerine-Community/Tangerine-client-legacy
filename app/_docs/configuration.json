@@ -12,6 +12,8 @@
 		"base"   : "192.168.1."
 	},
 
+	"robbert" : "http://localhost/robbert.php",
+	"tree"    : "http://localhost/tree.php",
 	"designDoc"       : "ojai",
 	"port"            : 5984,
 	"groupDBPrefix"   : "group-",
@@ -52,7 +54,7 @@
 			"context"          : "server",
 			"language"         : "en",
 			"groupName"        : "tangerine",
-			"groupHost"        : "http://tangerine.iriscouch.com",
+			"groupHost"        : "http://localhost",
 			"upPass"           : "pass",
 			"log"              : ["app"]
 		}
