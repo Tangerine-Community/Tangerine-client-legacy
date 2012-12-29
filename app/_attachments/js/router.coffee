@@ -612,6 +612,7 @@ class Router extends Backbone.Router
     Tangerine.user.verify
       isAdmin: ->
         $("#version-uuid").html("Updating...")
+
         $.couch.replicate(
           Tangerine.settings.urlDB("group"),
           Tangerine.settings.urlDB("local"),
@@ -625,7 +626,7 @@ class Router extends Backbone.Router
             error: (error) ->
               $("#version-uuid").html("Error updating: #{error}")
           ,
-            doc_ids: ["_design/tangerine"]
+            doc_ids: ["_design/update"]
         )
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true

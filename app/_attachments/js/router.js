@@ -1013,7 +1013,7 @@ Router = (function(_super) {
             return $("#version-uuid").html("Error updating: " + error);
           }
         }, {
-          doc_ids: ["_design/tangerine"]
+          doc_ids: ["_design/update"]
         });
       },
       isUnregistered: function(options) {
