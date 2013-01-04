@@ -23,9 +23,10 @@ Settings = (function(_super) {
   };
 
   Settings.prototype.update = function() {
-    var designDoc, groupHost, groupName, local, port, prefix, subnetBase, x;
+    var designDoc, groupHost, groupName, local, port, prefix, subnetBase, update, x;
     groupHost = this.get("groupHost");
     groupName = this.get("groupName");
+    update = this.config.get("update");
     local = this.config.get("local");
     port = this.config.get("port");
     designDoc = this.config.get("designDoc");
@@ -39,6 +40,10 @@ Settings = (function(_super) {
       group: {
         url: "" + groupHost + ":" + port + "/",
         db: "" + groupHost + ":" + port + "/" + prefix + groupName + "/"
+      },
+      update: {
+        url: "http://" + update.login + "@" + update.host + ":" + port + "/",
+        db: "http://" + update.login + "@" + update.host + ":" + port + "/" + update.dbName + "/"
       },
       subnet: {
         url: (function() {

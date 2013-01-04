@@ -1000,7 +1000,7 @@ Router = (function(_super) {
     return Tangerine.user.verify({
       isAdmin: function() {
         $("#version-uuid").html("Updating...");
-        return $.couch.replicate(Tangerine.settings.urlDB("group"), Tangerine.settings.urlDB("local"), {
+        return $.couch.replicate(Tangerine.settings.urlDB("update"), Tangerine.settings.urlDB("local"), {
           success: function() {
             $("#version-uuid").html("Successful update, now refreshing app...");
             return _.delay(function() {
@@ -1013,7 +1013,7 @@ Router = (function(_super) {
             return $("#version-uuid").html("Error updating: " + error);
           }
         }, {
-          doc_ids: ["_design/update"]
+          doc_ids: ["_design/tangerine"]
         });
       },
       isUnregistered: function(options) {

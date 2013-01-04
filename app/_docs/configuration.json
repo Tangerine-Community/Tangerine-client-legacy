@@ -6,6 +6,12 @@
 		"login"  : "localuser:localpass",
 		"dbName" : "tangerine"
 	},
+	"update" :
+	{
+		"host"   : "tangerine.iriscouch.com",
+		"dbName" : "update",
+		"login"  : "updater:updater"
+	},
 
 	"subnet" :
 	{

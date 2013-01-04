@@ -614,7 +614,7 @@ class Router extends Backbone.Router
         $("#version-uuid").html("Updating...")
 
         $.couch.replicate(
-          Tangerine.settings.urlDB("group"),
+          Tangerine.settings.urlDB("update"),
           Tangerine.settings.urlDB("local"),
             success: ->
               $("#version-uuid").html("Successful update, now refreshing app...")
@@ -626,7 +626,7 @@ class Router extends Backbone.Router
             error: (error) ->
               $("#version-uuid").html("Error updating: #{error}")
           ,
-            doc_ids: ["_design/update"]
+            doc_ids: ["_design/tangerine"]
         )
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true

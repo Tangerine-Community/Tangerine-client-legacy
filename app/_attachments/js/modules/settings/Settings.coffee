@@ -13,10 +13,13 @@ class Settings extends Backbone.Model
     groupHost = @get "groupHost"
     groupName = @get "groupName"
 
+    update     = @config.get "update"
+
     local      = @config.get "local"
     port       = @config.get "port"
     designDoc  = @config.get "designDoc"
     prefix     = @config.get "groupDBPrefix"
+
     subnetBase = @config.get("subnet").base
 
     @location =
@@ -26,6 +29,9 @@ class Settings extends Backbone.Model
       group:
         url   : "#{groupHost}:#{port}/"
         db    : "#{groupHost}:#{port}/#{prefix}#{groupName}/"
+      update:
+        url   : "http://#{update.login}@#{update.host}:#{port}/"
+        db    : "http://#{update.login}@#{update.host}:#{port}/#{update.dbName}/"
       subnet : 
         url : ("http://#{subnetBase}.#{x}:#{port}/"                 for x in [0..255])
         db  : ("http://#{subnetBase}.#{x}:#{port}/#{local.dbName}/" for x in [0..255])
