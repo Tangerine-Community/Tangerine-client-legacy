@@ -62,8 +62,7 @@ post "/production/:group" do
   #
 
   auth_response = RestClient.post "http://localhost/robbert.php?", :action=> "am_admin", :group => params[:group], :user => params[:user]
-
-  halt_error(403, "Sorry, you have to be an admin within the group to make an APK.") if JSON.parse(auth_response.body)[:message] == "no"
+  halt_error(403, "Sorry, you have to be an admin within the group to make an APK.") if JSON.parse(auth_response.body)["message"] == "no"
 
   #
   # Make APK, place it in token-directory for download
@@ -96,7 +95,7 @@ post "/production/:group" do
       apk_f = File.new("tangerine.apk", "w")
       apk_f.write(apk_response.body)
     rescue
-      log.error "Couldn't update tangerine.apk from github."
+      $logger.error "Couldn't update tangerine.apk from github."
       halt_error 500, "Server error. Failed to update blank."
     ensure
       aok_f.close
@@ -104,9 +103,9 @@ post "/production/:group" do
   end
 
   # replicate group to new local here
-  replicate_response = RestClient.post("http://admin:password@localhost:5984/_replicate", {
+  replicate_response = RestClient.post("http://tree:tree-password@localhost:5984/_replicate", {
     :source => "group-#{params[:group]}", 
-    :target => "copied-group-#{params[:group]}",
+    :target => "copied-group-#{params[:group]}", # "copied-" because debugging on same server 
     :create_target => true
   }.to_json, :content_type => :json )
 
@@ -114,40 +113,47 @@ post "/production/:group" do
 
   begin
     # clear it out if it's there
-    blank_dir = File.join( Dir.pwd, "blank" )
+    blank_dir = File.join( Dir.pwd, "tangerine" )
     `rm -rf #{blank_dir}`
 
     tangerine_apk = File.join( Dir.pwd, "tangerine.zip" )
 
-    #
-    `unzip #{tangerine_apk} -d blank`
+    `unzip #{tangerine_apk}`
     db_file = "copied-group-#{params[:group]}.couch"
     group_db = File.join( $couch_db_path, db_file )
 
     # standardize all groups DBs here as tangerine.couch
-    target_dir = File.join( Dir.pwd, "blank", "assets" )
+    target_dir = File.join( Dir.pwd, "tangerine", "assets" )
     `cp #{group_db} #{target_dir}`
-    `mv #{db_file} tangerine.couch`
+
+    old_database = File.join target_dir, db_file
+    new_database = File.join target_dir, "tangerine.couch"
+
+    "mv #{old_database} #{new_database}"
 
   rescue Exception => e
     $logger.error "Could not copy #{params[:group]}'s database into assets. #{e}"
-    halt_error 500, "Failed to prepare database."
+    halt_error 500, "Failed to copy database."
   end
 
   
   # zip APK and place it in token download directory
   begin
-    mkdir(token)
-    puts "token"
-    puts token
-    new_zip = File.join( "..", "apks", token, "tangerine.apk" )
-    puts  new_zip
-    `cd blank`
-    `unzip -r #{new_zip} *`
-    `cd ..`
-    `rm -rf blank/`
+    parent_dir = File.join( Dir.pwd.split("/")[0..-2] )
+    ensure_dir parent_dir, "apks", token
+
+    groupstamp_location = File.join( parent_dir, "apks", token, params[:group] )
+    `touch #{groupstamp_location}`
+
+    new_zip = File.join( parent_dir, "apks", token, "tangerine.apk" )
+    tangerine_filling = File.join Dir.pwd, "tangerine"
+
+    Dir.chdir(tangerine_filling){
+      `zip -r #{new_zip} *`
+    }
+    `rm -rf #{tangerine_filling}`
   rescue Exception => e
-    log.error "Could not copy #{params[:group]}'s database into assets. #{e}"
+    $logger.error "Could not copy #{params[:group]}'s database into assets. #{e}"
     halt_error 500, "Failed to prepare database."
   end
   
@@ -169,7 +175,7 @@ get "/apk/:token" do
       :filename    => File.basename(apk_name)
     )
   else
-    log.warning "(404) params[:token]."
+    $logger.warning "(404) params[:token]."
     halt_error 404, "No APK with that name."
   end
 
@@ -179,6 +185,16 @@ end
 #
 # Helper functions
 #
+
+def ensure_dir( *dirs )
+  path = ""
+  for current in dirs
+    path = File.join path, current
+    Dir::mkdir path if not File.directory? path
+  end
+rescue Exception => e
+  $logger.error "Couldn't make directory. #{e}"
+end
 
 def andify( nouns )
   #last = nouns.pop()
@@ -200,10 +216,10 @@ end
 
 def mkdir(dir)
   name = File.join Dir::pwd, dir
-  return nil if FileTest::directory? name
+  return nil if File.directory? name
   Dir::mkdir(name)
 rescue Exception => e
-  log.error "Couldn't make directory. #{e}"
+  $logger.error "Couldn't make directory. #{e}"
 end
 
 def halt_error(code, message)
