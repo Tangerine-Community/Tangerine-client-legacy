@@ -83,8 +83,10 @@ class User extends Backbone.Model
         @roles = []
         @clear()
         @trigger "logout"
-        window.location = Tangerine.settings.urlIndex "tangerine"
-        Tangerine.router.navigate "login", true
+        if Tangerine.settings.context == "server"
+          window.location = Tangerine.settings.urlIndex "tangerine"
+        else
+          Tangerine.router.navigate "login", true
 
   clearAttempt: ->
     @temp = ""
@@ -145,8 +147,11 @@ class User extends Backbone.Model
             # We should not have to log back in here.
             # After Robbert creates a group, THIS session ends.
             # Robbert does not interact with the session.
-            @login @get("name"), auth_p, success:callback
-            @trigger "group-join" if response.status == "success"
+            if response.status == "success"
+              @login @get("name"), auth_p, success:callback
+              @trigger "group-join" 
+            else
+              Utils.midAlert status.message
           error : (error) =>
             Utils.midAlert "Error creating group\n\n#{error[1]}\n#{error[2]}"
             @fetch success:callback

@@ -127,8 +127,11 @@ User = (function(_super) {
         _this.roles = [];
         _this.clear();
         _this.trigger("logout");
-        window.location = Tangerine.settings.urlIndex("tangerine");
-        return Tangerine.router.navigate("login", true);
+        if (Tangerine.settings.context === "server") {
+          return window.location = Tangerine.settings.urlIndex("tangerine");
+        } else {
+          return Tangerine.router.navigate("login", true);
+        }
       }
     });
   };
@@ -209,10 +212,14 @@ User = (function(_super) {
         auth_u: Tangerine.user.get("name"),
         auth_p: auth_p,
         success: function(response) {
-          _this.login(_this.get("name"), auth_p, {
-            success: callback
-          });
-          if (response.status === "success") return _this.trigger("group-join");
+          if (response.status === "success") {
+            _this.login(_this.get("name"), auth_p, {
+              success: callback
+            });
+            return _this.trigger("group-join");
+          } else {
+            return Utils.midAlert(status.message);
+          }
         },
         error: function(error) {
           Utils.midAlert("Error creating group\n\n" + error[1] + "\n" + error[2]);
