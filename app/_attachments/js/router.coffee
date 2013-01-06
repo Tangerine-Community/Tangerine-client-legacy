@@ -55,7 +55,10 @@ class Router extends Backbone.Router
 
   landing: ->
     if Tangerine.settings.get("context") == "server"
-      Tangerine.router.navigate "groups", true
+      if ~String(window.location.href).indexOf("tangerine/_design") # in main group?
+        Tangerine.router.navigate "groups", true
+      else
+        Tangerine.router.navigate "assessments", true
     else if Tangerine.settings.get("context") == "mobile"
       Tangerine.router.navigate "assessments", true
     else if Tangerine.settings.get("context") == "class"

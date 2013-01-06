@@ -49,7 +49,11 @@ Router = (function(_super) {
 
   Router.prototype.landing = function() {
     if (Tangerine.settings.get("context") === "server") {
-      return Tangerine.router.navigate("groups", true);
+      if (~String(window.location.href).indexOf("tangerine/_design")) {
+        return Tangerine.router.navigate("groups", true);
+      } else {
+        return Tangerine.router.navigate("assessments", true);
+      }
     } else if (Tangerine.settings.get("context") === "mobile") {
       return Tangerine.router.navigate("assessments", true);
     } else if (Tangerine.settings.get("context") === "class") {
