@@ -10,18 +10,25 @@ class User extends Backbone.Model
     @name = null
 
   signup: ( name, pass ) ->
-    $.ajax
-      url         : Tangerine.config.get("robbert")
-      type        : "POST"
-      dataType    : "json"
-      data :
-        action : "new_user"
-        auth_u : name
-        auth_p : pass
-      success: ( data ) =>
-        if @intent == "login"
-          @intent = "retry_login"
-          @login name, pass
+    if Tangerine.settings.get("context") == "server"
+      $.ajax
+        url         : Tangerine.config.get("robbert")
+        type        : "POST"
+        dataType    : "json"
+        data :
+          action : "new_user"
+          auth_u : name
+          auth_p : pass
+        success: ( data ) =>
+          if @intent == "login"
+            @intent = "retry_login"
+            @login name, pass
+    else
+      $.couch.signup name: name, pass,
+        success: ( data ) =>
+          if @intent == "login"
+            @intent = "retry_login"
+            @login name, pass
 
 
   login: ( name, pass, callbacks = {}) =>

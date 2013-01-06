@@ -25,22 +25,35 @@ User = (function(_super) {
 
   User.prototype.signup = function(name, pass) {
     var _this = this;
-    return $.ajax({
-      url: Tangerine.config.get("robbert"),
-      type: "POST",
-      dataType: "json",
-      data: {
-        action: "new_user",
-        auth_u: name,
-        auth_p: pass
-      },
-      success: function(data) {
-        if (_this.intent === "login") {
-          _this.intent = "retry_login";
-          return _this.login(name, pass);
+    if (Tangerine.settings.get("context") === "server") {
+      return $.ajax({
+        url: Tangerine.config.get("robbert"),
+        type: "POST",
+        dataType: "json",
+        data: {
+          action: "new_user",
+          auth_u: name,
+          auth_p: pass
+        },
+        success: function(data) {
+          if (_this.intent === "login") {
+            _this.intent = "retry_login";
+            return _this.login(name, pass);
+          }
         }
-      }
-    });
+      });
+    } else {
+      return $.couch.signup({
+        name: name
+      }, pass, {
+        success: function(data) {
+          if (_this.intent === "login") {
+            _this.intent = "retry_login";
+            return _this.login(name, pass);
+          }
+        }
+      });
+    }
   };
 
   User.prototype.login = function(name, pass, callbacks) {
