@@ -2,7 +2,7 @@ var Tangerine;
 
 Tangerine = {
   "db_name": window.location.pathname.split("/")[1],
-  "design_doc": "ojai"
+  "design_doc": "tangerine"
 };
 
 Tangerine.$db = $.couch.db(Tangerine.db_name);
@@ -23,9 +23,11 @@ Tangerine.config = new Config({
 
 Tangerine.config.fetch({
   error: function() {
+    console.log("could not fetch configuration");
     return console.log(arguments);
   },
   success: function() {
+    console.log("fetched configuration doc");
     Tangerine.settings = new Settings({
       "_id": "settings"
     });
@@ -58,20 +60,86 @@ Tangerine.onSettingsLoad = function() {
   });
   return Tangerine.templates.fetch({
     success: function() {
-      return $(function() {
-        window.vm = new ViewManager();
-        Tangerine.router = new Router();
-        Tangerine.user = new User();
-        Tangerine.nav = new NavigationView({
-          user: Tangerine.user,
-          router: Tangerine.router
-        });
-        return Tangerine.user.sessionRefresh({
-          success: function() {
-            return Backbone.history.start();
-          }
+      return Tangerine.ensureAdmin(function() {
+        return $(function() {
+          window.vm = new ViewManager();
+          Tangerine.router = new Router();
+          Tangerine.user = new User();
+          Tangerine.nav = new NavigationView({
+            user: Tangerine.user,
+            router: Tangerine.router
+          });
+          return Tangerine.user.sessionRefresh({
+            success: function() {
+              return Backbone.history.start();
+            }
+          });
         });
       });
     }
   });
+};
+
+Tangerine.ensureAdmin = function(callback) {
+  if (Tangerine.settings.get("context") === "mobile") {
+    return $.couch.login({
+      name: "admin",
+      password: "password",
+      success: function() {
+        var _this = this;
+        console.log("logged in as admin");
+        return $.couch.userDb(function(uDB) {
+          return uDB.openDoc("org.couchdb.user:admin", {
+            success: function() {
+              console.log("doc exists, great, I'm done");
+              return $.couch.logout({
+                success: function() {
+                  console.log("logging myself out now");
+                  return callback();
+                },
+                error: function() {
+                  console.log("Error logging out admin user");
+                  return console.log(arguments);
+                }
+              });
+            },
+            error: function() {
+              var _this = this;
+              console.log("there was no doc, trying to make one");
+              return $.ajax({
+                url: "/_users/org.couchdb.user:admin",
+                type: "PUT",
+                dataType: "json",
+                data: JSON.stringify({
+                  name: "admin",
+                  password: null,
+                  roles: [],
+                  type: "user",
+                  _id: "org.couchdb.user:admin"
+                }),
+                success: function(data) {
+                  console.log("created new user doc, great");
+                  return $.couch.logout({
+                    success: function() {
+                      return callback();
+                    },
+                    error: function() {
+                      console.log("Error logging out admin user");
+                      return console.log(arguments);
+                    }
+                  });
+                },
+                error: function() {
+                  console.log("Error ensuring admin _user doc");
+                  return console.log(arguments);
+                }
+              });
+            }
+          });
+        });
+      }
+    });
+  } else {
+    return callback();
+  }
 };
