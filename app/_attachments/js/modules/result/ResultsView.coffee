@@ -30,8 +30,8 @@ class ResultsView extends Backbone.View
   cloud: ->
     if @available.cloud.ok
       $.couch.replicate(
-        Tangerine.settings.urlDB "local",
-        Tangerine.settings.urlDB "group",
+        Tangerine.settings.urlDB("local"),
+        Tangerine.settings.urlDB("group"),
           success:      =>
             @$el.find(".status").find(".info_box").html "Results synced to cloud successfully"
           error: (a, b) =>
@@ -49,8 +49,8 @@ class ResultsView extends Backbone.View
       for ip in @available.tablets.ips
         do (ip) =>
           $.couch.replicate(
-            Tangerine.settings.urlDB "local",
-            Tangerine.settings.urlSubnet ip,
+            Tangerine.settings.urlDB("local"),
+            Tangerine.settings.urlSubnet(ip),
               success:      =>
                 @$el.find(".status").find(".info_box").html "Results synced to #{@available.tablets.okCount} successfully"
               error: (a, b) =>
@@ -71,7 +71,7 @@ class ResultsView extends Backbone.View
       filename = @assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
       # point browser to file
       # do it in a new window because otherwise it will cancel the fetching/updating of the file
-      csvLocation = Tangerine.settings.urlShow "local", "csv/Tangerine-#{@assessment.id.substr(-5, 5)}.csv?filename=#{filename}"
+      csvLocation = Tangerine.settings.urlShow("local", "csv/Tangerine-#{@assessment.id.substr(-5, 5)}.csv?filename=#{filename}")
       $button = @$el.find "button.csv"
       $button.after "<a href='#{csvLocation}' class='command'>Download CSV</a>"
       $button.remove()
@@ -95,7 +95,7 @@ class ResultsView extends Backbone.View
     # Detect Cloud
     $.ajax
       dataType: "jsonp"
-      url: Tangerine.settings.urlHost "group"
+      url: Tangerine.settings.urlHost("group")
       success: (a, b) =>
         @available.cloud.ok = true
       error: (a, b) =>
@@ -107,7 +107,7 @@ class ResultsView extends Backbone.View
   detectTablets: =>
     for local in [0..255]
       do (local) =>
-        ip = Tangerine.settings.subnetIP local
+        ip = Tangerine.settings.subnetIP(local)
         $.ajax
           dataType: "jsonp"
           contentType: "application/json;charset=utf-8",
@@ -226,7 +226,7 @@ class ResultsView extends Backbone.View
       return
 
     $.ajax 
-      url: Tangerine.settings.urlView "local", "resultSummaryByAssessmentId"
+      url: Tangerine.settings.urlView("local", "resultSummaryByAssessmentId")
       type: "POST"
       dataType: "json"
       contentType: "application/json"

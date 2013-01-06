@@ -53,7 +53,7 @@ ResultsView = (function(_super) {
   ResultsView.prototype.cloud = function() {
     var _this = this;
     if (this.available.cloud.ok) {
-      $.couch.replicate(Tangerine.settings.urlDB("local", Tangerine.settings.urlDB("group", {
+      $.couch.replicate(Tangerine.settings.urlDB("local"), Tangerine.settings.urlDB("group"), {
         success: function() {
           return _this.$el.find(".status").find(".info_box").html("Results synced to cloud successfully");
         },
@@ -62,7 +62,7 @@ ResultsView = (function(_super) {
         }
       }, {
         doc_ids: this.docList
-      })));
+      });
     } else {
       Utils.midAlert("Cannot detect cloud");
     }
@@ -75,7 +75,7 @@ ResultsView = (function(_super) {
     if (this.available.tablets.okCount > 0) {
       _ref = this.available.tablets.ips;
       _fn = function(ip) {
-        return $.couch.replicate(Tangerine.settings.urlDB("local", Tangerine.settings.urlSubnet(ip, {
+        return $.couch.replicate(Tangerine.settings.urlDB("local"), Tangerine.settings.urlSubnet(ip), {
           success: function() {
             return _this.$el.find(".status").find(".info_box").html("Results synced to " + _this.available.tablets.okCount + " successfully");
           },
@@ -84,7 +84,7 @@ ResultsView = (function(_super) {
           }
         }, {
           doc_ids: _this.docList
-        })));
+        });
       };
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         ip = _ref[_i];

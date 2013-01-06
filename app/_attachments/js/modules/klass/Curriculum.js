@@ -34,7 +34,7 @@ Curriculum = (function(_super) {
           datum = _ref[_i];
           docList.push(datum.id);
         }
-        return $.couch.replicate(Tangerine.settings.urlDB("group", Tangerine.settings.urlDB("local", {
+        return $.couch.replicate(Tangerine.settings.urlDB("group"), Tangerine.settings.urlDB("local"), {
           success: function() {
             return _this.trigger("status", "import success");
           },
@@ -43,7 +43,7 @@ Curriculum = (function(_super) {
           }
         }, {
           doc_ids: docList
-        })));
+        });
       }
     });
     return false;

@@ -15,8 +15,8 @@ class Curriculum extends Backbone.Model
         for datum in data.rows
           docList.push datum.id
         $.couch.replicate(
-          Tangerine.settings.urlDB "group",
-          Tangerine.settings.urlDB "local",
+          Tangerine.settings.urlDB("group"),
+          Tangerine.settings.urlDB("local"),
             success:      => @trigger "status", "import success"
             error: (a, b) => @trigger "status", "import error", "#{a} #{b}"
           ,

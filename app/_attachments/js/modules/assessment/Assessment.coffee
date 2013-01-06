@@ -9,7 +9,7 @@ class Assessment extends Backbone.Model
     # @getResultCount()
 
   getResultCount: =>
-    $.ajax Tangerine.settings.urlView "local", "resultCount"
+    $.ajax Tangerine.settings.urlView("local", "resultCount")
       type: "GET"
       dataType: "json"
       data: 
@@ -37,10 +37,11 @@ class Assessment extends Backbone.Model
 
   updateFromServer: ( dKey = @id.substr(-5, 5) ) =>
 
+    # split to handle multiple dkeys
     dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g," ").split(/\s+/))
 
     @trigger "status", "import lookup"
-    $.ajax Tangerine.settings.urlView("group", "dKey"),
+    $.ajax Tangerine.settings.urlView("group", "byDKey"),
       type: "POST"
       dataType: "jsonp"
       data: keys: dKeys
@@ -48,11 +49,11 @@ class Assessment extends Backbone.Model
         docList = []
         for datum in data.rows
           docList.push datum.id
-        $.couch.replicate(
-          Tangerine.settings.urlDB "group",
-          Tangerine.settings.urlDB "local",
+        $.couch.replicate( 
+          Tangerine.settings.urlDB("group"), 
+          Tangerine.settings.urlDB("local"),
             success:      => @trigger "status", "import success"
-            error: (a, b) => @trigger "status", "import error", "#{a} #{b}"
+            error: (a, b) => console.log arguments;@trigger "status", "import error", "#{a} #{b}"
           ,
             doc_ids: docList
         )

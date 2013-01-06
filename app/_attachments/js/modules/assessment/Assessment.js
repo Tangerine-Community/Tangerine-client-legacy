@@ -23,7 +23,7 @@ Assessment = (function(_super) {
 
   Assessment.prototype.getResultCount = function() {
     var _this = this;
-    return $.ajax(Tangerine.settings.urlView("local", "resultCount", {
+    return $.ajax(Tangerine.settings.urlView("local", "resultCount")({
       type: "GET",
       dataType: "json",
       data: {
@@ -63,7 +63,7 @@ Assessment = (function(_super) {
     if (dKey == null) dKey = this.id.substr(-5, 5);
     dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/));
     this.trigger("status", "import lookup");
-    $.ajax(Tangerine.settings.urlView("group", "dKey"), {
+    $.ajax(Tangerine.settings.urlView("group", "byDKey"), {
       type: "POST",
       dataType: "jsonp",
       data: {
@@ -77,16 +77,17 @@ Assessment = (function(_super) {
           datum = _ref[_i];
           docList.push(datum.id);
         }
-        return $.couch.replicate(Tangerine.settings.urlDB("group", Tangerine.settings.urlDB("local", {
+        return $.couch.replicate(Tangerine.settings.urlDB("group"), Tangerine.settings.urlDB("local"), {
           success: function() {
             return _this.trigger("status", "import success");
           },
           error: function(a, b) {
+            console.log(arguments);
             return _this.trigger("status", "import error", "" + a + " " + b);
           }
         }, {
           doc_ids: docList
-        })));
+        });
       }
     });
     return false;
