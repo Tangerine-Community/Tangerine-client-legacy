@@ -23,16 +23,22 @@ Settings = (function(_super) {
   };
 
   Settings.prototype.update = function() {
-    var designDoc, groupDDoc, groupHost, groupName, local, port, prefix, subnetBase, update, x;
+    var designDoc, groupDDoc, groupHost, groupName, local, port, prefix, splitGroup, subnetBase, upPass, upUser, update, x;
     groupHost = this.get("groupHost");
     groupName = this.get("groupName");
     groupDDoc = this.get("groupDDoc");
+    upUser = "uploader-" + groupName;
+    upPass = this.get("upPass");
     update = this.config.get("update");
     local = this.config.get("local");
     port = this.config.get("port");
     designDoc = this.config.get("designDoc");
     prefix = this.config.get("groupDBPrefix");
     subnetBase = this.config.get("subnet").base;
+    if (Tangerine.settings.get("context") === "mobile") {
+      splitGroup = groupHost.split("://");
+      groupHost = "" + splitGroup[0] + "://" + upUser + ":" + upPass + "@" + splitGroup[1];
+    }
     this.location = {
       local: {
         url: "" + local.host + ":" + port + "/",
@@ -112,30 +118,34 @@ Settings = (function(_super) {
   };
 
   Settings.prototype.urlDB = function(location) {
-    return "" + this.location[location].db;
+    if (location === "local") {
+      return ("" + this.location[location].db).slice(1, -1);
+    } else {
+      return ("" + this.location[location].db).slice(0, -1);
+    }
   };
 
   Settings.prototype.urlView = function(location, view) {
-    if (location === "group") {
-      return "" + (this.urlDB(location)) + this.couch.view + view;
+    if (location === "group" || Tangerine.settings.get("context") === "server") {
+      return "" + this.location[location].db + this.groupCouch.view + view;
     } else {
-      return "" + (this.urlDB(location)) + this.groupCouch.view + view;
+      return "" + this.location[location].db + this.couch.view + view;
     }
   };
 
   Settings.prototype.urlList = function(location, list) {
-    if (location === "group") {
-      return "" + (this.urlDB(location)) + this.couch.list + list;
+    if (location === "group" || Tangerine.settings.get("context") === "server") {
+      return "" + this.location[location].db + this.groupCouch.list + list;
     } else {
-      return "" + (this.urlDB(location)) + this.groupCouch.list + list;
+      return "" + this.location[location].db + this.couch.list + list;
     }
   };
 
   Settings.prototype.urlShow = function(location, show) {
-    if (location === "group") {
-      return "" + (this.urlDB(location)) + this.couch.show + show;
+    if (location === "group" || Tangerine.settings.get("context") === "server") {
+      return "" + this.location[location].db + this.groupCouch.show + show;
     } else {
-      return "" + (this.urlDB(location)) + this.groupCouch.show + show;
+      return "" + this.location[location].db + this.couch.show + show;
     }
   };
 

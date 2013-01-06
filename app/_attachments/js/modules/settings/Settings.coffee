@@ -14,6 +14,9 @@ class Settings extends Backbone.Model
     groupName = @get "groupName"
     groupDDoc = @get "groupDDoc"
 
+    upUser = "uploader-#{groupName}"
+    upPass = @get "upPass"
+
     update     = @config.get "update"
 
     local      = @config.get "local"
@@ -23,6 +26,11 @@ class Settings extends Backbone.Model
     prefix     = @config.get "groupDBPrefix"
 
     subnetBase = @config.get("subnet").base
+
+
+    if Tangerine.settings.get("context") == "mobile"
+      splitGroup = groupHost.split("://")
+      groupHost = "#{splitGroup[0]}://#{upUser}:#{upPass}@#{splitGroup[1]}"
 
     @location =
       local:
@@ -61,26 +69,33 @@ class Settings extends Backbone.Model
     hash      = if hash? then "##{hash}" else ""
     return "#{groupHost}:#{port}/#{prefix}#{groupName}/#{@couch.index}#{hash}"
 
-  urlHost  : ( location )       -> "#{@location[location].url}"
-  urlDB    : ( location )       -> "#{@location[location].db}"
+  
+  urlHost  : ( location ) -> "#{@location[location].url}"
+  
+  urlDB    : ( location ) -> 
+    if location == "local"
+      "#{@location[location].db}".slice(1,-1)
+    else
+      "#{@location[location].db}".slice(0, -1)
+
 
   urlView  : ( location, view ) ->
-    if location == "group"
-      "#{@urlDB(location)}#{@couch.view}#{view}"
+    if location == "group" || Tangerine.settings.get("context") == "server"
+      "#{@location[location].db}#{@groupCouch.view}#{view}"
     else
-      "#{@urlDB(location)}#{@groupCouch.view}#{view}"
+      "#{@location[location].db}#{@couch.view}#{view}"
 
   urlList  : ( location, list ) ->
-    if location == "group"
-      "#{@urlDB(location)}#{@couch.list}#{list}"
+    if location == "group" || Tangerine.settings.get("context") == "server"
+      "#{@location[location].db}#{@groupCouch.list}#{list}"
     else
-      "#{@urlDB(location)}#{@groupCouch.list}#{list}"
+      "#{@location[location].db}#{@couch.list}#{list}"
 
   urlShow  : ( location, show ) ->
-    if location == "group"
-      "#{@urlDB(location)}#{@couch.show}#{show}"
+    if location == "group" || Tangerine.settings.get("context") == "server"
+      "#{@location[location].db}#{@groupCouch.show}#{show}"
     else
-      "#{@urlDB(location)}#{@groupCouch.show}#{show}"
+      "#{@location[location].db}#{@couch.show}#{show}"
   
   # these two are a little weird. I feel like subnetAddress should be a class with properties IP, URL and index
   urlSubnet: ( ip ) -> 
