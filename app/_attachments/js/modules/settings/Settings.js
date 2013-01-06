@@ -23,9 +23,10 @@ Settings = (function(_super) {
   };
 
   Settings.prototype.update = function() {
-    var designDoc, groupHost, groupName, local, port, prefix, subnetBase, update, x;
+    var designDoc, groupDDoc, groupHost, groupName, local, port, prefix, subnetBase, update, x;
     groupHost = this.get("groupHost");
     groupName = this.get("groupName");
+    groupDDoc = this.get("groupDDoc");
     update = this.config.get("update");
     local = this.config.get("local");
     port = this.config.get("port");
@@ -82,11 +83,17 @@ Settings = (function(_super) {
         })()
       }
     };
-    return this.couch = {
+    this.couch = {
       view: "_design/" + designDoc + "/_view/",
       show: "_design/" + designDoc + "/_show/",
       list: "_design/" + designDoc + "/_list/",
       index: "_design/" + designDoc + "/index.html"
+    };
+    return this.groupCouch = {
+      view: "_design/" + groupDDoc + "/_view/",
+      show: "_design/" + groupDDoc + "/_show/",
+      list: "_design/" + groupDDoc + "/_list/",
+      index: "_design/" + groupDDoc + "/index.html"
     };
   };
 
@@ -109,15 +116,27 @@ Settings = (function(_super) {
   };
 
   Settings.prototype.urlView = function(location, view) {
-    return "" + this.location[location].db + this.couch.view + view;
+    if (location === "group") {
+      return "" + (this.urlDB(location)) + this.couch.view + view;
+    } else {
+      return "" + (this.urlDB(location)) + this.groupCouch.view + view;
+    }
   };
 
   Settings.prototype.urlList = function(location, list) {
-    return "" + this.location[location].db + this.couch.show + list;
+    if (location === "group") {
+      return "" + (this.urlDB(location)) + this.couch.list + list;
+    } else {
+      return "" + (this.urlDB(location)) + this.groupCouch.list + list;
+    }
   };
 
   Settings.prototype.urlShow = function(location, show) {
-    return "" + this.location[location].db + this.couch.list + show;
+    if (location === "group") {
+      return "" + (this.urlDB(location)) + this.couch.show + show;
+    } else {
+      return "" + (this.urlDB(location)) + this.groupCouch.show + show;
+    }
   };
 
   Settings.prototype.urlSubnet = function(ip) {

@@ -12,12 +12,14 @@ class Settings extends Backbone.Model
   update: =>
     groupHost = @get "groupHost"
     groupName = @get "groupName"
+    groupDDoc = @get "groupDDoc"
 
     update     = @config.get "update"
 
     local      = @config.get "local"
     port       = @config.get "port"
     designDoc  = @config.get "designDoc"
+
     prefix     = @config.get "groupDBPrefix"
 
     subnetBase = @config.get("subnet").base
@@ -45,6 +47,12 @@ class Settings extends Backbone.Model
       list  : "_design/#{designDoc}/_list/"
       index : "_design/#{designDoc}/index.html"
 
+    @groupCouch = 
+      view  : "_design/#{groupDDoc}/_view/"
+      show  : "_design/#{groupDDoc}/_show/"
+      list  : "_design/#{groupDDoc}/_list/"
+      index : "_design/#{groupDDoc}/index.html"
+
 
   urlIndex : ( groupName, hash = null ) ->
     groupHost = @get "groupHost"
@@ -56,9 +64,23 @@ class Settings extends Backbone.Model
   urlHost  : ( location )       -> "#{@location[location].url}"
   urlDB    : ( location )       -> "#{@location[location].db}"
 
-  urlView  : ( location, view ) -> "#{@location[location].db}#{@couch.view}#{view}"
-  urlList  : ( location, list ) -> "#{@location[location].db}#{@couch.show}#{list}"
-  urlShow  : ( location, show ) -> "#{@location[location].db}#{@couch.list}#{show}"
+  urlView  : ( location, view ) ->
+    if location == "group"
+      "#{@urlDB(location)}#{@couch.view}#{view}"
+    else
+      "#{@urlDB(location)}#{@groupCouch.view}#{view}"
+
+  urlList  : ( location, list ) ->
+    if location == "group"
+      "#{@urlDB(location)}#{@couch.list}#{list}"
+    else
+      "#{@urlDB(location)}#{@groupCouch.list}#{list}"
+
+  urlShow  : ( location, show ) ->
+    if location == "group"
+      "#{@urlDB(location)}#{@couch.show}#{show}"
+    else
+      "#{@urlDB(location)}#{@groupCouch.show}#{show}"
   
   # these two are a little weird. I feel like subnetAddress should be a class with properties IP, URL and index
   urlSubnet: ( ip ) -> 

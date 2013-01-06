@@ -20,7 +20,7 @@
 
 	"robbert" : "http://tangerine.xen.pgrmr.com:82/",
 	"tree"    : "http://tangerine.xen.pgrmr.com:81/",
-	"designDoc"       : "ojai",
+	"designDoc"       : "tangerine",
 	"port"            : 5984,
 	"groupDBPrefix"   : "group-",
 
@@ -59,9 +59,10 @@
 		{
 			"context" : "server",
 			"language"         : "en",
-			"groupName"        : "tangerine",
-			"groupHost"        : "http://localhost",
-			"upPass"           : "pass",
+			"groupName"        : "rti_philippines_2013",
+			"groupHost"        : "http://tangerine.iriscouch.com",
+			"groupDDoc"        : "ojai",
+			"upPass"           : "uploaderpassword",
 			"log"              : ["app"]
 		}
 	},
