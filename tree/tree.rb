@@ -139,6 +139,7 @@ post "/production/:group" do
   
   # zip APK and place it in token download directory
   begin
+
     parent_dir = File.join( Dir.pwd.split("/")[0..-2] )
     ensure_dir parent_dir, "apks", token
 
@@ -166,17 +167,19 @@ get "/apk/:token" do
 
   content_type :json
 
-  apk_name = "tangerine.apk"
-  apk_path = File.join('apks', params[:token], apk_name)
+  parent_dir = File.join( Dir.pwd.split("/")[0..-2] )
 
-  if File.directory? apk_directory
-    send_file( apk_name ,
+  apk_name = "tangerine.apk"
+  apk_path = File.join( parent_dir, 'apks', params[:token], apk_name)
+
+  if File.exist? apk_path
+    send_file( apk_path ,
       :disposition => 'attachment', 
       :filename    => File.basename(apk_name)
     )
   else
-    $logger.warning "(404) params[:token]."
-    halt_error 404, "No APK with that name."
+    $logger.warn "(404) params[:token]."
+    halt_error 404, "No APK found, invalid token."
   end
 
 end
