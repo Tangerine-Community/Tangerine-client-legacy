@@ -3,7 +3,7 @@ class Subtest extends Backbone.Model
   url: "subtest"
 
   initialize: (options) ->
-    @templates = Tangerine.templates.prototypeTemplates
+    @templates = Tangerine.templates.get("prototypeTemplates")
 
     # guarentee survey pseudo model for observations
     if @has("surveyAttributes")

@@ -57,7 +57,7 @@ SurveyEditView = (function(_super) {
   SurveyEditView.prototype.addQuestion = function(event) {
     var newAttributes, nq;
     if (event.type !== "click" && event.which !== 13) return true;
-    newAttributes = $.extend(Tangerine.templates.questionTemplate, {
+    newAttributes = $.extend(Tangerine.templates.get("questionTemplate"), {
       subtestId: this.model.id,
       assessmentId: this.model.get("assessmentId"),
       id: Utils.guid(),
@@ -77,7 +77,7 @@ SurveyEditView = (function(_super) {
   };
 
   SurveyEditView.prototype.save = function(options) {
-    var emptyOptions, i, notSaved, plural, question, requiresGrid, _has, _len, _question, _ref, _require;
+    var emptyOptions, i, notSaved, plural, question, requiresGrid, _has, _len, _question, _ref, _ref2, _require;
     options.questionSave = options.questionSave ? options.questionSave : true;
     this.model.set({
       "gridLinkId": this.$el.find("#link_select option:selected").val(),
@@ -89,7 +89,8 @@ SurveyEditView = (function(_super) {
     _ref = this.model.questions.models;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       question = _ref[i];
-      if (question.get("type") !== "open" && question.get("options").length === 0) {
+      console.log(question);
+      if (question.get("type") !== "open" && ((_ref2 = question.get("options")) != null ? _ref2.length : void 0) === 0) {
         emptyOptions.push(i + 1);
         if (options.questionSave) {
           if (!question.save()) notSaved.push(i);

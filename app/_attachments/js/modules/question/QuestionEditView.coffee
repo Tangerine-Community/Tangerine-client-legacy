@@ -37,8 +37,9 @@ class QuestionEditView extends Backbone.View
 
   templateFill: (event) ->
     index = $(event.target).find("option:selected").attr('data-index')
-    if Tangerine.templates.optionTemplates[index]?
-      @question.set "options", Tangerine.templates.optionTemplates[index].options
+    optionTemplates = Tangerine.templates.get("optionTemplates")
+    if optionTemplates[index]?
+      @question.set "options", optionTemplates[index].options
       @$el.find('#option_list_wrapper').html @getOptionList()
     return false
 
@@ -204,7 +205,8 @@ class QuestionEditView extends Backbone.View
             <option selected='selected'>Select template</option>
         "
       # ok to refernce things by index if not an object
-      for option, i in Tangerine.templates.optionTemplates
+      optionTemplates = Tangerine.templates.get("optionTemplates")
+      for option, i in optionTemplates
         optionHTML += "<option data-index='#{i}' class='template_option'>#{option.name}</option>"
 
       optionHTML += "</select>

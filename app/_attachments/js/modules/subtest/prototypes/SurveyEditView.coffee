@@ -32,7 +32,7 @@ class SurveyEditView extends Backbone.View
     if event.type != "click" && event.which != 13
       return true
     
-    newAttributes = $.extend Tangerine.templates.questionTemplate,
+    newAttributes = $.extend Tangerine.templates.get("questionTemplate"),
       subtestId    : @model.id
       assessmentId : @model.get "assessmentId"
       id           : Utils.guid()
@@ -64,7 +64,8 @@ class SurveyEditView extends Backbone.View
 
     # check for "errors"
     for question, i in @model.questions.models
-      if question.get("type") != "open" && question.get("options").length == 0
+      console.log question
+      if question.get("type") != "open" && question.get("options")?.length == 0
         emptyOptions.push i + 1
       
         if options.questionSave

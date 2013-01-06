@@ -13,7 +13,7 @@ Subtest = (function(_super) {
   Subtest.prototype.url = "subtest";
 
   Subtest.prototype.initialize = function(options) {
-    this.templates = Tangerine.templates.prototypeTemplates;
+    this.templates = Tangerine.templates.get("prototypeTemplates");
     if (this.has("surveyAttributes")) {
       if (this.get("assessmentId") !== this.get("surveyAttributes").assessmentId) {
         return this.save("surveyAttributes", {

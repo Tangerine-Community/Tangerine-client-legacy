@@ -200,7 +200,7 @@ CurriculumView = (function(_super) {
   };
 
   CurriculumView.prototype.newSubtest = function() {
-    var guid, subtest, subtestAttributes;
+    var guid, protoTemps, subtest, subtestAttributes;
     guid = Utils.guid();
     subtestAttributes = {
       "_id": guid,
@@ -209,7 +209,8 @@ CurriculumView = (function(_super) {
       "captureLastAttempted": false,
       "endOfLine": false
     };
-    subtestAttributes = $.extend(Tangerine.templates.prototypeTemplates["grid"], subtestAttributes);
+    protoTemps = Tangerine.templates.get("prototypeTemplates");
+    subtestAttributes = $.extend(protoTemps["grid"], subtestAttributes);
     subtest = new Subtest(subtestAttributes);
     return subtest.save(null, {
       success: function() {

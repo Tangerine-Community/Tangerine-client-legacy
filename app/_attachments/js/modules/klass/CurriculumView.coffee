@@ -258,7 +258,8 @@ class CurriculumView extends Backbone.View
       "captureLastAttempted" : false,
       "endOfLine" : false,
 
-    subtestAttributes = $.extend(Tangerine.templates.prototypeTemplates["grid"], subtestAttributes)
+    protoTemps = Tangerine.templates.get "prototypeTemplates"
+    subtestAttributes = $.extend(protoTemps["grid"], subtestAttributes)
 
     subtest = new Subtest subtestAttributes
     subtest.save null,
