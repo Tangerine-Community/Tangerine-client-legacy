@@ -218,6 +218,10 @@ class Utils
   @midAlert: (alert_text) ->
     $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").middleCenter().delay(2000).fadeOut(250, -> $(this).remove())
 
+  @sticky: (html) ->
+    $("<div class='disposable_alert'>#{html}</div>").appendTo("#content").middleCenter().on("keyup", (event) -> if event.which == 27 then $(this).remove())
+
+
   @passwordPrompt: (callback) ->
     html = "
       <div id='pass_form' title='User verification'>
@@ -314,6 +318,28 @@ class Robbert
         success data
       error: ( data ) =>
         error data
+
+# Tree interface
+class TangerineTree
+  
+  @request: (options) ->
+
+    success = options.success
+    error   = options.error
+
+    delete options.success
+    delete options.error
+
+    $.ajax
+      url      : Tangerine.config.get("tree")
+      type     : "POST"
+      dataType : "json"
+      data : options
+      success: ( data ) =>
+        success data
+      error: ( data ) =>
+        error data
+
 
 ##UI helpers
 $ ->

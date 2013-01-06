@@ -1,4 +1,4 @@
-var Robbert, Utils, i, km, sks;
+var Robbert, TangerineTree, Utils, i, km, sks;
 
 Backbone.View.prototype.close = function() {
   this.remove();
@@ -415,6 +415,12 @@ Utils = (function() {
     });
   };
 
+  Utils.sticky = function(html) {
+    return $("<div class='disposable_alert'>" + html + "</div>").appendTo("#content").middleCenter().on("keyup", function(event) {
+      if (event.which === 27) return $(this).remove();
+    });
+  };
+
   Utils.passwordPrompt = function(callback) {
     var $button, $pass, d, html;
     html = "      <div id='pass_form' title='User verification'>        <label for='password'>Please re-enter your password</label>        <input id='pass_val' type='password' name='password' id='password' value=''>        <button class='command' >Verify</button>        <button class='command' data-cancel='true'>Cancel</button>      </div>    ";
@@ -535,6 +541,35 @@ Robbert = (function() {
   };
 
   return Robbert;
+
+})();
+
+TangerineTree = (function() {
+
+  function TangerineTree() {}
+
+  TangerineTree.request = function(options) {
+    var error, success,
+      _this = this;
+    success = options.success;
+    error = options.error;
+    delete options.success;
+    delete options.error;
+    return $.ajax({
+      url: Tangerine.config.get("tree"),
+      type: "POST",
+      dataType: "json",
+      data: options,
+      success: function(data) {
+        return success(data);
+      },
+      error: function(data) {
+        return error(data);
+      }
+    });
+  };
+
+  return TangerineTree;
 
 })();
 
