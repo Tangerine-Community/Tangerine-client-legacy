@@ -18,8 +18,8 @@
 		"base"   : "192.168.1."
 	},
 
-	"robbert" : "http://localhost/robbert.php",
-	"tree"    : "http://localhost/tree.php",
+	"robbert" : "http://tangerine.xen.pgrmr.com:82/",
+	"tree"    : "http://tangerine.xen.pgrmr.com:81/",
 	"designDoc"       : "ojai",
 	"port"            : 5984,
 	"groupDBPrefix"   : "group-",
@@ -57,7 +57,7 @@
 	{
 		"settings" : 
 		{
-			"context"          : "server",
+			"context" : "server",
 			"language"         : "en",
 			"groupName"        : "tangerine",
 			"groupHost"        : "http://localhost",
