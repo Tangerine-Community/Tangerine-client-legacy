@@ -20,7 +20,21 @@ AssessmentsMenuView = (function(_super) {
     'click .new_cancel': 'newToggle',
     'click .new': 'newToggle',
     'click .import': 'import',
+    'click .apk': 'apk',
     'click .groups': 'gotoGroups'
+  };
+
+  AssessmentsMenuView.prototype.apk = function() {
+    return TangerineTree.request({
+      name: Tangerine.user.name,
+      success: function(data) {
+        return Utils.sticky("<h1>APK link</h1><p>tangerine.xen.pgrmr.com:81/apk/" + data.token + "</p>");
+      },
+      error: function(data) {
+        Utils.midAlert("Please try again, could not make APK.");
+        return console.log(data);
+      }
+    });
   };
 
   AssessmentsMenuView.prototype.gotoGroups = function() {
@@ -49,11 +63,12 @@ AssessmentsMenuView = (function(_super) {
   };
 
   AssessmentsMenuView.prototype.render = function() {
-    var groupsButton, html, importButton, newButton;
+    var apkButton, groupsButton, html, importButton, newButton;
     newButton = "<button class='new command'>New</button>";
     importButton = "<button class='import command'>Import</button>";
+    apkButton = "<button class='apk navigation'>APK</button>";
     groupsButton = "<button class='navigation groups'>Groups</button>";
-    html = "      " + (Tangerine.settings.get("context") === "server" ? groupsButton : "") + "      <h1>Assessments</h1>    ";
+    html = "      " + (Tangerine.settings.get("context") === "server" ? groupsButton : "") + "      " + (Tangerine.settings.get("context") === "server" ? apkButton : "") + "      <h1>Assessments</h1>    ";
     if (this.isAdmin) {
       html += "        " + (Tangerine.settings.get("context") === "server" ? newButton : "") + "        " + (Tangerine.settings.get("context") === "mobile" ? importButton : "") + "        <div class='new_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_name' placeholder='Name'>            <select id='new_type'>              <option value='assessment'>Assessment</option>              <option value='curriculum'>Curriculum</option>            </select><br>            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>          </div>        </div>        <div id='assessments_container'></div>        <div id='users_menu_container' class='UsersMenuView'></div>      ";
     } else {
@@ -62,8 +77,10 @@ AssessmentsMenuView = (function(_super) {
     this.$el.html(html);
     this.assessmentsView.setElement(this.$el.find("#assessments_container"));
     this.assessmentsView.render();
-    this.usersMenuView.setElement(this.$el.find("#users_menu_container"));
-    this.usersMenuView.render();
+    if (Tangerine.settings.get("context") === "server") {
+      this.usersMenuView.setElement(this.$el.find("#users_menu_container"));
+      this.usersMenuView.render();
+    }
     this.trigger("rendered");
   };
 

@@ -6,7 +6,18 @@ class AssessmentsMenuView extends Backbone.View
     'click .new_cancel'  : 'newToggle'
     'click .new'         : 'newToggle'
     'click .import'      : 'import'
+    'click .apk'         : 'apk'
     'click .groups'      : 'gotoGroups'
+
+  apk: ->
+    TangerineTree.request
+      name : Tangerine.user.name
+      success: (data) ->
+        Utils.sticky("<h1>APK link</h1><p>tangerine.xen.pgrmr.com:81/apk/#{data.token}</p>")
+      error: (data) ->
+        Utils.midAlert "Please try again, could not make APK."
+        console.log data
+
 
   gotoGroups: -> Tangerine.router.navigate "groups", true
 
@@ -33,10 +44,12 @@ class AssessmentsMenuView extends Backbone.View
   render: =>
     newButton    = "<button class='new command'>New</button>"
     importButton = "<button class='import command'>Import</button>"
+    apkButton    = "<button class='apk navigation'>APK</button>"
     groupsButton = "<button class='navigation groups'>Groups</button>"
 
     html = "
       #{if Tangerine.settings.get("context") == "server" then groupsButton else ""}
+      #{if Tangerine.settings.get("context") == "server" then apkButton else ""}
       <h1>Assessments</h1>
     "
     if @isAdmin
@@ -56,7 +69,6 @@ class AssessmentsMenuView extends Backbone.View
         </div>
         <div id='assessments_container'></div>
         <div id='users_menu_container' class='UsersMenuView'></div>
-
       "
     else
       html += "<div id='assessments_container'></div>"
@@ -67,8 +79,9 @@ class AssessmentsMenuView extends Backbone.View
     @assessmentsView.setElement( @$el.find("#assessments_container") )
     @assessmentsView.render()
 
-    @usersMenuView.setElement( @$el.find("#users_menu_container") )
-    @usersMenuView.render()
+    if Tangerine.settings.get("context") == "server"
+      @usersMenuView.setElement( @$el.find("#users_menu_container") )
+      @usersMenuView.render()
     
 
     @trigger "rendered"
