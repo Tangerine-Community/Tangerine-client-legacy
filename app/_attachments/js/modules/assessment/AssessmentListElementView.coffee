@@ -20,7 +20,7 @@ class AssessmentListElementView extends Backbone.View
   initialize: (options) ->
 
     # events
-    options.model.on "resultCount", @updateResultCount
+    # options.model.on "resultCount", @updateResultCount
 
     #arguments
     @model    = options.model
@@ -47,8 +47,8 @@ class AssessmentListElementView extends Backbone.View
         Utils.midAlert "Update failed"
 
   updateResultCount: =>
-    @resultCount = Math.commas @model.resultCount
-    @$el.find(".result_count").html "Results <b>#{@resultCount}</b>" 
+    #@resultCount = Math.commas @model.resultCount
+    #@$el.find(".result_count").html "Results <b>#{@resultCount}</b>" 
 
   archive: ->
     result = @$el.find(".archive :selected").val() == "true"
@@ -132,6 +132,8 @@ class AssessmentListElementView extends Backbone.View
       # not on mobile
       else
         # admin and group
+        # #{adminResultCount}
+
         html += "
           <div class='assessment_menu'>
             #{runButton}
@@ -142,12 +144,10 @@ class AssessmentListElementView extends Backbone.View
             #{deleteButton}
             #{downloadKey}
             #{deleteConfirm}
-            #{adminResultCount}
           </div>
         "
     # enumerator user
     else
-      console.log "gone here now"
       html = "<div>#{runButton}#{name} #{resultsButton}</div>"
 
     @$el.html html

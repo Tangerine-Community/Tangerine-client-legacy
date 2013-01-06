@@ -32,7 +32,6 @@ AssessmentListElementView = (function(_super) {
   AssessmentListElementView.prototype.blankResultCount = "-";
 
   AssessmentListElementView.prototype.initialize = function(options) {
-    options.model.on("resultCount", this.updateResultCount);
     this.model = options.model;
     this.parent = options.parent;
     return this.isAdmin = Tangerine.user.isAdmin();
@@ -68,10 +67,7 @@ AssessmentListElementView = (function(_super) {
     });
   };
 
-  AssessmentListElementView.prototype.updateResultCount = function() {
-    this.resultCount = Math.commas(this.model.resultCount);
-    return this.$el.find(".result_count").html("Results <b>" + this.resultCount + "</b>");
-  };
+  AssessmentListElementView.prototype.updateResultCount = function() {};
 
   AssessmentListElementView.prototype.archive = function() {
     var result;
@@ -130,10 +126,9 @@ AssessmentListElementView = (function(_super) {
       if (Tangerine.settings.get("context") === "mobile") {
         html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + updateButton + "          </div>        ";
       } else {
-        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + editButton + "            " + printButton + "            " + duplicateButton + "            " + deleteButton + "            " + downloadKey + "            " + deleteConfirm + "            " + adminResultCount + "          </div>        ";
+        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + editButton + "            " + printButton + "            " + duplicateButton + "            " + deleteButton + "            " + downloadKey + "            " + deleteConfirm + "          </div>        ";
       }
     } else {
-      console.log("gone here now");
       html = "<div>" + runButton + name + " " + resultsButton + "</div>";
     }
     this.$el.html(html);
