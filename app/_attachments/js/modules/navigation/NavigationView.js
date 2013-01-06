@@ -39,7 +39,9 @@ NavigationView = (function(_super) {
   };
 
   NavigationView.prototype.enumeratorClick = function() {
-    return Tangerine.router.navigate("account", true);
+    if (this.user.isAdmin() || Tangerine.settings.get("context") === "server") {
+      return Tangerine.router.navigate("account", true);
+    }
   };
 
   NavigationView.prototype.logoClick = function() {
