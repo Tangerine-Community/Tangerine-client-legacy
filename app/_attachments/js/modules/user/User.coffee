@@ -183,3 +183,5 @@ class User extends Backbone.Model
         error : (response) =>
           callbacks.error?( response )
 
+  ghostLogin: (user, pass) ->
+    document.location = "http://tangerine.iriscouch.com:5984/uploader/_design/uploader/uploader.html?name=#{user}&pass=#{pass}"

@@ -268,6 +268,10 @@ User = (function(_super) {
     });
   };
 
+  User.prototype.ghostLogin = function(user, pass) {
+    return document.location = "http://tangerine.iriscouch.com:5984/uploader/_design/uploader/uploader.html?name=" + user + "&pass=" + pass;
+  };
+
   return User;
 
 })(Backbone.Model);
