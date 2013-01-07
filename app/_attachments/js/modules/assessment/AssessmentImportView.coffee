@@ -3,8 +3,26 @@ class AssessmentImportView extends Backbone.View
   events: 
     'click .import' : 'import'
     'click .back'   : 'back'
+    'click .verify' : 'verify'
+
+  verify: ->
+    Tangerine.user.ghostLogin Tangerine.settings.upUser, Tangerine.settings.upPass
 
   initialize: ->
+    @connectionVerified = false
+    @timer = setTimeout @verify, 20 * 1000
+
+    # Ensure we have access to the group's documents on the server
+    $.ajax 
+      url: "http://tangerine.iriscouch.com:5984/group-rti_philippines_2013/_design/ojai/_view/byDKey"
+      dataType: "jsonp"
+      callback: "awesomeness"
+      data: keys: ["testtest"]
+      success: =>
+        clearTimeout @timer
+        @connectionVerified = true
+        @render()
+
     @docsRemaining = 0
     @serverStatus = "checking..."
     $.ajax
@@ -25,13 +43,17 @@ class AssessmentImportView extends Backbone.View
     false
 
   import: =>
-    @updateActivity();
+
+    @updateActivity()
     dKey = @$el.find("#d_key").val()
 
     @newAssessment = new Assessment
     @newAssessment.on "status", @updateActivity
 
-    @newAssessment.updateFromServer dKey
+    if Tangerine.settings.get("context") == "server"
+      @newAssessment.updateFromTrunk dKey
+    else
+      @newAssessment.updateFromServer dKey
 
     @activeTaskInterval = setInterval @updateFromActiveTasks, 3000
 
@@ -84,21 +106,36 @@ class AssessmentImportView extends Backbone.View
     @$el.find("#progress").html progressHTML
 
   render: ->
+
+    if not @connectionVerified 
+      importStep = "
+        <section><p>Please wait while your connection is verified.</p>
+          <button class='command verify'>Try now</button>
+          <p><small>Note: If verification fails, press back to return to previous screen and please try again when internet connectivity is better.</small></p>
+        </section>
+      "
+    else
+      importStep = "
+        <div class='question'>
+          <label for='d_key'>Download keys</label>
+          <input id='d_key' value=''>
+          <button class='import command'>Import</button><br>
+          <small>Server connection: <span id='server_connection'>#{@serverStatus}</span></small>
+        </div>
+        <div class='confirmation status'>
+          <h2>Status<h2>
+          <div class='info_box' id='progress'></div>
+        </div>
+      "
+
     @$el.html "
-    <button class='back navigation'>Back</button>
 
-    <h1>Tangerine Central Import</h1>
-    <div class='question'>
-      <label for='d_key'>Download keys</label>
-      <input id='d_key' value=''>
-      <button class='import command'>Import</button><br>
-      <small>Server connection: <span id='server_connection'>#{@serverStatus}</span></small>
-    </div>
+      <button class='back navigation'>Back</button>
 
-    <div class='confirmation status'>
-      <h2>Status<h2>
-      <div class='info_box' id='progress'></div>
-    </div>
+      <h1>Tangerine Central Import</h1>
+
+      #{importStep}
 
     "
+
     @trigger "rendered"
