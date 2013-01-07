@@ -67,8 +67,6 @@ AssessmentsView = (function(_super) {
     archivedContainer = "      <div class='archived_container'>        <h2>Archived (" + archivedViews.length + ") <button class='command toggle_archived'>Show</button></h2>        <ul class='archived_list confirmation'></ul>      </div>    ";
     showArchived = archivedViews.length !== 0 && Tangerine.get("context") === "server";
     this.$el.html("      <ul class='active_list assessment_list'></ul>      " + (showArchived ? archivedContainer : "") + "    ");
-    console.log(activeViews);
-    console.log(archivedViews);
     $ul = this.$el.find(".active_list");
     for (_j = 0, _len2 = activeViews.length; _j < _len2; _j++) {
       view = activeViews[_j];

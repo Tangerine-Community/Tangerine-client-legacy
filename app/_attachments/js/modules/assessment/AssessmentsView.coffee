@@ -77,9 +77,6 @@ class AssessmentsView extends Backbone.View
       #{ if showArchived then archivedContainer else "" }
     "
 
-    console.log activeViews
-    console.log archivedViews
-
     # fill containers
     $ul = @$el.find(".active_list")
     for view in activeViews
