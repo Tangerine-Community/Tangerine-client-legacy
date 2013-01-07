@@ -30,7 +30,6 @@ Tangerine.config.fetch
     console.log arguments
 
   success : ->
-    console.log "fetched configuration doc"
     # get our Tangerine settings
     Tangerine.settings = new Settings "_id" : "settings"
     Tangerine.settings.fetch
@@ -41,6 +40,7 @@ Tangerine.config.fetch
 
         Tangerine.settings.save null,
           error: ->
+            console.log "couldn't save new settings"
             console.log arguments
           success: ->
             Tangerine.onSettingsLoad()
@@ -53,7 +53,6 @@ Tangerine.onSettingsLoad = ->
   Tangerine.templates = new Template "_id" : "templates"
   Tangerine.templates.fetch
     success: ->
-
       Tangerine.ensureAdmin ->
         $ ->
           # Start the application
@@ -75,25 +74,22 @@ Tangerine.onSettingsLoad = ->
 
 # if admin user doesn't exist in _users database, create it
 Tangerine.ensureAdmin = (callback) ->
-  if Tangerine.settings.get("context") == "mobile"
+  if Tangerine.settings.get("context") == "mobile" && not Tangerine.settings.has("adminEnsured")
     $.couch.login
       name     : "admin"
       password : "password"
       success: ->
-        console.log "logged in as admin"
         $.couch.userDb (uDB) =>
           uDB.openDoc "org.couchdb.user:admin",
             success: ->
-              console.log "doc exists, great, I'm done"
               $.couch.logout
                 success:->
-                  console.log "logging myself out now"
+                  Tangerine.settings.save "adminEnsured" : true
                   callback()
                 error: ->
-                  console.log "Error logging out admin user"
+                  console.log "error logging out admin user"
                   console.log arguments
             error: ->
-              console.log "there was no doc, trying to make one"
               $.ajax
                 url      : "/_users/org.couchdb.user:admin"
                 type     : "PUT"
@@ -105,7 +101,7 @@ Tangerine.ensureAdmin = (callback) ->
                   type     : "user"
                   _id      : "org.couchdb.user:admin"
                 success: ( data ) =>
-                  console.log "created new user doc, great"
+                  Tangerine.settings.save "adminEnsured" : true
                   $.couch.logout
                     success: -> callback()
                     error: ->

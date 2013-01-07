@@ -27,7 +27,6 @@ Tangerine.config.fetch({
     return console.log(arguments);
   },
   success: function() {
-    console.log("fetched configuration doc");
     Tangerine.settings = new Settings({
       "_id": "settings"
     });
@@ -39,6 +38,7 @@ Tangerine.config.fetch({
         Tangerine.settings.set(Tangerine.config.getDefault("settings"));
         return Tangerine.settings.save(null, {
           error: function() {
+            console.log("couldn't save new settings");
             return console.log(arguments);
           },
           success: function() {
@@ -81,31 +81,30 @@ Tangerine.onSettingsLoad = function() {
 };
 
 Tangerine.ensureAdmin = function(callback) {
-  if (Tangerine.settings.get("context") === "mobile") {
+  if (Tangerine.settings.get("context") === "mobile" && !Tangerine.settings.has("adminEnsured")) {
     return $.couch.login({
       name: "admin",
       password: "password",
       success: function() {
         var _this = this;
-        console.log("logged in as admin");
         return $.couch.userDb(function(uDB) {
           return uDB.openDoc("org.couchdb.user:admin", {
             success: function() {
-              console.log("doc exists, great, I'm done");
               return $.couch.logout({
                 success: function() {
-                  console.log("logging myself out now");
+                  Tangerine.settings.save({
+                    "adminEnsured": true
+                  });
                   return callback();
                 },
                 error: function() {
-                  console.log("Error logging out admin user");
+                  console.log("error logging out admin user");
                   return console.log(arguments);
                 }
               });
             },
             error: function() {
               var _this = this;
-              console.log("there was no doc, trying to make one");
               return $.ajax({
                 url: "/_users/org.couchdb.user:admin",
                 type: "PUT",
@@ -118,7 +117,9 @@ Tangerine.ensureAdmin = function(callback) {
                   _id: "org.couchdb.user:admin"
                 }),
                 success: function(data) {
-                  console.log("created new user doc, great");
+                  Tangerine.settings.save({
+                    "adminEnsured": true
+                  });
                   return $.couch.logout({
                     success: function() {
                       return callback();
