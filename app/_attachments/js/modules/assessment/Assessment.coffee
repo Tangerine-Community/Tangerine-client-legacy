@@ -36,11 +36,12 @@ class Assessment extends Backbone.Model
     Assessment.__super__.fetch.call @, options
 
   updateFromServer: ( dKey = @id.substr(-5, 5) ) =>
-
+    
     # split to handle multiple dkeys
     dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g," ").split(/\s+/))
 
     @trigger "status", "import lookup"
+
     $.ajax Tangerine.settings.urlView("group", "byDKey"),
       type: "POST"
       dataType: "jsonp"
@@ -49,9 +50,38 @@ class Assessment extends Backbone.Model
         docList = []
         for datum in data.rows
           docList.push datum.id
+
         $.couch.replicate( 
           Tangerine.settings.urlDB("group"), 
           Tangerine.settings.urlDB("local"),
+            success:      => @trigger "status", "import success"
+            error: (a, b) => console.log arguments; @trigger "status", "import error", "#{a} #{b}"
+          ,
+            doc_ids: docList
+        )
+
+    false
+
+  updateFromTrunk: ( dKey = @id.substr(-5, 5) ) =>
+
+    # split to handle multiple dkeys
+    dKeys = dKey.replace(/[^a-f0-9]/g," ").split(/\s+/)
+
+    @trigger "status", "import lookup"
+    $.ajax 
+      url: Tangerine.settings.urlView("trunk", "byDKey")
+      dataType: "json"
+      contentType: "application/json"
+      type: "GET"
+      data: 
+        keys : JSON.stringify(dKeys)
+      success: (data) =>
+        docList = []
+        for datum in data.rows
+          docList.push datum.id
+        $.couch.replicate( 
+          Tangerine.settings.trunkDB, 
+          Tangerine.settings.groupDB,
             success:      => @trigger "status", "import success"
             error: (a, b) => console.log arguments;@trigger "status", "import error", "#{a} #{b}"
           ,
@@ -59,6 +89,8 @@ class Assessment extends Backbone.Model
         )
 
     false
+
+
 
   duplicate: (assessmentAttributes, subtestAttributes, questionAttributes, callback) ->
 

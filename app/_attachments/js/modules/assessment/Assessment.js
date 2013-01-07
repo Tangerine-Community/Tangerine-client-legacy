@@ -8,6 +8,7 @@ Assessment = (function(_super) {
   __extends(Assessment, _super);
 
   function Assessment() {
+    this.updateFromTrunk = __bind(this.updateFromTrunk, this);
     this.updateFromServer = __bind(this.updateFromServer, this);
     this.fetch = __bind(this.fetch, this);
     this.getResultCount = __bind(this.getResultCount, this);
@@ -78,6 +79,44 @@ Assessment = (function(_super) {
           docList.push(datum.id);
         }
         return $.couch.replicate(Tangerine.settings.urlDB("group"), Tangerine.settings.urlDB("local"), {
+          success: function() {
+            return _this.trigger("status", "import success");
+          },
+          error: function(a, b) {
+            console.log(arguments);
+            return _this.trigger("status", "import error", "" + a + " " + b);
+          }
+        }, {
+          doc_ids: docList
+        });
+      }
+    });
+    return false;
+  };
+
+  Assessment.prototype.updateFromTrunk = function(dKey) {
+    var dKeys,
+      _this = this;
+    if (dKey == null) dKey = this.id.substr(-5, 5);
+    dKeys = dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/);
+    this.trigger("status", "import lookup");
+    $.ajax({
+      url: Tangerine.settings.urlView("trunk", "byDKey"),
+      dataType: "json",
+      contentType: "application/json",
+      type: "GET",
+      data: {
+        keys: JSON.stringify(dKeys)
+      },
+      success: function(data) {
+        var datum, docList, _i, _len, _ref;
+        docList = [];
+        _ref = data.rows;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          datum = _ref[_i];
+          docList.push(datum.id);
+        }
+        return $.couch.replicate(Tangerine.settings.trunkDB, Tangerine.settings.groupDB, {
           success: function() {
             return _this.trigger("status", "import success");
           },
