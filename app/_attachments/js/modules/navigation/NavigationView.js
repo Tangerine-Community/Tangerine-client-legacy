@@ -20,12 +20,18 @@ NavigationView = (function(_super) {
     'touchstart div#logout_link': 'logout',
     'touchstart button': 'submenuHandler',
     'touchstart #corner_logo': 'logoClick',
-    'touchstart #enumerator': 'enumeratorClick'
+    'touchstart #enumerator': 'enumeratorClick',
+    'touchstart #update': 'update'
   } : {
     'click div#logout_link': 'logout',
     'click button': 'submenuHandler',
     'click #corner_logo': 'logoClick',
-    'click #enumerator': 'enumeratorClick'
+    'click #enumerator': 'enumeratorClick',
+    'click #update': 'update'
+  };
+
+  NavigationView.prototype.update = function() {
+    return Tangerine.router.navigate("update", true);
   };
 
   NavigationView.prototype.calcWhoAmI = function() {
@@ -101,7 +107,7 @@ NavigationView = (function(_super) {
 
   NavigationView.prototype.render = function() {
     var updateButton;
-    updateButton = Tangerine.user.isAdmin() && Tangerine.settings.get("context") !== "server" ? "<a href='#update'>" + (t('update')) + "</a>" : "";
+    updateButton = Tangerine.user.isAdmin() && Tangerine.settings.get("context") !== "server" ? "<div id='update'>" + (t('update')) + "</div>" : "";
     this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <div id='logout_link'>" + (t('logout')) + "</div>    <div id='enumerator_box'>      <span id='enumerator_label'>" + this.whoAmI + "</span>      <div id='enumerator'>" + (Tangerine.user.name || "") + "</div>    </div>    <div id='current_student'>      Student ID      <div id='current_student_id'></div>    </div>    <div id='version'>    version <br/>    <span id='version-uuid'>" + Tangerine.version + "</span><br/>    " + updateButton + "    </div>    ");
     $("body").ajaxStart(function() {
       return $("#corner_logo").attr("src", "images/spin_orange.gif");
