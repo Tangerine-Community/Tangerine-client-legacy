@@ -35,6 +35,8 @@ Settings = (function(_super) {
     port = this.config.get("port");
     designDoc = this.config.get("designDoc");
     prefix = this.config.get("groupDBPrefix");
+    this.groupDB = "" + prefix + groupName;
+    this.trunkDB = trunk.dbName;
     subnetBase = this.config.get("subnet").base;
     if (Tangerine.settings.get("context") === "mobile") {
       splitGroup = groupHost.split("://");
@@ -46,12 +48,12 @@ Settings = (function(_super) {
         db: "/" + local.dbName + "/"
       },
       trunk: {
-        url: "http://" + trunk.host + ":" + port + "/",
-        db: "http://" + trunk.host + ":" + port + "/" + trunk.dbName + "/"
+        url: "http://" + trunk.host + "/",
+        db: "http://" + trunk.host + "/" + trunk.dbName + "/"
       },
       group: {
-        url: "" + groupHost + ":" + port + "/",
-        db: "" + groupHost + ":" + port + "/" + prefix + groupName + "/"
+        url: "" + groupHost + "/",
+        db: "" + groupHost + "/" + prefix + groupName + "/"
       },
       update: {
         url: "http://" + update.login + "@" + update.host + ":" + port + "/",
@@ -122,12 +124,19 @@ Settings = (function(_super) {
     return "" + this.location[location].url;
   };
 
-  Settings.prototype.urlDB = function(location) {
+  Settings.prototype.urlDB = function(location, pass) {
+    var groupHost, result, splitDB;
+    if (pass == null) pass = null;
     if (location === "local") {
-      return ("" + this.location[location].db).slice(1, -1);
+      result = ("" + this.location[location].db).slice(1, -1);
     } else {
-      return ("" + this.location[location].db).slice(0, -1);
+      result = ("" + this.location[location].db).slice(0, -1);
     }
+    splitDB = result.split("://");
+    if (pass != null) {
+      groupHost = "" + splitDB[0] + "://" + Tangerine.user.name + ":" + pass + "@" + splitDB[1];
+    }
+    return result;
   };
 
   Settings.prototype.urlView = function(location, view) {

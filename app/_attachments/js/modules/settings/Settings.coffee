@@ -27,6 +27,9 @@ class Settings extends Backbone.Model
 
     prefix     = @config.get "groupDBPrefix"
 
+    @groupDB = "#{prefix}#{groupName}"
+    @trunkDB = trunk.dbName
+
     subnetBase = @config.get("subnet").base
 
 
@@ -39,11 +42,11 @@ class Settings extends Backbone.Model
         url : "#{local.host}:#{port}/"
         db  : "/#{local.dbName}/"
       trunk:
-        url   : "http://#{trunk.host}:#{port}/"
-        db    : "http://#{trunk.host}:#{port}/#{trunk.dbName}/"
+        url   : "http://#{trunk.host}/"
+        db    : "http://#{trunk.host}/#{trunk.dbName}/"
       group:
-        url   : "#{groupHost}:#{port}/"
-        db    : "#{groupHost}:#{port}/#{prefix}#{groupName}/"
+        url   : "#{groupHost}/"
+        db    : "#{groupHost}/#{prefix}#{groupName}/"
       update:
         url   : "http://#{update.login}@#{update.host}:#{port}/"
         db    : "http://#{update.login}@#{update.host}:#{port}/#{update.dbName}/"
@@ -77,11 +80,18 @@ class Settings extends Backbone.Model
   
   urlHost  : ( location ) -> "#{@location[location].url}"
   
-  urlDB    : ( location ) -> 
+  urlDB    : ( location, pass = null ) -> 
     if location == "local"
-      "#{@location[location].db}".slice(1,-1)
+      result = "#{@location[location].db}".slice(1,-1)
     else
-      "#{@location[location].db}".slice(0, -1)
+      result = "#{@location[location].db}".slice(0, -1)
+
+    splitDB = result.split("://")
+    
+    if pass?
+      groupHost = "#{splitDB[0]}://#{Tangerine.user.name}:#{pass}@#{splitDB[1]}"
+
+    return result
 
 
   urlView  : ( location, view ) ->
