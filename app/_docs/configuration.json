@@ -25,7 +25,7 @@
 
 	"robbert" : "http://tangerine.xen.pgrmr.com:82/",
 	"tree"    : "http://tangerine.xen.pgrmr.com:81/",
-	"designDoc"       : "tangerine",
+	"designDoc"       : "ojai",
 	"port"            : 5984,
 	"groupDBPrefix"   : "group-",
 
