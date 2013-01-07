@@ -215,16 +215,10 @@ sks = [
     })(),
     i: 0,
     c: function() {
-      var settings;
-      settings = new Settings({
-        "_id": "TangerineSettings"
-      });
-      return settings.fetch({
-        success: function(settings) {
-          settings.set({
-            "context": "server"
-          });
-          settings.save();
+      return Tangerine.settings.save({
+        "context": "server"
+      }, {
+        success: function() {
           return Tangerine.router.navigate("", true);
         }
       });
@@ -240,16 +234,10 @@ sks = [
     })(),
     i: 0,
     c: function() {
-      var settings;
-      settings = new Settings({
-        "_id": "TangerineSettings"
-      });
-      return settings.fetch({
-        success: function(settings) {
-          settings.set({
-            "context": "mobile"
-          });
-          settings.save();
+      return Tangerine.settings.save({
+        "context": "mobile"
+      }, {
+        success: function() {
           return Tangerine.router.navigate("", true);
         }
       });
@@ -265,16 +253,10 @@ sks = [
     })(),
     i: 0,
     c: function() {
-      var settings;
-      settings = new Settings({
-        "_id": "TangerineSettings"
-      });
-      return settings.fetch({
-        success: function(settings) {
-          settings.set({
-            "context": "class"
-          });
-          settings.save();
+      return Tangerine.settings.save({
+        "context": "class"
+      }, {
+        success: function() {
           return Tangerine.router.navigate("", true);
         }
       });
