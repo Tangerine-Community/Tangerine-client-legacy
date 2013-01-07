@@ -55,7 +55,7 @@ class AssessmentsMenuView extends Backbone.View
     if @isAdmin
       html += "
         #{if Tangerine.settings.get("context") == "server" then newButton else "" }
-        #{if Tangerine.settings.get("context") == "mobile" then importButton else ""}
+        #{importButton}
 
         <div class='new_form confirmation'>
           <div class='menu_box_wide'>
