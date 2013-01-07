@@ -2,7 +2,7 @@ var Tangerine;
 
 Tangerine = {
   "db_name": window.location.pathname.split("/")[1],
-  "design_doc": "tangerine"
+  "design_doc": "ojai"
 };
 
 Tangerine.$db = $.couch.db(Tangerine.db_name);

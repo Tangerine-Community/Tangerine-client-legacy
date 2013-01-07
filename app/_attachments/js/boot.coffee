@@ -9,7 +9,7 @@
 
 Tangerine = 
   "db_name"    : window.location.pathname.split("/")[1]
-  "design_doc" : "tangerine"
+  "design_doc" : "ojai"
 
 # Local tangerine database handle
 Tangerine.$db = $.couch.db(Tangerine.db_name)
