@@ -14,13 +14,15 @@ class Settings extends Backbone.Model
     groupName = @get "groupName"
     groupDDoc = @get "groupDDoc"
 
-    upUser = "uploader-#{groupName}"
-    upPass = @get "upPass"
+    @upUser = "uploader-#{groupName}"
+    @upPass = @get "upPass"
 
     update     = @config.get "update"
 
+    trunk      = @config.get "trunk"
     local      = @config.get "local"
     port       = @config.get "port"
+
     designDoc  = @config.get "designDoc"
 
     prefix     = @config.get "groupDBPrefix"
@@ -30,12 +32,15 @@ class Settings extends Backbone.Model
 
     if Tangerine.settings.get("context") == "mobile"
       splitGroup = groupHost.split("://")
-      groupHost = "#{splitGroup[0]}://#{upUser}:#{upPass}@#{splitGroup[1]}"
+      groupHost = "#{splitGroup[0]}://#{@upUser}:#{@upPass}@#{splitGroup[1]}"
 
     @location =
       local:
         url : "#{local.host}:#{port}/"
         db  : "/#{local.dbName}/"
+      trunk:
+        url   : "http://#{trunk.host}:#{port}/"
+        db    : "http://#{trunk.host}:#{port}/#{trunk.dbName}/"
       group:
         url   : "#{groupHost}:#{port}/"
         db    : "#{groupHost}:#{port}/#{prefix}#{groupName}/"

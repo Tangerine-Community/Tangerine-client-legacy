@@ -23,13 +23,14 @@ Settings = (function(_super) {
   };
 
   Settings.prototype.update = function() {
-    var designDoc, groupDDoc, groupHost, groupName, local, port, prefix, splitGroup, subnetBase, upPass, upUser, update, x;
+    var designDoc, groupDDoc, groupHost, groupName, local, port, prefix, splitGroup, subnetBase, trunk, update, x;
     groupHost = this.get("groupHost");
     groupName = this.get("groupName");
     groupDDoc = this.get("groupDDoc");
-    upUser = "uploader-" + groupName;
-    upPass = this.get("upPass");
+    this.upUser = "uploader-" + groupName;
+    this.upPass = this.get("upPass");
     update = this.config.get("update");
+    trunk = this.config.get("trunk");
     local = this.config.get("local");
     port = this.config.get("port");
     designDoc = this.config.get("designDoc");
@@ -37,12 +38,16 @@ Settings = (function(_super) {
     subnetBase = this.config.get("subnet").base;
     if (Tangerine.settings.get("context") === "mobile") {
       splitGroup = groupHost.split("://");
-      groupHost = "" + splitGroup[0] + "://" + upUser + ":" + upPass + "@" + splitGroup[1];
+      groupHost = "" + splitGroup[0] + "://" + this.upUser + ":" + this.upPass + "@" + splitGroup[1];
     }
     this.location = {
       local: {
         url: "" + local.host + ":" + port + "/",
         db: "/" + local.dbName + "/"
+      },
+      trunk: {
+        url: "http://" + trunk.host + ":" + port + "/",
+        db: "http://" + trunk.host + ":" + port + "/" + trunk.dbName + "/"
       },
       group: {
         url: "" + groupHost + ":" + port + "/",

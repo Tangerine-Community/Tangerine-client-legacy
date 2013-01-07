@@ -12,6 +12,11 @@
 		"dbName" : "update",
 		"login"  : "updater:updater"
 	},
+	"trunk" :
+	{
+		"host"   : "tangerine.iriscouch.com",
+		"dbName" : "tangerine"
+	},
 
 	"subnet" :
 	{
