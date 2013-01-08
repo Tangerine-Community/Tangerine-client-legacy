@@ -25,10 +25,9 @@ AssessmentsMenuView = (function(_super) {
   };
 
   AssessmentsMenuView.prototype.apk = function() {
-    return TangerineTree.request({
-      name: Tangerine.user.name,
+    return TangerineTree.make({
       success: function(data) {
-        return Utils.sticky("<h1>APK link</h1><p>tangerine.xen.pgrmr.com:81/apk/" + data.token + "</p>");
+        return Utils.sticky("<h1>APK link</h1><p>tangerine.xen.prgmr.com:81/apk/" + data.token + "</p>");
       },
       error: function(data) {
         Utils.midAlert("Please try again, could not make APK.");

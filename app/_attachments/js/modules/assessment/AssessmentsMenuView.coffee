@@ -10,10 +10,9 @@ class AssessmentsMenuView extends Backbone.View
     'click .groups'      : 'gotoGroups'
 
   apk: ->
-    TangerineTree.request
-      name : Tangerine.user.name
+    TangerineTree.make
       success: (data) ->
-        Utils.sticky("<h1>APK link</h1><p>tangerine.xen.pgrmr.com:81/apk/#{data.token}</p>")
+        Utils.sticky("<h1>APK link</h1><p>tangerine.xen.prgmr.com:81/apk/#{data.token}</p>")
       error: (data) ->
         Utils.midAlert "Please try again, could not make APK."
         console.log data
