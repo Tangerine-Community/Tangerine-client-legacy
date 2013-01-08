@@ -57,43 +57,43 @@ class GridRunView extends Backbone.View
       if @autostopped == true && autoCount < @autostop && @undoable == true then @unAutostopTest()
 
   markElement: (index, value = null) ->
-    console.log "Last attempted: #{@lastAttempted}"
     # if last attempted has been set, and the click is above it, then cancel
     if @lastAttempted != 0 && index > @lastAttempted then return
-    console.log "past first check"
+
     $target = @$el.find(".grid_element[data-index=#{index}]")
+
     @markRecord.push index
 
-    console.log "autostopped: #{@autostopped}"
     if not @autostopped
       if value == null # not specifying the value, just toggle
-          @gridOutput[index-1] = if (@gridOutput[index-1] == "correct") then "incorrect" else "correct"
-          $target.toggleClass "element_wrong"
+        @gridOutput[index-1] = if (@gridOutput[index-1] == "correct") then "incorrect" else "correct"
+        $target.toggleClass "element_wrong"
       else # value specified
-        if value == "correct"
-          @gridOutput[index-1] = value
-          if value == "incorrect"
-            $target.addClass "element_wrong"
-          else if value == "correct"
-            $target.removeClass "element_wrong"
+        @gridOutput[index-1] = value
+        if value == "incorrect"
+          $target.addClass "element_wrong"
+        else if value == "correct"
+          $target.removeClass "element_wrong"
         
   endOfGridLineClick: (event) ->
     if @mode == "mark"
       $target = $(event.target)
+      
+      # if what we clicked is already marked wrong
       if $target.hasClass("element_wrong")
+        # YES, mark it right
         $target.removeClass "element_wrong"
-        value = "correct"
         index = $target.attr('data-index')
         for i in [index..(index-(@columns-1))]
-          @markElement i, value
+          @markElement i, "correct"
       else if !$target.hasClass("element_wrong") && !@autostopped
+        # NO, mark it wrong
         $target.addClass "element_wrong"
-        value = "incorrect"
         index = $target.attr('data-index')
         for i in [index..(index-(@columns-1))]
-          @markElement i, value
-      if @autostop != 0
-        @checkAutostop()
+          @markElement i, "incorrect"
+
+      @checkAutostop() if @autostop != 0
 
   lastHandler: (event) =>
     $target = $(event.target)

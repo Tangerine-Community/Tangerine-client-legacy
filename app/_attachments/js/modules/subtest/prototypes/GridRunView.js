@@ -90,46 +90,39 @@ GridRunView = (function(_super) {
   GridRunView.prototype.markElement = function(index, value) {
     var $target;
     if (value == null) value = null;
-    console.log("Last attempted: " + this.lastAttempted);
     if (this.lastAttempted !== 0 && index > this.lastAttempted) return;
-    console.log("past first check");
     $target = this.$el.find(".grid_element[data-index=" + index + "]");
     this.markRecord.push(index);
-    console.log("autostopped: " + this.autostopped);
     if (!this.autostopped) {
       if (value === null) {
         this.gridOutput[index - 1] = this.gridOutput[index - 1] === "correct" ? "incorrect" : "correct";
         return $target.toggleClass("element_wrong");
       } else {
-        if (value === "correct") {
-          this.gridOutput[index - 1] = value;
-          if (value === "incorrect") {
-            return $target.addClass("element_wrong");
-          } else if (value === "correct") {
-            return $target.removeClass("element_wrong");
-          }
+        this.gridOutput[index - 1] = value;
+        if (value === "incorrect") {
+          return $target.addClass("element_wrong");
+        } else if (value === "correct") {
+          return $target.removeClass("element_wrong");
         }
       }
     }
   };
 
   GridRunView.prototype.endOfGridLineClick = function(event) {
-    var $target, i, index, value, _ref, _ref2;
+    var $target, i, index, _ref, _ref2;
     if (this.mode === "mark") {
       $target = $(event.target);
       if ($target.hasClass("element_wrong")) {
         $target.removeClass("element_wrong");
-        value = "correct";
         index = $target.attr('data-index');
         for (i = index, _ref = index - (this.columns - 1); index <= _ref ? i <= _ref : i >= _ref; index <= _ref ? i++ : i--) {
-          this.markElement(i, value);
+          this.markElement(i, "correct");
         }
       } else if (!$target.hasClass("element_wrong") && !this.autostopped) {
         $target.addClass("element_wrong");
-        value = "incorrect";
         index = $target.attr('data-index');
         for (i = index, _ref2 = index - (this.columns - 1); index <= _ref2 ? i <= _ref2 : i >= _ref2; index <= _ref2 ? i++ : i--) {
-          this.markElement(i, value);
+          this.markElement(i, "incorrect");
         }
       }
       if (this.autostop !== 0) return this.checkAutostop();
