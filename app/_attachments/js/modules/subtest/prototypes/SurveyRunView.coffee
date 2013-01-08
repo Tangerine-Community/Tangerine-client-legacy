@@ -56,7 +56,8 @@ class SurveyRunView extends Backbone.View
     autostopCount = 0
     if autostopLimit > 0
       for i in [1..@questionViews.length] # just in case they can't count
-        if @questionViews[i-1].answer == "0"
+        currentAnswer = @questionViews[i-1].answer
+        if currentAnswer == "0" or currentAnswer == "3"
           autostopCount++
         else
           autostopCount = 0

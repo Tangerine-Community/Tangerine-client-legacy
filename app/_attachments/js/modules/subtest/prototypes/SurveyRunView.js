@@ -60,7 +60,7 @@ SurveyRunView = (function(_super) {
   };
 
   SurveyRunView.prototype.onQuestionAnswer = function(event) {
-    var autostopCount, autostopLimit, cid, i, longestSequence, next, view, _i, _len, _ref, _ref2;
+    var autostopCount, autostopLimit, cid, currentAnswer, i, longestSequence, next, view, _i, _len, _ref, _ref2;
     if (this.isObservation) {
       cid = $(event.target).attr("data-cid");
       _ref = this.questionViews;
@@ -81,7 +81,8 @@ SurveyRunView = (function(_super) {
     autostopCount = 0;
     if (autostopLimit > 0) {
       for (i = 1, _ref2 = this.questionViews.length; 1 <= _ref2 ? i <= _ref2 : i >= _ref2; 1 <= _ref2 ? i++ : i--) {
-        if (this.questionViews[i - 1].answer === "0") {
+        currentAnswer = this.questionViews[i - 1].answer;
+        if (currentAnswer === "0" || currentAnswer === "3") {
           autostopCount++;
         } else {
           autostopCount = 0;
