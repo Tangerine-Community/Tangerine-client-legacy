@@ -88,6 +88,7 @@ class ResultsView extends Backbone.View
         total : 256
 
   detectOptions: ->
+    $("button.cloud, button.tablets").attr("disabled", "disabled")
     @detectCloud()
     @detectTablets()
     
@@ -109,10 +110,10 @@ class ResultsView extends Backbone.View
       do (local) =>
         ip = Tangerine.settings.subnetIP(local)
         $.ajax
+          url: Tangerine.settings.urlSubnet(ip)
           dataType: "jsonp"
           contentType: "application/json;charset=utf-8",
           timeout: 30000
-          url: urlSubnet(ip)
           complete:  (xhr, error) =>
             @available.tablets.checked++
             if xhr.status == 200

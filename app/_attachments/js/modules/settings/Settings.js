@@ -64,7 +64,7 @@ Settings = (function(_super) {
           var _results;
           _results = [];
           for (x = 0; x <= 255; x++) {
-            _results.push("http://" + subnetBase + "." + x + ":" + port + "/");
+            _results.push("http://" + subnetBase + x + ":" + port + "/");
           }
           return _results;
         })(),
@@ -72,7 +72,7 @@ Settings = (function(_super) {
           var _results;
           _results = [];
           for (x = 0; x <= 255; x++) {
-            _results.push("http://" + subnetBase + "." + x + ":" + port + "/" + local.dbName + "/");
+            _results.push("http://" + subnetBase + x + ":" + port + "/" + local.dbName + "/");
           }
           return _results;
         })()
@@ -82,7 +82,7 @@ Settings = (function(_super) {
           var _results;
           _results = [];
           for (x = 0; x <= 255; x++) {
-            _results.push("" + subnetBase + "." + x + ":" + port + "/");
+            _results.push("" + subnetBase + x + ":" + port + "/");
           }
           return _results;
         })(),
@@ -90,7 +90,7 @@ Settings = (function(_super) {
           var _results;
           _results = [];
           for (x = 0; x <= 255; x++) {
-            _results.push("" + subnetBase + "." + x + ":" + port + "/" + prefix + groupName + "/");
+            _results.push("" + subnetBase + x + ":" + port + "/" + prefix + groupName + "/");
           }
           return _results;
         })()
@@ -173,7 +173,7 @@ Settings = (function(_super) {
   Settings.prototype.subnetIP = function(index) {
     var base;
     base = this.config.get("subnet").base;
-    return "" + base + "." + index;
+    return "" + base + index;
   };
 
   return Settings;

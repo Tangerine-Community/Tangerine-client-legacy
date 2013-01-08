@@ -130,6 +130,7 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.detectOptions = function() {
+    $("button.cloud, button.tablets").attr("disabled", "disabled");
     this.detectCloud();
     return this.detectTablets();
   };
@@ -161,10 +162,10 @@ ResultsView = (function(_super) {
         var ip;
         ip = Tangerine.settings.subnetIP(local);
         return $.ajax({
+          url: Tangerine.settings.urlSubnet(ip),
           dataType: "jsonp",
           contentType: "application/json;charset=utf-8",
           timeout: 30000,
-          url: urlSubnet(ip),
           complete: function(xhr, error) {
             _this.available.tablets.checked++;
             if (xhr.status === 200) {

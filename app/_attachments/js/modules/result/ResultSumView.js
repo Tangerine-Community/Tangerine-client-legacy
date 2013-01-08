@@ -49,28 +49,6 @@ ResultSumView = (function(_super) {
   };
 
   ResultSumView.prototype.render = function() {
-    /*
-        if @finished || !@finishCheck
-          savedEnd = _.last(@result.attributes.subtestData)?.data.end_time
-          timestamp = @result.get('timestamp')
-          if timestamp?
-            endTime = new Date(timestamp) 
-          else if savedEnd?
-            endTime = new Date(savedEnd)
-          else
-            endTime = new Date()
-    
-          html = "
-            <div>
-              #{@studentId}
-              #{moment(endTime).format( 'YYYY-MMM-DD HH:mm' )}
-              (#{moment(endTime).fromNow()})
-              <button class='details command'>details</button>
-            </div>"
-        else
-          startTime = new Date(if @result.has('start_time') then @result.get("start_time") else @result.get("starttime"))
-          html = "<div>Not finished ( #{moment(startTime).fromNow()} ) <button class='command resume'>Resume</button></div>"
-    */
     var datum, html, i, _len, _ref;
     html = "<div class='detail_box'>";
     if (!(this.finished || !this.finishCheck)) {

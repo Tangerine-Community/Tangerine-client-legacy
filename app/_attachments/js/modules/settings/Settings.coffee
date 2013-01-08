@@ -51,11 +51,11 @@ class Settings extends Backbone.Model
         url   : "http://#{update.login}@#{update.host}/"
         db    : "http://#{update.login}@#{update.host}/#{update.dbName}/"
       subnet : 
-        url : ("http://#{subnetBase}.#{x}:#{port}/"                 for x in [0..255])
-        db  : ("http://#{subnetBase}.#{x}:#{port}/#{local.dbName}/" for x in [0..255])
+        url : ("http://#{subnetBase}#{x}:#{port}/"                 for x in [0..255])
+        db  : ("http://#{subnetBase}#{x}:#{port}/#{local.dbName}/" for x in [0..255])
       satellite : 
-        url : ("#{subnetBase}.#{x}:#{port}/"                       for x in [0..255])
-        db  : ("#{subnetBase}.#{x}:#{port}/#{prefix}#{groupName}/" for x in [0..255])
+        url : ("#{subnetBase}#{x}:#{port}/"                       for x in [0..255])
+        db  : ("#{subnetBase}#{x}:#{port}/#{prefix}#{groupName}/" for x in [0..255])
 
     @couch = 
       view  : "_design/#{designDoc}/_view/"
@@ -117,9 +117,10 @@ class Settings extends Backbone.Model
     port   = @config.get "port"
     dbName = @config.get("local").dbName
     "http://#{ip}:#{port}/#{dbName}"
+
   subnetIP: ( index ) ->
     base = @config.get("subnet").base
-    "#{base}.#{index}"
+    "#{base}#{index}"
 
 
 

@@ -25,29 +25,6 @@ class ResultSumView extends Backbone.View
         break
 
   render: ->
-    ###
-    if @finished || !@finishCheck
-      savedEnd = _.last(@result.attributes.subtestData)?.data.end_time
-      timestamp = @result.get('timestamp')
-      if timestamp?
-        endTime = new Date(timestamp) 
-      else if savedEnd?
-        endTime = new Date(savedEnd)
-      else
-        endTime = new Date()
-
-      html = "
-        <div>
-          #{@studentId}
-          #{moment(endTime).format( 'YYYY-MMM-DD HH:mm' )}
-          (#{moment(endTime).fromNow()})
-          <button class='details command'>details</button>
-        </div>"
-    else
-      startTime = new Date(if @result.has('start_time') then @result.get("start_time") else @result.get("starttime"))
-      html = "<div>Not finished ( #{moment(startTime).fromNow()} ) <button class='command resume'>Resume</button></div>"
-    ###
-     
     html = "<div class='detail_box'>"
     html += "<div>Not finished<button class='command resume'>Resume</button></div>" unless @finished || !@finishCheck
     for datum, i in @result.get("subtestData")
