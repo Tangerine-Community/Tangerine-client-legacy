@@ -132,7 +132,6 @@ $.ajaxSetup
         Tangerine.user.logout()
 
 
-
 # debug codes
 km = {"0":48,"1":49,"2":50,"3":51,"4":52,"5":53,"6":54,"7":55,"8":56,"9":57,"a":65,"b":66,"c":67,"d":68,"e":69,"f":70,"g":71,"h":72,"i":73,"j":74,"k":75,"l":76,"m":77,"n":78,"o":79,"p":80,"q":81,"r":82,"s":83,"t":84,"u":85,"v":86,"w":87,"x":88,"y":89,"z":90}
 sks = [ { q : (km["0100ser"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "server"}, { success: -> Tangerine.router.navigate("", true)}) },
@@ -219,7 +218,7 @@ class Utils
     $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").middleCenter().delay(2000).fadeOut(250, -> $(this).remove())
 
   @sticky: (html) ->
-    $("<div class='disposable_alert'>#{html}</div>").appendTo("#content").middleCenter().on("keyup", (event) -> if event.which == 27 then $(this).remove())
+    $("<div class='sticky_alert'>#{html}<br><button class='command parent_remove'>close</button></div>").appendTo("#content").middleCenter().on("keyup", (event) -> if event.which == 27 then $(this).remove())
 
 
   @passwordPrompt: (callback) ->
@@ -310,10 +309,11 @@ class Robbert
     delete options.error
 
     $.ajax
-      url      : Tangerine.config.get("robbert")
-      type     : "POST"
-      dataType : "json"
-      data : options
+      type        : "POST"
+      crossDomain : true
+      url         : Tangerine.config.get("robbert")
+      dataType    : "json"
+      data        : options
       success: ( data ) =>
         success data
       error: ( data ) =>
@@ -321,8 +321,8 @@ class Robbert
 
 # Tree interface
 class TangerineTree
-  
-  @request: (options) ->
+
+  @make: (options) ->
 
     success = options.success
     error   = options.error
@@ -330,11 +330,14 @@ class TangerineTree
     delete options.success
     delete options.error
 
+    options.user = Tangerine.user.name
+
     $.ajax
-      url      : Tangerine.config.get("tree")
       type     : "POST"
+      crossDomain : true
+      url      : Tangerine.config.get("tree") + "make/#{Tangerine.settings.get('groupName').split('group-')[1]}"
       dataType : "json"
-      data : options
+      data     : options
       success: ( data ) =>
         success data
       error: ( data ) =>

@@ -398,7 +398,7 @@ Utils = (function() {
   };
 
   Utils.sticky = function(html) {
-    return $("<div class='disposable_alert'>" + html + "</div>").appendTo("#content").middleCenter().on("keyup", function(event) {
+    return $("<div class='sticky_alert'>" + html + "<br><button class='command parent_remove'>close</button></div>").appendTo("#content").middleCenter().on("keyup", function(event) {
       if (event.which === 27) return $(this).remove();
     });
   };
@@ -509,8 +509,9 @@ Robbert = (function() {
     delete options.success;
     delete options.error;
     return $.ajax({
-      url: Tangerine.config.get("robbert"),
       type: "POST",
+      crossDomain: true,
+      url: Tangerine.config.get("robbert"),
       dataType: "json",
       data: options,
       success: function(data) {
@@ -530,16 +531,18 @@ TangerineTree = (function() {
 
   function TangerineTree() {}
 
-  TangerineTree.request = function(options) {
+  TangerineTree.make = function(options) {
     var error, success,
       _this = this;
     success = options.success;
     error = options.error;
     delete options.success;
     delete options.error;
+    options.user = Tangerine.user.name;
     return $.ajax({
-      url: Tangerine.config.get("tree"),
       type: "POST",
+      crossDomain: true,
+      url: Tangerine.config.get("tree") + ("make/" + (Tangerine.settings.get('groupName').split('group-')[1])),
       dataType: "json",
       data: options,
       success: function(data) {
