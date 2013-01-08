@@ -157,6 +157,33 @@ Math.limit    = (min, num, max) -> Math.max(min, Math.min(num, max))
 
 class Utils
 
+  @updateTangerine: ->
+    if Tangerine.settings.get("context") == "mobile"
+      $("#version-uuid").html("Updating...")
+      $.couch.replicate(
+        Tangerine.settings.urlDB("update"),
+        "http://localhost:5984/tangerine",
+          success: ->
+            Utils.midAlert "Update successful"
+
+            _.delay ->
+              Tangerine.router.navigate "", false
+              Utils.askToLogout()
+              document.location.reload()
+            , 2000
+          error: (error) ->
+            console.log "There was an error replicating", arguments
+            Utils.midAlert "Update error<br>#{error}"
+        , doc_ids: ["_design/tangerine"]
+      )
+
+    else if Tangerine.settings.get("context") == "server"
+      docIds    = ["_design/ojai"]
+      fromWhere = "trunk"
+      toWhere   = "group"
+
+
+
   @log: (self, error) ->
     className = self.constructor.toString().match(/function\s*(\w+)/)[1]
     console.log "#{className}: #{error}"

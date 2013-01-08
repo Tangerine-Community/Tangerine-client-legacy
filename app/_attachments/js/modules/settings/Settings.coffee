@@ -48,8 +48,8 @@ class Settings extends Backbone.Model
         url   : "#{groupHost}/"
         db    : "#{groupHost}/#{prefix}#{groupName}/"
       update:
-        url   : "http://#{update.login}@#{update.host}:#{port}/"
-        db    : "http://#{update.login}@#{update.host}:#{port}/#{update.dbName}/"
+        url   : "http://#{update.login}@#{update.host}/"
+        db    : "http://#{update.login}@#{update.host}/#{update.dbName}/"
       subnet : 
         url : ("http://#{subnetBase}.#{x}:#{port}/"                 for x in [0..255])
         db  : ("http://#{subnetBase}.#{x}:#{port}/#{local.dbName}/" for x in [0..255])
@@ -87,9 +87,9 @@ class Settings extends Backbone.Model
       result = "#{@location[location].db}".slice(0, -1)
 
     splitDB = result.split("://")
-    
+
     if pass?
-      groupHost = "#{splitDB[0]}://#{Tangerine.user.name}:#{pass}@#{splitDB[1]}"
+      result = "#{splitDB[0]}://#{Tangerine.user.name}:#{pass}@#{splitDB[1]}"
 
     return result
 

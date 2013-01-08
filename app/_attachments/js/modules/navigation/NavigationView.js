@@ -31,7 +31,7 @@ NavigationView = (function(_super) {
   };
 
   NavigationView.prototype.update = function() {
-    return Tangerine.router.navigate("update", true);
+    return Utils.updateTangerine();
   };
 
   NavigationView.prototype.calcWhoAmI = function() {

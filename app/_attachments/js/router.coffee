@@ -611,29 +611,6 @@ class Router extends Backbone.Router
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
 
-  update: ->
-    Tangerine.user.verify
-      isAdmin: ->
-        $("#version-uuid").html("Updating...")
-
-        $.couch.replicate(
-          Tangerine.settings.urlDB("update"),
-          Tangerine.settings.urlDB("local"),
-            success: ->
-              $("#version-uuid").html("Successful update, now refreshing app...")
-              _.delay ->
-                Tangerine.router.navigate "", false
-                Utils.askToLogout()
-                document.location.reload()
-              , 2000
-            error: (error) ->
-              $("#version-uuid").html("Error updating: #{error}")
-          ,
-            doc_ids: ["_design/tangerine"]
-        )
-      isUnregistered: (options) ->
-        Tangerine.router.navigate "login", true
-
   logs: ->
     view = new LogView
     vm.show view

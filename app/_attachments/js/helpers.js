@@ -319,6 +319,33 @@ Utils = (function() {
 
   function Utils() {}
 
+  Utils.updateTangerine = function() {
+    var docIds, fromWhere, toWhere;
+    if (Tangerine.settings.get("context") === "mobile") {
+      $("#version-uuid").html("Updating...");
+      return $.couch.replicate(Tangerine.settings.urlDB("update"), "http://localhost:5984/tangerine", {
+        success: function() {
+          Utils.midAlert("Update successful");
+          return _.delay(function() {
+            Tangerine.router.navigate("", false);
+            Utils.askToLogout();
+            return document.location.reload();
+          }, 2000);
+        },
+        error: function(error) {
+          console.log("There was an error replicating", arguments);
+          return Utils.midAlert("Update error<br>" + error);
+        }
+      }, {
+        doc_ids: ["_design/tangerine"]
+      });
+    } else if (Tangerine.settings.get("context") === "server") {
+      docIds = ["_design/ojai"];
+      fromWhere = "trunk";
+      return toWhere = "group";
+    }
+  };
+
   Utils.log = function(self, error) {
     var className;
     className = self.constructor.toString().match(/function\s*(\w+)/)[1];

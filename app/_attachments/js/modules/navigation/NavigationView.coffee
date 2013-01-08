@@ -17,7 +17,7 @@ class NavigationView extends Backbone.View
   }
 
   update: ->
-    Tangerine.router.navigate "update", true
+    Utils.updateTangerine()
 
   calcWhoAmI: =>
     # who am I

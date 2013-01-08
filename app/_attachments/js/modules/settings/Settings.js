@@ -56,8 +56,8 @@ Settings = (function(_super) {
         db: "" + groupHost + "/" + prefix + groupName + "/"
       },
       update: {
-        url: "http://" + update.login + "@" + update.host + ":" + port + "/",
-        db: "http://" + update.login + "@" + update.host + ":" + port + "/" + update.dbName + "/"
+        url: "http://" + update.login + "@" + update.host + "/",
+        db: "http://" + update.login + "@" + update.host + "/" + update.dbName + "/"
       },
       subnet: {
         url: (function() {
@@ -125,7 +125,7 @@ Settings = (function(_super) {
   };
 
   Settings.prototype.urlDB = function(location, pass) {
-    var groupHost, result, splitDB;
+    var result, splitDB;
     if (pass == null) pass = null;
     if (location === "local") {
       result = ("" + this.location[location].db).slice(1, -1);
@@ -134,7 +134,7 @@ Settings = (function(_super) {
     }
     splitDB = result.split("://");
     if (pass != null) {
-      groupHost = "" + splitDB[0] + "://" + Tangerine.user.name + ":" + pass + "@" + splitDB[1];
+      result = "" + splitDB[0] + "://" + Tangerine.user.name + ":" + pass + "@" + splitDB[1];
     }
     return result;
   };

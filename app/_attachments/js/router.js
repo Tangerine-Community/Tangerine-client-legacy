@@ -1000,32 +1000,6 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.update = function() {
-    return Tangerine.user.verify({
-      isAdmin: function() {
-        $("#version-uuid").html("Updating...");
-        return $.couch.replicate(Tangerine.settings.urlDB("update"), Tangerine.settings.urlDB("local"), {
-          success: function() {
-            $("#version-uuid").html("Successful update, now refreshing app...");
-            return _.delay(function() {
-              Tangerine.router.navigate("", false);
-              Utils.askToLogout();
-              return document.location.reload();
-            }, 2000);
-          },
-          error: function(error) {
-            return $("#version-uuid").html("Error updating: " + error);
-          }
-        }, {
-          doc_ids: ["_design/tangerine"]
-        });
-      },
-      isUnregistered: function(options) {
-        return Tangerine.router.navigate("login", true);
-      }
-    });
-  };
-
   Router.prototype.logs = function() {
     var view;
     view = new LogView;
