@@ -533,7 +533,8 @@ progress {
 .school_list {
   padding: 10px 0;
 }
-.disposable_alert {
+.disposable_alert,
+.sticky_alert {
   text-align: center;
   background: #f6ef9a;
   color: black;
