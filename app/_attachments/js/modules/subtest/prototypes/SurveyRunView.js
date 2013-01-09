@@ -82,7 +82,7 @@ SurveyRunView = (function(_super) {
     if (autostopLimit > 0) {
       for (i = 1, _ref2 = this.questionViews.length; 1 <= _ref2 ? i <= _ref2 : i >= _ref2; 1 <= _ref2 ? i++ : i--) {
         currentAnswer = this.questionViews[i - 1].answer;
-        if (currentAnswer === "0" || currentAnswer === "3") {
+        if (currentAnswer === "0" || currentAnswer === "9") {
           autostopCount++;
         } else {
           autostopCount = 0;
