@@ -33,9 +33,15 @@ ResultsView = (function(_super) {
   };
 
   ResultsView.prototype.showResultSumView = function(event) {
-    var result;
+    var $details, result, targetId;
+    targetId = $(event.target).attr("data-result-id");
+    $details = this.$el.find("#details_" + targetId);
+    if (!_.isEmpty($details.html())) {
+      $details.empty();
+      return;
+    }
     result = new Result({
-      _id: $(event.target).attr("data-result-id")
+      "_id": targetId
     });
     return result.fetch({
       success: function() {
@@ -45,7 +51,8 @@ ResultsView = (function(_super) {
           finishCheck: true
         });
         view.render();
-        return $(event.target).siblings().last().html(view.el);
+        $details.html("<div class='info_box'>" + $(view.el).html() + "</div>");
+        return view.close();
       }
     });
   };
@@ -307,7 +314,7 @@ ResultsView = (function(_super) {
           long = moment(row.value.end_time).format('YYYY-MMM-DD HH:mm');
           fromNow = moment(row.value.end_time).fromNow();
           time = "" + long + " (" + fromNow + ")";
-          htmlRows += "            <div>              " + time + "              <button data-result-id='" + row.id + "' class='details command'>details</button>              <div></div>            </div>          ";
+          htmlRows += "            <div>              " + id + " -              " + time + "              <button data-result-id='" + row.id + "' class='details command'>details</button>              <div id='details_" + row.id + "'></div>            </div>          ";
         }
         return _this.$el.find("#results_container").html(htmlRows);
       }

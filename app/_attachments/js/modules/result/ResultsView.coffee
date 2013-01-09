@@ -16,15 +16,22 @@ class ResultsView extends Backbone.View
     document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}"
 
   showResultSumView: (event) ->
-    result = new Result
-      _id: $(event.target).attr("data-result-id")
+    targetId = $(event.target).attr("data-result-id")
+    $details = @$el.find("#details_#{targetId}")
+    if not _.isEmpty($details.html())
+      $details.empty()
+      return 
+
+    result = new Result "_id" : targetId
     result.fetch
       success: ->
         view = new ResultSumView
-          model: result
-          finishCheck: true
+          model       : result
+          finishCheck : true
         view.render()
-        $(event.target).siblings().last().html view.el
+        $details.html "<div class='info_box'>" + $(view.el).html() + "</div>"
+        view.close()
+        
 
 
   cloud: ->
@@ -168,7 +175,6 @@ class ResultsView extends Backbone.View
     @initDetectOptions()
     @detectCloud()
 
-    
   render: ->
 
     @clearSubViews()
@@ -269,9 +275,10 @@ class ResultsView extends Backbone.View
           time    = "#{long} (#{fromNow})"
           htmlRows += "
             <div>
+              #{ id } -
               #{ time }
               <button data-result-id='#{row.id}' class='details command'>details</button>
-              <div></div>
+              <div id='details_#{row.id}'></div>
             </div>
           "
 
