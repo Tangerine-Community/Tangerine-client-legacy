@@ -31,11 +31,12 @@ class GridRunView extends Backbone.View
   markHandler: (event) =>
     $target = $(event.target)
     index = $target.attr('data-index')
-    if @lastAttempted != 0 && index > @lastAttempted
-      return
+
+    return if parseInt(@lastAttempted) != 0 && parseInt(index) > parseInt(@lastAttempted)
+      
     @markElement(index)
-    if @autostop != 0
-      @checkAutostop()
+    @checkAutostop() if @autostop != 0
+
 
   intermediateItemHandler: (event) =>
     @timeIntermediateCaptured = @getTime() - @startTime
@@ -58,10 +59,9 @@ class GridRunView extends Backbone.View
 
   markElement: (index, value = null) ->
     # if last attempted has been set, and the click is above it, then cancel
-    if @lastAttempted != 0 && index > @lastAttempted then return
+    return if parseInt(@lastAttempted) != 0 && parseInt(index) > parseInt(@lastAttempted)
 
     $target = @$el.find(".grid_element[data-index=#{index}]")
-
     @markRecord.push index
 
     if not @autostopped

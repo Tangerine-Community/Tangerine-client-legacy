@@ -55,7 +55,9 @@ GridRunView = (function(_super) {
     var $target, index;
     $target = $(event.target);
     index = $target.attr('data-index');
-    if (this.lastAttempted !== 0 && index > this.lastAttempted) return;
+    if (parseInt(this.lastAttempted) !== 0 && parseInt(index) > parseInt(this.lastAttempted)) {
+      return;
+    }
     this.markElement(index);
     if (this.autostop !== 0) return this.checkAutostop();
   };
@@ -90,7 +92,9 @@ GridRunView = (function(_super) {
   GridRunView.prototype.markElement = function(index, value) {
     var $target;
     if (value == null) value = null;
-    if (this.lastAttempted !== 0 && index > this.lastAttempted) return;
+    if (parseInt(this.lastAttempted) !== 0 && parseInt(index) > parseInt(this.lastAttempted)) {
+      return;
+    }
     $target = this.$el.find(".grid_element[data-index=" + index + "]");
     this.markRecord.push(index);
     if (!this.autostopped) {
