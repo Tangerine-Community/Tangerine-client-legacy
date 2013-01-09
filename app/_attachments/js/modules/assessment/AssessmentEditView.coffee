@@ -11,9 +11,7 @@ class AssessmentEditView extends Backbone.View
     'keypress #new_subtest_name'   : 'saveNewSubtest'
     'click .new_subtest_save'      : 'saveNewSubtest'
 
-    'keypress #basic input'        : 'showSave'
-    'click .assessment_save'       : 'save'
-
+    'change #basic input'          : 'save'
     'click .save'                  : 'save'
 
   
@@ -23,14 +21,9 @@ class AssessmentEditView extends Backbone.View
         success: =>
           Utils.midAlert "Assessment saved" 
           Tangerine.router.navigate "edit/"+@model.id, true
-          @hideSave()
         error: =>
           Utils.midAlert "Please try again. Assessment save error." 
 
-  showSave: -> @$el.find('.assessment_save').fadeIn(250)
-  
-  hideSave: -> @$el.find('.assessment_save').fadeToggle(250)
-  
   back: ->
     Tangerine.router.navigate "assessments", true
 
@@ -82,21 +75,13 @@ class AssessmentEditView extends Backbone.View
     else
       @$el.find("#sequences").val("") # clean text area
 
-    # wow, I have no idea what this does. This code is really old.
-    groups = Tangerine.user.get("groups")
-    if not ~groups.indexOf(@$el.find("#assessment_group").val())
-      alert "Warning\n\nYou cannot join a group unless you are a member of that group."
-      @$el.find("#assessment_group").val @model.escape "group"
-      @hideSave()
-      return false
-    else
-      @model.set
-        sequences : sequences
-        archived  : @$el.find("#archive_buttons input:checked").val() == "true"
-        name      : @$el.find("#assessment_name").val()
-        dKey      : @$el.find("#assessment_d_key").val()
-        assessmentId : @model.id
-      return true
+    @model.set
+      sequences : sequences
+      archived  : @$el.find("#archive_buttons input:checked").val() == "true"
+      name      : @$el.find("#assessment_name").val()
+      dKey      : @$el.find("#assessment_d_key").val()
+      assessmentId : @model.id
+    return true
 
   toggleNewSubtestForm: (event) ->
     @$el.find(".new_subtest_form, .new_subtest_button").fadeToggle(250, => 
@@ -177,8 +162,6 @@ class AssessmentEditView extends Backbone.View
       <div id='basic'>
         <label for='assessment_name'>Name</label>
         <input id='assessment_name' value='#{@model.escape("name")}'>
-
-        <button class='assessment_save confirmation'>Save</button><br>
 
         <label for='assessment_d_key' title='This key is used to import the assessment from a tablet'>Download Key</label><br>
         <div class='info_box'>#{@model.id.substr(-5,5)}</div>

@@ -25,8 +25,7 @@ AssessmentEditView = (function(_super) {
     'click .new_subtest_cancel': 'toggleNewSubtestForm',
     'keypress #new_subtest_name': 'saveNewSubtest',
     'click .new_subtest_save': 'saveNewSubtest',
-    'keypress #basic input': 'showSave',
-    'click .assessment_save': 'save',
+    'change #basic input': 'save',
     'click .save': 'save'
   };
 
@@ -36,8 +35,7 @@ AssessmentEditView = (function(_super) {
       return this.model.save(null, {
         success: function() {
           Utils.midAlert("Assessment saved");
-          Tangerine.router.navigate("edit/" + _this.model.id, true);
-          return _this.hideSave();
+          return Tangerine.router.navigate("edit/" + _this.model.id, true);
         },
         error: function() {
           return Utils.midAlert("Please try again. Assessment save error.");
@@ -46,20 +44,12 @@ AssessmentEditView = (function(_super) {
     }
   };
 
-  AssessmentEditView.prototype.showSave = function() {
-    return this.$el.find('.assessment_save').fadeIn(250);
-  };
-
-  AssessmentEditView.prototype.hideSave = function() {
-    return this.$el.find('.assessment_save').fadeToggle(250);
-  };
-
   AssessmentEditView.prototype.back = function() {
     return Tangerine.router.navigate("assessments", true);
   };
 
   AssessmentEditView.prototype.updateModel = function() {
-    var doublesError, element, emptyError, groups, i, j, rangeError, sequence, sequenceErrors, sequences, sequencesValue, subtestCount, tooFewError, tooManyError, validatedSequences, _len, _len2;
+    var doublesError, element, emptyError, i, j, rangeError, sequence, sequenceErrors, sequences, sequencesValue, subtestCount, tooFewError, tooManyError, validatedSequences, _len, _len2;
     subtestCount = this.model.subtests.models.length;
     sequencesValue = this.$el.find("#sequences").val().replace(/[^0-9,\n]/g, "");
     sequences = sequencesValue.split("\n");
@@ -109,22 +99,14 @@ AssessmentEditView = (function(_super) {
     } else {
       this.$el.find("#sequences").val("");
     }
-    groups = Tangerine.user.get("groups");
-    if (!~groups.indexOf(this.$el.find("#assessment_group").val())) {
-      alert("Warning\n\nYou cannot join a group unless you are a member of that group.");
-      this.$el.find("#assessment_group").val(this.model.escape("group"));
-      this.hideSave();
-      return false;
-    } else {
-      this.model.set({
-        sequences: sequences,
-        archived: this.$el.find("#archive_buttons input:checked").val() === "true",
-        name: this.$el.find("#assessment_name").val(),
-        dKey: this.$el.find("#assessment_d_key").val(),
-        assessmentId: this.model.id
-      });
-      return true;
-    }
+    this.model.set({
+      sequences: sequences,
+      archived: this.$el.find("#archive_buttons input:checked").val() === "true",
+      name: this.$el.find("#assessment_name").val(),
+      dKey: this.$el.find("#assessment_d_key").val(),
+      assessmentId: this.model.id
+    });
+    return true;
   };
 
   AssessmentEditView.prototype.toggleNewSubtestForm = function(event) {
@@ -198,7 +180,7 @@ AssessmentEditView = (function(_super) {
       subtestTypeSelect += "</optgroup>";
     }
     subtestTypeSelect += "</select>";
-    this.$el.html("      <button class='back navigation'>Back</button>        <h1>Assessment Builder</h1>      <div id='basic'>        <label for='assessment_name'>Name</label>        <input id='assessment_name' value='" + (this.model.escape("name")) + "'>        <button class='assessment_save confirmation'>Save</button><br>        <label for='assessment_d_key' title='This key is used to import the assessment from a tablet'>Download Key</label><br>        <div class='info_box'>" + (this.model.id.substr(-5, 5)) + "</div>      </div>      <label title='Only active assessments will be displayed in the main assessment list.'>Status</label><br>      <div id='archive_buttons' class='buttonset'>        <input type='radio' id='archive_false' name='archive' value='false' " + notArchiveChecked + "><label for='archive_false'>Active</label>        <input type='radio' id='archive_true'  name='archive' value='true'  " + archiveChecked + "><label for='archive_true'>Archived</label>      </div>      <h2>Subtests</h2>      <div class='menu_box'>        <div>        <ul id='subtest_list'>        </ul>        </div>        <button class='new_subtest_button command'>Add Subtest</button>        <div class='new_subtest_form confirmation'>          <div class='menu_box'>            <h2>New Subtest</h2>            <label for='subtest_type_select'>Type</label><br>            " + subtestTypeSelect + "<br>            <label for='new_subtest_name'>Name</label><br>            <input type='text' id='new_subtest_name'>            <button class='new_subtest_save command'>Add</button> <button class='new_subtest_cancel command'>Cancel</button>          </div>        </div>      </div>      <h2>Options</h2>      <div class='label_value'>        <label for='sequences' title='This is a list of acceptable orders of subtests, which will be randomly selected each time an assessment is run. Subtest indicies are separated by commas, new lines separate sequences. '>Random Sequences</label>        <div id='subtest_legend'>" + subtestLegend + "</div>        <textarea id='sequences'>" + sequences + "</textarea>      </div>      <button class='save command'>Save</button>      ");
+    this.$el.html("      <button class='back navigation'>Back</button>        <h1>Assessment Builder</h1>      <div id='basic'>        <label for='assessment_name'>Name</label>        <input id='assessment_name' value='" + (this.model.escape("name")) + "'>        <label for='assessment_d_key' title='This key is used to import the assessment from a tablet'>Download Key</label><br>        <div class='info_box'>" + (this.model.id.substr(-5, 5)) + "</div>      </div>      <label title='Only active assessments will be displayed in the main assessment list.'>Status</label><br>      <div id='archive_buttons' class='buttonset'>        <input type='radio' id='archive_false' name='archive' value='false' " + notArchiveChecked + "><label for='archive_false'>Active</label>        <input type='radio' id='archive_true'  name='archive' value='true'  " + archiveChecked + "><label for='archive_true'>Archived</label>      </div>      <h2>Subtests</h2>      <div class='menu_box'>        <div>        <ul id='subtest_list'>        </ul>        </div>        <button class='new_subtest_button command'>Add Subtest</button>        <div class='new_subtest_form confirmation'>          <div class='menu_box'>            <h2>New Subtest</h2>            <label for='subtest_type_select'>Type</label><br>            " + subtestTypeSelect + "<br>            <label for='new_subtest_name'>Name</label><br>            <input type='text' id='new_subtest_name'>            <button class='new_subtest_save command'>Add</button> <button class='new_subtest_cancel command'>Cancel</button>          </div>        </div>      </div>      <h2>Options</h2>      <div class='label_value'>        <label for='sequences' title='This is a list of acceptable orders of subtests, which will be randomly selected each time an assessment is run. Subtest indicies are separated by commas, new lines separate sequences. '>Random Sequences</label>        <div id='subtest_legend'>" + subtestLegend + "</div>        <textarea id='sequences'>" + sequences + "</textarea>      </div>      <button class='save command'>Save</button>      ");
     this.subtestListEditView.setElement(this.$el.find("#subtest_list"));
     this.subtestListEditView.render();
     this.$el.find("#subtest_list").sortable({
