@@ -152,7 +152,7 @@ class QuestionEditView extends Backbone.View
           <input id='prompt' type='text' value='#{prompt}'>
         </div>
         <div class='label_value'>
-          <label for='hint'>Hint</label>
+          <label for='hint'>Note to enumerator</label>
           <input id='hint' type='text' value='#{hint}'>
         </div>
         <div class='label_value'>
