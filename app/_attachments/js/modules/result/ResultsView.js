@@ -22,8 +22,8 @@ ResultsView = (function(_super) {
     'click .detect': 'detectOptions',
     'click .details': 'showResultSumView',
     'click .csv_beta': 'csvBeta',
-    'change .limit': "setLimit",
-    'change .page': "setOffset"
+    'change #limit': "setLimit",
+    'change #page': "setOffset"
   };
 
   ResultsView.prototype.csvBeta = function() {
@@ -257,56 +257,57 @@ ResultsView = (function(_super) {
     if (Tangerine.settings.get("context") === "mobile") {
       html += "        <button class='detect command'>Detect options</button>        <div class='status'>          <h2>Status</h2>          <div class='info_box'></div>          <div class='checking_status'></div>        </div>        ";
     }
-    html += "      <h2 id='results_header'>Results (loading)</h2>      <div id='results_container'></div>    ";
+    html += "      <h2 id='results_header'>Results (<span id='result_position'>loading...</span>)</h2>      <div class='confirmation' id='controls'>        <label for='page' class='small_grey'>Page</label><input id='page' type='number' value='0'>        <label for='limit' class='small_grey'>Per page</label><input id='limit' type='number' value='0'>      </div>      <div id='results_container'></div>    ";
     this.$el.html(html);
     this.updateResults();
     return this.trigger("rendered");
   };
 
   ResultsView.prototype.setLimit = function(event) {
-    this.resultLimit = parseInt($(event.target).val()) || 100;
+    this.resultLimit = parseInt($("#limit").val()) || 100;
     return this.updateResults();
   };
 
   ResultsView.prototype.setOffset = function(event) {
     var calculated, maxPage, val;
-    val = parseInt($(event.target).val()) || 1;
+    val = parseInt($("#page").val()) || 1;
     calculated = (val - 1) * this.resultLimit;
-    maxPage = Math.floor(this.results.length / this.resultLimit) + 1;
-    this.resultOffset = Math.limit(0, calculated, maxPage);
+    maxPage = Math.floor(this.results.length / this.resultLimit);
+    this.resultOffset = Math.limit(0, calculated, maxPage * this.resultLimit);
     return this.updateResults();
   };
 
-  ResultsView.prototype.updateResults = function() {
-    var _ref,
+  ResultsView.prototype.updateResults = function(focus) {
+    var location, _ref,
       _this = this;
     if (((_ref = this.results) != null ? _ref.length : void 0) === 0) {
       this.$el.find('#results_header').html("No results yet!");
       return;
     }
+    location = Tangerine.settings.get("context") === "server" ? "group" : Tangerine.settings.get("context") === "mobile" ? "local" : void 0;
     return $.ajax({
-      url: Tangerine.settings.urlView("local", "resultSummaryByAssessmentId"),
-      type: "POST",
+      url: Tangerine.settings.urlView(location, "resultSummaryByAssessmentId"),
+      type: "GET",
       dataType: "json",
       contentType: "application/json",
-      data: JSON.stringify({
-        keys: [this.assessment.id],
+      data: {
+        keys: JSON.stringify([this.assessment.id]),
         descenting: true,
         limit: this.resultLimit,
         skip: this.resultOffset
-      }),
+      },
       success: function(data) {
-        var count, currentPage, fromNow, htmlMenu, htmlRows, id, long, maxResults, row, rows, time, _i, _len, _ref2;
+        var count, currentPage, fromNow, htmlRows, id, long, maxResults, row, rows, time, _i, _len, _ref2;
         rows = data.rows;
         count = rows.length;
-        $('#results_header').html("Results (" + count + ")");
         maxResults = 100;
         currentPage = Math.floor(_this.resultOffset / _this.resultLimit) + 1;
-        htmlMenu = "";
-        if (count > maxResults) {
-          htmlMenu = "          <br>          <div>            <label for='page' class='small_grey'>Page</label><input id='page' type='number' value='" + currentPage + "'>            <label for='limit' class='small_grey'>Per page</label><input id='limit' type='number' value='" + _this.resultLimit + "'>          </div>        ";
+        if (_this.results.length > maxResults) {
+          _this.$el.find("#controls").removeClass("confirmation");
+          _this.$el.find("#page").val(currentPage);
+          _this.$el.find("#limit").val(_this.resultLimit);
         }
-        _this.$el.find('#results_header').html("          Results (" + count + ")          " + htmlMenu + "        ");
+        _this.$el.find('#result_position').html("" + _this.resultOffset + "-" + (Math.min(_this.resultOffset + _this.resultLimit, _this.results.length)) + " of " + _this.results.length);
         htmlRows = "";
         for (_i = 0, _len = rows.length; _i < _len; _i++) {
           row = rows[_i];
@@ -316,7 +317,8 @@ ResultsView = (function(_super) {
           time = "" + long + " (" + fromNow + ")";
           htmlRows += "            <div>              " + id + " -              " + time + "              <button data-result-id='" + row.id + "' class='details command'>details</button>              <div id='details_" + row.id + "'></div>            </div>          ";
         }
-        return _this.$el.find("#results_container").html(htmlRows);
+        _this.$el.find("#results_container").html(htmlRows);
+        return _this.$el.find(focus).focus();
       }
     });
   };

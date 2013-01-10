@@ -8,8 +8,8 @@ class ResultsView extends Backbone.View
     'click .details'  : 'showResultSumView'
     'click .csv_beta' : 'csvBeta'
 
-    'change .limit' : "setLimit"
-    'change .page' : "setOffset"
+    'change #limit' : "setLimit"
+    'change #page' : "setOffset"
 
   csvBeta: ->
     filename = @assessment.get("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
@@ -204,7 +204,11 @@ class ResultsView extends Backbone.View
         </div>
         "
     html += "
-      <h2 id='results_header'>Results (loading)</h2>
+      <h2 id='results_header'>Results (<span id='result_position'>loading...</span>)</h2>
+      <div class='confirmation' id='controls'>
+        <label for='page' class='small_grey'>Page</label><input id='page' type='number' value='0'>
+        <label for='limit' class='small_grey'>Per page</label><input id='limit' type='number' value='0'>
+      </div>
       <div id='results_container'></div>
     "
     
@@ -215,30 +219,41 @@ class ResultsView extends Backbone.View
     @trigger "rendered"
 
   setLimit: (event) ->
-    @resultLimit = parseInt($(event.target).val()) || 100 # default 100
+    # @resultOffset
+    # @resultLimit
+
+    @resultLimit = parseInt($("#limit").val()) || 100 # default 100
     @updateResults()
 
   setOffset: (event) ->
-    val = parseInt($(event.target).val()) || 1 
-    calculated = (val - 1) * @resultLimit
-    maxPage = Math.floor(@results.length / @resultLimit ) + 1
+    # @resultOffset
+    # @resultLimit
 
-    @resultOffset = Math.limit(0, calculated, maxPage) # default page 1 == 0_offset
+    val           = parseInt($("#page").val()) || 1 
+    calculated    = (val - 1) * @resultLimit
+    maxPage       = Math.floor(@results.length / @resultLimit )
+    @resultOffset = Math.limit(0, calculated, maxPage * @resultLimit) # default page 1 == 0_offset
 
     @updateResults()
 
-  updateResults: =>
+  updateResults: (focus) =>
     if @results?.length == 0
       @$el.find('#results_header').html "No results yet!"
       return
 
+    location = if Tangerine.settings.get("context") == "server"
+      "group"
+    else if Tangerine.settings.get("context") == "mobile"
+      "local"
+
+
     $.ajax 
-      url: Tangerine.settings.urlView("local", "resultSummaryByAssessmentId")
-      type: "POST"
+      url: Tangerine.settings.urlView(location, "resultSummaryByAssessmentId")
+      type: "GET"
       dataType: "json"
       contentType: "application/json"
-      data: JSON.stringify
-        keys        : [@assessment.id]
+      data: 
+        keys        : JSON.stringify([@assessment.id])
         descenting  : true
         limit       : @resultLimit
         skip        : @resultOffset
@@ -247,25 +262,15 @@ class ResultsView extends Backbone.View
         rows  = data.rows
         count = rows.length
 
-        $('#results_header').html "Results (#{count})"
-
         maxResults  = 100
         currentPage = Math.floor( @resultOffset / @resultLimit ) + 1 
 
-        htmlMenu = ""
-        htmlMenu = "
-          <br>
-          <div>
-            <label for='page' class='small_grey'>Page</label><input id='page' type='number' value='#{currentPage}'>
-            <label for='limit' class='small_grey'>Per page</label><input id='limit' type='number' value='#{@resultLimit}'>
-          </div>
-        " if count > maxResults
+        if @results.length > maxResults
+          @$el.find("#controls").removeClass("confirmation")
+          @$el.find("#page").val(currentPage)
+          @$el.find("#limit").val(@resultLimit)
 
-
-        @$el.find('#results_header').html "
-          Results (#{count})
-          #{htmlMenu}
-        "
+        @$el.find('#result_position').html "#{@resultOffset}-#{Math.min(@resultOffset+@resultLimit,@results.length)} of #{@results.length}"
 
         htmlRows = ""
         for row in rows
@@ -283,6 +288,8 @@ class ResultsView extends Backbone.View
           "
 
         @$el.find("#results_container").html htmlRows
+
+        @$el.find(focus).focus()
   
   afterRender: =>
     for view in @subViews
