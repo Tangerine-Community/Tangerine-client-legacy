@@ -36,7 +36,7 @@ class UsersMenuView extends Backbone.View
         Robbert.request
           "action" : action
           "user"   : user
-          "group"  : Tangerine.settings.get("groupName").substring(6) # without group prefix
+          "group"  : _.last(Tangerine.settings.get("groupName").split("group-")) # without group prefix
           "auth_u" : Tangerine.user.get("name")
           "auth_p" : auth_p
           success : ( response ) =>

@@ -58,7 +58,7 @@ UsersMenuView = (function(_super) {
       return Robbert.request({
         "action": action,
         "user": user,
-        "group": Tangerine.settings.get("groupName").substring(6),
+        "group": _.last(Tangerine.settings.get("groupName").split("group-")),
         "auth_u": Tangerine.user.get("name"),
         "auth_p": auth_p,
         success: function(response) {
