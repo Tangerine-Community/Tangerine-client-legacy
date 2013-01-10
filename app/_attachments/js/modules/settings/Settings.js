@@ -139,6 +139,12 @@ Settings = (function(_super) {
     return result;
   };
 
+  Settings.prototype.urlDDoc = function(location) {
+    var dDoc;
+    dDoc = this.config.get("designDoc");
+    return "" + (this.urlDB('trunk')) + "/_design/" + dDoc;
+  };
+
   Settings.prototype.urlView = function(location, view) {
     if (location === "group" || Tangerine.settings.get("context") === "server") {
       return "" + this.location[location].db + this.groupCouch.view + view;

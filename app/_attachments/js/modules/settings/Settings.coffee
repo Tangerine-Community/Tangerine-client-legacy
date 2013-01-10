@@ -93,6 +93,9 @@ class Settings extends Backbone.Model
 
     return result
 
+  urlDDoc : ( location ) ->
+    dDoc = @config.get "designDoc"
+    return "#{@urlDB('trunk')}/_design/#{dDoc}"
 
   urlView  : ( location, view ) ->
     if location == "group" || Tangerine.settings.get("context") == "server"
