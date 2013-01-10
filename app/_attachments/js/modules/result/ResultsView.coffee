@@ -274,9 +274,18 @@ class ResultsView extends Backbone.View
 
         htmlRows = ""
         for row in rows
-          id      = row.value?.participant_id || ""
-          long    = moment(row.value.end_time).format('YYYY-MMM-DD HH:mm')
-          fromNow = moment(row.value.end_time).fromNow()
+          
+          id      = row.value?.participant_id || "No ID"
+          endTime = row.value.end_time
+          if endTime?
+            long    = moment(endTime).format('YYYY-MMM-DD HH:mm')
+            fromNow = moment(endTime).fromNow()
+          else
+            startTime = row.value.start_time
+            console.log "start_time: #{startTime}"
+            long    = "<b>started</b> " + moment(startTime).format('YYYY-MMM-DD HH:mm')
+            fromNow = moment(startTime).fromNow()
+
           time    = "#{long} (#{fromNow})"
           htmlRows += "
             <div>

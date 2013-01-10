@@ -297,7 +297,7 @@ ResultsView = (function(_super) {
         skip: this.resultOffset
       },
       success: function(data) {
-        var count, currentPage, fromNow, htmlRows, id, long, maxResults, row, rows, time, _i, _len, _ref2;
+        var count, currentPage, endTime, fromNow, htmlRows, id, long, maxResults, row, rows, startTime, time, _i, _len, _ref2;
         rows = data.rows;
         count = rows.length;
         maxResults = 100;
@@ -311,9 +311,17 @@ ResultsView = (function(_super) {
         htmlRows = "";
         for (_i = 0, _len = rows.length; _i < _len; _i++) {
           row = rows[_i];
-          id = ((_ref2 = row.value) != null ? _ref2.participant_id : void 0) || "";
-          long = moment(row.value.end_time).format('YYYY-MMM-DD HH:mm');
-          fromNow = moment(row.value.end_time).fromNow();
+          id = ((_ref2 = row.value) != null ? _ref2.participant_id : void 0) || "No ID";
+          endTime = row.value.end_time;
+          if (endTime != null) {
+            long = moment(endTime).format('YYYY-MMM-DD HH:mm');
+            fromNow = moment(endTime).fromNow();
+          } else {
+            startTime = row.value.start_time;
+            console.log("start_time: " + startTime);
+            long = "<b>started</b> " + moment(startTime).format('YYYY-MMM-DD HH:mm');
+            fromNow = moment(startTime).fromNow();
+          }
           time = "" + long + " (" + fromNow + ")";
           htmlRows += "            <div>              " + id + " -              " + time + "              <button data-result-id='" + row.id + "' class='details command'>details</button>              <div id='details_" + row.id + "'></div>            </div>          ";
         }
