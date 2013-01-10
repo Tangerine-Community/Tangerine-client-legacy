@@ -31,6 +31,7 @@ class ConsentRunView extends Backbone.View
     "
 
     @trigger "rendered"
+    @trigger "ready"
   
   isValid: ->
     if @confirmedNonConsent == false

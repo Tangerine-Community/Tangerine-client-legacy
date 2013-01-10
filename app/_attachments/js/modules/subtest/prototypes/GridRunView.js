@@ -414,7 +414,8 @@ GridRunView = (function(_super) {
     }
     html += "      " + (!this.untimed ? stopTimerHTML : "") + "      " + (!this.untimed ? resetButton : "") + "      " + modeSelector + "    ";
     this.$el.html(html);
-    return this.trigger("rendered");
+    this.trigger("rendered");
+    return this.trigger("ready");
   };
 
   GridRunView.prototype.isValid = function() {

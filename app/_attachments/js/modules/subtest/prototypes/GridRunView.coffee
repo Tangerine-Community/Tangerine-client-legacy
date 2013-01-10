@@ -391,6 +391,7 @@ class GridRunView extends Backbone.View
     @$el.html html
 
     @trigger "rendered"
+    @trigger "ready"
     
   isValid: ->
     # Stop timer if still running. Issue #240

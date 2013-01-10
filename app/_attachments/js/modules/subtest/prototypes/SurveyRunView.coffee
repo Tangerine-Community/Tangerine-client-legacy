@@ -23,6 +23,7 @@ class SurveyRunView extends Backbone.View
     @isObservation = @options.isObservation
     @questionViews = []
     @answered      = []
+    @renderCount   = 0
     @questions     = new Questions
     @questions.fetch
       key: @model.get "assessmentId"
@@ -198,6 +199,8 @@ class SurveyRunView extends Backbone.View
     @trigger "rendered"
 
   onQuestionRendered: =>
+    @renderCount++
+    @trigger "ready" if @renderCount == ( @questions.length - 1 )
     @trigger "subRendered"
 
   onClose:->

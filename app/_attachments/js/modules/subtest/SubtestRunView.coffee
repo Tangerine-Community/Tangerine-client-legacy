@@ -43,9 +43,9 @@ class SubtestRunView extends Backbone.View
     @prototypeView.on "subRendered", => @trigger "subRendered"
     @prototypeView.on "showNext",    => @showNext()
     @prototypeView.on "hideNext",    => @hideNext()
+    @prototypeView.on "ready",       => @prototypeRendered = true
     @prototypeView.setElement(@$el.find('#prototype_wrapper'))
     @prototypeView.render()
-    @prototypeRendered = true
 
     @trigger "rendered"
 
@@ -70,6 +70,7 @@ class SubtestRunView extends Backbone.View
     @prototypeView?.close?()
 
   isValid: ->
+    console.log "checking if valid"
     if not @prototypeRendered then return false
     if @prototypeView.isValid?
       return @prototypeView.isValid()

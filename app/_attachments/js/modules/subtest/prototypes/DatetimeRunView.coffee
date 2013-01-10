@@ -28,6 +28,7 @@ class DatetimeRunView extends Backbone.View
       </form>
       "
     @trigger "rendered"
+    @trigger "ready"
   
   getResult: ->
     return {

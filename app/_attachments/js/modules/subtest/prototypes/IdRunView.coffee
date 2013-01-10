@@ -20,6 +20,7 @@ class IdRunView extends Backbone.View
       <div class='messages'></div>
     </form>"
     @trigger "rendered"
+    @trigger "ready"
 
   getResult: ->
     return { 'participant_id' : @$el.find("#participant_id").val() }

@@ -46,6 +46,7 @@ SurveyRunView = (function(_super) {
     this.isObservation = this.options.isObservation;
     this.questionViews = [];
     this.answered = [];
+    this.renderCount = 0;
     this.questions = new Questions;
     return this.questions.fetch({
       key: this.model.get("assessmentId"),
@@ -266,6 +267,8 @@ SurveyRunView = (function(_super) {
   };
 
   SurveyRunView.prototype.onQuestionRendered = function() {
+    this.renderCount++;
+    if (this.renderCount === (this.questions.length - 1)) this.trigger("ready");
     return this.trigger("subRendered");
   };
 

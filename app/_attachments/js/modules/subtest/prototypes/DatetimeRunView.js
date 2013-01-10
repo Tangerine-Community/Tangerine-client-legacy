@@ -27,7 +27,8 @@ DatetimeRunView = (function(_super) {
     if (minutes < 10) minutes = "0" + minutes;
     time = dateTime.getHours() + ":" + minutes;
     this.$el.html("      <form>          <table>            <tr>              <td><label for='year'>" + (t('year')) + "</label><input id='year' name='year' value='" + year + "'></td>              <td><label for='month'>" + (t('month')) + "</label><input id='month' type='month' name='month' value='" + month + "'></td>              <td><label for='day'>" + (t('day')) + "</label><input id='day' type='day' name='day' value='" + day + "'></td>            </tr>          </table>          <label for='time'>" + (t('time')) + "</label><br><input type='text' id='time' name='time' value='" + time + "'>      </form>      ");
-    return this.trigger("rendered");
+    this.trigger("rendered");
+    return this.trigger("ready");
   };
 
   DatetimeRunView.prototype.getResult = function() {

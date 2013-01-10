@@ -107,6 +107,7 @@ class LocationRunView extends Backbone.View
     @$el.html html
 
     @trigger "rendered"
+    @trigger "ready"
 
   getResult: ->
     return {

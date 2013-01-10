@@ -197,6 +197,7 @@ class ObservationRunView extends Backbone.View
     "
 
     @trigger "rendered"
+    @trigger "ready"
 
   renderSurvey: (e) ->
     if not @iAm.counting then return

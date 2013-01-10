@@ -55,9 +55,11 @@ SubtestRunView = (function(_super) {
     this.prototypeView.on("hideNext", function() {
       return _this.hideNext();
     });
+    this.prototypeView.on("ready", function() {
+      return _this.prototypeRendered = true;
+    });
     this.prototypeView.setElement(this.$el.find('#prototype_wrapper'));
     this.prototypeView.render();
-    this.prototypeRendered = true;
     return this.trigger("rendered");
   };
 
@@ -92,6 +94,7 @@ SubtestRunView = (function(_super) {
   };
 
   SubtestRunView.prototype.isValid = function() {
+    console.log("checking if valid");
     if (!this.prototypeRendered) return false;
     if (this.prototypeView.isValid != null) {
       return this.prototypeView.isValid();

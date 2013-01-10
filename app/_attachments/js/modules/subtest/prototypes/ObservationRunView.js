@@ -218,7 +218,8 @@ ObservationRunView = (function(_super) {
     this.trigger("hideNext");
     totalSeconds = this.model.get("totalSeconds");
     this.$el.html("      <div class='timer_wrapper'>        <div class='progress clearfix'>          <span class='completed_display confirmation'>" + (t('completed')) + " <div class='info_box completed_count'>" + this.my.observation.completed + "</div></span>          <span class='next_display confirmation'>" + (t('next observation')) + " <div class='info_box time_till_next'>" + (this.model.get('intervalLength')) + "</div></span>        </div>        <div>          <div class='start_button_wrapper'><button class='start_time command'>" + (t('start')) + "</button></div>          <div class='stop_button_wrapper confirmation'><button class='stop_time command'>" + (t('abort all observations')) + "</button></div>        </div>      </div>      <div id='current_survey'></div>    ");
-    return this.trigger("rendered");
+    this.trigger("rendered");
+    return this.trigger("ready");
   };
 
   ObservationRunView.prototype.renderSurvey = function(e) {

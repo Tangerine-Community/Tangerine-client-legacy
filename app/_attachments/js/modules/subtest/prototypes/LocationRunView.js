@@ -135,7 +135,8 @@ LocationRunView = (function(_super) {
       html += "        <div class='label_value'>          <label for='level_" + i + "'>" + level + "</label><br>          <input data-level='" + i + "' id='level_" + i + "' value=''>        </div>        <div id='autofill_" + i + "' class='autofill' style='display:none'>          <h2>" + (t('select one from autofill list')) + "</h2>          <ul class='school_list' id='school_list_" + i + "'>          </ul>        </div>    ";
     }
     this.$el.html(html);
-    return this.trigger("rendered");
+    this.trigger("rendered");
+    return this.trigger("ready");
   };
 
   LocationRunView.prototype.getResult = function() {
