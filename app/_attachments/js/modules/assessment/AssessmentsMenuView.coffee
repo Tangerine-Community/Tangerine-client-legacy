@@ -8,6 +8,33 @@ class AssessmentsMenuView extends Backbone.View
     'click .import'      : 'import'
     'click .apk'         : 'apk'
     'click .groups'      : 'gotoGroups'
+    'click .universal_upload' : 'universalUpload'
+
+  universalUpload: ->
+    $.ajax 
+      url: Tangerine.settings.urlView("local", "byCollection")
+      type: "GET"
+      dataType: "json"
+      contentType: "application/json"
+      data: 
+        keys : JSON.stringify(["result"])
+      success: (data) ->
+        rows = data.rows
+        docList = []
+        for result in rows
+          docList.push result.id
+
+        $.couch.replicate(
+          Tangerine.settings.urlDB("local"),
+          Tangerine.settings.urlDB("group"),
+            success:      =>
+              Utils.midAlert "Results synced to cloud successfully"
+            error: (a, b) =>
+              Utils.midAlert "Upload error<br>#{a} #{b}"
+          ,
+            doc_ids: docList
+        )
+
 
   apk: ->
     TangerineTree.make
@@ -41,10 +68,12 @@ class AssessmentsMenuView extends Backbone.View
     @usersMenuView = new UsersMenuView
 
   render: =>
+
     newButton    = "<button class='new command'>New</button>"
     importButton = "<button class='import command'>Import</button>"
     apkButton    = "<button class='apk navigation'>APK</button>"
     groupsButton = "<button class='navigation groups'>Groups</button>"
+    uploadButton = "<button class='command universal_upload'>Universal Upload</button>"
 
     html = "
       #{if Tangerine.settings.get("context") == "server" then groupsButton else ""}
@@ -54,7 +83,10 @@ class AssessmentsMenuView extends Backbone.View
     if @isAdmin
       html += "
         #{if Tangerine.settings.get("context") == "server" then newButton else "" }
+        #{if Tangerine.settings.get("context") == "mobile" then uploadButton else "" }
         #{importButton}
+
+        
 
         <div class='new_form confirmation'>
           <div class='menu_box_wide'>

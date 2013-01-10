@@ -21,7 +21,40 @@ AssessmentsMenuView = (function(_super) {
     'click .new': 'newToggle',
     'click .import': 'import',
     'click .apk': 'apk',
-    'click .groups': 'gotoGroups'
+    'click .groups': 'gotoGroups',
+    'click .universal_upload': 'universalUpload'
+  };
+
+  AssessmentsMenuView.prototype.universalUpload = function() {
+    return $.ajax({
+      url: Tangerine.settings.urlView("local", "byCollection"),
+      type: "GET",
+      dataType: "json",
+      contentType: "application/json",
+      data: {
+        keys: JSON.stringify(["result"])
+      },
+      success: function(data) {
+        var docList, result, rows, _i, _len,
+          _this = this;
+        rows = data.rows;
+        docList = [];
+        for (_i = 0, _len = rows.length; _i < _len; _i++) {
+          result = rows[_i];
+          docList.push(result.id);
+        }
+        return $.couch.replicate(Tangerine.settings.urlDB("local"), Tangerine.settings.urlDB("group"), {
+          success: function() {
+            return Utils.midAlert("Results synced to cloud successfully");
+          },
+          error: function(a, b) {
+            return Utils.midAlert("Upload error<br>" + a + " " + b);
+          }
+        }, {
+          doc_ids: docList
+        });
+      }
+    });
   };
 
   AssessmentsMenuView.prototype.apk = function() {
@@ -62,14 +95,15 @@ AssessmentsMenuView = (function(_super) {
   };
 
   AssessmentsMenuView.prototype.render = function() {
-    var apkButton, groupsButton, html, importButton, newButton;
+    var apkButton, groupsButton, html, importButton, newButton, uploadButton;
     newButton = "<button class='new command'>New</button>";
     importButton = "<button class='import command'>Import</button>";
     apkButton = "<button class='apk navigation'>APK</button>";
     groupsButton = "<button class='navigation groups'>Groups</button>";
+    uploadButton = "<button class='command universal_upload'>Universal Upload</button>";
     html = "      " + (Tangerine.settings.get("context") === "server" ? groupsButton : "") + "      " + (Tangerine.settings.get("context") === "server" ? apkButton : "") + "      <h1>Assessments</h1>    ";
     if (this.isAdmin) {
-      html += "        " + (Tangerine.settings.get("context") === "server" ? newButton : "") + "        " + importButton + "        <div class='new_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_name' placeholder='Name'>            <select id='new_type'>              <option value='assessment'>Assessment</option>              <option value='curriculum'>Curriculum</option>            </select><br>            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>          </div>        </div>        <div id='assessments_container'></div>        <div id='users_menu_container' class='UsersMenuView'></div>      ";
+      html += "        " + (Tangerine.settings.get("context") === "server" ? newButton : "") + "        " + (Tangerine.settings.get("context") === "mobile" ? uploadButton : "") + "        " + importButton + "                <div class='new_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_name' placeholder='Name'>            <select id='new_type'>              <option value='assessment'>Assessment</option>              <option value='curriculum'>Curriculum</option>            </select><br>            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>          </div>        </div>        <div id='assessments_container'></div>        <div id='users_menu_container' class='UsersMenuView'></div>      ";
     } else {
       html += "<div id='assessments_container'></div>";
     }
