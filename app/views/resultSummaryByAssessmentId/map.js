@@ -14,6 +14,7 @@
         result.end_time = subtest.data.end_time;
       }
     }
+    result.start_time = doc.start_time;
     return emit(doc.assessmentId, result);
   }
 });
