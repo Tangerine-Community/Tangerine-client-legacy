@@ -23,13 +23,12 @@ AssessmentsView = (function(_super) {
     if (this.archivedIsVisible) {
       this.archivedIsVisible = false;
       $container = this.$el.find(".archived_list").addClass("confirmation");
-      this.$el.find(".toggle_archived").html("Show");
+      return this.$el.find(".toggle_archived").html("Show");
     } else {
       this.archivedIsVisible = true;
       $container = this.$el.find(".archived_list").removeClass("confirmation");
-      this.$el.find(".toggle_archived").html("Hide");
+      return this.$el.find(".toggle_archived").html("Hide");
     }
-    return $container.fadeToggle(150);
   };
 
   AssessmentsView.prototype.initialize = function(options) {
@@ -52,7 +51,7 @@ AssessmentsView = (function(_super) {
         "model": assessment,
         "showAll": this.showAll
       });
-      if (assessment.isArchived() && Tangerine.settings.context === "server") {
+      if (assessment.isArchived() && Tangerine.settings.get("context") === "server") {
         archivedViews.push(newView);
       } else {
         activeViews.push(newView);
@@ -60,12 +59,16 @@ AssessmentsView = (function(_super) {
     }
     this.subviews = archivedViews.concat(activeViews);
     if (this.subviews.length === 0 && !this.isPublic) {
-      this.$el.html("<p class='grey'>No assessments yet. Click <b>new</b> to get started.</p>");
+      if (Tangerine.settings.get("context") === "server") {
+        this.$el.html("<p class='grey'>No assessments yet. Click <b>new</b> to get started.</p>");
+      } else {
+        this.$el.html("<p class='grey'>No assessments imported. Please contact your team leader and inform them that your tablet is empty.</p>");
+      }
       this.trigger("rendered");
       return;
     }
-    archivedContainer = "      <div class='archived_container'>        <h2>Archived (" + archivedViews.length + ") <button class='command toggle_archived'>Show</button></h2>        <ul class='archived_list confirmation'></ul>      </div>    ";
-    showArchived = archivedViews.length !== 0 && Tangerine.get("context") === "server";
+    archivedContainer = "      <div class='archived_container'>        <h2>Archived (" + archivedViews.length + ") <button class='command toggle_archived'>Show</button></h2>        <ul class='archived_list assessment_list confirmation'></ul>      </div>    ";
+    showArchived = archivedViews.length !== 0 && Tangerine.settings.get("context") === "server";
     this.$el.html("      <ul class='active_list assessment_list'></ul>      " + (showArchived ? archivedContainer : "") + "    ");
     $ul = this.$el.find(".active_list");
     for (_j = 0, _len2 = activeViews.length; _j < _len2; _j++) {
@@ -73,6 +76,7 @@ AssessmentsView = (function(_super) {
       view.render();
       $ul.append(view.el);
     }
+    console.log(showArchived);
     if (showArchived) {
       $ul = this.$el.find(".archived_list");
       for (_k = 0, _len3 = archivedViews.length; _k < _len3; _k++) {

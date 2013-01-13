@@ -20,8 +20,6 @@ class AssessmentsView extends Backbone.View
       $container = @$el.find(".archived_list").removeClass "confirmation"
       @$el.find(".toggle_archived").html "Hide"
 
-    $container.fadeToggle 150
-
   initialize: (options) ->
 
     options.assessments.on "add destroy update", @render
@@ -48,17 +46,23 @@ class AssessmentsView extends Backbone.View
         "model"     : assessment
         "showAll"   : @showAll
 
-      if assessment.isArchived() && Tangerine.settings.context == "server"
+
+      if assessment.isArchived() && Tangerine.settings.get("context") == "server"
         archivedViews.push newView 
       else
         activeViews.push newView
-    
+
     @subviews = archivedViews.concat activeViews
 
     # escape if no assessments in non-public list
     if @subviews.length == 0 && not @isPublic
-      @$el.html "<p class='grey'>No assessments yet. Click <b>new</b> to get started.</p>"
+      if Tangerine.settings.get("context") == "server"
+        @$el.html "<p class='grey'>No assessments yet. Click <b>new</b> to get started.</p>"
+      else
+        @$el.html "<p class='grey'>No assessments imported. Please contact your team leader and inform them that your tablet is empty.</p>"
+
       @trigger "rendered"
+
       return
 
     # templating and components
@@ -66,11 +70,11 @@ class AssessmentsView extends Backbone.View
     archivedContainer = "
       <div class='archived_container'>
         <h2>Archived (#{archivedViews.length}) <button class='command toggle_archived'>Show</button></h2>
-        <ul class='archived_list confirmation'></ul>
+        <ul class='archived_list assessment_list confirmation'></ul>
       </div>
     "
 
-    showArchived  = archivedViews.length != 0 && Tangerine.get("context") == "server"
+    showArchived = archivedViews.length != 0 && Tangerine.settings.get("context") == "server"
 
     @$el.html "
       <ul class='active_list assessment_list'></ul>
@@ -82,6 +86,8 @@ class AssessmentsView extends Backbone.View
     for view in activeViews
       view.render()
       $ul.append view.el
+
+    console.log showArchived
     if showArchived
       $ul = @$el.find(".archived_list")
       for view in archivedViews
