@@ -18,14 +18,13 @@ class AccountView extends Backbone.View
         settingsModel.save()
 
   goBack: ->
-    Tangerine.router.navigate "groups", true
+    window.history.back()
 
   joinToggle: ->
     @$el.find(".join, .join_confirmation").fadeToggle(0)
     @$el.find("#group_name").val ""
 
   join: ->
-
     group = @$el.find("#group_name").val().databaseSafetyDance()
     return if group.length == 0
     @user.joinGroup group, =>
@@ -48,16 +47,8 @@ class AccountView extends Backbone.View
 
   
   render: ->
-    html = "
-      <button class='back navigation'>Back</button>
-      <h1>Account</h1>
-      <a href='#settings' class='navigation'><button class='navigation'>Settings</button></a>
-      <section>
-        <div class='label_value'>
-          <label>Name</label>
-          <div>#{@user.name}</div>
-        </div>
-      </section>
+
+    groupSection = "
       <section>
         <div class='label_value'>
           <label>Groups</label>
@@ -74,6 +65,18 @@ class AccountView extends Backbone.View
             </div>
           </div>
         </section>
+    " if Tangerine.settings.get("context") == "server"
+    html = "
+      <button class='back navigation'>Back</button>
+      <h1>Account</h1>
+      <a href='#settings' class='navigation'><button class='navigation'>Settings</button></a>
+      <section>
+        <div class='label_value'>
+          <label>Name</label>
+          <div>#{@user.name}</div>
+        </div>
+      </section>
+      #{groupSection || ""}
       </div><br>
       <!--button class='command confirmation'>Report a bug</button>
       <div class='confirmation' id='bug'>
