@@ -33,7 +33,7 @@ Settings = (function(_super) {
     trunk = this.config.get("trunk");
     local = this.config.get("local");
     port = this.config.get("port");
-    designDoc = this.config.get("designDoc");
+    designDoc = Tangerine.design_doc;
     prefix = this.config.get("groupDBPrefix");
     this.groupDB = "" + prefix + groupName;
     this.trunkDB = trunk.dbName;
@@ -56,8 +56,9 @@ Settings = (function(_super) {
         db: "" + groupHost + "/" + prefix + groupName + "/"
       },
       update: {
-        url: "http://" + update.login + "@" + update.host + "/",
-        db: "http://" + update.login + "@" + update.host + "/" + update.dbName + "/"
+        url: "http://" + update.host + "/",
+        db: "http://" + update.host + "/" + update.dbName + "/",
+        target: update.target
       },
       subnet: {
         url: (function() {

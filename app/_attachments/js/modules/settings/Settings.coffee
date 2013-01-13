@@ -23,7 +23,7 @@ class Settings extends Backbone.Model
     local      = @config.get "local"
     port       = @config.get "port"
 
-    designDoc  = @config.get "designDoc"
+    designDoc  = Tangerine.design_doc
 
     prefix     = @config.get "groupDBPrefix"
 
@@ -48,8 +48,9 @@ class Settings extends Backbone.Model
         url : "#{groupHost}/"
         db  : "#{groupHost}/#{prefix}#{groupName}/"
       update :
-        url : "http://#{update.login}@#{update.host}/"
-        db  : "http://#{update.login}@#{update.host}/#{update.dbName}/"
+        url : "http://#{update.host}/"
+        db  : "http://#{update.host}/#{update.dbName}/"
+        target : update.target
       subnet : 
         url : ("http://#{subnetBase}#{x}:#{port}/"                 for x in [0..255])
         db  : ("http://#{subnetBase}#{x}:#{port}/#{local.dbName}/" for x in [0..255])
