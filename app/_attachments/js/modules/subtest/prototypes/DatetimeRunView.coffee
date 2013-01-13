@@ -16,16 +16,18 @@ class DatetimeRunView extends Backbone.View
     time     = dateTime.getHours() + ":" + minutes
 
     @$el.html "
-      <form>
-          <table>
-            <tr>
-              <td><label for='year'>#{t('year')}</label><input id='year' name='year' value='#{year}'></td>
-              <td><label for='month'>#{t('month')}</label><input id='month' type='month' name='month' value='#{month}'></td>
-              <td><label for='day'>#{t('day')}</label><input id='day' type='day' name='day' value='#{day}'></td>
-            </tr>
-          </table>
-          <label for='time'>#{t('time')}</label><br><input type='text' id='time' name='time' value='#{time}'>
-      </form>
+      <div class='question'>
+        <table>
+          <tr>
+            <td><label for='year'>#{t('year')}</label><input id='year' name='year' value='#{year}'></td>
+            <td><label for='month'>#{t('month')}</label><input id='month' type='month' name='month' value='#{month}'></td>
+            <td><label for='day'>#{t('day')}</label><input id='day' type='day' name='day' value='#{day}'></td>
+          </tr>
+          <tr>
+            <td><label for='time'>#{t('time')}</label><br><input type='text' id='time' name='time' value='#{time}'></td>
+          </tr>
+        </table>
+      </div>
       "
     @trigger "rendered"
     @trigger "ready"
