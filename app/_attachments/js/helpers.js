@@ -319,30 +319,55 @@ Utils = (function() {
 
   function Utils() {}
 
-  Utils.updateTangerine = function() {
-    var docIds, fromWhere, toWhere;
+  Utils.onUpdateSuccess = function() {
+    Utils.midAlert("Update successful");
+    return _.delay(function() {
+      Tangerine.router.navigate("", false);
+      Utils.askToLogout();
+      return document.location.reload();
+    }, 2000);
+  };
+
+  Utils.updateTangerine = function(callbacks) {
     if (Tangerine.settings.get("context") === "mobile") {
       $("#version-uuid").html("Updating...");
-      return $.couch.replicate(Tangerine.settings.urlDB("update"), "http://localhost:5984/tangerine", {
+      return Tangerine.$db.compact({
         success: function() {
-          Utils.midAlert("Update successful");
-          return _.delay(function() {
-            Tangerine.router.navigate("", false);
-            Utils.askToLogout();
-            return document.location.reload();
-          }, 2000);
-        },
-        error: function(error) {
-          console.log("There was an error replicating", arguments);
-          return Utils.midAlert("Update error<br>" + error);
+          return Tangerine.$db.openDoc("_design/tangerine", {
+            success: function(oldDoc) {
+              return $.couch.replicate(Tangerine.settings.urlDB("update"), Tangerine.settings.location.update.target, {
+                success: function() {
+                  return Tangerine.$db.openDoc("_design/tangerine", {
+                    conflicts: true,
+                    success: function(data) {
+                      if (data._conflicts != null) {
+                        return Tangerine.$db.removeDoc(oldDoc, {
+                          success: function() {
+                            return Utils.onUpdateSuccess();
+                          },
+                          error: function(error) {
+                            return Utils.midAlert("Update failed resolving conflict<br>" + error);
+                          }
+                        });
+                      } else {
+                        return Utils.onUpdateSuccess();
+                      }
+                    }
+                  });
+                },
+                error: function(error) {
+                  return Utils.midAlert("Update failed replicating<br>" + error);
+                }
+              }, {
+                doc_ids: ["_design/tangerine"]
+              });
+            },
+            error: function(error) {
+              return Utils.midAlert("Update failed openning database<br>" + error);
+            }
+          });
         }
-      }, {
-        doc_ids: ["_design/tangerine"]
       });
-    } else if (Tangerine.settings.get("context") === "server") {
-      docIds = ["_design/ojai"];
-      fromWhere = "trunk";
-      return toWhere = "group";
     }
   };
 
@@ -412,14 +437,16 @@ Utils = (function() {
     }
   };
 
-  Utils.topAlert = function(alert_text) {
-    return $("<div class='disposable_alert'>" + alert_text + "</div>").appendTo("#content").topCenter().delay(2000).fadeOut(250, function() {
+  Utils.topAlert = function(alert_text, delay) {
+    if (delay == null) delay = 2000;
+    return $("<div class='disposable_alert'>" + alert_text + "</div>").appendTo("#content").topCenter().delay(delay).fadeOut(250, function() {
       return $(this).remove();
     });
   };
 
-  Utils.midAlert = function(alert_text) {
-    return $("<div class='disposable_alert'>" + alert_text + "</div>").appendTo("#content").middleCenter().delay(2000).fadeOut(250, function() {
+  Utils.midAlert = function(alert_text, delay) {
+    if (delay == null) delay = 2000;
+    return $("<div class='disposable_alert'>" + alert_text + "</div>").appendTo("#content").middleCenter().delay(delay).fadeOut(250, function() {
       return $(this).remove();
     });
   };

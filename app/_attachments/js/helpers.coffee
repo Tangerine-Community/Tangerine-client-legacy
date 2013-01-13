@@ -157,32 +157,45 @@ Math.limit    = (min, num, max) -> Math.max(min, Math.min(num, max))
 
 class Utils
 
-  @updateTangerine: ->
+  @onUpdateSuccess: ->
+    Utils.midAlert "Update successful"
+    _.delay( ->
+      Tangerine.router.navigate "", false
+      Utils.askToLogout()
+      document.location.reload()
+    , 2000)
+
+
+  @updateTangerine: (callbacks) ->
+
     if Tangerine.settings.get("context") == "mobile"
+
       $("#version-uuid").html("Updating...")
-      $.couch.replicate(
-        Tangerine.settings.urlDB("update"),
-        "http://localhost:5984/tangerine",
-          success: ->
-            Utils.midAlert "Update successful"
-
-            _.delay ->
-              Tangerine.router.navigate "", false
-              Utils.askToLogout()
-              document.location.reload()
-            , 2000
-          error: (error) ->
-            console.log "There was an error replicating", arguments
-            Utils.midAlert "Update error<br>#{error}"
-        , doc_ids: ["_design/tangerine"]
-      )
-
-    else if Tangerine.settings.get("context") == "server"
-      docIds    = ["_design/ojai"]
-      fromWhere = "trunk"
-      toWhere   = "group"
-
-
+      # save old rev for later
+      Tangerine.$db.compact
+        success: ->
+          Tangerine.$db.openDoc "_design/tangerine", 
+            success: (oldDoc) -> 
+              # replicate from update database
+              $.couch.replicate Tangerine.settings.urlDB("update"),
+                Tangerine.settings.location.update.target,
+                  success: ->
+                    Tangerine.$db.openDoc "_design/tangerine"
+                      conflicts: true
+                      success: (data) ->
+                        if data._conflicts?
+                          Tangerine.$db.removeDoc oldDoc,
+                            success: ->
+                              Utils.onUpdateSuccess()
+                            error: (error) ->
+                              Utils.midAlert "Update failed resolving conflict<br>#{error}"
+                        else
+                          Utils.onUpdateSuccess()
+                  error: (error) ->
+                    Utils.midAlert "Update failed replicating<br>#{error}"
+                , doc_ids : ["_design/tangerine"]
+            error: (error) ->
+              Utils.midAlert "Update failed openning database<br>#{error}"
 
   @log: (self, error) ->
     className = self.constructor.toString().match(/function\s*(\w+)/)[1]
@@ -239,10 +252,10 @@ class Utils
 
 
   # Disposable alerts
-  @topAlert: (alert_text) ->
-    $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").topCenter().delay(2000).fadeOut(250, -> $(this).remove())
-  @midAlert: (alert_text) ->
-    $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").middleCenter().delay(2000).fadeOut(250, -> $(this).remove())
+  @topAlert: (alert_text, delay=2000) ->
+    $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").topCenter().delay(delay).fadeOut(250, -> $(this).remove())
+  @midAlert: (alert_text, delay=2000) ->
+    $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").middleCenter().delay(delay).fadeOut(250, -> $(this).remove())
 
   @sticky: (html) ->
     $("<div class='sticky_alert'>#{html}<br><button class='command parent_remove'>close</button></div>").appendTo("#content").middleCenter().on("keyup", (event) -> if event.which == 27 then $(this).remove())
