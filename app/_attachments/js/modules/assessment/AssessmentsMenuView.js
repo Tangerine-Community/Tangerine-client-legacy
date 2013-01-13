@@ -103,9 +103,9 @@ AssessmentsMenuView = (function(_super) {
     uploadButton = "<button class='command universal_upload'>Universal Upload</button>";
     html = "      " + (Tangerine.settings.get("context") === "server" ? groupsButton : "") + "      " + (Tangerine.settings.get("context") === "server" ? apkButton : "") + "      <h1>Assessments</h1>    ";
     if (this.isAdmin) {
-      html += "        " + (Tangerine.settings.get("context") === "server" ? newButton : "") + "        " + (Tangerine.settings.get("context") === "mobile" ? uploadButton : "") + "        " + importButton + "                <div class='new_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_name' placeholder='Name'>            <select id='new_type'>              <option value='assessment'>Assessment</option>              <option value='curriculum'>Curriculum</option>            </select><br>            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>          </div>        </div>        <div id='assessments_container'></div>        <div id='users_menu_container' class='UsersMenuView'></div>      ";
+      html += "        " + (Tangerine.settings.get("context") === "server" ? newButton : "") + "        " + importButton + "                <div class='new_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_name' placeholder='Name'>            <select id='new_type'>              <option value='assessment'>Assessment</option>              <option value='curriculum'>Curriculum</option>            </select><br>            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>          </div>        </div>        <div id='assessments_container'></div>        <br>        " + (Tangerine.settings.get("context") === "mobile" ? uploadButton : "") + "        <div id='users_menu_container' class='UsersMenuView'></div>      ";
     } else {
-      html += "<div id='assessments_container'></div>";
+      html += "        <div id='assessments_container'></div>        <br>        " + (Tangerine.settings.get("context") === "mobile" ? uploadButton : "") + "      ";
     }
     this.$el.html(html);
     this.assessmentsView.setElement(this.$el.find("#assessments_container"));

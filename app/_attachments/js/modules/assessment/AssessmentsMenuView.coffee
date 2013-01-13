@@ -83,7 +83,6 @@ class AssessmentsMenuView extends Backbone.View
     if @isAdmin
       html += "
         #{if Tangerine.settings.get("context") == "server" then newButton else "" }
-        #{if Tangerine.settings.get("context") == "mobile" then uploadButton else "" }
         #{importButton}
 
         
@@ -99,11 +98,17 @@ class AssessmentsMenuView extends Backbone.View
           </div>
         </div>
         <div id='assessments_container'></div>
+        <br>
+        #{if Tangerine.settings.get("context") == "mobile" then uploadButton else "" }
+
         <div id='users_menu_container' class='UsersMenuView'></div>
       "
     else
-      html += "<div id='assessments_container'></div>"
-
+      html += "
+        <div id='assessments_container'></div>
+        <br>
+        #{if Tangerine.settings.get("context") == "mobile" then uploadButton else "" }
+      "
 
     @$el.html html
 
