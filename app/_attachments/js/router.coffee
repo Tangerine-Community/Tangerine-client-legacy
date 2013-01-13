@@ -389,10 +389,10 @@ class Router extends Backbone.Router
             allResults.fetch
               include_docs: false
               key: assessmentId
-              success: (result) =>
+              success: (results) =>
                 view = new ResultsView
                   "assessment" : assessment
-                  "results"    : allResults.models
+                  "results"    : results.models
                 vm.show view
       isUnregistered: ->
         Tangerine.router.navigate "login", true
@@ -589,8 +589,9 @@ class Router extends Backbone.Router
     Tangerine.user.logout()
 
   account: ->
-    if Tangerine.db_name != "tangerine"
-      window.location = Tangerine.settings.urlIndex("tangerine", "account")
+    # change the location to the trunk, unless we're already in the trunk
+    if Tangerine.settings.get("context") == "server" and Tangerine.db_name != "tangerine"
+      window.location = Tangerine.settings.urlIndex("trunk", "account")
     else
       Tangerine.user.verify
         isRegistered: ->

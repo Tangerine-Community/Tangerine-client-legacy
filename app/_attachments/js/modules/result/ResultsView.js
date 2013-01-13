@@ -318,7 +318,6 @@ ResultsView = (function(_super) {
             fromNow = moment(endTime).fromNow();
           } else {
             startTime = row.value.start_time;
-            console.log("start_time: " + startTime);
             long = "<b>started</b> " + moment(startTime).format('YYYY-MMM-DD HH:mm');
             fromNow = moment(startTime).fromNow();
           }

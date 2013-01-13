@@ -620,11 +620,11 @@ Router = (function(_super) {
             return allResults.fetch({
               include_docs: false,
               key: assessmentId,
-              success: function(result) {
+              success: function(results) {
                 var view;
                 view = new ResultsView({
                   "assessment": assessment,
-                  "results": allResults.models
+                  "results": results.models
                 });
                 return vm.show(view);
               }
@@ -959,8 +959,8 @@ Router = (function(_super) {
   };
 
   Router.prototype.account = function() {
-    if (Tangerine.db_name !== "tangerine") {
-      return window.location = Tangerine.settings.urlIndex("tangerine", "account");
+    if (Tangerine.settings.get("context") === "server" && Tangerine.db_name !== "tangerine") {
+      return window.location = Tangerine.settings.urlIndex("trunk", "account");
     } else {
       return Tangerine.user.verify({
         isRegistered: function() {

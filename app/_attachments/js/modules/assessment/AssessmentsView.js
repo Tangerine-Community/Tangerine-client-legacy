@@ -62,7 +62,7 @@ AssessmentsView = (function(_super) {
       if (Tangerine.settings.get("context") === "server") {
         this.$el.html("<p class='grey'>No assessments yet. Click <b>new</b> to get started.</p>");
       } else {
-        this.$el.html("<p class='grey'>No assessments imported. Please contact your team leader and inform them that your tablet is empty.</p>");
+        this.$el.html("<p class='grey'>No assessments imported yet.</p>");
       }
       this.trigger("rendered");
       return;

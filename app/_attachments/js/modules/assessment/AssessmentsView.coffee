@@ -59,7 +59,7 @@ class AssessmentsView extends Backbone.View
       if Tangerine.settings.get("context") == "server"
         @$el.html "<p class='grey'>No assessments yet. Click <b>new</b> to get started.</p>"
       else
-        @$el.html "<p class='grey'>No assessments imported. Please contact your team leader and inform them that your tablet is empty.</p>"
+        @$el.html "<p class='grey'>No assessments imported yet.</p>"
 
       @trigger "rendered"
 
