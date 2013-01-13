@@ -10,7 +10,8 @@
 	{
 		"host"   : "tangerine.iriscouch.com",
 		"dbName" : "update",
-		"login"  : "updater:updater"
+		"login"  : "",
+		"target" : "http://localadmin:localpassword@localhost:5984/tangerine"
 	},
 	"trunk" :
 	{
@@ -23,9 +24,9 @@
 		"base"   : "192.168.1."
 	},
 
-	"robbert" : "http://tangerine.xen.pgrmr.com:82/",
-	"tree"    : "http://tangerine.xen.pgrmr.com:81/",
-	"designDoc"       : "ojai",
+	"robbert" : "http://tangerine.xen.prgmr.com:82/",
+	"tree"    : "http://tangerine.xen.prgmr.com:81/",
+	"designDoc"       : "tangerine",
 	"port"            : 5984,
 	"groupDBPrefix"   : "group-",
 
@@ -62,7 +63,7 @@
 	{
 		"settings" : 
 		{
-			"context" : "server",
+			"context" : "mobile",
 			"language"         : "en",
 			"groupName"        : "rti_philippines_2013",
 			"groupHost"        : "http://tangerine.iriscouch.com",
