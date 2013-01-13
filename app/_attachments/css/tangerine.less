@@ -325,6 +325,38 @@ textarea[contenteditable] {-webkit-appearance: none;}
   box-shadow: @x @y @blur @spread @color;
 }
 
+.box-sh (@one, @two, @three)
+{
+  -moz-box-shadow: @one @two @three;
+  -webkit-box-shadow: @one @two @three;
+  box-shadow: @one @two @three;
+}
+
+
+.box-sh (@one, @two, @three, @four)
+{
+  -moz-box-shadow: @one @two @three @four;
+  -webkit-box-shadow: @one @two @three @four;
+  box-shadow: @one @two @three @four;
+}
+
+
+.box-sh (@one, @two, @three, @four, @five)
+{
+  -moz-box-shadow: @one @two @three @four @five;
+  -webkit-box-shadow: @one @two @three @four @five;
+  box-shadow: @one @two @three @four @five;
+}
+
+
+.box-sh (@one, @two, @three, @four, @five, @six)
+{
+  -moz-box-shadow: @one @two @three @four @five @six;
+  -webkit-box-shadow: @one @two @three @four @five @six;
+  box-shadow: @one @two @three @four @five @six;
+}
+
+
 /*
  * Main
  */
@@ -332,6 +364,7 @@ textarea[contenteditable] {-webkit-appearance: none;}
 body
 {
   font-size: @h2;
+  background: #999 url("../images/noise.png");
 }
 
 p
@@ -341,17 +374,14 @@ p
 
 section
 {
-  box-shadow: 0 2px 2.5px rgba(0,0,0,0.1); 
+  .box-sh( 0 2px, 2.5px, rgba(0,0,0,0.1)); 
   padding: 10px;
   margin-bottom: 10px;
 }
 
-
 body.flash{
   background-color: @yellow;
 }
-
-
 
 .icon 
 {
@@ -565,10 +595,11 @@ progress
 
 #footer
 {
-  background: @orange-3;
+  background: @orange-3 url("../images/noise.png");
   width: 100%;
-  height: 20px;
-  margin: 0px 0;
+  height: 80px;
+  .box-sh (0, 15px, 30px, 5px, rgba(0,0,0,0.3));
+  margin: 0;
 }
 
 .info_box
@@ -619,8 +650,7 @@ progress
 #navigation
 {
   min-height: 50px;
-  background-color: @orange-3;
-  background-position: 5px 6px;
+  background: @orange-3 url("../images/noise.png");
   display: none;
   padding: 5px 5px 5px 5px;
   font-size: @menu_big;
@@ -629,6 +659,11 @@ progress
 }
 
 
+
+.next
+{
+  float: right;
+}
 
 nav#submenu
 {
@@ -727,9 +762,14 @@ button{
   text-decoration: none;
 }
 
+#content_wrapper
+{
+  background: #fff;
+  .box-sh( inset, 0, 5px, 10px, -5px, rgba(0,0,0,0.2));
+}
 #content{
   width: 80%;
-  padding: 10px 5px;
+  padding: 10px 5px 20px;
 }
 
 .clickable
@@ -977,7 +1017,7 @@ table.basic_info
 {
   position:relative;
 
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+  .box-sh( 2px, 2px, 6px, rgba(0,0,0,0.5));
   background: white;
   margin: 0 0 40px;
   padding: 5px 10px 15px;
@@ -989,7 +1029,7 @@ table.basic_info
 {
   position:relative;
 
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+  .box-sh(2px, 2px, 6px, rgba(0,0,0,0.5));
   background: white;
   margin: 0 0 40px;
   padding: 5px 10px 15px;
@@ -1022,7 +1062,7 @@ table.basic_info
   
   li
   {
-    box-shadow: 5px 5px 10px rgba(0,0,0,0.1);
+    .box-sh(5px, 5px, 10px, rgba(0,0,0,0.1));
     margin: 10px 0;
     background: white;
   }
@@ -1132,7 +1172,7 @@ table.basic_info
 {
   background: white;
   opacity: 0.95;
-  box-shadow: 5px 5px 30px rgba(0,0,0,0.2)
+  .box-sh( 5px, 5px, 30px, rgba(0,0,0,0.2));
 }
 
 
@@ -1249,7 +1289,7 @@ button.navigation
   color: white;
   background-color: @orange-2;
   border: 0 !important;
-  margin: 10px 10px 5px 0;
+  margin: 10px 0 5px 0;
   padding: 7px 20px !important;
   .border-radius(10px);
   font-weight: normal;

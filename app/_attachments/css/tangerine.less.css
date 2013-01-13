@@ -400,11 +400,14 @@ textarea[contenteditable] {
  */
 body {
   font-size: 20px;
+  background: #999999 url("../images/noise.png");
 }
 p {
   text-indent: 10px;
 }
 section {
+  -moz-box-shadow: 0 2px 2.5px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0 2px 2.5px rgba(0, 0, 0, 0.1);
   box-shadow: 0 2px 2.5px rgba(0, 0, 0, 0.1);
   padding: 10px;
   margin-bottom: 10px;
@@ -543,9 +546,9 @@ progress {
   -webkit-border-radius: 10px;
   padding: 20px;
   font-size: 30px;
-  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 1px 15px 25px -5px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 1px 15px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 1px 15px 25px -5px rgba(0, 0, 0, 0.1);
   z-index: 9999999;
 }
 #simplemodal-overlay {
@@ -575,10 +578,13 @@ progress {
   font-weight: bold;
 }
 #footer {
-  background: #f6c637;
+  background: #f6c637 url("../images/noise.png");
   width: 100%;
-  height: 20px;
-  margin: 0px 0;
+  height: 80px;
+  -moz-box-shadow: 0 15px 30px 5px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 15px 30px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 15px 30px 5px rgba(0, 0, 0, 0.3);
+  margin: 0;
 }
 .info_box {
   clear: both;
@@ -638,14 +644,16 @@ progress {
  */
 #navigation {
   min-height: 50px;
-  background-color: #f6c637;
-  background-position: 5px 6px;
+  background: #f6c637 url("../images/noise.png");
   display: none;
   padding: 5px 5px 5px 5px;
   font-size: 20px;
   -moz-box-shadow: 0 0 10px rgba(100, 0, 0, 0.2);
   -webkit-box-shadow: 0 0 10px rgba(100, 0, 0, 0.2);
   box-shadow: 0 0 10px rgba(100, 0, 0, 0.2);
+}
+.next {
+  float: right;
 }
 nav#submenu {
   display: inline;
@@ -717,9 +725,15 @@ button {
   color: black;
   text-decoration: none;
 }
+#content_wrapper {
+  background: #fff;
+  -moz-box-shadow: inset 0 5px 10px -5px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: inset 0 5px 10px -5px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 5px 10px -5px rgba(0, 0, 0, 0.2);
+}
 #content {
   width: 80%;
-  padding: 10px 5px;
+  padding: 10px 5px 20px;
 }
 .clickable {
   cursor: pointer;
@@ -877,6 +891,8 @@ table.basic_info th {
 }
 .edit_form {
   position: relative;
+  -moz-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
   background: white;
   margin: 0 0 40px;
@@ -885,6 +901,8 @@ table.basic_info th {
 }
 .question {
   position: relative;
+  -moz-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
   background: white;
   margin: 0 0 40px;
@@ -908,6 +926,8 @@ table.basic_info th {
   padding: 10px;
 }
 .question li {
+  -moz-box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
   margin: 10px 0;
   background: white;
@@ -984,6 +1004,8 @@ table.basic_info th {
 .drag_shadow {
   background: white;
   opacity: 0.95;
+  -moz-box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.2);
   box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.2);
 }
 /*
@@ -1062,7 +1084,7 @@ button.navigation {
   color: white;
   background-color: #f49b00;
   border: 0 !important;
-  margin: 10px 10px 5px 0;
+  margin: 10px 0 5px 0;
   padding: 7px 20px !important;
   border-radius: 10px;
   -moz-border-radius: 10px;

@@ -77,10 +77,9 @@ ResultView = (function(_super) {
   };
 
   ResultView.prototype.render = function() {
-    this.$el.append("<h2>Assessment complete</h2>    <div class='label_value'>      <label>Result</label>      <div class='info_box save_status not_saved'>Not saved yet</div>        <h2>Subtests completed</h2>    ");
+    this.$el.html("<h2>Assessment complete</h2>    <button class='save command'>Save result</button><div class='info_box save_status not_saved'>Not saved yet</div><br>    <div class='question'>      <div class='prompt'>Additional comments (optional)</div>      <textarea id='additional_comments' class='full_width'></textarea>    </div>    <div class='label_value'>            <h2>Subtests completed</h2>      <div id='result_sum' class='info_box'></div>      <div class='confirmation'><button class='another command'>Perform another assessment</button></div>    ");
+    this.resultSumView.setElement(this.$el.find("#result_sum"));
     this.resultSumView.render();
-    this.$el.append(this.resultSumView.el);
-    this.$el.append("      <div class='question'>      <div class='prompt'>Additional comments (optional)</div>      <textarea id='additional_comments' class='full_width'></textarea>      </div>      <button class='save command'>Save result</button><br>      <div class='confirmation'><button class='another command'>Perform another assessment</button></div>    ");
     return this.trigger("rendered");
   };
 
