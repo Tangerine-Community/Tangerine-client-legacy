@@ -9,7 +9,7 @@
 
 Tangerine = 
   "db_name"    : window.location.pathname.split("/")[1]
-  "design_doc" : "ojai"
+  "design_doc" : _.last(String(window.location).split("_design/")).split("/")[0]
 
 # Local tangerine database handle
 Tangerine.$db = $.couch.db(Tangerine.db_name)
@@ -58,6 +58,26 @@ Tangerine.onSettingsLoad = ->
           # Start the application
 
           window.vm = new ViewManager()
+
+          #$("<button id='reload'>reload me</button>").appendTo("#footer").click -> document.location.reload()
+
+          if Tangerine.settings.get("context") != "server"
+            document.addEventListener "deviceready"
+            , ->
+              #$(document).on "online", -> Tangerine.online = true
+              #$(document).on "offline", -> Tangerine.online = false
+              document.addEventListener "backbutton", (event) ->
+                if Tangerine.activity == "assessment run"
+                  if confirm("Assessment not finished. Continue to main screen?")
+                    Tangerine.activity = ""
+                    window.history.back()
+                  else
+                    return false
+                else
+                  return true
+              , false
+            , false
+
 
           # Singletons
           # Tangerine.log    = new Log()

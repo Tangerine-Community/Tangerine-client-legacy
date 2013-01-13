@@ -2,7 +2,7 @@ var Tangerine;
 
 Tangerine = {
   "db_name": window.location.pathname.split("/")[1],
-  "design_doc": "ojai"
+  "design_doc": _.last(String(window.location).split("_design/")).split("/")[0]
 };
 
 Tangerine.$db = $.couch.db(Tangerine.db_name);
@@ -63,6 +63,22 @@ Tangerine.onSettingsLoad = function() {
       return Tangerine.ensureAdmin(function() {
         return $(function() {
           window.vm = new ViewManager();
+          if (Tangerine.settings.get("context") !== "server") {
+            document.addEventListener("deviceready", function() {
+              return document.addEventListener("backbutton", function(event) {
+                if (Tangerine.activity === "assessment run") {
+                  if (confirm("Assessment not finished. Continue to main screen?")) {
+                    Tangerine.activity = "";
+                    return window.history.back();
+                  } else {
+                    return false;
+                  }
+                } else {
+                  return true;
+                }
+              }, false);
+            }, false);
+          }
           Tangerine.router = new Router();
           Tangerine.user = new User();
           Tangerine.nav = new NavigationView({
