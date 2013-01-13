@@ -128,6 +128,7 @@
           row.push(pair("gps_accuracy", subtest.data.gps.accuracy));
         }
       }
+      row.push(pair("time_stamp_" + (subtestIndex + 1), subtest.timestamp));
       bySubtest.push(row);
     }
     return emit(doc.assessmentId, bySubtest);
