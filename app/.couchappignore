@@ -10,6 +10,7 @@
   "scripts",
   "docs",
   ".DS_Store",
-  "Makefile"
+  "Makefile",
+  "file.watchr"
 
 ]
