@@ -42,14 +42,14 @@ class Settings extends Backbone.Model
         url : "#{local.host}:#{port}/"
         db  : "/#{local.dbName}/"
       trunk:
-        url   : "http://#{trunk.host}/"
-        db    : "http://#{trunk.host}/#{trunk.dbName}/"
+        url : "http://#{trunk.host}/"
+        db  : "http://#{trunk.host}/#{trunk.dbName}/"
       group:
-        url   : "#{groupHost}/"
-        db    : "#{groupHost}/#{prefix}#{groupName}/"
-      update:
-        url   : "http://#{update.login}@#{update.host}/"
-        db    : "http://#{update.login}@#{update.host}/#{update.dbName}/"
+        url : "#{groupHost}/"
+        db  : "#{groupHost}/#{prefix}#{groupName}/"
+      update :
+        url : "http://#{update.login}@#{update.host}/"
+        db  : "http://#{update.login}@#{update.host}/#{update.dbName}/"
       subnet : 
         url : ("http://#{subnetBase}#{x}:#{port}/"                 for x in [0..255])
         db  : ("http://#{subnetBase}#{x}:#{port}/#{local.dbName}/" for x in [0..255])
@@ -69,15 +69,20 @@ class Settings extends Backbone.Model
       list  : "_design/#{groupDDoc}/_list/"
       index : "_design/#{groupDDoc}/index.html"
 
-
   urlIndex : ( groupName, hash = null ) ->
     groupHost = @get "groupHost"
-    port      = @config.get "port"
-    prefix    = if groupName != "tangerine" then @config.get "groupDBPrefix" else ""
-    hash      = if hash? then "##{hash}" else ""
-    return "#{groupHost}:#{port}/#{prefix}#{groupName}/#{@couch.index}#{hash}"
 
-  
+    # port number only for local, iriscouch always uses 80, confuses cors
+    port   = if groupName == "local" then ":"+@config.get("port") else ""
+    hash   = if hash? then "##{hash}" else ""
+
+    if groupName == "trunk"
+      groupName = "tangerine"
+    else 
+      groupName = @config.get("groupDBPrefix") + groupName
+
+    return "#{groupHost}#{port}/#{groupName}/#{@couch.index}#{hash}"
+
   urlHost  : ( location ) -> "#{@location[location].url}"
   
   urlDB    : ( location, pass = null ) -> 

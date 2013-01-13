@@ -111,13 +111,17 @@ Settings = (function(_super) {
   };
 
   Settings.prototype.urlIndex = function(groupName, hash) {
-    var groupHost, port, prefix;
+    var groupHost, port;
     if (hash == null) hash = null;
     groupHost = this.get("groupHost");
-    port = this.config.get("port");
-    prefix = groupName !== "tangerine" ? this.config.get("groupDBPrefix") : "";
+    port = groupName === "local" ? ":" + this.config.get("port") : "";
     hash = hash != null ? "#" + hash : "";
-    return "" + groupHost + ":" + port + "/" + prefix + groupName + "/" + this.couch.index + hash;
+    if (groupName === "trunk") {
+      groupName = "tangerine";
+    } else {
+      groupName = this.config.get("groupDBPrefix") + groupName;
+    }
+    return "" + groupHost + port + "/" + groupName + "/" + this.couch.index + hash;
   };
 
   Settings.prototype.urlHost = function(location) {
