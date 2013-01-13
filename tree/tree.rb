@@ -11,29 +11,10 @@
 
 require 'sinatra'
 require 'rest-client'
+require 'net/http'
 require 'json'
-require 'sqlite3'
 require 'logger'
 
-class Storage
-  
-  def initialize(table_name)
-    @@db = SQLite3::Database.new( DB_NAME )
-    @db_name = table_name
-    @@db.execute( %~ CREATE TABLE IF NOT EXISTS #{db_name} (key varchar(100) PRIMARY KEY, value varchar(1000), modified timestamp(20)) ~ )
-  end
-
-  def self.get(key)
-    @@db.get_first_row( %~ SELECT * FROM #{db_name} WHERE key='#{key}' ~ )
-  end
-
-  def self.set(key, val)
-    result = @@db.execute( %~ REPLACE INTO #{db_name} (key, value, modified) VALUES ('%s', '%s', %d) ~ % [key, val, Time.now.to_i] )
-  end
-  
-  DB_NAME = 'com.rti.tangerine'
-  
-end
 #
 #
 #
@@ -50,10 +31,10 @@ post "/production/:group" do
 
   content_type :json
 
-  auth_errors = []
-  auth_errors << "a username" if params[:user] == nil
-  auth_errors << "a password" if params[:pass] == nil
-  auth_errors << "a group"    if params[:group].length == 0
+  #auth_errors = []
+  #auth_errors << "a username" if params[:user] == nil
+  #auth_errors << "a password" if params[:pass] == nil
+  #auth_errors << "a group"    if params[:group].length == 0
 
   #halt 403, { :error => "Please provide #{andify(auth_errors)}."} if auth_errors.length > 0
 
@@ -68,39 +49,7 @@ post "/production/:group" do
   # Make APK, place it in token-directory for download
   #
 
-  created = Time.now
-  #storage = new Storage("tree")
   token = get_token()
-
-  #
-  # check to see if we have the "newest version"
-  #
-  #apk_list_response = RestClient.get("https://api.github.com/repos/tangerine-community/tangerine/downloads", :Origin => "http://localhost")
-  #apk_list = JSON.parse(apk_list_response.body)
-  #
-  #for list in apk_list
-  #  if apk["name"].include? "blank"
-  #    stable_apk = apk
-  #    break
-  #  end
-  #end
-  
-  #local_apk_date = Date.strptime(storage.get("apk")['created_at'], "%Y-%m-%d")
-  #git_apk_date   = Date.strptime(apk_list[0]["created_at"], "%Y-%m-%d")
-
-  if false#local_apk_date >= git_apk_date
-    apk_response = RestClient.get( stable_apk['url'] )
-    begin
-
-      apk_f = File.new("tangerine.apk", "w")
-      apk_f.write(apk_response.body)
-    rescue
-      $logger.error "Couldn't update tangerine.apk from github."
-      halt_error 500, "Server error. Failed to update blank."
-    ensure
-      aok_f.close
-    end
-  end
 
   # replicate group to new local here
   replicate_response = RestClient.post("http://tree:tree-password@localhost:5984/_replicate", {
@@ -111,24 +60,47 @@ post "/production/:group" do
 
   halt_error 500, "Failed to replicate to tree." if replicate_response.code != 200
 
+  #
+  # for the ojai-parallel, replicate into proper design doc
+  #
+
+  # See if one exists aready
+  http = Net::HTTP.new "localhost", 5984
+  get_request = Net::HTTP::Get.new("/copied-group-#{params[:group]}/_design/tangerine")
+  get_response = http.response get_request
+  if get_response.code.to_i == 200
+    copy_rev = "?rev=" + JSON.parse(get_response.body).to_hash["_rev"]
+  else
+    copy_rev = ""
+  end
+
+  # copy _design/ojai to _design/tangerine
+  copy_request = Net::HTTP::Copy.new("/copied-group-#{params[:group]}/_design/ojai")
+  copy_request["Destination"] = "_design/tangerine" + copy_rev
+  copy_request.basic_auth "tree", "tree-password"
+  copy_response = http.request copy_request
+
+  copy_code = copy_response.code.to_i
+  halt_error 500, "Tree's couch failed to rename design doc." if !(copy_code >= 200 && copy_code < 300)
+
   begin
-    # clear it out if it's there
+    # clear out temp dir if it's there
     blank_dir = File.join( Dir.pwd, "tangerine" )
     `rm -rf #{blank_dir}`
 
+    # make a new temporary dir
     tangerine_apk = File.join( Dir.pwd, "tangerine.zip" )
-
     `unzip #{tangerine_apk}`
-    db_file = "copied-group-#{params[:group]}.couch"
-    group_db = File.join( $couch_db_path, db_file )
 
     # standardize all groups DBs here as tangerine.couch
-    target_dir = File.join( Dir.pwd, "tangerine", "assets" )
-    `cp #{group_db} #{target_dir}`
+    db_file = "copied-group-#{params[:group]}.couch"
+    group_db = File.join( $couch_db_path, db_file )
+    target_path = File.join( Dir.pwd, "tangerine", "assets", "tangerine.couch" )
+    `cp #{group_db} #{target_path}`
 
+    # rename database (I think this is the only way)
     old_database = File.join target_dir, db_file
     new_database = File.join target_dir, "tangerine.couch"
-
     "mv #{old_database} #{new_database}"
 
   rescue Exception => e
@@ -153,6 +125,7 @@ post "/production/:group" do
       `zip -r #{new_zip} *`
     }
     `rm -rf #{tangerine_filling}`
+
   rescue Exception => e
     $logger.error "Could not copy #{params[:group]}'s database into assets. #{e}"
     halt_error 500, "Failed to prepare database."
@@ -199,16 +172,6 @@ rescue Exception => e
   $logger.error "Couldn't make directory. #{e}"
 end
 
-def andify( nouns )
-  #last = nouns.pop()
-  return nouns#nouns.join(", ") + ", and " + last
-end
-
-def orify( nouns )
-  #last = nouns.pop()
-  return nouns#nouns.join(", ") + ", or " + last
-end
-
 def rand_char()
   $character_set.sample
 end
@@ -227,4 +190,14 @@ end
 
 def halt_error(code, message)
   halt code, { :error => message }.to_json
+end
+
+def andify( nouns )
+  #last = nouns.pop()
+  return nouns#nouns.join(", ") + ", and " + last
+end
+
+def orify( nouns )
+  #last = nouns.pop()
+  return nouns#nouns.join(", ") + ", or " + last
 end
