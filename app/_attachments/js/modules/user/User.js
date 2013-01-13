@@ -51,6 +51,10 @@ User = (function(_super) {
             _this.intent = "retry_login";
             return _this.login(name, pass);
           }
+        },
+        error: function() {
+          _this.intent = "";
+          return _this.trigger("pass-error", "Password incorrect");
         }
       });
     }
@@ -63,9 +67,9 @@ User = (function(_super) {
       name: name,
       password: pass,
       success: function(user) {
+        _this.intent = "";
         _this.name = name;
         _this.roles = user.roles;
-        _this.clearAttempt();
         return _this.fetch({
           success: function() {
             if (typeof callbacks.success === "function") callbacks.success();
@@ -75,7 +79,8 @@ User = (function(_super) {
       },
       error: function(status, error, message) {
         if (_this.intent === "retry_login") {
-          return _this.trigger("error", message);
+          _this.intent = "";
+          return _this.trigger("password-error", message);
         } else {
           _this.intent = "login";
           return _this.signup(name, pass);
@@ -141,16 +146,12 @@ User = (function(_super) {
         _this.clear();
         _this.trigger("logout");
         if (Tangerine.settings.context === "server") {
-          return window.location = Tangerine.settings.urlIndex("tangerine");
+          return window.location = Tangerine.settings.urlIndex("trunk");
         } else {
           return Tangerine.router.navigate("login", true);
         }
       }
     });
-  };
-
-  User.prototype.clearAttempt = function() {
-    return this.temp = "";
   };
 
   /*
@@ -262,7 +263,7 @@ User = (function(_super) {
           return _this.trigger(("group-leave" === (_ref = response.status) && _ref === "success"));
         },
         error: function(response) {
-          return typeof callbacks.error === "function" ? callbacks.error(response) : void 0;
+          return typeof callback.error === "function" ? callback.error(response) : void 0;
         }
       });
     });

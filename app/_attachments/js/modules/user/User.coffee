@@ -29,6 +29,9 @@ class User extends Backbone.Model
           if @intent == "login"
             @intent = "retry_login"
             @login name, pass
+        error: =>
+          @intent = ""
+          @trigger "pass-error", "Password incorrect"
 
 
   login: ( name, pass, callbacks = {}) =>
@@ -36,16 +39,17 @@ class User extends Backbone.Model
       name     : name
       password : pass
       success: ( user ) =>
+        @intent = ""
         @name   = name
         @roles  = user.roles
-        @clearAttempt()
         @fetch
           success: =>
             callbacks.success?()
             @trigger "login"
       error: ( status, error, message ) =>
         if @intent == "retry_login"
-          @trigger "error", message
+          @intent = ""
+          @trigger "password-error", message
         else 
           @intent = "login"
           @signup name, pass
@@ -91,12 +95,9 @@ class User extends Backbone.Model
         @clear()
         @trigger "logout"
         if Tangerine.settings.context == "server"
-          window.location = Tangerine.settings.urlIndex "tangerine"
+          window.location = Tangerine.settings.urlIndex "trunk"
         else
           Tangerine.router.navigate "login", true
-
-  clearAttempt: ->
-    @temp = ""
 
   ###
     Saves to the `_users` database
@@ -181,7 +182,7 @@ class User extends Backbone.Model
           @trigger "group-leave" is response.status == "success"
 
         error : (response) =>
-          callbacks.error?( response )
+          callback.error?( response )
 
   ghostLogin: (user, pass) ->
     document.location = "http://tangerine.iriscouch.com:5984/uploader/_design/uploader/uploader.html?name=#{user}&pass=#{pass}"

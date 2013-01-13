@@ -8,7 +8,6 @@ LoginView = (function(_super) {
   __extends(LoginView, _super);
 
   function LoginView() {
-    this.showMessage = __bind(this.showMessage, this);
     this.render = __bind(this.render, this);
     LoginView.__super__.constructor.apply(this, arguments);
   }
@@ -21,9 +20,15 @@ LoginView = (function(_super) {
   };
 
   LoginView.prototype.initialize = function(options) {
-    this.model = Tangerine.user;
-    this.model.on("login", this.goOn);
-    return this.model.on("all", this.showMessage);
+    var _this = this;
+    this.user = Tangerine.user;
+    this.user.on("login", this.goOn);
+    this.user.on("pass-error", function(error) {
+      return _this.passError(error);
+    });
+    return this.user.on("name-error", function(error) {
+      return _this.nameError(error);
+    });
   };
 
   LoginView.prototype.goOn = function() {
@@ -36,7 +41,9 @@ LoginView = (function(_super) {
     parentWidth = $('#content').offsetParent().width();
     this.oldWidth = 100 * width / parentWidth;
     $("#content").css("width", "100%");
-    this.$el.html("      <img src='images/tangerine_logo.png' id='login_logo'>      <div class='messages'></div>      <label for='login_username'>" + (t('enumerator name')) + "</label>      <input type='text' id='login_username' name='login_username'>      <label for='login_password'>" + (t('password')) + "</label>      <input id='login_password' name='login_username' type='password'>      <button class='login'>" + (t('login')) + "</button>    ");
+    this.$el.html("      <img src='images/tangerine_logo.png' id='login_logo'>      <label for='name'>" + (t('enumerator name')) + "</label>      <div id='name_message' class='messages'></div>      <input type='text' id='name'>      <label for='pass'>" + (t('password')) + "</label>      <div id='pass_message' class='messages'></div>      <input id='pass' type='password'>      <button class='login'>" + (t('login')) + "</button>    ");
+    this.nameMsg = this.$el.find("#name_message");
+    this.passMsg = this.$el.find("#pass_message");
     return this.trigger("rendered");
   };
 
@@ -51,24 +58,37 @@ LoginView = (function(_super) {
       } else {
         return this.login();
       }
+    } else {
+      return true;
     }
   };
 
   LoginView.prototype.login = function(event) {
-    var values;
-    values = Utils.getValues(this.el);
-    if (values['login_password'] === "") {
-      this.model.showMessage(t("please enter a password"));
-      this.$el.find('#login_password').focus();
-      return false;
-    }
-    return this.model.login(values["login_username"], values["login_password"]);
+    var name, pass;
+    name = this.$el.find("#name");
+    pass = this.$el.find("#pass");
+    this.clearErrors();
+    if (name.val() === "") this.nameError("Please enter a name.");
+    if (pass.val() === "") this.passError("Please enter a password.");
+    if (this.errors === 0) return this.user.login(name.val(), pass.val());
   };
 
-  LoginView.prototype.showMessage = function(eventName, options) {
-    var message;
-    message = eventName === "pass-incorrect" ? t("app.login.msg." + eventName) : void 0;
-    return this.$el.find(".messages").html(message);
+  LoginView.prototype.passError = function(error) {
+    this.errors++;
+    this.passMsg.html(error);
+    return this.$el.find("#pass").focus();
+  };
+
+  LoginView.prototype.nameError = function(error) {
+    this.errors++;
+    this.nameMsg.html(error);
+    return this.$el.find("#name").focus();
+  };
+
+  LoginView.prototype.clearErrors = function() {
+    this.nameMsg.html("");
+    this.passMsg.html("");
+    return this.errors = 0;
   };
 
   return LoginView;

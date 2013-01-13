@@ -7,9 +7,10 @@ class LoginView extends Backbone.View
     "keypress input"     : "keyHandler"
 
   initialize: (options) ->
-    @model = Tangerine.user
-    @model.on "login", @goOn
-    @model.on "all", @showMessage
+    @user = Tangerine.user
+    @user.on "login", @goOn
+    @user.on "pass-error", (error) => @passError error
+    @user.on "name-error", (error) => @nameError error
 
   goOn: ->
     Tangerine.router.navigate "", true
@@ -23,13 +24,18 @@ class LoginView extends Backbone.View
 
     @$el.html "
       <img src='images/tangerine_logo.png' id='login_logo'>
-      <div class='messages'></div>
-      <label for='login_username'>#{t('enumerator name')}</label>
-      <input type='text' id='login_username' name='login_username'>
-      <label for='login_password'>#{t('password')}</label>
-      <input id='login_password' name='login_username' type='password'>
+      <label for='name'>#{t('enumerator name')}</label>
+      <div id='name_message' class='messages'></div>
+      <input type='text' id='name'>
+      <label for='pass'>#{t('password')}</label>
+      <div id='pass_message' class='messages'></div>
+      <input id='pass' type='password'>
       <button class='login'>#{t('login')}</button>
     "
+
+    @nameMsg = @$el.find("#name_message")
+    @passMsg = @$el.find("#pass_message")
+
     @trigger "rendered"
 
   onClose: ->
@@ -41,18 +47,31 @@ class LoginView extends Backbone.View
         return true
       else
         @login()
+    else
+      return true
 
   login: (event) ->
-    values = Utils.getValues(@el)
-    if values['login_password'] == ""
-      @model.showMessage t("please enter a password")
-      @$el.find('#login_password').focus()
-      return false
-    @model.login values["login_username"], values["login_password"]
+    name = @$el.find("#name")
+    pass = @$el.find("#pass")
 
-  showMessage: (eventName, options) =>
-    message = 
-      if eventName == "pass-incorrect"
-        t("app.login.msg.#{eventName}")
-    @$el.find(".messages").html message
-    
+    @clearErrors()
+    @nameError("Please enter a name.") if name.val() == ""
+    @passError("Please enter a password.") if pass.val() == ""
+
+    if @errors == 0
+      @user.login name.val(), pass.val()
+
+  passError: (error) -> 
+    @errors++
+    @passMsg.html error
+    @$el.find("#pass").focus()
+
+  nameError: (error) -> 
+    @errors++
+    @nameMsg.html error
+    @$el.find("#name").focus()
+
+  clearErrors: ->
+    @nameMsg.html ""
+    @passMsg.html ""
+    @errors = 0
