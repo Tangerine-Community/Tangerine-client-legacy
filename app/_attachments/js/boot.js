@@ -65,6 +65,17 @@ Tangerine.onSettingsLoad = function() {
           window.vm = new ViewManager();
           if (Tangerine.settings.get("context") !== "server") {
             document.addEventListener("deviceready", function() {
+              document.addEventListener("online", function() {
+                return Tangerine.online = true;
+              });
+              document.addEventListener("offline", function() {
+                return Tangerine.online = false;
+              });
+              /* Note, turns on menu button
+              document.addEventListener "menubutton", (event) ->
+                console.log "menu button"
+              , false
+              */
               return document.addEventListener("backbutton", function(event) {
                 if (Tangerine.activity === "assessment run") {
                   if (confirm("Assessment not finished. Continue to main screen?")) {
@@ -74,7 +85,7 @@ Tangerine.onSettingsLoad = function() {
                     return false;
                   }
                 } else {
-                  return true;
+                  return window.history.back();
                 }
               }, false);
             }, false);

@@ -64,8 +64,16 @@ Tangerine.onSettingsLoad = ->
           if Tangerine.settings.get("context") != "server"
             document.addEventListener "deviceready"
             , ->
-              #$(document).on "online", -> Tangerine.online = true
-              #$(document).on "offline", -> Tangerine.online = false
+              document.addEventListener "online", -> Tangerine.online = true
+              document.addEventListener "offline", -> Tangerine.online = false
+
+              ### Note, turns on menu button
+              document.addEventListener "menubutton", (event) ->
+                console.log "menu button"
+              , false
+              ###
+
+              # prevents default
               document.addEventListener "backbutton", (event) ->
                 if Tangerine.activity == "assessment run"
                   if confirm("Assessment not finished. Continue to main screen?")
@@ -74,7 +82,7 @@ Tangerine.onSettingsLoad = ->
                   else
                     return false
                 else
-                  return true
+                  window.history.back()
               , false
             , false
 
