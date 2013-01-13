@@ -18,7 +18,35 @@ AssessmentImportView = (function(_super) {
   AssessmentImportView.prototype.events = {
     'click .import': 'import',
     'click .back': 'back',
-    'click .verify': 'verify'
+    'click .verify': 'verify',
+    'click .group_import': 'groupImport'
+  };
+
+  AssessmentImportView.prototype.groupImport = function() {
+    var _this = this;
+    return $.ajax({
+      url: Tangerine.settings.urlView("group", "assessmentsNotArchived"),
+      dataType: "jsonp",
+      success: function(data) {
+        var dKeys, doc, newAssessment;
+        dKeys = _.compact((function() {
+          var _i, _len, _ref, _results;
+          _ref = data.rows;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            doc = _ref[_i];
+            _results.push(doc.id.substr(-5, 5));
+          }
+          return _results;
+        })()).join(" ");
+        newAssessment = new Assessment;
+        newAssessment.on("status", _this.updateActivity);
+        return newAssessment.updateFromServer(dKeys);
+      },
+      error: function(a, b) {
+        return Utils.midAlert("Import error");
+      }
+    });
   };
 
   AssessmentImportView.prototype.verify = function() {
@@ -30,9 +58,8 @@ AssessmentImportView = (function(_super) {
     this.connectionVerified = false;
     this.timer = setTimeout(this.verify, 20 * 1000);
     $.ajax({
-      url: "http://tangerine.iriscouch.com:5984/group-rti_philippines_2013/_design/ojai/_view/byDKey",
+      url: "http://tangerine.iriscouch.com/group-rti_philippines_2013/_design/ojai/_view/byDKey",
       dataType: "jsonp",
-      callback: "awesomeness",
       data: {
         keys: ["testtest"]
       },
@@ -145,7 +172,7 @@ AssessmentImportView = (function(_super) {
     if (!this.connectionVerified) {
       importStep = "        <section><p>Please wait while your connection is verified.</p>          <button class='command verify'>Try now</button>          <p><small>Note: If verification fails, press back to return to previous screen and please try again when internet connectivity is better.</small></p>        </section>      ";
     } else {
-      importStep = "        <div class='question'>          <label for='d_key'>Download keys</label>          <input id='d_key' value=''>          <button class='import command'>Import</button><br>          <small>Server connection: <span id='server_connection'>" + this.serverStatus + "</span></small>        </div>        <div class='confirmation status'>          <h2>Status<h2>          <div class='info_box' id='progress'></div>        </div>      ";
+      importStep = "        <div class='question'>          <label for='d_key'>Download keys</label>          <input id='d_key' value=''>          <button class='import command'>Import</button> <button class='command group_import'>Group import</button><br>          <small>Server connection: <span id='server_connection'>" + this.serverStatus + "</span></small>        </div>        <div class='confirmation status'>          <h2>Status<h2>          <div class='info_box' id='progress'></div>        </div>      ";
     }
     this.$el.html("      <button class='back navigation'>Back</button>      <h1>Tangerine Central Import</h1>      " + importStep + "    ");
     return this.trigger("rendered");

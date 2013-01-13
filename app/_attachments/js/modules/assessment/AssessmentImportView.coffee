@@ -4,6 +4,19 @@ class AssessmentImportView extends Backbone.View
     'click .import' : 'import'
     'click .back'   : 'back'
     'click .verify' : 'verify'
+    'click .group_import' : 'groupImport'
+
+  groupImport: ->
+    $.ajax 
+      url: Tangerine.settings.urlView "group", "assessmentsNotArchived"
+      dataType: "jsonp"
+      success: (data) =>
+        dKeys = _.compact(doc.id.substr(-5, 5) for doc in data.rows).join(" ")
+        newAssessment = new Assessment
+        newAssessment.on "status", @updateActivity
+        newAssessment.updateFromServer dKeys
+      error: (a, b) ->
+        Utils.midAlert "Import error"
 
   verify: ->
     Tangerine.user.ghostLogin Tangerine.settings.upUser, Tangerine.settings.upPass
@@ -14,9 +27,8 @@ class AssessmentImportView extends Backbone.View
 
     # Ensure we have access to the group's documents on the server
     $.ajax 
-      url: "http://tangerine.iriscouch.com:5984/group-rti_philippines_2013/_design/ojai/_view/byDKey"
+      url: "http://tangerine.iriscouch.com/group-rti_philippines_2013/_design/ojai/_view/byDKey"
       dataType: "jsonp"
-      callback: "awesomeness"
       data: keys: ["testtest"]
       success: =>
         clearTimeout @timer
@@ -119,7 +131,7 @@ class AssessmentImportView extends Backbone.View
         <div class='question'>
           <label for='d_key'>Download keys</label>
           <input id='d_key' value=''>
-          <button class='import command'>Import</button><br>
+          <button class='import command'>Import</button> <button class='command group_import'>Group import</button><br>
           <small>Server connection: <span id='server_connection'>#{@serverStatus}</span></small>
         </div>
         <div class='confirmation status'>
