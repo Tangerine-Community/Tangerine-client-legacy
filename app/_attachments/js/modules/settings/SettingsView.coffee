@@ -1,7 +1,11 @@
 class SettingsView extends Backbone.View
 
   events: 
-    "click .save" : "save"
+    'click .save' : 'save'
+    'click .back' : 'goBack'
+
+  goBack: ->
+    window.history.back()
 
   initialize: (options) ->
     @settings = options.settings
@@ -31,7 +35,9 @@ class SettingsView extends Backbone.View
     upPass    = @settings.escape "upPass"
     log       = _.escape( @settings.getArray("log").join(", ") )
 
-    @$el.html "<h1>#{t("settings")}</h1>
+    @$el.html "
+    <button class='back navigation'>Back</button>
+    <h1>#{t("settings")}</h1>
     <p><img src='images/icon_warn.png' title='Warning'>Please be careful with the following settings.</p>
     <div class='menu_box'>
       <div class='label_value'>

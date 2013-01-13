@@ -11,7 +11,12 @@ SettingsView = (function(_super) {
   }
 
   SettingsView.prototype.events = {
-    "click .save": "save"
+    'click .save': 'save',
+    'click .back': 'goBack'
+  };
+
+  SettingsView.prototype.goBack = function() {
+    return window.history.back();
   };
 
   SettingsView.prototype.initialize = function(options) {
@@ -49,7 +54,7 @@ SettingsView = (function(_super) {
     groupHost = this.settings.escape("groupHost");
     upPass = this.settings.escape("upPass");
     log = _.escape(this.settings.getArray("log").join(", "));
-    this.$el.html("<h1>" + (t("settings")) + "</h1>    <p><img src='images/icon_warn.png' title='Warning'>Please be careful with the following settings.</p>    <div class='menu_box'>      <div class='label_value'>        <label for='context'>Context</label><br>        <input id='context' type='text' value='" + context + "'>      </div>      <div class='label_value'>        <label for='language'>Language code</label><br>        <input id='language' type='text' value='" + language + "'>      </div>      <div class='label_value'>        <label for='group_name'>Group name</label><br>        <input id='group_name' type='text' value='" + groupName + "' disabled='disabled'>      </div>      <div class='label_value'>        <label for='group_host'>Group host</label><br>        <input id='group_host' type='text' value='" + groupHost + "'>      </div>      <div class='label_value'>        <label for='up_pass'>Upload password</label><br>        <input id='up_pass' type='text' value='" + upPass + "'>      </div>      <div class='label_value'>        <label for='context' title='app, ui, db, err'>Log events</label><br>        <input id='language' value='" + log + "'>      </div>    </div><br>        <button class='command save'>Save</button>    ");
+    this.$el.html("    <button class='back navigation'>Back</button>    <h1>" + (t("settings")) + "</h1>    <p><img src='images/icon_warn.png' title='Warning'>Please be careful with the following settings.</p>    <div class='menu_box'>      <div class='label_value'>        <label for='context'>Context</label><br>        <input id='context' type='text' value='" + context + "'>      </div>      <div class='label_value'>        <label for='language'>Language code</label><br>        <input id='language' type='text' value='" + language + "'>      </div>      <div class='label_value'>        <label for='group_name'>Group name</label><br>        <input id='group_name' type='text' value='" + groupName + "' disabled='disabled'>      </div>      <div class='label_value'>        <label for='group_host'>Group host</label><br>        <input id='group_host' type='text' value='" + groupHost + "'>      </div>      <div class='label_value'>        <label for='up_pass'>Upload password</label><br>        <input id='up_pass' type='text' value='" + upPass + "'>      </div>      <div class='label_value'>        <label for='context' title='app, ui, db, err'>Log events</label><br>        <input id='language' value='" + log + "'>      </div>    </div><br>        <button class='command save'>Save</button>    ");
     return this.trigger("rendered");
   };
 
