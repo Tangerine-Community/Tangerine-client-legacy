@@ -12,17 +12,17 @@ class CurriculaView extends Backbone.View
   initialize: (options )->
     @subView = new CurriculaListView
       curricula : options.curricula
-    options.curricula.on "all", => @subView.render()
 
   render: ->
     @$el.html "
-    <button class='back navigation'>#{t('back')}</button><br>
-    <button class='command import'>#{t('import')}</button>
-    <br>
-    <div id='klass_list'></div>
+      <button class='back navigation'>#{t('back')}</button><br>
+      <button class='command import'>#{t('import')}</button>
+      <br>
+      <div id='curricula_list'></div>
     "
 
-    @subView.setElement @$el.find('#klass_list')
+    @subView.setElement @$el.find('#curricula_list')
+    @subView.render()
 
     @trigger "rendered"
 

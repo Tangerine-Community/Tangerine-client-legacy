@@ -24,18 +24,15 @@ CurriculaView = (function(_super) {
   };
 
   CurriculaView.prototype.initialize = function(options) {
-    var _this = this;
-    this.subView = new CurriculaListView({
+    return this.subView = new CurriculaListView({
       curricula: options.curricula
-    });
-    return options.curricula.on("all", function() {
-      return _this.subView.render();
     });
   };
 
   CurriculaView.prototype.render = function() {
-    this.$el.html("    <button class='back navigation'>" + (t('back')) + "</button><br>    <button class='command import'>" + (t('import')) + "</button>    <br>    <div id='klass_list'></div>    ");
-    this.subView.setElement(this.$el.find('#klass_list'));
+    this.$el.html("      <button class='back navigation'>" + (t('back')) + "</button><br>      <button class='command import'>" + (t('import')) + "</button>      <br>      <div id='curricula_list'></div>    ");
+    this.subView.setElement(this.$el.find('#curricula_list'));
+    this.subView.render();
     return this.trigger("rendered");
   };
 
