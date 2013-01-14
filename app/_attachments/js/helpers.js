@@ -279,7 +279,7 @@ String.prototype.safetyDance = function() {
 };
 
 String.prototype.databaseSafetyDance = function() {
-  return this.replace(/\s/g, "_").replace(/[^a-z0-9_-]/g, "");
+  return this.replace(/\s/g, "_").toLowerCase().replace(/[^a-z0-9_-]/g, "");
 };
 
 Math.ave = function() {
