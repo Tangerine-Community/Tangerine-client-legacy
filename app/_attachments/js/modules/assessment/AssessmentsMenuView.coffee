@@ -98,6 +98,7 @@ class AssessmentsMenuView extends Backbone.View
           </div>
         </div>
         <div id='assessments_container'></div>
+        <div id='curricula_container'></div>
         <br>
         #{if Tangerine.settings.get("context") == "mobile" then uploadButton else "" }
 
@@ -114,6 +115,9 @@ class AssessmentsMenuView extends Backbone.View
 
     @assessmentsView.setElement( @$el.find("#assessments_container") )
     @assessmentsView.render()
+
+    @curriculaListView.setElement( @$el.find("#curricula_container") )
+    @curriculaListView.render()
 
     if Tangerine.settings.get("context") == "server"
       @usersMenuView.setElement( @$el.find("#users_menu_container") )
@@ -177,6 +181,7 @@ class AssessmentsMenuView extends Backbone.View
   # ViewManager
   closeViews: ->
     @assessmentsView.close()
+    @curriculaListView.close()
 
   onClose: ->
     @closeViews()

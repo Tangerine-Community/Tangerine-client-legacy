@@ -103,13 +103,15 @@ AssessmentsMenuView = (function(_super) {
     uploadButton = "<button class='command universal_upload'>Universal Upload</button>";
     html = "      " + (Tangerine.settings.get("context") === "server" ? groupsButton : "") + "      " + (Tangerine.settings.get("context") === "server" ? apkButton : "") + "      <h1>Assessments</h1>    ";
     if (this.isAdmin) {
-      html += "        " + (Tangerine.settings.get("context") === "server" ? newButton : "") + "        " + importButton + "                <div class='new_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_name' placeholder='Name'>            <select id='new_type'>              <option value='assessment'>Assessment</option>              <option value='curriculum'>Curriculum</option>            </select><br>            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>          </div>        </div>        <div id='assessments_container'></div>        <br>        " + (Tangerine.settings.get("context") === "mobile" ? uploadButton : "") + "        <div id='users_menu_container' class='UsersMenuView'></div>      ";
+      html += "        " + (Tangerine.settings.get("context") === "server" ? newButton : "") + "        " + importButton + "                <div class='new_form confirmation'>          <div class='menu_box_wide'>            <input type='text' class='new_name' placeholder='Name'>            <select id='new_type'>              <option value='assessment'>Assessment</option>              <option value='curriculum'>Curriculum</option>            </select><br>            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>          </div>        </div>        <div id='assessments_container'></div>        <div id='curricula_container'></div>        <br>        " + (Tangerine.settings.get("context") === "mobile" ? uploadButton : "") + "        <div id='users_menu_container' class='UsersMenuView'></div>      ";
     } else {
       html += "        <div id='assessments_container'></div>        <br>        " + (Tangerine.settings.get("context") === "mobile" ? uploadButton : "") + "      ";
     }
     this.$el.html(html);
     this.assessmentsView.setElement(this.$el.find("#assessments_container"));
     this.assessmentsView.render();
+    this.curriculaListView.setElement(this.$el.find("#curricula_container"));
+    this.curriculaListView.render();
     if (Tangerine.settings.get("context") === "server") {
       this.usersMenuView.setElement(this.$el.find("#users_menu_container"));
       this.usersMenuView.render();
@@ -172,7 +174,8 @@ AssessmentsMenuView = (function(_super) {
   };
 
   AssessmentsMenuView.prototype.closeViews = function() {
-    return this.assessmentsView.close();
+    this.assessmentsView.close();
+    return this.curriculaListView.close();
   };
 
   AssessmentsMenuView.prototype.onClose = function() {
