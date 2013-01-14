@@ -18,7 +18,8 @@ KlassesView = (function(_super) {
     'click .cancel': 'toggleAddForm',
     'click .save': 'saveNewKlass',
     'click .goto_class': 'gotoKlass',
-    'click .curricula': 'gotoCurricula'
+    'click .curricula': 'gotoCurricula',
+    'click .pull_data': 'pullData'
   };
 
   KlassesView.prototype.initialize = function(options) {
@@ -26,6 +27,98 @@ KlassesView = (function(_super) {
     this.klasses = options.klasses;
     this.curricula = options.curricula;
     return this.klasses.on("add remove change", this.render);
+  };
+
+  KlassesView.prototype.pullData = function() {
+    var local, _fn,
+      _this = this;
+    this.tablets = {
+      checked: 0,
+      okCount: 0,
+      ips: [],
+      result: 0
+    };
+    Utils.midAlert("Please wait, detecting tablets.");
+    _fn = function(local) {
+      var ip;
+      ip = Tangerine.settings.subnetIP(local);
+      return $.ajax({
+        url: Tangerine.settings.urlSubnet(ip),
+        dataType: "jsonp",
+        contentType: "application/json;charset=utf-8",
+        timeout: 30000,
+        complete: function(xhr, error) {
+          _this.tablets.checked++;
+          if (xhr.status === 200) {
+            _this.tablets.okCount++;
+            _this.tablets.ips.push(ip);
+          }
+          return _this.updatePull();
+        }
+      });
+    };
+    for (local = 0; local <= 255; local++) {
+      _fn(local);
+    }
+    return {
+      updatePull: function() {
+        var ip, _fn2, _i, _len, _ref,
+          _this = this;
+        if (this.tablets.checked < 256) return;
+        if (this.available.tablets.okCount > 0) {
+          Utils.midAlert("Pulling from " + this.tablets.okCount + " tablets.");
+          _ref = this.tablets.ips;
+          _fn2 = function(ip) {
+            return $.ajax({
+              "url": Tangerine.settings.urlSubnet(ip) + "_design/tangerine/_view/byCollection",
+              "dataType": "jsonp",
+              "data": {
+                keys: JSON.stringify(['result', 'klass', 'student', 'curriculum'])
+              },
+              success: function(data) {
+                var datum, docList;
+                docList = (function() {
+                  var _j, _len2, _ref2, _results;
+                  _ref2 = data.rows;
+                  _results = [];
+                  for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+                    datum = _ref2[_j];
+                    _results.push(datum.id);
+                  }
+                  return _results;
+                })();
+                return $.couch.replicate(Tangerine.settings.urlSubnet(ip), Tangerine.settings.urlDB("local"), {
+                  success: function() {
+                    _this.tablets.complete++;
+                    _this.tablets.successful++;
+                    return _this.updatePullResult();
+                  },
+                  error: function(a, b) {
+                    _this.tablets.complete++;
+                    return _this.updatePullResult();
+                  }
+                }, {
+                  doc_ids: docList
+                });
+              }
+            });
+          };
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            ip = _ref[_i];
+            _fn2(ip);
+          }
+        } else {
+          Utils.midAlert("Cannot detect tablets");
+        }
+        return false;
+      }
+    };
+  };
+
+  KlassesView.prototype.updatePullResult = function() {
+    if (this.tablets.complete === this.tablets.okCount) {
+      return Utils.midAlert("Pull finished.<br>" + this.tablets.successful + " out of " + tablets.okCount + " successful.", 5000);
+    }
   };
 
   KlassesView.prototype.gotoCurricula = function() {
@@ -92,14 +185,17 @@ KlassesView = (function(_super) {
   };
 
   KlassesView.prototype.render = function() {
-    var curricula, curriculaOptionList, _i, _len, _ref;
+    var adminPanel, curricula, curriculaOptionList, _i, _len, _ref;
     curriculaOptionList = "<option value='_none' disabled='disabled' selected='selected'>" + (t('select a curriculum')) + "</option>";
     _ref = this.curricula.models;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       curricula = _ref[_i];
       curriculaOptionList += "<option data-id='" + curricula.id + "'>" + (curricula.get('name')) + "</option>";
     }
-    this.$el.html("      <h1>" + (t('classes')) + "</h1>      <div id='klass_list_wrapper'></div>      <button class='add command'>" + (t('add')) + "</button>      <div id='add_form' class='confirmation'>        <div class='menu_box'>           <div class='label_value'>            <label for='year'>" + (t('year')) + "</label>            <input id='year'>          </div>          <div class='label_value'>            <label for='grade'>" + (t('grade')) + "</label>            <input id='grade'>          </div>          <div class='label_value'>            <label for='stream'>" + (t('stream')) + "</label>            <input id='stream'>          </div>          <div class='label_value'>            <label for='curriculum'>" + (t('curriculum')) + "</label><br>            <select id='curriculum'>" + curriculaOptionList + "</select>          </div>          <button class='command save'>" + (t('save')) + "</button><button class='command cancel'>" + (t('cancel')) + "</button>        </div>      </div>      <button class='command curricula'>" + (t('all curricula')) + "</button>    ");
+    if (Tangerine.user.isAdmin()) {
+      adminPanel = "      <h1>Admin menu</h1>      <button class='pull_data command'>Pull data</button>    ";
+    }
+    this.$el.html("      " + (adminPanel || "") + "      <h1>" + (t('classes')) + "</h1>      <div id='klass_list_wrapper'></div>      <button class='add command'>" + (t('add')) + "</button>      <div id='add_form' class='confirmation'>        <div class='menu_box'>           <div class='label_value'>            <label for='year'>" + (t('year')) + "</label>            <input id='year'>          </div>          <div class='label_value'>            <label for='grade'>" + (t('grade')) + "</label>            <input id='grade'>          </div>          <div class='label_value'>            <label for='stream'>" + (t('stream')) + "</label>            <input id='stream'>          </div>          <div class='label_value'>            <label for='curriculum'>" + (t('curriculum')) + "</label><br>            <select id='curriculum'>" + curriculaOptionList + "</select>          </div>          <button class='command save'>" + (t('save')) + "</button><button class='command cancel'>" + (t('cancel')) + "</button>        </div>      </div>      <button class='command curricula'>" + (t('all curricula')) + "</button>    ");
     this.renderKlasses();
     return this.trigger("rendered");
   };

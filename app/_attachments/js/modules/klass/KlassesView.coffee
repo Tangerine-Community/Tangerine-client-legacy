@@ -6,6 +6,7 @@ class KlassesView extends Backbone.View
     'click .save'       : 'saveNewKlass'
     'click .goto_class' : 'gotoKlass'
     'click .curricula'  : 'gotoCurricula'
+    'click .pull_data'  : 'pullData' 
 
   initialize: ( options ) ->
     @views = []
@@ -13,6 +14,62 @@ class KlassesView extends Backbone.View
     @curricula = options.curricula
     
     @klasses.on "add remove change", @render
+
+  pullData: ->
+    @tablets =
+      checked : 0
+      okCount : 0
+      ips     : []
+      result  : 0
+    Utils.midAlert "Please wait, detecting tablets."
+    for local in [0..255]
+      do (local) =>
+        ip = Tangerine.settings.subnetIP(local)
+        $.ajax
+          url: Tangerine.settings.urlSubnet(ip)
+          dataType: "jsonp"
+          contentType: "application/json;charset=utf-8",
+          timeout: 30000
+          complete:  (xhr, error) =>
+            @tablets.checked++
+            if xhr.status == 200
+              @tablets.okCount++
+              @tablets.ips.push ip
+            @updatePull()
+
+    updatePull: ->
+      return if @tablets.checked < 256
+
+      if @available.tablets.okCount > 0
+        Utils.midAlert "Pulling from #{@tablets.okCount} tablets."
+        for ip in @tablets.ips
+          do (ip) =>
+            $.ajax
+              "url"      : Tangerine.settings.urlSubnet(ip) + "_design/tangerine/_view/byCollection"
+              "dataType" : "jsonp"
+              "data"     : keys : JSON.stringify(['result', 'klass', 'student','curriculum'])
+              success : (data) =>
+                docList = (datum.id for datum in data.rows)
+                $.couch.replicate(
+                  Tangerine.settings.urlSubnet(ip),
+                  Tangerine.settings.urlDB("local"),
+                    success:      =>
+                      @tablets.complete++
+                      @tablets.successful++
+                      @updatePullResult()
+                    error: (a, b) =>
+                      @tablets.complete++
+                      @updatePullResult()
+                  ,
+                    doc_ids: docList
+                )
+      else
+        Utils.midAlert "Cannot detect tablets"
+      return false
+
+  updatePullResult: ->
+    if @tablets.complete == @tablets.okCount
+      Utils.midAlert "Pull finished.<br>#{@tablets.successful} out of #{tablets.okCount} successful.", 5000
 
   gotoCurricula: ->
     Tangerine.router.navigate "curricula", true
@@ -68,8 +125,14 @@ class KlassesView extends Backbone.View
     for curricula in @curricula.models
       curriculaOptionList += "<option data-id='#{curricula.id}'>#{curricula.get 'name'}</option>"
 
+    adminPanel = "
+      <h1>Admin menu</h1>
+      <button class='pull_data command'>Pull data</button>
+    " if Tangerine.user.isAdmin()
+
 
     @$el.html "
+      #{adminPanel || ""}
       <h1>#{t('classes')}</h1>
       <div id='klass_list_wrapper'></div>
 
