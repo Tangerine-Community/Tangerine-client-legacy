@@ -8,8 +8,6 @@ class KlassResult extends Backbone.Model
 
   get: (options) ->
 
-    @assertSubtestData()
-
     if options == "correct"     then return @gridCount "correct"
     if options == "incorrect"   then return @gridCount "incorrect"
     if options == "missing"     then return @gridCount "missing"
@@ -23,7 +21,6 @@ class KlassResult extends Backbone.Model
     return super(options)
 
   gridCount: (value) ->
-    if not @get("subtestData").items? then throw "No items"
     # count correct
     count = 0
     (count++ if item.itemResult == value) for item in @get("subtestData").items 
@@ -36,7 +33,4 @@ class KlassResult extends Backbone.Model
     return parseInt( @get("subtestData").time_remain )
 
   getCorrectPerSeconds: ( secondsAllowed ) ->
-    Math.round( @get("correct") / ( secondsAllowed - @getTimeRemain() ) ) * secondsAllowed
-
-  assertSubtestData: ->
-    if not @attributes.subtestData? then throw "No subtest data."
+    Math.round( ( @get("correct") / ( secondsAllowed - @getTimeRemain() ) ) * secondsAllowed )

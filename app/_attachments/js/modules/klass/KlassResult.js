@@ -19,7 +19,6 @@ KlassResult = (function(_super) {
   };
 
   KlassResult.prototype.get = function(options) {
-    this.assertSubtestData();
     if (options === "correct") return this.gridCount("correct");
     if (options === "incorrect") return this.gridCount("incorrect");
     if (options === "missing") return this.gridCount("missing");
@@ -31,7 +30,6 @@ KlassResult = (function(_super) {
 
   KlassResult.prototype.gridCount = function(value) {
     var count, item, _i, _len, _ref;
-    if (!(this.get("subtestData").items != null)) throw "No items";
     count = 0;
     _ref = this.get("subtestData").items;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -50,11 +48,7 @@ KlassResult = (function(_super) {
   };
 
   KlassResult.prototype.getCorrectPerSeconds = function(secondsAllowed) {
-    return Math.round(this.get("correct") / (secondsAllowed - this.getTimeRemain())) * secondsAllowed;
-  };
-
-  KlassResult.prototype.assertSubtestData = function() {
-    if (!(this.attributes.subtestData != null)) throw "No subtest data.";
+    return Math.round((this.get("correct") / (secondsAllowed - this.getTimeRemain())) * secondsAllowed);
   };
 
   return KlassResult;
