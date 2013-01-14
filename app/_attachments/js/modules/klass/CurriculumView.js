@@ -165,6 +165,7 @@ CurriculumView = (function(_super) {
       attributes[key] = newValue;
       subtest.save(attributes, {
         success: function() {
+          Utils.midAlert("Subtest saved");
           return subtest.fetch({
             success: function() {
               return _this.updateTable();
@@ -209,7 +210,7 @@ CurriculumView = (function(_super) {
       "captureLastAttempted": false,
       "endOfLine": false
     };
-    protoTemps = Tangerine.templates.get("prototypeTemplates");
+    protoTemps = Tangerine.templates.get("prototypes");
     subtestAttributes = $.extend(protoTemps["grid"], subtestAttributes);
     subtest = new Subtest(subtestAttributes);
     return subtest.save(null, {

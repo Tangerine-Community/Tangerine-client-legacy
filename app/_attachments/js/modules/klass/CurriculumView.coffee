@@ -224,6 +224,7 @@ class CurriculumView extends Backbone.View
       attributes[key] = newValue
       subtest.save attributes,
         success: =>
+          Utils.midAlert "Subtest saved"
           subtest.fetch 
             success: =>
               @updateTable()
@@ -258,7 +259,7 @@ class CurriculumView extends Backbone.View
       "captureLastAttempted" : false,
       "endOfLine" : false,
 
-    protoTemps = Tangerine.templates.get "prototypeTemplates"
+    protoTemps = Tangerine.templates.get "prototypes"
     subtestAttributes = $.extend(protoTemps["grid"], subtestAttributes)
 
     subtest = new Subtest subtestAttributes
