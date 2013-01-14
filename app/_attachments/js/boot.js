@@ -96,6 +96,7 @@ Tangerine.onSettingsLoad = function() {
             user: Tangerine.user,
             router: Tangerine.router
           });
+          Tangerine.log = new Log();
           return Tangerine.user.sessionRefresh({
             success: function() {
               return Backbone.history.start();

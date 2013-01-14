@@ -88,12 +88,13 @@ Tangerine.onSettingsLoad = ->
 
 
           # Singletons
-          # Tangerine.log    = new Log()
           Tangerine.router = new Router()
           Tangerine.user   = new User()
           Tangerine.nav    = new NavigationView
             user   : Tangerine.user
             router : Tangerine.router
+          Tangerine.log    = new Log()
+
 
           Tangerine.user.sessionRefresh 
             success: -> 
