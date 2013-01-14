@@ -23,8 +23,14 @@ class User extends Backbone.Model
           if @intent == "login"
             @intent = "retry_login"
             @login name, pass
+    else if Tangerine.settings.get("context") == "class"
+      view = new RegisterTeacherView
+        name : name
+        pass : pass
+      vm.show view
+      @intent = "retry_login"
     else
-      $.couch.signup name: name, pass,
+      $.couch.signup name : name, pass,
         success: ( data ) =>
           if @intent == "login"
             @intent = "retry_login"
@@ -39,6 +45,7 @@ class User extends Backbone.Model
       name     : name
       password : pass
       success: ( user ) =>
+        Tangerine.log.app "login_success", @name
         @intent = ""
         @name   = name
         @roles  = user.roles
@@ -104,7 +111,7 @@ class User extends Backbone.Model
     usage: either `@save("key", "value", options)` or `@save({"key":"value"}, options)`
     @override (Backbone.Model.save)
   ###
-  save: (keyObject, valueOptions ) ->
+  save: (keyObject, valueOptions, options ) ->
     attrs = {}
     if _.isObject keyObject
       attrs = $.extend attrs, keyObject 
@@ -113,8 +120,9 @@ class User extends Backbone.Model
       attrs[keyObject] = value
     # get user DB
     $.couch.userDb (db) =>
-      db.saveDoc $.extend(@attributes, attrs)
-      options.success?.apply(@, arguments)
+      db.saveDoc $.extend(@attributes, attrs),
+        success: =>
+          options.success?.apply(@, arguments)
 
   ###
     Fetches user's doc from _users, loads into @attributes

@@ -24,7 +24,8 @@ User = (function(_super) {
   };
 
   User.prototype.signup = function(name, pass) {
-    var _this = this;
+    var view,
+      _this = this;
     if (Tangerine.settings.get("context") === "server") {
       return $.ajax({
         url: Tangerine.config.get("robbert"),
@@ -42,6 +43,13 @@ User = (function(_super) {
           }
         }
       });
+    } else if (Tangerine.settings.get("context") === "class") {
+      view = new RegisterTeacherView({
+        name: name,
+        pass: pass
+      });
+      vm.show(view);
+      return this.intent = "retry_login";
     } else {
       return $.couch.signup({
         name: name
@@ -67,6 +75,7 @@ User = (function(_super) {
       name: name,
       password: pass,
       success: function(user) {
+        Tangerine.log.app("login_success", _this.name);
         _this.intent = "";
         _this.name = name;
         _this.roles = user.roles;
@@ -160,8 +169,8 @@ User = (function(_super) {
       @override (Backbone.Model.save)
   */
 
-  User.prototype.save = function(keyObject, valueOptions) {
-    var attrs, options,
+  User.prototype.save = function(keyObject, valueOptions, options) {
+    var attrs,
       _this = this;
     attrs = {};
     if (_.isObject(keyObject)) {
@@ -171,9 +180,12 @@ User = (function(_super) {
       attrs[keyObject] = value;
     }
     return $.couch.userDb(function(db) {
-      var _ref;
-      db.saveDoc($.extend(_this.attributes, attrs));
-      return (_ref = options.success) != null ? _ref.apply(_this, arguments) : void 0;
+      return db.saveDoc($.extend(_this.attributes, attrs), {
+        success: function() {
+          var _ref;
+          return (_ref = options.success) != null ? _ref.apply(_this, arguments) : void 0;
+        }
+      });
     });
   };
 

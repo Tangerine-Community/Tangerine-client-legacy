@@ -15,22 +15,77 @@ RegisterTeacherView = (function(_super) {
   };
 
   RegisterTeacherView.prototype.initialize = function(options) {
-    return this.model = options.model;
+    this.name = options.name;
+    this.pass = options.pass;
+    return this.fields = ["first", "last", "gender", "school", "contact"];
   };
 
   RegisterTeacherView.prototype.register = function() {
-    this.model.set({
-      name: this.$el.find("#name").val(),
-      school: this.$el.find("#school").val(),
-      village: this.$el.find("#village").val(),
-      district: this.$el.find("#district").val(),
-      region: this.$el.find("#region").val()
+    var _this = this;
+    return this.validate(function() {
+      return _this.saveUser();
     });
-    return this.model.save();
+  };
+
+  RegisterTeacherView.prototype.validate = function(callback) {
+    var element, errors, _i, _len, _ref;
+    errors = false;
+    _ref = this.fields;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      element = _ref[_i];
+      if (_.isEmpty(this[element].val())) {
+        this.$el.find("#" + element + "_message").html("Please fill out this field.");
+        errors = true;
+      } else {
+        this.$el.find("#" + element + "_message").html("");
+      }
+    }
+    if (errors) {
+      return Utils.midAlert("Please correct the errors on this page.");
+    } else {
+      return callback();
+    }
+  };
+
+  RegisterTeacherView.prototype.saveUser = function() {
+    var element, userDoc, _i, _len, _ref,
+      _this = this;
+    userDoc = {
+      "name": this.name
+    };
+    _ref = this.fields;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      element = _ref[_i];
+      userDoc[element] = this[element].val();
+    }
+    return $.couch.signup(userDoc, this.pass, {
+      success: function() {
+        Utils.midAlert("New teacher registered");
+        return Tangerine.user.login(_this.name, _this.pass);
+      },
+      error: function(error) {
+        return Utils.midAlert("Registration error<br>" + error, 5000);
+      }
+    });
   };
 
   RegisterTeacherView.prototype.render = function() {
-    this.$el.html("    <h1>Register</h1>    <div class='label_value'>      <label for='role'>Role</label>      <input id='role'>    </div>    <div class='label_value'>      <label for='name'>Name</label>      <input id='name'>    </div>    <div class='label_value'>      <label for='school'>School</label>      <input id='school'>    </div>    <div class='label_value'>      <label for='school'>Village</label>      <input id='school'>    </div>    <div class='label_value'>      <label for='district'>District</label>      <input id='district'>    </div>    <div class='label_value'>      <label for='region'>Region</label>      <input id='region'>    </div>    <button class='register'>Register</button>    ");
+    var element, x, _i, _len, _ref;
+    this.$el.html("      <h1>Register new teacher</h1>      <table>        <tr>          <td class='small_grey'><b>Username</b></td>          <td class='small_grey'>" + this.name + "</td>          <td class='small_grey'><b>Password</b></td>          <td class='small_grey'>" + (((function() {
+      var _i, _len, _ref, _results;
+      _ref = this.pass;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        x = _ref[_i];
+        _results.push("*");
+      }
+      return _results;
+    }).call(this)).join('')) + "</td>        </tr>      </table>      <div class='label_value'>        <label for='first'>First name</label>        <div id='first_message' class='messages'></div>        <input id='first'>      </div>      <div class='label_value'>        <label for='last'>Last Name</label>        <div id='last_message' class='messages'></div>        <input id='last'>      </div>      <div class='label_value'>        <label for='gender'>Gender</label>        <div id='gender_message' class='messages'></div>        <input id='gender'>      </div>      <div class='label_value'>        <label for='school'>School name</label>        <div id='school_message' class='messages'></div>        <input id='school'>      </div>      <div class='label_value'>        <label for='contact'>Email address or mobile phone number</label>        <div id='contact_message' class='messages'></div>        <input id='contact'>      </div>      <button class='register command'>Register</button>    ");
+    _ref = this.fields;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      element = _ref[_i];
+      this[element] = this.$el.find("#" + element);
+    }
     return this.trigger("rendered");
   };
 
