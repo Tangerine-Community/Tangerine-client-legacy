@@ -11,20 +11,27 @@ class KlassGroupingMenuView extends Backbone.View
     @klass     = @parent.options.klass
     @curricula = @parent.options.curricula
     @currentPart = @klass.calcCurrentPart()
-    allSubtests = new Subtests
-    allSubtests.fetch
-      success: (collection) =>
-        subtests = collection.where 
-          curriculaId : @curricula.id
-        @parts = []
-        for subtest in subtests
-          @parts[subtest.get('part')] = subtest.id
-        @ready = true
-        @render()
+
+    @students = new Students
+    @students.fetch
+      klassId : @klass.id
+      success: =>
+        allSubtests = new Subtests
+        allSubtests.fetch
+          success: (collection) =>
+            subtests = collection.where 
+              curriculaId : @curricula.id
+            @parts = []
+            for subtest in subtests
+              @parts[subtest.get('part')] = subtest.id
+            @ready = true
+            @render()
 
   render: ->
 
     if @ready
+
+      console.log @students
 
       # quick data check
       if not @students? or @students.length == 0

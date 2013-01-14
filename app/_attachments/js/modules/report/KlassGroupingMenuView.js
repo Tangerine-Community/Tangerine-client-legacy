@@ -19,26 +19,32 @@ KlassGroupingMenuView = (function(_super) {
   };
 
   KlassGroupingMenuView.prototype.initialize = function(options) {
-    var allSubtests,
-      _this = this;
+    var _this = this;
     this.parent = options.parent;
     this.klass = this.parent.options.klass;
     this.curricula = this.parent.options.curricula;
     this.currentPart = this.klass.calcCurrentPart();
-    allSubtests = new Subtests;
-    return allSubtests.fetch({
-      success: function(collection) {
-        var subtest, subtests, _i, _len;
-        subtests = collection.where({
-          curriculaId: _this.curricula.id
+    this.students = new Students;
+    return this.students.fetch({
+      klassId: this.klass.id,
+      success: function() {
+        var allSubtests;
+        allSubtests = new Subtests;
+        return allSubtests.fetch({
+          success: function(collection) {
+            var subtest, subtests, _i, _len;
+            subtests = collection.where({
+              curriculaId: _this.curricula.id
+            });
+            _this.parts = [];
+            for (_i = 0, _len = subtests.length; _i < _len; _i++) {
+              subtest = subtests[_i];
+              _this.parts[subtest.get('part')] = subtest.id;
+            }
+            _this.ready = true;
+            return _this.render();
+          }
         });
-        _this.parts = [];
-        for (_i = 0, _len = subtests.length; _i < _len; _i++) {
-          subtest = subtests[_i];
-          _this.parts[subtest.get('part')] = subtest.id;
-        }
-        _this.ready = true;
-        return _this.render();
       }
     });
   };
@@ -46,6 +52,7 @@ KlassGroupingMenuView = (function(_super) {
   KlassGroupingMenuView.prototype.render = function() {
     var flagForCurrent, html, part, subtestId, _len, _ref;
     if (this.ready) {
+      console.log(this.students);
       if (!(this.students != null) || this.students.length === 0) {
         this.$el.html("Please add students to this class.");
         return;
