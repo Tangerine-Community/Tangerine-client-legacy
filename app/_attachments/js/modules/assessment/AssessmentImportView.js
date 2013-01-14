@@ -168,11 +168,14 @@ AssessmentImportView = (function(_super) {
   };
 
   AssessmentImportView.prototype.render = function() {
-    var importStep;
+    var groupImport, importStep;
+    if (Tangerine.settings.get("context") !== "server") {
+      groupImport = "      <button class='command group_import'>Group import</button>    ";
+    }
     if (!this.connectionVerified) {
       importStep = "        <section><p>Please wait while your connection is verified.</p>          <button class='command verify'>Try now</button>          <p><small>Note: If verification fails, press back to return to previous screen and please try again when internet connectivity is better.</small></p>        </section>      ";
     } else {
-      importStep = "        <div class='question'>          <label for='d_key'>Download keys</label>          <input id='d_key' value=''>          <button class='import command'>Import</button> <button class='command group_import'>Group import</button><br>          <small>Server connection: <span id='server_connection'>" + this.serverStatus + "</span></small>        </div>        <div class='confirmation status'>          <h2>Status<h2>          <div class='info_box' id='progress'></div>        </div>      ";
+      importStep = "        <div class='question'>          <label for='d_key'>Download keys</label>          <input id='d_key' value=''>          <button class='import command'>Import</button> " + (groupImport || "") + "<br>          <small>Server connection: <span id='server_connection'>" + this.serverStatus + "</span></small>        </div>        <div class='confirmation status'>          <h2>Status<h2>          <div class='info_box' id='progress'></div>        </div>      ";
     }
     this.$el.html("      <button class='back navigation'>Back</button>      <h1>Tangerine Central Import</h1>      " + importStep + "    ");
     return this.trigger("rendered");

@@ -119,6 +119,10 @@ class AssessmentImportView extends Backbone.View
 
   render: ->
 
+    groupImport = "
+      <button class='command group_import'>Group import</button>
+    " if Tangerine.settings.get("context") != "server"
+
     if not @connectionVerified 
       importStep = "
         <section><p>Please wait while your connection is verified.</p>
@@ -131,7 +135,7 @@ class AssessmentImportView extends Backbone.View
         <div class='question'>
           <label for='d_key'>Download keys</label>
           <input id='d_key' value=''>
-          <button class='import command'>Import</button> <button class='command group_import'>Group import</button><br>
+          <button class='import command'>Import</button> #{groupImport || ""}<br>
           <small>Server connection: <span id='server_connection'>#{@serverStatus}</span></small>
         </div>
         <div class='confirmation status'>
