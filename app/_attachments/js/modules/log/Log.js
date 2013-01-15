@@ -1,4 +1,4 @@
-var AppLog, BDLog, Log, LogView, Logs, UILog,
+var Log, LogView, Logs,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -13,7 +13,6 @@ Log = (function(_super) {
   Log.prototype.url = "log";
 
   Log.prototype.initialize = function() {
-    this.app = true;
     return this.ensure();
   };
 
@@ -21,52 +20,64 @@ Log = (function(_super) {
     var _this = this;
     if (code == null) code = "";
     if (details == null) details = "";
-    return this.ensure(function() {
-      return Tangerine.log.add({
-        type: "app",
-        "code": code,
-        "details": details
+    if (~Tangerine.settings.get("log").indexOf("app")) {
+      return this.ensure(function() {
+        return Tangerine.log.add({
+          "type": "app",
+          "code": code,
+          "details": details,
+          "timestamp": (new Date()).getTime()
+        });
       });
-    });
+    }
   };
 
   Log.prototype.db = function(code, details) {
     var _this = this;
     if (code == null) code = "";
     if (details == null) details = "";
-    return this.ensure(function() {
-      return Tangerine.log.add({
-        type: "db",
-        "code": code,
-        "details": details
+    if (~Tangerine.settings.get("log").indexOf("db")) {
+      return this.ensure(function() {
+        return Tangerine.log.add({
+          "type": "db",
+          "code": code,
+          "details": details,
+          "timestamp": (new Date()).getTime()
+        });
       });
-    });
+    }
   };
 
   Log.prototype.ui = function(code, details) {
     var _this = this;
     if (code == null) code = "";
     if (details == null) details = "";
-    return this.ensure(function() {
-      return Tangerine.log.add({
-        type: "ui",
-        "code": code,
-        "details": details
+    if (~Tangerine.settings.get("log").indexOf("ui")) {
+      return this.ensure(function() {
+        return Tangerine.log.add({
+          "type": "ui",
+          "code": code,
+          "details": details,
+          "timestamp": (new Date()).getTime()
+        });
       });
-    });
+    }
   };
 
   Log.prototype.err = function(code, details) {
     var _this = this;
     if (code == null) code = "";
     if (details == null) details = "";
-    return this.ensure(function() {
-      return Tangerine.log.add({
-        type: "err",
-        "code": code,
-        "details": details
+    if (~Tangerine.settings.get("log").indexOf("err")) {
+      return this.ensure(function() {
+        return Tangerine.log.add({
+          "type": "err",
+          "code": code,
+          "details": details,
+          "timestamp": (new Date()).getTime()
+        });
       });
-    });
+    }
   };
 
   Log.prototype.ensure = function(callback) {
@@ -84,7 +95,11 @@ Log = (function(_super) {
           return typeof callback === "function" ? callback() : void 0;
         },
         error: function(model, xhr, options) {
-          return typeof callback === "function" ? callback() : void 0;
+          return _this.save({
+            success: function() {
+              return typeof callback === "function" ? callback() : void 0;
+            }
+          });
         }
       });
     } else {
@@ -98,84 +113,28 @@ Log = (function(_super) {
   };
 
   Log.prototype.add = function(logEvent) {
-    var logEvents;
-    if (logEvent == null) return;
-    if (!this.has("time_stamp") || !this.has("user")) {
-      this.set({
-        time_stamp: (new Date()).getTime(),
-        user: Tangerine.user.get("name")
-      });
-    }
-    logEvents = this.get("logEvents");
+    var d, logEvents;
+    d = new Date();
+    if (!this.has("year")) this.set("year", d.getMonth());
+    if (!this.has("month")) this.set("month", d.getFullYear());
+    if (!this.has("date")) this.set("date", d.getDate());
+    if (!this.has("user")) this.set("user", Tangerine.user.name);
+    logEvents = this.getArray("logEvents");
     logEvents.push(logEvent);
     this.set("logEvents", logEvents);
     return this.save();
   };
 
   Log.prototype.calcFileName = function() {
-    var d, user, _ref;
+    var d, user;
     d = new Date();
-    user = ((_ref = Tangerine.user) != null ? _ref.get("name") : void 0) != null ? Tangerine.user.get("name") : "not-signed-in";
+    user = Tangerine.user.name != null ? Tangerine.user.name : "not-signed-in";
     return hex_sha1("" + user + "_" + (d.getFullYear()) + "-" + (d.getMonth()) + "-" + (d.getDate()));
   };
 
   return Log;
 
 })(Backbone.Model);
-
-BDLog = (function(_super) {
-
-  __extends(BDLog, _super);
-
-  function BDLog() {
-    BDLog.__super__.constructor.apply(this, arguments);
-  }
-
-  BDLog.prototype.initialize = function(options) {
-    var logEvent;
-    logEvent = options.logEvent;
-    return logEvent.type = "db";
-  };
-
-  return BDLog;
-
-})(Log);
-
-UILog = (function(_super) {
-
-  __extends(UILog, _super);
-
-  function UILog() {
-    UILog.__super__.constructor.apply(this, arguments);
-  }
-
-  UILog.prototype.initialize = function(options) {
-    var logEvent;
-    logEvent = options.logEvent;
-    return logEvent.type = "ui";
-  };
-
-  return UILog;
-
-})(Log);
-
-AppLog = (function(_super) {
-
-  __extends(AppLog, _super);
-
-  function AppLog() {
-    AppLog.__super__.constructor.apply(this, arguments);
-  }
-
-  AppLog.prototype.initialize = function(options) {
-    var logEvent;
-    logEvent = options.logEvent;
-    return logEvent.type = "app";
-  };
-
-  return AppLog;
-
-})(Log);
 
 Logs = (function(_super) {
 
@@ -190,7 +149,7 @@ Logs = (function(_super) {
   Logs.prototype.model = Log;
 
   Logs.prototype.comparator = function(model) {
-    return model.get("time_stamp");
+    return model.get("timestamp");
   };
 
   return Logs;
