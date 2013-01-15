@@ -75,7 +75,7 @@ class KlassesView extends Backbone.View
               "contentType" : "application/json;charset=utf-8",
               "data"     : 
                 include_docs : false
-                keys : JSON.stringify(['result', 'klass', 'student','curriculum'])
+                keys : JSON.stringify(['result', 'klass', 'student','curriculum', 'teacher'])
             viewReq.success (data) =>
               docList = (datum.id for datum in data.rows)
               $.couch.replicate(

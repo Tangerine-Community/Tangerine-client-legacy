@@ -110,7 +110,7 @@ KlassesView = (function(_super) {
                 "contentType": "application/json;charset=utf-8",
                 "data": {
                   include_docs: false,
-                  keys: JSON.stringify(['result', 'klass', 'student', 'curriculum'])
+                  keys: JSON.stringify(['result', 'klass', 'student', 'curriculum', 'teacher'])
                 }
               });
               return viewReq.success(function(data) {
