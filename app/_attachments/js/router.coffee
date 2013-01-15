@@ -12,6 +12,8 @@ class Router extends Backbone.Router
 
     '' : 'landing'
 
+    'logs' : 'logs'
+
     # Class
     'class'          : 'klass'
     'class/edit/:id' : 'klassEdit'
@@ -129,7 +131,8 @@ class Router extends Backbone.Router
   curriculumImport: ->
     Tangerine.user.verify
       isRegistered: ->
-        view = new CurriculumImportView
+        view = new AssessmentImportView
+          noun : "curriculum"
         vm.show view
       isUnregistered: ->
         Tangerine.router.navigate "login", true
@@ -280,6 +283,7 @@ class Router extends Backbone.Router
     Tangerine.user.verify
       isRegistered: ->
         view = new AssessmentImportView
+          noun :"assessment"
         vm.show view
       isUnregistered: ->
         Tangerine.router.navigate "login", true
@@ -619,8 +623,12 @@ class Router extends Backbone.Router
         Tangerine.router.navigate "login", true
 
   logs: ->
-    view = new LogView
-    vm.show view
+    logs = new Logs
+    logs.fetch
+      success: ->
+        view = new LogView
+          logs: logs
+        vm.show view
 
   # Transfer a new user from tangerine-central into tangerine
   transfer: ->

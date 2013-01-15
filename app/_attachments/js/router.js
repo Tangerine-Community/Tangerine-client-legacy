@@ -19,6 +19,7 @@ Router = (function(_super) {
     'settings': 'settings',
     'update': 'update',
     '': 'landing',
+    'logs': 'logs',
     'class': 'klass',
     'class/edit/:id': 'klassEdit',
     'class/student/:studentId': 'studentEdit',
@@ -176,7 +177,9 @@ Router = (function(_super) {
     return Tangerine.user.verify({
       isRegistered: function() {
         var view;
-        view = new CurriculumImportView;
+        view = new AssessmentImportView({
+          noun: "curriculum"
+        });
         return vm.show(view);
       },
       isUnregistered: function() {
@@ -439,7 +442,9 @@ Router = (function(_super) {
     return Tangerine.user.verify({
       isRegistered: function() {
         var view;
-        view = new AssessmentImportView;
+        view = new AssessmentImportView({
+          noun: "assessment"
+        });
         return vm.show(view);
       },
       isUnregistered: function() {
@@ -1013,9 +1018,17 @@ Router = (function(_super) {
   };
 
   Router.prototype.logs = function() {
-    var view;
-    view = new LogView;
-    return vm.show(view);
+    var logs;
+    logs = new Logs;
+    return logs.fetch({
+      success: function() {
+        var view;
+        view = new LogView({
+          logs: logs
+        });
+        return vm.show(view);
+      }
+    });
   };
 
   Router.prototype.transfer = function() {
