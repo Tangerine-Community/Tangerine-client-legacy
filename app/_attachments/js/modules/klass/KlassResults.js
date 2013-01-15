@@ -16,6 +16,7 @@ KlassResults = (function(_super) {
 
   KlassResults.prototype.initialize = function(options) {
     var _this = this;
+    if (options == null) options = {};
     if (!((options.showOld != null) && options.showOld === true)) {
       return this.on("all", function(event) {
         var result, resultId, toRemove, _i, _j, _len, _len2, _ref, _results;

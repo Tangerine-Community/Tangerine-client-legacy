@@ -3,7 +3,7 @@ class KlassResults extends Backbone.Collection
   url: "result"
   model: KlassResult
 
-  initialize: (options) ->
+  initialize: (options = {}) ->
     unless options.showOld? && options.showOld == true
       @on "all", (event) =>
         toRemove = []
