@@ -75,7 +75,15 @@ class KlassSubtestRunView extends Backbone.View
 
   done: ->
     if @isValid()
-      @result.add(@getResult())
-      Tangerine.router.navigate "class/#{@options.student.get('klassId')}/#{@options.subtest.get('part')}", true
+      # Gaurantee single "new" result
+      Tangerine.$db.view "tangerine/resultsByStudentSubtest",
+        key : [@options.student.id,@options.subtest.id]
+        success: (data) =>
+          rows = data.rows
+          for datum in rows
+            Tangerine.$db.saveDoc $.extend(datum.value, "old":true)
+          # save this result
+          @result.add @getResult(), =>
+            Tangerine.router.navigate "class/#{@options.student.get('klassId')}/#{@options.subtest.get('part')}", true
     else
       @prototypeView.showErrors()

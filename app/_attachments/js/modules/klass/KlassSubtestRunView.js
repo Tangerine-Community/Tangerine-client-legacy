@@ -92,9 +92,24 @@ KlassSubtestRunView = (function(_super) {
   };
 
   KlassSubtestRunView.prototype.done = function() {
+    var _this = this;
     if (this.isValid()) {
-      this.result.add(this.getResult());
-      return Tangerine.router.navigate("class/" + (this.options.student.get('klassId')) + "/" + (this.options.subtest.get('part')), true);
+      return Tangerine.$db.view("tangerine/resultsByStudentSubtest", {
+        key: [this.options.student.id, this.options.subtest.id],
+        success: function(data) {
+          var datum, rows, _i, _len;
+          rows = data.rows;
+          for (_i = 0, _len = rows.length; _i < _len; _i++) {
+            datum = rows[_i];
+            Tangerine.$db.saveDoc($.extend(datum.value, {
+              "old": true
+            }));
+          }
+          return _this.result.add(_this.getResult(), function() {
+            return Tangerine.router.navigate("class/" + (_this.options.student.get('klassId')) + "/" + (_this.options.subtest.get('part')), true);
+          });
+        }
+      });
     } else {
       return this.prototypeView.showErrors();
     }
