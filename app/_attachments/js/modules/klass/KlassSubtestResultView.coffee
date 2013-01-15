@@ -1,12 +1,15 @@
 class KlassSubtestResultView extends Backbone.View
 
+  className: "KlassSubtestResultView"
+
   events: 
     "click .run"           : "gotoRun"
     "click .back"          : "back"
     "click .show_itemized" : "showItemized"
 
   initialize: (options) ->
-    #do nothing?
+    @result = options.result
+    @previous = options.previous
 
   showItemized: -> @$el.find(".itemized").fadeToggle()
   gotoRun: -> Tangerine.router.navigate "class/run/#{@options.student.id}/#{@options.subtest.id}", true
@@ -18,32 +21,40 @@ class KlassSubtestResultView extends Backbone.View
     resultHTML = "<br>"
     taken      = ""
 
-    if @options.result.length != 0
+    if @result.length != 0
+      @result = @result[0]
 
-      correctItems = totalItems = 0
-      for item in @options.result[0].get("subtestData").items
-          correctItems++ if item.itemResult == "correct"
-          totalItems++
+      correctItems = @result.get "correct"
+      totalItems   = @result.get "total"
+
       percentageCorrect = (correctItems / totalItems) * 100
+
+      ###
       if percentageCorrect < (parseFloat(Tangerine.settings.generalThreshold)*100)
         resultHTML += "<div class='info_box'><b>Warning</b><br>Student's #{Math.decimals(percentageCorrect,2)}% score is less than threshold of #{Math.decimals(Tangerine.settings.generalThreshold*100, 2)}%</div><br>"
-
+      ###
       resultHTML += "<button class='command show_itemized'>#{t('itemized results')}</button><table class='itemized confirmation'><tbody><tr><th>Item</th><th>Result</th></tr>"
-      for datum, i in @options.result[0].get("subtestData").items
+      for datum, i in @result.get("subtestData").items
         resultHTML += "<tr><td>#{datum.itemLabel}</td><td>#{t(datum.itemResult)}</td></tr>"
       resultHTML += "</tbody></table><br>"
 
-      timestamp = new Date @options.result[0].get("timestamp")
+      timestamp = new Date @result.get("startTime")
 
       taken += "
         <tr>
-          <td><label>#{t('taken')}</label></td><td>#{timestamp.getFullYear()}/#{timestamp.getMonth()+1}/#{timestamp.getDate()}</td>
+          <td><label>Taken last</label></td><td>#{timestamp.getFullYear()}/#{timestamp.getMonth()+1}/#{timestamp.getDate()}</td>
         </tr>
       "
 
+      taken += "
+        <tr>
+          <td><label>Previous attempts</label></td><td>#{@previous}</td>
+        </tr>
+      " if @previous > 0
+
     @$el.html "
       <h1>Result</h1>
-      <table class='info_box'><tbody>
+      <table><tbody>
         <tr>
           <td><label>Assessment</label></td>
           <td>#{@options.subtest.get("part")}</td>
