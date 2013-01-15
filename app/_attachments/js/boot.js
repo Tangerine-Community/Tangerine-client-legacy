@@ -109,7 +109,7 @@ Tangerine.onSettingsLoad = function() {
 };
 
 Tangerine.ensureAdmin = function(callback) {
-  if (Tangerine.settings.get("context") === "mobile" && !Tangerine.settings.has("adminEnsured")) {
+  if (Tangerine.settings.get("context") !== "server" && !Tangerine.settings.has("adminEnsured")) {
     return $.couch.login({
       name: "admin",
       password: "password",

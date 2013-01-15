@@ -86,7 +86,6 @@ Tangerine.onSettingsLoad = ->
               , false
             , false
 
-
           # Singletons
           Tangerine.router = new Router()
           Tangerine.user   = new User()
@@ -95,7 +94,6 @@ Tangerine.onSettingsLoad = ->
             router : Tangerine.router
           Tangerine.log    = new Log()
 
-
           Tangerine.user.sessionRefresh 
             success: -> 
               Backbone.history.start()
@@ -103,7 +101,7 @@ Tangerine.onSettingsLoad = ->
 
 # if admin user doesn't exist in _users database, create it
 Tangerine.ensureAdmin = (callback) ->
-  if Tangerine.settings.get("context") == "mobile" && not Tangerine.settings.has("adminEnsured")
+  if Tangerine.settings.get("context") != "server" && not Tangerine.settings.has("adminEnsured")
     $.couch.login
       name     : "admin"
       password : "password"
