@@ -20,7 +20,30 @@ KlassGroupingView = (function(_super) {
 
   KlassGroupingView.prototype.events = {
     "click .back": "goBack",
-    "change #selector_container input": "selector"
+    "change #selector_container input": "selector",
+    'click .student_name': 'showItemized'
+  };
+
+  KlassGroupingView.prototype.showItemized = function(event) {
+    var $studentResults, $target, studentId;
+    $target = $(event.target);
+    studentId = $(event.target).attr("data-studentId");
+    $studentResults = this.$el.find(".student_" + studentId);
+    if ($studentResults.is(":visible")) {
+      $studentResults.addClass("confirmation");
+      return $target.css({
+        "color": "black"
+      });
+    } else {
+      this.$el.find(".student_name").css({
+        "color": "black"
+      });
+      $target.css({
+        "color": "white"
+      });
+      this.$el.find(".itemized_results").addClass("confirmation");
+      return this.$el.find(".student_" + studentId).removeClass("confirmation");
+    }
   };
 
   KlassGroupingView.prototype.selector = function() {
@@ -74,6 +97,8 @@ KlassGroupingView = (function(_super) {
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       result = _ref[_i];
       person = {
+        'studentId': result.get("studentId"),
+        'items': result.get("subtestData").items,
         'name': this.students.get(result.get("studentId")).get("name"),
         'pCorrect': 0,
         'nCorrect': result.get("correct"),
@@ -115,7 +140,7 @@ KlassGroupingView = (function(_super) {
   };
 
   KlassGroupingView.prototype.render = function() {
-    var checkedAttribute, detailsHTML, emptyHTML, html, menuHTML, person, subtest, summaryHTML, _i, _j, _len, _len2, _ref, _ref2;
+    var checkedAttribute, datum, detailsHTML, emptyHTML, html, i, itemizedResults, menuHTML, person, subtest, summaryHTML, _i, _j, _len, _len2, _len3, _ref, _ref2, _ref3;
     emptyHTML = "      <h1>" + (t('student grouping report')) + "</h1>      <p>No students tested for " + (this.subtests.get(this.selected.subtestId).get("name")) + " on assessment #" + (this.subtests.models[0].get("part")) + " yet. Return to the <a href='#class'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>    ";
     menuHTML = "<div id='selector_container' class='buttonset'>";
     _ref = this.subtests.models;
@@ -127,14 +152,22 @@ KlassGroupingView = (function(_super) {
     menuHTML += "</div>";
     summaryHTML = "<h1>" + (t('summary')) + "</h1>    <table class='summary'>      <tr><th>Subtest Name</th>          <td>" + this.summary.name + "</td></tr>      <tr><th>Average (%)</th>           <td>" + this.summary.aCorrect + "</td></tr>      <tr><th>Standard Deviation (%)</th><td>" + this.summary.stdDev + "</td></tr>      <tr><th>Class Size</th>            <td>" + this.summary.classSize + "</td></tr>      <tr><th>Number of Questions</th>   <td>" + this.summary.totalItems + "</td></tr>      <tr><th>Students to watch</th>     <td>" + (this.summary.watchList.join(', ')) + "</td></tr>    </table>";
     detailsHTML = "      <h1>" + (t('student grouping report')) + "</h1>      <table class='details'>      <tr>        <th>Name</th>        <th>Percentile</th>        <th>Status</th>      </tr>    ";
+    itemizedResults = "";
     _ref2 = this.table;
     for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
       person = _ref2[_j];
-      detailsHTML += "        <tr class='" + this.colorClass[person.index] + "'>          <td>" + person.name + "</td>          <td>" + person.percentile + "</td>          <td>" + person.status + "</td>        </tr>        ";
+      detailsHTML += "        <tr class='" + this.colorClass[person.index] + "'>          <td class='student_name icon' data-studentId='" + person.studentId + "'>" + person.name + "</td>          <td>" + person.percentile + "</td>          <td>" + person.status + "</td>        </tr>        ";
+      itemizedResults += "        <table class='itemized_results confirmation student_" + person.studentId + "'>          <tbody><tr><th>Item</th><th>Result</th></tr>      ";
+      _ref3 = person.items;
+      for (i = 0, _len3 = _ref3.length; i < _len3; i++) {
+        datum = _ref3[i];
+        itemizedResults += "<tr><td>" + datum.itemLabel + "</td><td>" + (t(datum.itemResult)) + "</td></tr>";
+      }
+      itemizedResults += "</tbody></table>";
     }
     detailsHTML += "</table>";
     if (this.selected.results.length !== 0) {
-      html = "        " + menuHTML + "        " + detailsHTML + "        <button class='navigation back'>Back</button>      ";
+      html = "        " + menuHTML + "        " + detailsHTML + "        " + itemizedResults + "        <button class='navigation back'>Back</button>      ";
     } else {
       html = "        " + menuHTML + "        " + emptyHTML + "        <button class='navigation back'>Back</button>      ";
     }

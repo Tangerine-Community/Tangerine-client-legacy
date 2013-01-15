@@ -11,6 +11,21 @@ class KlassGroupingView extends Backbone.View
   events:
     "click .back"                      : "goBack"
     "change #selector_container input" : "selector"
+    'click .student_name' : 'showItemized' 
+
+  showItemized: (event) ->
+    $target = $(event.target)
+    studentId = $(event.target).attr "data-studentId"
+    $studentResults = @$el.find ".student_#{studentId}"
+
+    if $studentResults.is ":visible"
+      $studentResults.addClass "confirmation"
+      $target.css "color" : "black"
+    else
+      @$el.find(".student_name").css "color" : "black"
+      $target.css "color" : "white"
+      @$el.find(".itemized_results").addClass "confirmation"
+      @$el.find(".student_#{studentId}").removeClass "confirmation"
 
   selector: ->
     subtestId = @$el.find("#selector_container input:checked").attr("data-subtestId")
@@ -53,6 +68,8 @@ class KlassGroupingView extends Backbone.View
 
     for result in @selected.results
       person =
+        'studentId'  : result.get("studentId")
+        'items'      : result.get("subtestData").items
         'name'       : @students.get( result.get("studentId") ).get("name")
         'pCorrect'   : 0
         'nCorrect'   : result.get("correct")
@@ -151,21 +168,35 @@ class KlassGroupingView extends Backbone.View
       </tr>
     "
 
+    itemizedResults = ""
+
     for person in @table
       detailsHTML += "
         <tr class='#{@colorClass[person.index]}'>
-          <td>#{person.name}</td>
+          <td class='student_name icon' data-studentId='#{person.studentId}'>#{person.name}</td>
           <td>#{person.percentile}</td>
           <td>#{person.status}</td>
         </tr>
         "
+
+      itemizedResults += "
+        <table class='itemized_results confirmation student_#{person.studentId}'>
+          <tbody><tr><th>Item</th><th>Result</th></tr>
+      "
+      for datum, i in person.items
+        itemizedResults += "<tr><td>#{datum.itemLabel}</td><td>#{t(datum.itemResult)}</td></tr>"
+      itemizedResults += "</tbody></table>"
+
+
     detailsHTML += "</table>"
+
 
 
     if @selected.results.length != 0
       html = "
         #{menuHTML}
         #{detailsHTML}
+        #{itemizedResults}
         <button class='navigation back'>Back</button>
       "
     else

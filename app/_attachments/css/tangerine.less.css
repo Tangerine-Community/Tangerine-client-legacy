@@ -1359,6 +1359,28 @@ body[rtl] {
   text-align: left;
   border: 1px solid #000000;
 }
+.KlassSubtestResultView {
+  margin: 1em 0;
+  border: 0;
+  width: 100%;
+}
+.KlassSubtestResultView td {
+  padding: 0.25em 0;
+  color: #666666;
+  border: 0;
+  border-bottom: 1px solid #cccccc;
+}
+.KlassSubtestResultView th {
+  vertical-align: top;
+  padding: 0.25em 0;
+  font-weight: normal;
+  color: black;
+  text-align: left;
+}
+.KlassSubtestResultView td {
+  vertical-align: middle;
+  padding-right: 10px;
+}
 /*
  * Curriculum editor
  */
