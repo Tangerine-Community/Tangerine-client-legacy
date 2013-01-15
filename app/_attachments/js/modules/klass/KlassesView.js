@@ -10,6 +10,8 @@ KlassesView = (function(_super) {
   function KlassesView() {
     this.render = __bind(this.render, this);
     this.onSubviewRendered = __bind(this.onSubviewRendered, this);
+    this.updatePullResult = __bind(this.updatePullResult, this);
+    this.updatePull = __bind(this.updatePull, this);
     KlassesView.__super__.constructor.apply(this, arguments);
   }
 
@@ -30,62 +32,98 @@ KlassesView = (function(_super) {
   };
 
   KlassesView.prototype.pullData = function() {
-    var local, _fn,
-      _this = this;
+    var _this = this;
     this.tablets = {
       checked: 0,
+      complete: 0,
+      successful: 0,
       okCount: 0,
       ips: [],
       result: 0
     };
     Utils.midAlert("Please wait, detecting tablets.");
-    _fn = function(local) {
-      var ip;
-      ip = Tangerine.settings.subnetIP(local);
-      return $.ajax({
-        url: Tangerine.settings.urlSubnet(ip),
-        dataType: "jsonp",
-        contentType: "application/json;charset=utf-8",
-        timeout: 30000,
-        complete: function(xhr, error) {
-          _this.tablets.checked++;
-          if (xhr.status === 200) {
-            _this.tablets.okCount++;
-            _this.tablets.ips.push(ip);
-          }
-          return _this.updatePull();
+    Utils.working(true);
+    this.randomIdDoc = hex_sha1("" + Math.random());
+    return Tangerine.$db.saveDoc({
+      "_id": this.randomIdDoc
+    }, {
+      success: function(doc) {
+        var local, _results;
+        _this.randomDoc = doc;
+        _results = [];
+        for (local = 0; local <= 15; local++) {
+          _results.push((function(local) {
+            var ip, req;
+            ip = Tangerine.settings.subnetIP(local);
+            req = $.ajax({
+              url: Tangerine.settings.urlSubnet(ip),
+              dataType: "jsonp",
+              contentType: "application/json;charset=utf-8",
+              timeout: 10000
+            });
+            return req.complete(function(xhr, error) {
+              _this.tablets.checked++;
+              if (parseInt(xhr.status) === 200) {
+                _this.tablets.okCount++;
+                _this.tablets.ips.push(ip);
+              }
+              return _this.updatePull();
+            });
+          })(local));
         }
-      });
-    };
-    for (local = 0; local <= 255; local++) {
-      _fn(local);
-    }
-    return {
-      updatePull: function() {
-        var ip, _fn2, _i, _len, _ref,
-          _this = this;
-        if (this.tablets.checked < 256) return;
-        if (this.available.tablets.okCount > 0) {
-          Utils.midAlert("Pulling from " + this.tablets.okCount + " tablets.");
-          _ref = this.tablets.ips;
-          _fn2 = function(ip) {
-            return $.ajax({
-              "url": Tangerine.settings.urlSubnet(ip) + "_design/tangerine/_view/byCollection",
-              "dataType": "jsonp",
-              "data": {
-                keys: JSON.stringify(['result', 'klass', 'student', 'curriculum'])
-              },
-              success: function(data) {
+        return _results;
+      },
+      error: function() {
+        Utils.working(false);
+        return Utils.midAlert("Internal database error");
+      }
+    });
+  };
+
+  KlassesView.prototype.updatePull = function() {
+    var ip, _i, _len, _ref, _results,
+      _this = this;
+    if (this.tablets.checked < 16) return;
+    if (this.tablets.okCount > 1) {
+      this.tablets.okCount--;
+      Utils.midAlert("Pulling from " + this.tablets.okCount + " tablets.");
+      _ref = this.tablets.ips;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        ip = _ref[_i];
+        _results.push((function(ip) {
+          var selfReq;
+          selfReq = $.ajax({
+            "url": Tangerine.settings.urlSubnet(ip) + "/" + _this.randomIdDoc,
+            "dataType": "jsonp",
+            "timeout": 10000,
+            "contentType": "application/json;charset=utf-8"
+          });
+          selfReq.success(function(data, xhr, error) {});
+          return selfReq.complete(function(xhr, error) {
+            return (function(xhr) {
+              var viewReq;
+              if (parseInt(xhr.status) === 200) return;
+              viewReq = $.ajax({
+                "url": Tangerine.settings.urlSubnet(ip) + "/_design/tangerine/_view/byCollection",
+                "dataType": "jsonp",
+                "contentType": "application/json;charset=utf-8",
+                "data": {
+                  include_docs: false,
+                  keys: JSON.stringify(['result', 'klass', 'student', 'curriculum'])
+                }
+              });
+              return viewReq.success(function(data) {
                 var datum, docList;
                 docList = (function() {
-                  var _j, _len2, _ref2, _results;
+                  var _j, _len2, _ref2, _results2;
                   _ref2 = data.rows;
-                  _results = [];
+                  _results2 = [];
                   for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
                     datum = _ref2[_j];
-                    _results.push(datum.id);
+                    _results2.push(datum.id);
                   }
-                  return _results;
+                  return _results2;
                 })();
                 return $.couch.replicate(Tangerine.settings.urlSubnet(ip), Tangerine.settings.urlDB("local"), {
                   success: function() {
@@ -100,24 +138,36 @@ KlassesView = (function(_super) {
                 }, {
                   doc_ids: docList
                 });
-              }
-            });
-          };
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            ip = _ref[_i];
-            _fn2(ip);
-          }
-        } else {
-          Utils.midAlert("Cannot detect tablets");
-        }
-        return false;
+              });
+            })(xhr);
+          });
+        })(ip));
       }
-    };
+      return _results;
+    } else {
+      Utils.working(false);
+      Utils.midAlert("Cannot detect tablets");
+      return Tangerine.$db.removeDoc({
+        "_id": this.randomDoc.id,
+        "_rev": this.randomDoc.rev
+      });
+    }
   };
 
   KlassesView.prototype.updatePullResult = function() {
+    var _this = this;
     if (this.tablets.complete === this.tablets.okCount) {
-      return Utils.midAlert("Pull finished.<br>" + this.tablets.successful + " out of " + tablets.okCount + " successful.", 5000);
+      Utils.working(false);
+      Utils.midAlert("Pull finished.<br>" + this.tablets.successful + " out of " + this.tablets.okCount + " successful.", 5000);
+      Tangerine.$db.removeDoc({
+        "_id": this.randomDoc.id,
+        "_rev": this.randomDoc.rev
+      });
+      return this.klasses.fetch({
+        success: function() {
+          return _this.renderKlasses();
+        }
+      });
     }
   };
 
@@ -138,6 +188,7 @@ KlassesView = (function(_super) {
     }
     if (errors.length === 0) {
       return this.klasses.create({
+        teacher: Tangerine.user.name,
         year: this.$el.find("#year").val(),
         grade: this.$el.find("#grade").val(),
         stream: this.$el.find("#stream").val(),
@@ -177,6 +228,7 @@ KlassesView = (function(_super) {
       this.views.push(view);
       $ul.append(view.el);
     }
+    this.$el.find("#klass_list_wrapper").empty();
     return this.$el.find("#klass_list_wrapper").append($ul);
   };
 

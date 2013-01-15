@@ -16,60 +16,96 @@ class KlassesView extends Backbone.View
     @klasses.on "add remove change", @render
 
   pullData: ->
-    @tablets =
-      checked : 0
-      okCount : 0
-      ips     : []
-      result  : 0
+    @tablets = # if you can think of a better idea I'd like to see it
+      checked    : 0
+      complete   : 0
+      successful : 0
+      okCount    : 0
+      ips        : []
+      result     : 0
     Utils.midAlert "Please wait, detecting tablets."
-    for local in [0..255]
-      do (local) =>
-        ip = Tangerine.settings.subnetIP(local)
-        $.ajax
-          url: Tangerine.settings.urlSubnet(ip)
-          dataType: "jsonp"
-          contentType: "application/json;charset=utf-8",
-          timeout: 30000
-          complete:  (xhr, error) =>
-            @tablets.checked++
-            if xhr.status == 200
-              @tablets.okCount++
-              @tablets.ips.push ip
-            @updatePull()
+    Utils.working true
+    @randomIdDoc = hex_sha1(""+Math.random())
+    Tangerine.$db.saveDoc 
+      "_id" : @randomIdDoc
+    ,
+      success: (doc) =>
+        @randomDoc = doc
+        for local in [0..15]
+          do (local) =>
+            ip = Tangerine.settings.subnetIP(local)
+            req = $.ajax
+              url: Tangerine.settings.urlSubnet(ip)
+              dataType: "jsonp"
+              contentType: "application/json;charset=utf-8",
+              timeout: 10000
+            req.complete (xhr, error) =>
+              @tablets.checked++
+              if parseInt(xhr.status) == 200
+                @tablets.okCount++
+                @tablets.ips.push ip
+              @updatePull()
+      error: ->
+        Utils.working false
+        Utils.midAlert "Internal database error"
 
-    updatePull: ->
-      return if @tablets.checked < 256
+  updatePull: =>
+    return if @tablets.checked < 16
 
-      if @available.tablets.okCount > 0
-        Utils.midAlert "Pulling from #{@tablets.okCount} tablets."
-        for ip in @tablets.ips
-          do (ip) =>
-            $.ajax
-              "url"      : Tangerine.settings.urlSubnet(ip) + "_design/tangerine/_view/byCollection"
+    if @tablets.okCount > 1
+      # -1 because one of them will be this computer
+      @tablets.okCount--
+      Utils.midAlert "Pulling from #{@tablets.okCount} tablets."
+      for ip in @tablets.ips
+        do (ip) =>
+          # see if our random document is on the server we just found
+          selfReq = $.ajax
+            "url"         : Tangerine.settings.urlSubnet(ip) + "/" + @randomIdDoc
+            "dataType"    : "jsonp"
+            "timeout"     : 10000
+            "contentType" : "application/json;charset=utf-8",
+          selfReq.success (data, xhr, error) =>
+            # if found self then do nothing
+          selfReq.complete (xhr, error) => do (xhr) =>
+            return if parseInt(xhr.status) == 200
+            # if not, then we found another tablet
+            viewReq = $.ajax
+              "url"      : Tangerine.settings.urlSubnet(ip) + "/_design/tangerine/_view/byCollection"
               "dataType" : "jsonp"
-              "data"     : keys : JSON.stringify(['result', 'klass', 'student','curriculum'])
-              success : (data) =>
-                docList = (datum.id for datum in data.rows)
-                $.couch.replicate(
-                  Tangerine.settings.urlSubnet(ip),
-                  Tangerine.settings.urlDB("local"),
-                    success:      =>
-                      @tablets.complete++
-                      @tablets.successful++
-                      @updatePullResult()
-                    error: (a, b) =>
-                      @tablets.complete++
-                      @updatePullResult()
-                  ,
-                    doc_ids: docList
-                )
-      else
-        Utils.midAlert "Cannot detect tablets"
-      return false
+              "contentType" : "application/json;charset=utf-8",
+              "data"     : 
+                include_docs : false
+                keys : JSON.stringify(['result', 'klass', 'student','curriculum'])
+            viewReq.success (data) =>
+              docList = (datum.id for datum in data.rows)
+              $.couch.replicate(
+                Tangerine.settings.urlSubnet(ip),
+                Tangerine.settings.urlDB("local"),
+                  success:      =>
+                    @tablets.complete++
+                    @tablets.successful++
+                    @updatePullResult()
+                  error: (a, b) =>
+                    @tablets.complete++
+                    @updatePullResult()
+                ,
+                  doc_ids: docList
+              )
+    else
+      Utils.working false
+      Utils.midAlert "Cannot detect tablets"
+      Tangerine.$db.removeDoc 
+        "_id"  : @randomDoc.id
+        "_rev" : @randomDoc.rev
 
-  updatePullResult: ->
+  updatePullResult: =>
     if @tablets.complete == @tablets.okCount
-      Utils.midAlert "Pull finished.<br>#{@tablets.successful} out of #{tablets.okCount} successful.", 5000
+      Utils.working false
+      Utils.midAlert "Pull finished.<br>#{@tablets.successful} out of #{@tablets.okCount} successful.", 5000
+      Tangerine.$db.removeDoc 
+        "_id"  : @randomDoc.id
+        "_rev" : @randomDoc.rev
+      @klasses.fetch success: => @renderKlasses()
 
   gotoCurricula: ->
     Tangerine.router.navigate "curricula", true
@@ -84,6 +120,7 @@ class KlassesView extends Backbone.View
     
     if errors.length == 0
       @klasses.create
+        teacher      : Tangerine.user.name
         year         : @$el.find("#year").val()
         grade        : @$el.find("#grade").val()
         stream       : @$el.find("#stream").val()
@@ -113,7 +150,7 @@ class KlassesView extends Backbone.View
       view.render()
       @views.push view
       $ul.append view.el
-
+    @$el.find("#klass_list_wrapper").empty()
     @$el.find("#klass_list_wrapper").append $ul
 
   onSubviewRendered: =>
