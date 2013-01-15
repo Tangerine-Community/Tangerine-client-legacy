@@ -143,6 +143,8 @@ class Router extends Backbone.Router
             allCurricula = new Curricula
             allCurricula.fetch
               success: ( curriculaCollection ) ->
+                if not Tangerine.user.isAdmin()
+                  klassCollection = new Klasses klassCollection.where("teacher" : Tangerine.user.name)
                 view = new KlassesView
                   klasses   : klassCollection
                   curricula : curriculaCollection
@@ -213,18 +215,22 @@ class Router extends Backbone.Router
             subtest = new Subtest "_id" : subtestId
             subtest.fetch
               success: ->
-                allResults = new Results 
-                allResults.fetch
-                  success: (collection) ->
-                    result = collection.where 
-                      "subtestId" : subtestId
-                      "studentId" : studentId
-                      "klassId" : student.get("klassId")
-                    view = new KlassSubtestResultView
-                      "result"  : result
-                      "subtest" : subtest
-                      "student" : student
-                    vm.show view
+                Tangerine.$db.view "tangerine/resultsByStudentSubtest",
+                  key : [studentId,subtestId]
+                  success: (response) =>
+                    allResults = new KlassResults 
+                    allResults.fetch
+                      success: (collection) ->
+                        result = collection.where
+                          "subtestId" : subtestId
+                          "studentId" : studentId
+                          "klassId"   : student.get("klassId")
+                        view = new KlassSubtestResultView
+                          "result"   : result
+                          "subtest"  : subtest
+                          "student"  : student
+                          "previous" : response.rows.length
+                        vm.show view
 
   runSubtest: (studentId, subtestId) ->
     Tangerine.user.verify

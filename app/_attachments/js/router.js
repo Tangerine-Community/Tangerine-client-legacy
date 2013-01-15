@@ -197,6 +197,11 @@ Router = (function(_super) {
             return allCurricula.fetch({
               success: function(curriculaCollection) {
                 var view;
+                if (!Tangerine.user.isAdmin()) {
+                  klassCollection = new Klasses(klassCollection.where({
+                    "teacher": Tangerine.user.name
+                  }));
+                }
                 view = new KlassesView({
                   klasses: klassCollection,
                   curricula: curriculaCollection
@@ -323,22 +328,29 @@ Router = (function(_super) {
             });
             return subtest.fetch({
               success: function() {
-                var allResults;
-                allResults = new Results;
-                return allResults.fetch({
-                  success: function(collection) {
-                    var result, view;
-                    result = collection.where({
-                      "subtestId": subtestId,
-                      "studentId": studentId,
-                      "klassId": student.get("klassId")
+                var _this = this;
+                return Tangerine.$db.view("tangerine/resultsByStudentSubtest", {
+                  key: [studentId, subtestId],
+                  success: function(response) {
+                    var allResults;
+                    allResults = new KlassResults;
+                    return allResults.fetch({
+                      success: function(collection) {
+                        var result, view;
+                        result = collection.where({
+                          "subtestId": subtestId,
+                          "studentId": studentId,
+                          "klassId": student.get("klassId")
+                        });
+                        view = new KlassSubtestResultView({
+                          "result": result,
+                          "subtest": subtest,
+                          "student": student,
+                          "previous": response.rows.length
+                        });
+                        return vm.show(view);
+                      }
                     });
-                    view = new KlassSubtestResultView({
-                      "result": result,
-                      "subtest": subtest,
-                      "student": student
-                    });
-                    return vm.show(view);
                   }
                 });
               }
