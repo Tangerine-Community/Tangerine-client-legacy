@@ -378,15 +378,14 @@ Utils = (function() {
   };
 
   Utils.working = function(isWorking) {
-    var timer;
     if (isWorking) {
-      if (!(Tangerine.loadingTimers != null)) Tangerine.loadingTimers = [];
-      return Tangerine.loadingTimers.push(setTimeout(Utils.showLoadingIndicator, 3000));
+      if (!(Tangerine.loadingTimer != null)) {
+        return Tangerine.loadingTimer = setTimeout(Utils.showLoadingIndicator, 3000);
+      }
     } else {
-      if (Tangerine.loadingTimers != null) {
-        while (timer = Tangerine.loadingTimers.pop()) {
-          clearTimeout(timer);
-        }
+      if (Tangerine.loadingTimer != null) {
+        clearTimeout(Tangerine.loadingTimer);
+        Tangerine.loadingTimer = null;
       }
       return $(".loading_bar").remove();
     }
@@ -491,11 +490,11 @@ Utils = (function() {
 
   Utils.flash = function(color) {
     if (color == null) color = "red";
-    $("body").css({
+    $("#content, #content_wrapper").css({
       "backgroundColor": color
     });
     return setTimeout(function() {
-      return $("body").css({
+      return $("#content, #content_wrapper").css({
         "backgroundColor": "white"
       });
     }, 1000);

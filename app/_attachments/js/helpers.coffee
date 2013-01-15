@@ -203,11 +203,12 @@ class Utils
 
   @working: (isWorking) ->
     if isWorking
-      Tangerine.loadingTimers = [] if not Tangerine.loadingTimers?
-      Tangerine.loadingTimers.push(setTimeout(Utils.showLoadingIndicator, 3000))
+      if not Tangerine.loadingTimer?
+        Tangerine.loadingTimer = setTimeout(Utils.showLoadingIndicator, 3000)
     else
-      if Tangerine.loadingTimers?
-        clearTimeout timer while timer = Tangerine.loadingTimers.pop()
+      if Tangerine.loadingTimer?
+        clearTimeout Tangerine.loadingTimer
+        Tangerine.loadingTimer = null
           
       $(".loading_bar").remove()
 
@@ -305,9 +306,9 @@ class Utils
 
   # turns the body background a color and then returns to white
   @flash: (color="red") ->
-    $("body").css "backgroundColor" : color
+    $("#content, #content_wrapper").css "backgroundColor" : color
     setTimeout ->
-      $("body").css "backgroundColor" : "white"
+      $("#content, #content_wrapper").css "backgroundColor" : "white"
     , 1000
 
 
