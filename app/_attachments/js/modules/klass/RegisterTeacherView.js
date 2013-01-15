@@ -58,6 +58,9 @@ RegisterTeacherView = (function(_super) {
       element = _ref[_i];
       userDoc[element] = this[element].val();
     }
+    $.couch.saveDoc($.extend(userDoc, {
+      "collection": "teacher"
+    }));
     return $.couch.signup(userDoc, this.pass, {
       success: function() {
         Utils.midAlert("New teacher registered");

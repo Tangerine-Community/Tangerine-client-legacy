@@ -31,6 +31,8 @@ class RegisterTeacherView extends Backbone.View
     userDoc = "name" : @name
     (userDoc[element] = @[element].val()) for element in @fields
 
+    $.couch.saveDoc $.extend(userDoc, "collection" : "teacher")
+
     $.couch.signup userDoc, @pass,
       success: =>
         Utils.midAlert "New teacher registered"
