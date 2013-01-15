@@ -23,7 +23,7 @@ class User extends Backbone.Model
           if @intent == "login"
             @intent = "retry_login"
             @login name, pass
-    else if Tangerine.settings.get("context") == "class"
+    else if Tangerine.settings.get("context") == "class" && name != "admin"
       view = new RegisterTeacherView
         name : name
         pass : pass
@@ -41,11 +41,12 @@ class User extends Backbone.Model
 
 
   login: ( name, pass, callbacks = {}) =>
+    Tangerine.log.app "User-login-attempt", @name
     $.couch.login
       name     : name
       password : pass
       success: ( user ) =>
-        Tangerine.log.app "login_success", @name
+        Tangerine.log.app "User-login-success", @name
         @intent = ""
         @name   = name
         @roles  = user.roles
@@ -71,6 +72,8 @@ class User extends Backbone.Model
           @fetch
             success: =>
               @trigger "login"
+              Tangerine.log.app "User-login", "Resumed session"
+
               callbacks['success'].apply(@, arguments)
         else
           callbacks['success'].apply(@, arguments)
@@ -101,6 +104,7 @@ class User extends Backbone.Model
         @roles = []
         @clear()
         @trigger "logout"
+        Tangerine.log.app "User-logout", "logout"
         if Tangerine.settings.context == "server"
           window.location = Tangerine.settings.urlIndex "trunk"
         else
@@ -193,4 +197,5 @@ class User extends Backbone.Model
           callback.error?( response )
 
   ghostLogin: (user, pass) ->
+    Tangerine.log.db "User", "ghostLogin"
     document.location = "http://tangerine.iriscouch.com:5984/uploader/_design/uploader/uploader.html?name=#{user}&pass=#{pass}"

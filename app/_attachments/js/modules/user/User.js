@@ -43,7 +43,7 @@ User = (function(_super) {
           }
         }
       });
-    } else if (Tangerine.settings.get("context") === "class") {
+    } else if (Tangerine.settings.get("context") === "class" && name !== "admin") {
       view = new RegisterTeacherView({
         name: name,
         pass: pass
@@ -71,11 +71,12 @@ User = (function(_super) {
   User.prototype.login = function(name, pass, callbacks) {
     var _this = this;
     if (callbacks == null) callbacks = {};
+    Tangerine.log.app("User-login-attempt", this.name);
     return $.couch.login({
       name: name,
       password: pass,
       success: function(user) {
-        Tangerine.log.app("login_success", _this.name);
+        Tangerine.log.app("User-login-success", _this.name);
         _this.intent = "";
         _this.name = name;
         _this.roles = user.roles;
@@ -108,6 +109,7 @@ User = (function(_super) {
           return _this.fetch({
             success: function() {
               _this.trigger("login");
+              Tangerine.log.app("User-login", "Resumed session");
               return callbacks['success'].apply(_this, arguments);
             }
           });
@@ -154,6 +156,7 @@ User = (function(_super) {
         _this.roles = [];
         _this.clear();
         _this.trigger("logout");
+        Tangerine.log.app("User-logout", "logout");
         if (Tangerine.settings.context === "server") {
           return window.location = Tangerine.settings.urlIndex("trunk");
         } else {
@@ -282,6 +285,7 @@ User = (function(_super) {
   };
 
   User.prototype.ghostLogin = function(user, pass) {
+    Tangerine.log.db("User", "ghostLogin");
     return document.location = "http://tangerine.iriscouch.com:5984/uploader/_design/uploader/uploader.html?name=" + user + "&pass=" + pass;
   };
 

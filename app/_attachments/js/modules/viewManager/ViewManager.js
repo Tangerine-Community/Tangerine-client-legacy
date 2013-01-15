@@ -18,6 +18,8 @@ ViewManager = (function(_super) {
     window.scrollTo(0, 0);
     if ((_ref = this.currentView) != null) _ref.close();
     this.currentView = view;
+    this.className = String(this.currentView.constructor).split("function ")[1].split("() {")[0];
+    Tangerine.log.app("show", this.className);
     this.currentView.on("rendered", function() {
       var _base;
       Utils.working(false);
