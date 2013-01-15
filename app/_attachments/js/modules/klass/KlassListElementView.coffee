@@ -63,10 +63,10 @@ class KlassListElementView extends Backbone.View
         <tr><td><small>#{t('stream')}</small></td><td>#{klass.get 'stream'}</td></tr>
         <tr><td><small>#{t('curriculum')}</small></td><td>#{@curriculum.escape 'name' || ""}</td></tr>
       </table>
-      <img src='images/icon_run.png'     class='run'>
-      <img src='images/icon_results.png' class='results'>
-      <img src='images/icon_edit.png'    class='edit'>
-      <img src='images/icon_delete.png'  class='delete'>
+      <img src='images/icon_run.png'     class='icon run'> 
+      <img src='images/icon_results.png' class='icon results'> 
+      <img src='images/icon_edit.png'    class='icon edit'> 
+      <img src='images/icon_delete.png'  class='icon delete'> 
       <div class='report_select_container confirmation'>
         <div class='menu_box'>
           <select id='report'>

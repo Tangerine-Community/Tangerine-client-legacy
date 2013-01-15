@@ -417,6 +417,7 @@ body.flash {
 }
 .icon {
   cursor: pointer;
+  margin-right: 10px;
 }
 table.disabled .grid_element,
 div.disabled .grid_element {
