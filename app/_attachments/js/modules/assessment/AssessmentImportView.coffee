@@ -21,19 +21,29 @@ class AssessmentImportView extends Backbone.View
   verify: ->
     Tangerine.user.ghostLogin Tangerine.settings.upUser, Tangerine.settings.upPass
 
-  initialize: ->
+  initialize: (options) ->
+    @noun = options.noun
     @connectionVerified = false
-    @timer = setTimeout @verify, 20 * 1000
 
-    # Ensure we have access to the group's documents on the server
-    $.ajax 
-      url: "http://tangerine.iriscouch.com/group-rti_philippines_2013/_design/ojai/_view/byDKey"
-      dataType: "jsonp"
-      data: keys: ["testtest"]
-      success: =>
-        clearTimeout @timer
-        @connectionVerified = true
-        @render()
+    if Tangerine.settings.get("context") != "server"
+      @timer = setTimeout @verify, 20 * 1000
+      # Ensure we have access to the group's documents on the server
+      verReq = $.ajax 
+        url: Tangerine.settings.urlView("group", "byDKey")
+        dataType: "jsonp"
+        data: keys: ["testtest"]
+        timeout: 5000
+        success: =>
+          clearTimeout @timer
+          @connectionVerified = true
+          @render()
+      verReq.complete =>
+        console.log "complete"
+
+    else
+      @connectionVerified = true
+      @render()
+
 
     @docsRemaining = 0
     @serverStatus = "checking..."
@@ -85,7 +95,7 @@ class AssessmentImportView extends Backbone.View
 
     @activity = ""
     if status == "import lookup"
-      @activity = "Finding assessment"
+      @activity = "Finding #{@noun}"
     else if status == "import success"
       clearInterval @activeTaskInterval
       @activity = "Import successful"

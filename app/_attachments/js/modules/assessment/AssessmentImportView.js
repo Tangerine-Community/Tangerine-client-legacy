@@ -53,22 +53,33 @@ AssessmentImportView = (function(_super) {
     return Tangerine.user.ghostLogin(Tangerine.settings.upUser, Tangerine.settings.upPass);
   };
 
-  AssessmentImportView.prototype.initialize = function() {
-    var _this = this;
+  AssessmentImportView.prototype.initialize = function(options) {
+    var verReq,
+      _this = this;
+    this.noun = options.noun;
     this.connectionVerified = false;
-    this.timer = setTimeout(this.verify, 20 * 1000);
-    $.ajax({
-      url: "http://tangerine.iriscouch.com/group-rti_philippines_2013/_design/ojai/_view/byDKey",
-      dataType: "jsonp",
-      data: {
-        keys: ["testtest"]
-      },
-      success: function() {
-        clearTimeout(_this.timer);
-        _this.connectionVerified = true;
-        return _this.render();
-      }
-    });
+    if (Tangerine.settings.get("context") !== "server") {
+      this.timer = setTimeout(this.verify, 20 * 1000);
+      verReq = $.ajax({
+        url: Tangerine.settings.urlView("group", "byDKey"),
+        dataType: "jsonp",
+        data: {
+          keys: ["testtest"]
+        },
+        timeout: 5000,
+        success: function() {
+          clearTimeout(_this.timer);
+          _this.connectionVerified = true;
+          return _this.render();
+        }
+      });
+      verReq.complete(function() {
+        return console.log("complete");
+      });
+    } else {
+      this.connectionVerified = true;
+      this.render();
+    }
     this.docsRemaining = 0;
     this.serverStatus = "checking...";
     return $.ajax({
@@ -132,7 +143,7 @@ AssessmentImportView = (function(_super) {
     this.$el.find(".status").fadeIn(250);
     this.activity = "";
     if (status === "import lookup") {
-      this.activity = "Finding assessment";
+      this.activity = "Finding " + this.noun;
     } else if (status === "import success") {
       clearInterval(this.activeTaskInterval);
       this.activity = "Import successful";
