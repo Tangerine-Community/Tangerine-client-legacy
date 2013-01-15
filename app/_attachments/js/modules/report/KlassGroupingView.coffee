@@ -58,13 +58,15 @@ class KlassGroupingView extends Backbone.View
     aCorrect = 0
 
     @subtest = @subtests.get @selected.subtestId
-    @summary = 
-      "name"       : @subtest.get("name")
-      "aCorrect"   : 0
-      "stdDev"     : 0
-      "classSize"  : @students.length
-      "totalItems" : @subtest.get("items").length
-      "watchList"  : []
+    @summary =
+      "name"        : @subtest.get("name")
+      "classSize"   : @students.length
+      "resultCount" : @results.length
+      "aCorrect"    : 0
+      "anCorrect"   : 0
+      "stdDev"      : 0
+      "totalItems"  : @subtest.get("items").length
+      "watchList"   : []
 
     for result in @selected.results
       person =
@@ -82,10 +84,12 @@ class KlassGroupingView extends Backbone.View
       person.pCorrect = Math.round(person.nCorrect / person.attempted * 100)
 
       @summary.aCorrect += person.pCorrect
+      @summary.anCorrect += person.nCorrect
 
       @table.push person
 
-    @summary.aCorrect = Math.decimals( @summary.aCorrect / @table.length, 2)
+    @summary.aCorrect  = Math.decimals( @summary.aCorrect / @table.length, 2)
+    @summary.anCorrect = Math.decimals( @summary.anCorrect / @table.length, 2)
 
     for person in @table
       @summary.stdDev += Math.pow(person.pCorrect - @summary.aCorrect, 2)
@@ -148,10 +152,10 @@ class KlassGroupingView extends Backbone.View
     summaryHTML = "<h1>#{t('summary')}</h1>
     <table class='summary'>
       <tr><th>Subtest Name</th>          <td>#{@summary.name}</td></tr>
-      <tr><th>Average (%)</th>           <td>#{@summary.aCorrect}</td></tr>
-      <tr><th>Standard Deviation (%)</th><td>#{@summary.stdDev}</td></tr>
       <tr><th>Class Size</th>            <td>#{@summary.classSize}</td></tr>
-      <tr><th>Number of Questions</th>   <td>#{@summary.totalItems}</td></tr>
+      <tr><th>Students Assessed</th>     <td>#{@summary.resultCount}</td></tr>
+      <tr><th>Average Correct</th>       <td>#{@summary.aCorrect}%</td></tr>
+      <tr><th>Average Correct</th>       <td>#{@summary.anCorrect} / #{@summary.totalItems}</td></tr>
       <tr><th>Students to watch</th>     <td>#{@summary.watchList.join(', ')}</td></tr>
     </table>"
 
@@ -195,6 +199,7 @@ class KlassGroupingView extends Backbone.View
     if @selected.results.length != 0
       html = "
         #{menuHTML}
+        #{summaryHTML}
         #{detailsHTML}
         #{itemizedResults}
         <button class='navigation back'>Back</button>

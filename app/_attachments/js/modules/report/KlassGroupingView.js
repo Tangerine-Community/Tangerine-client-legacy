@@ -87,9 +87,11 @@ KlassGroupingView = (function(_super) {
     this.subtest = this.subtests.get(this.selected.subtestId);
     this.summary = {
       "name": this.subtest.get("name"),
-      "aCorrect": 0,
-      "stdDev": 0,
       "classSize": this.students.length,
+      "resultCount": this.results.length,
+      "aCorrect": 0,
+      "anCorrect": 0,
+      "stdDev": 0,
       "totalItems": this.subtest.get("items").length,
       "watchList": []
     };
@@ -110,9 +112,11 @@ KlassGroupingView = (function(_super) {
       };
       person.pCorrect = Math.round(person.nCorrect / person.attempted * 100);
       this.summary.aCorrect += person.pCorrect;
+      this.summary.anCorrect += person.nCorrect;
       this.table.push(person);
     }
     this.summary.aCorrect = Math.decimals(this.summary.aCorrect / this.table.length, 2);
+    this.summary.anCorrect = Math.decimals(this.summary.anCorrect / this.table.length, 2);
     _ref2 = this.table;
     for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
       person = _ref2[_j];
@@ -150,7 +154,7 @@ KlassGroupingView = (function(_super) {
       menuHTML += "        <label for='" + subtest.id + "'>" + (subtest.get("name")) + "</label>        <input type='radio' class='selector' name='selector' id='" + subtest.id + "' data-subtestId='" + subtest.id + "' " + checkedAttribute + ">      ";
     }
     menuHTML += "</div>";
-    summaryHTML = "<h1>" + (t('summary')) + "</h1>    <table class='summary'>      <tr><th>Subtest Name</th>          <td>" + this.summary.name + "</td></tr>      <tr><th>Average (%)</th>           <td>" + this.summary.aCorrect + "</td></tr>      <tr><th>Standard Deviation (%)</th><td>" + this.summary.stdDev + "</td></tr>      <tr><th>Class Size</th>            <td>" + this.summary.classSize + "</td></tr>      <tr><th>Number of Questions</th>   <td>" + this.summary.totalItems + "</td></tr>      <tr><th>Students to watch</th>     <td>" + (this.summary.watchList.join(', ')) + "</td></tr>    </table>";
+    summaryHTML = "<h1>" + (t('summary')) + "</h1>    <table class='summary'>      <tr><th>Subtest Name</th>          <td>" + this.summary.name + "</td></tr>      <tr><th>Class Size</th>            <td>" + this.summary.classSize + "</td></tr>      <tr><th>Students Assessed</th>     <td>" + this.summary.resultCount + "</td></tr>      <tr><th>Average Correct</th>       <td>" + this.summary.aCorrect + "%</td></tr>      <tr><th>Average Correct</th>       <td>" + this.summary.anCorrect + " / " + this.summary.totalItems + "</td></tr>      <tr><th>Students to watch</th>     <td>" + (this.summary.watchList.join(', ')) + "</td></tr>    </table>";
     detailsHTML = "      <h1>" + (t('student grouping report')) + "</h1>      <table class='details'>      <tr>        <th>Name</th>        <th>Percentile</th>        <th>Status</th>      </tr>    ";
     itemizedResults = "";
     _ref2 = this.table;
@@ -167,7 +171,7 @@ KlassGroupingView = (function(_super) {
     }
     detailsHTML += "</table>";
     if (this.selected.results.length !== 0) {
-      html = "        " + menuHTML + "        " + detailsHTML + "        " + itemizedResults + "        <button class='navigation back'>Back</button>      ";
+      html = "        " + menuHTML + "        " + summaryHTML + "        " + detailsHTML + "        " + itemizedResults + "        <button class='navigation back'>Back</button>      ";
     } else {
       html = "        " + menuHTML + "        " + emptyHTML + "        <button class='navigation back'>Back</button>      ";
     }
