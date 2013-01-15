@@ -66,10 +66,12 @@ class AccountView extends Backbone.View
           </div>
         </section>
     " if Tangerine.settings.get("context") == "server"
+
     html = "
       <button class='back navigation'>Back</button>
       <h1>Account</h1>
       <a href='#settings' class='navigation'><button class='navigation'>Settings</button></a>
+      <a href='#logs' class='navigation'><button class='navigation'>Logs</button></a>
       <section>
         <div class='label_value'>
           <label>Name</label>
