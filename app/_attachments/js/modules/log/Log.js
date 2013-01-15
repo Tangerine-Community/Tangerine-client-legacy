@@ -115,8 +115,8 @@ Log = (function(_super) {
   Log.prototype.add = function(logEvent) {
     var d, logEvents;
     d = new Date();
-    if (!this.has("year")) this.set("year", d.getMonth());
-    if (!this.has("month")) this.set("month", d.getFullYear());
+    if (!this.has("year")) this.set("year", d.getFullYear());
+    if (!this.has("month")) this.set("month", d.getMonth());
     if (!this.has("date")) this.set("date", d.getDate());
     if (!this.has("user")) this.set("user", Tangerine.user.name);
     logEvents = this.getArray("logEvents");
@@ -164,26 +164,35 @@ LogView = (function(_super) {
     LogView.__super__.constructor.apply(this, arguments);
   }
 
-  LogView.prototype.initialize = function() {
-    this.allLogs = new Logs;
-    return this.allLogs.fetch({
-      success: function(collection) {
-        return this.logs = collection.where({
-          user: Tangerine.user.name
-        });
-      }
-    });
+  LogView.prototype.initialize = function(options) {
+    return this.logs = options.logs.models;
   };
 
   LogView.prototype.render = function() {
-    var html, log, _i, _len, _ref;
-    html = "<table><th><td>time</td><td>type</td><td>details</td></th>";
+    var html, k, log, oneEvent, v, _i, _j, _len, _len2, _ref, _ref2, _ref3;
+    html = "";
     _ref = this.logs;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       log = _ref[_i];
-      html += "<tr><td>" + (log.get("timestamp")) + "</td><td>" + (log.get("type")) + "</td><td>" + (log.get("details")) + "</td></tr>";
+      _ref2 = log.attributes;
+      for (k in _ref2) {
+        v = _ref2[k];
+        if (k === "_rev" || k === "_id" || k === "collection" || k === "hash" || k === "updated" || k === "logEvents") {
+          continue;
+        }
+        html += "<b>" + k + "</b> " + v + "<br><br>";
+      }
+      _ref3 = log.attributes.logEvents;
+      for (_j = 0, _len2 = _ref3.length; _j < _len2; _j++) {
+        oneEvent = _ref3[_j];
+        for (k in oneEvent) {
+          v = oneEvent[k];
+          if (k === "timestamp") v = (new Date(parseInt(v))).toString();
+          html += "<b>" + k + "</b> " + v + "<br>";
+        }
+        html += "<br>";
+      }
     }
-    html += "</table>";
     this.$el.html(html);
     return this.trigger("rendered");
   };

@@ -87,8 +87,8 @@ class Log extends Backbone.Model
 
     d = new Date()
 
-    @set "year",  d.getMonth()        if not @has("year")
-    @set "month", d.getFullYear()     if not @has("month")
+    @set "year",  d.getFullYear()     if not @has("year")
+    @set "month", d.getMonth()        if not @has("month")
     @set "date",  d.getDate()         if not @has("date")
     @set "user",  Tangerine.user.name if not @has("user")
 
@@ -109,18 +109,22 @@ class Logs extends Backbone.Collection
 
 class LogView extends Backbone.View
 
-  initialize: ->
-    @allLogs = new Logs
-    @allLogs.fetch
-      success: (collection) ->
-        @logs = collection.where
-          user : Tangerine.user.name
+  initialize: (options) ->
+    @logs = options.logs.models
 
   render: ->
-    html = "<table><th><td>time</td><td>type</td><td>details</td></th>"
-    
+
+    html = ""
     for log in @logs
-      html += "<tr><td>#{log.get("timestamp")}</td><td>#{log.get("type")}</td><td>#{log.get("details")}</td></tr>"
-    html += "</table>"
+      for k, v of log.attributes
+        continue if k in ["_rev", "_id", "collection", "hash", "updated", "logEvents"] 
+        html += "<b>#{k}</b> #{v}<br><br>"
+      for oneEvent in log.attributes.logEvents
+        for k, v of oneEvent
+          if k == "timestamp" then v = (new Date(parseInt(v))).toString()
+          html += "<b>#{k}</b> #{v}<br>"
+        html += "<br>"
+
     @$el.html html
+    
     @trigger "rendered"
