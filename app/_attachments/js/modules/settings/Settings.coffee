@@ -33,7 +33,7 @@ class Settings extends Backbone.Model
     subnetBase = @config.get("subnet").base
 
 
-    if Tangerine.settings.get("context") == "mobile"
+    if Tangerine.settings.get("context") != "server"
       splitGroup = groupHost.split("://")
       groupHost = "#{splitGroup[0]}://#{@upUser}:#{@upPass}@#{splitGroup[1]}"
 

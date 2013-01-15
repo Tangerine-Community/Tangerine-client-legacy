@@ -38,7 +38,7 @@ Settings = (function(_super) {
     this.groupDB = "" + prefix + groupName;
     this.trunkDB = trunk.dbName;
     subnetBase = this.config.get("subnet").base;
-    if (Tangerine.settings.get("context") === "mobile") {
+    if (Tangerine.settings.get("context") !== "server") {
       splitGroup = groupHost.split("://");
       groupHost = "" + splitGroup[0] + "://" + this.upUser + ":" + this.upPass + "@" + splitGroup[1];
     }
