@@ -2,9 +2,11 @@ class KlassResult extends Backbone.Model
 
   url : "result"
 
-  add: ( subtestDataElement ) ->
+  add: ( subtestDataElement, callback ) ->
     @save
       'subtestData' : subtestDataElement
+    ,
+      success: => callback()
 
   get: (options) ->
 

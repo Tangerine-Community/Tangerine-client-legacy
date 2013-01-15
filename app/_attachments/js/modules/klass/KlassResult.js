@@ -12,9 +12,14 @@ KlassResult = (function(_super) {
 
   KlassResult.prototype.url = "result";
 
-  KlassResult.prototype.add = function(subtestDataElement) {
+  KlassResult.prototype.add = function(subtestDataElement, callback) {
+    var _this = this;
     return this.save({
       'subtestData': subtestDataElement
+    }, {
+      success: function() {
+        return callback();
+      }
     });
   };
 
