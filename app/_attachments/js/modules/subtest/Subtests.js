@@ -19,7 +19,11 @@ Subtests = (function(_super) {
   };
 
   Subtests.prototype.comparator = function(subtest) {
-    return subtest.get("order");
+    if (subtest.has("curriculumId")) {
+      return [subtest.get("part"), subtest.get("order")];
+    } else {
+      return subtest.get("order");
+    }
   };
 
   Subtests.prototype.initialize = function(options) {};
