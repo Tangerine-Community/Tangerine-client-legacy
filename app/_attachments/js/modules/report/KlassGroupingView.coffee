@@ -49,7 +49,6 @@ class KlassGroupingView extends Backbone.View
       @selected.subtestId = @subtests.models[i].id
       break if (@selected.results = @results.where("subtestId" : subtest.id)).length != 0
 
-    
     @updateTable()
 
   updateTable: ->
@@ -61,7 +60,7 @@ class KlassGroupingView extends Backbone.View
     @summary =
       "name"        : @subtest.get("name")
       "classSize"   : @students.length
-      "resultCount" : @results.length
+      "resultCount" : @selected.results.length
       "aCorrect"    : 0
       "anCorrect"   : 0
       "stdDev"      : 0
@@ -189,7 +188,7 @@ class KlassGroupingView extends Backbone.View
       <tr><th>Subtest Name</th>          <td>#{@summary.name}</td></tr>
       <tr><th>Class Size</th>            <td>#{@summary.classSize}</td></tr>
       <tr><th>Students Assessed</th>     <td>#{@summary.resultCount}</td></tr>
-      <tr><th>Average Correct</th>       <td>#{@summary.aCorrect}%</td></tr>
+      <tr><th>Average Correct (%)</th>   <td>#{@summary.aCorrect}%</td></tr>
       <tr><th>Average Correct</th>       <td>#{@summary.anCorrect} / #{@summary.totalItems}</td></tr>
       <tr><th>Students to watch</th>     <td>#{@summary.watchList.join(', ')}</td></tr>
     </table>"

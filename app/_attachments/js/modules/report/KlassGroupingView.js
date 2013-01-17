@@ -88,7 +88,7 @@ KlassGroupingView = (function(_super) {
     this.summary = {
       "name": this.subtest.get("name"),
       "classSize": this.students.length,
-      "resultCount": this.results.length,
+      "resultCount": this.selected.results.length,
       "aCorrect": 0,
       "anCorrect": 0,
       "stdDev": 0,
@@ -176,7 +176,7 @@ KlassGroupingView = (function(_super) {
       menuHTML += "        <label for='" + subtest.id + "'>" + (subtest.get("name")) + "</label>        <input type='radio' class='selector' name='selector' id='" + subtest.id + "' data-subtestId='" + subtest.id + "' " + checkedAttribute + ">      ";
     }
     menuHTML += "</div>";
-    summaryHTML = "<h1>Summary</h1>    <table class='summary'>      <tr><th>Subtest Name</th>          <td>" + this.summary.name + "</td></tr>      <tr><th>Class Size</th>            <td>" + this.summary.classSize + "</td></tr>      <tr><th>Students Assessed</th>     <td>" + this.summary.resultCount + "</td></tr>      <tr><th>Average Correct</th>       <td>" + this.summary.aCorrect + "%</td></tr>      <tr><th>Average Correct</th>       <td>" + this.summary.anCorrect + " / " + this.summary.totalItems + "</td></tr>      <tr><th>Students to watch</th>     <td>" + (this.summary.watchList.join(', ')) + "</td></tr>    </table>";
+    summaryHTML = "<h1>Summary</h1>    <table class='summary'>      <tr><th>Subtest Name</th>          <td>" + this.summary.name + "</td></tr>      <tr><th>Class Size</th>            <td>" + this.summary.classSize + "</td></tr>      <tr><th>Students Assessed</th>     <td>" + this.summary.resultCount + "</td></tr>      <tr><th>Average Correct (%)</th>   <td>" + this.summary.aCorrect + "%</td></tr>      <tr><th>Average Correct</th>       <td>" + this.summary.anCorrect + " / " + this.summary.totalItems + "</td></tr>      <tr><th>Students to watch</th>     <td>" + (this.summary.watchList.join(', ')) + "</td></tr>    </table>";
     detailsHTML = "      <h1>" + (t('student grouping report')) + "</h1>      <table class='details'>      <tr>        <th>Name</th>        <th>Percentile</th>        <th>Status</th>      </tr>    ";
     itemizedResults = "";
     _ref2 = this.table;
