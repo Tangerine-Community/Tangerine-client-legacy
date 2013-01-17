@@ -94,7 +94,6 @@ SubtestRunView = (function(_super) {
   };
 
   SubtestRunView.prototype.isValid = function() {
-    console.log("checking if valid");
     if (!this.prototypeRendered) return false;
     if (this.prototypeView.isValid != null) {
       return this.prototypeView.isValid();
