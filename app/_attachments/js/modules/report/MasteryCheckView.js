@@ -21,6 +21,7 @@ MasteryCheckView = (function(_super) {
   };
 
   MasteryCheckView.prototype.initialize = function(options) {
+    this.subtests = options.subtests;
     this.results = options.results;
     this.student = options.student;
     this.klass = options.klass;
@@ -29,7 +30,7 @@ MasteryCheckView = (function(_super) {
   };
 
   MasteryCheckView.prototype.render = function() {
-    var html, part, result, _i, _len, _ref, _ref2;
+    var html, part, result, subtestName, _i, _len, _ref, _ref2;
     html = "      <h1>Mastery check report</h1>      <h2>Student " + (this.student.get("name")) + "</h2>      <table>    ";
     for (part = 1, _ref = this.lastPart; 1 <= _ref ? part <= _ref : part >= _ref; 1 <= _ref ? part++ : part--) {
       if (this.resultsByPart[part] === void 0) continue;
@@ -37,7 +38,8 @@ MasteryCheckView = (function(_super) {
       _ref2 = this.resultsByPart[part];
       for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
         result = _ref2[_i];
-        html += "          <td>" + (result.get("itemType").titleize()) + " correct</td>          <td>" + (result.get("correct")) + "/" + (result.get("total")) + "</td>";
+        subtestName = this.subtests.get(result.get('subtestId')).get('name');
+        html += "          <td>            " + (result.get("itemType").titleize()) + " correct<br>            " + subtestName + "          </td>          <td>" + (result.get("correct")) + "/" + (result.get("total")) + "</td>";
       }
     }
     html += "    </table>    <button class='navigation back'>" + (t('back')) + "</button>    ";

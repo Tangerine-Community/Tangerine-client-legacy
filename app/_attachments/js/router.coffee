@@ -482,11 +482,23 @@ class Router extends Backbone.Router
                 allResults.fetch
                   success: ( collection ) ->
                     results = new KlassResults collection.where "studentId" : studentId, "reportType" : "mastery", "klassId" : klassId
-                    view = new MasteryCheckView
-                      "student" : student
-                      "results" : results
-                      "klass"   : klass
-                    vm.show view
+                    
+                    # get a list of subtests involved
+                    subtestIdList = {}
+                    subtestIdList[result.get("subtestId")] = true for result in results.models
+                    subtestIdList = _.keys(subtestIdList)
+
+                    # make a collection and fetch
+                    subtestCollection = new Subtests
+                    subtestCollection.add new Subtest "_id" : subtestId for subtestId in subtestIdList
+                    subtestCollection.fetch
+                      success: ->
+                        view = new MasteryCheckView
+                          "student"  : student
+                          "results"  : results
+                          "klass"    : klass
+                          "subtests" : subtestCollection
+                        vm.show view
 
   progressReport: (studentId, klassId) ->
     Tangerine.user.verify

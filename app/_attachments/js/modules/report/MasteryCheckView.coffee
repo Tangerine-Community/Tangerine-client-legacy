@@ -9,9 +9,10 @@ class MasteryCheckView extends Backbone.View
 
   initialize: (options) ->
 
-    @results = options.results
-    @student = options.student
-    @klass   = options.klass
+    @subtests = options.subtests
+    @results  = options.results
+    @student  = options.student
+    @klass    = options.klass
 
     @resultsByPart = @results.indexBy "part"
     @lastPart = Math.max.apply @, @results.pluck("part")
@@ -29,8 +30,12 @@ class MasteryCheckView extends Backbone.View
         <tr>"
 
       for result in @resultsByPart[part]
+        subtestName = @subtests.get(result.get('subtestId')).get('name')
         html += "
-          <td>#{result.get("itemType").titleize()} correct</td>
+          <td>
+            #{result.get("itemType").titleize()} correct<br>
+            #{subtestName}
+          </td>
           <td>#{result.get("correct")}/#{result.get("total")}</td>"
       
     html += "

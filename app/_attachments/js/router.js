@@ -765,18 +765,38 @@ Router = (function(_super) {
                 allResults = new KlassResults;
                 return allResults.fetch({
                   success: function(collection) {
-                    var results, view;
+                    var result, results, subtestCollection, subtestId, subtestIdList, _i, _j, _len, _len2, _ref;
                     results = new KlassResults(collection.where({
                       "studentId": studentId,
                       "reportType": "mastery",
                       "klassId": klassId
                     }));
-                    view = new MasteryCheckView({
-                      "student": student,
-                      "results": results,
-                      "klass": klass
+                    subtestIdList = {};
+                    _ref = results.models;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                      result = _ref[_i];
+                      subtestIdList[result.get("subtestId")] = true;
+                    }
+                    subtestIdList = _.keys(subtestIdList);
+                    subtestCollection = new Subtests;
+                    for (_j = 0, _len2 = subtestIdList.length; _j < _len2; _j++) {
+                      subtestId = subtestIdList[_j];
+                      subtestCollection.add(new Subtest({
+                        "_id": subtestId
+                      }));
+                    }
+                    return subtestCollection.fetch({
+                      success: function() {
+                        var view;
+                        view = new MasteryCheckView({
+                          "student": student,
+                          "results": results,
+                          "klass": klass,
+                          "subtests": subtestCollection
+                        });
+                        return vm.show(view);
+                      }
                     });
-                    return vm.show(view);
                   }
                 });
               }
