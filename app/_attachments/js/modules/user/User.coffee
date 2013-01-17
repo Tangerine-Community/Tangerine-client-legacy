@@ -41,12 +41,12 @@ class User extends Backbone.Model
 
 
   login: ( name, pass, callbacks = {}) =>
-    Tangerine.log.app "User-login-attempt", @name
+    Tangerine.log.app "User-login-attempt", name
     $.couch.login
       name     : name
       password : pass
       success: ( user ) =>
-        Tangerine.log.app "User-login-success", @name
+        Tangerine.log.app "User-login-success", name
         @intent = ""
         @name   = name
         @roles  = user.roles

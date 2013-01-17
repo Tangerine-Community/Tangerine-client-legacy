@@ -71,12 +71,12 @@ User = (function(_super) {
   User.prototype.login = function(name, pass, callbacks) {
     var _this = this;
     if (callbacks == null) callbacks = {};
-    Tangerine.log.app("User-login-attempt", this.name);
+    Tangerine.log.app("User-login-attempt", name);
     return $.couch.login({
       name: name,
       password: pass,
       success: function(user) {
-        Tangerine.log.app("User-login-success", _this.name);
+        Tangerine.log.app("User-login-success", name);
         _this.intent = "";
         _this.name = name;
         _this.roles = user.roles;
