@@ -150,8 +150,6 @@ Assessment = (function(_super) {
           key: originalId,
           success: function(questions) {
             var subtests;
-            console.log("got this back");
-            console.log(questions);
             subtests = new Subtests;
             return subtests.fetch({
               key: originalId,
