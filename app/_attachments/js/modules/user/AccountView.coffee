@@ -79,19 +79,10 @@ class AccountView extends Backbone.View
         </div>
       </section>
       #{groupSection || ""}
-      </div><br>
-      <!--button class='command confirmation'>Report a bug</button>
-      <div class='confirmation' id='bug'>
-        <label for='where'>What broke?
-        <input id='where' placeholder='where'>
-        <label for='where'>What happened?
-        <input id='where' placeholder='what'>
-        <label for='where'>What should have happened?
-        <input id='should' placeholder='should'>
-        <button>Send</button>
-      </div-->
-      "
+      </div>
+    "
+
     @$el.html html
-    @renderGroups()
+    @renderGroups() if Tangerine.settings.get("context") == "server"
 
     @trigger "rendered"
