@@ -490,12 +490,12 @@ Utils = (function() {
 
   Utils.flash = function(color) {
     if (color == null) color = "red";
-    $("#content, #content_wrapper").css({
+    $("#content_wrapper").css({
       "backgroundColor": color
     });
     return setTimeout(function() {
-      return $("#content, #content_wrapper").css({
-        "backgroundColor": "white"
+      return $("#content_wrapper").css({
+        "backgroundColor": ""
       });
     }, 1000);
   };

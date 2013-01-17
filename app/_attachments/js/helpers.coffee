@@ -306,9 +306,9 @@ class Utils
 
   # turns the body background a color and then returns to white
   @flash: (color="red") ->
-    $("#content, #content_wrapper").css "backgroundColor" : color
+    $("#content_wrapper").css "backgroundColor" : color
     setTimeout ->
-      $("#content, #content_wrapper").css "backgroundColor" : "white"
+      $("#content_wrapper").css "backgroundColor" : ""
     , 1000
 
 
