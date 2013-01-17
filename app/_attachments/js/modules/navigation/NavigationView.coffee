@@ -29,8 +29,9 @@ class NavigationView extends Backbone.View
       @whoAmI = t "enumerator"
 
   enumeratorClick: -> 
-    if @user.isAdmin() || Tangerine.settings.get("context") == "server"
-      Tangerine.router.navigate "account", true
+
+    if @user.isAdmin()
+        Tangerine.router.navigate "account", true
 
   logoClick: -> 
     if @user.isAdmin()
