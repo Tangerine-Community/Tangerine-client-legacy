@@ -18,7 +18,10 @@ class AccountView extends Backbone.View
         settingsModel.save()
 
   goBack: ->
-    window.history.back()
+    if Tangerine.settings.get("context") == "server"
+      Tangerine.router.navigate "groups", true
+    else
+      window.history.back()
 
   joinToggle: ->
     @$el.find(".join, .join_confirmation").fadeToggle(0)
@@ -67,11 +70,16 @@ class AccountView extends Backbone.View
         </section>
     " if Tangerine.settings.get("context") == "server"
 
+
+    if Tangerine.settings.get("context") != "server"
+      settingsButton = "<a href='#settings' class='navigation'><button class='navigation'>Settings</button></a>"
+      logsButton = "<a href='#logs' class='navigation'><button class='navigation'>Logs</button></a>"
+
     html = "
       <button class='back navigation'>Back</button>
       <h1>Account</h1>
-      <a href='#settings' class='navigation'><button class='navigation'>Settings</button></a>
-      <a href='#logs' class='navigation'><button class='navigation'>Logs</button></a>
+      #{settingsButton || ""}
+      #{logsButton || ""}
       <section>
         <div class='label_value'>
           <label>Name</label>

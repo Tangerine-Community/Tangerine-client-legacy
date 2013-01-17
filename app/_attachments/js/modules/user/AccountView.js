@@ -38,7 +38,11 @@ AccountView = (function(_super) {
   };
 
   AccountView.prototype.goBack = function() {
-    return window.history.back();
+    if (Tangerine.settings.get("context") === "server") {
+      return Tangerine.router.navigate("groups", true);
+    } else {
+      return window.history.back();
+    }
   };
 
   AccountView.prototype.joinToggle = function() {
@@ -80,11 +84,15 @@ AccountView = (function(_super) {
   };
 
   AccountView.prototype.render = function() {
-    var groupSection, html;
+    var groupSection, html, logsButton, settingsButton;
     if (Tangerine.settings.get("context") === "server") {
       groupSection = "      <section>        <div class='label_value'>          <label>Groups</label>          <div id='group_wrapper'></div>          <button class='command join'>Join or create a group</button>          <div class='confirmation join_confirmation'>            <div class='menu_box'>              <input id='group_name' placeholder='Group name'>              <div class='small_grey'>Please be specific.<br>              Good examples: malawi_jun_2012, mike_test_group_2012, egra_group_aug-2012<br>              Bad examples: group, test, mine</div><br>              <button class='command join_group'>Join Group</button>              <button class='command join_cancel'>Cancel</button>            </div>          </div>        </section>    ";
     }
-    html = "      <button class='back navigation'>Back</button>      <h1>Account</h1>      <a href='#settings' class='navigation'><button class='navigation'>Settings</button></a>      <a href='#logs' class='navigation'><button class='navigation'>Logs</button></a>      <section>        <div class='label_value'>          <label>Name</label>          <div>" + this.user.name + "</div>        </div>      </section>      " + (groupSection || "") + "      </div>    ";
+    if (Tangerine.settings.get("context") !== "server") {
+      settingsButton = "<a href='#settings' class='navigation'><button class='navigation'>Settings</button></a>";
+      logsButton = "<a href='#logs' class='navigation'><button class='navigation'>Logs</button></a>";
+    }
+    html = "      <button class='back navigation'>Back</button>      <h1>Account</h1>      " + (settingsButton || "") + "      " + (logsButton || "") + "      <section>        <div class='label_value'>          <label>Name</label>          <div>" + this.user.name + "</div>        </div>      </section>      " + (groupSection || "") + "      </div>    ";
     this.$el.html(html);
     if (Tangerine.settings.get("context") === "server") this.renderGroups();
     return this.trigger("rendered");
