@@ -39,10 +39,15 @@ KlassGroupingMenuView = (function(_super) {
             _this.parts = [];
             for (_i = 0, _len = subtests.length; _i < _len; _i++) {
               subtest = subtests[_i];
-              _this.parts[subtest.get('part')] = {
-                "id": subtest.id,
-                "name": subtest.get("name")
-              };
+              if (!(_this.parts[subtest.get('part')] != null)) {
+                _this.parts[subtest.get('part')] = {};
+              }
+              _this.parts[subtest.get('part')]["id"] = subtest.id;
+              if (_this.parts[subtest.get('part')]["name"] != null) {
+                _this.parts[subtest.get('part')]["name"] += " " + subtest.get("name");
+              } else {
+                _this.parts[subtest.get('part')]["name"] = subtest.get("name");
+              }
             }
             _this.ready = true;
             return _this.render();

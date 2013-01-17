@@ -64,6 +64,7 @@ class KlassGroupingView extends Backbone.View
       "aCorrect"    : 0
       "anCorrect"   : 0
       "stdDev"      : 0
+      "attempted"   : 0
       "totalItems"  : @subtest.get("items").length
       "watchList"   : []
 
@@ -84,11 +85,13 @@ class KlassGroupingView extends Backbone.View
 
       @summary.aCorrect += person.pCorrect
       @summary.anCorrect += person.nCorrect
+      @summary.attempted += person.attempted
 
       @table.push person
 
     @summary.aCorrect  = Math.decimals( @summary.aCorrect / @table.length, 2)
     @summary.anCorrect = Math.decimals( @summary.anCorrect / @table.length, 2)
+    @summary.attempted = Math.decimals( @summary.attempted / @table.length, 2)
 
     for person in @table
       @summary.stdDev += Math.pow(person.pCorrect - @summary.aCorrect, 2)
@@ -189,7 +192,7 @@ class KlassGroupingView extends Backbone.View
       <tr><th>Class Size</th>            <td>#{@summary.classSize}</td></tr>
       <tr><th>Students Assessed</th>     <td>#{@summary.resultCount}</td></tr>
       <tr><th>Average Correct (%)</th>   <td>#{@summary.aCorrect}%</td></tr>
-      <tr><th>Average Correct</th>       <td>#{@summary.anCorrect} / #{@summary.totalItems}</td></tr>
+      <tr><th>Average Correct</th>       <td>#{@summary.anCorrect} / #{@summary.attempted}</td></tr>
       <tr><th>Students to watch</th>     <td>#{@summary.watchList.join(', ')}</td></tr>
     </table>"
 
@@ -197,7 +200,7 @@ class KlassGroupingView extends Backbone.View
     # details
     #
     detailsHTML = "
-      <h1>#{t('student grouping report')}</h1>
+      <h1>Student grouping</h1>
       <table class='details'>
       <tr>
         <th>Name</th>
