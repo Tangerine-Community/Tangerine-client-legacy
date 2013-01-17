@@ -107,7 +107,7 @@ class Assessment extends Backbone.Model
       success: ->
         questions = new Questions
         questions.fetch
-          key: @id
+          key: originalId
           success: ( questions ) =>
             subtests = new Subtests
             subtests.fetch

@@ -147,9 +147,11 @@ Assessment = (function(_super) {
           _this = this;
         questions = new Questions;
         return questions.fetch({
-          key: this.id,
+          key: originalId,
           success: function(questions) {
             var subtests;
+            console.log("got this back");
+            console.log(questions);
             subtests = new Subtests;
             return subtests.fetch({
               key: originalId,
