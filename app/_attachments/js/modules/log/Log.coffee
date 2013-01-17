@@ -4,7 +4,25 @@ class Log extends Backbone.Model
   url: "log"
 
   initialize: ->
-    @ensure()
+    @ensure() if @get("_id") != @calcName()
+    d = new Date()
+    @set 
+      "year"  : d.getFullYear()
+      "month" : d.getMonth()
+      "date"  : d.getDate()
+      "user"  : Tangerine.user.name
+
+  ensure: (callback) ->
+    @set "_id", @calcName()
+
+    # continue old log if possible
+    @fetch
+      success: (model, response, options) =>
+        callback?()
+      error: (model, xhr, options ) =>
+        @save
+          success:=>
+            callback?()
 
   #
   # Log using these four functions
@@ -13,91 +31,49 @@ class Log extends Backbone.Model
   # larger application functions
   app: ( code = "", details = "" ) ->
     if ~Tangerine.settings.get("log").indexOf("app")
-      @ensure =>
-        Tangerine.log.add
-          "type"      : "app"
-          "code"      : code
-          "details"   : details
-          "timestamp" : (new Date()).getTime()
+      Tangerine.log.add
+        "type"      : "app"
+        "code"      : code
+        "details"   : details
+        "timestamp" : (new Date()).getTime()
 
   # communications with databases
   db: ( code = "", details = "" ) ->
     if ~Tangerine.settings.get("log").indexOf("db")
-      @ensure =>
-        Tangerine.log.add
-          "type"      : "db"
-          "code"      : code
-          "details"   : details
-          "timestamp" : (new Date()).getTime()
+      Tangerine.log.add
+        "type"      : "db"
+        "code"      : code
+        "details"   : details
+        "timestamp" : (new Date()).getTime()
 
   # specific UI interactions
   ui: ( code = "", details = "" ) ->
     if ~Tangerine.settings.get("log").indexOf("ui")
-      @ensure =>
-        Tangerine.log.add
-          "type"      : "ui"
-          "code"      : code
-          "details"   : details
-          "timestamp" : (new Date()).getTime()
+      Tangerine.log.add
+        "type"      : "ui"
+        "code"      : code
+        "details"   : details
+        "timestamp" : (new Date()).getTime()
 
   # errors, handled or otherwise
   err: ( code = "", details = "" ) ->
     if ~Tangerine.settings.get("log").indexOf("err")
-      @ensure =>
-        Tangerine.log.add
-          "type"      : "err"
-          "code"      : code
-          "details"   : details
-          "timestamp" : (new Date()).getTime()
-
-
-  # forces singularity, then saves
-  ensure: ( callback={} ) ->
-    # I have a name that changes every hour
-    desiredId = @calcFileName()
-
-    # do we already have a log going?
-    if not Tangerine.log?
-      # NO, no log yet. See if one exists on the server
-      Tangerine.log = @
-      Tangerine.log.set "_id" : desiredId
-      Tangerine.log.fetch
-        success: (model, response, options) =>
-          # it was there, we updated ourselves, time to save
-          callback?()
-        error: (model, xhr, options ) =>
-          # it wasna't there, let's start with this one
-          @save
-            success:=>
-              callback?()
-    else
-      # YES, check to see if it's current
-      if Tangerine.log.id == desiredId
-        # YES, already existing log is current
-        callback?()
-      else
-        # NO, it's old, make a new one
-        Tangerine.log = @
-        # Now it's current
-        callback?()
+      Tangerine.log.add
+        "type"      : "err"
+        "code"      : code
+        "details"   : details
+        "timestamp" : (new Date()).getTime()
 
   # requires that THIS, @, is up to date. 
   # has a side effect, it saves
   add: ( logEvent ) ->
-
-    d = new Date()
-
-    @set "year",  d.getFullYear()     if not @has("year")
-    @set "month", d.getMonth()        if not @has("month")
-    @set "date",  d.getDate()         if not @has("date")
-    @set "user",  Tangerine.user.name if not @has("user")
-
     logEvents = @getArray("logEvents")
     logEvents.push logEvent
     @set "logEvents", logEvents
-    @save()
+    @ensure =>
+      Tangerine.log.save()
 
-  calcFileName: ->
+  calcName: ->
     d = new Date()
     user = if Tangerine.user.name? then Tangerine.user.name else "not-signed-in"
     return hex_sha1 "#{user}_#{d.getFullYear()}-#{d.getMonth()}-#{d.getDate()}"

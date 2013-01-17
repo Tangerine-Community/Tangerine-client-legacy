@@ -13,119 +13,98 @@ Log = (function(_super) {
   Log.prototype.url = "log";
 
   Log.prototype.initialize = function() {
-    return this.ensure();
+    var d;
+    if (this.get("_id") !== this.calcName()) this.ensure();
+    d = new Date();
+    return this.set({
+      "year": d.getFullYear(),
+      "month": d.getMonth(),
+      "date": d.getDate(),
+      "user": Tangerine.user.name
+    });
+  };
+
+  Log.prototype.ensure = function(callback) {
+    var _this = this;
+    this.set("_id", this.calcName());
+    return this.fetch({
+      success: function(model, response, options) {
+        return typeof callback === "function" ? callback() : void 0;
+      },
+      error: function(model, xhr, options) {
+        return _this.save({
+          success: function() {
+            return typeof callback === "function" ? callback() : void 0;
+          }
+        });
+      }
+    });
   };
 
   Log.prototype.app = function(code, details) {
-    var _this = this;
     if (code == null) code = "";
     if (details == null) details = "";
     if (~Tangerine.settings.get("log").indexOf("app")) {
-      return this.ensure(function() {
-        return Tangerine.log.add({
-          "type": "app",
-          "code": code,
-          "details": details,
-          "timestamp": (new Date()).getTime()
-        });
+      return Tangerine.log.add({
+        "type": "app",
+        "code": code,
+        "details": details,
+        "timestamp": (new Date()).getTime()
       });
     }
   };
 
   Log.prototype.db = function(code, details) {
-    var _this = this;
     if (code == null) code = "";
     if (details == null) details = "";
     if (~Tangerine.settings.get("log").indexOf("db")) {
-      return this.ensure(function() {
-        return Tangerine.log.add({
-          "type": "db",
-          "code": code,
-          "details": details,
-          "timestamp": (new Date()).getTime()
-        });
+      return Tangerine.log.add({
+        "type": "db",
+        "code": code,
+        "details": details,
+        "timestamp": (new Date()).getTime()
       });
     }
   };
 
   Log.prototype.ui = function(code, details) {
-    var _this = this;
     if (code == null) code = "";
     if (details == null) details = "";
     if (~Tangerine.settings.get("log").indexOf("ui")) {
-      return this.ensure(function() {
-        return Tangerine.log.add({
-          "type": "ui",
-          "code": code,
-          "details": details,
-          "timestamp": (new Date()).getTime()
-        });
+      return Tangerine.log.add({
+        "type": "ui",
+        "code": code,
+        "details": details,
+        "timestamp": (new Date()).getTime()
       });
     }
   };
 
   Log.prototype.err = function(code, details) {
-    var _this = this;
     if (code == null) code = "";
     if (details == null) details = "";
     if (~Tangerine.settings.get("log").indexOf("err")) {
-      return this.ensure(function() {
-        return Tangerine.log.add({
-          "type": "err",
-          "code": code,
-          "details": details,
-          "timestamp": (new Date()).getTime()
-        });
+      return Tangerine.log.add({
+        "type": "err",
+        "code": code,
+        "details": details,
+        "timestamp": (new Date()).getTime()
       });
-    }
-  };
-
-  Log.prototype.ensure = function(callback) {
-    var desiredId,
-      _this = this;
-    if (callback == null) callback = {};
-    desiredId = this.calcFileName();
-    if (!(Tangerine.log != null)) {
-      Tangerine.log = this;
-      Tangerine.log.set({
-        "_id": desiredId
-      });
-      return Tangerine.log.fetch({
-        success: function(model, response, options) {
-          return typeof callback === "function" ? callback() : void 0;
-        },
-        error: function(model, xhr, options) {
-          return _this.save({
-            success: function() {
-              return typeof callback === "function" ? callback() : void 0;
-            }
-          });
-        }
-      });
-    } else {
-      if (Tangerine.log.id === desiredId) {
-        return typeof callback === "function" ? callback() : void 0;
-      } else {
-        Tangerine.log = this;
-        return typeof callback === "function" ? callback() : void 0;
-      }
     }
   };
 
   Log.prototype.add = function(logEvent) {
-    var d, logEvents;
-    d = new Date();
-    if (!this.has("year")) this.set("year", d.getFullYear());
-    if (!this.has("month")) this.set("month", d.getMonth());
-    if (!this.has("date")) this.set("date", d.getDate());
-    if (!this.has("user")) this.set("user", Tangerine.user.name);
+    var logEvents,
+      _this = this;
     logEvents = this.getArray("logEvents");
     logEvents.push(logEvent);
     this.set("logEvents", logEvents);
-    return this.save();
+    return this.ensure(function() {
+      return Tangerine.log.save();
+    });
   };
 
-  Log.prototype.calcFileName = function() {
+  Log.prototype.calcName = function() {
     var d, user;
     d = new Date();
     user = Tangerine.user.name != null ? Tangerine.user.name : "not-signed-in";
