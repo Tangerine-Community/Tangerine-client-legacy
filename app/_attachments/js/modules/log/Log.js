@@ -97,7 +97,7 @@ Log = (function(_super) {
     }
   };
 
-  Log.prototype.add = function(logEvent) {
+  Log.prototype.add = function(logEvent, haventTriedYet) {
     var logEvents,
       _this = this;
     logEvents = this.getArray("logEvents");
@@ -106,11 +106,13 @@ Log = (function(_super) {
     return this.ensure(function() {
       return Tangerine.log.save({
         error: function() {
-          return Tangerine.log.fetch({
-            success: function() {
-              return Tangerine.log.add(logEvent);
-            }
-          });
+          if (haventTriedYet) {
+            return Tangerine.log.fetch({
+              success: function() {
+                return Tangerine.log.add(logEvent, true);
+              }
+            });
+          }
         }
       });
     });

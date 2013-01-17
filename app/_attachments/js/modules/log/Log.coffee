@@ -69,16 +69,17 @@ class Log extends Backbone.Model
 
   # requires that THIS, @, is up to date. 
   # has a side effect, it saves
-  add: ( logEvent ) ->
+  add: ( logEvent, haventTriedYet ) ->
     logEvents = @getArray("logEvents")
     logEvents.push logEvent
     @set "logEvents", logEvents
     @ensure =>
       Tangerine.log.save
         error: -> # if we can't save, see if we can fetch first then save.
-          Tangerine.log.fetch
-            success: ->
-              Tangerine.log.add(logEvent)
+          if haventTriedYet
+            Tangerine.log.fetch
+              success: ->
+                Tangerine.log.add(logEvent, true)
 
   calcName: ->
     d = new Date()
