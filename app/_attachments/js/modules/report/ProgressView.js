@@ -21,7 +21,14 @@ ProgressView = (function(_super) {
 
   ProgressView.prototype.events = {
     'click .back': 'goBack',
-    'click .select_itemType': 'selectItemType'
+    'click .select_itemType': 'selectItemType',
+    'click .xtick': 'selectAssessment'
+  };
+
+  ProgressView.prototype.selectAssessment = function(event) {
+    this.selected.week = parseInt($(event.target).attr('data-index'));
+    this.updateTable();
+    return this.updateFlot();
   };
 
   ProgressView.prototype.selectItemType = function(event) {
@@ -35,7 +42,7 @@ ProgressView = (function(_super) {
   };
 
   ProgressView.prototype.initialize = function(options) {
-    var data, dataForBenchmark, i, itemType, itemTypes, key, name, part, parts, pointsByItemType, result, row, subtest, subtests, _i, _j, _k, _len, _len2, _len3, _len4, _len5, _len6, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+    var data, dataForBenchmark, i, itemType, itemTypes, key, name, part, parts, pointsByItemType, result, row, subtest, subtests, _i, _j, _k, _len, _len2, _len3, _len4, _len5, _len6, _len7, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
     this.results = options.results;
     this.student = options.student;
     this.subtests = options.subtests;
@@ -107,9 +114,10 @@ ProgressView = (function(_super) {
       _ref6 = row.itemTypes;
       for (_k = 0, _len5 = _ref6.length; _k < _len5; _k++) {
         itemType = _ref6[_k];
-        key = itemType.name;
-        if (!(pointsByItemType[key] != null)) pointsByItemType[key] = [];
-        pointsByItemType[key].push([i + 1, itemType.itemsPerMinute]);
+        if (!(pointsByItemType[itemType.key] != null)) {
+          pointsByItemType[itemType.key] = [];
+        }
+        pointsByItemType[itemType.key].push([i + 1, itemType.itemsPerMinute]);
       }
     }
     this.flotData = [];
@@ -117,7 +125,7 @@ ProgressView = (function(_super) {
     i = 0;
     for (name in pointsByItemType) {
       data = pointsByItemType[name];
-      key = name;
+      key = name.toLowerCase();
       this.flotData[key] = {
         "data": data,
         "label": name.titleize(),
@@ -130,22 +138,16 @@ ProgressView = (function(_super) {
         }
       };
     }
-    this.benchmarkData = [];
-    this.warningThresholds = {};
+    this.flotBenchmark = [];
     _ref7 = this.subtests.indexBy("itemType");
     for (itemType in _ref7) {
       subtests = _ref7[itemType];
       dataForBenchmark = [];
-      this.warningThresholds[itemType] = [];
       for (i = 0, _len6 = subtests.length; i < _len6; i++) {
         subtest = subtests[i];
-        this.warningThresholds[itemType].push({
-          target: subtest.getNumber("scoreTarget"),
-          spread: subtest.getNumber("scoreSpread")
-        });
         dataForBenchmark.push([i + 1, subtest.getNumber("scoreTarget")]);
       }
-      this.benchmarkData[itemType] = {
+      this.flotBenchmark[itemType.toLowerCase()] = {
         "label": "Progress benchmark",
         "data": dataForBenchmark,
         "lines": {
@@ -153,6 +155,19 @@ ProgressView = (function(_super) {
           "color": "green"
         }
       };
+    }
+    this.warningThresholds = {};
+    _ref8 = this.subtests.indexBy("itemType");
+    for (itemType in _ref8) {
+      subtests = _ref8[itemType];
+      this.warningThresholds[itemType] = [];
+      for (i = 0, _len7 = subtests.length; i < _len7; i++) {
+        subtest = subtests[i];
+        this.warningThresholds[itemType.toLowerCase()].push({
+          target: subtest.getNumber("scoreTarget"),
+          spread: subtest.getNumber("scoreSpread")
+        });
+      }
     }
     this.renderReady = true;
     return this.render();
@@ -185,52 +200,53 @@ ProgressView = (function(_super) {
   };
 
   ProgressView.prototype.updateTable = function() {
-    var adjective, data, datum, difference, high, html, i, itemType, low, result, row, score, selectedType, threshold, warnings, _i, _j, _len, _len2, _len3, _ref, _ref2;
-    console.log("test");
-    console.log(this.rows);
-    console.log(this.subtestNames);
-    selectedType = this.selected.itemType;
+    var adjective, data, datum, difference, high, html, i, itemType, low, result, row, score, threshold, type, warnings, week, _i, _j, _len, _len2, _len3, _ref, _ref2;
+    type = this.selected.itemType;
+    week = this.selected.week;
     html = "<table class='tabular'>";
     _ref = this.rows;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       row = _ref[i];
-      if (!~_.pluck(row.itemTypes, "key").indexOf(selectedType)) continue;
-      html += "<tr><th>" + this.subtestNames[i][selectedType] + "</th></tr><tr>";
+      if (!~_.pluck(row.itemTypes, "key").indexOf(type)) continue;
+      html += "<tr><th>" + this.subtestNames[i][type] + "</th></tr><tr>";
       _ref2 = row.itemTypes;
       for (_i = 0, _len2 = _ref2.length; _i < _len2; _i++) {
         itemType = _ref2[_i];
-        if (itemType.key !== selectedType) continue;
+        if (itemType.key !== type) continue;
         html += "          <tr>            <td>" + itemType.name + " correct</td><td>" + itemType.correct + "/" + itemType.attempted + "</td>            <td>" + itemType.name + " per minute</td><td>" + itemType.itemsPerMinute + "</td>          </tr>         ";
       }
     }
     html += "</table>";
-    score = 0;
-    data = this.flotData[selectedType] != null ? this.flotData[selectedType].data : [];
-    console.log(data);
-    for (_j = 0, _len3 = data.length; _j < _len3; _j++) {
-      datum = data[_j];
-      if (datum[0] === this.selected.week + 1) score = datum[1];
-    }
-    threshold = this.warningThresholds[selectedType][this.selected.week];
-    high = threshold.target + threshold.spread;
-    low = threshold.target - threshold.spread;
-    difference = score - threshold.target;
-    if (score > high) {
-      result = "" + difference + " above the benchmark";
-      warnings = "Your class is doing well, " + result + ", continue with the reading program. Share your and your class’ great work with parents. Reward your class with some fun reading activities such as reading marathons or competitions. However, look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind.";
-    } else if (score < low) {
-      result = "" + (Math.abs(difference)) + " below the benchmark";
-      warnings = "Your class is performing below the grade-level target, " + result + ". Plan for additional lesson time focusing on reading in consultation with your principal. Encourage parents to spend more time with reading materials at home – remind them that you are a team working together to help their children learning to read. Think about organizing other events and opportunities for practice, e.g., reading marathons or competitions to motivate students to read more.";
-    } else {
-      if (difference * -1 === Math.abs(difference)) {
-        adjective = "above";
-      } else {
-        adjective = "below";
+    if (week >= this.rows.length) {
+      html += "<section>No data for this assessment.</section>";
+    } else if (this.mode === this.AGGREGATE) {
+      score = 0;
+      data = this.flotData[type] != null ? this.flotData[type].data : [];
+      for (_j = 0, _len3 = data.length; _j < _len3; _j++) {
+        datum = data[_j];
+        if (datum[0] === week + 1) score = datum[1];
       }
-      result = (score - threshold.score) + (" " + adjective + " the benchmark");
-      warnings = "Your class is in line with expectations, " + result + ", continue with the reading program and keep up the good work! Look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind.";
+      threshold = this.warningThresholds[type][week];
+      high = threshold.target + threshold.spread;
+      low = threshold.target - threshold.spread;
+      difference = score - threshold.target;
+      if (score > high) {
+        result = "" + difference + " above the benchmark";
+        warnings = "Your class is doing well, " + result + ", continue with the reading program. Share your and your class’ great work with parents. Reward your class with some fun reading activities such as reading marathons or competitions. However, look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind.";
+      } else if (score < low) {
+        result = "" + (Math.abs(difference)) + " below the benchmark";
+        warnings = "Your class is performing below the grade-level target, " + result + ". Plan for additional lesson time focusing on reading in consultation with your principal. Encourage parents to spend more time with reading materials at home – remind them that you are a team working together to help their children learning to read. Think about organizing other events and opportunities for practice, e.g., reading marathons or competitions to motivate students to read more.";
+      } else {
+        if (difference * -1 === Math.abs(difference)) {
+          adjective = "above";
+        } else {
+          adjective = "below";
+        }
+        result = (score - threshold.score) + (" " + adjective + " the benchmark");
+        warnings = "Your class is in line with expectations, " + result + ", continue with the reading program and keep up the good work! Look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind.";
+      }
+      html += "        <section>          " + warnings + "        </section>      ";
     }
-    html += "      <section>        " + warnings + "      </section>    ";
     return this.$el.find("#table_container").html(html);
   };
 
@@ -251,7 +267,7 @@ ProgressView = (function(_super) {
         }).call(this),
         "tickDecimals": 0,
         "tickFormatter": function(num) {
-          return "<button class='xtick' data-index='" + num + "'>" + _this.subtestNames[num - 1][_this.selected.itemType] + "</button>";
+          return "<button class='xtick " + (num - 1 === _this.selected.week ? 'selected' : '') + "' data-index='" + (num - 1) + "'>" + _this.subtestNames[num - 1][_this.selected.itemType] + "</button>";
         }
       },
       "grid": {
@@ -264,7 +280,7 @@ ProgressView = (function(_super) {
         }
       }
     };
-    displayData = [this.flotData[this.selected.itemType], this.benchmarkData[this.selected.itemType]];
+    displayData = [this.flotData[this.selected.itemType], this.flotBenchmark[this.selected.itemType]];
     return this.flot = $.plot(this.$el.find("#flot-container"), displayData, this.flotOptions);
   };
 

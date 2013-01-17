@@ -4,9 +4,18 @@ class ProgressView extends Backbone.View
   AGGREGATE  : 2
 
   className : "ProgressView"
+
   events:
-    'click .back'          : 'goBack'
+    'click .back'            : 'goBack'
     'click .select_itemType' : 'selectItemType'
+    'click .xtick'           : 'selectAssessment'
+
+  # ! - variable name FUBAR
+  # assessment = part = week
+  selectAssessment: (event) ->
+    @selected.week = parseInt($(event.target).attr('data-index'))
+    @updateTable()
+    @updateFlot()
 
   selectItemType: (event) ->
     @selected.itemType = $(event.target).attr('data-itemType')
@@ -114,15 +123,14 @@ class ProgressView extends Backbone.View
     pointsByItemType = {}
     for row, i in @rows
       for itemType in row.itemTypes
-        key = itemType.name
-        pointsByItemType[key] = [] if not pointsByItemType[key]? 
-        pointsByItemType[key].push [i+1, itemType.itemsPerMinute]
+        pointsByItemType[itemType.key] = [] if not pointsByItemType[itemType.key]? 
+        pointsByItemType[itemType.key].push [i+1, itemType.itemsPerMinute]
     @flotData      = []
     @benchmarkData = []
     i = 0
 
     for name, data of pointsByItemType
-      key = name
+      key = name.toLowerCase()
       @flotData[key] = {
         "data"  : data
         "label" : name.titleize()
@@ -134,27 +142,32 @@ class ProgressView extends Backbone.View
       }
 
     #
-    # Draw a line from the first result to the benchmark of the last
+    # Create benchmark flot graphs
     #
-    @benchmarkData = []
-    @warningThresholds = {}
-
+    @flotBenchmark = []
     for itemType, subtests of @subtests.indexBy("itemType")
       dataForBenchmark = []
-      @warningThresholds[itemType] = []
-      for subtest,i in subtests
-        @warningThresholds[itemType].push 
-          target: subtest.getNumber("scoreTarget")
-          spread: subtest.getNumber("scoreSpread")
+      for subtest, i in subtests
         dataForBenchmark.push [i+1, subtest.getNumber("scoreTarget")]
-        
-      @benchmarkData[itemType] = {
+
+      @flotBenchmark[itemType.toLowerCase()] = {
         "label" : "Progress benchmark"
         "data" : dataForBenchmark
         "lines" :
           "show"  : true
           "color" : "green"
       }
+
+    #
+    # create warning thresholds
+    #
+    @warningThresholds = {}
+    for itemType, subtests of @subtests.indexBy("itemType")
+      @warningThresholds[itemType] = []
+      for subtest, i in subtests
+        @warningThresholds[itemType.toLowerCase()].push 
+          target: subtest.getNumber("scoreTarget")
+          spread: subtest.getNumber("scoreSpread")
 
 
     @renderReady = true
@@ -202,19 +215,18 @@ class ProgressView extends Backbone.View
 
   updateTable: ->
 
-    console.log "test"
-    console.log @rows
-    console.log @subtestNames
+    type = @selected.itemType
+    week = @selected.week
 
 
-    selectedType = @selected.itemType
+
     html = "<table class='tabular'>"
     for row, i in @rows
       # skip if selected row doesn't have any of the selected item type
-      continue if !~_.pluck(row.itemTypes, "key").indexOf(selectedType)
-      html += "<tr><th>#{@subtestNames[i][selectedType]}</th></tr><tr>"
+      continue if !~_.pluck(row.itemTypes, "key").indexOf(type)
+      html += "<tr><th>#{@subtestNames[i][type]}</th></tr><tr>"
       for itemType in row.itemTypes
-        if itemType.key != selectedType then continue
+        if itemType.key != type then continue
         html += "
           <tr>
             <td>#{itemType.name} correct</td><td>#{itemType.correct}/#{itemType.attempted}</td>
@@ -223,42 +235,51 @@ class ProgressView extends Backbone.View
          "
     html += "</table>"
 
-    score = 0
+    #
+    # Add warning if all students mode
+    #
 
-    data = if @flotData[selectedType]?
-      @flotData[selectedType].data
-    else
-      []
-    console.log  data
-    for datum in data
-      if datum[0] == @selected.week + 1
-        score = datum[1] 
+    if week >= @rows.length
+      html += "<section>No data for this assessment.</section>"
+    else if @mode == @AGGREGATE
 
-    threshold = @warningThresholds[selectedType][@selected.week]
+      score = 0
 
-    high = threshold.target + threshold.spread
-    low  = threshold.target - threshold.spread
-    difference = score - threshold.target
-
-    if score > high
-      result = "#{difference} above the benchmark"
-      warnings = "Your class is doing well, #{result}, continue with the reading program. Share your and your class’ great work with parents. Reward your class with some fun reading activities such as reading marathons or competitions. However, look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
-    else if score < low
-      result = "#{Math.abs(difference)} below the benchmark"
-      warnings = "Your class is performing below the grade-level target, #{result}. Plan for additional lesson time focusing on reading in consultation with your principal. Encourage parents to spend more time with reading materials at home – remind them that you are a team working together to help their children learning to read. Think about organizing other events and opportunities for practice, e.g., reading marathons or competitions to motivate students to read more."
-    else
-      if difference * -1 == Math.abs(difference)
-        adjective = "above"
+      data = if @flotData[type]?
+        @flotData[type].data
       else
-        adjective = "below"
-      result = (score - threshold.score) + " #{adjective} the benchmark"
-      warnings = "Your class is in line with expectations, #{result}, continue with the reading program and keep up the good work! Look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
+        []
 
-    html += "
-      <section>
-        #{warnings}
-      </section>
-    "
+      for datum in data
+        if datum[0] == week+1
+          score = datum[1] 
+
+      threshold = @warningThresholds[type][week]
+
+      high = threshold.target + threshold.spread
+      low  = threshold.target - threshold.spread
+      difference = score - threshold.target
+
+      if score > high
+        result = "#{difference} above the benchmark"
+        warnings = "Your class is doing well, #{result}, continue with the reading program. Share your and your class’ great work with parents. Reward your class with some fun reading activities such as reading marathons or competitions. However, look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
+      else if score < low
+        result = "#{Math.abs(difference)} below the benchmark"
+        warnings = "Your class is performing below the grade-level target, #{result}. Plan for additional lesson time focusing on reading in consultation with your principal. Encourage parents to spend more time with reading materials at home – remind them that you are a team working together to help their children learning to read. Think about organizing other events and opportunities for practice, e.g., reading marathons or competitions to motivate students to read more."
+      else
+        if difference * -1 == Math.abs(difference)
+          adjective = "above"
+        else
+          adjective = "below"
+        result = (score - threshold.score) + " #{adjective} the benchmark"
+        warnings = "Your class is in line with expectations, #{result}, continue with the reading program and keep up the good work! Look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
+
+      html += "
+        <section>
+          #{warnings}
+        </section>
+      "
+
     @$el.find("#table_container").html html
 
 
@@ -272,7 +293,7 @@ class ProgressView extends Backbone.View
         "max"           : @partCount + 0.5
         "ticks"         : ( String( i ) for i in [1..@partCount] )
         "tickDecimals"  : 0
-        "tickFormatter" : ( num ) => "<button class='xtick' data-index='#{num}'>#{@subtestNames[num-1][@selected.itemType]}</button>"
+        "tickFormatter" : ( num ) => "<button class='xtick #{if num-1==@selected.week then 'selected' else ''}' data-index='#{num-1}'>#{@subtestNames[num-1][@selected.itemType]}</button>"
       "grid" :
         "markings" :
           "color"  : "#ffc"
@@ -280,7 +301,7 @@ class ProgressView extends Backbone.View
             "to"   : @selected.week + 0.5
             "from" : @selected.week - 0.5
 
-    displayData = [ @flotData[@selected.itemType], @benchmarkData[@selected.itemType] ]
+    displayData = [ @flotData[@selected.itemType], @flotBenchmark[@selected.itemType] ]
     @flot = $.plot @$el.find("#flot-container"), displayData, @flotOptions
 
 

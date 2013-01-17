@@ -32,8 +32,8 @@ class KlassSubtestEditView extends Backbone.View
     @model.save
       name           : @$el.find("#name").val()
       part           : parseInt( @$el.find("#part").val() )
-      reportType     : @$el.find("#report_type").val()
-      itemType       : @$el.find("#item_type").val()
+      reportType     : @$el.find("#report_type").val().toLowerCase()
+      itemType       : @$el.find("#item_type").val().toLowerCase()
       scoreTarget    : @$el.find("#score_target").val()
       scoreSpread    : @$el.find("#score_spread").val()
       order          : @$el.find("#order").val()
@@ -92,7 +92,7 @@ class KlassSubtestEditView extends Backbone.View
       </div>
 
       <div class='label_value'>
-        <label for='item_type'>Item Type</label>
+        <label for='item_type' title='This variable is used for reports. All results from subtests with the same Item Type will show up together. Inconsistent naming will invalidate results.  '>Item Type</label>
         <input id='item_type' value='#{itemType}'>
       </div>
 

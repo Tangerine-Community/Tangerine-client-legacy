@@ -164,7 +164,7 @@ class KlassEditView extends Backbone.View
     
     <h2>#{t('students').capitalize()}</h2>
     <div id='student_list_wrapper'></div>
-    <button class='add_student command'>#{t('add student')}</button>
+    <button class='add_student command'>Add student</button>
     <div class='add_student_form menu_box confirmation'>
       <div class='label_value'>
         <label for='add_student_select'>#{t('add student')}</label><br>

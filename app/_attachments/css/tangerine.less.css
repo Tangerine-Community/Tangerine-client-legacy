@@ -1152,6 +1152,36 @@ button.navigation:hover {
 .command_red:hover {
   background-color: #f6ef9a;
 }
+.xtick {
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
+  color: black;
+  background-color: #cccccc;
+  border: 0 !important;
+  margin: 5px;
+  padding: 7px !important;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  font-weight: normal;
+}
+.xtick a,
+.xtick a:visited,
+.xtick a:hover {
+  text-decoration: none;
+  color: black;
+}
+.xtick:active {
+  background-color: #f6c637;
+}
+.xtick:hover {
+  background-color: #f6ef9a;
+}
+.xtick.selected {
+  color: white;
+  background-color: #8cc63f;
+}
 label {
   color: black;
   font-weight: bold;

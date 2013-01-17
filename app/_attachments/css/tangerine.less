@@ -1343,6 +1343,44 @@ button.navigation
   color: #fff;
 }
 
+.xtick
+{
+  text-decoration: none;
+  display:inline-block;
+  font-size: @h3;
+  color: black;
+  background-color: @grey-1;
+  border: 0 !important;
+  margin: 5px;
+  padding: 7px !important;
+  .border-radius(10px);
+  font-weight: normal;
+
+  a, a:visited, a:hover
+  {
+    text-decoration: none;
+    color: black;
+  }
+
+  &:active
+  {
+    background-color: @orange-3;
+  }
+  
+  &:hover
+  {
+    background-color: @orange-4;
+  }
+
+}
+
+.xtick.selected
+{
+  color: white;
+  background-color: @green;
+}
+
+
 
 label
 {
