@@ -42,7 +42,7 @@ class ProgressView extends Backbone.View
     @itemTypeList  = {}
     @selected =
       "itemType" : null
-      "week"     : null
+      "week"     : 0
 
     #
     # Find out how many parts belong to the progress report
@@ -96,7 +96,7 @@ class ProgressView extends Backbone.View
           "attempted"      : result.get "attempted"
           "itemsPerMinute" : result.getCorrectPerSeconds(60)
 
-        @benchmarkScore[itemType] = @subtests.get(result.get("subtestId")).get("benchmarkScore") || 60
+        @benchmarkScore[itemType] = @subtests.get(result.get("subtestId")).getNumber("scoreTarget")
 
       # each row is one week/part
       @rows.push
@@ -114,7 +114,7 @@ class ProgressView extends Backbone.View
     pointsByItemType = {}
     for row, i in @rows
       for itemType in row.itemTypes
-        key = itemType.name.toLowerCase()
+        key = itemType.name
         pointsByItemType[key] = [] if not pointsByItemType[key]? 
         pointsByItemType[key].push [i+1, itemType.itemsPerMinute]
     @flotData      = []
@@ -122,8 +122,8 @@ class ProgressView extends Backbone.View
     i = 0
 
     for name, data of pointsByItemType
-      key = name.toLowerCase()
-      @flotData[key]  = {
+      key = name
+      @flotData[key] = {
         "data"  : data
         "label" : name.titleize()
         "key"   : key
@@ -133,26 +133,35 @@ class ProgressView extends Backbone.View
           "show" : true
       }
 
-      #
-      # Draw a line from the first result to the benchmark of the last
-      #
-      firstResultInItemType = data[0][1]
-      @benchmarkData[key] = {
+    #
+    # Draw a line from the first result to the benchmark of the last
+    #
+    @benchmarkData = []
+    @warningThresholds = {}
+
+    for itemType, subtests of @subtests.indexBy("itemType")
+      dataForBenchmark = []
+      @warningThresholds[itemType] = []
+      for subtest,i in subtests
+        @warningThresholds[itemType].push 
+          target: subtest.getNumber("scoreTarget")
+          spread: subtest.getNumber("scoreSpread")
+        dataForBenchmark.push [i+1, subtest.getNumber("scoreTarget")]
+        
+      @benchmarkData[itemType] = {
         "label" : "Progress benchmark"
-        "data" : [
-          [1,          firstResultInItemType]
-          [@partCount, @benchmarkScore[key]]
-        ]
+        "data" : dataForBenchmark
         "lines" :
           "show"  : true
           "color" : "green"
       }
 
+
     @renderReady = true
     @render()
 
   render: ->
-    if not @renderReady then return
+    return if not @renderReady
     $window = $(window)
     win = 
       h : $window.height()
@@ -192,16 +201,64 @@ class ProgressView extends Backbone.View
     @updateFlot()
 
   updateTable: ->
+
+    console.log "test"
+    console.log @rows
+    console.log @subtestNames
+
+
+    selectedType = @selected.itemType
     html = "<table class='tabular'>"
     for row, i in @rows
       # skip if selected row doesn't have any of the selected item type
-      continue if !~_.pluck(row.itemTypes, "key").indexOf(@selected.itemType) 
-      html += "<tr><th>#{@subtestNames[i][@selected.itemType]}</th><tr><tr>"
+      continue if !~_.pluck(row.itemTypes, "key").indexOf(selectedType)
+      html += "<tr><th>#{@subtestNames[i][selectedType]}</th></tr><tr>"
       for itemType in row.itemTypes
-        if itemType.key != @selected.itemType then continue
-        html += "<td>#{itemType.name} correct</td><td>#{itemType.correct}/#{itemType.attempted}</td>"
-        html += "<td>#{itemType.name} per minute</td><td>#{itemType.itemsPerMinute}</td>"
+        if itemType.key != selectedType then continue
+        html += "
+          <tr>
+            <td>#{itemType.name} correct</td><td>#{itemType.correct}/#{itemType.attempted}</td>
+            <td>#{itemType.name} per minute</td><td>#{itemType.itemsPerMinute}</td>
+          </tr>
+         "
     html += "</table>"
+
+    score = 0
+
+    data = if @flotData[selectedType]?
+      @flotData[selectedType].data
+    else
+      []
+    console.log  data
+    for datum in data
+      if datum[0] == @selected.week + 1
+        score = datum[1] 
+
+    threshold = @warningThresholds[selectedType][@selected.week]
+
+    high = threshold.target + threshold.spread
+    low  = threshold.target - threshold.spread
+    difference = score - threshold.target
+
+    if score > high
+      result = "#{difference} above the benchmark"
+      warnings = "Your class is doing well, #{result}, continue with the reading program. Share your and your class’ great work with parents. Reward your class with some fun reading activities such as reading marathons or competitions. However, look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
+    else if score < low
+      result = "#{Math.abs(difference)} below the benchmark"
+      warnings = "Your class is performing below the grade-level target, #{result}. Plan for additional lesson time focusing on reading in consultation with your principal. Encourage parents to spend more time with reading materials at home – remind them that you are a team working together to help their children learning to read. Think about organizing other events and opportunities for practice, e.g., reading marathons or competitions to motivate students to read more."
+    else
+      if difference * -1 == Math.abs(difference)
+        adjective = "above"
+      else
+        adjective = "below"
+      result = (score - threshold.score) + " #{adjective} the benchmark"
+      warnings = "Your class is in line with expectations, #{result}, continue with the reading program and keep up the good work! Look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
+
+    html += "
+      <section>
+        #{warnings}
+      </section>
+    "
     @$el.find("#table_container").html html
 
 

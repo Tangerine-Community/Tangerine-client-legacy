@@ -35,7 +35,7 @@ ProgressView = (function(_super) {
   };
 
   ProgressView.prototype.initialize = function(options) {
-    var data, firstResultInItemType, i, itemType, itemTypes, key, name, part, parts, pointsByItemType, result, row, subtest, _i, _j, _k, _len, _len2, _len3, _len4, _len5, _ref, _ref2, _ref3, _ref4, _ref5, _ref6;
+    var data, dataForBenchmark, i, itemType, itemTypes, key, name, part, parts, pointsByItemType, result, row, subtest, subtests, _i, _j, _k, _len, _len2, _len3, _len4, _len5, _len6, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
     this.results = options.results;
     this.student = options.student;
     this.subtests = options.subtests;
@@ -54,7 +54,7 @@ ProgressView = (function(_super) {
     this.itemTypeList = {};
     this.selected = {
       "itemType": null,
-      "week": null
+      "week": 0
     };
     parts = [];
     _ref = this.subtests.models;
@@ -92,7 +92,7 @@ ProgressView = (function(_super) {
           "attempted": result.get("attempted"),
           "itemsPerMinute": result.getCorrectPerSeconds(60)
         });
-        this.benchmarkScore[itemType] = this.subtests.get(result.get("subtestId")).get("benchmarkScore") || 60;
+        this.benchmarkScore[itemType] = this.subtests.get(result.get("subtestId")).getNumber("scoreTarget");
       }
       this.rows.push({
         "part": part,
@@ -107,7 +107,7 @@ ProgressView = (function(_super) {
       _ref6 = row.itemTypes;
       for (_k = 0, _len5 = _ref6.length; _k < _len5; _k++) {
         itemType = _ref6[_k];
-        key = itemType.name.toLowerCase();
+        key = itemType.name;
         if (!(pointsByItemType[key] != null)) pointsByItemType[key] = [];
         pointsByItemType[key].push([i + 1, itemType.itemsPerMinute]);
       }
@@ -117,7 +117,7 @@ ProgressView = (function(_super) {
     i = 0;
     for (name in pointsByItemType) {
       data = pointsByItemType[name];
-      key = name.toLowerCase();
+      key = name;
       this.flotData[key] = {
         "data": data,
         "label": name.titleize(),
@@ -129,10 +129,25 @@ ProgressView = (function(_super) {
           "show": true
         }
       };
-      firstResultInItemType = data[0][1];
-      this.benchmarkData[key] = {
+    }
+    this.benchmarkData = [];
+    this.warningThresholds = {};
+    _ref7 = this.subtests.indexBy("itemType");
+    for (itemType in _ref7) {
+      subtests = _ref7[itemType];
+      dataForBenchmark = [];
+      this.warningThresholds[itemType] = [];
+      for (i = 0, _len6 = subtests.length; i < _len6; i++) {
+        subtest = subtests[i];
+        this.warningThresholds[itemType].push({
+          target: subtest.getNumber("scoreTarget"),
+          spread: subtest.getNumber("scoreSpread")
+        });
+        dataForBenchmark.push([i + 1, subtest.getNumber("scoreTarget")]);
+      }
+      this.benchmarkData[itemType] = {
         "label": "Progress benchmark",
-        "data": [[1, firstResultInItemType], [this.partCount, this.benchmarkScore[key]]],
+        "data": dataForBenchmark,
         "lines": {
           "show": true,
           "color": "green"
@@ -170,24 +185,52 @@ ProgressView = (function(_super) {
   };
 
   ProgressView.prototype.updateTable = function() {
-    var html, i, itemType, row, _i, _len, _len2, _ref, _ref2;
+    var adjective, data, datum, difference, high, html, i, itemType, low, result, row, score, selectedType, threshold, warnings, _i, _j, _len, _len2, _len3, _ref, _ref2;
+    console.log("test");
+    console.log(this.rows);
+    console.log(this.subtestNames);
+    selectedType = this.selected.itemType;
     html = "<table class='tabular'>";
     _ref = this.rows;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       row = _ref[i];
-      if (!~_.pluck(row.itemTypes, "key").indexOf(this.selected.itemType)) {
-        continue;
-      }
-      html += "<tr><th>" + this.subtestNames[i][this.selected.itemType] + "</th><tr><tr>";
+      if (!~_.pluck(row.itemTypes, "key").indexOf(selectedType)) continue;
+      html += "<tr><th>" + this.subtestNames[i][selectedType] + "</th></tr><tr>";
       _ref2 = row.itemTypes;
       for (_i = 0, _len2 = _ref2.length; _i < _len2; _i++) {
         itemType = _ref2[_i];
-        if (itemType.key !== this.selected.itemType) continue;
-        html += "<td>" + itemType.name + " correct</td><td>" + itemType.correct + "/" + itemType.attempted + "</td>";
-        html += "<td>" + itemType.name + " per minute</td><td>" + itemType.itemsPerMinute + "</td>";
+        if (itemType.key !== selectedType) continue;
+        html += "          <tr>            <td>" + itemType.name + " correct</td><td>" + itemType.correct + "/" + itemType.attempted + "</td>            <td>" + itemType.name + " per minute</td><td>" + itemType.itemsPerMinute + "</td>          </tr>         ";
       }
     }
     html += "</table>";
+    score = 0;
+    data = this.flotData[selectedType] != null ? this.flotData[selectedType].data : [];
+    console.log(data);
+    for (_j = 0, _len3 = data.length; _j < _len3; _j++) {
+      datum = data[_j];
+      if (datum[0] === this.selected.week + 1) score = datum[1];
+    }
+    threshold = this.warningThresholds[selectedType][this.selected.week];
+    high = threshold.target + threshold.spread;
+    low = threshold.target - threshold.spread;
+    difference = score - threshold.target;
+    if (score > high) {
+      result = "" + difference + " above the benchmark";
+      warnings = "Your class is doing well, " + result + ", continue with the reading program. Share your and your class’ great work with parents. Reward your class with some fun reading activities such as reading marathons or competitions. However, look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind.";
+    } else if (score < low) {
+      result = "" + (Math.abs(difference)) + " below the benchmark";
+      warnings = "Your class is performing below the grade-level target, " + result + ". Plan for additional lesson time focusing on reading in consultation with your principal. Encourage parents to spend more time with reading materials at home – remind them that you are a team working together to help their children learning to read. Think about organizing other events and opportunities for practice, e.g., reading marathons or competitions to motivate students to read more.";
+    } else {
+      if (difference * -1 === Math.abs(difference)) {
+        adjective = "above";
+      } else {
+        adjective = "below";
+      }
+      result = (score - threshold.score) + (" " + adjective + " the benchmark");
+      warnings = "Your class is in line with expectations, " + result + ", continue with the reading program and keep up the good work! Look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind.";
+    }
+    html += "      <section>        " + warnings + "      </section>    ";
     return this.$el.find("#table_container").html(html);
   };
 

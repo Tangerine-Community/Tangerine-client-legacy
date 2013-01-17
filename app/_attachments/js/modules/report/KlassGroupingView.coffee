@@ -122,9 +122,44 @@ class KlassGroupingView extends Backbone.View
 
     # Sort descending by %-correct
     @table.sort (a, b) -> b.pCorrect - a.pCorrect
+
     
+    # warning flags
+    nStudentsNotReady = 0
+    (nStudentsNotReady++ if person.pCorrect < 80) for person in @table
+    pNotReady = (nStudentsNotReady/@table.length) * 100
+    isClassReady = pNotReady < 20
+
+    warningIcon = "<img src='images/icon_warn.png'>"
+    @readyPercentage = "<p>#{pNotReady}% of your students are not ready to move on to the next lessons.</p>"
+
+    classReady = "It is ok to move on in the lesson sequence. Make sure that those children performing in the “poor” or “concerning” category get extra attention and practice and don’t fall behind. This can be done during practice lessons on Tuesday and Thursdays, or during another subject on the timetable."
+    classNotReady = "Your class needs extra practice. Consider re-teaching Monday and Wednesday lessons introducing the new curriculum items or organize intense practice activities for the entire class. To find out which items students are particularly struggling with, select the name of a few students in the “poor” or “concerning” category and review their performance item by item. Take note of items that seem particularly troublesome."
+
+    @readinessWarning = if isClassReady then classReady else classNotReady
 
   render: ->
+
+    #
+    # Warnings
+    #
+
+    # dynamic
+    warningsHTML = "
+    <section>
+      #{@readyPercentage}
+      #{@readinessWarning}
+    </section>
+    "
+    # static
+    warningsHTML += '
+    <section>
+      <p>Refer to the file “Kiswahili Wordlists” on your tablet for a list of additional words that may be useful for such group-based activities or practice for students performing in the “poor” or “concerning” category.</p>
+      <p>For the students to watch – consider also communicating with parents for extra practice at home.</p>
+      <p>Identify items these students need further practice on by selecting their name in the grouping report to see their performance on each item.</p>
+      <p>Give parents some help: Write out on a piece of paper the letters for them to practice with their child; or copy applicable words from the “Kiswahili Wordlists” that contain the letters for the child to practice.</p>
+    </section>
+    '
 
     #
     # Empty warning
@@ -149,7 +184,7 @@ class KlassGroupingView extends Backbone.View
     #
     # summary
     #
-    summaryHTML = "<h1>#{t('summary')}</h1>
+    summaryHTML = "<h1>Summary</h1>
     <table class='summary'>
       <tr><th>Subtest Name</th>          <td>#{@summary.name}</td></tr>
       <tr><th>Class Size</th>            <td>#{@summary.classSize}</td></tr>
@@ -202,6 +237,7 @@ class KlassGroupingView extends Backbone.View
         #{summaryHTML}
         #{detailsHTML}
         #{itemizedResults}
+        #{warningsHTML}
         <button class='navigation back'>Back</button>
       "
     else

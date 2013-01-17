@@ -81,7 +81,7 @@ KlassGroupingView = (function(_super) {
   };
 
   KlassGroupingView.prototype.updateTable = function() {
-    var aCorrect, dev, devIndex, i, index, percentile, person, result, _i, _j, _len, _len2, _len3, _ref, _ref2, _ref3;
+    var aCorrect, classNotReady, classReady, dev, devIndex, i, index, isClassReady, nStudentsNotReady, pNotReady, percentile, person, result, warningIcon, _i, _j, _k, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4;
     this.table = [];
     aCorrect = 0;
     this.subtest = this.subtests.get(this.selected.subtestId);
@@ -138,13 +138,35 @@ KlassGroupingView = (function(_super) {
         this.summary.watchList.push(person.name);
       }
     }
-    return this.table.sort(function(a, b) {
+    this.table.sort(function(a, b) {
       return b.pCorrect - a.pCorrect;
     });
+    nStudentsNotReady = 0;
+    _ref4 = this.table;
+    for (_k = 0, _len4 = _ref4.length; _k < _len4; _k++) {
+      person = _ref4[_k];
+      if (person.pCorrect < 80) nStudentsNotReady++;
+    }
+    pNotReady = (nStudentsNotReady / this.table.length) * 100;
+    isClassReady = pNotReady < 20;
+    warningIcon = "<img src='images/icon_warn.png'>";
+    this.readyPercentage = "<p>" + pNotReady + "% of your students are not ready to move on to the next lessons.</p>";
+    classReady = "It is ok to move on in the lesson sequence. Make sure that those children performing in the “poor” or “concerning” category get extra attention and practice and don’t fall behind. This can be done during practice lessons on Tuesday and Thursdays, or during another subject on the timetable.";
+    classNotReady = "Your class needs extra practice. Consider re-teaching Monday and Wednesday lessons introducing the new curriculum items or organize intense practice activities for the entire class. To find out which items students are particularly struggling with, select the name of a few students in the “poor” or “concerning” category and review their performance item by item. Take note of items that seem particularly troublesome.";
+    return this.readinessWarning = isClassReady ? classReady : classNotReady;
   };
 
   KlassGroupingView.prototype.render = function() {
-    var checkedAttribute, datum, detailsHTML, emptyHTML, html, i, itemizedResults, menuHTML, person, subtest, summaryHTML, _i, _j, _len, _len2, _len3, _ref, _ref2, _ref3;
+    var checkedAttribute, datum, detailsHTML, emptyHTML, html, i, itemizedResults, menuHTML, person, subtest, summaryHTML, warningsHTML, _i, _j, _len, _len2, _len3, _ref, _ref2, _ref3;
+    warningsHTML = "    <section>      " + this.readyPercentage + "      " + this.readinessWarning + "    </section>    ";
+    warningsHTML += '\
+    <section>\
+      <p>Refer to the file “Kiswahili Wordlists” on your tablet for a list of additional words that may be useful for such group-based activities or practice for students performing in the “poor” or “concerning” category.</p>\
+      <p>For the students to watch – consider also communicating with parents for extra practice at home.</p>\
+      <p>Identify items these students need further practice on by selecting their name in the grouping report to see their performance on each item.</p>\
+      <p>Give parents some help: Write out on a piece of paper the letters for them to practice with their child; or copy applicable words from the “Kiswahili Wordlists” that contain the letters for the child to practice.</p>\
+    </section>\
+    ';
     emptyHTML = "      <h1>" + (t('student grouping report')) + "</h1>      <p>No students tested for " + (this.subtests.get(this.selected.subtestId).get("name")) + " on assessment #" + (this.subtests.models[0].get("part")) + " yet. Return to the <a href='#class'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>    ";
     menuHTML = "<div id='selector_container' class='buttonset'>";
     _ref = this.subtests.models;
@@ -154,7 +176,7 @@ KlassGroupingView = (function(_super) {
       menuHTML += "        <label for='" + subtest.id + "'>" + (subtest.get("name")) + "</label>        <input type='radio' class='selector' name='selector' id='" + subtest.id + "' data-subtestId='" + subtest.id + "' " + checkedAttribute + ">      ";
     }
     menuHTML += "</div>";
-    summaryHTML = "<h1>" + (t('summary')) + "</h1>    <table class='summary'>      <tr><th>Subtest Name</th>          <td>" + this.summary.name + "</td></tr>      <tr><th>Class Size</th>            <td>" + this.summary.classSize + "</td></tr>      <tr><th>Students Assessed</th>     <td>" + this.summary.resultCount + "</td></tr>      <tr><th>Average Correct</th>       <td>" + this.summary.aCorrect + "%</td></tr>      <tr><th>Average Correct</th>       <td>" + this.summary.anCorrect + " / " + this.summary.totalItems + "</td></tr>      <tr><th>Students to watch</th>     <td>" + (this.summary.watchList.join(', ')) + "</td></tr>    </table>";
+    summaryHTML = "<h1>Summary</h1>    <table class='summary'>      <tr><th>Subtest Name</th>          <td>" + this.summary.name + "</td></tr>      <tr><th>Class Size</th>            <td>" + this.summary.classSize + "</td></tr>      <tr><th>Students Assessed</th>     <td>" + this.summary.resultCount + "</td></tr>      <tr><th>Average Correct</th>       <td>" + this.summary.aCorrect + "%</td></tr>      <tr><th>Average Correct</th>       <td>" + this.summary.anCorrect + " / " + this.summary.totalItems + "</td></tr>      <tr><th>Students to watch</th>     <td>" + (this.summary.watchList.join(', ')) + "</td></tr>    </table>";
     detailsHTML = "      <h1>" + (t('student grouping report')) + "</h1>      <table class='details'>      <tr>        <th>Name</th>        <th>Percentile</th>        <th>Status</th>      </tr>    ";
     itemizedResults = "";
     _ref2 = this.table;
@@ -171,7 +193,7 @@ KlassGroupingView = (function(_super) {
     }
     detailsHTML += "</table>";
     if (this.selected.results.length !== 0) {
-      html = "        " + menuHTML + "        " + summaryHTML + "        " + detailsHTML + "        " + itemizedResults + "        <button class='navigation back'>Back</button>      ";
+      html = "        " + menuHTML + "        " + summaryHTML + "        " + detailsHTML + "        " + itemizedResults + "        " + warningsHTML + "        <button class='navigation back'>Back</button>      ";
     } else {
       html = "        " + menuHTML + "        " + emptyHTML + "        <button class='navigation back'>Back</button>      ";
     }
