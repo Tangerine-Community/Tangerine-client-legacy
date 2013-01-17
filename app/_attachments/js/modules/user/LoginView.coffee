@@ -16,6 +16,12 @@ class LoginView extends Backbone.View
     Tangerine.router.navigate "", true
 
   render: =>
+
+    nameName = Tangerine.settings.contextualize
+      server: "User name"
+      mobile: "Enumerator name"
+      klass : "Teacher name"
+
     width = $('#content').width()
     parentWidth = $('#content').offsetParent().width()
     @oldWidth = 100 * width / parentWidth
@@ -24,7 +30,7 @@ class LoginView extends Backbone.View
 
     @$el.html "
       <img src='images/tangerine_logo.png' id='login_logo'>
-      <label for='name'>#{t('enumerator name')}</label>
+      <label for='name'>#{nameName}</label>
       <div id='name_message' class='messages'></div>
       <input type='text' id='name'>
       <label for='pass'>#{t('password')}</label>

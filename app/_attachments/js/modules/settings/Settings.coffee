@@ -8,6 +8,16 @@ class Settings extends Backbone.Model
     @config = Tangerine.config
     @on "all", => @update()
 
+  contextualize: (callbacks={}) ->
+    if @get("context") == "server"
+      return callbacks.server() if _.isFunction(callbacks.server)
+      return callbacks.server if callbacks.server?
+    else if @get("context") == "mobile"
+      return callbacks.mobile() if _.isFunction(callbacks.mobile)
+      return callbacks.mobile if callbacks.mobile?
+    else if @get("context") == "class"
+      return callbacks.klass() if _.isFunction(callbacks.klass)
+      return callbacks.klass if callbacks.klass?
 
   update: =>
     groupHost = @get "groupHost"

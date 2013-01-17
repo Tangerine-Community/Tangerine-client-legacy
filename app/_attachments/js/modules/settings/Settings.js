@@ -22,6 +22,20 @@ Settings = (function(_super) {
     });
   };
 
+  Settings.prototype.contextualize = function(callbacks) {
+    if (callbacks == null) callbacks = {};
+    if (this.get("context") === "server") {
+      if (_.isFunction(callbacks.server)) return callbacks.server();
+      if (callbacks.server != null) return callbacks.server;
+    } else if (this.get("context") === "mobile") {
+      if (_.isFunction(callbacks.mobile)) return callbacks.mobile();
+      if (callbacks.mobile != null) return callbacks.mobile;
+    } else if (this.get("context") === "class") {
+      if (_.isFunction(callbacks.klass)) return callbacks.klass();
+      if (callbacks.klass != null) return callbacks.klass;
+    }
+  };
+
   Settings.prototype.update = function() {
     var designDoc, groupDDoc, groupHost, groupName, local, port, prefix, splitGroup, subnetBase, trunk, update, x;
     groupHost = this.get("groupHost");

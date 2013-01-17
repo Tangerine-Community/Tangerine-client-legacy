@@ -36,12 +36,17 @@ LoginView = (function(_super) {
   };
 
   LoginView.prototype.render = function() {
-    var parentWidth, width;
+    var nameName, parentWidth, width;
+    nameName = Tangerine.settings.contextualize({
+      server: "User name",
+      mobile: "Enumerator name",
+      klass: "Teacher name"
+    });
     width = $('#content').width();
     parentWidth = $('#content').offsetParent().width();
     this.oldWidth = 100 * width / parentWidth;
     $("#content").css("width", "100%");
-    this.$el.html("      <img src='images/tangerine_logo.png' id='login_logo'>      <label for='name'>" + (t('enumerator name')) + "</label>      <div id='name_message' class='messages'></div>      <input type='text' id='name'>      <label for='pass'>" + (t('password')) + "</label>      <div id='pass_message' class='messages'></div>      <input id='pass' type='password'>      <button class='login'>" + (t('login')) + "</button>    ");
+    this.$el.html("      <img src='images/tangerine_logo.png' id='login_logo'>      <label for='name'>" + nameName + "</label>      <div id='name_message' class='messages'></div>      <input type='text' id='name'>      <label for='pass'>" + (t('password')) + "</label>      <div id='pass_message' class='messages'></div>      <input id='pass' type='password'>      <button class='login'>" + (t('login')) + "</button>    ");
     this.nameMsg = this.$el.find("#name_message");
     this.passMsg = this.$el.find("#pass_message");
     return this.trigger("rendered");
