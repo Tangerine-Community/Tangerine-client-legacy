@@ -13,7 +13,6 @@ class CurriculumView extends Backbone.View
     "focusout .editing" : "editing"
     "keyup    .editing" : "editing"
     "keydown  .editing" : "editing"
-    
 
   initialize: (options) ->
     

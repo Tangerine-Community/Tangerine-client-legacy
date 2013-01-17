@@ -31,8 +31,6 @@ class KlassGroupingMenuView extends Backbone.View
 
     if @ready
 
-      console.log @students
-
       # quick data check
       if not @students? or @students.length == 0
         @$el.html "Please add students to this class."

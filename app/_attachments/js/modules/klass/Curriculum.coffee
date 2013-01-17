@@ -4,8 +4,11 @@ class Curriculum extends Backbone.Model
 
   updateFromServer: ( dKey = @id.substr(-5,5)) =>
 
-    @trigger "status", "import lookup"
+    # split to handle multiple dkeys
     dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g," ").split(/\s+/))
+
+    @trigger "status", "import lookup"
+
     $.ajax Tangerine.settings.urlView("group", "byDKey"),
       type: "POST"
       dataType: "jsonp"
@@ -24,6 +27,7 @@ class Curriculum extends Backbone.Model
         )
 
     false
+
 
   destroy: (callback) ->
 

@@ -18,8 +18,8 @@ Curriculum = (function(_super) {
     var dKeys,
       _this = this;
     if (dKey == null) dKey = this.id.substr(-5, 5);
-    this.trigger("status", "import lookup");
     dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/));
+    this.trigger("status", "import lookup");
     $.ajax(Tangerine.settings.urlView("group", "byDKey"), {
       type: "POST",
       dataType: "jsonp",
