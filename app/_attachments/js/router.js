@@ -997,19 +997,9 @@ Router = (function(_super) {
   Router.prototype.settings = function() {
     return Tangerine.user.verify({
       isRegistered: function() {
-        var settings;
-        settings = new Settings({
-          "_id": "settings"
-        });
-        return settings.fetch({
-          success: function(settings) {
-            var view;
-            view = new SettingsView({
-              "settings": settings
-            });
-            return vm.show(view);
-          }
-        });
+        var view;
+        view = new SettingsView;
+        return vm.show(view);
       },
       isUnregistered: function(options) {
         return Tangerine.router.navigate("login", true);

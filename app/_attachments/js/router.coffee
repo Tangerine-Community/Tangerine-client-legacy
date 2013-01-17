@@ -613,12 +613,8 @@ class Router extends Backbone.Router
   settings: ->
     Tangerine.user.verify
       isRegistered: ->
-        settings = new Settings "_id" : "settings"
-        settings.fetch
-          success: (settings) ->
-            view = new SettingsView
-              "settings" : settings
-            vm.show view
+        view = new SettingsView
+        vm.show view
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
 

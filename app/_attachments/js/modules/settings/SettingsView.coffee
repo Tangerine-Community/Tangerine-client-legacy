@@ -8,20 +8,17 @@ class SettingsView extends Backbone.View
     window.history.back()
 
   initialize: (options) ->
-    @settings = options.settings
+    @settings = Tangerine.settings
 
-  updateModel: ->
-    @settings.set
+  save: ->
+    @settings.save
       context   : @$el.find('#context').val()
       language  : @$el.find('#language').val()
       groupName : @$el.find("#group_name").val()
       groupHost : @$el.find("#group_host").val()
       upPass    : @$el.find("#up_pass").val()
       log       : @$el.find("#log").val().split(/[\s,]+/)
-
-  save: ->
-    @updateModel()
-    @settings.save
+    ,
       success: ->
         Utils.midAlert "Settings saved"
       error: ->
@@ -50,7 +47,7 @@ class SettingsView extends Backbone.View
       </div>
       <div class='label_value'>
         <label for='group_name'>Group name</label><br>
-        <input id='group_name' type='text' value='#{groupName}' disabled='disabled'>
+        <input id='group_name' type='text' value='#{groupName}'>
       </div>
       <div class='label_value'>
         <label for='group_host'>Group host</label><br>
@@ -61,8 +58,8 @@ class SettingsView extends Backbone.View
         <input id='up_pass' type='text' value='#{upPass}'>
       </div>
       <div class='label_value'>
-        <label for='context' title='app, ui, db, err'>Log events</label><br>
-        <input id='language' value='#{log}'>
+        <label for='log' title='app, ui, db, err'>Log events</label><br>
+        <input id='log' value='#{log}'>
       </div>
     </div><br>
     
