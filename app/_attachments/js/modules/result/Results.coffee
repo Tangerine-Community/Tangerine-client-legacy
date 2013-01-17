@@ -6,7 +6,7 @@ class Results extends Backbone.Collection
     view: "resultsByAssessmentId"
 
   comparator: (model) ->
-    model.get('timestamp') || 0
+    model.get('start_time') || 0
 
   # By default include the docs
   fetch: (options) ->

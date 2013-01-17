@@ -19,7 +19,7 @@ Results = (function(_super) {
   };
 
   Results.prototype.comparator = function(model) {
-    return model.get('timestamp') || 0;
+    return model.get('start_time') || 0;
   };
 
   Results.prototype.fetch = function(options) {
