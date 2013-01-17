@@ -15,12 +15,7 @@ ResultSumView = (function(_super) {
   ResultSumView.prototype.className = "info_box";
 
   ResultSumView.prototype.events = {
-    'click .details': 'toggleDetails',
-    'click .resume': 'resume'
-  };
-
-  ResultSumView.prototype.resume = function() {
-    return Tangerine.router.navigate("resume/" + (this.result.get('assessmentId')) + "/" + this.result.id, true);
+    'click .details': 'toggleDetails'
   };
 
   ResultSumView.prototype.toggleDetails = function() {
@@ -52,7 +47,7 @@ ResultSumView = (function(_super) {
     var datum, html, i, _len, _ref;
     html = "<div class='detail_box'>";
     if (!(this.finished || !this.finishCheck)) {
-      html += "<div>Not finished<button class='command resume'>Resume</button></div>";
+      html += "<div>Not finished<a href='#resume/" + (this.result.get('assessmentId')) + "/" + this.result.id + "'><button class='command'>Resume</button></a></div>";
     }
     _ref = this.result.get("subtestData");
     for (i = 0, _len = _ref.length; i < _len; i++) {

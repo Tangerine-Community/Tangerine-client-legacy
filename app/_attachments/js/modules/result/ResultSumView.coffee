@@ -4,10 +4,6 @@ class ResultSumView extends Backbone.View
 
   events:
     'click .details' : 'toggleDetails'
-    'click .resume' : 'resume'
-
-  resume: ->
-    Tangerine.router.navigate "resume/#{@result.get('assessmentId')}/#{@result.id}", true
 
   toggleDetails: ->
     @$el.find('.detail_box').toggle(250)
@@ -26,7 +22,7 @@ class ResultSumView extends Backbone.View
 
   render: ->
     html = "<div class='detail_box'>"
-    html += "<div>Not finished<button class='command resume'>Resume</button></div>" unless @finished || !@finishCheck
+    html += "<div>Not finished<a href='#resume/#{@result.get('assessmentId')}/#{@result.id}'><button class='command'>Resume</button></a></div>" unless @finished || !@finishCheck
     for datum, i in @result.get("subtestData")
       html += "<div><span id='#{@cid}_#{i}'></span>#{datum.name} - items #{datum.sum.total}</div>"
     html += "
