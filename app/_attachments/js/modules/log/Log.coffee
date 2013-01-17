@@ -13,16 +13,19 @@ class Log extends Backbone.Model
       "user"  : Tangerine.user.name
 
   ensure: (callback) ->
-    @set "_id", @calcName()
+    if @get("_id") != @calcName()
+      @set "_id", @calcName()
 
-    # continue old log if possible
-    @fetch
-      success: (model, response, options) =>
-        callback?()
-      error: (model, xhr, options ) =>
-        @save
-          success:=>
-            callback?()
+      # continue old log if possible
+      @fetch
+        success: (model, response, options) =>
+          callback?()
+        error: (model, xhr, options ) =>
+          @save
+            success:=>
+              callback?()
+    else
+      callback?()
 
   #
   # Log using these four functions
@@ -71,7 +74,11 @@ class Log extends Backbone.Model
     logEvents.push logEvent
     @set "logEvents", logEvents
     @ensure =>
-      Tangerine.log.save()
+      Tangerine.log.save
+        error: -> # if we can't save, see if we can fetch first then save.
+          Tangerine.log.fetch
+            success: ->
+              Tangerine.log.add(logEvent)
 
   calcName: ->
     d = new Date()

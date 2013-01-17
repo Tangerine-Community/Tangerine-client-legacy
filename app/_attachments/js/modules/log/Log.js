@@ -26,19 +26,23 @@ Log = (function(_super) {
 
   Log.prototype.ensure = function(callback) {
     var _this = this;
-    this.set("_id", this.calcName());
-    return this.fetch({
-      success: function(model, response, options) {
-        return typeof callback === "function" ? callback() : void 0;
-      },
-      error: function(model, xhr, options) {
-        return _this.save({
-          success: function() {
-            return typeof callback === "function" ? callback() : void 0;
-          }
-        });
-      }
-    });
+    if (this.get("_id") !== this.calcName()) {
+      this.set("_id", this.calcName());
+      return this.fetch({
+        success: function(model, response, options) {
+          return typeof callback === "function" ? callback() : void 0;
+        },
+        error: function(model, xhr, options) {
+          return _this.save({
+            success: function() {
+              return typeof callback === "function" ? callback() : void 0;
+            }
+          });
+        }
+      });
+    } else {
+      return typeof callback === "function" ? callback() : void 0;
+    }
   };
 
   Log.prototype.app = function(code, details) {
@@ -100,7 +104,15 @@ Log = (function(_super) {
     logEvents.push(logEvent);
     this.set("logEvents", logEvents);
     return this.ensure(function() {
-      return Tangerine.log.save();
+      return Tangerine.log.save({
+        error: function() {
+          return Tangerine.log.fetch({
+            success: function() {
+              return Tangerine.log.add(logEvent);
+            }
+          });
+        }
+      });
     });
   };
 
