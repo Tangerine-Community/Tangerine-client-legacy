@@ -39,7 +39,10 @@ KlassGroupingMenuView = (function(_super) {
             _this.parts = [];
             for (_i = 0, _len = subtests.length; _i < _len; _i++) {
               subtest = subtests[_i];
-              _this.parts[subtest.get('part')] = subtest.id;
+              _this.parts[subtest.get('part')] = {
+                "id": subtest.id,
+                "name": subtest.get("name")
+              };
             }
             _this.ready = true;
             return _this.render();
@@ -50,7 +53,7 @@ KlassGroupingMenuView = (function(_super) {
   };
 
   KlassGroupingMenuView.prototype.render = function() {
-    var flagForCurrent, html, part, subtestId, _len, _ref;
+    var flagForCurrent, html, part, subtest, _len, _ref;
     if (this.ready) {
       if (!(this.students != null) || this.students.length === 0) {
         this.$el.html("Please add students to this class.");
@@ -59,10 +62,10 @@ KlassGroupingMenuView = (function(_super) {
       html = "        <select class='part_selector'>          <option disabled='disabled' selected='selected'>Select an assessment</option>          ";
       _ref = this.parts;
       for (part = 0, _len = _ref.length; part < _len; part++) {
-        subtestId = _ref[part];
-        if (subtestId != null) {
+        subtest = _ref[part];
+        if ((subtest != null ? subtest.id : void 0) != null) {
           flagForCurrent = this.currentPart === part ? "**" : '';
-          html += "<option data-part='" + part + "' data-subtestId='" + subtestId + "'>" + part + flagForCurrent + "</option>";
+          html += "<option data-part='" + part + "' data-subtestId='" + subtest.id + "'>" + flagForCurrent + " " + part + " " + subtest.name + "</option>";
         }
       }
       html += "</select>";

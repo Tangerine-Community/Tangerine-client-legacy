@@ -23,7 +23,9 @@ class KlassGroupingMenuView extends Backbone.View
               curriculaId : @curricula.id
             @parts = []
             for subtest in subtests
-              @parts[subtest.get('part')] = subtest.id
+              @parts[subtest.get('part')] =
+                "id"   : subtest.id
+                "name" : subtest.get("name")
             @ready = true
             @render()
 
@@ -40,10 +42,10 @@ class KlassGroupingMenuView extends Backbone.View
         <select class='part_selector'>
           <option disabled='disabled' selected='selected'>Select an assessment</option>
           "
-      for subtestId, part in @parts
-        if subtestId?
+      for subtest, part in @parts
+        if subtest?.id?
           flagForCurrent = if @currentPart == part then "**" else ''
-          html += "<option data-part='#{part}' data-subtestId='#{subtestId}'>#{part}#{flagForCurrent}</option>"
+          html += "<option data-part='#{part}' data-subtestId='#{subtest.id}'>#{flagForCurrent} #{part} #{subtest.name}</option>"
       html += "</select>"
           
       @$el.html html
