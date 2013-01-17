@@ -184,7 +184,7 @@ class ResultsView extends Backbone.View
     csvButton    = "<button class='csv command'>CSV</button>"
 
     html = "
-      <h1>#{@assessment.get('name')}</h1>
+      <h1>#{@assessment.get('name')} results</h1>
       <h2>Save options</h2>
       <div class='menu_box'>
         #{if Tangerine.settings.get("context") == "mobile" then cloudButton  else ""}
@@ -254,7 +254,7 @@ class ResultsView extends Backbone.View
       contentType: "application/json"
       data: 
         keys        : JSON.stringify([@assessment.id])
-        descenting  : true
+        descending  : true
         limit       : @resultLimit
         skip        : @resultOffset
       success: ( data ) =>

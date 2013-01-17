@@ -253,7 +253,7 @@ ResultsView = (function(_super) {
     cloudButton = "<button class='cloud command' disabled='disabled'>Cloud</button>";
     tabletButton = "<button class='tablets command' disabled='disabled'>Tablets</button>";
     csvButton = "<button class='csv command'>CSV</button>";
-    html = "      <h1>" + (this.assessment.get('name')) + "</h1>      <h2>Save options</h2>      <div class='menu_box'>        " + (Tangerine.settings.get("context") === "mobile" ? cloudButton : "") + "        " + (Tangerine.settings.get("context") === "mobile" ? tabletButton : "") + "        " + csvButton + "        <button class='command csv_beta'>CSV (beta)</button>      </div>";
+    html = "      <h1>" + (this.assessment.get('name')) + " results</h1>      <h2>Save options</h2>      <div class='menu_box'>        " + (Tangerine.settings.get("context") === "mobile" ? cloudButton : "") + "        " + (Tangerine.settings.get("context") === "mobile" ? tabletButton : "") + "        " + csvButton + "        <button class='command csv_beta'>CSV (beta)</button>      </div>";
     if (Tangerine.settings.get("context") === "mobile") {
       html += "        <button class='detect command'>Detect options</button>        <div class='status'>          <h2>Status</h2>          <div class='info_box'></div>          <div class='checking_status'></div>        </div>        ";
     }
@@ -292,7 +292,7 @@ ResultsView = (function(_super) {
       contentType: "application/json",
       data: {
         keys: JSON.stringify([this.assessment.id]),
-        descenting: true,
+        descending: true,
         limit: this.resultLimit,
         skip: this.resultOffset
       },
