@@ -598,10 +598,13 @@ Router = (function(_super) {
             });
             return result.fetch({
               success: function(result) {
-                var view;
+                var orderMap, view;
+                console.log(result);
+                orderMap = result.get("order_map").slice();
                 view = new AssessmentRunView({
                   model: assessment
                 });
+                view.orderMap = orderMap;
                 view.result = result;
                 view.subtestViews.pop();
                 view.subtestViews.push(new ResultView({
