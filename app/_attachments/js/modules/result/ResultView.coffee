@@ -29,8 +29,11 @@ class ResultView extends Backbone.View
       Utils.midAlert "Result saved"
       @$el.find('.save_status').html "saved"
       @$el.find('.save_status').removeClass('not_saved')
-      @$el.find('button.save, .question').fadeOut(250)
-      @$el.find('.confirmation').removeClass('confirmation')
+      @$el.find('.question').fadeOut(250)
+
+      $button = @$el.find("button.save")
+
+      $button.removeClass('save').addClass('another').html "Perform another assessment"
     else
       Utils.midAlert "Save error"
       @$el.find('.save_status').html "Results may not have saved"
@@ -60,19 +63,22 @@ class ResultView extends Backbone.View
       finishCheck : false
 
   render: ->
-    @$el.html "<h2>Assessment complete</h2>
-    <button class='save command'>Save result</button><div class='info_box save_status not_saved'>Not saved yet</div><br>
-    <div class='question'>
-      <div class='prompt'>Additional comments (optional)</div>
-      <textarea id='additional_comments' class='full_width'></textarea>
-    </div>
+    @$el.html "
+      <h2>Assessment complete</h2>
 
-    <div class='label_value'>
-      
-      <h2>Subtests completed</h2>
-      <div id='result_sum' class='info_box'></div>
+      <button class='save command'>Save result</button>
+      <div class='info_box save_status not_saved'>Not saved yet</div>
+      <br>
 
-      <div class='confirmation'><button class='another command'>Perform another assessment</button></div>
+      <div class='question'>
+        <div class='prompt'>Additional comments (optional)</div>
+        <textarea id='additional_comments' class='full_width'></textarea>
+      </div>
+
+      <div class='label_value'>
+        <h2>Subtests completed</h2>
+        <div id='result_sum' class='info_box'></div>
+      </div>
     "
 
     @resultSumView.setElement(@$el.find("#result_sum"))

@@ -22,6 +22,7 @@ ResultView = (function(_super) {
   };
 
   ResultView.prototype.save = function() {
+    var $button;
     this.model.add({
       name: "Assessment complete",
       prototype: "complete",
@@ -43,8 +44,9 @@ ResultView = (function(_super) {
       Utils.midAlert("Result saved");
       this.$el.find('.save_status').html("saved");
       this.$el.find('.save_status').removeClass('not_saved');
-      this.$el.find('button.save, .question').fadeOut(250);
-      return this.$el.find('.confirmation').removeClass('confirmation');
+      this.$el.find('.question').fadeOut(250);
+      $button = this.$el.find("button.save");
+      return $button.removeClass('save').addClass('another').html("Perform another assessment");
     } else {
       Utils.midAlert("Save error");
       return this.$el.find('.save_status').html("Results may not have saved");
@@ -77,7 +79,7 @@ ResultView = (function(_super) {
   };
 
   ResultView.prototype.render = function() {
-    this.$el.html("<h2>Assessment complete</h2>    <button class='save command'>Save result</button><div class='info_box save_status not_saved'>Not saved yet</div><br>    <div class='question'>      <div class='prompt'>Additional comments (optional)</div>      <textarea id='additional_comments' class='full_width'></textarea>    </div>    <div class='label_value'>            <h2>Subtests completed</h2>      <div id='result_sum' class='info_box'></div>      <div class='confirmation'><button class='another command'>Perform another assessment</button></div>    ");
+    this.$el.html("      <h2>Assessment complete</h2>      <button class='save command'>Save result</button>      <div class='info_box save_status not_saved'>Not saved yet</div>      <br>      <div class='question'>        <div class='prompt'>Additional comments (optional)</div>        <textarea id='additional_comments' class='full_width'></textarea>      </div>      <div class='label_value'>        <h2>Subtests completed</h2>        <div id='result_sum' class='info_box'></div>      </div>    ");
     this.resultSumView.setElement(this.$el.find("#result_sum"));
     this.resultSumView.render();
     return this.trigger("rendered");
