@@ -599,7 +599,6 @@ Router = (function(_super) {
             return result.fetch({
               success: function(result) {
                 var orderMap, view;
-                console.log(result);
                 orderMap = result.get("order_map").slice();
                 view = new AssessmentRunView({
                   model: assessment

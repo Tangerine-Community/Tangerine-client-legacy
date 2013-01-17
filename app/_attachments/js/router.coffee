@@ -372,7 +372,6 @@ class Router extends Backbone.Router
               "_id" : resultId
             result.fetch
               success: (result) ->
-                console.log result
                 # save the order map of previous randomization
                 orderMap = result.get("order_map").slice() # clone array
                 view = new AssessmentRunView 
