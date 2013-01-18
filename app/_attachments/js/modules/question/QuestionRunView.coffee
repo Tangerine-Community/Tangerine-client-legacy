@@ -60,19 +60,28 @@ class QuestionRunView extends Backbone.View
     @$el.attr "data-result", if _.isString(@answer) then @answer else JSON.stringify(@answer)
 
   updateValidity: ->
-    if @model.get("skippable") is true or ($("#question-#{@name}").hasClass("disabled_skipped") or $("#question-#{@name}").hasClass("disabled_autostop"))
+
+    isSkippable    = @model.getBoolean("skippable")
+    isAutostopped  = @$el.hasClass("disabled_autostop")
+    isLogicSkipped = @$el.hasClass("disabled_skipped")
+
+    # have we or can we be skipped?
+    if isSkippable or ( isLogicSkipped or isAutostopped )
+      # YES, ok, I guess we're valid
       @isValid = true
       @skipped = if _.isEmpty(@answer) then true else false
     else
-      @isValid = if _.isEmpty(@answer) then false else true
+      # NO, some kind of validation must occur now
+      customValidationCode = @model.get("customValidationCode")
 
-    customValidationCode = @model.get("customValidationCode")
+      if not _.isEmpty(customValidationCode)
+        try
+          @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
+        catch e
+          alert "Custom Validation error\n\n#{e}"
+      else
+        @isValid = if _.isEmpty(@answer) then false else true
 
-    if not _.isEmpty(customValidationCode)
-      try
-        @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
-      catch e
-        alert "Custom Validation error\n\n#{e}"
 
   setMessage: (message) =>
     @$el.find(".error_message").html message

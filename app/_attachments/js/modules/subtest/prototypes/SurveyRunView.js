@@ -123,12 +123,12 @@ SurveyRunView = (function(_super) {
     this.questions.each(function(question) {
       var result, skipLogic;
       skipLogic = question.get("skipLogic");
-      if (skipLogic != null) {
-        result = CoffeeScript.eval("" + skipLogic);
+      if (!_.isEmpty(skipLogic)) {
+        result = CoffeeScript.eval(skipLogic);
         if (result) {
-          return $("#question-" + (question.get("name"))).addClass("disabled_skipped");
+          return $("#question-" + (question.get('name'))).addClass("disabled_skipped");
         } else {
-          return $("#question-" + (question.get("name"))).removeClass("disabled_skipped");
+          return $("#question-" + (question.get('name'))).removeClass("disabled_skipped");
         }
       }
     });

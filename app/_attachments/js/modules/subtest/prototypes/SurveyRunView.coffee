@@ -51,10 +51,11 @@ class SurveyRunView extends Backbone.View
             next.scrollTo()
 
     # auto stop after limit
-    @autostopped = false
-    autostopLimit = parseInt(@model.get("autostopLimit")) || 0
+    @autostopped    = false
+    autostopLimit   = parseInt(@model.get("autostopLimit")) || 0
     longestSequence = 0
-    autostopCount = 0
+    autostopCount   = 0
+
     if autostopLimit > 0
       for i in [1..@questionViews.length] # just in case they can't count
         currentAnswer = @questionViews[i-1].answer
@@ -79,12 +80,12 @@ class SurveyRunView extends Backbone.View
   updateSkipLogic: =>
     @questions.each (question) ->
       skipLogic = question.get "skipLogic"
-      if skipLogic?
-        result = CoffeeScript.eval "#{skipLogic}"
+      if not _.isEmpty(skipLogic)
+        result = CoffeeScript.eval skipLogic
         if result
-          $("#question-#{question.get "name"}").addClass "disabled_skipped"
+          $("#question-#{question.get('name')}").addClass "disabled_skipped"
         else
-          $("#question-#{question.get "name"}").removeClass "disabled_skipped"
+          $("#question-#{question.get('name')}").removeClass "disabled_skipped"
     _.each @questionViews, (questionView) ->
       questionView.updateValidity()
       
@@ -114,7 +115,7 @@ class SurveyRunView extends Backbone.View
           qv.notAskedResult
         else if not _.isEmpty(qv.answer) # use answer
           qv.answer
-        else if qv.skipped # 
+        else if qv.skipped 
           qv.skippedResult
         else if qv.$el.hasClass("disabled_skipped")
           qv.logicSkippedResult

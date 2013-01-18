@@ -85,19 +85,23 @@ QuestionRunView = (function(_super) {
   };
 
   QuestionRunView.prototype.updateValidity = function() {
-    var customValidationCode;
-    if (this.model.get("skippable") === true || ($("#question-" + this.name).hasClass("disabled_skipped") || $("#question-" + this.name).hasClass("disabled_autostop"))) {
+    var customValidationCode, isAutostopped, isLogicSkipped, isSkippable;
+    isSkippable = this.model.getBoolean("skippable");
+    isAutostopped = this.$el.hasClass("disabled_autostop");
+    isLogicSkipped = this.$el.hasClass("disabled_skipped");
+    if (isSkippable || (isLogicSkipped || isAutostopped)) {
       this.isValid = true;
-      this.skipped = _.isEmpty(this.answer) ? true : false;
+      return this.skipped = _.isEmpty(this.answer) ? true : false;
     } else {
-      this.isValid = _.isEmpty(this.answer) ? false : true;
-    }
-    customValidationCode = this.model.get("customValidationCode");
-    if (!_.isEmpty(customValidationCode)) {
-      try {
-        return this.isValid = CoffeeScript.eval.apply(this, [customValidationCode]);
-      } catch (e) {
-        return alert("Custom Validation error\n\n" + e);
+      customValidationCode = this.model.get("customValidationCode");
+      if (!_.isEmpty(customValidationCode)) {
+        try {
+          return this.isValid = CoffeeScript.eval.apply(this, [customValidationCode]);
+        } catch (e) {
+          return alert("Custom Validation error\n\n" + e);
+        }
+      } else {
+        return this.isValid = _.isEmpty(this.answer) ? false : true;
       }
     }
   };
