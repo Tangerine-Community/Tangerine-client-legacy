@@ -42,5 +42,5 @@ class Curriculum extends Backbone.Model
 
     # remove model
     super
-      success: =>
+      success: ->
         callback()

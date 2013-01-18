@@ -19,7 +19,7 @@ class SettingsView extends Backbone.View
       upPass    : @$el.find("#up_pass").val()
       log       : @$el.find("#log").val().split(/[\s,]+/)
     ,
-      success: ->
+      success: =>
         Utils.midAlert "Settings saved"
       error: ->
         Utils.midAlert "Error. Settings weren't saved"

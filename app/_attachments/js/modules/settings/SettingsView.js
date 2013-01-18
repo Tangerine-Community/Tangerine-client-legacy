@@ -24,6 +24,7 @@ SettingsView = (function(_super) {
   };
 
   SettingsView.prototype.save = function() {
+    var _this = this;
     return this.settings.save({
       context: this.$el.find('#context').val(),
       language: this.$el.find('#language').val(),

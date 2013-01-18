@@ -137,4 +137,4 @@ class GridEditView extends Backbone.View
         <label for='subtest_timer' title='Seconds to give the child to complete the test. Setting this value to 0 will make the test untimed.'>Timer</label>
         <input id='subtest_timer' value='#{timer}' type='number'>
       </div>"
-    
+

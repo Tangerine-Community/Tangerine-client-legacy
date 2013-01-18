@@ -54,8 +54,7 @@ Curriculum = (function(_super) {
   };
 
   Curriculum.prototype.destroy = function(callback) {
-    var curriculumId, subtests,
-      _this = this;
+    var curriculumId, subtests;
     curriculumId = this.id;
     subtests = new Subtests;
     subtests.fetch({
@@ -70,7 +69,7 @@ Curriculum = (function(_super) {
       }
     });
     return Curriculum.__super__.destroy.call(this, {
-      success: function() {
+      succes: function() {
         return callback();
       }
     });
