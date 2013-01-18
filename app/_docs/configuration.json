@@ -24,9 +24,9 @@
 		"base"   : "192.168.1."
 	},
 
-	"robbert" : "http://tangerine.xen.prgmr.com:82/",
-	"tree"    : "http://tangerine.xen.prgmr.com:81/",
-	"designDoc"       : "tangerine",
+	"robbert" : "http://backup.tangerinecentral.org:82/",
+	"tree"    : "http://backup.tangerinecentral.org:81/",
+	"designDoc"       : "ojai",
 	"port"            : 5984,
 	"groupDBPrefix"   : "group-",
 
@@ -63,13 +63,13 @@
 	{
 		"settings" : 
 		{
-			"context" : "mobile",
+			"context" : "server",
 			"language"         : "en",
-			"groupName"        : "rti_philippines_2013",
+			"groupName"        : "",
 			"groupHost"        : "http://tangerine.iriscouch.com",
 			"groupDDoc"        : "ojai",
-			"upPass"           : "uploaderpassword",
-			"log"              : ["app"]
+			"upPass"           : "",
+			"log"              : [""]
 		}
 	},
 	
