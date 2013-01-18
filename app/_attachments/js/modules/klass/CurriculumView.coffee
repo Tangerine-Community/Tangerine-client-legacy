@@ -242,8 +242,7 @@ class CurriculumView extends Backbone.View
 
   deleteCurriculum: ->
     if confirm("Delete curriculum\n#{@curriculum.get('name')}?")
-      group = @curriculum.get("group")
-      @curriculum.destroy => Tangerine.router.navigate "assessments/#{group}", true
+      @curriculum.destroy => Tangerine.router.navigate "assessments", true
 
   #
   # Subtest new and destroy

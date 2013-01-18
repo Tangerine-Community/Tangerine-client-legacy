@@ -14,6 +14,10 @@ Curriculum = (function(_super) {
 
   Curriculum.prototype.url = "curriculum";
 
+  Curriculum.prototype.isArchived = function() {
+    return false;
+  };
+
   Curriculum.prototype.updateFromServer = function(dKey) {
     var dKeys,
       _this = this;
@@ -50,7 +54,8 @@ Curriculum = (function(_super) {
   };
 
   Curriculum.prototype.destroy = function(callback) {
-    var curriculumId, subtests;
+    var curriculumId, subtests,
+      _this = this;
     curriculumId = this.id;
     subtests = new Subtests;
     subtests.fetch({
@@ -64,8 +69,11 @@ Curriculum = (function(_super) {
         return _results;
       }
     });
-    Curriculum.__super__.destroy.call(this);
-    return callback();
+    return Curriculum.__super__.destroy.call(this, {
+      success: function() {
+        return callback();
+      }
+    });
   };
 
   return Curriculum;

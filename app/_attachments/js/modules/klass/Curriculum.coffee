@@ -2,6 +2,8 @@ class Curriculum extends Backbone.Model
 
   url : "curriculum"
 
+  isArchived: -> false
+
   updateFromServer: ( dKey = @id.substr(-5,5)) =>
 
     # split to handle multiple dkeys
@@ -39,6 +41,6 @@ class Curriculum extends Backbone.Model
       success: (collection) -> collection.pop().destroy() while collection.length != 0
 
     # remove model
-    super()
-
-    callback()
+    super
+      success: =>
+        callback()

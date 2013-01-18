@@ -190,12 +190,10 @@ CurriculumView = (function(_super) {
   };
 
   CurriculumView.prototype.deleteCurriculum = function() {
-    var group,
-      _this = this;
+    var _this = this;
     if (confirm("Delete curriculum\n" + (this.curriculum.get('name')) + "?")) {
-      group = this.curriculum.get("group");
       return this.curriculum.destroy(function() {
-        return Tangerine.router.navigate("assessments/" + group, true);
+        return Tangerine.router.navigate("assessments", true);
       });
     }
   };

@@ -52,6 +52,7 @@ class AssessmentsMenuView extends Backbone.View
   initialize: (options) ->
 
     @assessments = options.assessments
+    @curricula = options.curricula
 
     @assessments.each (assessment) =>
       assessment.on "new", @addToCollection
@@ -59,7 +60,7 @@ class AssessmentsMenuView extends Backbone.View
     @isAdmin = Tangerine.user.isAdmin()
 
     @curriculaListView = new CurriculaListView
-      "curricula" : options.curricula
+      "curricula" : @curricula
 
     @assessmentsView = new AssessmentsView
       "assessments" : @assessments
@@ -129,7 +130,10 @@ class AssessmentsMenuView extends Backbone.View
     return
 
   addToCollection: (newAssessment) =>
-    @assessments.add newAssessment
+    if newAssessment.has("curriculumId")
+      @curricula.add newAssessment    
+    else
+      @assessments.add newAssessment
     newAssessment.on "new", @addToCollection
 
   # Making a new assessment
@@ -172,7 +176,6 @@ class AssessmentsMenuView extends Backbone.View
         @$el.find('.new_form, .new').fadeToggle(250, => @$el.find('.new_name').val(""))
         Utils.midAlert "#{name} saved"
       error: =>
-        @addToCollection(newObject)
         @$el.find('.new_form, .new').fadeToggle(250, => @$el.find('.new_name').val(""))
         Utils.midAlert "Please try again. Error saving."
 

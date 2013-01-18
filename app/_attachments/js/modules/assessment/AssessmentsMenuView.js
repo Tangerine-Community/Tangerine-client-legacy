@@ -80,12 +80,13 @@ AssessmentsMenuView = (function(_super) {
   AssessmentsMenuView.prototype.initialize = function(options) {
     var _this = this;
     this.assessments = options.assessments;
+    this.curricula = options.curricula;
     this.assessments.each(function(assessment) {
       return assessment.on("new", _this.addToCollection);
     });
     this.isAdmin = Tangerine.user.isAdmin();
     this.curriculaListView = new CurriculaListView({
-      "curricula": options.curricula
+      "curricula": this.curricula
     });
     this.assessmentsView = new AssessmentsView({
       "assessments": this.assessments,
@@ -120,7 +121,11 @@ AssessmentsMenuView = (function(_super) {
   };
 
   AssessmentsMenuView.prototype.addToCollection = function(newAssessment) {
-    this.assessments.add(newAssessment);
+    if (newAssessment.has("curriculumId")) {
+      this.curricula.add(newAssessment);
+    } else {
+      this.assessments.add(newAssessment);
+    }
     return newAssessment.on("new", this.addToCollection);
   };
 
@@ -163,7 +168,6 @@ AssessmentsMenuView = (function(_super) {
         return Utils.midAlert("" + name + " saved");
       },
       error: function() {
-        _this.addToCollection(newObject);
         _this.$el.find('.new_form, .new').fadeToggle(250, function() {
           return _this.$el.find('.new_name').val("");
         });
