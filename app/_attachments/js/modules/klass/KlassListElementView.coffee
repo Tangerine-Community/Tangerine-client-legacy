@@ -58,7 +58,7 @@ class KlassListElementView extends Backbone.View
     klass = @options.klass
     @$el.html "
       <table>
-        <tr><td><small>#{t('year')}</small></td><td>#{klass.get 'year'}</td></tr>
+        <tr><td><small>School year</small></td><td>#{klass.get 'year'}</td></tr>
         <tr><td><small>#{t('grade')}</small></td><td>#{klass.get 'grade'}</td></tr>
         <tr><td><small>#{t('stream')}</small></td><td>#{klass.get 'stream'}</td></tr>
         <tr><td><small>#{t('curriculum')}</small></td><td>#{@curriculum.escape 'name' || ""}</td></tr>
