@@ -133,7 +133,7 @@ class KlassEditView extends Backbone.View
     <h1>#{t('class editor')}</h1>
     <h2>#{t('basic info')}</h2>
     <table class='info_box basic_info'>
-      <tr><td><label>#{t('year')}</label></td><td>#{year}</td></tr>
+      <tr><td><label>School year</label></td><td>#{year}</td></tr>
       <tr><td><label>#{t('grade')}</label></td><td>#{grade}</td></tr>
       <tr><td><label>#{t('stream')}</label></td><td>#{stream}</td></tr>
       <tr><td><label>#{t('starting date')}</label></td><td>#{startDate.getFullYear()+"/"+(startDate.getMonth()+1)+"/"+startDate.getDate()}</td></tr>
@@ -142,7 +142,7 @@ class KlassEditView extends Backbone.View
     <div class='basic_info confirmation'>
       <div class='menu_box'>
         <div class='label_value'>
-          <label for='year'>#{t('year')}</label>
+          <label for='year'>School year</label>
           <input id='year' value='#{year}'>
         </div>
         <div class='label_value'>
@@ -179,7 +179,7 @@ class KlassEditView extends Backbone.View
     <div class='register_student_form menu_box confirmation'>
       <h2>#{t('register student')}</h2>
       <div class='label_value'>
-        <label for='register_student_name'>#{t('name')}</label>
+        <label for='register_student_name'>Full name</label>
         <input id='register_student_name' value=''>
       </div>
       <div class='label_value'>

@@ -177,7 +177,7 @@ class KlassesView extends Backbone.View
       <div id='add_form' class='confirmation'>
         <div class='menu_box'> 
           <div class='label_value'>
-            <label for='year'>#{t('year')}</label>
+            <label for='year'>School year</label>
             <input id='year'>
           </div>
           <div class='label_value'>

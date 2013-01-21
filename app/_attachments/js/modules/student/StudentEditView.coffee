@@ -33,7 +33,7 @@ class StudentEditView extends Backbone.View
     <button class='back navigation'>#{t('back')}</button><br>
     <div class='info_box'>
       <div class='label_value'>
-        <label for='name'>#{t('name')}</label>
+        <label for='name'>Full name</label>
         <input id='name' value='#{name}'>
       </div>
       <div class='label_value'>
