@@ -207,7 +207,7 @@ Router = (function(_super) {
                     var view;
                     if (!Tangerine.user.isAdmin()) {
                       klassCollection = new Klasses(klassCollection.where({
-                        "teacher": Tangerine.user.name
+                        "teacherId": Tangerine.user.get("teacherId")
                       }));
                     }
                     view = new KlassesView({

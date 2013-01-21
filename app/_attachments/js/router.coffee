@@ -150,7 +150,7 @@ class Router extends Backbone.Router
                 allCurricula.fetch
                   success: ( curriculaCollection ) ->
                     if not Tangerine.user.isAdmin()
-                      klassCollection = new Klasses klassCollection.where("teacher" : Tangerine.user.name)
+                      klassCollection = new Klasses klassCollection.where("teacherId" : Tangerine.user.get("teacherId"))
                     view = new KlassesView
                       klasses   : klassCollection
                       curricula : curriculaCollection
