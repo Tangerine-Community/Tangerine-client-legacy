@@ -32,6 +32,7 @@ KlassesView = (function(_super) {
     this.views = [];
     this.klasses = options.klasses;
     this.curricula = options.curricula;
+    this.teachers = options.teachers;
     return this.klasses.on("add remove change", this.render);
   };
 
@@ -184,8 +185,11 @@ KlassesView = (function(_super) {
   };
 
   KlassesView.prototype.saveNewKlass = function() {
-    var errors;
+    var errors, teacherId;
     errors = [];
+    if ($.trim(this.$el.find("#school_name").val()) === "") {
+      errors.push(" - No school name.");
+    }
     if ($.trim(this.$el.find("#year").val()) === "") {
       errors.push(" - No year.");
     }
@@ -199,8 +203,10 @@ KlassesView = (function(_super) {
       errors.push(" - No curriculum selected.");
     }
     if (errors.length === 0) {
+      teacherId = Tangerine.user.has("teacherId") ? Tangerine.user.get("teacherId") : "admin";
       return this.klasses.create({
-        teacher: Tangerine.user.name,
+        teacherId: teacherId,
+        schoolName: this.$el.find("#school_name").val(),
         year: this.$el.find("#year").val(),
         grade: this.$el.find("#grade").val(),
         stream: this.$el.find("#stream").val(),
@@ -218,7 +224,7 @@ KlassesView = (function(_super) {
 
   KlassesView.prototype.toggleAddForm = function() {
     this.$el.find("#add_form, .add").toggle();
-    this.$el.find("#year").focus();
+    this.$el.find("#school_name").focus();
     if (this.$el.find("#add_form").is(":visible")) {
       return this.$el.find("#add_form").scrollTo();
     }
@@ -259,7 +265,7 @@ KlassesView = (function(_super) {
     if (Tangerine.user.isAdmin()) {
       adminPanel = "      <h1>Admin menu</h1>      <button class='pull_data command'>Pull data</button>    ";
     }
-    this.$el.html("      " + (adminPanel || "") + "      <h1>" + (t('classes')) + "</h1>      <div id='klass_list_wrapper'></div>      <button class='add command'>" + (t('add')) + "</button>      <div id='add_form' class='confirmation'>        <div class='menu_box'>           <div class='label_value'>            <label for='year'>School year</label>            <input id='year'>          </div>          <div class='label_value'>            <label for='grade'>" + (t('grade')) + "</label>            <input id='grade'>          </div>          <div class='label_value'>            <label for='stream'>" + (t('stream')) + "</label>            <input id='stream'>          </div>          <div class='label_value'>            <label for='curriculum'>" + (t('curriculum')) + "</label><br>            <select id='curriculum'>" + curriculaOptionList + "</select>          </div>          <button class='command save'>" + (t('save')) + "</button><button class='command cancel'>" + (t('cancel')) + "</button>        </div>      </div>      <button class='command curricula'>" + (t('all curricula')) + "</button>    ");
+    this.$el.html("      " + (adminPanel || "") + "      <h1>" + (t('classes')) + "</h1>      <div id='klass_list_wrapper'></div>      <button class='add command'>" + (t('add')) + "</button>      <div id='add_form' class='confirmation'>        <div class='menu_box'>           <div class='label_value'>            <label for='school_name'>School name</label>            <input id='school_name'>          </div>          <div class='label_value'>            <label for='year'>School year</label>            <input id='year'>          </div>          <div class='label_value'>            <label for='grade'>" + (t('grade')) + "</label>            <input id='grade'>          </div>          <div class='label_value'>            <label for='stream'>" + (t('stream')) + "</label>            <input id='stream'>          </div>          <div class='label_value'>            <label for='curriculum'>" + (t('curriculum')) + "</label><br>            <select id='curriculum'>" + curriculaOptionList + "</select>          </div>          <button class='command save'>" + (t('save')) + "</button><button class='command cancel'>" + (t('cancel')) + "</button>        </div>      </div>      <button class='command curricula'>" + (t('all curricula')) + "</button>    ");
     this.renderKlasses();
     return this.trigger("rendered");
   };

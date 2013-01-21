@@ -196,21 +196,28 @@ Router = (function(_super) {
         allKlasses = new Klasses;
         return allKlasses.fetch({
           success: function(klassCollection) {
-            var allCurricula;
-            allCurricula = new Curricula;
-            return allCurricula.fetch({
-              success: function(curriculaCollection) {
-                var view;
-                if (!Tangerine.user.isAdmin()) {
-                  klassCollection = new Klasses(klassCollection.where({
-                    "teacher": Tangerine.user.name
-                  }));
-                }
-                view = new KlassesView({
-                  klasses: klassCollection,
-                  curricula: curriculaCollection
+            var teachers;
+            teachers = new Teachers;
+            return teachers.fetch({
+              success: function() {
+                var allCurricula;
+                allCurricula = new Curricula;
+                return allCurricula.fetch({
+                  success: function(curriculaCollection) {
+                    var view;
+                    if (!Tangerine.user.isAdmin()) {
+                      klassCollection = new Klasses(klassCollection.where({
+                        "teacher": Tangerine.user.name
+                      }));
+                    }
+                    view = new KlassesView({
+                      klasses: klassCollection,
+                      curricula: curriculaCollection,
+                      teachers: teachers
+                    });
+                    return vm.show(view);
+                  }
                 });
-                return vm.show(view);
               }
             });
           }

@@ -53,10 +53,11 @@ class KlassEditView extends Backbone.View
     if $basicInfo.is(":visible")
       $basicInfo.scrollTo()
       @$el.find("#year").focus()
-      
-    @$el.find("#year").val(  @klass.get("year")   || "")
-    @$el.find("#grade").val( @klass.get("grade")  || "")
-    @$el.find("#stream").val(@klass.get("stream") || "")
+
+    @$el.find("#school_name").val @klass.getString("schoolName")
+    @$el.find("#year").val        @klass.getString("year")
+    @$el.find("#grade").val       @klass.getString("grade")
+    @$el.find("#stream").val      @klass.getString("stream")
   
   basicInfoSave: ->
     inputs = @$el.find("#start_date").val().split("/")
@@ -65,14 +66,18 @@ class KlassEditView extends Backbone.View
     newDate.setMonth(parseInt(inputs[1]) - 1)
     newDate.setDate(parseInt(inputs[2]))
 
-    @klass.set
-      year      : @$el.find("#year").val()
-      grade     : @$el.find("#grade").val()
-      stream    : @$el.find("#stream").val()
-      startDate : newDate.getTime()
-
-    @klass.save()
-    @render()
+    
+    @klass.save
+      schoolName : @$el.find("#school_name").val()
+      year       : @$el.find("#year").val()
+      grade      : @$el.find("#grade").val()
+      stream     : @$el.find("#stream").val()
+      startDate  : newDate.getTime()
+    ,
+      success: =>
+        @render()
+      error: =>
+        Utils.midAlert "Save error<br>Please try again."
 
   back: ->
     window.history.back()
@@ -123,16 +128,19 @@ class KlassEditView extends Backbone.View
 
   render: ->
 
-    year      = @klass.get("year")   || ""
-    grade     = @klass.get("grade")  || ""
-    stream    = @klass.get("stream") || ""
-    startDate = new Date(parseInt(@klass.get("startDate")))
+    schoolName = @klass.getString "schoolName"
+    year       = @klass.getString "year"
+    grade      = @klass.getString "grade"
+    stream     = @klass.getString "stream"
+
+    startDate  = new Date @klass.getNumber "startDate"
 
     @$el.html "
     <button class='back navigation'>#{t('back')}</button>
     <h1>#{t('class editor')}</h1>
     <h2>#{t('basic info')}</h2>
     <table class='info_box basic_info'>
+      <tr><td><label>School name</label></td><td>#{schoolName}</td></tr>
       <tr><td><label>School year</label></td><td>#{year}</td></tr>
       <tr><td><label>#{t('grade')}</label></td><td>#{grade}</td></tr>
       <tr><td><label>#{t('stream')}</label></td><td>#{stream}</td></tr>
@@ -141,6 +149,11 @@ class KlassEditView extends Backbone.View
     </table>
     <div class='basic_info confirmation'>
       <div class='menu_box'>
+
+        <div class='label_value'>
+          <label for='school_name'>School name</label>
+          <input id='school_name' value='#{schoolName}'>
+        </div>
         <div class='label_value'>
           <label for='year'>School year</label>
           <input id='year' value='#{year}'>
@@ -198,7 +211,3 @@ class KlassEditView extends Backbone.View
     @trigger "rendered"
 
     @renderStudents()
-
-
-
-

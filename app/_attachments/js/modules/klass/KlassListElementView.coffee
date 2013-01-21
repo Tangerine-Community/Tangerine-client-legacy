@@ -56,12 +56,25 @@ class KlassListElementView extends Backbone.View
   
   render: =>
     klass = @options.klass
+
+    if klass.get("teacherId") == "admin"
+      teacherName = "admin"
+    else
+      teacher = vm.currentView.teachers.get(klass.get("teacherId"))
+      teacherName = teacher?.getEscapedString('name') || ""
+
+    htmlTeacher = "
+      <tr><td><small>Teacher</small></td><td>#{teacherName}</td></tr>
+    " if Tangerine.user.isAdmin() 
+
     @$el.html "
       <table>
-        <tr><td><small>School year</small></td><td>#{klass.get 'year'}</td></tr>
-        <tr><td><small>#{t('grade')}</small></td><td>#{klass.get 'grade'}</td></tr>
-        <tr><td><small>#{t('stream')}</small></td><td>#{klass.get 'stream'}</td></tr>
-        <tr><td><small>#{t('curriculum')}</small></td><td>#{@curriculum.escape 'name' || ""}</td></tr>
+        #{htmlTeacher || ""}
+        <tr><td><small>School name</small></td><td>#{klass.getEscapedString('schoolName')}</td></tr>
+        <tr><td><small>School year</small></td><td>#{klass.getString('year')}</td></tr>
+        <tr><td><small>#{t('grade')}</small></td><td>#{klass.getString('grade')}</td></tr>
+        <tr><td><small>#{t('stream')}</small></td><td>#{klass.getString('stream')}</td></tr>
+        <tr><td><small>#{t('curriculum')}</small></td><td>#{@curriculum.getEscapedString('name')}</td></tr>
       </table>
       <img src='images/icon_run.png'     class='icon run'> 
       <img src='images/icon_results.png' class='icon results'> 

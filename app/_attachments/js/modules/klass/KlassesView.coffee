@@ -12,6 +12,7 @@ class KlassesView extends Backbone.View
     @views = []
     @klasses   = options.klasses
     @curricula = options.curricula
+    @teachers  = options.teachers
     
     @klasses.on "add remove change", @render
 
@@ -112,6 +113,7 @@ class KlassesView extends Backbone.View
 
   saveNewKlass: ->
     errors = []
+    errors.push " - No school name." if $.trim(@$el.find("#school_name").val()) == ""
     errors.push " - No year."   if $.trim(@$el.find("#year").val())   == "" 
     errors.push " - No grade."  if $.trim(@$el.find("#grade").val())  == "" 
     errors.push " - No stream." if $.trim(@$el.find("#stream").val()) == "" 
@@ -119,8 +121,13 @@ class KlassesView extends Backbone.View
     
     
     if errors.length == 0
+      teacherId = if Tangerine.user.has("teacherId")
+        Tangerine.user.get("teacherId")
+      else
+        "admin"
       @klasses.create
-        teacher      : Tangerine.user.name
+        teacherId    : teacherId
+        schoolName   : @$el.find("#school_name").val()
         year         : @$el.find("#year").val()
         grade        : @$el.find("#grade").val()
         stream       : @$el.find("#stream").val()
@@ -134,9 +141,8 @@ class KlassesView extends Backbone.View
 
   toggleAddForm: ->
     @$el.find("#add_form, .add").toggle()
-    @$el.find("#year").focus()
+    @$el.find("#school_name").focus()
     if @$el.find("#add_form").is(":visible") then @$el.find("#add_form").scrollTo()
-
 
   renderKlasses: ->
     @closeViews()
@@ -176,6 +182,10 @@ class KlassesView extends Backbone.View
       <button class='add command'>#{t('add')}</button>
       <div id='add_form' class='confirmation'>
         <div class='menu_box'> 
+          <div class='label_value'>
+            <label for='school_name'>School name</label>
+            <input id='school_name'>
+          </div>
           <div class='label_value'>
             <label for='year'>School year</label>
             <input id='year'>

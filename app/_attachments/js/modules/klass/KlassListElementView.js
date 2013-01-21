@@ -87,9 +87,18 @@ KlassListElementView = (function(_super) {
   };
 
   KlassListElementView.prototype.render = function() {
-    var klass, report;
+    var htmlTeacher, klass, report, teacher, teacherName;
     klass = this.options.klass;
-    this.$el.html("      <table>        <tr><td><small>School year</small></td><td>" + (klass.get('year')) + "</td></tr>        <tr><td><small>" + (t('grade')) + "</small></td><td>" + (klass.get('grade')) + "</td></tr>        <tr><td><small>" + (t('stream')) + "</small></td><td>" + (klass.get('stream')) + "</td></tr>        <tr><td><small>" + (t('curriculum')) + "</small></td><td>" + (this.curriculum.escape('name' || "")) + "</td></tr>      </table>      <img src='images/icon_run.png'     class='icon run'>       <img src='images/icon_results.png' class='icon results'>       <img src='images/icon_edit.png'    class='icon edit'>       <img src='images/icon_delete.png'  class='icon delete'>       <div class='report_select_container confirmation'>        <div class='menu_box'>          <select id='report'>            <option selected='selected' disabled='disabled'>" + (t('select report type')) + "</option>            " + (((function() {
+    if (klass.get("teacherId") === "admin") {
+      teacherName = "admin";
+    } else {
+      teacher = vm.currentView.teachers.get(klass.get("teacherId"));
+      teacherName = (teacher != null ? teacher.getEscapedString('name') : void 0) || "";
+    }
+    if (Tangerine.user.isAdmin()) {
+      htmlTeacher = "      <tr><td><small>Teacher</small></td><td>" + teacherName + "</td></tr>    ";
+    }
+    this.$el.html("      <table>        " + (htmlTeacher || "") + "        <tr><td><small>School name</small></td><td>" + (klass.getEscapedString('schoolName')) + "</td></tr>        <tr><td><small>School year</small></td><td>" + (klass.getString('year')) + "</td></tr>        <tr><td><small>" + (t('grade')) + "</small></td><td>" + (klass.getString('grade')) + "</td></tr>        <tr><td><small>" + (t('stream')) + "</small></td><td>" + (klass.getString('stream')) + "</td></tr>        <tr><td><small>" + (t('curriculum')) + "</small></td><td>" + (this.curriculum.getEscapedString('name')) + "</td></tr>      </table>      <img src='images/icon_run.png'     class='icon run'>       <img src='images/icon_results.png' class='icon results'>       <img src='images/icon_edit.png'    class='icon edit'>       <img src='images/icon_delete.png'  class='icon delete'>       <div class='report_select_container confirmation'>        <div class='menu_box'>          <select id='report'>            <option selected='selected' disabled='disabled'>" + (t('select report type')) + "</option>            " + (((function() {
       var _i, _len, _ref, _results;
       _ref = this.availableReports;
       _results = [];

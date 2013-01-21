@@ -28,17 +28,26 @@ class RegisterTeacherView extends Backbone.View
 
   saveUser: ->
 
-    userDoc = "name" : @name
-    (userDoc[element] = @[element].val()) for element in @fields
+    teacherDoc = 
+      "name" : @name
 
-    Tangerine.$db.saveDoc $.extend(userDoc, "collection" : "teacher")
+    (teacherDoc[element] = @[element].val()) for element in @fields
 
-    $.couch.signup userDoc, @pass,
+    couchUserDoc = 
+      "name" : @name
+
+    teacher = new Teacher teacherDoc
+    teacher.save null,
       success: =>
-        Utils.midAlert "New teacher registered"
-        Tangerine.user.login @name, @pass
-      error: (error) ->
-        Utils.midAlert "Registration error<br>#{error}", 5000
+        couchUserDoc["teacherId"] = teacher.id
+        console.log "couchuserodoc"
+        console.log couchUserDoc
+        $.couch.signup couchUserDoc, @pass,
+          success: =>
+            Utils.midAlert "New teacher registered"
+            Tangerine.user.login @name, @pass
+          error: (error) ->
+            Utils.midAlert "Registration error<br>#{error}", 5000
 
 
   render: ->

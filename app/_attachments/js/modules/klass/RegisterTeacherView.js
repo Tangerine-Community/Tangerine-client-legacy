@@ -49,26 +49,34 @@ RegisterTeacherView = (function(_super) {
   };
 
   RegisterTeacherView.prototype.saveUser = function() {
-    var element, userDoc, _i, _len, _ref,
+    var couchUserDoc, element, teacher, teacherDoc, _i, _len, _ref,
       _this = this;
-    userDoc = {
+    teacherDoc = {
       "name": this.name
     };
     _ref = this.fields;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       element = _ref[_i];
-      userDoc[element] = this[element].val();
+      teacherDoc[element] = this[element].val();
     }
-    Tangerine.$db.saveDoc($.extend(userDoc, {
-      "collection": "teacher"
-    }));
-    return $.couch.signup(userDoc, this.pass, {
+    couchUserDoc = {
+      "name": this.name
+    };
+    teacher = new Teacher(teacherDoc);
+    return teacher.save(null, {
       success: function() {
-        Utils.midAlert("New teacher registered");
-        return Tangerine.user.login(_this.name, _this.pass);
-      },
-      error: function(error) {
-        return Utils.midAlert("Registration error<br>" + error, 5000);
+        couchUserDoc["teacherId"] = teacher.id;
+        console.log("couchuserodoc");
+        console.log(couchUserDoc);
+        return $.couch.signup(couchUserDoc, _this.pass, {
+          success: function() {
+            Utils.midAlert("New teacher registered");
+            return Tangerine.user.login(_this.name, _this.pass);
+          },
+          error: function(error) {
+            return Utils.midAlert("Registration error<br>" + error, 5000);
+          }
+        });
       }
     });
   };

@@ -889,6 +889,10 @@ table.basic_info {
 table.basic_info th {
   text-align: left;
   padding-right: 5px;
+  vertical-align: middle;
+}
+table.basic_info td {
+  vertical-align: middle;
 }
 .edit_form {
   position: relative;
