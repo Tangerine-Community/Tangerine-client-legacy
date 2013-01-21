@@ -74,7 +74,7 @@ class SurveyRunView extends Backbone.View
     autostopLimit = parseInt(@model.get("autostopLimit")) || 0
     for view, i in @questionViews
       if i > (@autostopIndex - 1)
-        view.$el.addClass    "disabled_autostop" if @autostopped
+        view.$el.addClass    "disabled_autostop" if     @autostopped
         view.$el.removeClass "disabled_autostop" if not @autostopped
 
   updateSkipLogic: =>
