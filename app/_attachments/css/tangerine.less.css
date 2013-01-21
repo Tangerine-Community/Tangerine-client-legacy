@@ -1128,6 +1128,10 @@ button.navigation:hover {
 .command:hover {
   background-color: #f6ef9a;
 }
+.command.selected {
+  color: white;
+  background-color: #8cc63f;
+}
 .command_red {
   text-decoration: none;
   display: inline-block;

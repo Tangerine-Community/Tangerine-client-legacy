@@ -34,7 +34,11 @@ ProgressView = (function(_super) {
   };
 
   ProgressView.prototype.selectItemType = function(event) {
-    this.selected.itemType = $(event.target).attr('data-itemType');
+    var $target;
+    $target = $(event.target);
+    this.selected.itemType = $target.attr('data-itemType');
+    this.$el.find(".select_itemType").removeClass("selected");
+    $target.addClass("selected");
     this.updateTable();
     return this.updateFlot();
   };
@@ -125,6 +129,12 @@ ProgressView = (function(_super) {
       });
     }
     this.rows = this.aggregate(this.rows);
+    if (this.rows.length !== 0) {
+      this.selected = {
+        week: this.rows.length - 1,
+        itemType: _.last(this.rows)['itemTypes'][0].key
+      };
+    }
     pointsByItemType = {};
     _ref4 = this.rows;
     for (i = _m = 0, _len3 = _ref4.length; _m < _len3; i = ++_m) {
@@ -192,7 +202,7 @@ ProgressView = (function(_super) {
   };
 
   ProgressView.prototype.render = function() {
-    var $window, flotObject, html, key, win, _ref;
+    var $window, flotObject, html, key, selectedClass, studentName, win, _ref;
     if (!this.renderReady) {
       return;
     }
@@ -201,12 +211,16 @@ ProgressView = (function(_super) {
       h: $window.height(),
       w: $window.width()
     };
-    html = "      <h1>Progress table</h1>      <h2>" + (this.mode === this.INDIVIDUAL ? this.student.get("name") : "") + "</h2>    ";
+    if (this.mode === this.INDIVIDUAL) {
+      studentName = "      <h2>" + (this.student.get('name')) + "</h2>    ";
+    }
+    html = "      <h1>Progress table</h1>      " + (studentName || "") + "    ";
     html += "      <div id='flot-menu'>      ";
     _ref = this.flotData;
     for (key in _ref) {
       flotObject = _ref[key];
-      html += "<button class='command select_itemType' data-itemType='" + flotObject.key + "'>" + flotObject.label + "</button>";
+      selectedClass = flotObject.key === this.selected.itemType ? "selected" : "";
+      html += "<button class='command select_itemType " + selectedClass + "' data-itemType='" + flotObject.key + "'>" + flotObject.label + "</button>";
     }
     html += "      </div>      <div id='flot-container' style='width: " + (window.w * 0.8) + "px; height:300px;'></div>    ";
     html += "    <div id='table_container'></div>    <button class='navigation back'>" + (t('back')) + "</button>    ";

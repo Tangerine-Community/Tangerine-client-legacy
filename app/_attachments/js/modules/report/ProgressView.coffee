@@ -18,7 +18,10 @@ class ProgressView extends Backbone.View
     @updateFlot()
 
   selectItemType: (event) ->
-    @selected.itemType = $(event.target).attr('data-itemType')
+    $target = $(event.target)
+    @selected.itemType = $target.attr('data-itemType')
+    @$el.find(".select_itemType").removeClass("selected")
+    $target.addClass("selected")
     @updateTable()
     @updateFlot()
 
@@ -116,7 +119,16 @@ class ProgressView extends Backbone.View
     # Aggregate mode averages data across students
     #
     @rows = @aggregate @rows
-    
+
+    #
+    # Select the most recent thing with data
+    #
+
+    if @rows.length != 0
+      @selected =
+        week     : @rows.length - 1
+        itemType : _.last(@rows)['itemTypes'][0].key
+
     #
     # Make flot data
     #
@@ -179,9 +191,14 @@ class ProgressView extends Backbone.View
     win = 
       h : $window.height()
       w : $window.width()
+    
+    studentName = "
+      <h2>#{@student.get('name')}</h2>
+    " if @mode == @INDIVIDUAL
+
     html = "
       <h1>Progress table</h1>
-      <h2>#{if @mode == @INDIVIDUAL then @student.get("name") else ""}</h2>
+      #{studentName || ""}
     "
 
     #
@@ -191,7 +208,8 @@ class ProgressView extends Backbone.View
       <div id='flot-menu'>
       "
     for key, flotObject of @flotData
-      html += "<button class='command select_itemType' data-itemType='#{flotObject.key}'>#{flotObject.label}</button>"
+      selectedClass = if flotObject.key == @selected.itemType then "selected" else ""
+      html += "<button class='command select_itemType #{selectedClass}' data-itemType='#{flotObject.key}'>#{flotObject.label}</button>"
 
     html += "
       </div>
