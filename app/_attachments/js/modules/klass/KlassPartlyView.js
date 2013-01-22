@@ -55,7 +55,7 @@ KlassPartlyView = (function(_super) {
   };
 
   KlassPartlyView.prototype.nextPart = function() {
-    if (this.currentPart < this.subtestsByPart.length - 1) {
+    if (this.currentPart < this.lastPart) {
       this.currentPart++;
       return this.update();
     }
@@ -69,23 +69,11 @@ KlassPartlyView = (function(_super) {
   };
 
   KlassPartlyView.prototype.initialize = function(options) {
-    var byPart, part;
     this.search = "";
     this.currentPart = options.part || 1;
     this.subtestsByPart = [];
-    part = 1;
-    while ((byPart = options.subtests.where({
-        "part": part
-      })).length !== 0) {
-      if (byPart !== 0) {
-        this.subtestsByPart[part] = byPart;
-      }
-      this.subtestsByPart[part].sort(function(a, b) {
-        return a.get("name").toLowerCase() > b.get("name").toLowerCase();
-      });
-      part++;
-    }
-    return this.totalParts = part - 1;
+    this.subtestsByPart = options.subtests.indexBy("part");
+    return this.lastPart = Math.max.apply(this, _.compact(options.subtests.pluck("part"))) || 1;
   };
 
   KlassPartlyView.prototype.updateGridPage = function() {
@@ -96,6 +84,9 @@ KlassPartlyView = (function(_super) {
     var cell, column, gridPage, i, j, resultsForThisStudent, row, student, studentResult, subtest, subtestsThisPart, table, taken, takenClass, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref;
     table = [];
     subtestsThisPart = this.subtestsByPart[this.currentPart];
+    if (!(subtestsThisPart != null)) {
+      return "No subtests for this assessment.";
+    }
     _ref = this.options.students.models;
     for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
       student = _ref[i];

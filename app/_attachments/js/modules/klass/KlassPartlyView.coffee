@@ -44,7 +44,7 @@ class KlassPartlyView extends Backbone.View
     Tangerine.router.navigate "class/result/student/subtest/#{studentId}/#{subtestId}", true
 
   nextPart: ->
-    if @currentPart < @subtestsByPart.length-1
+    if @currentPart < @lastPart
       @currentPart++
       @update()
 
@@ -57,12 +57,12 @@ class KlassPartlyView extends Backbone.View
     @search = ""
     @currentPart = options.part || 1
     @subtestsByPart = []
-    part = 1
-    while (byPart=options.subtests.where "part" : part).length != 0
-      @subtestsByPart[part] = byPart unless byPart == 0
-      @subtestsByPart[part].sort (a,b) -> a.get("name").toLowerCase() > b.get("name").toLowerCase()
-      part++
-    @totalParts = part - 1
+
+    @subtestsByPart = options.subtests.indexBy "part"
+
+    @lastPart = Math.max.apply(@, _.compact(options.subtests.pluck("part"))) || 1
+
+
 
   updateGridPage:->
     @$el.find("#grid_container").html @getGridPage()
@@ -70,6 +70,7 @@ class KlassPartlyView extends Backbone.View
   getGridPage: ->
     table = []
     subtestsThisPart = @subtestsByPart[@currentPart]
+    return "No subtests for this assessment." if not subtestsThisPart?
     for student, i in @options.students.models
       table[i] = []
 
