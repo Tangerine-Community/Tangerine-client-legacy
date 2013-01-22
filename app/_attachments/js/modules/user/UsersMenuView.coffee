@@ -36,15 +36,17 @@ class UsersMenuView extends Backbone.View
         Robbert.request
           "action" : action
           "user"   : user
-          "group"  : _.last(Tangerine.settings.get("groupName").split("group-")) # without group prefix
+          "group"  : Tangerine.settings.get("groupName") # without group prefix
           "auth_u" : Tangerine.user.get("name")
           "auth_p" : auth_p
           success : ( response ) =>
-            Utils.midAlert(response.message)
+            console.log response
+            Utils.midAlert response.message
             Tangerine.user.fetch success: =>
               @render()
           error : (error) =>
-            Utils.midAlert "Error creating group\n\n#{error[1]}\n#{error[2]}"
+            Utils.midAlert "Server error\n\n#{error[1]}\n#{error[2]}"
+            console.log arguments
 
   initialize: ->
 

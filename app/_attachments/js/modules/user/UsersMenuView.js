@@ -59,10 +59,11 @@ UsersMenuView = (function(_super) {
       return Robbert.request({
         "action": action,
         "user": user,
-        "group": _.last(Tangerine.settings.get("groupName").split("group-")),
+        "group": Tangerine.settings.get("groupName"),
         "auth_u": Tangerine.user.get("name"),
         "auth_p": auth_p,
         success: function(response) {
+          console.log(response);
           Utils.midAlert(response.message);
           return Tangerine.user.fetch({
             success: function() {
@@ -71,7 +72,8 @@ UsersMenuView = (function(_super) {
           });
         },
         error: function(error) {
-          return Utils.midAlert("Error creating group\n\n" + error[1] + "\n" + error[2]);
+          Utils.midAlert("Server error\n\n" + error[1] + "\n" + error[2]);
+          return console.log(arguments);
         }
       });
     });
