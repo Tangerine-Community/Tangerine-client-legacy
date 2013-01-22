@@ -16,7 +16,7 @@ Students = (function(_super) {
   Students.prototype.url = "student";
 
   Students.prototype.comparator = function(model) {
-    return model.get("name");
+    return model.get("name").toLowerCase();
   };
 
   return Students;

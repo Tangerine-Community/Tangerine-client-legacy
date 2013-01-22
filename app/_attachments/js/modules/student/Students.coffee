@@ -4,4 +4,4 @@ class Students extends Backbone.Collection
   url: "student"
 
   comparator: (model) ->
-    model.get("name")
+    model.get("name").toLowerCase()
