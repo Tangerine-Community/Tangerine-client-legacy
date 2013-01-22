@@ -113,7 +113,26 @@ class KlassGroupingView extends Backbone.View
         else
           50
 
-      index = @getQuartile(percentile)
+      pc = person.pCorrect
+
+      index = 
+        if pc >= 80
+          index = 3
+        else if pc >= 60 && pc <= 79
+          index = 2
+        else if pc >= 30 && pc <= 59
+          index = 1
+        else
+          index = 0
+
+
+      # old way
+      # index = @getQuartile(percentile)
+      
+      ### semi-old way
+      Math.floor(person.pCorrect / 100 * 4)
+      index = 3 if index == 4
+      ###
 
       @table[i].deviation  = devIndex / 100
       @table[i].percentile = percentile
@@ -128,7 +147,7 @@ class KlassGroupingView extends Backbone.View
     
     # warning flags
     nStudentsNotReady = 0
-    (nStudentsNotReady++ if person.pCorrect < 80) for person in @table
+    (nStudentsNotReady++ if person.pCorrect < 75) for person in @table
     pNotReady = (nStudentsNotReady/@table.length) * 100
     isClassReady = pNotReady < 20
 
@@ -204,7 +223,7 @@ class KlassGroupingView extends Backbone.View
       <table class='details'>
       <tr>
         <th>Name</th>
-        <th>Percentile</th>
+        <th>% correct</th>
         <th>Status</th>
       </tr>
     "
@@ -215,7 +234,7 @@ class KlassGroupingView extends Backbone.View
       detailsHTML += "
         <tr class='#{@colorClass[person.index]}'>
           <td class='student_name icon' data-studentId='#{person.studentId}'>#{person.name}</td>
-          <td>#{person.percentile}</td>
+          <td>#{person.pCorrect}</td>
           <td>#{person.status}</td>
         </tr>
         "

@@ -82,7 +82,7 @@ KlassGroupingView = (function(_super) {
   };
 
   KlassGroupingView.prototype.updateTable = function() {
-    var aCorrect, classNotReady, classReady, dev, devIndex, i, index, isClassReady, nStudentsNotReady, pNotReady, percentile, person, result, warningIcon, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
+    var aCorrect, classNotReady, classReady, dev, devIndex, i, index, isClassReady, nStudentsNotReady, pNotReady, pc, percentile, person, result, warningIcon, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
     this.table = [];
     aCorrect = 0;
     this.subtest = this.subtests.get(this.selected.subtestId);
@@ -133,7 +133,13 @@ KlassGroupingView = (function(_super) {
       dev = (person.pCorrect - this.summary.aCorrect) / this.summary.stdDev;
       devIndex = Math.round(dev * 100);
       percentile = devIndex > 409 || devIndex < -409 ? 0 : devIndex > 0 ? 100 * Math.round(50 + 100 * this.normalCurve[devIndex]) / 100 : devIndex < 0 ? 100 * Math.round(50 - 100 * this.normalCurve[devIndex * -1]) / 100 : 50;
-      index = this.getQuartile(percentile);
+      pc = person.pCorrect;
+      index = pc >= 80 ? index = 3 : pc >= 60 && pc <= 79 ? index = 2 : pc >= 30 && pc <= 59 ? index = 1 : index = 0;
+      /* semi-old way
+      Math.floor(person.pCorrect / 100 * 4)
+      index = 3 if index == 4
+      */
+
       this.table[i].deviation = devIndex / 100;
       this.table[i].percentile = percentile;
       this.table[i].index = index;
@@ -149,7 +155,7 @@ KlassGroupingView = (function(_super) {
     _ref3 = this.table;
     for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
       person = _ref3[_l];
-      if (person.pCorrect < 80) {
+      if (person.pCorrect < 75) {
         nStudentsNotReady++;
       }
     }
@@ -183,12 +189,12 @@ KlassGroupingView = (function(_super) {
     }
     menuHTML += "</div>";
     summaryHTML = "<h1>Summary</h1>    <table class='summary'>      <tr><th>Subtest Name</th>          <td>" + this.summary.name + "</td></tr>      <tr><th>Class Size</th>            <td>" + this.summary.classSize + "</td></tr>      <tr><th>Students Assessed</th>     <td>" + this.summary.resultCount + "</td></tr>      <tr><th>Average Correct (%)</th>   <td>" + this.summary.aCorrect + "%</td></tr>      <tr><th>Average Correct</th>       <td>" + this.summary.anCorrect + " / " + this.summary.attempted + "</td></tr>      <tr><th>Students to watch</th>     <td>" + (this.summary.watchList.join(', ')) + "</td></tr>    </table>";
-    detailsHTML = "      <h1>Student grouping</h1>      <table class='details'>      <tr>        <th>Name</th>        <th>Percentile</th>        <th>Status</th>      </tr>    ";
+    detailsHTML = "      <h1>Student grouping</h1>      <table class='details'>      <tr>        <th>Name</th>        <th>% correct</th>        <th>Status</th>      </tr>    ";
     itemizedResults = "";
     _ref1 = this.table;
     for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
       person = _ref1[_j];
-      detailsHTML += "        <tr class='" + this.colorClass[person.index] + "'>          <td class='student_name icon' data-studentId='" + person.studentId + "'>" + person.name + "</td>          <td>" + person.percentile + "</td>          <td>" + person.status + "</td>        </tr>        ";
+      detailsHTML += "        <tr class='" + this.colorClass[person.index] + "'>          <td class='student_name icon' data-studentId='" + person.studentId + "'>" + person.name + "</td>          <td>" + person.pCorrect + "</td>          <td>" + person.status + "</td>        </tr>        ";
       itemizedResults += "        <table class='itemized_results confirmation student_" + person.studentId + "'>          <tbody><tr><th>Item</th><th>Result</th></tr>      ";
       _ref2 = person.items;
       for (i = _k = 0, _len2 = _ref2.length; _k < _len2; i = ++_k) {
