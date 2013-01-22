@@ -34,7 +34,6 @@ KlassPartlyView = (function(_super) {
       return;
     }
     this.currentPart = parseInt(val);
-    console.log(this.$el.find("#current_part").val());
     return this.updateGridPage();
   };
 

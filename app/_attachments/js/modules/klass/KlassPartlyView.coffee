@@ -27,7 +27,6 @@ class KlassPartlyView extends Backbone.View
     val = @$el.find("#current_part").val()
     if val == "" then return
     @currentPart = parseInt(val)
-    console.log @$el.find("#current_part").val()
     @updateGridPage()
 
   update: ->
@@ -71,6 +70,7 @@ class KlassPartlyView extends Backbone.View
     table = []
     subtestsThisPart = @subtestsByPart[@currentPart]
     return "No subtests for this assessment." if not subtestsThisPart?
+
     for student, i in @options.students.models
       table[i] = []
 
