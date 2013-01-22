@@ -300,6 +300,7 @@ Router = (function(_super) {
                             subtests = new Subtests(collection.where({
                               "curriculumId": klass.get("curriculumId")
                             }));
+                            console.log(subtests);
                             view = new KlassPartlyView({
                               "part": part,
                               "subtests": subtests,
@@ -736,6 +737,9 @@ Router = (function(_super) {
                 return students.fetch({
                   success: function() {
                     var view;
+                    students = new Students(students.where({
+                      "klassId": klassId
+                    }));
                     view = new KlassGroupingView({
                       "students": students,
                       "subtests": subtests,

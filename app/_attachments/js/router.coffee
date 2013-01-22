@@ -199,7 +199,7 @@ class Router extends Backbone.Router
                         allSubtests.fetch
                           success: (collection ) ->
                             subtests = new Subtests ( collection.where( "curriculumId" : klass.get("curriculumId") ) )
-
+                            console.log subtests
                             view = new KlassPartlyView
                               "part"       : part
                               "subtests"   : subtests
@@ -464,6 +464,7 @@ class Router extends Backbone.Router
                   students = new Students
                   students.fetch
                     success: ->
+                      students = new Students students.where "klassId" : klassId
                       view = new KlassGroupingView
                         "students" : students
                         "subtests" : subtests
