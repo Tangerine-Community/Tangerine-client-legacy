@@ -609,12 +609,21 @@ Router = (function(_super) {
             });
             return result.fetch({
               success: function(result) {
-                var orderMap, view;
-                orderMap = result.get("order_map").slice();
+                var orderMap, subtest, view, _i, _len, _ref;
                 view = new AssessmentRunView({
                   model: assessment
                 });
-                view.orderMap = orderMap;
+                if (result.has("order_map")) {
+                  orderMap = result.get("order_map").slice();
+                  view.orderMap = orderMap;
+                }
+                _ref = result.get("subtestData");
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                  subtest = _ref[_i];
+                  if (subtest.data.participant_id != null) {
+                    Tangerine.nav.setStudent(subtest.data.participant_id);
+                  }
+                }
                 view.result = result;
                 view.subtestViews.pop();
                 view.subtestViews.push(new ResultView({

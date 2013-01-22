@@ -376,13 +376,18 @@ class Router extends Backbone.Router
               "_id" : resultId
             result.fetch
               success: (result) ->
-                # save the order map of previous randomization
-                orderMap = result.get("order_map").slice() # clone array
                 view = new AssessmentRunView 
                   model: assessment
 
-                # restore the previous ordermap
-                view.orderMap = orderMap
+                if result.has("order_map")
+                  # save the order map of previous randomization
+                  orderMap = result.get("order_map").slice() # clone array
+                  # restore the previous ordermap
+                  view.orderMap = orderMap
+
+                for subtest in result.get("subtestData")
+                  if subtest.data.participant_id?
+                    Tangerine.nav.setStudent subtest.data.participant_id
 
                 # replace the view's result with our old one
                 view.result = result
