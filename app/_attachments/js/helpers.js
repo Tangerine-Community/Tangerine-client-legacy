@@ -616,7 +616,7 @@ TangerineTree = (function() {
     return $.ajax({
       type: "POST",
       crossDomain: true,
-      url: Tangerine.config.get("tree") + ("make/" + (Tangerine.settings.get('groupName').split('group-')[1])),
+      url: Tangerine.config.get("tree") + ("make/" + (Tangerine.settings.get('groupName'))),
       dataType: "json",
       data: options,
       success: function(data) {
