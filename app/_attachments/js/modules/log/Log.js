@@ -55,14 +55,18 @@ Log = (function(_super) {
     if (details == null) {
       details = "";
     }
-    if (~Tangerine.settings.get("log").indexOf("app")) {
-      return Tangerine.log.add({
-        "type": "app",
-        "code": code,
-        "details": details,
-        "timestamp": (new Date()).getTime()
-      });
+    if (Tangerine.settings.get("context") === "server") {
+      return;
     }
+    if (~Tangerine.settings.get("log").indexOf("app")) {
+      return;
+    }
+    return Tangerine.log.add({
+      "type": "app",
+      "code": code,
+      "details": details,
+      "timestamp": (new Date()).getTime()
+    });
   };
 
   Log.prototype.db = function(code, details) {
@@ -72,14 +76,18 @@ Log = (function(_super) {
     if (details == null) {
       details = "";
     }
-    if (~Tangerine.settings.get("log").indexOf("db")) {
-      return Tangerine.log.add({
-        "type": "db",
-        "code": code,
-        "details": details,
-        "timestamp": (new Date()).getTime()
-      });
+    if (Tangerine.settings.get("context") === "server") {
+      return;
     }
+    if (!~Tangerine.settings.get("log").indexOf("db")) {
+      return;
+    }
+    return Tangerine.log.add({
+      "type": "db",
+      "code": code,
+      "details": details,
+      "timestamp": (new Date()).getTime()
+    });
   };
 
   Log.prototype.ui = function(code, details) {
@@ -89,14 +97,18 @@ Log = (function(_super) {
     if (details == null) {
       details = "";
     }
-    if (~Tangerine.settings.get("log").indexOf("ui")) {
-      return Tangerine.log.add({
-        "type": "ui",
-        "code": code,
-        "details": details,
-        "timestamp": (new Date()).getTime()
-      });
+    if (Tangerine.settings.get("context") === "server") {
+      return;
     }
+    if (!~Tangerine.settings.get("log").indexOf("ui")) {
+      return;
+    }
+    return Tangerine.log.add({
+      "type": "ui",
+      "code": code,
+      "details": details,
+      "timestamp": (new Date()).getTime()
+    });
   };
 
   Log.prototype.err = function(code, details) {
@@ -106,14 +118,16 @@ Log = (function(_super) {
     if (details == null) {
       details = "";
     }
-    if (~Tangerine.settings.get("log").indexOf("err")) {
-      return Tangerine.log.add({
-        "type": "err",
-        "code": code,
-        "details": details,
-        "timestamp": (new Date()).getTime()
-      });
+    if (Tangerine.settings.get("context") === "server") {
+      return;
     }
+    return !~Tangerine.settings.get("log").indexOf("err");
+    return Tangerine.log.add({
+      "type": "err",
+      "code": code,
+      "details": details,
+      "timestamp": (new Date()).getTime()
+    });
   };
 
   Log.prototype.add = function(logEvent, haventTriedYet) {

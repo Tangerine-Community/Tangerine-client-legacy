@@ -33,39 +33,43 @@ class Log extends Backbone.Model
 
   # larger application functions
   app: ( code = "", details = "" ) ->
-    if ~Tangerine.settings.get("log").indexOf("app")
-      Tangerine.log.add
-        "type"      : "app"
-        "code"      : code
-        "details"   : details
-        "timestamp" : (new Date()).getTime()
+    return if Tangerine.settings.get("context") == "server"
+    return if ~Tangerine.settings.get("log").indexOf("app")
+    Tangerine.log.add
+      "type"      : "app"
+      "code"      : code
+      "details"   : details
+      "timestamp" : (new Date()).getTime()
 
   # communications with databases
   db: ( code = "", details = "" ) ->
-    if ~Tangerine.settings.get("log").indexOf("db")
-      Tangerine.log.add
-        "type"      : "db"
-        "code"      : code
-        "details"   : details
-        "timestamp" : (new Date()).getTime()
+    return if Tangerine.settings.get("context") == "server"
+    return if !~Tangerine.settings.get("log").indexOf("db")
+    Tangerine.log.add
+      "type"      : "db"
+      "code"      : code
+      "details"   : details
+      "timestamp" : (new Date()).getTime()
 
   # specific UI interactions
   ui: ( code = "", details = "" ) ->
-    if ~Tangerine.settings.get("log").indexOf("ui")
-      Tangerine.log.add
-        "type"      : "ui"
-        "code"      : code
-        "details"   : details
-        "timestamp" : (new Date()).getTime()
+    return if Tangerine.settings.get("context") == "server"
+    return if !~Tangerine.settings.get("log").indexOf("ui")
+    Tangerine.log.add
+      "type"      : "ui"
+      "code"      : code
+      "details"   : details
+      "timestamp" : (new Date()).getTime()
 
   # errors, handled or otherwise
   err: ( code = "", details = "" ) ->
-    if ~Tangerine.settings.get("log").indexOf("err")
-      Tangerine.log.add
-        "type"      : "err"
-        "code"      : code
-        "details"   : details
-        "timestamp" : (new Date()).getTime()
+    return if Tangerine.settings.get("context") == "server"
+    return !~Tangerine.settings.get("log").indexOf("err")
+    Tangerine.log.add
+      "type"      : "err"
+      "code"      : code
+      "details"   : details
+      "timestamp" : (new Date()).getTime()
 
   # requires that THIS, @, is up to date. 
   # has a side effect, it saves
