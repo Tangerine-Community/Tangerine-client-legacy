@@ -223,8 +223,15 @@ KlassesView = (function(_super) {
   };
 
   KlassesView.prototype.toggleAddForm = function() {
+    var schoolName;
     this.$el.find("#add_form, .add").toggle();
-    this.$el.find("#school_name").focus();
+    if (!Tangerine.user.isAdmin()) {
+      schoolName = this.teachers.get(Tangerine.user.get("teacherId")).get("school");
+      this.$el.find("#school_name").val(schoolName);
+      this.$el.find("#year").focus();
+    } else {
+      this.$el.find("#school_name").focus();
+    }
     if (this.$el.find("#add_form").is(":visible")) {
       return this.$el.find("#add_form").scrollTo();
     }

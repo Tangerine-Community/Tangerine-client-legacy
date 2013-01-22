@@ -141,7 +141,12 @@ class KlassesView extends Backbone.View
 
   toggleAddForm: ->
     @$el.find("#add_form, .add").toggle()
-    @$el.find("#school_name").focus()
+    if not Tangerine.user.isAdmin()
+      schoolName = @teachers.get(Tangerine.user.get("teacherId")).get("school")
+      @$el.find("#school_name").val(schoolName)
+      @$el.find("#year").focus()
+    else
+      @$el.find("#school_name").focus()
     if @$el.find("#add_form").is(":visible") then @$el.find("#add_form").scrollTo()
 
   renderKlasses: ->
