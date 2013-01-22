@@ -180,6 +180,7 @@ class ProgressView extends Backbone.View
         @warningThresholds[itemType.toLowerCase()].push 
           target: subtest.getNumber("scoreTarget")
           spread: subtest.getNumber("scoreSpread")
+          seconds: subtest.getNumber("timer")
 
 
     @renderReady = true
@@ -207,9 +208,11 @@ class ProgressView extends Backbone.View
     html += "
       <div id='flot-menu'>
       "
-    for key, flotObject of @flotData
-      selectedClass = if flotObject.key == @selected.itemType then "selected" else ""
-      html += "<button class='command select_itemType #{selectedClass}' data-itemType='#{flotObject.key}'>#{flotObject.label}</button>"
+
+    for key in _.uniq(@subtests.pluck("itemType"))
+      label = key.replace(/[_-]/g, " ").capitalize()
+      selectedClass = if key == @selected.itemType then "selected" else ""
+      html += "<button class='command select_itemType #{selectedClass}' data-itemType='#{key}'>#{label}</button>"
 
     html += "
       </div>
@@ -236,8 +239,6 @@ class ProgressView extends Backbone.View
     type = @selected.itemType
     week = @selected.week
 
-
-
     html = "<table class='tabular'>"
     for row, i in @rows
       # skip if selected row doesn't have any of the selected item type
@@ -248,7 +249,9 @@ class ProgressView extends Backbone.View
         html += "
           <tr>
             <td>#{itemType.name} correct</td><td>#{itemType.correct}/#{itemType.attempted}</td>
-            <td>#{itemType.name} per minute</td><td>#{itemType.itemsPerMinute}</td>
+          </tr>
+          <tr>
+            <td>#{itemType.name} correct per minute</td><td>#{itemType.itemsPerMinute}</td>
           </tr>
          "
     html += "</table>"
@@ -257,7 +260,9 @@ class ProgressView extends Backbone.View
     # Add warning if all students mode
     #
 
-    if week >= @rows.length
+    availableItemTypesThisWeek = _.pluck(@rows[week].itemTypes, "key")
+
+    if week >= @rows.length || !~availableItemTypesThisWeek.indexOf(type)
       html += "<section>No data for this assessment.</section>"
     else if @mode == @AGGREGATE
 
@@ -279,18 +284,21 @@ class ProgressView extends Backbone.View
       difference = score - threshold.target
 
       if score > high
-        result = "#{difference} above the benchmark"
+        result = "(#{score}), #{difference} correct items per minute above the benchmark"
         warnings = "Your class is doing well, #{result}, continue with the reading program. Share your and your class’ great work with parents. Reward your class with some fun reading activities such as reading marathons or competitions. However, look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
       else if score < low
-        result = "#{Math.abs(difference)} below the benchmark"
+        result = "(#{score}), #{Math.abs(difference)} correct items per minute below the benchmark"
         warnings = "Your class is performing below the grade-level target, #{result}. Plan for additional lesson time focusing on reading in consultation with your principal. Encourage parents to spend more time with reading materials at home – remind them that you are a team working together to help their children learning to read. Think about organizing other events and opportunities for practice, e.g., reading marathons or competitions to motivate students to read more."
       else
-        if difference * -1 == Math.abs(difference)
-          adjective = "above"
+        if difference != 0 && difference * -1 == Math.abs(difference)
+          result = (score - threshold.target) + " correct items per minute above the bench mark"
+        else if difference == 0
+          result = "#{score} correct items per minute"
         else
-          adjective = "below"
-        result = (score - threshold.score) + " #{adjective} the benchmark"
-        warnings = "Your class is in line with expectations, #{result}, continue with the reading program and keep up the good work! Look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
+          result = "(#{score}), " + Math.abs(score - threshold.target) + " correct items per minute below the bench mark"
+        
+        # @TODO make that "minute" unit dynamic
+        warnings = "Your class is in line with expectations, #{result}. Continue with the reading program and keep up the good work! Look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
 
       html += "
         <section>
@@ -305,13 +313,18 @@ class ProgressView extends Backbone.View
     #
     # Flot options
     #
+
     @flotOptions =
       "xaxis" :
         "min"           : 0.5
         "max"           : @partCount + 0.5
         "ticks"         : ( String( i ) for i in [1..@partCount] )
         "tickDecimals"  : 0
-        "tickFormatter" : ( num ) => "<button class='xtick #{if num-1==@selected.week then 'selected' else ''}' data-index='#{num-1}'>#{@subtestNames[num-1][@selected.itemType]}</button>"
+        "tickFormatter" : ( num ) => 
+          if @subtestNames[num-1][@selected.itemType]?
+            return "<button class='xtick #{if num-1==@selected.week then 'selected' else ''}' data-index='#{num-1}'>#{@subtestNames[num-1][@selected.itemType]}</button>"
+          else
+            ""
       "grid" :
         "markings" :
           "color"  : "#ffc"
