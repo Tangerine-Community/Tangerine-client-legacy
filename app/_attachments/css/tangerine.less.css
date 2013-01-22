@@ -1366,6 +1366,9 @@ body[rtl] {
   color: black;
   text-align: left;
 }
+.ProgressView table.tabular th {
+  padding-top: 1em;
+}
 /*
  * KlassGroupingView
  */
