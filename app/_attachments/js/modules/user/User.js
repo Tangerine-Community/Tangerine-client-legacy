@@ -166,7 +166,7 @@ User = (function(_super) {
         _this.clear();
         _this.trigger("logout");
         Tangerine.log.app("User-logout", "logout");
-        if (Tangerine.settings.context === "server") {
+        if (Tangerine.settings.get("context") === "server") {
           return window.location = Tangerine.settings.urlIndex("trunk");
         } else {
           return Tangerine.router.navigate("login", true);
@@ -250,6 +250,7 @@ User = (function(_super) {
     if (callback == null) {
       callback = {};
     }
+    Utils.working(true);
     return Utils.passwordPrompt(function(auth_p) {
       return Robbert.request({
         action: "new_group",
@@ -257,16 +258,17 @@ User = (function(_super) {
         auth_u: Tangerine.user.get("name"),
         auth_p: auth_p,
         success: function(response) {
+          Utils.working(false);
           if (response.status === "success") {
             _this.login(_this.get("name"), auth_p, {
               success: callback
             });
-            return _this.trigger("group-join");
-          } else {
-            return Utils.midAlert(status.message);
+            _this.trigger("group-join");
           }
+          return Utils.midAlert(response.message);
         },
         error: function(error) {
+          Utils.working(false);
           Utils.midAlert("Error creating group\n\n" + error[1] + "\n" + error[2]);
           return _this.fetch({
             success: callback
@@ -281,21 +283,27 @@ User = (function(_super) {
     if (callback == null) {
       callback = {};
     }
+    Utils.working(true);
     return Utils.passwordPrompt(function(auth_p) {
       return Robbert.request({
-        action: "remove_group",
+        action: "leave_group",
         user: _this.get("name"),
         group: group,
         auth_u: Tangerine.user.get("name"),
         auth_p: auth_p,
         success: function(response) {
-          var _ref;
+          Utils.working(false);
           _this.login(_this.get("name"), auth_p, {
             success: callback
           });
-          return _this.trigger(("group-leave" === (_ref = response.status) && _ref === "success"));
+          if (response.status === "success") {
+            _this.trigger("group-leave");
+          }
+          return Utils.midAlert(response.message);
         },
         error: function(response) {
+          Utils.working(false);
+          Utils.midAlert(response.message);
           return typeof callback.error === "function" ? callback.error(response) : void 0;
         }
       });

@@ -105,7 +105,7 @@ class User extends Backbone.Model
         @clear()
         @trigger "logout"
         Tangerine.log.app "User-logout", "logout"
-        if Tangerine.settings.context == "server"
+        if Tangerine.settings.get("context") == "server"
           window.location = Tangerine.settings.urlIndex "trunk"
         else
           Tangerine.router.navigate "login", true
@@ -156,6 +156,7 @@ class User extends Backbone.Model
   ###
 
   joinGroup: (group, callback = {}) ->
+    Utils.working true
     Utils.passwordPrompt (auth_p) =>
         Robbert.request
           action : "new_group"
@@ -163,6 +164,7 @@ class User extends Backbone.Model
           auth_u : Tangerine.user.get("name")
           auth_p : auth_p
           success : ( response ) =>
+            Utils.working false
             # @TODO
             # We should not have to log back in here.
             # After Robbert creates a group, THIS session ends.
@@ -170,30 +172,36 @@ class User extends Backbone.Model
             if response.status == "success"
               @login @get("name"), auth_p, success:callback
               @trigger "group-join" 
-            else
-              Utils.midAlert status.message
+
+            Utils.midAlert response.message
           error : (error) =>
+            Utils.working false
             Utils.midAlert "Error creating group\n\n#{error[1]}\n#{error[2]}"
             @fetch success:callback
 
   leaveGroup: (group, callback = {}) ->
+    Utils.working true
     Utils.passwordPrompt ( auth_p ) =>
       Robbert.request
-        action : "remove_group" # attempts to leave first, if last person, deletes group
+        action : "leave_group" # attempts to leave first, if last person, deletes group
         user   : @get("name")
         group  : group
         auth_u : Tangerine.user.get("name")
         auth_p : auth_p
         success : (response) =>
+          Utils.working false
           # @TODO
           # We should not have to log back in here.
           # After Robbert creates a group, THIS session ends.
           # Robbert does not interact with the session.
           @login @get("name"), auth_p, success:callback
 
-          @trigger "group-leave" is response.status == "success"
+          @trigger "group-leave" if response.status == "success"
+          Utils.midAlert response.message
 
         error : (response) =>
+          Utils.working false
+          Utils.midAlert response.message
           callback.error?( response )
 
   ghostLogin: (user, pass) ->
