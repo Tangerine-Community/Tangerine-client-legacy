@@ -16,7 +16,6 @@ StudentListElementView = (function(_super) {
   StudentListElementView.prototype.className = "student_list_element";
 
   StudentListElementView.prototype.events = {
-    'click .results': 'results',
     'click .edit': 'edit',
     'click .remove': 'toggleRemove',
     'click .remove_cancel': 'toggleRemove',
@@ -26,10 +25,6 @@ StudentListElementView = (function(_super) {
   StudentListElementView.prototype.initialize = function(options) {
     this.student = options.student;
     return this.students = options.students;
-  };
-
-  StudentListElementView.prototype.results = function() {
-    return Tangerine.router.navigate("report/studentToDate/" + this.student.id, true);
   };
 
   StudentListElementView.prototype.edit = function() {
@@ -48,7 +43,7 @@ StudentListElementView = (function(_super) {
   };
 
   StudentListElementView.prototype.render = function() {
-    this.$el.html("      " + (this.student.get('name')) + "      " + (this.student.get('gender')) + "      " + (this.student.get('age')) + "      <img src='images/icon_results.png' class='results' title='Results'>      <img src='images/icon_edit.png' class='edit' title='Edit'>      <img src='images/icon_delete.png' class='remove' title='Remove'>      <div class='remove_confirm confirmation'>        <div class='menu_box'>          " + (t('remove student')) + "<br>          <button class='remove_delete command_red'>" + (t('remove')) + "</button>          <button class='remove_cancel command'>" + (t('cancel')) + "</button>        </div>      </div>    ");
+    this.$el.html("      " + (this.student.get('name')) + "      " + (this.student.get('gender')) + "      " + (this.student.get('age')) + "      <img src='images/icon_edit.png' class='edit' title='Edit'>      <img src='images/icon_delete.png' class='remove' title='Remove'>      <div class='remove_confirm confirmation'>        <div class='menu_box'>          " + (t('remove student')) + "<br>          <button class='remove_delete command_red'>" + (t('remove')) + "</button>          <button class='remove_cancel command'>" + (t('cancel')) + "</button>        </div>      </div>    ");
     return this.trigger("rendered");
   };
 

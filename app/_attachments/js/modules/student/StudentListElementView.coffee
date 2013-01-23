@@ -4,7 +4,6 @@ class StudentListElementView extends Backbone.View
   className: "student_list_element"
 
   events :
-    'click .results'       : 'results'
     'click .edit'          : 'edit'
     'click .remove'        : 'toggleRemove'
     'click .remove_cancel' : 'toggleRemove'
@@ -14,7 +13,6 @@ class StudentListElementView extends Backbone.View
     @student = options.student
     @students = options.students
   
-  results: -> Tangerine.router.navigate "report/studentToDate/#{@student.id}", true
   edit:    -> Tangerine.router.navigate "class/student/#{@student.id}", true
   toggleRemove: -> @$el.find(".remove_confirm, .remove").toggle()
   removeStudent: -> 
@@ -26,7 +24,6 @@ class StudentListElementView extends Backbone.View
       #{@student.get 'name'}
       #{@student.get 'gender'}
       #{@student.get 'age'}
-      <img src='images/icon_results.png' class='results' title='Results'>
       <img src='images/icon_edit.png' class='edit' title='Edit'>
       <img src='images/icon_delete.png' class='remove' title='Remove'>
       <div class='remove_confirm confirmation'>
