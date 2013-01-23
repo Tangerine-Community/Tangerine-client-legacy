@@ -52,6 +52,12 @@ class KlassSubtestResultView extends Backbone.View
         </tr>
       " if @previous > 0
 
+    runButton = "
+      <div class='menu_box'>
+        <img src='images/icon_run.png' class='run'>
+      </div><br>
+    " if not @result? || @result.get?("reportType") != "progress"
+
     @$el.html "
       <h1>Result</h1>
       <table><tbody>
@@ -70,9 +76,7 @@ class KlassSubtestResultView extends Backbone.View
         #{taken}
       </tbody></table>
       #{resultHTML}
-      <div class='menu_box'>
-        <img src='images/icon_run.png' class='run'>
-      </div><br>
+      #{runButton || ""}
       <button class='navigation back'>Back</button>
     "
 

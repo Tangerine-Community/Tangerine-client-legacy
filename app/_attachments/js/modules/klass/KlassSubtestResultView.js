@@ -37,7 +37,7 @@ KlassSubtestResultView = (function(_super) {
   };
 
   KlassSubtestResultView.prototype.render = function() {
-    var correctItems, datum, i, percentageCorrect, resultHTML, subtestItems, taken, timestamp, totalItems, _i, _len, _ref;
+    var correctItems, datum, i, percentageCorrect, resultHTML, runButton, subtestItems, taken, timestamp, totalItems, _base, _i, _len, _ref;
     subtestItems = this.options.subtest.get("items");
     resultHTML = "<br>";
     taken = "";
@@ -64,7 +64,10 @@ KlassSubtestResultView = (function(_super) {
         taken += "        <tr>          <td><label>Previous attempts</label></td><td>" + this.previous + "</td>        </tr>      ";
       }
     }
-    this.$el.html("      <h1>Result</h1>      <table><tbody>        <tr>          <td><label>Assessment</label></td>          <td>" + (this.options.subtest.get("part")) + "</td>        </tr>        <tr>          <td><label>Student</label></td>          <td>" + (this.options.student.escape("name")) + "</td>        </tr>        <tr>          <td><label>Subtest</label></td>          <td>" + (this.options.subtest.escape("name")) + "</td>        </tr>        " + taken + "      </tbody></table>      " + resultHTML + "      <div class='menu_box'>        <img src='images/icon_run.png' class='run'>      </div><br>      <button class='navigation back'>Back</button>    ");
+    if (!(this.result != null) || (typeof (_base = this.result).get === "function" ? _base.get("reportType") : void 0) !== "progress") {
+      runButton = "      <div class='menu_box'>        <img src='images/icon_run.png' class='run'>      </div><br>    ";
+    }
+    this.$el.html("      <h1>Result</h1>      <table><tbody>        <tr>          <td><label>Assessment</label></td>          <td>" + (this.options.subtest.get("part")) + "</td>        </tr>        <tr>          <td><label>Student</label></td>          <td>" + (this.options.student.escape("name")) + "</td>        </tr>        <tr>          <td><label>Subtest</label></td>          <td>" + (this.options.subtest.escape("name")) + "</td>        </tr>        " + taken + "      </tbody></table>      " + resultHTML + "      " + (runButton || "") + "      <button class='navigation back'>Back</button>    ");
     return this.trigger("rendered");
   };
 
