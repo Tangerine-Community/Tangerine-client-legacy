@@ -7,17 +7,12 @@ class NavigationView extends Backbone.View
     'touchstart button'            : 'submenuHandler'
     'touchstart #corner_logo'      : 'logoClick'
     'touchstart #enumerator'       : 'enumeratorClick'
-    'touchstart #update'           : 'update'
   } else {
     'click div#logout_link'  : 'logout'
     'click button'            : 'submenuHandler'
     'click #corner_logo'      : 'logoClick'
     'click #enumerator'       : 'enumeratorClick'
-    'click #update'           : 'update'
   }
-
-  update: ->
-    Utils.updateTangerine()
 
   calcWhoAmI: =>
     # who am I
@@ -79,8 +74,6 @@ class NavigationView extends Backbone.View
     @$el.find("main_nav").empty()
 
   render: ->
-    updateButton = if Tangerine.user.isAdmin() && Tangerine.settings.get("context") != "server" then "<div id='update'>#{t('update')}</div>" else ""
-
     @$el.html "
     <img id='corner_logo' src='images/corner_logo.png'>
     <div id='logout_link'>#{t('logout')}</div>
@@ -96,7 +89,6 @@ class NavigationView extends Backbone.View
     <div id='version'>
     version <br/>
     <span id='version-uuid'>#{Tangerine.version}</span><br/>
-    #{updateButton}
     </div>
     "
 

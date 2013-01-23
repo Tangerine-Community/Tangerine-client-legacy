@@ -158,7 +158,7 @@ Math.limit    = (min, num, max) -> Math.max(min, Math.min(num, max))
 class Utils
 
   @onUpdateSuccess: ->
-    Utils.midAlert "Update successful"
+    Utils.midAlert "Update successful<br>Restarting Tangerine"
     _.delay( ->
       Tangerine.router.navigate "", false
       Utils.askToLogout()
@@ -170,7 +170,8 @@ class Utils
 
     if Tangerine.settings.get("context") != "server"
 
-      $("#version-uuid").html("Updating...")
+      Utils.midAlert "Updating..."
+      Utils.working true
       # save old rev for later
       Tangerine.$db.compact
         success: ->
@@ -186,16 +187,23 @@ class Utils
                         if data._conflicts?
                           Tangerine.$db.removeDoc oldDoc,
                             success: ->
+                              Utils.working false
                               Utils.onUpdateSuccess()
                             error: (error) ->
+                              Utils.working false
                               Utils.midAlert "Update failed resolving conflict<br>#{error}"
                         else
                           Utils.onUpdateSuccess()
                   error: (error) ->
+                    Utils.working false
                     Utils.midAlert "Update failed replicating<br>#{error}"
                 , doc_ids : ["_design/tangerine"]
             error: (error) ->
+              Utils.working false
               Utils.midAlert "Update failed openning database<br>#{error}"
+        error: (error) ->
+          Utils.working false
+          Utils.midAlert "Update failed compacting database<br>#{error}"
 
   @log: (self, error) ->
     className = self.constructor.toString().match(/function\s*(\w+)/)[1]

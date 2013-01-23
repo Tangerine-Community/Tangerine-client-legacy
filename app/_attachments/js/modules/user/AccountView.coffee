@@ -7,7 +7,10 @@ class AccountView extends Backbone.View
     'click .join_group'  : 'join'
     'click .back'        : 'goBack'
     'click #mode_buttons input' : 'changeMode'
+    'click .update' : 'update'
 
+  update: ->
+    Utils.updateTangerine()
 
   changeMode: (event) ->
     settings = new Settings "_id" : "TangerineSettings"
@@ -75,11 +78,16 @@ class AccountView extends Backbone.View
       settingsButton = "<a href='#settings' class='navigation'><button class='navigation'>Settings</button></a>"
       logsButton = "<a href='#logs' class='navigation'><button class='navigation'>Logs</button></a>"
 
+    updateButton = "
+      <button class='command update'>Update Tangerine</button>
+    " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") != "server"
+
     html = "
       <button class='back navigation'>Back</button>
       <h1>Account</h1>
       #{settingsButton || ""}
-      #{logsButton || ""}
+      #{logsButton || ""}<br>
+      #{updateButton || ""}
       <section>
         <div class='label_value'>
           <label>Name</label>

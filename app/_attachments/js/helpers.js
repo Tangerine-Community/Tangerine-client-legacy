@@ -329,7 +329,7 @@ Utils = (function() {
   function Utils() {}
 
   Utils.onUpdateSuccess = function() {
-    Utils.midAlert("Update successful");
+    Utils.midAlert("Update successful<br>Restarting Tangerine");
     return _.delay(function() {
       Tangerine.router.navigate("", false);
       Utils.askToLogout();
@@ -339,7 +339,8 @@ Utils = (function() {
 
   Utils.updateTangerine = function(callbacks) {
     if (Tangerine.settings.get("context") !== "server") {
-      $("#version-uuid").html("Updating...");
+      Utils.midAlert("Updating...");
+      Utils.working(true);
       return Tangerine.$db.compact({
         success: function() {
           return Tangerine.$db.openDoc("_design/tangerine", {
@@ -352,9 +353,11 @@ Utils = (function() {
                       if (data._conflicts != null) {
                         return Tangerine.$db.removeDoc(oldDoc, {
                           success: function() {
+                            Utils.working(false);
                             return Utils.onUpdateSuccess();
                           },
                           error: function(error) {
+                            Utils.working(false);
                             return Utils.midAlert("Update failed resolving conflict<br>" + error);
                           }
                         });
@@ -365,6 +368,7 @@ Utils = (function() {
                   });
                 },
                 error: function(error) {
+                  Utils.working(false);
                   return Utils.midAlert("Update failed replicating<br>" + error);
                 }
               }, {
@@ -372,9 +376,14 @@ Utils = (function() {
               });
             },
             error: function(error) {
+              Utils.working(false);
               return Utils.midAlert("Update failed openning database<br>" + error);
             }
           });
+        },
+        error: function(error) {
+          Utils.working(false);
+          return Utils.midAlert("Update failed compacting database<br>" + error);
         }
       });
     }
