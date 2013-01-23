@@ -120,15 +120,15 @@ class AssessmentImportView extends Backbone.View
         #{failures || ""}
         #{changes || ""}
       "
-      @updateProgress()
-      Utils.askToLogout()
+      @updateProgress null, =>
+        Utils.askToLogout()
     else if status == "import error"
       clearInterval @activeTaskInterval
       @activity = "Import error: #{message}"
 
     @updateProgress()
 
-  updateProgress: (key) =>
+  updateProgress: (key, callback={}) =>
 
     if key?
       if @importList[key]?
@@ -147,6 +147,8 @@ class AssessmentImportView extends Backbone.View
     progressHTML += "</table>"
 
     @$el.find("#progress").html progressHTML
+
+    callback?()
 
   render: ->
 

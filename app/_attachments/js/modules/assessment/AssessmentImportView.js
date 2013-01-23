@@ -146,7 +146,8 @@ AssessmentImportView = (function(_super) {
   };
 
   AssessmentImportView.prototype.updateActivity = function(status, message) {
-    var changes, failed, failures, headline, read, written, writtenPlural;
+    var changes, failed, failures, headline, read, written, writtenPlural,
+      _this = this;
     if (message != null) {
       read = written = failed = 0;
       if (message.docs_read != null) {
@@ -177,8 +178,9 @@ AssessmentImportView = (function(_super) {
         headline = "Nothing imported";
       }
       this.activity = "" + headline + "<br>        <b>" + written + "</b> document" + writtenPlural + " written<br>        " + (failures || "") + "        " + (changes || "") + "      ";
-      this.updateProgress();
-      Utils.askToLogout();
+      this.updateProgress(null, function() {
+        return Utils.askToLogout();
+      });
     } else if (status === "import error") {
       clearInterval(this.activeTaskInterval);
       this.activity = "Import error: " + message;
@@ -186,8 +188,11 @@ AssessmentImportView = (function(_super) {
     return this.updateProgress();
   };
 
-  AssessmentImportView.prototype.updateProgress = function(key) {
+  AssessmentImportView.prototype.updateProgress = function(key, callback) {
     var progressHTML, value, _ref;
+    if (callback == null) {
+      callback = {};
+    }
     if (key != null) {
       if (this.importList[key] != null) {
         this.importList[key]++;
@@ -205,7 +210,8 @@ AssessmentImportView = (function(_super) {
       progressHTML += "<tr><td colspan='2'>" + this.activity + "</td></tr>";
     }
     progressHTML += "</table>";
-    return this.$el.find("#progress").html(progressHTML);
+    this.$el.find("#progress").html(progressHTML);
+    return typeof callback === "function" ? callback() : void 0;
   };
 
   AssessmentImportView.prototype.render = function() {
