@@ -1370,6 +1370,12 @@ body[rtl] {
   padding-top: 1em;
 }
 /*
+ * KlassGroupingMenuView
+ */
+.part_selector {
+  max-width: 17em;
+}
+/*
  * KlassGroupingView
  */
 .KlassGroupingView .concerning {
