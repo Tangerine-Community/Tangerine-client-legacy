@@ -168,7 +168,7 @@ class Utils
 
   @updateTangerine: (callbacks) ->
 
-    if Tangerine.settings.get("context") == "mobile"
+    if Tangerine.settings.get("context") != "server"
 
       $("#version-uuid").html("Updating...")
       # save old rev for later

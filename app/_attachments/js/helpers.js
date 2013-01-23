@@ -338,7 +338,7 @@ Utils = (function() {
   };
 
   Utils.updateTangerine = function(callbacks) {
-    if (Tangerine.settings.get("context") === "mobile") {
+    if (Tangerine.settings.get("context") !== "server") {
       $("#version-uuid").html("Updating...");
       return Tangerine.$db.compact({
         success: function() {
