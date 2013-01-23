@@ -40,7 +40,11 @@ class ProgressView extends Backbone.View
     # Catch things that "look" "odd"
     if not @klass?          then Utils.log @, "No klass."
     if not @subtests?       then Utils.log @, "No progress type subtests."
-    if @results.length == 0 then Utils.log @, "No result data."
+    if @results.length == 0
+      @renderReady = true
+      @render()
+      return
+
 
     @mode = if @student? then @INDIVIDUAL else @AGGREGATE
 
@@ -187,6 +191,7 @@ class ProgressView extends Backbone.View
     @render()
 
   render: ->
+
     return if not @renderReady
     $window = $(window)
     win = 
@@ -201,6 +206,20 @@ class ProgressView extends Backbone.View
       <h1>Progress table</h1>
       #{studentName || ""}
     "
+
+    #
+    # Empty warning
+    #
+    htmlWarning = "<p>No test data for this type of report. Return to the <a href='#class'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>"
+
+    if @results.length == 0
+      @$el.html "
+        #{html}
+        #{htmlWarning}
+      "
+      @trigger "rendered"
+      return
+
 
     #
     # Flot containers

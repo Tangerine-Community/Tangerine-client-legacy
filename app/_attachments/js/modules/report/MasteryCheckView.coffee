@@ -15,16 +15,36 @@ class MasteryCheckView extends Backbone.View
     @klass    = options.klass
 
     @resultsByPart = @results.indexBy "part"
-    @lastPart = Math.max.apply @, @results.pluck("part")
+
+    @lastPart = Math.max.apply(@, @results.pluck("part"))
+    @lastPart = 0 if not isFinite(@lastPart)
 
   render: ->
+
     html = "
       <h1>Mastery check report</h1>
       <h2>Student #{@student.get("name")}</h2>
-      <table>
     "
+
+    #
+    # Empty warning
+    #
+    htmlWarning = "<p>No test data for this type of report. Return to the <a href='#class'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>"
+
+    if @results.length == 0
+      @$el.html "
+        #{html}
+        #{htmlWarning}
+      "
+      @trigger "rendered"
+      return
+
+
+
+    html += "<table>"
     for part in [1..@lastPart]
-      if @resultsByPart[part] == undefined then continue
+
+      if not @resultsByPart[part]? then continue
       html += "
         <tr><th>Assessment #{part}</th></tr>
         <tr>"

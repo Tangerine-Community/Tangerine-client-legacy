@@ -60,7 +60,9 @@ ProgressView = (function(_super) {
       Utils.log(this, "No progress type subtests.");
     }
     if (this.results.length === 0) {
-      Utils.log(this, "No result data.");
+      this.renderReady = true;
+      this.render();
+      return;
     }
     this.mode = this.student != null ? this.INDIVIDUAL : this.AGGREGATE;
     this.subtestNames = {};
@@ -203,7 +205,7 @@ ProgressView = (function(_super) {
   };
 
   ProgressView.prototype.render = function() {
-    var $window, html, key, label, selectedClass, studentName, win, _i, _len, _ref;
+    var $window, html, htmlWarning, key, label, selectedClass, studentName, win, _i, _len, _ref;
     if (!this.renderReady) {
       return;
     }
@@ -216,6 +218,12 @@ ProgressView = (function(_super) {
       studentName = "      <h2>" + (this.student.get('name')) + "</h2>    ";
     }
     html = "      <h1>Progress table</h1>      " + (studentName || "") + "    ";
+    htmlWarning = "<p>No test data for this type of report. Return to the <a href='#class'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>";
+    if (this.results.length === 0) {
+      this.$el.html("        " + html + "        " + htmlWarning + "      ");
+      this.trigger("rendered");
+      return;
+    }
     html += "      <div id='flot-menu'>      ";
     _ref = _.uniq(this.subtests.pluck("itemType"));
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {

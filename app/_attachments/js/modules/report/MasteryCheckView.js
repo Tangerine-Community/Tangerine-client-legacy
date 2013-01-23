@@ -27,14 +27,24 @@ MasteryCheckView = (function(_super) {
     this.student = options.student;
     this.klass = options.klass;
     this.resultsByPart = this.results.indexBy("part");
-    return this.lastPart = Math.max.apply(this, this.results.pluck("part"));
+    this.lastPart = Math.max.apply(this, this.results.pluck("part"));
+    if (!isFinite(this.lastPart)) {
+      return this.lastPart = 0;
+    }
   };
 
   MasteryCheckView.prototype.render = function() {
-    var html, part, result, subtestName, _i, _j, _len, _ref, _ref1;
-    html = "      <h1>Mastery check report</h1>      <h2>Student " + (this.student.get("name")) + "</h2>      <table>    ";
+    var html, htmlWarning, part, result, subtestName, _i, _j, _len, _ref, _ref1;
+    html = "      <h1>Mastery check report</h1>      <h2>Student " + (this.student.get("name")) + "</h2>    ";
+    htmlWarning = "<p>No test data for this type of report. Return to the <a href='#class'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>";
+    if (this.results.length === 0) {
+      this.$el.html("        " + html + "        " + htmlWarning + "      ");
+      this.trigger("rendered");
+      return;
+    }
+    html += "<table>";
     for (part = _i = 1, _ref = this.lastPart; 1 <= _ref ? _i <= _ref : _i >= _ref; part = 1 <= _ref ? ++_i : --_i) {
-      if (this.resultsByPart[part] === void 0) {
+      if (!(this.resultsByPart[part] != null)) {
         continue;
       }
       html += "        <tr><th>Assessment " + part + "</th></tr>        <tr>";
