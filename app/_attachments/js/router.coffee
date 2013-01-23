@@ -199,7 +199,6 @@ class Router extends Backbone.Router
                         allSubtests.fetch
                           success: (collection ) ->
                             subtests = new Subtests ( collection.where( "curriculumId" : klass.get("curriculumId") ) )
-                            console.log subtests
                             view = new KlassPartlyView
                               "part"       : part
                               "subtests"   : subtests
@@ -500,7 +499,7 @@ class Router extends Backbone.Router
 
                     # make a collection and fetch
                     subtestCollection = new Subtests
-                    subtestCollection.add new Subtest "_id" : subtestId for subtestId in subtestIdList
+                    subtestCollection.add new Subtest("_id" : subtestId) for subtestId in subtestIdList
                     subtestCollection.fetch
                       success: ->
                         view = new MasteryCheckView

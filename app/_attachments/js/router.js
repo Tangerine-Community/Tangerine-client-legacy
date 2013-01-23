@@ -300,7 +300,6 @@ Router = (function(_super) {
                             subtests = new Subtests(collection.where({
                               "curriculumId": klass.get("curriculumId")
                             }));
-                            console.log(subtests);
                             view = new KlassPartlyView({
                               "part": part,
                               "subtests": subtests,
