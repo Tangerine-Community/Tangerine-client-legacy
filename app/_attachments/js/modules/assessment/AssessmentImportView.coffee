@@ -91,6 +91,21 @@ class AssessmentImportView extends Backbone.View
 
   updateActivity: (status, message) =>
 
+    if message?
+      read = written = failed = 0
+
+      read    = message.docs_read    if message.docs_read?
+      written = message.docs_written if message.docs_written?
+      failed  = message.doc_write_failures if message.doc_write_failures?
+
+      writtenPlural = if written != 1 then "s" else ""
+
+      failures = "
+        <b>#{failed}</b> failures<br>
+      " if failed != 0
+
+      changes = "No changes" if message.no_changes? && message.no_changes == true
+
     @$el.find(".status").fadeIn(250)
 
     @activity = ""
@@ -98,7 +113,13 @@ class AssessmentImportView extends Backbone.View
       @activity = "Finding #{@noun}"
     else if status == "import success"
       clearInterval @activeTaskInterval
-      @activity = "Import successful"
+      headline = "Import successful"
+      headline = "Nothing imported" if read == 0
+      @activity = "#{headline}<br>
+        <b>#{written}</b> document#{writtenPlural} written<br>
+        #{failures || ""}
+        #{changes}
+      "
       @updateProgress()
       Utils.askToLogout()
     else if status == "import error"

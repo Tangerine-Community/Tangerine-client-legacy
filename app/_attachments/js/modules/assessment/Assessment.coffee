@@ -54,8 +54,8 @@ class Assessment extends Backbone.Model
         $.couch.replicate( 
           Tangerine.settings.urlDB("group"), 
           Tangerine.settings.urlDB("local"),
-            success:      => @trigger "status", "import success"
-            error: (a, b) => console.log arguments; @trigger "status", "import error", "#{a} #{b}"
+            success: (response)=> @trigger "status", "import success", response
+            error: (a, b)      => @trigger "status", "import error", "#{a} #{b}"
           ,
             doc_ids: docList
         )

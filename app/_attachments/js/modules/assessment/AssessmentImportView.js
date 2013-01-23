@@ -146,13 +146,37 @@ AssessmentImportView = (function(_super) {
   };
 
   AssessmentImportView.prototype.updateActivity = function(status, message) {
+    var changes, failed, failures, headline, read, written, writtenPlural;
+    if (message != null) {
+      read = written = failed = 0;
+      if (message.docs_read != null) {
+        read = message.docs_read;
+      }
+      if (message.docs_written != null) {
+        written = message.docs_written;
+      }
+      if (message.doc_write_failures != null) {
+        failed = message.doc_write_failures;
+      }
+      writtenPlural = written !== 1 ? "s" : "";
+      if (failed !== 0) {
+        failures = "        <b>" + failed + "</b> failures<br>      ";
+      }
+      if ((message.no_changes != null) && message.no_changes === true) {
+        changes = "No changes";
+      }
+    }
     this.$el.find(".status").fadeIn(250);
     this.activity = "";
     if (status === "import lookup") {
       this.activity = "Finding " + this.noun;
     } else if (status === "import success") {
       clearInterval(this.activeTaskInterval);
-      this.activity = "Import successful";
+      headline = "Import successful";
+      if (read === 0) {
+        headline = "Nothing imported";
+      }
+      this.activity = "" + headline + "<br>        <b>" + written + "</b> document" + writtenPlural + " written<br>        " + (failures || "") + "        " + changes + "      ";
       this.updateProgress();
       Utils.askToLogout();
     } else if (status === "import error") {

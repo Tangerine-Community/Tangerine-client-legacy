@@ -87,11 +87,10 @@ Assessment = (function(_super) {
           docList.push(datum.id);
         }
         return $.couch.replicate(Tangerine.settings.urlDB("group"), Tangerine.settings.urlDB("local"), {
-          success: function() {
-            return _this.trigger("status", "import success");
+          success: function(response) {
+            return _this.trigger("status", "import success", response);
           },
           error: function(a, b) {
-            console.log(arguments);
             return _this.trigger("status", "import error", "" + a + " " + b);
           }
         }, {
