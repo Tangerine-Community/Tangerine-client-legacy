@@ -180,9 +180,9 @@ ProgressView = (function(_super) {
       this.flotBenchmark[itemType.toLowerCase()] = {
         "label": "Progress benchmark",
         "data": dataForBenchmark,
+        "color": "#aaa",
         "lines": {
-          "show": true,
-          "color": "green"
+          "show": true
         }
       };
     }
@@ -244,7 +244,7 @@ ProgressView = (function(_super) {
   };
 
   ProgressView.prototype.updateTable = function() {
-    var availableItemTypesThisWeek, data, datum, difference, high, html, i, itemType, low, result, row, score, threshold, type, warnings, week, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+    var availableItemTypesThisWeek, data, datum, difference, high, html, i, itemType, low, result, row, score, threshold, type, warnings, week, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
     type = this.selected.itemType;
     week = this.selected.week;
     html = "<table class='tabular'>";
@@ -265,7 +265,7 @@ ProgressView = (function(_super) {
       }
     }
     html += "</table>";
-    availableItemTypesThisWeek = _.pluck(this.rows[week].itemTypes, "key");
+    availableItemTypesThisWeek = _.pluck((_ref2 = this.rows[week]) != null ? _ref2.itemTypes : void 0, "key");
     if (week >= this.rows.length || !~availableItemTypesThisWeek.indexOf(type)) {
       html += "<section>No data for this assessment.</section>";
     } else if (this.mode === this.AGGREGATE) {
@@ -336,7 +336,13 @@ ProgressView = (function(_super) {
         }
       }
     };
-    displayData = [this.flotData[this.selected.itemType], this.flotBenchmark[this.selected.itemType]];
+    displayData = [];
+    if (this.flotData[this.selected.itemType]) {
+      displayData.push(this.flotData[this.selected.itemType]);
+    }
+    if (this.flotBenchmark[this.selected.itemType]) {
+      displayData.push(this.flotBenchmark[this.selected.itemType]);
+    }
     return this.flot = $.plot(this.$el.find("#flot-container"), displayData, this.flotOptions);
   };
 

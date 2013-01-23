@@ -169,9 +169,9 @@ class ProgressView extends Backbone.View
       @flotBenchmark[itemType.toLowerCase()] = {
         "label" : "Progress benchmark"
         "data" : dataForBenchmark
+        "color" : "#aaa"
         "lines" :
           "show"  : true
-          "color" : "green"
       }
 
     #
@@ -279,7 +279,7 @@ class ProgressView extends Backbone.View
     # Add warning if all students mode
     #
 
-    availableItemTypesThisWeek = _.pluck(@rows[week].itemTypes, "key")
+    availableItemTypesThisWeek = _.pluck(@rows[week]?.itemTypes, "key")
 
     if week >= @rows.length || !~availableItemTypesThisWeek.indexOf(type)
       html += "<section>No data for this assessment.</section>"
@@ -351,9 +351,12 @@ class ProgressView extends Backbone.View
             "to"   : @selected.week + 0.5
             "from" : @selected.week - 0.5
 
-    displayData = [ @flotData[@selected.itemType], @flotBenchmark[@selected.itemType] ]
-    @flot = $.plot @$el.find("#flot-container"), displayData, @flotOptions
 
+    displayData = []
+    displayData.push @flotData[@selected.itemType]      if @flotData[@selected.itemType]
+    displayData.push @flotBenchmark[@selected.itemType] if @flotBenchmark[@selected.itemType]
+    
+    @flot = $.plot @$el.find("#flot-container"), displayData, @flotOptions
 
   # Takes the results for each itemType and replaces them with an average
   aggregate: (oldRows) ->
