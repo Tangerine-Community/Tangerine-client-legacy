@@ -311,6 +311,13 @@ class Utils
   @S4: ->
    return ( ( ( 1 + Math.random() ) * 0x10000 ) | 0 ).toString(16).substring(1)
 
+  @humanGUID: -> return @randomLetters(4)+"-"+@randomLetters(4)+"-"+@randomLetters(4)
+  @safeLetters = "abcdefghijlmnopqrstuvwxyz".split("")
+  @randomLetters: (length) -> 
+    result = ""
+    while length--
+      result += Utils.safeLetters[Math.floor(Math.random()*Utils.safeLetters.length)]
+    return result
 
   # turns the body background a color and then returns to white
   @flash: (color="red") ->

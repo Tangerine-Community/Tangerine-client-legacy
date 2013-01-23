@@ -512,6 +512,21 @@ Utils = (function() {
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
   };
 
+  Utils.humanGUID = function() {
+    return this.randomLetters(4) + "-" + this.randomLetters(4) + "-" + this.randomLetters(4);
+  };
+
+  Utils.safeLetters = "abcdefghijlmnopqrstuvwxyz".split("");
+
+  Utils.randomLetters = function(length) {
+    var result;
+    result = "";
+    while (length--) {
+      result += Utils.safeLetters[Math.floor(Math.random() * Utils.safeLetters.length)];
+    }
+    return result;
+  };
+
   Utils.flash = function(color) {
     if (color == null) {
       color = "red";

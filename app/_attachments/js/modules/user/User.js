@@ -27,8 +27,7 @@ User = (function(_super) {
   };
 
   User.prototype.signup = function(name, pass) {
-    var view,
-      _this = this;
+    var _this = this;
     if (Tangerine.settings.get("context") === "server") {
       return $.ajax({
         url: Tangerine.config.get("robbert"),
@@ -46,19 +45,28 @@ User = (function(_super) {
           }
         }
       });
-    } else if (Tangerine.settings.get("context") === "class" && name !== "admin") {
-      view = new RegisterTeacherView({
-        name: name,
-        pass: pass
-      });
-      vm.show(view);
-      return this.intent = "retry_login";
     } else {
       return $.couch.signup({
         name: name
       }, pass, {
         success: function(data) {
-          if (_this.intent === "login") {
+          if (_this.intent === "login" && Tangerine.settings.get("context") === "class" && name !== "admin") {
+            return $.couch.login({
+              name: name,
+              password: pass,
+              success: function(user) {
+                var view;
+                _this.intent = "";
+                _this.name = name;
+                _this.roles = user.roles;
+                view = new RegisterTeacherView({
+                  name: name,
+                  pass: pass
+                });
+                return vm.show(view);
+              }
+            });
+          } else if (_this.intent === "login") {
             _this.intent = "retry_login";
             return _this.login(name, pass);
           }

@@ -23,16 +23,27 @@ class User extends Backbone.Model
           if @intent == "login"
             @intent = "retry_login"
             @login name, pass
-    else if Tangerine.settings.get("context") == "class" && name != "admin"
-      view = new RegisterTeacherView
-        name : name
-        pass : pass
-      vm.show view
-      @intent = "retry_login"
     else
       $.couch.signup name : name, pass,
         success: ( data ) =>
-          if @intent == "login"
+
+          if @intent == "login" && Tangerine.settings.get("context") == "class" && name != "admin"
+            #
+            # Register new teacher in class
+            #
+            $.couch.login
+              name     : name
+              password : pass
+              success: ( user ) =>
+                @intent = ""
+                @name   = name
+                @roles  = user.roles
+                view = new RegisterTeacherView
+                  name : name
+                  pass : pass
+                vm.show view
+          else if @intent == "login"
+            # mobile login
             @intent = "retry_login"
             @login name, pass
         error: =>

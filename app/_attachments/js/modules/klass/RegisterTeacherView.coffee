@@ -2,11 +2,15 @@ class RegisterTeacherView extends Backbone.View
 
   events :
     'click .register' : 'register'
+    'click .cancel' : 'cancel'
 
   initialize: ( options ) ->
     @name = options.name
     @pass = options.pass
     @fields = ["first", "last", "gender", "school", "contact"]
+
+  cancel: ->
+    Tangerine.router.login()
 
   register: ->
 
@@ -37,17 +41,20 @@ class RegisterTeacherView extends Backbone.View
       "name" : @name
 
     teacher = new Teacher teacherDoc
-    teacher.save null,
+    teacher.save 
+      "_id" : Utils.humanGUID()
+    ,
       success: =>
-        couchUserDoc["teacherId"] = teacher.id
-        console.log "couchuserodoc"
-        console.log couchUserDoc
-        $.couch.signup couchUserDoc, @pass,
-          success: =>
-            Utils.midAlert "New teacher registered"
-            Tangerine.user.login @name, @pass
-          error: (error) ->
-            Utils.midAlert "Registration error<br>#{error}", 5000
+        $.couch.userDb (db) =>
+          db.openDoc "org.couchdb.user:#{@name}",
+            success: ( userDoc ) =>
+              newUserDoc = $.extend(userDoc, {teacherId : teacher.id})
+              db.saveDoc userDoc,
+                success: =>
+                  Utils.midAlert "New teacher registered"
+                  Tangerine.user.login @name, @pass
+                error: (error) ->
+                  Utils.midAlert "Registration error<br>#{error}", 5000
 
 
   render: ->
@@ -83,10 +90,10 @@ class RegisterTeacherView extends Backbone.View
       </div>
       <div class='label_value'>
         <label for='contact'>Email address or mobile phone number</label>
-        <div id='contact_message' class='messages'></div>
+        <div type='email' id='contact_message' class='messages'></div>
         <input id='contact'>
       </div>
-      <button class='register command'>Register</button>
+      <button class='register command'>Register</button> <button class='cancel command'>Cancel</button>
     "
     for element in @fields
       @[element] = @$el.find("#"+element)

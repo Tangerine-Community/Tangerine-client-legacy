@@ -12,13 +12,18 @@ RegisterTeacherView = (function(_super) {
   }
 
   RegisterTeacherView.prototype.events = {
-    'click .register': 'register'
+    'click .register': 'register',
+    'click .cancel': 'cancel'
   };
 
   RegisterTeacherView.prototype.initialize = function(options) {
     this.name = options.name;
     this.pass = options.pass;
     return this.fields = ["first", "last", "gender", "school", "contact"];
+  };
+
+  RegisterTeacherView.prototype.cancel = function() {
+    return Tangerine.router.login();
   };
 
   RegisterTeacherView.prototype.register = function() {
@@ -63,19 +68,28 @@ RegisterTeacherView = (function(_super) {
       "name": this.name
     };
     teacher = new Teacher(teacherDoc);
-    return teacher.save(null, {
+    return teacher.save({
+      "_id": Utils.humanGUID()
+    }, {
       success: function() {
-        couchUserDoc["teacherId"] = teacher.id;
-        console.log("couchuserodoc");
-        console.log(couchUserDoc);
-        return $.couch.signup(couchUserDoc, _this.pass, {
-          success: function() {
-            Utils.midAlert("New teacher registered");
-            return Tangerine.user.login(_this.name, _this.pass);
-          },
-          error: function(error) {
-            return Utils.midAlert("Registration error<br>" + error, 5000);
-          }
+        return $.couch.userDb(function(db) {
+          return db.openDoc("org.couchdb.user:" + _this.name, {
+            success: function(userDoc) {
+              var newUserDoc;
+              newUserDoc = $.extend(userDoc, {
+                teacherId: teacher.id
+              });
+              return db.saveDoc(userDoc, {
+                success: function() {
+                  Utils.midAlert("New teacher registered");
+                  return Tangerine.user.login(_this.name, _this.pass);
+                },
+                error: function(error) {
+                  return Utils.midAlert("Registration error<br>" + error, 5000);
+                }
+              });
+            }
+          });
         });
       }
     });
@@ -92,7 +106,7 @@ RegisterTeacherView = (function(_super) {
         _results.push("*");
       }
       return _results;
-    }).call(this)).join('')) + "</td>        </tr>      </table>      <div class='label_value'>        <label for='first'>First name</label>        <div id='first_message' class='messages'></div>        <input id='first'>      </div>      <div class='label_value'>        <label for='last'>Last Name</label>        <div id='last_message' class='messages'></div>        <input id='last'>      </div>      <div class='label_value'>        <label for='gender'>Gender</label>        <div id='gender_message' class='messages'></div>        <input id='gender'>      </div>      <div class='label_value'>        <label for='school'>School name</label>        <div id='school_message' class='messages'></div>        <input id='school'>      </div>      <div class='label_value'>        <label for='contact'>Email address or mobile phone number</label>        <div id='contact_message' class='messages'></div>        <input id='contact'>      </div>      <button class='register command'>Register</button>    ");
+    }).call(this)).join('')) + "</td>        </tr>      </table>      <div class='label_value'>        <label for='first'>First name</label>        <div id='first_message' class='messages'></div>        <input id='first'>      </div>      <div class='label_value'>        <label for='last'>Last Name</label>        <div id='last_message' class='messages'></div>        <input id='last'>      </div>      <div class='label_value'>        <label for='gender'>Gender</label>        <div id='gender_message' class='messages'></div>        <input id='gender'>      </div>      <div class='label_value'>        <label for='school'>School name</label>        <div id='school_message' class='messages'></div>        <input id='school'>      </div>      <div class='label_value'>        <label for='contact'>Email address or mobile phone number</label>        <div type='email' id='contact_message' class='messages'></div>        <input id='contact'>      </div>      <button class='register command'>Register</button> <button class='cancel command'>Cancel</button>    ");
     _ref = this.fields;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       element = _ref[_i];
