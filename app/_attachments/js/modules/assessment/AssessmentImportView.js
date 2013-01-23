@@ -176,7 +176,7 @@ AssessmentImportView = (function(_super) {
       if (read === 0) {
         headline = "Nothing imported";
       }
-      this.activity = "" + headline + "<br>        <b>" + written + "</b> document" + writtenPlural + " written<br>        " + (failures || "") + "        " + changes + "      ";
+      this.activity = "" + headline + "<br>        <b>" + written + "</b> document" + writtenPlural + " written<br>        " + (failures || "") + "        " + (changes || "") + "      ";
       this.updateProgress();
       Utils.askToLogout();
     } else if (status === "import error") {

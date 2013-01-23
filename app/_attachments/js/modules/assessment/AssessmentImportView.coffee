@@ -118,7 +118,7 @@ class AssessmentImportView extends Backbone.View
       @activity = "#{headline}<br>
         <b>#{written}</b> document#{writtenPlural} written<br>
         #{failures || ""}
-        #{changes}
+        #{changes || ""}
       "
       @updateProgress()
       Utils.askToLogout()
