@@ -165,22 +165,26 @@ class KlassGroupingView extends Backbone.View
     # Warnings
     #
 
-    # dynamic
-    warningsHTML = "
-    <section>
-      #{@readyPercentage}
-      #{@readinessWarning}
-    </section>
-    "
-    # static
-    warningsHTML += '
-    <section>
-      <p>Refer to the file “Kiswahili Wordlists” on your tablet for a list of additional words that may be useful for such group-based activities or practice for students performing in the “poor” or “concerning” category.</p>
-      <p>For the students to watch – consider also communicating with parents for extra practice at home.</p>
-      <p>Identify items these students need further practice on by selecting their name in the grouping report to see their performance on each item.</p>
-      <p>Give parents some help: Write out on a piece of paper the letters for them to practice with their child; or copy applicable words from the “Kiswahili Wordlists” that contain the letters for the child to practice.</p>
-    </section>
-    '
+    if !~@subtests.pluck("reportType").indexOf("progress") #dont data guidance for progress
+
+      # dynamic
+      warningsHTML = "
+      <section>
+        #{@readyPercentage}
+        #{@readinessWarning}
+      </section>
+      "
+      # static
+      warningsHTML += '
+      <section>
+        <p>Refer to the file “Kiswahili Wordlists” on your tablet for a list of additional words that may be useful for such group-based activities or practice for students performing in the “poor” or “concerning” category.</p>
+        <p>For the students to watch – consider also communicating with parents for extra practice at home.</p>
+        <p>Identify items these students need further practice on by selecting their name in the grouping report to see their performance on each item.</p>
+        <p>Give parents some help: Write out on a piece of paper the letters for them to practice with their child; or copy applicable words from the “Kiswahili Wordlists” that contain the letters for the child to practice.</p>
+      </section>
+      '
+
+
 
     #
     # Empty warning
@@ -258,7 +262,7 @@ class KlassGroupingView extends Backbone.View
         #{summaryHTML}
         #{detailsHTML}
         #{itemizedResults}
-        #{warningsHTML}
+        #{warningsHTML || ""}
         <button class='navigation back'>Back</button>
       "
     else

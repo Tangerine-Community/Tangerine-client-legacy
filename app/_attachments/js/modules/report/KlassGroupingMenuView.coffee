@@ -23,12 +23,17 @@ class KlassGroupingMenuView extends Backbone.View
               curriculaId : @curricula.id
             @parts = []
             for subtest in subtests
-              @parts[subtest.get('part')] = {} if not @parts[subtest.get('part')]?
-              @parts[subtest.get('part')]["id"]   = subtest.id
-              if @parts[subtest.get('part')]["name"]? 
-                @parts[subtest.get('part')]["name"] += " " + subtest.get("name")
+              
+              part = subtest.get('part')
+
+              @parts[part]         = {} if not @parts[part]?
+              @parts[part]["id"]   = subtest.id
+              
+              if @parts[part]["name"]? 
+                @parts[part]["name"] += " " + subtest.get("name")
               else
-                @parts[subtest.get('part')]["name"] = subtest.get("name")
+                @parts[part]["name"] = subtest.get("name")
+              @parts[part]["reportType"] = subtest.get("reportType")
 
             @ready = true
             @render()

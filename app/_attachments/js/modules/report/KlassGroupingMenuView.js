@@ -33,22 +33,24 @@ KlassGroupingMenuView = (function(_super) {
         allSubtests = new Subtests;
         return allSubtests.fetch({
           success: function(collection) {
-            var subtest, subtests, _i, _len;
+            var part, subtest, subtests, _i, _len;
             subtests = collection.where({
               curriculaId: _this.curricula.id
             });
             _this.parts = [];
             for (_i = 0, _len = subtests.length; _i < _len; _i++) {
               subtest = subtests[_i];
-              if (!(_this.parts[subtest.get('part')] != null)) {
-                _this.parts[subtest.get('part')] = {};
+              part = subtest.get('part');
+              if (!(_this.parts[part] != null)) {
+                _this.parts[part] = {};
               }
-              _this.parts[subtest.get('part')]["id"] = subtest.id;
-              if (_this.parts[subtest.get('part')]["name"] != null) {
-                _this.parts[subtest.get('part')]["name"] += " " + subtest.get("name");
+              _this.parts[part]["id"] = subtest.id;
+              if (_this.parts[part]["name"] != null) {
+                _this.parts[part]["name"] += " " + subtest.get("name");
               } else {
-                _this.parts[subtest.get('part')]["name"] = subtest.get("name");
+                _this.parts[part]["name"] = subtest.get("name");
               }
+              _this.parts[part]["reportType"] = subtest.get("reportType");
             }
             _this.ready = true;
             return _this.render();

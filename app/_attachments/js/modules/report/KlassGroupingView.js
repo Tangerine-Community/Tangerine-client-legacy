@@ -170,15 +170,17 @@ KlassGroupingView = (function(_super) {
 
   KlassGroupingView.prototype.render = function() {
     var checkedAttribute, datum, detailsHTML, emptyHTML, html, i, itemizedResults, menuHTML, person, subtest, summaryHTML, warningsHTML, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
-    warningsHTML = "    <section>      " + this.readyPercentage + "      " + this.readinessWarning + "    </section>    ";
-    warningsHTML += '\
-    <section>\
-      <p>Refer to the file “Kiswahili Wordlists” on your tablet for a list of additional words that may be useful for such group-based activities or practice for students performing in the “poor” or “concerning” category.</p>\
-      <p>For the students to watch – consider also communicating with parents for extra practice at home.</p>\
-      <p>Identify items these students need further practice on by selecting their name in the grouping report to see their performance on each item.</p>\
-      <p>Give parents some help: Write out on a piece of paper the letters for them to practice with their child; or copy applicable words from the “Kiswahili Wordlists” that contain the letters for the child to practice.</p>\
-    </section>\
-    ';
+    if (!~this.subtests.pluck("reportType").indexOf("progress")) {
+      warningsHTML = "      <section>        " + this.readyPercentage + "        " + this.readinessWarning + "      </section>      ";
+      warningsHTML += '\
+      <section>\
+        <p>Refer to the file “Kiswahili Wordlists” on your tablet for a list of additional words that may be useful for such group-based activities or practice for students performing in the “poor” or “concerning” category.</p>\
+        <p>For the students to watch – consider also communicating with parents for extra practice at home.</p>\
+        <p>Identify items these students need further practice on by selecting their name in the grouping report to see their performance on each item.</p>\
+        <p>Give parents some help: Write out on a piece of paper the letters for them to practice with their child; or copy applicable words from the “Kiswahili Wordlists” that contain the letters for the child to practice.</p>\
+      </section>\
+      ';
+    }
     emptyHTML = "      <h1>" + (t('student grouping report')) + "</h1>      <p>No students tested for " + (this.subtests.get(this.selected.subtestId).get("name")) + " on assessment #" + (this.subtests.models[0].get("part")) + " yet. Return to the <a href='#class'>class menu</a> and click the <img src='images/icon_run.png'> icon to collect data.</p>    ";
     menuHTML = "<div id='selector_container' class='buttonset'>";
     _ref = this.subtests.models;
@@ -205,7 +207,7 @@ KlassGroupingView = (function(_super) {
     }
     detailsHTML += "</table>";
     if (this.selected.results.length !== 0) {
-      html = "        " + menuHTML + "        " + summaryHTML + "        " + detailsHTML + "        " + itemizedResults + "        " + warningsHTML + "        <button class='navigation back'>Back</button>      ";
+      html = "        " + menuHTML + "        " + summaryHTML + "        " + detailsHTML + "        " + itemizedResults + "        " + (warningsHTML || "") + "        <button class='navigation back'>Back</button>      ";
     } else {
       html = "        " + menuHTML + "        " + emptyHTML + "        <button class='navigation back'>Back</button>      ";
     }
