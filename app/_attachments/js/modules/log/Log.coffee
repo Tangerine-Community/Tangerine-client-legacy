@@ -34,7 +34,7 @@ class Log extends Backbone.Model
   # larger application functions
   app: ( code = "", details = "" ) ->
     return if Tangerine.settings.get("context") == "server"
-    return if ~Tangerine.settings.get("log").indexOf("app")
+    return if !~Tangerine.settings.get("log").indexOf("app")
     Tangerine.log.add
       "type"      : "app"
       "code"      : code

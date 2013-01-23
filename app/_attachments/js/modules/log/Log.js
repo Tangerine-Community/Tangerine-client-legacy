@@ -58,7 +58,7 @@ Log = (function(_super) {
     if (Tangerine.settings.get("context") === "server") {
       return;
     }
-    if (~Tangerine.settings.get("log").indexOf("app")) {
+    if (!~Tangerine.settings.get("log").indexOf("app")) {
       return;
     }
     return Tangerine.log.add({
