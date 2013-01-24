@@ -62,6 +62,7 @@ class KlassSubtestEditView extends Backbone.View
         scoreSpread    : parseInt(@$el.find("#score_spread").val())
         order          : parseInt(@$el.find("#order").val())
 
+        captureLastAttempted: @$el.find("#capture_last_attempted input:checked").val() == "true"
         endOfLine : @$el.find("#end_of_line input:checked").val() == "true"
         randomize : @$el.find("#randomize input:checked").val() == "true"
         timer     : Math.max(parseInt( @$el.find("#subtest_timer").val() ), 0)
@@ -186,6 +187,7 @@ class KlassSubtestEditView extends Backbone.View
     if @prototype == "grid"
       endOfLine    = if @model.has("endOfLine") then @model.get("endOfLine") else true
       randomize    = if @model.has("randomize") then @model.get("randomize") else false
+      captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted") else false
 
       items        = @model.get("items").join " "
       timer        = @model.get("timer")        || 0
@@ -211,7 +213,15 @@ class KlassSubtestEditView extends Backbone.View
             <label for='end_of_line_true'>Yes</label><input name='end_of_line' type='radio' value='true' id='end_of_line_true' #{'checked' if endOfLine}>
             <label for='end_of_line_false'>No</label><input name='end_of_line' type='radio' value='false' id='end_of_line_false' #{'checked' if not endOfLine}>
           </div>
-        </div>
+        </div><br>
+
+        <label>Capture last item attempted</label><br>
+        <div class='menu_box'>
+          <div id='capture_last_attempted' class='buttonset'>
+            <label for='capture_last_attempted_true'>Yes</label><input name='capture_last_attempted' type='radio' value='true' id='capture_last_attempted_true' #{'checked' if captureLastAttempted}>
+            <label for='capture_last_attempted_false'>No</label><input name='capture_last_attempted' type='radio' value='false' id='capture_last_attempted_false' #{'checked' if not captureLastAttempted}>
+          </div>
+        </div><br>
 
         <div class='label_value'>
           <label for='subtest_columns' title='Number of columns in which to display the grid items.'>Columns</label><br>

@@ -274,8 +274,8 @@ class CurriculumView extends Backbone.View
       "_id"          : guid
       "curriculumId" : @curriculum.id
       "prototype"    : prototype
-      "captureLastAttempted" : false,
-      "endOfLine" : false,
+      "captureLastAttempted" : false
+      "endOfLine" : false
 
     protoTemps = Tangerine.templates.get "prototypes"
     subtestAttributes = $.extend(protoTemps[prototype], subtestAttributes)
