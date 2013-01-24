@@ -24,7 +24,7 @@ class CurriculumView extends Backbone.View
     @totalAssessments  = Math.max.apply Math, @subtests.pluck("part")
     @subtestsByPart    = @subtests.indexArrayBy "part"
     @subtestProperties = 
-      [
+      "grid" : [
         {
           "key"      : "part"
           "label"    : "Assessment"
@@ -52,7 +52,25 @@ class CurriculumView extends Backbone.View
           "label"    : "Report"
           "editable" : true
         }
+      ],
+      "survey" : [
+        {
+          "key" : "part"
+          "label" : "assessment"
+          "editable" : true
+        },
+        {
+          "key" : "name"
+          "label" : "Name"
+          "editable" : true
+        },
+        {
+          "key"      : "reportType"
+          "label"    : "Report"
+          "editable" : true
+        }
       ]
+
 
   render: ->
 
@@ -70,11 +88,12 @@ class CurriculumView extends Backbone.View
       <div id='subtest_table_container'>
         #{subtestTable}
       </div>
-      <button class='command new_subtest'>New Subtest</button>
-      <br><br>
-      
-      #{deleteButton}
 
+      <button class='command new_subtest' data-prototype='grid'>New Grid Subtest</button><br>
+      <button class='command new_subtest' data-prototype='survey'>New Survey Subtest</button>
+      <br><br>
+
+      #{deleteButton}
 
     "
 
@@ -110,7 +129,7 @@ class CurriculumView extends Backbone.View
 
 
         html += "<tr>"
-        for prop in @subtestProperties
+        for prop in @subtestProperties[subtest.get("prototype")]
 
           # cook the value
           value = if prop.key?   then subtest.get(prop.key)    else "&nbsp;"
@@ -238,7 +257,7 @@ class CurriculumView extends Backbone.View
     # this ensures we do not insert a newline character when we press enter
     return false
 
-  goBack: -> history.back()
+  goBack: -> Tangerine.router.navigate "class", true
 
   deleteCurriculum: ->
     if confirm("Delete curriculum\n#{@curriculum.get('name')}?")
@@ -247,18 +266,19 @@ class CurriculumView extends Backbone.View
   #
   # Subtest new and destroy
   #
-  newSubtest: ->
+  newSubtest: (event) ->
+    prototype = $(event.target).attr("data-prototype")
     guid = Utils.guid()
 
     subtestAttributes = 
       "_id"          : guid
       "curriculumId" : @curriculum.id
-      "prototype"    : "grid"
+      "prototype"    : prototype
       "captureLastAttempted" : false,
       "endOfLine" : false,
 
     protoTemps = Tangerine.templates.get "prototypes"
-    subtestAttributes = $.extend(protoTemps["grid"], subtestAttributes)
+    subtestAttributes = $.extend(protoTemps[prototype], subtestAttributes)
 
     subtest = new Subtest subtestAttributes
     subtest.save null,

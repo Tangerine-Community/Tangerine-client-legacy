@@ -16,6 +16,11 @@ class QuestionEditView extends Backbone.View
     'keypress .option_label'  : 'quickFocusValue'
     'change #custom_validation_code' : 'validateSyntax'
 
+  initialize: (options) ->
+    @question   = options.question
+    @subtest    = options.subtest
+    @assessment = options.assessment
+
   validateSyntax: ->
     if not _.isEmpty(customValidationCode = @$el.find("#custom_validation_code").val())
       try
@@ -44,13 +49,8 @@ class QuestionEditView extends Backbone.View
     return false
 
   goBack: =>
-    Tangerine.router.navigate "subtest/#{@question.get 'subtestId'}", true
+    window.history.back()
     return false
-
-  initialize: (options) ->
-    @question   = options.question
-    @subtest    = options.subtest
-    @assessment = options.assessment
 
   getOptionList: ->
     options = @question.get "options"

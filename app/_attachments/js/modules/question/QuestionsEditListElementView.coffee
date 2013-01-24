@@ -10,6 +10,8 @@ class QuestionsEditListElementView extends Backbone.View
     'click .delete_delete' : 'delete'
 
   edit: (event) ->
+    console.log "trying to edit my ID"
+    console.log @question.id
     @trigger "question-edit", @question.id
     return false
 

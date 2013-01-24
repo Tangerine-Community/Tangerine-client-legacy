@@ -21,9 +21,9 @@ Subtests = (function(_super) {
 
   Subtests.prototype.comparator = function(subtest) {
     if (subtest.has("curriculumId")) {
-      return [subtest.get("part"), subtest.get("order")];
+      return (parseInt(subtest.get("part")) * 100) + parseInt(subtest.get("order"));
     } else {
-      return subtest.get("order");
+      return parseInt(subtest.get("order"));
     }
   };
 

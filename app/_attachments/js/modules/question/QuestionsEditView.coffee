@@ -21,7 +21,10 @@ class QuestionsEditView extends Backbone.View
         "question" : question
       @views.push view
       view.on "deleted", @render
-      view.on "question-edit", (questionId) => @trigger "question-edit", questionId
+      view.on "question-edit", (questionId) => 
+        console.log "passing up a qID"
+        console.log questionId
+        @trigger "question-edit", questionId
       view.render()
       @$el.append view.el
 

@@ -32,6 +32,12 @@ QuestionEditView = (function(_super) {
     'change #custom_validation_code': 'validateSyntax'
   };
 
+  QuestionEditView.prototype.initialize = function(options) {
+    this.question = options.question;
+    this.subtest = options.subtest;
+    return this.assessment = options.assessment;
+  };
+
   QuestionEditView.prototype.validateSyntax = function() {
     var customValidationCode, oldAnswer;
     if (!_.isEmpty(customValidationCode = this.$el.find("#custom_validation_code").val())) {
@@ -76,14 +82,8 @@ QuestionEditView = (function(_super) {
   };
 
   QuestionEditView.prototype.goBack = function() {
-    Tangerine.router.navigate("subtest/" + (this.question.get('subtestId')), true);
+    window.history.back();
     return false;
-  };
-
-  QuestionEditView.prototype.initialize = function(options) {
-    this.question = options.question;
-    this.subtest = options.subtest;
-    return this.assessment = options.assessment;
   };
 
   QuestionEditView.prototype.getOptionList = function() {

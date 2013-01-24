@@ -26,16 +26,20 @@ KlassResult = (function(_super) {
 
   KlassResult.prototype.get = function(options) {
     if (options === "correct") {
-      return this.gridCount("correct");
+      return this.gridCount(["correct", 1]);
     }
     if (options === "incorrect") {
-      return this.gridCount("incorrect");
+      return this.gridCount(["incorrect", 0]);
     }
     if (options === "missing") {
-      return this.gridCount("missing");
+      return this.gridCount(["missing", 9]);
     }
     if (options === "total") {
-      return this.attributes.subtestData.items.length;
+      if (this.attributes.prototype === "grid") {
+        return this.attributes.subtestData.items.length;
+      } else if (this.attributes.prototype === "survey") {
+        return _.keys(this.attributes.subtestData).length;
+      }
     }
     if (options === "attempted") {
       return this.getAttempted();
@@ -47,13 +51,44 @@ KlassResult = (function(_super) {
   };
 
   KlassResult.prototype.gridCount = function(value) {
-    var count, item, _i, _len, _ref;
+    var count, item, k, v, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3;
+    console.log("\n\n\nstarting grid count");
     count = 0;
-    _ref = this.get("subtestData").items;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      item = _ref[_i];
-      if (item.itemResult === value) {
-        count++;
+    if (this.attributes.prototype === "grid") {
+      if (_.isArray(value)) {
+        _ref = this.get("subtestData").items;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          item = _ref[_i];
+          if (~value.indexOf(item.itemResult)) {
+            count++;
+          }
+        }
+      } else {
+        _ref1 = this.get("subtestData").items;
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          item = _ref1[_j];
+          if (item.itemResult === value) {
+            count++;
+          }
+        }
+      }
+    } else if (this.attributes.prototype === "survey") {
+      if (_.isArray(value)) {
+        _ref2 = this.attributes.subtestData;
+        for (k in _ref2) {
+          v = _ref2[k];
+          if (~value.indexOf(v) || ~value.indexOf(parseInt(v))) {
+            count++;
+          }
+        }
+      } else {
+        _ref3 = this.attributes.subtestData;
+        for (k in _ref3) {
+          v = _ref3[k];
+          if (value === v || value === parseInt(v)) {
+            count++;
+          }
+        }
       }
     }
     return count;

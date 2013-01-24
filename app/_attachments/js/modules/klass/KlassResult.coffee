@@ -9,23 +9,41 @@ class KlassResult extends Backbone.Model
       success: => callback()
 
   get: (options) ->
+    if options == "correct"     then return @gridCount ["correct", 1]
+    if options == "incorrect"   then return @gridCount ["incorrect", 0]
+    if options == "missing"     then return @gridCount ["missing", 9]
 
-    if options == "correct"     then return @gridCount "correct"
-    if options == "incorrect"   then return @gridCount "incorrect"
-    if options == "missing"     then return @gridCount "missing"
-    if options == "total"       then return @attributes.subtestData.items.length
+
+    if options == "total"
+      if @attributes.prototype == "grid"
+        return @attributes.subtestData.items.length
+      else if @attributes.prototype == "survey"
+        return _.keys(@attributes.subtestData).length
     
     if options == "attempted"   then return @getAttempted()
     if options == "time_remain" then return @getTimeRemain()
 
     # if no special properties detected let's go with super
     # result = KlassResult.__super__.get.apply @, arguments
-    return super(options)
+
+    super(options)
 
   gridCount: (value) ->
-    # count correct
+    console.log "\n\n\nstarting grid count"
     count = 0
-    (count++ if item.itemResult == value) for item in @get("subtestData").items 
+    if @attributes.prototype == "grid"
+      if _.isArray(value)
+        (count++ if ~value.indexOf(item.itemResult)) for item in @get("subtestData").items   
+      else
+        (count++ if item.itemResult == value) for item in @get("subtestData").items 
+    else if @attributes.prototype == "survey"
+      if _.isArray(value)
+        for k, v of @attributes.subtestData
+          count++ if (~value.indexOf(v) || ~value.indexOf(parseInt(v)))
+      else
+        for k, v of @attributes.subtestData
+          count++ if (value == v || value == parseInt(v))
+            
     return count
 
   getAttempted: ->

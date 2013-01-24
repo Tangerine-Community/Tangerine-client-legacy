@@ -29,38 +29,55 @@ CurriculumView = (function(_super) {
     this.subtests = options.subtests;
     this.totalAssessments = Math.max.apply(Math, this.subtests.pluck("part"));
     this.subtestsByPart = this.subtests.indexArrayBy("part");
-    return this.subtestProperties = [
-      {
-        "key": "part",
-        "label": "Assessment",
-        "editable": true
-      }, {
-        "key": "name",
-        "label": "Name",
-        "editable": true,
-        "escaped": true
-      }, {
-        "key": "items",
-        "label": "Items",
-        "count": true,
-        "editable": true
-      }, {
-        "key": "timer",
-        "label": "Time<br>allowed",
-        "editable": true
-      }, {
-        "key": "reportType",
-        "label": "Report",
-        "editable": true
-      }
-    ];
+    return this.subtestProperties = {
+      "grid": [
+        {
+          "key": "part",
+          "label": "Assessment",
+          "editable": true
+        }, {
+          "key": "name",
+          "label": "Name",
+          "editable": true,
+          "escaped": true
+        }, {
+          "key": "items",
+          "label": "Items",
+          "count": true,
+          "editable": true
+        }, {
+          "key": "timer",
+          "label": "Time<br>allowed",
+          "editable": true
+        }, {
+          "key": "reportType",
+          "label": "Report",
+          "editable": true
+        }
+      ],
+      "survey": [
+        {
+          "key": "part",
+          "label": "assessment",
+          "editable": true
+        }, {
+          "key": "name",
+          "label": "Name",
+          "editable": true
+        }, {
+          "key": "reportType",
+          "label": "Report",
+          "editable": true
+        }
+      ]
+    };
   };
 
   CurriculumView.prototype.render = function() {
     var deleteButton, html, subtestTable;
     subtestTable = this.getSubtestTable();
     deleteButton = Tangerine.settings.get("context") === "server" ? "<button class='command_red delete'>Delete</button>" : "";
-    html = "      <button class='navigation back'>" + (t('back')) + "</button>      <h1>" + (this.options.curriculum.get('name')) + "</h1>      <div class='small_grey'>Download key <b>" + (this.curriculum.id.substr(-5, 5)) + "</b></div>            <div id='subtest_table_container'>        " + subtestTable + "      </div>      <button class='command new_subtest'>New Subtest</button>      <br><br>            " + deleteButton + "    ";
+    html = "      <button class='navigation back'>" + (t('back')) + "</button>      <h1>" + (this.options.curriculum.get('name')) + "</h1>      <div class='small_grey'>Download key <b>" + (this.curriculum.id.substr(-5, 5)) + "</b></div>            <div id='subtest_table_container'>        " + subtestTable + "      </div>      <button class='command new_subtest' data-prototype='grid'>New Grid Subtest</button><br>      <button class='command new_subtest' data-prototype='survey'>New Survey Subtest</button>      <br><br>      " + deleteButton + "    ";
     this.$el.html(html);
     return this.trigger("rendered");
   };
@@ -88,7 +105,7 @@ CurriculumView = (function(_super) {
       for (_j = 0, _len1 = subtests.length; _j < _len1; _j++) {
         subtest = subtests[_j];
         html += "<tr>";
-        _ref2 = this.subtestProperties;
+        _ref2 = this.subtestProperties[subtest.get("prototype")];
         for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
           prop = _ref2[_k];
           value = prop.key != null ? subtest.get(prop.key) : "&nbsp;";
@@ -201,7 +218,7 @@ CurriculumView = (function(_super) {
   };
 
   CurriculumView.prototype.goBack = function() {
-    return history.back();
+    return Tangerine.router.navigate("class", true);
   };
 
   CurriculumView.prototype.deleteCurriculum = function() {
@@ -213,18 +230,19 @@ CurriculumView = (function(_super) {
     }
   };
 
-  CurriculumView.prototype.newSubtest = function() {
-    var guid, protoTemps, subtest, subtestAttributes;
+  CurriculumView.prototype.newSubtest = function(event) {
+    var guid, protoTemps, prototype, subtest, subtestAttributes;
+    prototype = $(event.target).attr("data-prototype");
     guid = Utils.guid();
     subtestAttributes = {
       "_id": guid,
       "curriculumId": this.curriculum.id,
-      "prototype": "grid",
+      "prototype": prototype,
       "captureLastAttempted": false,
       "endOfLine": false
     };
     protoTemps = Tangerine.templates.get("prototypes");
-    subtestAttributes = $.extend(protoTemps["grid"], subtestAttributes);
+    subtestAttributes = $.extend(protoTemps[prototype], subtestAttributes);
     subtest = new Subtest(subtestAttributes);
     return subtest.save(null, {
       success: function() {

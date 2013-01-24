@@ -50,6 +50,8 @@ QuestionsEditView = (function(_super) {
       this.views.push(view);
       view.on("deleted", this.render);
       view.on("question-edit", function(questionId) {
+        console.log("passing up a qID");
+        console.log(questionId);
         return _this.trigger("question-edit", questionId);
       });
       view.render();

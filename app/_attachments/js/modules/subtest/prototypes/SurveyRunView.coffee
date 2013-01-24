@@ -179,7 +179,7 @@ class SurveyRunView extends Backbone.View
 
         required = parseInt(question.get("linkedGridScore")) || 0
 
-        isNotAsked = (required != 0 && @parent.getGridScore() < required) || @parent.gridWasAutostopped()
+        isNotAsked = ( ( required != 0 && @parent.getGridScore() < required ) || @parent.gridWasAutostopped() ) && @parent.getGridScore() != false
 
         if isNotAsked then notAskedCount++
 

@@ -260,7 +260,7 @@ SurveyRunView = (function(_super) {
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         question = _ref[i];
         required = parseInt(question.get("linkedGridScore")) || 0;
-        isNotAsked = (required !== 0 && this.parent.getGridScore() < required) || this.parent.gridWasAutostopped();
+        isNotAsked = ((required !== 0 && this.parent.getGridScore() < required) || this.parent.gridWasAutostopped()) && this.parent.getGridScore() !== false;
         if (isNotAsked) {
           notAskedCount++;
         }

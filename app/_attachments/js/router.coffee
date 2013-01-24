@@ -20,6 +20,7 @@ class Router extends Backbone.Router
     'class/student/:studentId'        : 'studentEdit'
     'class/student/report/:studentId' : 'studentReport'
     'class/subtest/:id' : 'editKlassSubtest'
+    'class/question/:id' : "editKlassQuestion"
 
     'class/:id/:part' : 'klassPartly'
     'class/:id'       : 'klassPartly'
@@ -218,6 +219,8 @@ class Router extends Backbone.Router
         student = new Student "_id" : studentId
         student.fetch
           success: ->
+            console.log student
+            console.log studentId
             subtest = new Subtest "_id" : subtestId
             subtest.fetch
               success: ->
@@ -227,12 +230,12 @@ class Router extends Backbone.Router
                     allResults = new KlassResults 
                     allResults.fetch
                       success: (collection) ->
-                        result = collection.where
+                        results = collection.where
                           "subtestId" : subtestId
                           "studentId" : studentId
                           "klassId"   : student.get("klassId")
                         view = new KlassSubtestResultView
-                          "result"   : result
+                          "results"  : results
                           "subtest"  : subtest
                           "student"  : student
                           "previous" : response.rows.length
@@ -247,10 +250,30 @@ class Router extends Backbone.Router
             student = new Student "_id" : studentId
             student.fetch
               success: ->
-                view = new KlassSubtestRunView
-                  "student" : student
-                  "subtest" : subtest
-                vm.show view
+
+                onSuccess = (student, subtest, question=null, linkedResult={}) ->
+                  view = new KlassSubtestRunView
+                    "student"      : student
+                    "subtest"      : subtest
+                    "questions"    : questions
+                    "linkedResult" : linkedResult
+                  vm.show view
+
+                questions = null
+                if subtest.get("prototype") == "survey"
+                  Tangerine.$db.view "tangerine/resultsByStudentSubtest",
+                    key : [studentId,subtest.get("gridLinkId")]
+                    success: (response) =>
+                      if response.rows != 0
+                        linkedResult = new KlassResult _.last(response.rows)?.value
+                      questions = new Questions
+                      questions.fetch
+                        key: subtest.get("curriculumId")
+                        success: ->
+                          questions = new Questions(questions.where {subtestId : subtestId })
+                          onSuccess(student, subtest, questions, linkedResult)
+                else
+                  onSuccess(student, subtest)
 
   register: ->
     Tangerine.user.verify
@@ -491,7 +514,6 @@ class Router extends Backbone.Router
                 allResults.fetch
                   success: ( collection ) ->
                     results = new KlassResults collection.where "studentId" : studentId, "reportType" : "mastery", "klassId" : klassId
-                    
                     # get a list of subtests involved
                     subtestIdList = {}
                     subtestIdList[result.get("subtestId")] = true for result in results.models
@@ -563,20 +585,33 @@ class Router extends Backbone.Router
         Tangerine.router.navigate "login", true
 
   editKlassSubtest: (id) ->
+
+    onSuccess = (subtest, curriculum, questions=null) ->
+      view = new KlassSubtestEditView
+        model      : subtest
+        curriculum : curriculum
+        questions  : questions
+      vm.show view
+
     Tangerine.user.verify
       isAdmin: ->
         id = Utils.cleanURL id
         subtest = new Subtest _id : id
         subtest.fetch
-          success: (model, response) ->
+          success: ->
             curriculum = new Curriculum
               "_id" : subtest.get("curriculumId")
             curriculum.fetch
               success: ->
-                view = new KlassSubtestEditView
-                  model      : model
-                  curriculum : curriculum
-                vm.show view
+                if subtest.get("prototype") == "survey"
+                  questions = new Questions
+                  questions.fetch
+                    key : curriculum.id
+                    success: ->
+                      questions = new Questions questions.where("subtestId":subtest.id)
+                      onSuccess subtest, curriculum, questions
+                else
+                  onSuccess subtest, curriculum
       isUser: ->
         Tangerine.router.navigate "", true
       isUnregistereded: ->
@@ -608,6 +643,30 @@ class Router extends Backbone.Router
                     vm.show view
       isUser: ->
         Tangerine.router.navigate "", true
+      isUnregistered: ->
+        Tangerine.router.navigate "login", true
+
+
+  editKlassQuestion: (id) ->
+    Tangerine.user.verify
+      isAdmin: ->
+        id = Utils.cleanURL id
+        question = new Question "_id" : id
+        question.fetch
+          success: (question, response) ->
+            curriculum = new Curriculum
+              "_id" : question.get("curriculumId")
+            curriculum.fetch
+              success: ->
+                subtest = new Subtest
+                  "_id" : question.get("subtestId")
+                subtest.fetch
+                  success: ->
+                    view = new QuestionEditView
+                      "question"   : question
+                      "subtest"    : subtest
+                      "assessment" : curriculum
+                    vm.show view
       isUnregistered: ->
         Tangerine.router.navigate "login", true
 

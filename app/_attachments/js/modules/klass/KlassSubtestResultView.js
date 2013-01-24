@@ -20,8 +20,11 @@ KlassSubtestResultView = (function(_super) {
   };
 
   KlassSubtestResultView.prototype.initialize = function(options) {
-    this.result = options.result;
-    return this.previous = options.previous;
+    this.results = options.results;
+    this.result = this.results[0];
+    this.previous = options.previous;
+    this.subtest = options.subtest;
+    return this.student = options.student;
   };
 
   KlassSubtestResultView.prototype.showItemized = function() {
@@ -37,37 +40,33 @@ KlassSubtestResultView = (function(_super) {
   };
 
   KlassSubtestResultView.prototype.render = function() {
-    var correctItems, datum, i, percentageCorrect, resultHTML, runButton, subtestItems, taken, timestamp, totalItems, _base, _i, _len, _ref;
-    subtestItems = this.options.subtest.get("items");
-    resultHTML = "<br>";
-    taken = "";
-    if (this.result.length !== 0) {
-      this.result = this.result[0];
-      correctItems = this.result.get("correct");
-      totalItems = this.result.get("total");
-      percentageCorrect = (correctItems / totalItems) * 100;
-      /*
-            if percentageCorrect < (parseFloat(Tangerine.settings.generalThreshold)*100)
-              resultHTML += "<div class='info_box'><b>Warning</b><br>Student's #{Math.decimals(percentageCorrect,2)}% score is less than threshold of #{Math.decimals(Tangerine.settings.generalThreshold*100, 2)}%</div><br>"
-      */
-
-      resultHTML += "<button class='command show_itemized'>" + (t('itemized results')) + "</button><table class='itemized confirmation'><tbody><tr><th>Item</th><th>Result</th></tr>";
-      _ref = this.result.get("subtestData").items;
-      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-        datum = _ref[i];
-        resultHTML += "<tr><td>" + datum.itemLabel + "</td><td>" + (t(datum.itemResult)) + "</td></tr>";
+    var datum, i, key, resultHTML, runButton, taken, timestamp, value, _base, _i, _len, _ref, _ref1;
+    if (this.result != null) {
+      this.results = this.results[0];
+      resultHTML = "<button class='command show_itemized'>" + (t('itemized results')) + "</button><table class='itemized confirmation'><tbody><tr><th>Item</th><th>Result</th></tr>";
+      if (this.subtest.get("prototype") === "grid") {
+        _ref = this.result.get("subtestData").items;
+        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+          datum = _ref[i];
+          resultHTML += "<tr><td>" + datum.itemLabel + "</td><td>" + (t(datum.itemResult)) + "</td></tr>";
+        }
+      } else if (this.subtest.get("prototype") === "survey") {
+        _ref1 = this.result.get("subtestData");
+        for (key in _ref1) {
+          value = _ref1[key];
+          resultHTML += "<tr><td>" + key + "</td><td>" + (t(value)) + "</td></tr>";
+        }
       }
       resultHTML += "</tbody></table><br>";
       timestamp = new Date(this.result.get("startTime"));
-      taken += "        <tr>          <td><label>Taken last</label></td><td>" + (timestamp.getFullYear()) + "/" + (timestamp.getMonth() + 1) + "/" + (timestamp.getDate()) + "</td>        </tr>      ";
       if (this.previous > 0) {
-        taken += "        <tr>          <td><label>Previous attempts</label></td><td>" + this.previous + "</td>        </tr>      ";
+        taken = "        <tr>          <td><label>Taken last</label></td><td>" + (timestamp.getFullYear()) + "/" + (timestamp.getMonth() + 1) + "/" + (timestamp.getDate()) + "</td>        </tr>        <tr>          <td><label>Previous attempts</label></td><td>" + this.previous + "</td>        </tr>      ";
       }
     }
     if (!(this.result != null) || (typeof (_base = this.result).get === "function" ? _base.get("reportType") : void 0) !== "progress") {
       runButton = "      <div class='menu_box'>        <img src='images/icon_run.png' class='run'>      </div><br>    ";
     }
-    this.$el.html("      <h1>Result</h1>      <table><tbody>        <tr>          <td><label>Assessment</label></td>          <td>" + (this.options.subtest.get("part")) + "</td>        </tr>        <tr>          <td><label>Student</label></td>          <td>" + (this.options.student.escape("name")) + "</td>        </tr>        <tr>          <td><label>Subtest</label></td>          <td>" + (this.options.subtest.escape("name")) + "</td>        </tr>        " + taken + "      </tbody></table>      " + resultHTML + "      " + (runButton || "") + "      <button class='navigation back'>Back</button>    ");
+    this.$el.html("      <h1>Result</h1>      <table><tbody>        <tr>          <td><label>Assessment</label></td>          <td>" + (this.subtest.get("part")) + "</td>        </tr>        <tr>          <td><label>Student</label></td>          <td>" + (this.student.escape("name")) + "</td>        </tr>        <tr>          <td><label>Subtest</label></td>          <td>" + (this.subtest.escape("name")) + "</td>        </tr>        " + taken + "      </tbody></table>      " + (resultHTML || "") + "      " + (runButton || "") + "      <button class='navigation back'>Back</button>    ");
     return this.trigger("rendered");
   };
 

@@ -24,27 +24,48 @@ KlassSubtestRunView = (function(_super) {
   };
 
   KlassSubtestRunView.prototype.initialize = function(options) {
+    this.linkedResult = options.linkedResult;
+    this.student = options.student;
+    this.subtest = options.subtest;
+    this.questions = options.questions;
+    this.prototype = this.subtest.get("prototype");
     this.protoViews = Tangerine.config.get("prototypeViews");
     this.prototypeRendered = false;
-    return this.result = new KlassResult({
-      startTime: (new Date()).getTime(),
-      itemType: options.subtest.get("itemType"),
-      reportType: options.subtest.get("reportType"),
-      studentId: options.student.id,
-      subtestId: options.subtest.id,
-      part: options.subtest.get("part"),
-      klassId: options.student.get("klassId"),
-      timeAllowed: options.subtest.get("timer")
-    });
+    if (this.prototype === "grid") {
+      return this.result = new KlassResult({
+        prototype: "grid",
+        startTime: (new Date()).getTime(),
+        itemType: this.subtest.get("itemType"),
+        reportType: this.subtest.get("reportType"),
+        studentId: this.student.id,
+        subtestId: this.subtest.id,
+        part: this.subtest.get("part"),
+        klassId: this.student.get("klassId"),
+        timeAllowed: this.subtest.get("timer")
+      });
+    } else if (this.prototype === "survey") {
+      this.result = new KlassResult({
+        prototype: "survey",
+        startTime: (new Date()).getTime(),
+        studentId: this.student.id,
+        subtestId: this.subtest.id,
+        part: this.subtest.get("part"),
+        klassId: this.student.get("klassId"),
+        itemType: this.subtest.get("itemType"),
+        reportType: this.subtest.get("reportType")
+      });
+      this.questions.sort();
+      return this.render();
+    }
   };
 
   KlassSubtestRunView.prototype.render = function() {
     var enumeratorHelp, studentDialog;
-    enumeratorHelp = (this.options.subtest.get("enumeratorHelp") || "") !== "" ? "<button class='subtest_help command'>help</button><div class='enumerator_help'>" + (this.options.subtest.get('enumeratorHelp')) + "</div>" : "";
-    studentDialog = (this.options.subtest.get("studentDialog") || "") !== "" ? "<div class='student_dialog'>" + (this.options.subtest.get('studentDialog')) + "</div>" : "";
+    enumeratorHelp = (this.subtest.get("enumeratorHelp") || "") !== "" ? "<button class='subtest_help command'>help</button><div class='enumerator_help'>" + (this.options.subtest.get('enumeratorHelp')) + "</div>" : "";
+    studentDialog = (this.subtest.get("studentDialog") || "") !== "" ? "<div class='student_dialog'>" + (this.options.subtest.get('studentDialog')) + "</div>" : "";
     this.$el.html("      <h2>" + (this.options.subtest.get('name')) + "</h2>      " + enumeratorHelp + "      " + studentDialog + "    ");
-    this.prototypeView = new window[this.protoViews[this.options.subtest.get('prototype')]['run']]({
-      model: this.options.subtest,
+    this.prototypeView = new window[this.protoViews[this.subtest.get('prototype')]['run']]({
+      model: this.subtest,
       parent: this
     });
     this.prototypeView.on("rendered", this.onPrototypeRendered);
@@ -57,6 +78,20 @@ KlassSubtestRunView = (function(_super) {
 
   KlassSubtestRunView.prototype.onPrototypeRendered = function() {
     return this.trigger("rendered");
+  };
+
+  KlassSubtestRunView.prototype.getGridScore = function() {
+    var result;
+    if (!(this.linkedResult.get("subtestData") != null)) {
+      return false;
+    }
+    result = this.linkedResult.get("subtestData")['attempted'] || 0;
+    return result;
+  };
+
+  KlassSubtestRunView.prototype.gridWasAutostopped = function() {
+    var _ref;
+    return ((_ref = this.linkedResult.get("subtestData")) != null ? _ref['auto_stop'] : void 0) || 0;
   };
 
   KlassSubtestRunView.prototype.onClose = function() {
@@ -76,12 +111,6 @@ KlassSubtestRunView = (function(_super) {
     return true;
   };
 
-  KlassSubtestRunView.prototype.getResult = function() {
-    var result;
-    result = this.prototypeView.getResult();
-    return result;
-  };
-
   KlassSubtestRunView.prototype.getSkipped = function() {
     if (this.prototypeView.getSkipped != null) {
       return this.prototypeView.getSkipped();
@@ -98,7 +127,7 @@ KlassSubtestRunView = (function(_super) {
     var _this = this;
     if (this.isValid()) {
       return Tangerine.$db.view("tangerine/resultsByStudentSubtest", {
-        key: [this.options.student.id, this.options.subtest.id],
+        key: [this.options.student.id, this.subtest.id],
         success: function(data) {
           var datum, rows, _i, _len;
           rows = data.rows;
@@ -108,7 +137,7 @@ KlassSubtestRunView = (function(_super) {
               "old": true
             }));
           }
-          return _this.result.add(_this.getResult(), function() {
+          return _this.result.add(_this.prototypeView.getResult(), function() {
             return Tangerine.router.navigate("class/" + (_this.options.student.get('klassId')) + "/" + (_this.options.subtest.get('part')), true);
           });
         }

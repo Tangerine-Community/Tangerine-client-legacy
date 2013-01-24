@@ -10,9 +10,11 @@ class SurveyEditView extends Backbone.View
     @model = options.model
     @parent = options.parent
     @model.questions = new Questions
+    Utils.working true
     @model.questions.fetch
       key: @model.get "assessmentId"
       success: =>
+        Utils.working false
         @model.questions = new Questions(@model.questions.where {subtestId : @model.id  })
         @model.questions.maintainOrder()
         @questionsEditView = new QuestionsEditView
@@ -20,6 +22,9 @@ class SurveyEditView extends Backbone.View
         @questionsEditView.on "question-edit", (questionId) => @trigger "question-edit", questionId
         @model.questions.on "change", @renderQuestions
         @renderQuestions()
+      erorr: (a, b) =>
+        Utils.working false
+        Utils.midAlert "Error<br>Could not load questions<br>#{a}, #{b}", 5000
 
   toggleAddQuestion: =>
     @$el.find("#add_question_form, .add_question").fadeToggle 250, =>
@@ -64,7 +69,6 @@ class SurveyEditView extends Backbone.View
 
     # check for "errors"
     for question, i in @model.questions.models
-      console.log question
       if question.get("type") != "open" && question.get("options")?.length == 0
         emptyOptions.push i + 1
       

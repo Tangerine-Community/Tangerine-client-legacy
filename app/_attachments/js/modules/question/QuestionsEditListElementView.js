@@ -23,6 +23,8 @@ QuestionsEditListElementView = (function(_super) {
   };
 
   QuestionsEditListElementView.prototype.edit = function(event) {
+    console.log("trying to edit my ID");
+    console.log(this.question.id);
     this.trigger("question-edit", this.question.id);
     return false;
   };

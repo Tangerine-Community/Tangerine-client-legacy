@@ -26,6 +26,7 @@ Router = (function(_super) {
     'class/student/:studentId': 'studentEdit',
     'class/student/report/:studentId': 'studentReport',
     'class/subtest/:id': 'editKlassSubtest',
+    'class/question/:id': "editKlassQuestion",
     'class/:id/:part': 'klassPartly',
     'class/:id': 'klassPartly',
     'class/run/:studentId/:subtestId': 'runSubtest',
@@ -336,6 +337,8 @@ Router = (function(_super) {
         return student.fetch({
           success: function() {
             var subtest;
+            console.log(student);
+            console.log(studentId);
             subtest = new Subtest({
               "_id": subtestId
             });
@@ -349,14 +352,14 @@ Router = (function(_super) {
                     allResults = new KlassResults;
                     return allResults.fetch({
                       success: function(collection) {
-                        var result, view;
-                        result = collection.where({
+                        var results, view;
+                        results = collection.where({
                           "subtestId": subtestId,
                           "studentId": studentId,
                           "klassId": student.get("klassId")
                         });
                         view = new KlassSubtestResultView({
-                          "result": result,
+                          "results": results,
                           "subtest": subtest,
                           "student": student,
                           "previous": response.rows.length
@@ -389,12 +392,48 @@ Router = (function(_super) {
             });
             return student.fetch({
               success: function() {
-                var view;
-                view = new KlassSubtestRunView({
-                  "student": student,
-                  "subtest": subtest
-                });
-                return vm.show(view);
+                var onSuccess, questions,
+                  _this = this;
+                onSuccess = function(student, subtest, question, linkedResult) {
+                  var view;
+                  if (question == null) {
+                    question = null;
+                  }
+                  if (linkedResult == null) {
+                    linkedResult = {};
+                  }
+                  view = new KlassSubtestRunView({
+                    "student": student,
+                    "subtest": subtest,
+                    "questions": questions,
+                    "linkedResult": linkedResult
+                  });
+                  return vm.show(view);
+                };
+                questions = null;
+                if (subtest.get("prototype") === "survey") {
+                  return Tangerine.$db.view("tangerine/resultsByStudentSubtest", {
+                    key: [studentId, subtest.get("gridLinkId")],
+                    success: function(response) {
+                      var linkedResult, _ref;
+                      if (response.rows !== 0) {
+                        linkedResult = new KlassResult((_ref = _.last(response.rows)) != null ? _ref.value : void 0);
+                      }
+                      questions = new Questions;
+                      return questions.fetch({
+                        key: subtest.get("curriculumId"),
+                        success: function() {
+                          questions = new Questions(questions.where({
+                            subtestId: subtestId
+                          }));
+                          return onSuccess(student, subtest, questions, linkedResult);
+                        }
+                      });
+                    }
+                  });
+                } else {
+                  return onSuccess(student, subtest);
+                }
               }
             });
           }
@@ -922,6 +961,19 @@ Router = (function(_super) {
   };
 
   Router.prototype.editKlassSubtest = function(id) {
+    var onSuccess;
+    onSuccess = function(subtest, curriculum, questions) {
+      var view;
+      if (questions == null) {
+        questions = null;
+      }
+      view = new KlassSubtestEditView({
+        model: subtest,
+        curriculum: curriculum,
+        questions: questions
+      });
+      return vm.show(view);
+    };
     return Tangerine.user.verify({
       isAdmin: function() {
         var subtest;
@@ -930,19 +982,28 @@ Router = (function(_super) {
           _id: id
         });
         return subtest.fetch({
-          success: function(model, response) {
+          success: function() {
             var curriculum;
             curriculum = new Curriculum({
               "_id": subtest.get("curriculumId")
             });
             return curriculum.fetch({
               success: function() {
-                var view;
-                view = new KlassSubtestEditView({
-                  model: model,
-                  curriculum: curriculum
-                });
-                return vm.show(view);
+                var questions;
+                if (subtest.get("prototype") === "survey") {
+                  questions = new Questions;
+                  return questions.fetch({
+                    key: curriculum.id,
+                    success: function() {
+                      questions = new Questions(questions.where({
+                        "subtestId": subtest.id
+                      }));
+                      return onSuccess(subtest, curriculum, questions);
+                    }
+                  });
+                } else {
+                  return onSuccess(subtest, curriculum);
+                }
               }
             });
           }
@@ -995,6 +1056,48 @@ Router = (function(_super) {
       },
       isUser: function() {
         return Tangerine.router.navigate("", true);
+      },
+      isUnregistered: function() {
+        return Tangerine.router.navigate("login", true);
+      }
+    });
+  };
+
+  Router.prototype.editKlassQuestion = function(id) {
+    return Tangerine.user.verify({
+      isAdmin: function() {
+        var question;
+        id = Utils.cleanURL(id);
+        question = new Question({
+          "_id": id
+        });
+        return question.fetch({
+          success: function(question, response) {
+            var curriculum;
+            curriculum = new Curriculum({
+              "_id": question.get("curriculumId")
+            });
+            return curriculum.fetch({
+              success: function() {
+                var subtest;
+                subtest = new Subtest({
+                  "_id": question.get("subtestId")
+                });
+                return subtest.fetch({
+                  success: function() {
+                    var view;
+                    view = new QuestionEditView({
+                      "question": question,
+                      "subtest": subtest,
+                      "assessment": curriculum
+                    });
+                    return vm.show(view);
+                  }
+                });
+              }
+            });
+          }
+        });
       },
       isUnregistered: function() {
         return Tangerine.router.navigate("login", true);

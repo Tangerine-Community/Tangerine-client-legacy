@@ -3,29 +3,51 @@ class KlassSubtestRunView extends Backbone.View
   events:
     'click .done'         : 'done'
     'click .cancel'       : 'cancel'
-
     'click .subtest_help' : 'toggleHelp'
 
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
   initialize: (options) ->
-    @protoViews  = Tangerine.config.get("prototypeViews")
+    @linkedResult = options.linkedResult
+    @student      = options.student
+    @subtest      = options.subtest
+    @questions    = options.questions
+
+    @prototype = @subtest.get("prototype")
+
+    @protoViews = Tangerine.config.get("prototypeViews")
+
     @prototypeRendered = false
 
-    @result = new KlassResult
-      startTime    : (new Date()).getTime()
-      itemType     : options.subtest.get("itemType")
-      reportType   : options.subtest.get("reportType")
-      studentId    : options.student.id
-      subtestId    : options.subtest.id
-      part         : options.subtest.get("part")
-      klassId      : options.student.get("klassId")
-      timeAllowed  : options.subtest.get("timer")
+
+    if @prototype == "grid"
+      @result = new KlassResult
+        prototype    : "grid"
+        startTime    : (new Date()).getTime()
+        itemType     : @subtest.get("itemType")
+        reportType   : @subtest.get("reportType")
+        studentId    : @student.id
+        subtestId    : @subtest.id
+        part         : @subtest.get("part")
+        klassId      : @student.get("klassId")
+        timeAllowed  : @subtest.get("timer")
+    else if @prototype == "survey"
+      @result = new KlassResult
+        prototype    : "survey"
+        startTime    : (new Date()).getTime()
+        studentId    : @student.id
+        subtestId    : @subtest.id
+        part         : @subtest.get("part")
+        klassId      : @student.get("klassId")
+        itemType     : @subtest.get("itemType")
+        reportType   : @subtest.get("reportType")
+      @questions.sort()
+      @render()
+
 
   render: ->
-
-    enumeratorHelp = if (@options.subtest.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help'>#{@options.subtest.get 'enumeratorHelp'}</div>" else ""
-    studentDialog  = if (@options.subtest.get("studentDialog")  || "") != "" then "<div class='student_dialog'>#{@options.subtest.get 'studentDialog'}</div>" else ""
+    enumeratorHelp = if (@subtest.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help'>#{@options.subtest.get 'enumeratorHelp'}</div>" else ""
+    studentDialog  = if (@subtest.get("studentDialog")  || "") != "" then "<div class='student_dialog'>#{@options.subtest.get 'studentDialog'}</div>" else ""
 
     @$el.html "
       <h2>#{@options.subtest.get 'name'}</h2>
@@ -34,8 +56,8 @@ class KlassSubtestRunView extends Backbone.View
     "
 
     # Use prototype specific views here
-    @prototypeView = new window[@protoViews[@options.subtest.get 'prototype']['run']]
-      model: @options.subtest
+    @prototypeView = new window[@protoViews[@subtest.get 'prototype']['run']]
+      model: @subtest
       parent: @
     @prototypeView.on "rendered", @onPrototypeRendered
     @prototypeView.render()
@@ -49,6 +71,13 @@ class KlassSubtestRunView extends Backbone.View
   onPrototypeRendered: =>
     @trigger "rendered"
 
+  getGridScore: -> 
+    return false if not @linkedResult.get("subtestData")? # no result found
+    result = @linkedResult.get("subtestData")['attempted'] || 0 
+    return result
+
+  gridWasAutostopped: -> @linkedResult.get("subtestData")?['auto_stop'] || 0
+
   onClose: ->
     @prototypeView?.close?()
 
@@ -59,10 +88,6 @@ class KlassSubtestRunView extends Backbone.View
     else
       return false
     true
-
-  getResult: ->
-    result = @prototypeView.getResult()
-    return result
 
   getSkipped: ->
     if @prototypeView.getSkipped?
@@ -77,13 +102,13 @@ class KlassSubtestRunView extends Backbone.View
     if @isValid()
       # Gaurantee single "new" result
       Tangerine.$db.view "tangerine/resultsByStudentSubtest",
-        key : [@options.student.id,@options.subtest.id]
+        key : [@options.student.id,@subtest.id]
         success: (data) =>
           rows = data.rows
           for datum in rows
             Tangerine.$db.saveDoc $.extend(datum.value, "old":true)
           # save this result
-          @result.add @getResult(), =>
+          @result.add @prototypeView.getResult(), =>
             Tangerine.router.navigate "class/#{@options.student.get('klassId')}/#{@options.subtest.get('part')}", true
     else
       @prototypeView.showErrors()

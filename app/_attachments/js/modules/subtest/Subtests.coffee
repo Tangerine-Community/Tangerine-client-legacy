@@ -6,10 +6,10 @@ class Subtests extends Backbone.Collection
     view: "subtestsByAssessmentId"
 
   comparator: (subtest) ->
-    if subtest.has("curriculumId")
-      return [subtest.get("part"), subtest.get("order")]
-    else
-      return subtest.get("order")
+      if subtest.has("curriculumId")
+        return (parseInt(subtest.get("part"))*100) + parseInt(subtest.get("order"))
+      else
+        return parseInt(subtest.get("order"))
 
   initialize: (options) ->
 

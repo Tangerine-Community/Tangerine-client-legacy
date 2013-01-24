@@ -27,9 +27,11 @@ SurveyEditView = (function(_super) {
     this.model = options.model;
     this.parent = options.parent;
     this.model.questions = new Questions;
+    Utils.working(true);
     return this.model.questions.fetch({
       key: this.model.get("assessmentId"),
       success: function() {
+        Utils.working(false);
         _this.model.questions = new Questions(_this.model.questions.where({
           subtestId: _this.model.id
         }));
@@ -42,6 +44,10 @@ SurveyEditView = (function(_super) {
         });
         _this.model.questions.on("change", _this.renderQuestions);
         return _this.renderQuestions();
+      },
+      erorr: function(a, b) {
+        Utils.working(false);
+        return Utils.midAlert("Error<br>Could not load questions<br>" + a + ", " + b, 5000);
       }
     });
   };
@@ -93,7 +99,6 @@ SurveyEditView = (function(_super) {
     _ref = this.model.questions.models;
     for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
       question = _ref[i];
-      console.log(question);
       if (question.get("type") !== "open" && ((_ref1 = question.get("options")) != null ? _ref1.length : void 0) === 0) {
         emptyOptions.push(i + 1);
         if (options.questionSave) {
