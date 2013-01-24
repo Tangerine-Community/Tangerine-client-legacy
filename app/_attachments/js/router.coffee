@@ -706,12 +706,14 @@ class Router extends Backbone.Router
         Tangerine.router.navigate "login", true
 
   logs: ->
-    logs = new Logs
-    logs.fetch
-      success: ->
-        view = new LogView
-          logs: logs
-        vm.show view
+    Tangerine.user.verify
+      isRegistered: ->
+        logs = new Logs
+        logs.fetch
+          success: ->
+            view = new LogView
+              logs: logs
+            vm.show view
 
   # Transfer a new user from tangerine-central into tangerine
   transfer: ->

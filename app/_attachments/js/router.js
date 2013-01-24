@@ -1155,15 +1155,19 @@ Router = (function(_super) {
   };
 
   Router.prototype.logs = function() {
-    var logs;
-    logs = new Logs;
-    return logs.fetch({
-      success: function() {
-        var view;
-        view = new LogView({
-          logs: logs
+    return Tangerine.user.verify({
+      isRegistered: function() {
+        var logs;
+        logs = new Logs;
+        return logs.fetch({
+          success: function() {
+            var view;
+            view = new LogView({
+              logs: logs
+            });
+            return vm.show(view);
+          }
         });
-        return vm.show(view);
       }
     });
   };

@@ -5,27 +5,27 @@ class Log extends Backbone.Model
 
   initialize: ->
     @ensure() if @get("_id") != @calcName()
+
+  ensure: (callback) ->
     d = new Date()
     @set 
+      "_id"   : @calcName()
       "year"  : d.getFullYear()
       "month" : d.getMonth()
       "date"  : d.getDate()
       "user"  : Tangerine.user.name
 
-  ensure: (callback) ->
-    if @get("_id") != @calcName()
-      @set "_id", @calcName()
-
-      # continue old log if possible
-      @fetch
-        success: (model, response, options) =>
-          callback?()
-        error: (model, xhr, options ) =>
-          @save
-            success:=>
-              callback?()
-    else
-      callback?()
+    @save null,
+      success: =>
+        callback?()
+      error: =>
+        @fetch
+          success: =>
+            @save
+              succes: =>
+                callback?()
+          error: =>
+            callback?()
 
   #
   # Log using these four functions
@@ -73,17 +73,13 @@ class Log extends Backbone.Model
 
   # requires that THIS, @, is up to date. 
   # has a side effect, it saves
-  add: ( logEvent, haventTriedYet ) ->
+  add: ( logEvent ) ->
     logEvents = @getArray("logEvents")
     logEvents.push logEvent
     @set "logEvents", logEvents
     @ensure =>
       Tangerine.log.save
-        error: -> # if we can't save, see if we can fetch first then save.
-          if haventTriedYet
-            Tangerine.log.fetch
-              success: ->
-                Tangerine.log.add(logEvent, true)
+       
 
   calcName: ->
     d = new Date()
@@ -97,21 +93,31 @@ class Logs extends Backbone.Collection
 
 class LogView extends Backbone.View
 
+  className : "LogView"
+
   initialize: (options) ->
-    @logs = options.logs.models
+    @logs = options.logs
+    @logs.on "all", => @render()
 
-  render: ->
-
+  render: =>
     html = ""
-    for log in @logs
-      for k, v of log.attributes
-        continue if k in ["_rev", "_id", "collection", "hash", "updated", "logEvents"] 
-        html += "<b>#{k}</b> #{v}<br><br>"
-      for oneEvent in log.attributes.logEvents
+
+    @logs.each (log) =>
+      
+      html += "<b>User</b> #{log.get("user")}<br><br>"
+
+      html += "<table><tr>"
+      for k, v of log.get("logEvents")[0]
+        html += "<th>#{k}</th>"
+      html += "</tr>"
+
+      for oneEvent in log.get "logEvents"
+        html += "<tr>"
         for k, v of oneEvent
           if k == "timestamp" then v = (new Date(parseInt(v))).toString()
-          html += "<b>#{k}</b> #{v}<br>"
-        html += "<br>"
+          html += "<td>#{v}</td>"
+        html += "</tr>"
+      html += "</table>"
 
     @$el.html html
     

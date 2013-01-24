@@ -1320,6 +1320,34 @@ label.no_help {
   color: black;
   text-align: left;
 }
+.LogView table {
+  margin: 1em 0;
+  border: 0;
+  width: 100%;
+  font-size: 0.8em;
+}
+.LogView table td {
+  padding: 0.25em 0;
+  color: #666666;
+  border: 0;
+  border-bottom: 1px solid #cccccc;
+}
+.LogView table th {
+  vertical-align: top;
+  padding: 0.25em 0;
+  font-weight: normal;
+  color: black;
+  text-align: left;
+}
+.LogView table th {
+  text-align: center;
+}
+.LogView table td:nth-child(odd) {
+  background-color: #fff;
+}
+.LogView table td:nth-child(even) {
+  background-color: #eee;
+}
 ul.klass_list li {
   padding: 5px 0;
   border-bottom: 1px solid #cccccc;
