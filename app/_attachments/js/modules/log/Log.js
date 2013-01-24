@@ -14,44 +14,6 @@ Log = (function(_super) {
 
   Log.prototype.url = "log";
 
-  Log.prototype.initialize = function() {
-    if (this.get("_id") !== this.calcName()) {
-      return this.ensure();
-    }
-  };
-
-  Log.prototype.ensure = function(callback) {
-    var d,
-      _this = this;
-    d = new Date();
-    this.set({
-      "_id": this.calcName(),
-      "year": d.getFullYear(),
-      "month": d.getMonth(),
-      "date": d.getDate(),
-      "user": Tangerine.user.name
-    });
-    return this.save(null, {
-      success: function() {
-        return typeof callback === "function" ? callback() : void 0;
-      },
-      error: function() {
-        return _this.fetch({
-          success: function() {
-            return _this.save({
-              succes: function() {
-                return typeof callback === "function" ? callback() : void 0;
-              }
-            });
-          },
-          error: function() {
-            return typeof callback === "function" ? callback() : void 0;
-          }
-        });
-      }
-    });
-  };
-
   Log.prototype.app = function(code, details) {
     if (code == null) {
       code = "";
@@ -65,7 +27,7 @@ Log = (function(_super) {
     if (!~Tangerine.settings.get("log").indexOf("app")) {
       return;
     }
-    return Tangerine.log.add({
+    return this.add({
       "type": "app",
       "code": code,
       "details": details,
@@ -86,7 +48,7 @@ Log = (function(_super) {
     if (!~Tangerine.settings.get("log").indexOf("db")) {
       return;
     }
-    return Tangerine.log.add({
+    return this.add({
       "type": "db",
       "code": code,
       "details": details,
@@ -107,7 +69,7 @@ Log = (function(_super) {
     if (!~Tangerine.settings.get("log").indexOf("ui")) {
       return;
     }
-    return Tangerine.log.add({
+    return this.add({
       "type": "ui",
       "code": code,
       "details": details,
@@ -126,7 +88,7 @@ Log = (function(_super) {
       return;
     }
     return !~Tangerine.settings.get("log").indexOf("err");
-    return Tangerine.log.add({
+    return this.add({
       "type": "err",
       "code": code,
       "details": details,
@@ -135,21 +97,32 @@ Log = (function(_super) {
   };
 
   Log.prototype.add = function(logEvent) {
-    var logEvents,
-      _this = this;
-    logEvents = this.getArray("logEvents");
-    logEvents.push(logEvent);
-    this.set("logEvents", logEvents);
-    return this.ensure(function() {
-      return Tangerine.log.save;
+    var d, name;
+    d = new Date();
+    name = "not-signed-in";
+    if (!!(Tangerine.user.name != null)) {
+      name = Tangerine.user.name;
+    }
+    this.unset("_rev");
+    return this.save({
+      "_id": this.calcName(),
+      "year": d.getFullYear(),
+      "month": d.getMonth(),
+      "date": d.getDate(),
+      "timestamp": d.getTime(),
+      "user": name,
+      "event": logEvent
     });
   };
 
   Log.prototype.calcName = function() {
     var d, user;
     d = new Date();
-    user = Tangerine.user.name != null ? Tangerine.user.name : "not-signed-in";
-    return hex_sha1("" + user + "_" + (d.getFullYear()) + "-" + (d.getMonth()) + "-" + (d.getDate()));
+    user = "not-signed-in";
+    if (!!(Tangerine.user.name != null)) {
+      user = Tangerine.user.name;
+    }
+    return hex_sha1("" + user + "_" + (d.getTime()));
   };
 
   return Log;
@@ -188,41 +161,24 @@ LogView = (function(_super) {
   LogView.prototype.className = "LogView";
 
   LogView.prototype.initialize = function(options) {
-    var _this = this;
-    this.logs = options.logs;
-    return this.logs.on("all", function() {
-      return _this.render();
-    });
+    return this.logs = options.logs;
   };
 
   LogView.prototype.render = function() {
     var html,
       _this = this;
-    html = "";
+    html = "      <h1>Logs</h1>      <table><tr>        <th>User</th>        <th>Code</th>        <th>Details</th>        <th>Time</th>      </tr>      ";
     this.logs.each(function(log) {
-      var k, oneEvent, v, _i, _len, _ref, _ref1;
-      html += "<b>User</b> " + (log.get("user")) + "<br><br>";
-      html += "<table><tr>";
-      _ref = log.get("logEvents")[0];
-      for (k in _ref) {
-        v = _ref[k];
-        html += "<th>" + k + "</th>";
+      var code, details, ev, name, time;
+      if (!(log.get("event") != null)) {
+        return;
       }
-      html += "</tr>";
-      _ref1 = log.get("logEvents");
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        oneEvent = _ref1[_i];
-        html += "<tr>";
-        for (k in oneEvent) {
-          v = oneEvent[k];
-          if (k === "timestamp") {
-            v = (new Date(parseInt(v))).toString();
-          }
-          html += "<td>" + v + "</td>";
-        }
-        html += "</tr>";
-      }
-      return html += "</table>";
+      ev = log.get("event");
+      name = log.get("user");
+      code = ev.code;
+      details = ev.details;
+      time = (new Date(parseInt(ev.timestamp))).toString();
+      return html += "      <tr>        <td>" + name + "</td>        <td>" + code + "</td>        <td>" + details + "</td>        <td>" + time + "</td>      </tr>      ";
     });
     this.$el.html(html);
     return this.trigger("rendered");

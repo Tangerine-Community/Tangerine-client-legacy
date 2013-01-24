@@ -12,9 +12,12 @@ class ViewManager extends Backbone.View
 
     @currentView?.close()
     @currentView = view
+
     @className = String(@currentView.constructor).split("function ")[1].split("() {")[0]
 
-    Tangerine.log.app "show", @className
+    Tangerine.log.app("show", @className)
+
+    @currentView.on "click", => console.log arguments
 
     @currentView.on "rendered", =>
       Utils.working false

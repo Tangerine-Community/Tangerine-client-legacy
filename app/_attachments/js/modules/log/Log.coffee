@@ -1,31 +1,6 @@
-# this object forces itself to be a singleton
 class Log extends Backbone.Model
 
   url: "log"
-
-  initialize: ->
-    @ensure() if @get("_id") != @calcName()
-
-  ensure: (callback) ->
-    d = new Date()
-    @set 
-      "_id"   : @calcName()
-      "year"  : d.getFullYear()
-      "month" : d.getMonth()
-      "date"  : d.getDate()
-      "user"  : Tangerine.user.name
-
-    @save null,
-      success: =>
-        callback?()
-      error: =>
-        @fetch
-          success: =>
-            @save
-              succes: =>
-                callback?()
-          error: =>
-            callback?()
 
   #
   # Log using these four functions
@@ -35,7 +10,7 @@ class Log extends Backbone.Model
   app: ( code = "", details = "" ) ->
     return if Tangerine.settings.get("context") == "server"
     return if !~Tangerine.settings.get("log").indexOf("app")
-    Tangerine.log.add
+    @add
       "type"      : "app"
       "code"      : code
       "details"   : details
@@ -45,7 +20,7 @@ class Log extends Backbone.Model
   db: ( code = "", details = "" ) ->
     return if Tangerine.settings.get("context") == "server"
     return if !~Tangerine.settings.get("log").indexOf("db")
-    Tangerine.log.add
+    @add
       "type"      : "db"
       "code"      : code
       "details"   : details
@@ -55,7 +30,7 @@ class Log extends Backbone.Model
   ui: ( code = "", details = "" ) ->
     return if Tangerine.settings.get("context") == "server"
     return if !~Tangerine.settings.get("log").indexOf("ui")
-    Tangerine.log.add
+    @add
       "type"      : "ui"
       "code"      : code
       "details"   : details
@@ -65,7 +40,7 @@ class Log extends Backbone.Model
   err: ( code = "", details = "" ) ->
     return if Tangerine.settings.get("context") == "server"
     return !~Tangerine.settings.get("log").indexOf("err")
-    Tangerine.log.add
+    @add
       "type"      : "err"
       "code"      : code
       "details"   : details
@@ -74,22 +49,29 @@ class Log extends Backbone.Model
   # requires that THIS, @, is up to date. 
   # has a side effect, it saves
   add: ( logEvent ) ->
-    logEvents = @getArray("logEvents")
-    logEvents.push logEvent
-    @set "logEvents", logEvents
-    @ensure =>
-      Tangerine.log.save
-       
+    d = new Date()
+    name = "not-signed-in"
+    name = Tangerine.user.name unless not Tangerine.user.name?
+    @unset "_rev"
+    @save 
+      "_id"       : @calcName()
+      "year"      : d.getFullYear()
+      "month"     : d.getMonth()
+      "date"      : d.getDate()
+      "timestamp" : d.getTime()
+      "user"      : name
+      "event"     : logEvent
 
   calcName: ->
     d = new Date()
-    user = if Tangerine.user.name? then Tangerine.user.name else "not-signed-in"
-    return hex_sha1 "#{user}_#{d.getFullYear()}-#{d.getMonth()}-#{d.getDate()}"
+    user = "not-signed-in"
+    user = Tangerine.user.name unless not Tangerine.user.name?
+    return hex_sha1 "#{user}_#{d.getTime()}"
 
 class Logs extends Backbone.Collection
   url: "log"
   model: Log
-  comparator: (model) -> return model.get "timestamp"
+  comparator: (model) -> return model.get("timestamp")
 
 class LogView extends Backbone.View
 
@@ -97,27 +79,35 @@ class LogView extends Backbone.View
 
   initialize: (options) ->
     @logs = options.logs
-    @logs.on "all", => @render()
 
   render: =>
-    html = ""
+    html = "
+      <h1>Logs</h1>
+      <table><tr>
+        <th>User</th>
+        <th>Code</th>
+        <th>Details</th>
+        <th>Time</th>
+      </tr>
+      "
+
 
     @logs.each (log) =>
-      
-      html += "<b>User</b> #{log.get("user")}<br><br>"
+      return if not log.get("event")? 
+      ev = log.get "event"
+      name = log.get("user")
+      code = ev.code
+      details = ev.details
+      time = (new Date(parseInt(ev.timestamp))).toString()
 
-      html += "<table><tr>"
-      for k, v of log.get("logEvents")[0]
-        html += "<th>#{k}</th>"
-      html += "</tr>"
-
-      for oneEvent in log.get "logEvents"
-        html += "<tr>"
-        for k, v of oneEvent
-          if k == "timestamp" then v = (new Date(parseInt(v))).toString()
-          html += "<td>#{v}</td>"
-        html += "</tr>"
-      html += "</table>"
+      html += "
+      <tr>
+        <td>#{name}</td>
+        <td>#{code}</td>
+        <td>#{details}</td>
+        <td>#{time}</td>
+      </tr>
+      "
 
     @$el.html html
     

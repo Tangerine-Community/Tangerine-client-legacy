@@ -23,6 +23,9 @@ ViewManager = (function(_super) {
     this.currentView = view;
     this.className = String(this.currentView.constructor).split("function ")[1].split("() {")[0];
     Tangerine.log.app("show", this.className);
+    this.currentView.on("click", function() {
+      return console.log(arguments);
+    });
     this.currentView.on("rendered", function() {
       var _base;
       Utils.working(false);

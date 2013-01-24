@@ -1157,7 +1157,8 @@ Router = (function(_super) {
   Router.prototype.logs = function() {
     return Tangerine.user.verify({
       isRegistered: function() {
-        var logs;
+        var logs,
+          _this = this;
         logs = new Logs;
         return logs.fetch({
           success: function() {

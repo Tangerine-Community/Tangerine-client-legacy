@@ -10,6 +10,7 @@ class User extends Backbone.Model
     @name = null
 
   signup: ( name, pass ) ->
+    Tangerine.log.app "User-signup", name
     if Tangerine.settings.get("context") == "server"
       $.ajax
         url         : Tangerine.config.get("robbert")
@@ -42,6 +43,7 @@ class User extends Backbone.Model
                   name : name
                   pass : pass
                 vm.show view
+                Tangerine.log.app "User-teacher-register", name
           else if @intent == "login"
             # mobile login
             @intent = "retry_login"
@@ -57,10 +59,10 @@ class User extends Backbone.Model
       name     : name
       password : pass
       success: ( user ) =>
-        Tangerine.log.app "User-login-success", name
         @intent = ""
         @name   = name
         @roles  = user.roles
+        Tangerine.log.app "User-login-success", name
         @fetch
           success: =>
             callbacks.success?()
@@ -69,6 +71,7 @@ class User extends Backbone.Model
         if @intent == "retry_login"
           @intent = ""
           @trigger "password-error", message
+          Tangerine.log.app "User-login-fail", name + " password incorrect"
         else 
           @intent = "login"
           @signup name, pass
@@ -83,9 +86,8 @@ class User extends Backbone.Model
           @fetch
             success: =>
               @trigger "login"
-              Tangerine.log.app "User-login", "Resumed session"
-
               callbacks['success'].apply(@, arguments)
+              Tangerine.log.app "User-login", "Resumed session"
         else
           callbacks['success'].apply(@, arguments)
       error: ->
@@ -115,11 +117,11 @@ class User extends Backbone.Model
         @roles = []
         @clear()
         @trigger "logout"
-        Tangerine.log.app "User-logout", "logout"
         if Tangerine.settings.get("context") == "server"
           window.location = Tangerine.settings.urlIndex "trunk"
         else
           Tangerine.router.navigate "login", true
+        Tangerine.log.app "User-logout", "logout"
 
   ###
     Saves to the `_users` database

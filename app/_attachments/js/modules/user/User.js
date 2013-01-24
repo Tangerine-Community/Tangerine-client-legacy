@@ -28,6 +28,7 @@ User = (function(_super) {
 
   User.prototype.signup = function(name, pass) {
     var _this = this;
+    Tangerine.log.app("User-signup", name);
     if (Tangerine.settings.get("context") === "server") {
       return $.ajax({
         url: Tangerine.config.get("robbert"),
@@ -63,7 +64,8 @@ User = (function(_super) {
                   name: name,
                   pass: pass
                 });
-                return vm.show(view);
+                vm.show(view);
+                return Tangerine.log.app("User-teacher-register", name);
               }
             });
           } else if (_this.intent === "login") {
@@ -89,10 +91,10 @@ User = (function(_super) {
       name: name,
       password: pass,
       success: function(user) {
-        Tangerine.log.app("User-login-success", name);
         _this.intent = "";
         _this.name = name;
         _this.roles = user.roles;
+        Tangerine.log.app("User-login-success", name);
         return _this.fetch({
           success: function() {
             if (typeof callbacks.success === "function") {
@@ -105,7 +107,8 @@ User = (function(_super) {
       error: function(status, error, message) {
         if (_this.intent === "retry_login") {
           _this.intent = "";
-          return _this.trigger("password-error", message);
+          _this.trigger("password-error", message);
+          return Tangerine.log.app("User-login-fail", name + " password incorrect");
         } else {
           _this.intent = "login";
           return _this.signup(name, pass);
@@ -124,8 +127,8 @@ User = (function(_super) {
           return _this.fetch({
             success: function() {
               _this.trigger("login");
-              Tangerine.log.app("User-login", "Resumed session");
-              return callbacks['success'].apply(_this, arguments);
+              callbacks['success'].apply(_this, arguments);
+              return Tangerine.log.app("User-login", "Resumed session");
             }
           });
         } else {
@@ -173,12 +176,12 @@ User = (function(_super) {
         _this.roles = [];
         _this.clear();
         _this.trigger("logout");
-        Tangerine.log.app("User-logout", "logout");
         if (Tangerine.settings.get("context") === "server") {
-          return window.location = Tangerine.settings.urlIndex("trunk");
+          window.location = Tangerine.settings.urlIndex("trunk");
         } else {
-          return Tangerine.router.navigate("login", true);
+          Tangerine.router.navigate("login", true);
         }
+        return Tangerine.log.app("User-logout", "logout");
       }
     });
   };

@@ -710,10 +710,11 @@ class Router extends Backbone.Router
       isRegistered: ->
         logs = new Logs
         logs.fetch
-          success: ->
+          success: =>
             view = new LogView
               logs: logs
             vm.show view
+
 
   # Transfer a new user from tangerine-central into tangerine
   transfer: ->
