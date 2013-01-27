@@ -29,7 +29,6 @@ class KlassResult extends Backbone.Model
     super(options)
 
   gridCount: (value) ->
-    console.log "\n\n\nstarting grid count"
     count = 0
     if @attributes.prototype == "grid"
       if _.isArray(value)

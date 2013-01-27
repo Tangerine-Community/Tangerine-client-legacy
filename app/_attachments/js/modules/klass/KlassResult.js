@@ -52,7 +52,6 @@ KlassResult = (function(_super) {
 
   KlassResult.prototype.gridCount = function(value) {
     var count, item, k, v, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3;
-    console.log("\n\n\nstarting grid count");
     count = 0;
     if (this.attributes.prototype === "grid") {
       if (_.isArray(value)) {
