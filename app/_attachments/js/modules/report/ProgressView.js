@@ -48,7 +48,7 @@ ProgressView = (function(_super) {
   };
 
   ProgressView.prototype.initialize = function(options) {
-    var data, dataForBenchmark, i, itemType, itemTypes, key, name, part, parts, pointsByItemType, result, row, subtest, subtests, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _m, _n, _o, _p, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+    var data, dataForBenchmark, graphIndex, i, itemType, itemTypes, key, name, part, partByIndex, parts, pointsByItemType, result, row, subtest, subtests, subtestsByPart, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _len7, _m, _n, _o, _p, _q, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
     this.results = options.results;
     this.student = options.student;
     this.subtests = options.subtests;
@@ -91,20 +91,27 @@ ProgressView = (function(_super) {
       this.subtestNames[i][subtest.get("itemType")] = subtest.get("name");
     }
     this.partCount = parts.length;
+    subtestsByPart = this.subtests.indexBy("part");
+    partByIndex = _.keys(subtestsByPart);
+    this.indexByPart = [];
+    for (i = _j = 0, _len1 = partByIndex.length; _j < _len1; i = ++_j) {
+      part = partByIndex[i];
+      this.indexByPart[part] = i;
+    }
     this.resultsByPart = this.results.indexBy("part");
     _ref1 = this.results.models;
-    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-      result = _ref1[_j];
+    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+      result = _ref1[_k];
       this.itemTypeList[result.get("itemType").toLowerCase()] = true;
     }
     this.itemTypeList = _.keys(this.itemTypeList);
-    for (part = _k = 1, _ref2 = this.lastPart; 1 <= _ref2 ? _k <= _ref2 : _k >= _ref2; part = 1 <= _ref2 ? ++_k : --_k) {
+    for (part = _l = 1, _ref2 = this.lastPart; 1 <= _ref2 ? _l <= _ref2 : _l >= _ref2; part = 1 <= _ref2 ? ++_l : --_l) {
       if (this.resultsByPart[part] === void 0) {
         continue;
       }
       itemTypes = {};
       _ref3 = this.resultsByPart[part];
-      for (i = _l = 0, _len2 = _ref3.length; _l < _len2; i = ++_l) {
+      for (i = _m = 0, _len3 = _ref3.length; _m < _len3; i = ++_m) {
         result = _ref3[i];
         if (this.mode === this.INDIVIDUAL && result.get("studentId") !== this.student.id) {
           continue;
@@ -119,6 +126,7 @@ ProgressView = (function(_super) {
         itemTypes[itemType].push({
           "name": itemType.titleize(),
           "key": itemType,
+          "part": result.get("part"),
           "correct": result.get("correct"),
           "attempted": result.get("attempted"),
           "itemsPerMinute": result.getCorrectPerSeconds(60)
@@ -139,15 +147,16 @@ ProgressView = (function(_super) {
     }
     pointsByItemType = {};
     _ref4 = this.rows;
-    for (i = _m = 0, _len3 = _ref4.length; _m < _len3; i = ++_m) {
+    for (i = _n = 0, _len4 = _ref4.length; _n < _len4; i = ++_n) {
       row = _ref4[i];
       _ref5 = row.itemTypes;
-      for (_n = 0, _len4 = _ref5.length; _n < _len4; _n++) {
-        itemType = _ref5[_n];
+      for (_o = 0, _len5 = _ref5.length; _o < _len5; _o++) {
+        itemType = _ref5[_o];
+        graphIndex = this.indexByPart[row.part] + 1;
         if (!(pointsByItemType[itemType.key] != null)) {
           pointsByItemType[itemType.key] = [];
         }
-        pointsByItemType[itemType.key].push([i + 1, itemType.itemsPerMinute]);
+        pointsByItemType[itemType.key].push([graphIndex, itemType.itemsPerMinute]);
       }
     }
     this.flotData = [];
@@ -167,15 +176,18 @@ ProgressView = (function(_super) {
           "show": true
         }
       };
+      console.log("data for " + key);
+      console.log(data);
     }
     this.flotBenchmark = [];
     _ref6 = this.subtests.indexBy("itemType");
     for (itemType in _ref6) {
       subtests = _ref6[itemType];
       dataForBenchmark = [];
-      for (i = _o = 0, _len5 = subtests.length; _o < _len5; i = ++_o) {
+      for (i = _p = 0, _len6 = subtests.length; _p < _len6; i = ++_p) {
         subtest = subtests[i];
-        dataForBenchmark.push([i + 1, subtest.getNumber("scoreTarget")]);
+        graphIndex = this.indexByPart[subtest.get("part")] + 1;
+        dataForBenchmark.push([graphIndex, subtest.getNumber("scoreTarget")]);
       }
       this.flotBenchmark[itemType.toLowerCase()] = {
         "label": "Progress benchmark",
@@ -191,13 +203,13 @@ ProgressView = (function(_super) {
     for (itemType in _ref7) {
       subtests = _ref7[itemType];
       this.warningThresholds[itemType] = [];
-      for (i = _p = 0, _len6 = subtests.length; _p < _len6; i = ++_p) {
+      for (i = _q = 0, _len7 = subtests.length; _q < _len7; i = ++_q) {
         subtest = subtests[i];
-        this.warningThresholds[itemType.toLowerCase()].push({
+        this.warningThresholds[itemType.toLowerCase()][this.indexByPart[subtest.get("part")]] = {
           target: subtest.getNumber("scoreTarget"),
           spread: subtest.getNumber("scoreSpread"),
           seconds: subtest.getNumber("timer")
-        });
+        };
       }
     }
     this.renderReady = true;

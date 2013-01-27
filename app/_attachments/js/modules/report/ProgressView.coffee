@@ -76,6 +76,16 @@ class ProgressView extends Backbone.View
     @partCount = parts.length
 
     #
+    # Make a map in case we need it of which week belongs to which index
+    #
+    subtestsByPart = @subtests.indexBy("part")
+    partByIndex = _.keys(subtestsByPart)
+    @indexByPart = []
+    for part, i in partByIndex
+      @indexByPart[part] = i
+
+
+    #
     # make the resultsByPart and the itemTypeList
     #
     @resultsByPart = @results.indexBy "part"
@@ -108,6 +118,7 @@ class ProgressView extends Backbone.View
         itemTypes[itemType].push
           "name"           : itemType.titleize()
           "key"            : itemType
+          "part"           : result.get("part")
           "correct"        : result.get "correct"
           "attempted"      : result.get "attempted"
           "itemsPerMinute" : result.getCorrectPerSeconds(60)
@@ -139,8 +150,9 @@ class ProgressView extends Backbone.View
     pointsByItemType = {}
     for row, i in @rows
       for itemType in row.itemTypes
+        graphIndex = @indexByPart[row.part] + 1
         pointsByItemType[itemType.key] = [] if not pointsByItemType[itemType.key]? 
-        pointsByItemType[itemType.key].push [i+1, itemType.itemsPerMinute]
+        pointsByItemType[itemType.key].push [graphIndex, itemType.itemsPerMinute]
     @flotData      = []
     @benchmarkData = []
     i = 0
@@ -156,6 +168,8 @@ class ProgressView extends Backbone.View
         "points" :
           "show" : true
       }
+      console.log "data for #{key}"
+      console.log data
 
     #
     # Create benchmark flot graphs
@@ -164,7 +178,8 @@ class ProgressView extends Backbone.View
     for itemType, subtests of @subtests.indexBy("itemType")
       dataForBenchmark = []
       for subtest, i in subtests
-        dataForBenchmark.push [i+1, subtest.getNumber("scoreTarget")]
+        graphIndex = @indexByPart[subtest.get("part")] + 1
+        dataForBenchmark.push [graphIndex, subtest.getNumber("scoreTarget")]
 
       @flotBenchmark[itemType.toLowerCase()] = {
         "label" : "Progress benchmark"
@@ -181,7 +196,7 @@ class ProgressView extends Backbone.View
     for itemType, subtests of @subtests.indexBy("itemType")
       @warningThresholds[itemType] = []
       for subtest, i in subtests
-        @warningThresholds[itemType.toLowerCase()].push 
+        @warningThresholds[itemType.toLowerCase()][@indexByPart[subtest.get("part")]] =
           target: subtest.getNumber("scoreTarget")
           spread: subtest.getNumber("scoreSpread")
           seconds: subtest.getNumber("timer")
@@ -294,7 +309,7 @@ class ProgressView extends Backbone.View
 
       for datum in data
         if datum[0] == week+1
-          score = datum[1] 
+          score = datum[1]
 
       threshold = @warningThresholds[type][week]
 
@@ -360,6 +375,7 @@ class ProgressView extends Backbone.View
 
   # Takes the results for each itemType and replaces them with an average
   aggregate: (oldRows) ->
+
     newRows = []
     for row, i in oldRows
       newRows[i] =

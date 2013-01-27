@@ -543,7 +543,9 @@ class Router extends Backbone.Router
               allSubtests = new Subtests
               allSubtests.fetch
                 success: ( allSubtests ) ->
-                  subtests = new Subtests allSubtests.where "curriculumId" : klass.get("curriculumId"), "reportType" : "progress"
+                  subtests = new Subtests allSubtests.where 
+                    "curriculumId" : klass.get("curriculumId")
+                    "reportType"   : "progress"
                   allResults = new KlassResults
                   allResults.fetch
                     success: ( collection ) ->
