@@ -1,9 +1,0 @@
-{
-  "_id" : "Example_English_EGRA_May_2011.Datetime",
-  "collection": "subtest",
-  "prototype": "datetime",
-  "name" : "Date and Time",
-  "order" : 0,
-  "assessmentId" : "Example_English_EGRA_May_2011.Assessment",
-  "couchapp": {}
-}

@@ -1,8 +1,0 @@
-{
-  "_id" : "Example_English_EGRA_May_2011.PupilContextInterview",
-  "prototype" : "survey",
-  "order" : 13,
-  "assessmentId" : "Example_English_EGRA_May_2011.Assessment",
-  "collection" : "question",
-  "couchapp" : {}
-}
