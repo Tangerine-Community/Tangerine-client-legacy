@@ -647,7 +647,7 @@ TangerineTree = (function() {
         return success(data);
       },
       error: function(data) {
-        return error(data);
+        return error(data, JSON.parse(data.responseText));
       }
     });
   };
