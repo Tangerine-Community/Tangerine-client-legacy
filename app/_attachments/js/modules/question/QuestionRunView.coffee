@@ -23,7 +23,7 @@ class QuestionRunView extends Backbone.View
 
     @defineSpecialCaseResults()
 
-    if @model.get("skippable") == "true" || @model.get("skippable") == true
+    if @model.getBoolean("skippable")
       @isValid = true
       @skipped = true
     else

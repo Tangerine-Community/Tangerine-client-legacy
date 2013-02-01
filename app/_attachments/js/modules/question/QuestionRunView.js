@@ -34,7 +34,7 @@ QuestionRunView = (function(_super) {
     this.notAsked = options.notAsked;
     this.isObservation = options.isObservation;
     this.defineSpecialCaseResults();
-    if (this.model.get("skippable") === "true" || this.model.get("skippable") === true) {
+    if (this.model.getBoolean("skippable")) {
       this.isValid = true;
       this.skipped = true;
     } else {
