@@ -43,7 +43,7 @@ class Router extends Backbone.Router
     'assessments'        : 'assessments'
 
     'run/:id'       : 'run'
-    'print/:id'       : 'print'
+    'print/:id'     : 'print'
 
     'resume/:assessmentId/:resultId'    : 'resume'
     
@@ -164,16 +164,20 @@ class Router extends Backbone.Router
         klass = new Klass _id : id
         klass.fetch
           success: ( model ) ->
-            allStudents = new Students
-            allStudents.fetch
-              success: (allStudents) ->
-                klassStudents = new Students allStudents.where {klassId : id}
-                view = new KlassEditView
-                  klass       : model
-                  students    : klassStudents
-                  allStudents : allStudents
+            teachers = new Teachers
+            teachers.fetch
+              success: ->
+                allStudents = new Students
+                allStudents.fetch
+                  success: (allStudents) ->
+                    klassStudents = new Students allStudents.where {klassId : id}
+                    view = new KlassEditView
+                      klass       : model
+                      students    : klassStudents
+                      allStudents : allStudents
+                      teachers    : teachers
 
-                vm.show view
+                    vm.show view
       isUnregistered: ->
         Tangerine.router.navigate "", true
 
