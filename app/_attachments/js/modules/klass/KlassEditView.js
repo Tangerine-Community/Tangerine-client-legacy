@@ -22,12 +22,19 @@ KlassEditView = (function(_super) {
     'click .save': 'basicInfoSave',
     'click .basic_info_edit': 'basicInfoToggle',
     'click .basic_info_cancel': 'basicInfoToggle',
+    'change #teacher_select': 'teacherSelect',
     'click .add_student': 'addStudentToggle',
     'click .add_student_cancel': 'addStudentToggle',
     'click .add_student_add': 'addStudent',
     'click .register_student': 'registerStudentToggle',
     'click .register_student_cancel': 'registerStudentToggle',
     'click .register_student_save': 'registerStudent'
+  };
+
+  KlassEditView.prototype.teacherSelect = function(event) {
+    var teacherId;
+    teacherId = this.$el.find("#teacher_select option:selected").attr("data-teacherId");
+    return this.klass.set("teacherId", teacherId);
   };
 
   KlassEditView.prototype.addStudentToggle = function() {
@@ -117,6 +124,7 @@ KlassEditView = (function(_super) {
     this.klass = options.klass;
     this.students = options.students;
     this.allStudents = options.allStudents;
+    this.teachers = options.teachers;
     this.students.on("add remove change", this.renderStudents);
     return this.views = [];
   };
@@ -173,13 +181,29 @@ KlassEditView = (function(_super) {
   };
 
   KlassEditView.prototype.render = function() {
-    var grade, schoolName, startDate, stream, year;
+    var grade, htmlInfoTeacher, htmlTeacherSelect, schoolName, startDate, stream, teacher, year;
     schoolName = this.klass.getString("schoolName");
     year = this.klass.getString("year");
     grade = this.klass.getString("grade");
     stream = this.klass.getString("stream");
     startDate = new Date(this.klass.getNumber("startDate"));
-    this.$el.html("    <button class='back navigation'>" + (t('back')) + "</button>    <h1>" + (t('class editor')) + "</h1>    <h2>" + (t('basic info')) + "</h2>    <table class='info_box basic_info'>      <tr><td><label>School name</label></td><td>" + schoolName + "</td></tr>      <tr><td><label>School year</label></td><td>" + year + "</td></tr>      <tr><td><label>" + (t('grade')) + "</label></td><td>" + grade + "</td></tr>      <tr><td><label>" + (t('stream')) + "</label></td><td>" + stream + "</td></tr>      <tr><td><label>" + (t('starting date')) + "</label></td><td>" + (startDate.getFullYear() + "/" + (startDate.getMonth() + 1) + "/" + startDate.getDate()) + "</td></tr>      <tr><td colspan='2'><button class='basic_info_edit command'>" + (t('edit')) + "</button></td></tr>    </table>    <div class='basic_info confirmation'>      <div class='menu_box'>        <div class='label_value'>          <label for='school_name'>School name</label>          <input id='school_name' value='" + schoolName + "'>        </div>        <div class='label_value'>          <label for='year'>School year</label>          <input id='year' value='" + year + "'>        </div>        <div class='label_value'>          <label for='grade'>" + (t('grade')) + "</label>          <input id='grade' value='" + grade + "'>        </div>        <div class='label_value'>          <label for='stream'>" + (t('stream')) + "</label>          <input id='stream' value='" + stream + "'>        </div>        <div class='label_value'>          <label for='start_date'>" + (t('starting date')) + "</label>          <input id='start_date' value='" + (startDate.getFullYear() + "/" + (startDate.getMonth() + 1) + "/" + startDate.getDate()) + "'>        </div>              <button class='save command'>" + (t('save')) + "</button> <button class='basic_info_cancel command'>" + (t('cancel')) + "</button>      </div>    </div>        <h2>" + (t('students').capitalize()) + "</h2>    <div id='student_list_wrapper'></div>    <button class='add_student command'>Add student</button>    <div class='add_student_form menu_box confirmation'>      <div class='label_value'>        <label for='add_student_select'>" + (t('add student')) + "</label><br>        <select id='add_student_select'>        </select>      </div>            <button class='add_student_add command'>" + (t('add')) + "</button><button class='add_student_cancel command'>" + (t('cancel')) + "</button>    </div>    <button class='register_student command'>" + ($.t("register student")) + "</button>    <div class='register_student_form menu_box confirmation'>      <h2>" + (t('register student')) + "</h2>      <div class='label_value'>        <label for='register_student_name'>Full name</label>        <input id='register_student_name' value=''>      </div>      <div class='label_value'>        <label for='register_student_gender'>" + (t('gender')) + "</label>        <input id='register_student_gender' value=''>      </div>      <div class='label_value'>        <label for='register_student_age'>" + (t('age')) + "</label>        <input id='register_student_age' value=''>      </div>      <button class='register_student_save command'>" + (t('save')) + "</button>      <button class='register_student_cancel command'>" + (t('cancel')) + "</button>    </div>    ");
+    console.log(this.klass);
+    if (Tangerine.user.isAdmin()) {
+      htmlInfoTeacher = "      <tr><td><label>Teacher</label></td><td>" + (this.teachers.get(this.klass.get('teacherId')).get('name')) + "</td></tr>    ";
+    }
+    if (Tangerine.user.isAdmin()) {
+      htmlTeacherSelect = "      <label>Teacher</label><br>      <select id='teacher_select'>      " + ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.teachers.models;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          teacher = _ref[_i];
+          _results.push("<option " + (teacher.id === this.klass.get('teacherId') ? "selected='selected' " : "") + " data-teacherId='" + teacher.id + "'>" + (teacher.get('name')) + "</option>");
+        }
+        return _results;
+      }).call(this)) + "      </select>    ";
+    }
+    this.$el.html("    <button class='back navigation'>" + (t('back')) + "</button>    <h1>" + (t('class editor')) + "</h1>    <h2>" + (t('basic info')) + "</h2>    <table class='info_box basic_info'>      <tr><td><label>School name</label></td><td>" + schoolName + "</td></tr>      " + (htmlInfoTeacher || "") + "      <tr><td><label>School year</label></td><td>" + year + "</td></tr>      <tr><td><label>" + (t('grade')) + "</label></td><td>" + grade + "</td></tr>      <tr><td><label>" + (t('stream')) + "</label></td><td>" + stream + "</td></tr>      <tr><td><label>" + (t('starting date')) + "</label></td><td>" + (startDate.getFullYear() + "/" + (startDate.getMonth() + 1) + "/" + startDate.getDate()) + "</td></tr>      <tr><td colspan='2'><button class='basic_info_edit command'>" + (t('edit')) + "</button></td></tr>    </table>    <div class='basic_info confirmation'>      <div class='menu_box'>        <div class='label_value'>          <label for='school_name'>School name</label>          <input id='school_name' value='" + schoolName + "'>        </div>        <div class='label_value'>          " + (htmlTeacherSelect || "") + "        </div>        <div class='label_value'>          <label for='year'>School year</label>          <input id='year' value='" + year + "'>        </div>        <div class='label_value'>          <label for='grade'>" + (t('grade')) + "</label>          <input id='grade' value='" + grade + "'>        </div>        <div class='label_value'>          <label for='stream'>" + (t('stream')) + "</label>          <input id='stream' value='" + stream + "'>        </div>        <div class='label_value'>          <label for='start_date'>" + (t('starting date')) + "</label>          <input id='start_date' value='" + (startDate.getFullYear() + "/" + (startDate.getMonth() + 1) + "/" + startDate.getDate()) + "'>        </div>              <button class='save command'>" + (t('save')) + "</button> <button class='basic_info_cancel command'>" + (t('cancel')) + "</button>      </div>    </div>        <h2>" + (t('students').capitalize()) + "</h2>    <div id='student_list_wrapper'></div>    <button class='add_student command'>Add student</button>    <div class='add_student_form menu_box confirmation'>      <div class='label_value'>        <label for='add_student_select'>" + (t('add student')) + "</label><br>        <select id='add_student_select'>        </select>      </div>            <button class='add_student_add command'>" + (t('add')) + "</button><button class='add_student_cancel command'>" + (t('cancel')) + "</button>    </div>    <button class='register_student command'>" + ($.t("register student")) + "</button>    <div class='register_student_form menu_box confirmation'>      <h2>" + (t('register student')) + "</h2>      <div class='label_value'>        <label for='register_student_name'>Full name</label>        <input id='register_student_name' value=''>      </div>      <div class='label_value'>        <label for='register_student_gender'>" + (t('gender')) + "</label>        <input id='register_student_gender' value=''>      </div>      <div class='label_value'>        <label for='register_student_age'>" + (t('age')) + "</label>        <input id='register_student_age' value=''>      </div>      <button class='register_student_save command'>" + (t('save')) + "</button>      <button class='register_student_cancel command'>" + (t('cancel')) + "</button>    </div>    ");
     this.trigger("rendered");
     return this.renderStudents();
   };
