@@ -267,41 +267,46 @@ class Utils
     $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").middleCenter().delay(delay).fadeOut(250, -> $(this).remove())
 
   @sticky: (html) ->
-    $("<div class='sticky_alert'>#{html}<br><button class='command parent_remove'>close</button></div>").appendTo("#content").middleCenter().on("keyup", (event) -> if event.which == 27 then $(this).remove())
+    $("<div class='sticky_alert'>#{html}<br><button class='command parent_remove'>Close</button></div>").appendTo("#content").middleCenter().on("keyup", (event) -> if event.which == 27 then $(this).remove())
 
+  @modal: (html) ->
+    if html == false
+      $("#modal_back, #modal").remove()
+      return
+
+    $("body").prepend("<div id='modal_back'></div>")
+    $("<div id='modal'>#{html}</div>").appendTo("#content").middleCenter().on("keyup", (event) -> if event.which == 27 then $("#modal_back, #modal").remove())
 
   @passwordPrompt: (callback) ->
     html = "
       <div id='pass_form' title='User verification'>
         <label for='password'>Please re-enter your password</label>
         <input id='pass_val' type='password' name='password' id='password' value=''>
-        <button class='command' >Verify</button>
-        <button class='command' data-cancel='true'>Cancel</button>
+        <button class='command' data-verify='true'>Verify</button>
+        <button class='command'>Cancel</button>
       </div>
     "
 
-    d = $.modal html
+    Utils.modal html
 
     $pass = $("#pass_val")
     $button = $("#pass_form button")
 
-    $pass.on "change", (event) ->
-      $button.off "click"
+    $pass.on "keyup", (event) ->
+      return true unless event.which == 13
+      $button.off "click" 
       $pass.off "change"
 
       callback $pass.val()
-      $.modal.close()
+      Utils.modal false
 
     $button.on "click", (event) ->
       $button.off "click"
       $pass.off "change"
 
-      if $(event.target).attr("data-cancel") == "true"
-        $.modal.close()
-        return
+      callback $pass.val() if $(event.target).attr("data-verify") == "true"
 
-      callback $pass.val()
-      $.modal.close()
+      Utils.modal false
 
 
 

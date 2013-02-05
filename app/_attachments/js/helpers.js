@@ -473,34 +473,48 @@ Utils = (function() {
   };
 
   Utils.sticky = function(html) {
-    return $("<div class='sticky_alert'>" + html + "<br><button class='command parent_remove'>close</button></div>").appendTo("#content").middleCenter().on("keyup", function(event) {
+    return $("<div class='sticky_alert'>" + html + "<br><button class='command parent_remove'>Close</button></div>").appendTo("#content").middleCenter().on("keyup", function(event) {
       if (event.which === 27) {
         return $(this).remove();
       }
     });
   };
 
+  Utils.modal = function(html) {
+    if (html === false) {
+      $("#modal_back, #modal").remove();
+      return;
+    }
+    $("body").prepend("<div id='modal_back'></div>");
+    return $("<div id='modal'>" + html + "</div>").appendTo("#content").middleCenter().on("keyup", function(event) {
+      if (event.which === 27) {
+        return $("#modal_back, #modal").remove();
+      }
+    });
+  };
+
   Utils.passwordPrompt = function(callback) {
-    var $button, $pass, d, html;
-    html = "      <div id='pass_form' title='User verification'>        <label for='password'>Please re-enter your password</label>        <input id='pass_val' type='password' name='password' id='password' value=''>        <button class='command' >Verify</button>        <button class='command' data-cancel='true'>Cancel</button>      </div>    ";
-    d = $.modal(html);
+    var $button, $pass, html;
+    html = "      <div id='pass_form' title='User verification'>        <label for='password'>Please re-enter your password</label>        <input id='pass_val' type='password' name='password' id='password' value=''>        <button class='command' data-verify='true'>Verify</button>        <button class='command'>Cancel</button>      </div>    ";
+    Utils.modal(html);
     $pass = $("#pass_val");
     $button = $("#pass_form button");
-    $pass.on("change", function(event) {
+    $pass.on("keyup", function(event) {
+      if (event.which !== 13) {
+        return true;
+      }
       $button.off("click");
       $pass.off("change");
       callback($pass.val());
-      return $.modal.close();
+      return Utils.modal(false);
     });
     return $button.on("click", function(event) {
       $button.off("click");
       $pass.off("change");
-      if ($(event.target).attr("data-cancel") === "true") {
-        $.modal.close();
-        return;
+      if ($(event.target).attr("data-verify") === "true") {
+        callback($pass.val());
       }
-      callback($pass.val());
-      return $.modal.close();
+      return Utils.modal(false);
     });
   };
 
