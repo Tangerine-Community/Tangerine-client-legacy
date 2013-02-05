@@ -552,6 +552,14 @@ progress {
   box-shadow: 1px 15px 25px -5px rgba(0, 0, 0, 0.1);
   z-index: 9999999;
 }
+#modal_back {
+  background-color: rgba(0, 0, 0, 0.5);
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  position: fixed;
+}
 #simplemodal-overlay {
   background-color: #000;
 }
