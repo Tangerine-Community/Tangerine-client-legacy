@@ -694,7 +694,7 @@ class Router extends Backbone.Router
   account: ->
     # change the location to the trunk, unless we're already in the trunk
     if Tangerine.settings.get("context") == "server" and Tangerine.db_name != "tangerine"
-      window.location = Tangerine.settings.urlIndex("trunk", "account")
+      window.location = "http://" + Tangerine.settings.urlIndex("trunk", "account")
     else
       Tangerine.user.verify
         isRegistered: ->

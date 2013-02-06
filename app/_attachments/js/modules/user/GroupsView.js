@@ -17,13 +17,13 @@ GroupsView = (function(_super) {
   };
 
   GroupsView.prototype.gotoAccount = function() {
-    return window.location = Tangerine.settings.urlIndex("trunk", "account");
+    return window.location = Tangerine.router.navigate("account", true);
   };
 
   GroupsView.prototype.gotoGroup = function(event) {
     var group;
     group = $(event.target).attr("data-group");
-    return window.location = Tangerine.settings.urlIndex(group, "assessments");
+    return window.location = "http://" + Tangerine.settings.urlIndex(group, "assessments");
   };
 
   GroupsView.prototype.render = function() {

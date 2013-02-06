@@ -5,11 +5,11 @@ class GroupsView extends Backbone.View
     'click .goto'    : 'gotoGroup'
 
   gotoAccount: ->
-    window.location = Tangerine.settings.urlIndex("trunk", "account")
+    window.location = Tangerine.router.navigate "account", true
 
   gotoGroup: (event) ->
     group = $(event.target).attr("data-group")
-    window.location = Tangerine.settings.urlIndex(group, "assessments")
+    window.location = "http://" + Tangerine.settings.urlIndex(group, "assessments")
 
   render: ->
     groups = Tangerine.user.get("groups") || []

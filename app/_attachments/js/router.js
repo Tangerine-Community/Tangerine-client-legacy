@@ -1131,7 +1131,7 @@ Router = (function(_super) {
 
   Router.prototype.account = function() {
     if (Tangerine.settings.get("context") === "server" && Tangerine.db_name !== "tangerine") {
-      return window.location = Tangerine.settings.urlIndex("trunk", "account");
+      return window.location = "http://" + Tangerine.settings.urlIndex("trunk", "account");
     } else {
       return Tangerine.user.verify({
         isRegistered: function() {

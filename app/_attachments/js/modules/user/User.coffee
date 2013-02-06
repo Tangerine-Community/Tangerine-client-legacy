@@ -118,7 +118,7 @@ class User extends Backbone.Model
         @clear()
         @trigger "logout"
         if Tangerine.settings.get("context") == "server"
-          window.location = Tangerine.settings.urlIndex "trunk"
+          window.location = "http://"+Tangerine.settings.urlIndex "trunk"
         else
           Tangerine.router.navigate "login", true
         Tangerine.log.app "User-logout", "logout"
