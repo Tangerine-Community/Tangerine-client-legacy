@@ -55,6 +55,21 @@ class Router extends Backbone.Router
     'subtest/:id'       : 'editSubtest'
 
     'question/:id' : 'editQuestion'
+    'dashboard' : 'dashboard'
+    'dashboard/*options' : 'dashboard'
+    
+  dashboard: (options) ->
+    console.log "ASDASD"
+    options = options?.split(/\//)
+    reportViewOptions = {}
+
+    # Allows us to get name/value pairs from URL
+    _.each options, (option,index) ->
+      unless index % 2
+        reportViewOptions[option] = options[index+1]
+
+    Tangerine.reportView ?= new DashboardView()
+    Tangerine.reportView.render reportViewOptions
 
   landing: ->
     if Tangerine.settings.get("context") == "server"

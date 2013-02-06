@@ -47,7 +47,25 @@ Router = (function(_super) {
     'results/:name': 'results',
     'import': 'import',
     'subtest/:id': 'editSubtest',
-    'question/:id': 'editQuestion'
+    'question/:id': 'editQuestion',
+    'dashboard': 'dashboard',
+    'dashboard/*options': 'dashboard'
+  };
+
+  Router.prototype.dashboard = function(options) {
+    var reportViewOptions, _ref;
+    console.log("ASDASD");
+    options = options != null ? options.split(/\//) : void 0;
+    reportViewOptions = {};
+    _.each(options, function(option, index) {
+      if (!(index % 2)) {
+        return reportViewOptions[option] = options[index + 1];
+      }
+    });
+    if ((_ref = Tangerine.reportView) == null) {
+      Tangerine.reportView = new DashboardView();
+    }
+    return Tangerine.reportView.render(reportViewOptions);
   };
 
   Router.prototype.landing = function() {

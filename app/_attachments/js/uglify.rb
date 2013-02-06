@@ -1,4 +1,4 @@
-#! /usr/local/bin/ruby
+#! /usr/bin/ruby
 
 require 'uglifier'
 
@@ -53,6 +53,7 @@ jsFiles = [
   'modules/result/ResultsView.js',
   'modules/result/ResultSumView.js',
   'modules/result/CSVView.js',
+  'modules/result/DashboardView.js',
 
   'modules/question/Question.js',
   'modules/question/Questions.js',
@@ -161,6 +162,7 @@ libFiles = [
   'lib/table2CSV.js',
   'lib/base64.js',
   'lib/coffee-script.js'
+  'lib/jstz.min.js'
 ]
 
 if $options[:make_app]
