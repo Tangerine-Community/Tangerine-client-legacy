@@ -39,7 +39,7 @@ GridPrintView = (function(_super) {
       var itemText;
       index += 1;
       itemText = "<td class='item'>" + item + "</td>";
-      if (index % _this.model.get("columns") === 0) {
+      if (index % _this.model.get("columns") === 0 && index !== _this.model.get("items").length) {
         itemText += "</tr><tr>";
       } else {
         "";
