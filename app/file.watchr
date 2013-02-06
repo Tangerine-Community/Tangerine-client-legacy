@@ -1,13 +1,13 @@
-
 def push
   version = `git log --pretty=format:'%h' -n 1`
 
   File.open("_attachments/js/version.js", "w") {|f| f.write("window.Tangerine.version = \"#{version}\"\;") }
+# Do this twice so you don't have to wait for uglify when in dev mode
+  `couchapp push`
 
   Dir.chdir( File.join Dir.pwd, "_attachments", "js" ) {
     `./uglify.rb app`
   }
-
   `couchapp push`
 end
 
