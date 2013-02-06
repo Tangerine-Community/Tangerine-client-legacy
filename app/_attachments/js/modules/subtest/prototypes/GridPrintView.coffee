@@ -32,19 +32,21 @@ class GridPrintView extends Backbone.View
         </table>
       </div>
     "
-    console.log @$el
-    overflow = 100
-    while @$el.find("##{@model.get "_id"}")[0].scrollWidth > @$el.find("##{@model.get "_id"} table").innerWidth() and  @$el.find("##{@model.get "_id"}")[0].scrollHeight > @$el.find("##{@model.get "_id"} table").innerHeight()
-      break if (overflow-=1) is 0
-      console.log @$el.find("##{@model.get "_id"}")[0].scrollWidth
-      console.log @$el.find("##{@model.get "_id"} table").innerWidth()
-      currentSize = @$el.find("##{@model.get "_id"} td").css("font-size")
-      @$el.find("##{@model.get "_id"} td").css("font-size", "#{parseInt(currentSize)+5}px")
-      # More hackiness
-      @$el.find("#navigation").hide()
-      @$el.find("#footer").hide()
-    currentSize = @$el.find("##{@model.get "_id"} td").css("font-size")
-    @$el.find("##{@model.get "_id"} td").css("font-size", "#{parseInt(currentSize)-10}px")
+
+    _.delay =>
+      overflow = 100
+      while $("##{@model.get "_id"}")[0].scrollWidth > $("##{@model.get "_id"} table").innerWidth() and  $("##{@model.get "_id"}")[0].scrollHeight > $("##{@model.get "_id"} table").innerHeight()
+        break if (overflow-=1) is 0
+        console.log $("##{@model.get "_id"}")[0].scrollWidth
+        console.log $("##{@model.get "_id"} table").innerWidth()
+        currentSize = $("##{@model.get "_id"} td").css("font-size")
+        $("##{@model.get "_id"} td").css("font-size", "#{parseInt(currentSize)+5}px")
+        # More hackiness
+        $("#navigation").hide()
+        $("#footer").hide()
+      currentSize = $("##{@model.get "_id"} td").css("font-size")
+      $("##{@model.get "_id"} td").css("font-size", "#{parseInt(currentSize)-10}px")
+    ,1000
 
   renderContent: ->
     fields = "autostop

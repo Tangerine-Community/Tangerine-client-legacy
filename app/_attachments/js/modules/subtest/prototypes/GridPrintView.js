@@ -33,7 +33,7 @@ GridPrintView = (function(_super) {
   };
 
   GridPrintView.prototype.renderStimuli = function() {
-    var currentSize, index, overflow,
+    var index,
       _this = this;
     this.$el.html("      <div id='" + (this.model.get("_id")) + "' class='print-page'>        <table>          <tr>            " + (index = 0, _.map(this.model.get("items"), function(item) {
       var itemText;
@@ -47,21 +47,23 @@ GridPrintView = (function(_super) {
       }
       return itemText;
     }).join("")) + "          </tr>        </table>      </div>    ");
-    console.log(this.$el);
-    overflow = 100;
-    while (this.$el.find("#" + (this.model.get("_id")))[0].scrollWidth > this.$el.find("#" + (this.model.get("_id")) + " table").innerWidth() && this.$el.find("#" + (this.model.get("_id")))[0].scrollHeight > this.$el.find("#" + (this.model.get("_id")) + " table").innerHeight()) {
-      if ((overflow -= 1) === 0) {
-        break;
+    return _.delay(function() {
+      var currentSize, overflow;
+      overflow = 100;
+      while ($("#" + (_this.model.get("_id")))[0].scrollWidth > $("#" + (_this.model.get("_id")) + " table").innerWidth() && $("#" + (_this.model.get("_id")))[0].scrollHeight > $("#" + (_this.model.get("_id")) + " table").innerHeight()) {
+        if ((overflow -= 1) === 0) {
+          break;
+        }
+        console.log($("#" + (_this.model.get("_id")))[0].scrollWidth);
+        console.log($("#" + (_this.model.get("_id")) + " table").innerWidth());
+        currentSize = $("#" + (_this.model.get("_id")) + " td").css("font-size");
+        $("#" + (_this.model.get("_id")) + " td").css("font-size", "" + (parseInt(currentSize) + 5) + "px");
+        $("#navigation").hide();
+        $("#footer").hide();
       }
-      console.log(this.$el.find("#" + (this.model.get("_id")))[0].scrollWidth);
-      console.log(this.$el.find("#" + (this.model.get("_id")) + " table").innerWidth());
-      currentSize = this.$el.find("#" + (this.model.get("_id")) + " td").css("font-size");
-      this.$el.find("#" + (this.model.get("_id")) + " td").css("font-size", "" + (parseInt(currentSize) + 5) + "px");
-      this.$el.find("#navigation").hide();
-      this.$el.find("#footer").hide();
-    }
-    currentSize = this.$el.find("#" + (this.model.get("_id")) + " td").css("font-size");
-    return this.$el.find("#" + (this.model.get("_id")) + " td").css("font-size", "" + (parseInt(currentSize) - 10) + "px");
+      currentSize = $("#" + (_this.model.get("_id")) + " td").css("font-size");
+      return $("#" + (_this.model.get("_id")) + " td").css("font-size", "" + (parseInt(currentSize) - 10) + "px");
+    }, 1000);
   };
 
   GridPrintView.prototype.renderContent = function() {
