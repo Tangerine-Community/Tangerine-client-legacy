@@ -36,8 +36,8 @@ watch ( '.*\.coffee$' ) { |match|
     notify("CoffeeScript error", result)
     puts "\n\nCoffeescript error\n******************\n#{result}"
   else
-    docco_result = `docco #{match}`
-    puts "\nDocco-menting:\t\t#{match}\n"
+#    docco_result = `docco #{match}`
+#    puts "\nDocco-menting:\t\t#{match}\n"
     push()
   end
 

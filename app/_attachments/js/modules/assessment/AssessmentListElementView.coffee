@@ -124,7 +124,6 @@ class AssessmentListElementView extends Backbone.View
         </div>
       "
       # Admin on mobile
-# TODO REMOVE printButton - added by Mike
       if Tangerine.settings.get("context") == "mobile"
         html += "
           <div class='assessment_menu'>
@@ -133,7 +132,6 @@ class AssessmentListElementView extends Backbone.View
             #{updateButton}
             #{deleteButton}
             #{deleteConfirm}
-            #{printButtons}
           </div>
         "
       ##{resultCount}

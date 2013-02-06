@@ -126,7 +126,7 @@ AssessmentListElementView = (function(_super) {
     if (this.isAdmin) {
       html = "        <div>          " + toggleButton + "          " + adminName + "        </div>      ";
       if (Tangerine.settings.get("context") === "mobile") {
-        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + updateButton + "            " + deleteButton + "            " + deleteConfirm + "            " + printButtons + "          </div>        ";
+        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + updateButton + "            " + deleteButton + "            " + deleteConfirm + "          </div>        ";
       } else {
         html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + editButton + "            " + printButtons + "            " + duplicateButton + "            " + deleteButton + "            " + downloadKey + "            " + deleteConfirm + "          </div>        ";
       }

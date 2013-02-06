@@ -41,6 +41,7 @@ class AssessmentPrintView extends Backbone.View
             overflow: hidden;
             text-align: center;
             padding: 1%;
+            font-family: Andika;
           }
 
         </style>

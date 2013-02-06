@@ -1,3 +1,11 @@
+@font-face {
+    font-family: 'Andika';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./andika.ttf') format('truetype');
+}
+
+
 /*
  * Media queries for responsive design https://github.com/shichuan/mobile-html5-boilerplate/wiki/The-Style
  */
