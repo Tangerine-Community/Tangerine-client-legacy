@@ -28,8 +28,8 @@ class AssessmentPrintView extends Backbone.View
           }
           #prototype_wrapper .print-page{
             size: 11in 8.5in; 
-            height: 8.5in;
-            width: 11in;
+            height: 11in;
+            width: 8.5in;
             margin: 0;
             page-break-after: always;
             overflow: hidden;

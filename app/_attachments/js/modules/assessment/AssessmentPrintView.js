@@ -38,7 +38,7 @@ AssessmentPrintView = (function(_super) {
     if (this.model.subtests.length === 0) {
       this.$el.append("<h1>Oops...</h1><p>This assessment is blank. Perhaps you meant to add some subtests.</p>");
     } else {
-      this.$el.append("        <style>          body{            font-size: 100%;          }          #prototype_wrapper .print-page{            size: 11in 8.5in;             height: 8.5in;            width: 11in;            margin: 0;            page-break-after: always;            overflow: hidden;          }          #prototype_wrapper .print-page table{            table-layout: fixed;          }          #prototype_wrapper .print-page table td{            overflow: hidden;            text-align: center;            padding: 1%;          }        </style>      ");
+      this.$el.append("        <style>          body{            font-size: 100%;          }          #prototype_wrapper .print-page{            size: 11in 8.5in;             height: 11in;            width: 8.5in;            margin: 0;            page-break-after: always;            overflow: hidden;          }          #prototype_wrapper .print-page table{            table-layout: fixed;          }          #prototype_wrapper .print-page table td{            overflow: hidden;            text-align: center;            padding: 1%;          }        </style>      ");
       _.each(this.subtestViews, function(subtestView) {
         subtestView.render();
         return _this.$el.append(subtestView.el);
