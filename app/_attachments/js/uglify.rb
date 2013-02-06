@@ -161,7 +161,7 @@ libFiles = [
   'lib/transcriptionCheckdigit.js',
   'lib/table2CSV.js',
   'lib/base64.js',
-  'lib/coffee-script.js'
+  'lib/coffee-script.js',
   'lib/jstz.min.js'
 ]
 
