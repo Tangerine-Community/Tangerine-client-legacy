@@ -24,7 +24,7 @@ class GridPrintView extends Backbone.View
               _.map(@model.get("items"), (item) =>
                 index += 1
                 itemText = "<td class='item'>#{item}</td>"
-                if index % @model.get("columns") is 0 then itemText += "</tr><tr>" else ""
+                if index % @model.get("columns") is 0 and index isnt @model.get("items").length then itemText += "</tr><tr>" else ""
                 itemText
               ).join("")
             }
