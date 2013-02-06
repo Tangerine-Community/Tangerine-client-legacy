@@ -47,7 +47,28 @@ Router = (function(_super) {
     'results/:name': 'results',
     'import': 'import',
     'subtest/:id': 'editSubtest',
-    'question/:id': 'editQuestion'
+    'question/:id': 'editQuestion',
+    'dashboard': 'dashboard',
+    'dashboard/*options': 'dashboard'
+  };
+
+  Router.prototype.dashboard = function(options) {
+    var reportViewOptions, _ref;
+    console.log("ASDASD");
+    options = options != null ? options.split(/\//) : void 0;
+    reportViewOptions = {
+      assessment: "All",
+      groupBy: "enumerator"
+    };
+    _.each(options, function(option, index) {
+      if (!(index % 2)) {
+        return reportViewOptions[option] = options[index + 1];
+      }
+    });
+    if ((_ref = Tangerine.reportView) == null) {
+      Tangerine.reportView = new DashboardView();
+    }
+    return Tangerine.reportView.render(reportViewOptions);
   };
 
   Router.prototype.landing = function() {
@@ -236,20 +257,27 @@ Router = (function(_super) {
         });
         return klass.fetch({
           success: function(model) {
-            var allStudents;
-            allStudents = new Students;
-            return allStudents.fetch({
-              success: function(allStudents) {
-                var klassStudents, view;
-                klassStudents = new Students(allStudents.where({
-                  klassId: id
-                }));
-                view = new KlassEditView({
-                  klass: model,
-                  students: klassStudents,
-                  allStudents: allStudents
+            var teachers;
+            teachers = new Teachers;
+            return teachers.fetch({
+              success: function() {
+                var allStudents;
+                allStudents = new Students;
+                return allStudents.fetch({
+                  success: function(allStudents) {
+                    var klassStudents, view;
+                    klassStudents = new Students(allStudents.where({
+                      klassId: id
+                    }));
+                    view = new KlassEditView({
+                      klass: model,
+                      students: klassStudents,
+                      allStudents: allStudents,
+                      teachers: teachers
+                    });
+                    return vm.show(view);
+                  }
                 });
-                return vm.show(view);
               }
             });
           }

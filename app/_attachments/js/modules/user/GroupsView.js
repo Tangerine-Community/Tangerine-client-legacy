@@ -17,7 +17,7 @@ GroupsView = (function(_super) {
   };
 
   GroupsView.prototype.gotoAccount = function() {
-    return Tangerine.router.navigate("account", true);
+    return window.location = Tangerine.router.navigate("account", true);
   };
 
   GroupsView.prototype.gotoGroup = function(event) {

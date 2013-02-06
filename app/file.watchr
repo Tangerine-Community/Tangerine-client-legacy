@@ -1,6 +1,13 @@
 def push
   version = `git log --pretty=format:'%h' -n 1`
+
   File.open("_attachments/js/version.js", "w") {|f| f.write("window.Tangerine.version = \"#{version}\"\;") }
+# Do this twice so you don't have to wait for uglify when in dev mode
+  `couchapp push`
+
+  Dir.chdir( File.join Dir.pwd, "_attachments", "js" ) {
+    `./uglify.rb app`
+  }
   `couchapp push`
 end
 
@@ -38,7 +45,7 @@ watch ( '.*\.coffee$' ) { |match|
 
 watch ( '.*\.less$' ) { |match| 
   puts "\nCompiling:\t\t#{match}"
-  result = `lessc #{match} > #{match}.css`
+  result = `lessc #{match} --yui-compress > #{match}.css`
   if result.index "Error"
     notify("LESS error",result)
     puts "\n\nLESS error\n******************\n#{result}"
@@ -48,10 +55,12 @@ watch ( '.*\.less$' ) { |match|
 }
 
 watch ( '.*\.css$|.*\.js$|.*\.html$|.*\.json$' ) { |match|
-  if match.string().index("version.js") == nil
+  if match.string().index("version.js") == nil && match.string().index("app.js") == nil
     puts "\nUpdating:\t\t#{match}\nPushing to couchapp\n\n"
     push()
   end
 }
 
 push()
+
+

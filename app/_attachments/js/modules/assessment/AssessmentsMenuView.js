@@ -65,9 +65,8 @@ AssessmentsMenuView = (function(_super) {
       success: function(data) {
         return Utils.sticky("<h1>APK link</h1><p>tangerine.xen.prgmr.com:81/apk/" + data.token + "</p>");
       },
-      error: function(data) {
-        Utils.midAlert("Please try again, could not make APK.");
-        return console.log(data);
+      error: function(xhr, response) {
+        return Utils.sticky(response.error);
       }
     });
   };

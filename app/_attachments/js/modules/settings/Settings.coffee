@@ -110,7 +110,7 @@ class Settings extends Backbone.Model
     return result
 
   urlDDoc : ( location ) ->
-    dDoc = @config.get "designDoc"
+    dDoc = Tangerine.designDoc
     return "#{@urlDB('trunk')}/_design/#{dDoc}"
 
   urlView  : ( location, view ) ->

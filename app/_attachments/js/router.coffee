@@ -55,6 +55,24 @@ class Router extends Backbone.Router
     'subtest/:id'       : 'editSubtest'
 
     'question/:id' : 'editQuestion'
+    'dashboard' : 'dashboard'
+    'dashboard/*options' : 'dashboard'
+    
+  dashboard: (options) ->
+    console.log "ASDASD"
+    options = options?.split(/\//)
+    #default view options
+    reportViewOptions =
+      assessment: "All"
+      groupBy: "enumerator"
+
+    # Allows us to get name/value pairs from URL
+    _.each options, (option,index) ->
+      unless index % 2
+        reportViewOptions[option] = options[index+1]
+
+    Tangerine.reportView ?= new DashboardView()
+    Tangerine.reportView.render reportViewOptions
 
   landing: ->
     if Tangerine.settings.get("context") == "server"
@@ -164,16 +182,20 @@ class Router extends Backbone.Router
         klass = new Klass _id : id
         klass.fetch
           success: ( model ) ->
-            allStudents = new Students
-            allStudents.fetch
-              success: (allStudents) ->
-                klassStudents = new Students allStudents.where {klassId : id}
-                view = new KlassEditView
-                  klass       : model
-                  students    : klassStudents
-                  allStudents : allStudents
+            teachers = new Teachers
+            teachers.fetch
+              success: ->
+                allStudents = new Students
+                allStudents.fetch
+                  success: (allStudents) ->
+                    klassStudents = new Students allStudents.where {klassId : id}
+                    view = new KlassEditView
+                      klass       : model
+                      students    : klassStudents
+                      allStudents : allStudents
+                      teachers    : teachers
 
-                vm.show view
+                    vm.show view
       isUnregistered: ->
         Tangerine.router.navigate "", true
 

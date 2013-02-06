@@ -288,7 +288,7 @@ SurveyRunView = (function(_super) {
 
   SurveyRunView.prototype.onQuestionRendered = function() {
     this.renderCount++;
-    if (this.renderCount === (this.questions.length - 1)) {
+    if (this.renderCount === this.questions.length) {
       this.trigger("ready");
     }
     return this.trigger("subRendered");

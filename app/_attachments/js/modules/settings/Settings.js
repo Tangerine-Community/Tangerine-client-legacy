@@ -179,7 +179,7 @@ Settings = (function(_super) {
 
   Settings.prototype.urlDDoc = function(location) {
     var dDoc;
-    dDoc = this.config.get("designDoc");
+    dDoc = Tangerine.designDoc;
     return "" + (this.urlDB('trunk')) + "/_design/" + dDoc;
   };
 

@@ -40,9 +40,9 @@ class AssessmentsMenuView extends Backbone.View
     TangerineTree.make
       success: (data) ->
         Utils.sticky("<h1>APK link</h1><p>tangerine.xen.prgmr.com:81/apk/#{data.token}</p>")
-      error: (data) ->
-        Utils.midAlert "Please try again, could not make APK."
-        console.log data
+      error: (xhr, response) ->
+        Utils.sticky response.error
+
 
 
   gotoGroups: -> Tangerine.router.navigate "groups", true

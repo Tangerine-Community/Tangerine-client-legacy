@@ -5,6 +5,8 @@ class KlassEditView extends Backbone.View
     'click .save'                    : 'basicInfoSave'
     'click .basic_info_edit'         : 'basicInfoToggle'
     'click .basic_info_cancel'       : 'basicInfoToggle'
+
+    'change #teacher_select'         : 'teacherSelect'
     
     'click .add_student'             : 'addStudentToggle'
     'click .add_student_cancel'      : 'addStudentToggle'
@@ -12,6 +14,11 @@ class KlassEditView extends Backbone.View
     'click .register_student'        : 'registerStudentToggle'
     'click .register_student_cancel' : 'registerStudentToggle'
     'click .register_student_save'   : 'registerStudent'
+
+
+  teacherSelect: (event) ->
+    teacherId = @$el.find("#teacher_select option:selected").attr("data-teacherId")
+    @klass.set "teacherId", teacherId
 
   addStudentToggle: -> @$el.find(".add_student_form, .add_student").toggle()
 
@@ -86,6 +93,7 @@ class KlassEditView extends Backbone.View
     @klass       = options.klass
     @students    = options.students
     @allStudents = options.allStudents
+    @teachers    = options.teachers
 
     @students.on "add remove change", @renderStudents
 
@@ -135,12 +143,26 @@ class KlassEditView extends Backbone.View
 
     startDate  = new Date @klass.getNumber "startDate"
 
+    console.log @klass
+
+    htmlInfoTeacher = "
+      <tr><td><label>Teacher</label></td><td>#{@teachers.get(@klass.get('teacherId')).get('name')}</td></tr>
+    " if Tangerine.user.isAdmin()
+
+    htmlTeacherSelect = "
+      <label>Teacher</label><br>
+      <select id='teacher_select'>
+      #{("<option #{if teacher.id == @klass.get('teacherId') then "selected='selected' " else ""} data-teacherId='#{teacher.id}'>#{teacher.get('name')}</option>") for teacher in @teachers.models}
+      </select>
+    " if Tangerine.user.isAdmin()
+
     @$el.html "
     <button class='back navigation'>#{t('back')}</button>
     <h1>#{t('class editor')}</h1>
     <h2>#{t('basic info')}</h2>
     <table class='info_box basic_info'>
       <tr><td><label>School name</label></td><td>#{schoolName}</td></tr>
+      #{htmlInfoTeacher || ""}
       <tr><td><label>School year</label></td><td>#{year}</td></tr>
       <tr><td><label>#{t('grade')}</label></td><td>#{grade}</td></tr>
       <tr><td><label>#{t('stream')}</label></td><td>#{stream}</td></tr>
@@ -153,6 +175,9 @@ class KlassEditView extends Backbone.View
         <div class='label_value'>
           <label for='school_name'>School name</label>
           <input id='school_name' value='#{schoolName}'>
+        </div>
+        <div class='label_value'>
+          #{htmlTeacherSelect || ""}
         </div>
         <div class='label_value'>
           <label for='year'>School year</label>

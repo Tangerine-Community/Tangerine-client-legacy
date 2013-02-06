@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<phonegap>
-    <access origin="http://127.0.0.1*"/>
-    <access origin="http://0.0.0.0*"/>
-    <access origin="http://tangerine.iriscouch.com*"/>
-    <log level="DEBUG"/>
-</phonegap>
