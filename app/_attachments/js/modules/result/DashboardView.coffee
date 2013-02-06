@@ -185,7 +185,8 @@ class DashboardView extends Backbone.View
           "<option value='#{row.key}' #{if row.key is @key then "selected='true'" else ""}>#{row.key}</option>"
         ).join("")
         _.each result.rows, (row) =>
-          $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).openDoc row.key,
+          return unless row.key?
+          $.couch.db(Tangerine.db_name).openDoc row.key,
             success: (result) =>
               $("option[value=#{row.key}]").html result.name
             error: (result) =>

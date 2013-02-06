@@ -158,7 +158,10 @@ DashboardView = (function(_super) {
           return "<option value='" + row.key + "' " + (row.key === _this.key ? "selected='true'" : "") + ">" + row.key + "</option>";
         }).join(""));
         return _.each(result.rows, function(row) {
-          return $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).openDoc(row.key, {
+          if (row.key == null) {
+            return;
+          }
+          return $.couch.db(Tangerine.db_name).openDoc(row.key, {
             success: function(result) {
               return $("option[value=" + row.key + "]").html(result.name);
             },

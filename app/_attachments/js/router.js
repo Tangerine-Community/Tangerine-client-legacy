@@ -56,7 +56,10 @@ Router = (function(_super) {
     var reportViewOptions, _ref;
     console.log("ASDASD");
     options = options != null ? options.split(/\//) : void 0;
-    reportViewOptions = {};
+    reportViewOptions = {
+      assessment: "All",
+      groupBy: "enumerator"
+    };
     _.each(options, function(option, index) {
       if (!(index % 2)) {
         return reportViewOptions[option] = options[index + 1];

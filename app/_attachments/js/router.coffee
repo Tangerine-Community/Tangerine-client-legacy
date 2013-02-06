@@ -61,7 +61,10 @@ class Router extends Backbone.Router
   dashboard: (options) ->
     console.log "ASDASD"
     options = options?.split(/\//)
-    reportViewOptions = {}
+    #default view options
+    reportViewOptions =
+      assessment: "All"
+      groupBy: "enumerator"
 
     # Allows us to get name/value pairs from URL
     _.each options, (option,index) ->
