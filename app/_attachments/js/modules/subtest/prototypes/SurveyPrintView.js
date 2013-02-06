@@ -35,6 +35,10 @@ SurveyPrintView = (function(_super) {
 
   SurveyPrintView.prototype.render = function() {
     var i, notAskedCount, oneView, question, _base, _i, _len, _ref;
+    if (this.format === "stimuli") {
+      this.trigger("rendered");
+      return;
+    }
     notAskedCount = 0;
     this.questions.sort();
     if (this.questions.models != null) {

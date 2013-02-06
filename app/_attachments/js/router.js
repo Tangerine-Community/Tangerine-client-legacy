@@ -40,7 +40,7 @@ Router = (function(_super) {
     'groups': 'groups',
     'assessments': 'assessments',
     'run/:id': 'run',
-    'print/:id': 'print',
+    'print/:id/:format': 'print',
     'resume/:assessmentId/:resultId': 'resume',
     'restart/:id': 'restart',
     'edit/:id': 'edit',
@@ -609,7 +609,7 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.print = function(id) {
+  Router.prototype.print = function(id, format) {
     return Tangerine.user.verify({
       isRegistered: function() {
         var assessment;
@@ -620,7 +620,8 @@ Router = (function(_super) {
           success: function(model) {
             var view;
             view = new AssessmentPrintView({
-              model: model
+              model: model,
+              format: format
             });
             return vm.show(view);
           }

@@ -17,6 +17,7 @@ class LocationPrintView extends Backbone.View
 
 
   render: ->
+    return if @format is "stimuli"
     schoolListElements = ""
 
     @$el.html "

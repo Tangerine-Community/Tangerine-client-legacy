@@ -95,7 +95,11 @@ class AssessmentListElementView extends Backbone.View
     editButton      = "<a href='#edit/#{@model.id}'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>"
     runButton       = "<a href='#run/#{@model.id}'><img class='link_icon run' title='Run' src='images/icon_run.png'></a>"
     resultsButton   = "<a href='#results/#{@model.id}'><img class='link_icon results' title='Results' src='images/icon_results.png'></a>"
-    printButton     = "<a href='#print/#{@model.id}'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>"
+    printButtons    = "
+      <a href='#print/#{@model.id}/content'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>
+      <a href='#print/#{@model.id}/stimuli'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>
+      <a href='#print/#{@model.id}/backup'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>
+    "
 
     copyButton      = "<img class='link_icon copy' title='Copy to' src='images/icon_copy_to.png'>"
     deleteButton    = "<img class='assessment_delete link_icon' title='Delete' src='images/icon_delete.png'>"
@@ -120,6 +124,7 @@ class AssessmentListElementView extends Backbone.View
         </div>
       "
       # Admin on mobile
+# TODO REMOVE printButton - added by Mike
       if Tangerine.settings.get("context") == "mobile"
         html += "
           <div class='assessment_menu'>
@@ -128,6 +133,7 @@ class AssessmentListElementView extends Backbone.View
             #{updateButton}
             #{deleteButton}
             #{deleteConfirm}
+            #{printButtons}
           </div>
         "
       ##{resultCount}
@@ -141,7 +147,7 @@ class AssessmentListElementView extends Backbone.View
             #{runButton}
             #{resultsButton}
             #{editButton}
-            #{printButton}
+            #{printButtons}
             #{duplicateButton}
             #{deleteButton}
             #{downloadKey}

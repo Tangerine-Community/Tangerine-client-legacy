@@ -26,6 +26,9 @@ LocationPrintView = (function(_super) {
 
   LocationPrintView.prototype.render = function() {
     var schoolListElements;
+    if (this.format === "stimuli") {
+      return;
+    }
     schoolListElements = "";
     this.$el.html("      School Locations<br/>      Levels: " + this.levels + "<br/>      Available Locations:<br/>      " + (this.locations.join("<br/>")) + "<br/>    ");
     return this.trigger("rendered");

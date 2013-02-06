@@ -4,6 +4,7 @@ class SubtestPrintView extends Backbone.View
     @protoViews  = Tangerine.config.prototypeViews
     @model       = options.model
     @parent      = options.parent
+    @format      = options.format
 
     @prototypeRendered = false
 
@@ -14,14 +15,20 @@ class SubtestPrintView extends Backbone.View
     skipButton = "<button class='skip navigation'>Skip</button>"
     skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
 
-    @$el.html "
-      <h2>#{@model.get 'name'}</h2>
-      Enumerator Help:<br/>
-      #{enumeratorHelp}
-      Student Dialog:<br/>
-      #{studentDialog}
+    if @format is "content"
+
+      @$el.html "
+        <h2>#{@model.get 'name'}</h2>
+        Enumerator Help:<br/>
+        #{enumeratorHelp}
+        Student Dialog:<br/>
+        #{studentDialog}
+        <div class='format-#{format}' id='prototype_wrapper'></div>
+        <hr/>
+      "
+
+    @$el.append "
       <div id='prototype_wrapper'></div>
-      <hr/>
     "
   
     # Use prototype specific views here
@@ -33,6 +40,7 @@ class SubtestPrintView extends Backbone.View
     @prototypeView.on "showNext",    => @showNext()
     @prototypeView.on "hideNext",    => @hideNext()
     @prototypeView.setElement(@$el.find('#prototype_wrapper'))
+    @prototypeView.format = @format
     @prototypeView.render()
     @prototypeRendered = true
 

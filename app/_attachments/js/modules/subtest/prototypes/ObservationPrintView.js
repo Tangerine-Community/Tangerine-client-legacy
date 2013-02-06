@@ -225,6 +225,9 @@ ObservationPrintView = (function(_super) {
 
   ObservationPrintView.prototype.render = function() {
     var totalSeconds;
+    if (this.format === "stimuli") {
+      return;
+    }
     this.trigger("hideNext");
     totalSeconds = this.model.get("totalSeconds");
     this.$el.html("      <div class='timer_wrapper'>        <div class='progress clearfix'>          <span class='completed_display confirmation'>Completed <div class='info_box completed_count'>" + this.my.observation.completed + "</div></span>          <span class='next_display confirmation'>Next observation <div class='info_box time_till_next'>" + (this.model.get('intervalLength')) + "</div></span>        </div>        <div>          <div class='start_button_wrapper'><button class='start_time command'>Start</button></div>          <div class='stop_button_wrapper confirmation'><button class='stop_time command'>Abort <i>all</i> observations</button></div>        </div>      </div>      <div id='current_survey'></div>    ");

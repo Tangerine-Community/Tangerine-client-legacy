@@ -100,7 +100,7 @@ AssessmentListElementView = (function(_super) {
   };
 
   AssessmentListElementView.prototype.render = function() {
-    var adminName, adminResultCount, archiveClass, archiveSwitch, copyButton, deleteButton, deleteConfirm, downloadKey, duplicateButton, editButton, html, isArchived, name, printButton, resultCount, resultsButton, runButton, selected, toggleButton, updateButton;
+    var adminName, adminResultCount, archiveClass, archiveSwitch, copyButton, deleteButton, deleteConfirm, downloadKey, duplicateButton, editButton, html, isArchived, name, printButtons, resultCount, resultsButton, runButton, selected, toggleButton, updateButton;
     isArchived = this.model.getBoolean('archived');
     if (!this.isAdmin && isArchived && Tangerine.settings.get("context") === "mobile") {
       return;
@@ -115,7 +115,7 @@ AssessmentListElementView = (function(_super) {
     editButton = "<a href='#edit/" + this.model.id + "'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>";
     runButton = "<a href='#run/" + this.model.id + "'><img class='link_icon run' title='Run' src='images/icon_run.png'></a>";
     resultsButton = "<a href='#results/" + this.model.id + "'><img class='link_icon results' title='Results' src='images/icon_results.png'></a>";
-    printButton = "<a href='#print/" + this.model.id + "'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>";
+    printButtons = "      <a href='#print/" + this.model.id + "/content'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>      <a href='#print/" + this.model.id + "/stimuli'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>      <a href='#print/" + this.model.id + "/backup'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>    ";
     copyButton = "<img class='link_icon copy' title='Copy to' src='images/icon_copy_to.png'>";
     deleteButton = "<img class='assessment_delete link_icon' title='Delete' src='images/icon_delete.png'>";
     deleteConfirm = "<span class='assessment_delete_confirm'><div class='menu_box'>Confirm <button class='assessment_delete_yes command_red'>Delete</button> <button class='assessment_delete_cancel command'>Cancel</button></div></span>";
@@ -126,9 +126,9 @@ AssessmentListElementView = (function(_super) {
     if (this.isAdmin) {
       html = "        <div>          " + toggleButton + "          " + adminName + "        </div>      ";
       if (Tangerine.settings.get("context") === "mobile") {
-        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + updateButton + "            " + deleteButton + "            " + deleteConfirm + "          </div>        ";
+        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + updateButton + "            " + deleteButton + "            " + deleteConfirm + "            " + printButtons + "          </div>        ";
       } else {
-        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + editButton + "            " + printButton + "            " + duplicateButton + "            " + deleteButton + "            " + downloadKey + "            " + deleteConfirm + "          </div>        ";
+        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + editButton + "            " + printButtons + "            " + duplicateButton + "            " + deleteButton + "            " + downloadKey + "            " + deleteConfirm + "          </div>        ";
       }
     } else {
       html = "<div>" + runButton + name + " " + resultsButton + "</div>";

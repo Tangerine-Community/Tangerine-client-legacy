@@ -15,6 +15,7 @@ SubtestPrintView = (function(_super) {
     this.protoViews = Tangerine.config.prototypeViews;
     this.model = options.model;
     this.parent = options.parent;
+    this.format = options.format;
     return this.prototypeRendered = false;
   };
 
@@ -25,7 +26,10 @@ SubtestPrintView = (function(_super) {
     studentDialog = (this.model.get("studentDialog") || "") !== "" ? "<div class='student_dialog_print'>" + (this.model.get('studentDialog')) + "</div>" : "";
     skipButton = "<button class='skip navigation'>Skip</button>";
     skippable = this.model.get("skippable") === true || this.model.get("skippable") === "true";
-    this.$el.html("      <h2>" + (this.model.get('name')) + "</h2>      Enumerator Help:<br/>      " + enumeratorHelp + "      Student Dialog:<br/>      " + studentDialog + "      <div id='prototype_wrapper'></div>      <hr/>    ");
+    if (this.format === "content") {
+      this.$el.html("        <h2>" + (this.model.get('name')) + "</h2>        Enumerator Help:<br/>        " + enumeratorHelp + "        Student Dialog:<br/>        " + studentDialog + "        <div class='format-" + format + "' id='prototype_wrapper'></div>        <hr/>      ");
+    }
+    this.$el.append("      <div id='prototype_wrapper'></div>    ");
     this.prototypeView = new window[this.model.get('prototype').humanize() + 'PrintView']({
       model: this.model,
       parent: this
@@ -43,6 +47,7 @@ SubtestPrintView = (function(_super) {
       return _this.hideNext();
     });
     this.prototypeView.setElement(this.$el.find('#prototype_wrapper'));
+    this.prototypeView.format = this.format;
     this.prototypeView.render();
     this.prototypeRendered = true;
     return this.trigger("rendered");

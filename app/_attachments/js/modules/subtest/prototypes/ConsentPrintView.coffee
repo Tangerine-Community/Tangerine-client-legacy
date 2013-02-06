@@ -6,6 +6,7 @@ class ConsentPrintView extends Backbone.View
     @parent = @options.parent
   
   render: ->
+    return if @format is "stimuli"
     @$el.html "
     <form>
       <div class='question'>

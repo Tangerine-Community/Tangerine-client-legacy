@@ -16,6 +16,9 @@ IdPrintView = (function(_super) {
   IdPrintView.prototype.initialize = function(options) {};
 
   IdPrintView.prototype.render = function() {
+    if (this.format === "stimuli") {
+      return;
+    }
     this.$el.html("      ID    ");
     return this.trigger("rendered");
   };

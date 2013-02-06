@@ -20,10 +20,16 @@ AssessmentPrintView = (function(_super) {
     this.subtestViews = [];
     this.model.subtests.sort();
     return this.model.subtests.each(function(model) {
-      return _this.subtestViews.push(new SubtestPrintView({
+      var subtestView;
+      subtestView = new SubtestPrintView({
         model: model,
-        parent: _this
-      }));
+        parent: _this,
+        format: options.format
+      });
+      subtestView.on("rendered", function(view) {
+        return view != null ? typeof view.afterRender === "function" ? view.afterRender() : void 0 : void 0;
+      });
+      return _this.subtestViews.push(subtestView);
     });
   };
 
@@ -32,6 +38,7 @@ AssessmentPrintView = (function(_super) {
     if (this.model.subtests.length === 0) {
       this.$el.append("<h1>Oops...</h1><p>This assessment is blank. Perhaps you meant to add some subtests.</p>");
     } else {
+      this.$el.append("        <style>          body{            font-size: 100%;          }          #prototype_wrapper .print-page{            size: 11in 8.5in;             height: 8.5in;            width: 11in;            margin: 0;            page-break-after: always;            overflow: hidden;          }          #prototype_wrapper .print-page table{            table-layout: fixed;          }          #prototype_wrapper .print-page table td{            overflow: hidden;            text-align: center;            padding: 1%;          }        </style>      ");
       _.each(this.subtestViews, function(subtestView) {
         subtestView.render();
         return _this.$el.append(subtestView.el);

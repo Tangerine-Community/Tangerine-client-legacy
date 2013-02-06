@@ -171,6 +171,8 @@ class ObservationPrintView extends Backbone.View
 
 
   render: ->
+    return if @format is "stimuli"
+
     @trigger "hideNext"
     totalSeconds = @model.get("totalSeconds")
 

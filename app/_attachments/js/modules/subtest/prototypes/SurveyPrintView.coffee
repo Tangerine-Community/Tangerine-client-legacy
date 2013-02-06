@@ -15,6 +15,10 @@ class SurveyPrintView extends Backbone.View
         @render()
 
   render: ->
+    if @format is "stimuli"
+      @trigger "rendered"
+      return
+
     notAskedCount = 0
     @questions.sort()
     if @questions.models?

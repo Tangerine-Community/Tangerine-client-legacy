@@ -7,6 +7,7 @@ class DatetimePrintView extends Backbone.View
     @parent = @options.parent
   
   render: ->
+    return if @format is "stimuli"
 
     @$el.html "
         DateTime

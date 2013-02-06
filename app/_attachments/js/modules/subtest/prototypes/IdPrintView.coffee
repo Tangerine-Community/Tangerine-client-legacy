@@ -5,6 +5,7 @@ class IdPrintView extends Backbone.View
   initialize: (options) ->
 
   render: ->
+    return if @format is "stimuli"
     @$el.html "
       ID
     "

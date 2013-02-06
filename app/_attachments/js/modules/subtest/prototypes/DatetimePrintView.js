@@ -19,6 +19,9 @@ DatetimePrintView = (function(_super) {
   };
 
   DatetimePrintView.prototype.render = function() {
+    if (this.format === "stimuli") {
+      return;
+    }
     this.$el.html("        DateTime      ");
     return this.trigger("rendered");
   };
