@@ -23,7 +23,7 @@ GroupsView = (function(_super) {
   GroupsView.prototype.gotoGroup = function(event) {
     var group;
     group = $(event.target).attr("data-group");
-    return window.location = "http://" + Tangerine.settings.urlIndex(group, "assessments");
+    return window.location = Tangerine.settings.urlIndex(group, "assessments");
   };
 
   GroupsView.prototype.render = function() {

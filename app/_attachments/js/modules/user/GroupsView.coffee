@@ -9,7 +9,7 @@ class GroupsView extends Backbone.View
 
   gotoGroup: (event) ->
     group = $(event.target).attr("data-group")
-    window.location = "http://" + Tangerine.settings.urlIndex(group, "assessments")
+    window.location = Tangerine.settings.urlIndex(group, "assessments")
 
   render: ->
     groups = Tangerine.user.get("groups") || []

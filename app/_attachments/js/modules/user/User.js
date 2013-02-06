@@ -177,7 +177,7 @@ User = (function(_super) {
         _this.clear();
         _this.trigger("logout");
         if (Tangerine.settings.get("context") === "server") {
-          window.location = "http://" + Tangerine.settings.urlIndex("trunk");
+          window.location = Tangerine.settings.urlIndex("trunk");
         } else {
           Tangerine.router.navigate("login", true);
         }
