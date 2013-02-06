@@ -67,7 +67,7 @@
 			"groupName"        : "",
 			"groupHost"        : "http://tangerine.iriscouch.com",
 			"groupDDoc"        : "ojai",
-			"upPass"           : "",
+			"upPass"           : "pass",
 			"log"              : [""]
 		}
 	},
