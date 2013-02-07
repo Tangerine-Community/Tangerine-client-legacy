@@ -103,7 +103,8 @@ class DashboardView extends Backbone.View
       </select>
       <br/>
       <br/>
-      <div id='advancedOptions'>
+      <button onClick='$(\"#advancedOptions\").toggle()'>Advanced Options</button>
+      <div style='display:none' id='advancedOptions'>
       Current time in your timezone (#{jstz.determine().name()}) is #{ moment().format("YYYY-MM-DD HH:mm") }<br/>
       Shift time values by <input id='shiftHours' type='number' value='#{@shiftHours}'></input> hours to handle correct timezone.<br/>
       Shifted time: #{ moment().add("h",@shiftHours).format("YYYY-MM-DD HH:mm")}
