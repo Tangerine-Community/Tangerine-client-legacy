@@ -103,17 +103,19 @@ class DashboardView extends Backbone.View
       </select>
       <br/>
       <br/>
+      <div id='advancedOptions'>
       Current time in your timezone (#{jstz.determine().name()}) is #{ moment().format("YYYY-MM-DD HH:mm") }<br/>
       Shift time values by <input id='shiftHours' type='number' value='#{@shiftHours}'></input> hours to handle correct timezone.<br/>
       Shifted time: #{ moment().add("h",@shiftHours).format("YYYY-MM-DD HH:mm")}
       <br/>
+      </div>
 
       <table id='results' class='tablesorter'>
         <thead>
           <th>#{@groupBy}</th>
           #{
-            _.map(dates, (date) ->
-              "<th>#{date}</th>"
+            _.map(_.sortBy(dates, (date) -> date), (date) ->
+              "<th class='#{date.replace(/\s/g,'-')}'>#{date}</th>"
             ).join("")
           }
         </thead>
@@ -123,8 +125,8 @@ class DashboardView extends Backbone.View
               "<tr>
                 <td>#{leftColumn}</td>
                 #{
-                  _.map(dates, (date) ->
-                    "<td>
+                  _.map(_.sortBy(dates, (date) -> date), (date) ->
+                    "<td class='#{date.replace(/\s/g,'-')}'>
                       #{
                         if dataForDates[date]
                           "
@@ -176,6 +178,15 @@ class DashboardView extends Backbone.View
           sortValue
         else
           $(node).text()
+
+    $("#advancedOptions").append "Select which dates to show<br/>"
+    _.each(_.sortBy(dates, (date) -> date), (date) ->
+      dateCheckbox = $("<label for='#{date}'>#{date}</label><input name='#{date}' id='#{date}' type='checkbox' checked='true'/>")
+      dateCheckbox.click ->
+        $(".#{date.replace(/\s/,'-')}").toggle()
+      $("#advancedOptions").append dateCheckbox
+    )
+
           
     $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/dashboardResults",
       group: true

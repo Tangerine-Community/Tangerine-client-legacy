@@ -131,11 +131,15 @@ DashboardView = (function(_super) {
     });
     this.$el.html("      Assessment:      <select id='assessment'>      </select>      <br/>      Value used for grouping:      <select id='groupBy'>        " + (_.map(propertiesToGroupBy, function(value, key) {
       return "<option " + (key === _this.groupBy ? "selected='true'" : '') + ">              " + key + "            </option>";
-    })) + "      </select>      <br/>      <br/>      Current time in your timezone (" + (jstz.determine().name()) + ") is " + (moment().format("YYYY-MM-DD HH:mm")) + "<br/>      Shift time values by <input id='shiftHours' type='number' value='" + this.shiftHours + "'></input> hours to handle correct timezone.<br/>      Shifted time: " + (moment().add("h", this.shiftHours).format("YYYY-MM-DD HH:mm")) + "      <br/>      <table id='results' class='tablesorter'>        <thead>          <th>" + this.groupBy + "</th>          " + (_.map(dates, function(date) {
-      return "<th>" + date + "</th>";
+    })) + "      </select>      <br/>      <br/>      <div id='advancedOptions'>      Current time in your timezone (" + (jstz.determine().name()) + ") is " + (moment().format("YYYY-MM-DD HH:mm")) + "<br/>      Shift time values by <input id='shiftHours' type='number' value='" + this.shiftHours + "'></input> hours to handle correct timezone.<br/>      Shifted time: " + (moment().add("h", this.shiftHours).format("YYYY-MM-DD HH:mm")) + "      <br/>      </div>      <table id='results' class='tablesorter'>        <thead>          <th>" + this.groupBy + "</th>          " + (_.map(_.sortBy(dates, function(date) {
+      return date;
+    }), function(date) {
+      return "<th class='" + (date.replace(/\s/g, '-')) + "'>" + date + "</th>";
     }).join("")) + "        </thead>        <tbody>          " + (_.map(tableRows, function(dataForDates, leftColumn) {
-      return "<tr>                <td>" + leftColumn + "</td>                " + (_.map(dates, function(date) {
-        return "<td>                      " + (dataForDates[date] ? "                            <button class='sort-value' onClick='$(this).siblings().toggle()'>" + dataForDates[date].length + "</button>                            <div style='display:none'>                              " + (dataForDates[date].join("")) + "                            </div>                          " : "") + "                    </td>";
+      return "<tr>                <td>" + leftColumn + "</td>                " + (_.map(_.sortBy(dates, function(date) {
+        return date;
+      }), function(date) {
+        return "<td class='" + (date.replace(/\s/g, '-')) + "'>                      " + (dataForDates[date] ? "                            <button class='sort-value' onClick='$(this).siblings().toggle()'>" + dataForDates[date].length + "</button>                            <div style='display:none'>                              " + (dataForDates[date].join("")) + "                            </div>                          " : "") + "                    </td>";
       }).join("")) + "              </tr>";
     }).join("")) + "        </tbody>      </table>      <div id='resultDetails'>      </div>      <style>        #resultDetails{          position:absolute;          background-color:black;          display:none;        }        pre {          font-size: 75%;          outline: 1px solid #ccc;           padding: 5px;           margin: 5px;           text-shadow: none;          overflow-wrap:break-word;        }        .string { color: green; }        .number { color: darkorange; }        .boolean { color: blue; }        .null { color: magenta; }        .key { color: red; }      </style>    ");
     $("table").tablesorter({
@@ -150,6 +154,17 @@ DashboardView = (function(_super) {
           return $(node).text();
         }
       }
+    });
+    $("#advancedOptions").append("Select which dates to show<br/>");
+    _.each(_.sortBy(dates, function(date) {
+      return date;
+    }), function(date) {
+      var dateCheckbox;
+      dateCheckbox = $("<label for='" + date + "'>" + date + "</label><input name='" + date + "' id='" + date + "' type='checkbox' checked='true'/>");
+      dateCheckbox.click(function() {
+        return $("." + (date.replace(/\s/, '-'))).toggle();
+      });
+      return $("#advancedOptions").append(dateCheckbox);
     });
     return $.couch.db(Tangerine.db_name).view("" + Tangerine.design_doc + "/dashboardResults", {
       group: true,
