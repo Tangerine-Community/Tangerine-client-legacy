@@ -161,8 +161,8 @@ libFiles = [
   'lib/transcriptionCheckdigit.js',
   'lib/table2CSV.js',
   'lib/base64.js',
-  'lib/coffee-script.js',
-  'lib/jstz.min.js'
+  'lib/jstz.min.js',
+  'lib/coffee-script.js'
 ]
 
 if $options[:make_app]
