@@ -11,6 +11,7 @@ class LoginView extends Backbone.View
     @user.on "login", @goOn
     @user.on "pass-error", (error) => @passError error
     @user.on "name-error", (error) => @nameError error
+    $("#watermark").hide()
 
   goOn: ->
     Tangerine.router.navigate "", true
@@ -46,6 +47,7 @@ class LoginView extends Backbone.View
 
   onClose: ->
     $("#content").css "width", @oldWidth + "%"
+    $("#watermark").show()
 
   keyHandler: (event) ->
     if event.which

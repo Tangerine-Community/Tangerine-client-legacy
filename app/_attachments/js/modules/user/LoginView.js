@@ -27,9 +27,10 @@ LoginView = (function(_super) {
     this.user.on("pass-error", function(error) {
       return _this.passError(error);
     });
-    return this.user.on("name-error", function(error) {
+    this.user.on("name-error", function(error) {
       return _this.nameError(error);
     });
+    return $("#watermark").hide();
   };
 
   LoginView.prototype.goOn = function() {
@@ -54,7 +55,8 @@ LoginView = (function(_super) {
   };
 
   LoginView.prototype.onClose = function() {
-    return $("#content").css("width", this.oldWidth + "%");
+    $("#content").css("width", this.oldWidth + "%");
+    return $("#watermark").show();
   };
 
   LoginView.prototype.keyHandler = function(event) {
