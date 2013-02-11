@@ -141,7 +141,7 @@ ProgressView = (function(_super) {
     this.rows = this.aggregate(this.rows);
     if (this.rows.length !== 0) {
       this.selected = {
-        week: this.rows.length - 1,
+        week: this.indexByPart[_.last(this.rows)['part']],
         itemType: _.last(this.rows)['itemTypes'][0].key
       };
     }
@@ -176,8 +176,6 @@ ProgressView = (function(_super) {
           "show": true
         }
       };
-      console.log("data for " + key);
-      console.log(data);
     }
     this.flotBenchmark = [];
     _ref6 = this.subtests.indexBy("itemType");
@@ -259,6 +257,9 @@ ProgressView = (function(_super) {
     var availableItemTypesThisWeek, data, datum, difference, high, html, i, itemType, low, result, row, score, threshold, type, warnings, week, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
     type = this.selected.itemType;
     week = this.selected.week;
+    console.log("type: " + type);
+    console.log("week: " + week);
+    console.log(this.warningThresholds);
     html = "<table class='tabular'>";
     _ref = this.rows;
     for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {

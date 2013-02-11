@@ -10,7 +10,7 @@ class ProgressView extends Backbone.View
     'click .select_itemType' : 'selectItemType'
     'click .xtick'           : 'selectAssessment'
 
-  # ! - variable name FUBAR
+  # !!! - variable name FUBAR
   # assessment = part = week
   selectAssessment: (event) ->
     @selected.week = parseInt($(event.target).attr('data-index'))
@@ -141,7 +141,7 @@ class ProgressView extends Backbone.View
 
     if @rows.length != 0
       @selected =
-        week     : @rows.length - 1
+        week     : @indexByPart[_.last(@rows)['part']]
         itemType : _.last(@rows)['itemTypes'][0].key
 
     #
@@ -168,8 +168,7 @@ class ProgressView extends Backbone.View
         "points" :
           "show" : true
       }
-      console.log "data for #{key}"
-      console.log data
+
 
     #
     # Create benchmark flot graphs
