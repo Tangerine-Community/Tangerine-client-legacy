@@ -178,22 +178,8 @@ class Assessment extends Backbone.Model
               Utils.midAlert "Delete error."
           error: ->
             Utils.midAlert "Delete error."
-            
-
-    return
-    # remove children
-    assessmentId = @id
-    subtests = new Subtests
-    subtests.fetch
-      key: assessmentId
-      success: (collection) -> collection.pop().destroy() while collection.length != 0
-    questions = new Questions
-    questions.fetch
-      key: assessmentId
-      success: (collection) -> collection.pop().destroy() while collection.length != 0
-
-    # remove model
-    super()
+      error: ->
+        Utils.midAlert "Delete error."
 
   isActive: -> return not @isArchived()
 

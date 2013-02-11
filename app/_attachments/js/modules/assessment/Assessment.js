@@ -214,9 +214,8 @@ Assessment = (function(_super) {
   };
 
   Assessment.prototype.destroy = function() {
-    var assessmentId, questions, subtests,
-      _this = this;
-    Tangerine.$db.view("tangerine/revByAssessmentId", {
+    var _this = this;
+    return Tangerine.$db.view("tangerine/revByAssessmentId", {
       keys: [this.id],
       success: function(response) {
         var docs, requestData, row, _i, _len, _ref;
@@ -257,35 +256,11 @@ Assessment = (function(_super) {
             return Utils.midAlert("Delete error.");
           }
         });
+      },
+      error: function() {
+        return Utils.midAlert("Delete error.");
       }
     });
-    return;
-    assessmentId = this.id;
-    subtests = new Subtests;
-    subtests.fetch({
-      key: assessmentId,
-      success: function(collection) {
-        var _results;
-        _results = [];
-        while (collection.length !== 0) {
-          _results.push(collection.pop().destroy());
-        }
-        return _results;
-      }
-    });
-    questions = new Questions;
-    questions.fetch({
-      key: assessmentId,
-      success: function(collection) {
-        var _results;
-        _results = [];
-        while (collection.length !== 0) {
-          _results.push(collection.pop().destroy());
-        }
-        return _results;
-      }
-    });
-    return Assessment.__super__.destroy.call(this);
   };
 
   Assessment.prototype.isActive = function() {
