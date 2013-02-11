@@ -13,7 +13,7 @@ class SubtestPrintView extends Backbone.View
     enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<div class='enumerator_help_print'>#{@model.get 'enumeratorHelp'}</div>" else ""
     studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog_print'>#{@model.get 'studentDialog'}</div>" else ""
     skipButton = "<button class='skip navigation'>Skip</button>"
-    skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+    skippable = @model.getBoolean("skippable")
 
     if @format is "content"
 
@@ -23,7 +23,7 @@ class SubtestPrintView extends Backbone.View
         #{enumeratorHelp}
         Student Dialog:<br/>
         #{studentDialog}
-        <div class='format-#{format}' id='prototype_wrapper'></div>
+        <div class='format-#{@format}' id='prototype_wrapper'></div>
         <hr/>
       "
 
@@ -37,8 +37,6 @@ class SubtestPrintView extends Backbone.View
       parent: @
     @prototypeView.on "rendered",    => @trigger "rendered"
     @prototypeView.on "subRendered", => @trigger "subRendered"
-    @prototypeView.on "showNext",    => @showNext()
-    @prototypeView.on "hideNext",    => @hideNext()
     @prototypeView.setElement(@$el.find('#prototype_wrapper'))
     @prototypeView.format = @format
     @prototypeView.render()

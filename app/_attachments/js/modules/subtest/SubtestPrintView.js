@@ -25,9 +25,9 @@ SubtestPrintView = (function(_super) {
     enumeratorHelp = (this.model.get("enumeratorHelp") || "") !== "" ? "<div class='enumerator_help_print'>" + (this.model.get('enumeratorHelp')) + "</div>" : "";
     studentDialog = (this.model.get("studentDialog") || "") !== "" ? "<div class='student_dialog_print'>" + (this.model.get('studentDialog')) + "</div>" : "";
     skipButton = "<button class='skip navigation'>Skip</button>";
-    skippable = this.model.get("skippable") === true || this.model.get("skippable") === "true";
+    skippable = this.model.getBoolean("skippable");
     if (this.format === "content") {
-      this.$el.html("        <h2>" + (this.model.get('name')) + "</h2>        Enumerator Help:<br/>        " + enumeratorHelp + "        Student Dialog:<br/>        " + studentDialog + "        <div class='format-" + format + "' id='prototype_wrapper'></div>        <hr/>      ");
+      this.$el.html("        <h2>" + (this.model.get('name')) + "</h2>        Enumerator Help:<br/>        " + enumeratorHelp + "        Student Dialog:<br/>        " + studentDialog + "        <div class='format-" + this.format + "' id='prototype_wrapper'></div>        <hr/>      ");
     }
     this.$el.append("      <div id='prototype_wrapper'></div>    ");
     this.prototypeView = new window[this.model.get('prototype').humanize() + 'PrintView']({
@@ -39,12 +39,6 @@ SubtestPrintView = (function(_super) {
     });
     this.prototypeView.on("subRendered", function() {
       return _this.trigger("subRendered");
-    });
-    this.prototypeView.on("showNext", function() {
-      return _this.showNext();
-    });
-    this.prototypeView.on("hideNext", function() {
-      return _this.hideNext();
     });
     this.prototypeView.setElement(this.$el.find('#prototype_wrapper'));
     this.prototypeView.format = this.format;
