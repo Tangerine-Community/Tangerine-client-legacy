@@ -56,12 +56,14 @@ KlassEditView = (function(_super) {
     } else {
       studentId = this.$el.find("#add_student_select option:selected").attr("data-id");
       newStudent = this.allStudents.get(studentId);
-      newStudent.set({
+      return newStudent.save({
         klassId: this.klass.id
+      }, {
+        success: function() {
+          this.students.add(newStudent);
+          return this.addStudentToggle();
+        }
       });
-      newStudent.save();
-      this.students.add(newStudent);
-      return this.addStudentToggle();
     }
   };
 

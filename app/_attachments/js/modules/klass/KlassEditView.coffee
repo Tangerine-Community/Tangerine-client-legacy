@@ -34,13 +34,13 @@ class KlassEditView extends Backbone.View
     else
       studentId = @$el.find("#add_student_select option:selected").attr("data-id")
       newStudent = @allStudents.get studentId
-      newStudent.set
+      newStudent.save
         klassId : @klass.id
-      newStudent.save()
-      @students.add newStudent
-      @addStudentToggle()
-    
-  
+      ,
+        success: ->
+          @students.add newStudent
+          @addStudentToggle()
+
   registerStudent: =>
     @students.create
       name    : @$el.find("#register_student_name").val()
