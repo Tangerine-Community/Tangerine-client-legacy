@@ -14,6 +14,9 @@ class AssessmentListElementView extends Backbone.View
     'click .duplicate'                 : 'duplicate'
     'click .archive'                   : 'archive'
     'click .update'                    : 'update'
+    'click .print'                     : 'togglePrint'
+    'change #print_format'             : 'print'
+
 
   blankResultCount: "-"
 
@@ -45,6 +48,21 @@ class AssessmentListElementView extends Backbone.View
         Utils.midAlert "Updated"
       else if message == "import error"
         Utils.midAlert "Update failed"
+
+
+  togglePrint: ->
+    @$el.find(".print_format_wrapper").fadeToggle(150)
+
+  print: ->
+    format = @$el.find("#print_format option:selected").attr("data-format")
+
+    if format == "cancel"
+      @$el.find(".print_format_wrapper").fadeToggle 150, =>
+        @$el.find("#print_format").val("reset")
+      return
+
+    Tangerine.router.navigate "print/#{@model.id}/#{format}", true
+
 
   updateResultCount: =>
     #@resultCount = Math.commas @model.resultCount
@@ -95,10 +113,21 @@ class AssessmentListElementView extends Backbone.View
     editButton      = "<a href='#edit/#{@model.id}'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>"
     runButton       = "<a href='#run/#{@model.id}'><img class='link_icon run' title='Run' src='images/icon_run.png'></a>"
     resultsButton   = "<a href='#results/#{@model.id}'><img class='link_icon results' title='Results' src='images/icon_results.png'></a>"
+    printButton    = "<img class='link_icon print' title='Print' src='images/icon_print.png'> "
     printButtons    = "
       <a href='#print/#{@model.id}/content'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>
       <a href='#print/#{@model.id}/stimuli'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>
       <a href='#print/#{@model.id}/backup'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>
+    "
+    printSelector   = "
+      <div class='print_format_wrapper confirmation'>
+        <select id='print_format'>
+        <option disabled='disabled' selected='selected' value='reset'>Select a print format</option>
+        #{("<option data-format='#{format.key}'>#{format.name}</option>") for format in Tangerine.settings.config.get("printFormats")}
+        <option data-format='cancel'>Cancel</option>
+        </select>
+
+      </div>
     "
 
     copyButton      = "<img class='link_icon copy' title='Copy to' src='images/icon_copy_to.png'>"
@@ -145,12 +174,16 @@ class AssessmentListElementView extends Backbone.View
             #{runButton}
             #{resultsButton}
             #{editButton}
-            #{printButtons}
+            #{printButton}
             #{duplicateButton}
             #{deleteButton}
             #{downloadKey}
             #{deleteConfirm}
+            #{printSelector}
+
           </div>
+
+
         "
     # enumerator user
     else

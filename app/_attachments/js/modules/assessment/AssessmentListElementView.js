@@ -28,7 +28,9 @@ AssessmentListElementView = (function(_super) {
     'click .copy': 'copyTo',
     'click .duplicate': 'duplicate',
     'click .archive': 'archive',
-    'click .update': 'update'
+    'click .update': 'update',
+    'click .print': 'togglePrint',
+    'change #print_format': 'print'
   };
 
   AssessmentListElementView.prototype.blankResultCount = "-";
@@ -69,6 +71,23 @@ AssessmentListElementView = (function(_super) {
     });
   };
 
+  AssessmentListElementView.prototype.togglePrint = function() {
+    return this.$el.find(".print_format_wrapper").fadeToggle(150);
+  };
+
+  AssessmentListElementView.prototype.print = function() {
+    var format,
+      _this = this;
+    format = this.$el.find("#print_format option:selected").attr("data-format");
+    if (format === "cancel") {
+      this.$el.find(".print_format_wrapper").fadeToggle(150, function() {
+        return _this.$el.find("#print_format").val("reset");
+      });
+      return;
+    }
+    return Tangerine.router.navigate("print/" + this.model.id + "/" + format, true);
+  };
+
   AssessmentListElementView.prototype.updateResultCount = function() {};
 
   AssessmentListElementView.prototype.archive = function() {
@@ -100,7 +119,7 @@ AssessmentListElementView = (function(_super) {
   };
 
   AssessmentListElementView.prototype.render = function() {
-    var adminName, adminResultCount, archiveClass, archiveSwitch, copyButton, deleteButton, deleteConfirm, downloadKey, duplicateButton, editButton, html, isArchived, name, printButtons, resultCount, resultsButton, runButton, selected, toggleButton, updateButton;
+    var adminName, adminResultCount, archiveClass, archiveSwitch, copyButton, deleteButton, deleteConfirm, downloadKey, duplicateButton, editButton, format, html, isArchived, name, printButton, printButtons, printSelector, resultCount, resultsButton, runButton, selected, toggleButton, updateButton;
     isArchived = this.model.getBoolean('archived');
     if (!this.isAdmin && isArchived && Tangerine.settings.get("context") === "mobile") {
       return;
@@ -115,7 +134,18 @@ AssessmentListElementView = (function(_super) {
     editButton = "<a href='#edit/" + this.model.id + "'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>";
     runButton = "<a href='#run/" + this.model.id + "'><img class='link_icon run' title='Run' src='images/icon_run.png'></a>";
     resultsButton = "<a href='#results/" + this.model.id + "'><img class='link_icon results' title='Results' src='images/icon_results.png'></a>";
+    printButton = "<img class='link_icon print' title='Print' src='images/icon_print.png'> ";
     printButtons = "      <a href='#print/" + this.model.id + "/content'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>      <a href='#print/" + this.model.id + "/stimuli'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>      <a href='#print/" + this.model.id + "/backup'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>    ";
+    printSelector = "      <div class='print_format_wrapper confirmation'>        <select id='print_format'>        <option disabled='disabled' selected='selected' value='reset'>Select a print format</option>        " + ((function() {
+      var _i, _len, _ref, _results;
+      _ref = Tangerine.settings.config.get("printFormats");
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        format = _ref[_i];
+        _results.push("<option data-format='" + format.key + "'>" + format.name + "</option>");
+      }
+      return _results;
+    })()) + "        <option data-format='cancel'>Cancel</option>        </select>      </div>    ";
     copyButton = "<img class='link_icon copy' title='Copy to' src='images/icon_copy_to.png'>";
     deleteButton = "<img class='assessment_delete link_icon' title='Delete' src='images/icon_delete.png'>";
     deleteConfirm = "<span class='assessment_delete_confirm'><div class='menu_box'>Confirm <button class='assessment_delete_yes command_red'>Delete</button> <button class='assessment_delete_cancel command'>Cancel</button></div></span>";
@@ -128,7 +158,7 @@ AssessmentListElementView = (function(_super) {
       if (Tangerine.settings.get("context") === "mobile") {
         html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + updateButton + "            " + deleteButton + "            " + deleteConfirm + "          </div>        ";
       } else {
-        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + editButton + "            " + printButtons + "            " + duplicateButton + "            " + deleteButton + "            " + downloadKey + "            " + deleteConfirm + "          </div>        ";
+        html += "          <div class='assessment_menu'>            " + runButton + "            " + resultsButton + "            " + editButton + "            " + printButton + "            " + duplicateButton + "            " + deleteButton + "            " + downloadKey + "            " + deleteConfirm + "            " + printSelector + "          </div>        ";
       }
     } else {
       html = "<div>" + runButton + name + " " + resultsButton + "</div>";

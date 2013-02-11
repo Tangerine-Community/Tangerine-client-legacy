@@ -57,12 +57,26 @@
 			"menuView"   : "KlassGroupingMenuView"
 		}
 	],
-	
+	"printFormats" :
+	[
+		{
+			"name" : "Content",
+			"key" : "content"
+		},
+		{
+			"name" : "Stimuli",
+			"key"  : "stimuli"
+		},
+		{
+			"name" : "Backup",
+			"key"  : "backup"
+		}
+	],
 	"defaults" :
 	{
 		"settings" : 
 		{
-			"context" : "server",
+			"context" : "class",
 			"language"         : "en",
 			"groupName"        : "",
 			"groupHost"        : "http://tangerine.iriscouch.com",
