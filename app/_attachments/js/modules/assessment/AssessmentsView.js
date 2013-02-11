@@ -33,7 +33,7 @@ AssessmentsView = (function(_super) {
   };
 
   AssessmentsView.prototype.initialize = function(options) {
-    options.assessments.on("add destroy update", this.render);
+    options.assessments.on("add destroy remove update", this.render);
     this.parent = options.parent;
     this.assessments = options.assessments;
     this.subviews = [];

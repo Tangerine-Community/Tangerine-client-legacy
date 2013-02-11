@@ -9,6 +9,8 @@ Assessment = (function(_super) {
   __extends(Assessment, _super);
 
   function Assessment() {
+    this.destroy = __bind(this.destroy, this);
+
     this.updateFromTrunk = __bind(this.updateFromTrunk, this);
 
     this.updateFromServer = __bind(this.updateFromServer, this);
@@ -16,6 +18,8 @@ Assessment = (function(_super) {
     this.fetch = __bind(this.fetch, this);
 
     this.getResultCount = __bind(this.getResultCount, this);
+
+    this.calcDKey = __bind(this.calcDKey, this);
     return Assessment.__super__.constructor.apply(this, arguments);
   }
 
@@ -26,6 +30,10 @@ Assessment = (function(_super) {
       options = {};
     }
     return this.subtests = new Subtests;
+  };
+
+  Assessment.prototype.calcDKey = function() {
+    return this.id.substr(-5, 5);
   };
 
   Assessment.prototype.getResultCount = function() {
@@ -68,7 +76,7 @@ Assessment = (function(_super) {
     var dKeys,
       _this = this;
     if (dKey == null) {
-      dKey = this.id.substr(-5, 5);
+      dKey = this.calcDKey();
     }
     dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/));
     this.trigger("status", "import lookup");
@@ -105,7 +113,7 @@ Assessment = (function(_super) {
     var dKeys,
       _this = this;
     if (dKey == null) {
-      dKey = this.id.substr(-5, 5);
+      dKey = this.calcDKey();
     }
     dKeys = dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/);
     this.trigger("status", "import lookup");
@@ -206,7 +214,52 @@ Assessment = (function(_super) {
   };
 
   Assessment.prototype.destroy = function() {
-    var assessmentId, questions, subtests;
+    var assessmentId, questions, subtests,
+      _this = this;
+    Tangerine.$db.view("tangerine/revByAssessmentId", {
+      keys: [this.id],
+      success: function(response) {
+        var docs, requestData, row, _i, _len, _ref;
+        docs = [];
+        _ref = response.rows;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          row = _ref[_i];
+          row.value["_deleted"] = true;
+          docs.push(row.value);
+        }
+        requestData = {
+          "docs": docs
+        };
+        return $.ajax({
+          type: "POST",
+          contentType: "application/json; charset=UTF-8",
+          dataType: "json",
+          url: "/" + Tangerine.settings.urlDB("local") + "/_bulk_docs",
+          data: JSON.stringify(requestData),
+          success: function(responses) {
+            var okCount, resp, _j, _len1;
+            okCount = 0;
+            for (_j = 0, _len1 = responses.length; _j < _len1; _j++) {
+              resp = responses[_j];
+              console.log(resp);
+              if (resp.ok != null) {
+                okCount++;
+              }
+            }
+            if (okCount === responses.length) {
+              _this.collection.remove(_this.id);
+              return _this.clear();
+            } else {
+              return Utils.midAlert("Delete error.");
+            }
+          },
+          error: function() {
+            return Utils.midAlert("Delete error.");
+          }
+        });
+      }
+    });
+    return;
     assessmentId = this.id;
     subtests = new Subtests;
     subtests.fetch({
@@ -222,7 +275,7 @@ Assessment = (function(_super) {
     });
     questions = new Questions;
     questions.fetch({
-      key: this.id,
+      key: assessmentId,
       success: function(collection) {
         var _results;
         _results = [];

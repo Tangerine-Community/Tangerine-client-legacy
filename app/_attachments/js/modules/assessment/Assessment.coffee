@@ -8,6 +8,8 @@ class Assessment extends Backbone.Model
     @subtests = new Subtests
     # @getResultCount()
 
+  calcDKey: => @id.substr(-5, 5)
+
   getResultCount: =>
     $.ajax Tangerine.settings.urlView("local", "resultCount")
       type: "GET"
@@ -35,7 +37,7 @@ class Assessment extends Backbone.Model
             oldSuccess? @
     Assessment.__super__.fetch.call @, options
 
-  updateFromServer: ( dKey = @id.substr(-5, 5) ) =>
+  updateFromServer: ( dKey = @calcDKey() ) =>
     
     # split to handle multiple dkeys
     dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g," ").split(/\s+/))
@@ -62,7 +64,7 @@ class Assessment extends Backbone.Model
 
     false
 
-  updateFromTrunk: ( dKey = @id.substr(-5, 5) ) =>
+  updateFromTrunk: ( dKey = @calcDKey() ) =>
 
     # split to handle multiple dkeys
     dKeys = dKey.replace(/[^a-f0-9]/g," ").split(/\s+/)
@@ -145,8 +147,40 @@ class Assessment extends Backbone.Model
                   newQuestion.save()
                 callback newModel
 
-  destroy: ->
+  destroy: =>
 
+    # get all docs that belong to this assesssment except results
+    Tangerine.$db.view "tangerine/revByAssessmentId",
+      keys:[ @id ]
+      success: (response) =>
+        docs = []
+        for row in response.rows
+          # only absolutely necessary properties are sent back, _id, _rev, _deleted
+          row.value["_deleted"] = true
+          docs.push row.value
+
+        requestData = 
+          "docs" : docs
+
+        $.ajax
+          type: "POST"
+          contentType: "application/json; charset=UTF-8"
+          dataType: "json"
+          url: "/" + Tangerine.settings.urlDB("local") + "/_bulk_docs"
+          data: JSON.stringify(requestData)
+          success: (responses) =>
+            okCount = 0
+            (console.log resp; okCount++ if resp.ok?) for resp in responses
+            if okCount == responses.length
+              @collection.remove @id
+              @clear()
+            else
+              Utils.midAlert "Delete error."
+          error: ->
+            Utils.midAlert "Delete error."
+            
+
+    return
     # remove children
     assessmentId = @id
     subtests = new Subtests
@@ -155,7 +189,7 @@ class Assessment extends Backbone.Model
       success: (collection) -> collection.pop().destroy() while collection.length != 0
     questions = new Questions
     questions.fetch
-      key: @id
+      key: assessmentId
       success: (collection) -> collection.pop().destroy() while collection.length != 0
 
     # remove model
