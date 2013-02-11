@@ -143,10 +143,13 @@ class KlassEditView extends Backbone.View
 
     startDate  = new Date @klass.getNumber "startDate"
 
-    console.log @klass
+    if teacherId = @klass.get("teacherId") == "admin"
+      teacherName = "admin"
+    else 
+      teacherName = @teachers.get(@klass.get('teacherId')).get('name')
 
     htmlInfoTeacher = "
-      <tr><td><label>Teacher</label></td><td>#{@teachers.get(@klass.get('teacherId')).get('name')}</td></tr>
+      <tr><td><label>Teacher</label></td><td>#{teacherName}</td></tr>
     " if Tangerine.user.isAdmin()
 
     htmlTeacherSelect = "

@@ -181,15 +181,19 @@ KlassEditView = (function(_super) {
   };
 
   KlassEditView.prototype.render = function() {
-    var grade, htmlInfoTeacher, htmlTeacherSelect, schoolName, startDate, stream, teacher, year;
+    var grade, htmlInfoTeacher, htmlTeacherSelect, schoolName, startDate, stream, teacher, teacherId, teacherName, year;
     schoolName = this.klass.getString("schoolName");
     year = this.klass.getString("year");
     grade = this.klass.getString("grade");
     stream = this.klass.getString("stream");
     startDate = new Date(this.klass.getNumber("startDate"));
-    console.log(this.klass);
+    if (teacherId = this.klass.get("teacherId") === "admin") {
+      teacherName = "admin";
+    } else {
+      teacherName = this.teachers.get(this.klass.get('teacherId')).get('name');
+    }
     if (Tangerine.user.isAdmin()) {
-      htmlInfoTeacher = "      <tr><td><label>Teacher</label></td><td>" + (this.teachers.get(this.klass.get('teacherId')).get('name')) + "</td></tr>    ";
+      htmlInfoTeacher = "      <tr><td><label>Teacher</label></td><td>" + teacherName + "</td></tr>    ";
     }
     if (Tangerine.user.isAdmin()) {
       htmlTeacherSelect = "      <label>Teacher</label><br>      <select id='teacher_select'>      " + ((function() {
