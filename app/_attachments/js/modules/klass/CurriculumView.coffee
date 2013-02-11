@@ -15,11 +15,11 @@ class CurriculumView extends Backbone.View
     "keydown  .editing" : "editing"
 
   initialize: (options) ->
-    
+
     # arguments
     @curriculum = options.curriculum
     @subtests = options.subtests
-    
+
     # primaries
     @totalAssessments  = Math.max.apply Math, @subtests.pluck("part")
     @subtestsByPart    = @subtests.indexArrayBy "part"
@@ -257,7 +257,11 @@ class CurriculumView extends Backbone.View
     # this ensures we do not insert a newline character when we press enter
     return false
 
-  goBack: -> Tangerine.router.navigate "class", true
+  goBack: -> 
+    if Tangerine.settings.get("context") == "server" 
+      Tangerine.router.navigate "assessments", true
+    else if Tangerine.settings.get("context") == "class"
+      Tangerine.router.navigate "class", true
 
   deleteCurriculum: ->
     if confirm("Delete curriculum\n#{@curriculum.get('name')}?")

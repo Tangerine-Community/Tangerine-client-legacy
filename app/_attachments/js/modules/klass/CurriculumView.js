@@ -218,7 +218,11 @@ CurriculumView = (function(_super) {
   };
 
   CurriculumView.prototype.goBack = function() {
-    return Tangerine.router.navigate("class", true);
+    if (Tangerine.settings.get("context") === "server") {
+      return Tangerine.router.navigate("assessments", true);
+    } else if (Tangerine.settings.get("context") === "class") {
+      return Tangerine.router.navigate("class", true);
+    }
   };
 
   CurriculumView.prototype.deleteCurriculum = function() {
