@@ -397,16 +397,16 @@ class Router extends Backbone.Router
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true
 
-  print: (id,format) ->
+  print: ( assessmentId, format ) ->
     Tangerine.user.verify
       isRegistered: ->
         assessment = new Assessment
-          "_id" : id
+          "_id" : assessmentId
         assessment.fetch
           success : ( model ) ->
             view = new AssessmentPrintView
-              model: model
-              format: format
+              model  : model
+              format : format
             vm.show view
       isUnregistered: (options) ->
         Tangerine.router.navigate "login", true

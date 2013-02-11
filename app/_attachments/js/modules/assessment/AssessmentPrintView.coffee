@@ -4,16 +4,17 @@ class AssessmentPrintView extends Backbone.View
     @abortAssessment = false
     @index = 0
     @model = options.model
+    @format = options.format
 
     Tangerine.activity = "assessment print"
     @subtestViews = []
     @model.subtests.sort()
-    @model.subtests.each (model) =>
+    @model.subtests.each ( subtest ) =>
       subtestView = new SubtestPrintView
-        model  : model
+        model  : subtest
         parent : @
-        format : options.format
-      subtestView.on "rendered", (view) =>
+        format : @format
+      subtestView.on "rendered", ( view ) =>
         view?.afterRender?()
       @subtestViews.push subtestView
   

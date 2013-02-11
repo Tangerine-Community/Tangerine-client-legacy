@@ -637,16 +637,19 @@ Router = (function(_super) {
     });
   };
 
-  Router.prototype.print = function(id, format) {
+  Router.prototype.print = function(assessmentId, format) {
     return Tangerine.user.verify({
       isRegistered: function() {
         var assessment;
         assessment = new Assessment({
-          "_id": id
+          "_id": assessmentId
         });
         return assessment.fetch({
           success: function(model) {
             var view;
+            console.log("should be passing these");
+            console.log(model);
+            console.log(format);
             view = new AssessmentPrintView({
               model: model,
               format: format

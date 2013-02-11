@@ -16,15 +16,16 @@ AssessmentPrintView = (function(_super) {
     this.abortAssessment = false;
     this.index = 0;
     this.model = options.model;
+    this.format = options.format;
     Tangerine.activity = "assessment print";
     this.subtestViews = [];
     this.model.subtests.sort();
-    return this.model.subtests.each(function(model) {
+    return this.model.subtests.each(function(subtest) {
       var subtestView;
       subtestView = new SubtestPrintView({
-        model: model,
+        model: subtest,
         parent: _this,
-        format: options.format
+        format: _this.format
       });
       subtestView.on("rendered", function(view) {
         return view != null ? typeof view.afterRender === "function" ? view.afterRender() : void 0 : void 0;
