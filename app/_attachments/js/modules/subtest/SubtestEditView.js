@@ -10,6 +10,8 @@ SubtestEditView = (function(_super) {
 
   function SubtestEditView() {
     this.goBack = __bind(this.goBack, this);
+
+    this.save = __bind(this.save, this);
     return SubtestEditView.__super__.constructor.apply(this, arguments);
   }
 
@@ -38,6 +40,8 @@ SubtestEditView = (function(_super) {
 
   SubtestEditView.prototype.initialize = function(options) {
     var _this = this;
+    this.activity = null;
+    this.timer = 0;
     this.richtextKeys = _.pluck(this.richtextConfig, "key");
     this.model = options.model;
     this.assessment = options.assessment;
@@ -121,6 +125,10 @@ SubtestEditView = (function(_super) {
     if (options == null) {
       options = {};
     }
+    if (this.activity !== null) {
+      return false;
+    }
+    this.activity = "saving";
     options.prototypeSave = options.prototypeSave != null ? options.prorotypeSave : true;
     prototype = this.model.get("prototype");
     this.model.set({
@@ -136,17 +144,23 @@ SubtestEditView = (function(_super) {
     this.prototypeEditor.save(options);
     if (this.prototypeEditor.isValid() === false) {
       Utils.midAlert("There are errors on this page");
-      return typeof (_base = this.prototypeEditor).showErrors === "function" ? _base.showErrors() : void 0;
+      if (typeof (_base = this.prototypeEditor).showErrors === "function") {
+        _base.showErrors();
+      }
+      return this.activity = null;
     } else {
       return this.model.save(null, {
         success: function() {
+          _this.activity = null;
           if (options.success) {
             return options.success();
           }
           Utils.midAlert("Subtest Saved");
-          return setTimeout(_this.goBack, 1000);
+          clearTimeout(_this.timer);
+          return _this.timer = setTimeout(_this.goBack, 1000);
         },
         error: function() {
+          _this.activity = null;
           if (options.error != null) {
             return options.error();
           }

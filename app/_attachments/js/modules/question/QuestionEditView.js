@@ -33,6 +33,8 @@ QuestionEditView = (function(_super) {
   };
 
   QuestionEditView.prototype.initialize = function(options) {
+    this.activity = null;
+    this.timer = 0;
     this.question = options.question;
     this.subtest = options.subtest;
     return this.assessment = options.assessment;
@@ -78,11 +80,6 @@ QuestionEditView = (function(_super) {
       this.question.set("options", optionTemplates[index].options);
       this.$el.find('#option_list_wrapper').html(this.getOptionList());
     }
-    return false;
-  };
-
-  QuestionEditView.prototype.goBack = function() {
-    window.history.back();
     return false;
   };
 
@@ -185,16 +182,28 @@ QuestionEditView = (function(_super) {
 
   QuestionEditView.prototype.done = function() {
     var _this = this;
+    if (this.activity !== null) {
+      return false;
+    }
+    this.activity = "saving";
     this.updateModel();
     this.question.save(null, {
       success: function() {
+        _this.activity = null;
         Utils.midAlert("Question Saved");
-        return setTimeout(_this.goBack, 500);
+        clearTimeout(_this.timer);
+        return _this.timer = setTimeout(_this.goBack, 500);
       },
       error: function() {
+        _this.activity = null;
         return Utils.midAlert("Save error");
       }
     });
+    return false;
+  };
+
+  QuestionEditView.prototype.goBack = function() {
+    window.history.back();
     return false;
   };
 

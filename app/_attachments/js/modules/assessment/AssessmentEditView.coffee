@@ -4,7 +4,7 @@ class AssessmentEditView extends Backbone.View
 
   events :
     'click #archive_buttons input' : 'save'
-    'click .back'                  : 'back'
+    'click .back'                  : 'goBack'
     'click .new_subtest_button'    : 'toggleNewSubtestForm'
     'click .new_subtest_cancel'    : 'toggleNewSubtestForm'
 
@@ -14,18 +14,23 @@ class AssessmentEditView extends Backbone.View
     'change #basic input'          : 'save'
     'click .save'                  : 'save'
 
-  
+  initialize: (options) ->
+    @model = options.model
+    @subtestListEditView = new SubtestListEditView
+      "assessment" : @model
+
+    @model.subtests.on "change remove", @subtestListEditView.render
+    @model.subtests.on "all", @updateSubtestLegend
+
   save: =>
     if @updateModel()
       @model.save null,
         success: =>
-          Utils.midAlert "Assessment saved" 
-          Tangerine.router.navigate "edit/"+@model.id, true
+          Utils.midAlert "#{@model.get("name")} saved" 
         error: =>
           Utils.midAlert "Please try again. Assessment save error." 
 
-  back: ->
-    Tangerine.router.navigate "assessments", true
+  goBack: -> Tangerine.router.navigate "assessments", true
 
   updateModel: =>
 
@@ -120,15 +125,6 @@ class AssessmentEditView extends Backbone.View
     @toggleNewSubtestForm()
     return false
   
-  
-  initialize: (options) ->
-    @model = options.model
-    @subtestListEditView = new SubtestListEditView
-      "assessment" : @model
-
-    @model.subtests.on "change remove", @subtestListEditView.render
-    @model.subtests.on "all", @updateSubtestLegend
-
   render: =>
     sequences = ""
     if @model.has("sequences") 

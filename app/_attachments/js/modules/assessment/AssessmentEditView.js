@@ -25,7 +25,7 @@ AssessmentEditView = (function(_super) {
 
   AssessmentEditView.prototype.events = {
     'click #archive_buttons input': 'save',
-    'click .back': 'back',
+    'click .back': 'goBack',
     'click .new_subtest_button': 'toggleNewSubtestForm',
     'click .new_subtest_cancel': 'toggleNewSubtestForm',
     'keypress #new_subtest_name': 'saveNewSubtest',
@@ -34,13 +34,21 @@ AssessmentEditView = (function(_super) {
     'click .save': 'save'
   };
 
+  AssessmentEditView.prototype.initialize = function(options) {
+    this.model = options.model;
+    this.subtestListEditView = new SubtestListEditView({
+      "assessment": this.model
+    });
+    this.model.subtests.on("change remove", this.subtestListEditView.render);
+    return this.model.subtests.on("all", this.updateSubtestLegend);
+  };
+
   AssessmentEditView.prototype.save = function() {
     var _this = this;
     if (this.updateModel()) {
       return this.model.save(null, {
         success: function() {
-          Utils.midAlert("Assessment saved");
-          return Tangerine.router.navigate("edit/" + _this.model.id, true);
+          return Utils.midAlert("" + (_this.model.get("name")) + " saved");
         },
         error: function() {
           return Utils.midAlert("Please try again. Assessment save error.");
@@ -49,7 +57,7 @@ AssessmentEditView = (function(_super) {
     }
   };
 
-  AssessmentEditView.prototype.back = function() {
+  AssessmentEditView.prototype.goBack = function() {
     return Tangerine.router.navigate("assessments", true);
   };
 
@@ -160,15 +168,6 @@ AssessmentEditView = (function(_super) {
     newSubtest = this.model.subtests.create(newAttributes);
     this.toggleNewSubtestForm();
     return false;
-  };
-
-  AssessmentEditView.prototype.initialize = function(options) {
-    this.model = options.model;
-    this.subtestListEditView = new SubtestListEditView({
-      "assessment": this.model
-    });
-    this.model.subtests.on("change remove", this.subtestListEditView.render);
-    return this.model.subtests.on("all", this.updateSubtestLegend);
   };
 
   AssessmentEditView.prototype.render = function() {

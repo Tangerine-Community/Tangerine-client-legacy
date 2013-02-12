@@ -23,6 +23,9 @@ class SubtestEditView extends Backbone.View
 
   initialize: ( options ) ->
 
+    @activity = null
+    @timer = 0
+    
     @richtextKeys = _.pluck(@richtextConfig, "key")
 
     @model      = options.model
@@ -92,7 +95,10 @@ class SubtestEditView extends Backbone.View
 
   saveSubtest: -> @save()
 
-  save: ( options={} ) ->
+  save: ( options={} ) =>
+
+    return false unless @activity == null
+    @activity = "saving"
 
     # by default save prototype as well
     options.prototypeSave = if options.prototypeSave? then options.prorotypeSave else true
@@ -117,15 +123,19 @@ class SubtestEditView extends Backbone.View
     if @prototypeEditor.isValid() == false
       Utils.midAlert "There are errors on this page"
       @prototypeEditor.showErrors?()
+      @activity = null
     else
       @model.save null,
         success: =>
+          @activity = null
           # prefer the success callback
           return options.success() if options.success
           Utils.midAlert "Subtest Saved"
-          setTimeout @goBack, 1000
+          clearTimeout @timer
+          @timer = setTimeout @goBack, 1000
 
-        error: ->
+        error: =>
+          @activity = null
           return options.error() if options.error?
           Utils.midAlert "Save error"
 

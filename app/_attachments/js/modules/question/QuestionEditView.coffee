@@ -17,9 +17,14 @@ class QuestionEditView extends Backbone.View
     'change #custom_validation_code' : 'validateSyntax'
 
   initialize: (options) ->
+
+    @activity   = null
+    @timer = 0
+
     @question   = options.question
     @subtest    = options.subtest
     @assessment = options.assessment
+
 
   validateSyntax: ->
     if not _.isEmpty(customValidationCode = @$el.find("#custom_validation_code").val())
@@ -46,10 +51,6 @@ class QuestionEditView extends Backbone.View
     if optionTemplates[index]?
       @question.set "options", optionTemplates[index].options
       @$el.find('#option_list_wrapper').html @getOptionList()
-    return false
-
-  goBack: =>
-    window.history.back()
     return false
 
   getOptionList: ->
@@ -253,13 +254,23 @@ class QuestionEditView extends Backbone.View
   # Saving
   #
   done: ->
+    return false unless @activity == null
+    @activity = "saving"
+
     @updateModel()
     @question.save null,
       success: =>
+        @activity = null
         Utils.midAlert "Question Saved"
-        setTimeout @goBack, 500
-      error: ->
+        clearTimeout @timer # go with the last timeout
+        @timer = setTimeout @goBack, 500
+      error: =>
+        @activity = null
         Utils.midAlert "Save error"
+    return false
+
+  goBack: =>
+    window.history.back()
     return false
 
   updateModel: =>
