@@ -77,7 +77,6 @@ AssessmentsView = (function(_super) {
       view.render();
       $ul.append(view.el);
     }
-    console.log(showArchived);
     if (showArchived) {
       $ul = this.$el.find(".archived_list");
       for (_k = 0, _len2 = archivedViews.length; _k < _len2; _k++) {

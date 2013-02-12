@@ -87,7 +87,6 @@ class AssessmentsView extends Backbone.View
       view.render()
       $ul.append view.el
 
-    console.log showArchived
     if showArchived
       $ul = @$el.find(".archived_list")
       for view in archivedViews
