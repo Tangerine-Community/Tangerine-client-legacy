@@ -647,9 +647,6 @@ Router = (function(_super) {
         return assessment.fetch({
           success: function(model) {
             var view;
-            console.log("should be passing these");
-            console.log(model);
-            console.log(format);
             view = new AssessmentPrintView({
               model: model,
               format: format

@@ -257,9 +257,6 @@ ProgressView = (function(_super) {
     var availableItemTypesThisWeek, data, datum, difference, high, html, i, itemType, low, result, row, score, threshold, type, warnings, week, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
     type = this.selected.itemType;
     week = this.selected.week;
-    console.log("type: " + type);
-    console.log("week: " + week);
-    console.log(this.warningThresholds);
     html = "<table class='tabular'>";
     _ref = this.rows;
     for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
