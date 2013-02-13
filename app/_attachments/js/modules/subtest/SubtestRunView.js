@@ -15,6 +15,8 @@ SubtestRunView = (function(_super) {
     return SubtestRunView.__super__.constructor.apply(this, arguments);
   }
 
+  SubtestRunView.prototype.className = "SubtestRunView";
+
   SubtestRunView.prototype.events = {
     'click .next': 'next',
     'click .subtest_help': 'toggleHelp',

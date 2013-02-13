@@ -1,5 +1,6 @@
 class ObservationPrintView extends Backbone.View
 
+  className: "ObservationPrintView"
 
   events:
     "click .start_time" : "startObservations"

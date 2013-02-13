@@ -11,6 +11,8 @@ CurriculaView = (function(_super) {
     return CurriculaView.__super__.constructor.apply(this, arguments);
   }
 
+  CurriculaView.prototype.className = "CurriculaView";
+
   CurriculaView.prototype.events = {
     'click .import': 'gotoImport',
     'click .back': 'goBack'

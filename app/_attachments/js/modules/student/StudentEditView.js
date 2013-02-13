@@ -11,6 +11,8 @@ StudentEditView = (function(_super) {
     return StudentEditView.__super__.constructor.apply(this, arguments);
   }
 
+  StudentEditView.prototype.className = "StudentEditView";
+
   StudentEditView.prototype.events = {
     'click .done': 'done',
     'click .back': 'back'

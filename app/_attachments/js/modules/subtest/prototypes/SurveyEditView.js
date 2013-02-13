@@ -15,6 +15,8 @@ SurveyEditView = (function(_super) {
     return SurveyEditView.__super__.constructor.apply(this, arguments);
   }
 
+  SurveyEditView.prototype.className = "SurveyEditView";
+
   SurveyEditView.prototype.events = {
     'click .add_question': 'toggleAddQuestion',
     'click .add_question_cancel': 'toggleAddQuestion',

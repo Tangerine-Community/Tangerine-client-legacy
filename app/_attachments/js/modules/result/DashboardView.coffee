@@ -1,4 +1,7 @@
 class DashboardView extends Backbone.View
+
+  className : "DashboardView"
+
   el: '#content'
 
   events:

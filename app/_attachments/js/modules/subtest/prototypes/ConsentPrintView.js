@@ -11,6 +11,8 @@ ConsentPrintView = (function(_super) {
     return ConsentPrintView.__super__.constructor.apply(this, arguments);
   }
 
+  ConsentPrintView.prototype.className = "ConsentPrintView";
+
   ConsentPrintView.prototype.initialize = function(options) {
     this.confirmedNonConsent = false;
     this.model = this.options.model;

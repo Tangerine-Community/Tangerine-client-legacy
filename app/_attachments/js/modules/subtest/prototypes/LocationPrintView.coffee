@@ -1,5 +1,6 @@
 class LocationPrintView extends Backbone.View
 
+  className: "LocationPrintView"
 
   initialize: (options) ->
     

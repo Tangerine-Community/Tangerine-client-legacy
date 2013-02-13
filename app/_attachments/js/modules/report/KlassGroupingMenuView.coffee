@@ -1,5 +1,7 @@
 class KlassGroupingMenuView extends Backbone.View
 
+  className: "KlassGroupingMenuView"
+
   events:
     'change .part_selector' : 'gotoKlassGroupingReport'
 

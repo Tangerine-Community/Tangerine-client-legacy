@@ -17,6 +17,8 @@ KlassEditView = (function(_super) {
     return KlassEditView.__super__.constructor.apply(this, arguments);
   }
 
+  KlassEditView.prototype.className = "KlassEditView";
+
   KlassEditView.prototype.events = {
     'click .back': 'back',
     'click .save': 'basicInfoSave',

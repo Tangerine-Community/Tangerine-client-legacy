@@ -13,6 +13,8 @@ CurriculaListView = (function(_super) {
     return CurriculaListView.__super__.constructor.apply(this, arguments);
   }
 
+  CurriculaListView.prototype.className = "CurriculaListView";
+
   CurriculaListView.prototype.tagName = "ul";
 
   CurriculaListView.prototype.initialize = function(options) {

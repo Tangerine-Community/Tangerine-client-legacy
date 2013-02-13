@@ -1,5 +1,7 @@
 class AssessmentRunView extends Backbone.View
-  
+
+  className : "AssessmentRunView"
+
   initialize: (options) ->
 
     @abortAssessment = false

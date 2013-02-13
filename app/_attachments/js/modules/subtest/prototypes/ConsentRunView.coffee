@@ -1,5 +1,7 @@
 class ConsentRunView extends Backbone.View
 
+  className : "ConsentRunView"
+
   events:
     'click #non_consent_confirm' : 'noConsent'
     'click #consent_yes' : 'clearMessages'

@@ -1,5 +1,7 @@
 class AssessmentImportView extends Backbone.View
 
+  className: "AssessmentImportView"
+
   events: 
     'click .import' : 'import'
     'click .back'   : 'back'

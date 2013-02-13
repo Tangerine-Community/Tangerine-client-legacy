@@ -11,6 +11,8 @@ UsersMenuView = (function(_super) {
     return UsersMenuView.__super__.constructor.apply(this, arguments);
   }
 
+  UsersMenuView.prototype.className = "UsersMenuView";
+
   UsersMenuView.prototype.events = {
     "click .admin": "selectAdmin",
     "click .reader": "selectReader",

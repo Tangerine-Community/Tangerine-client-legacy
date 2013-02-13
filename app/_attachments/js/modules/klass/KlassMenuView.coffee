@@ -1,5 +1,7 @@
 class KlassMenuView extends Backbone.View
 
+  className : "KlassMenuView"
+
   events:
     'click .registration' : 'gotoKlasses'
 

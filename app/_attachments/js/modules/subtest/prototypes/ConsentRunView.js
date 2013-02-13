@@ -11,6 +11,8 @@ ConsentRunView = (function(_super) {
     return ConsentRunView.__super__.constructor.apply(this, arguments);
   }
 
+  ConsentRunView.prototype.className = "ConsentRunView";
+
   ConsentRunView.prototype.events = {
     'click #non_consent_confirm': 'noConsent',
     'click #consent_yes': 'clearMessages',

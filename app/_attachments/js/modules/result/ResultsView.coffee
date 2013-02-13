@@ -1,5 +1,7 @@
 class ResultsView extends Backbone.View
 
+  className : "ResultsView"
+
   events:
     'click .cloud'    : 'cloud'
     'click .csv'      : 'csv'

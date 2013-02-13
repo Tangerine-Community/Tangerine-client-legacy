@@ -1,5 +1,7 @@
 class StudentEditView extends Backbone.View
 
+  className: "StudentEditView"
+
   events:
     'click .done' : 'done'
     'click .back' : 'back'

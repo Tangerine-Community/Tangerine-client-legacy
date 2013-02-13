@@ -1,5 +1,7 @@
 class RegisterTeacherView extends Backbone.View
 
+  className : "RegisterTeacherView"
+
   events :
     'click .register' : 'register'
     'click .cancel' : 'cancel'

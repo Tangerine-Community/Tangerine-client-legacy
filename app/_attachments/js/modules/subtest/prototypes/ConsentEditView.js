@@ -11,6 +11,8 @@ ConsentEditView = (function(_super) {
     return ConsentEditView.__super__.constructor.apply(this, arguments);
   }
 
+  ConsentEditView.prototype.className = "ConsentEditView";
+
   ConsentEditView.prototype.initialize = function(options) {
     this.model = options.model;
     return this.parent = options.parent;

@@ -1,6 +1,8 @@
 # little janky, no model
 class CSVView extends Backbone.View
 
+  className: "CSVView"
+
   exportValueMap :
     "correct" : 1
     "checked" : 1

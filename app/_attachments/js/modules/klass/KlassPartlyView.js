@@ -11,6 +11,8 @@ KlassPartlyView = (function(_super) {
     return KlassPartlyView.__super__.constructor.apply(this, arguments);
   }
 
+  KlassPartlyView.prototype.className = "KlassPartlyView";
+
   KlassPartlyView.prototype.events = {
     "click .next_part": "nextPart",
     "click .prev_part": "prevPart",

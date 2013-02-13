@@ -11,6 +11,8 @@ IdEditView = (function(_super) {
     return IdEditView.__super__.constructor.apply(this, arguments);
   }
 
+  IdEditView.prototype.className = "IdEditView";
+
   IdEditView.prototype.initialize = function(options) {
     this.model = options.model;
     return this.parent = options.parent;

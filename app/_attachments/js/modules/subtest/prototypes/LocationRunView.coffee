@@ -1,5 +1,7 @@
 class LocationRunView extends Backbone.View
 
+  className: "LocationRunView"
+
   events:
     "click .school_list li" : "autofill"
     "keyup input"  : "showOptions"

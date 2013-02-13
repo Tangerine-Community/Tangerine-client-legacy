@@ -11,12 +11,12 @@ GridPrintView = (function(_super) {
     return GridPrintView.__super__.constructor.apply(this, arguments);
   }
 
+  GridPrintView.prototype.className = "grid_prototype";
+
   GridPrintView.prototype.initialize = function(options) {
     this.model = this.options.model;
     return this.parent = this.options.parent;
   };
-
-  GridPrintView.prototype.className = "grid_prototype";
 
   GridPrintView.prototype.render = function() {
     switch (this.format) {

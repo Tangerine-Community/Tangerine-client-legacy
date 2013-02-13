@@ -13,6 +13,8 @@ SurveyPrintView = (function(_super) {
     return SurveyPrintView.__super__.constructor.apply(this, arguments);
   }
 
+  SurveyPrintView.prototype.className = "SurveyPrintView";
+
   SurveyPrintView.prototype.initialize = function(options) {
     var _this = this;
     this.model = this.options.model;

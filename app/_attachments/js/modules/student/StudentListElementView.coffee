@@ -1,7 +1,7 @@
 class StudentListElementView extends Backbone.View
 
-  tagName : "li"
   className: "student_list_element"
+  tagName : "li"
 
   events :
     'click .edit'          : 'edit'

@@ -1,5 +1,7 @@
 class AssessmentsMenuView extends Backbone.View
 
+  className: "AssessmentsMenuView"
+
   events:
     'keypress .new_name' : 'newSave'
     'click .new_save'    : 'newSave'

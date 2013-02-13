@@ -11,6 +11,8 @@ CurriculumListElementView = (function(_super) {
     return CurriculumListElementView.__super__.constructor.apply(this, arguments);
   }
 
+  CurriculumListElementView.prototype.className = "CurriculumListElementView";
+
   CurriculumListElementView.prototype.tagName = "li";
 
   CurriculumListElementView.prototype.events = {

@@ -38,6 +38,8 @@ SurveyRunView = (function(_super) {
     return SurveyRunView.__super__.constructor.apply(this, arguments);
   }
 
+  SurveyRunView.prototype.className = "SurveyRunView";
+
   SurveyRunView.prototype.events = {
     'change input': 'updateSkipLogic',
     'change textarea': 'updateSkipLogic'

@@ -1,7 +1,8 @@
 class SubtestListElementView extends Backbone.View
 
-  tagName : "li"
   className : "subtest_element"
+  tagName : "li"
+
   events: 
     'click .icon_edit'     : 'edit'
     "click .icon_delete"   : "toggleDeleteConfirm"

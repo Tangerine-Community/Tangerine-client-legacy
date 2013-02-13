@@ -1,5 +1,7 @@
 class AccountView extends Backbone.View
 
+  className: "AccountView"
+
   events:
     'click .leave'       : 'leaveGroup'
     'click .join_cancel' : 'joinToggle'

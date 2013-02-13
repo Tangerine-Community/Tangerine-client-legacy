@@ -1,5 +1,7 @@
 class KlassEditView extends Backbone.View
 
+  className : "KlassEditView"
+
   events: 
     'click .back'                    : 'back'
     'click .save'                    : 'basicInfoSave'

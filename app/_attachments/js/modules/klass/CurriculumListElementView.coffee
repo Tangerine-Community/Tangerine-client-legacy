@@ -1,5 +1,6 @@
 class CurriculumListElementView extends Backbone.View
 
+  className : "CurriculumListElementView"
   tagName: "li"
 
   events:

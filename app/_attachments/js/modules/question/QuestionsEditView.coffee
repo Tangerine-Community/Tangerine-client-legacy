@@ -1,8 +1,8 @@
 class QuestionsEditView extends Backbone.View
 
-  tagName : "ul"
   className : "questions_edit_view"
-  
+  tagName : "ul"
+
   initialize: ( options ) ->
     @views = []
     @questions = options.questions

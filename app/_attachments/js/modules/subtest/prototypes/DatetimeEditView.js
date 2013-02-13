@@ -11,6 +11,8 @@ DatetimeEditView = (function(_super) {
     return DatetimeEditView.__super__.constructor.apply(this, arguments);
   }
 
+  DatetimeEditView.prototype.className = "DatetimeEditView";
+
   DatetimeEditView.prototype.initialize = function(options) {
     this.model = options.model;
     return this.parent = options.parent;

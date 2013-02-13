@@ -25,6 +25,8 @@ ObservationPrintView = (function(_super) {
     return ObservationPrintView.__super__.constructor.apply(this, arguments);
   }
 
+  ObservationPrintView.prototype.className = "ObservationPrintView";
+
   ObservationPrintView.prototype.events = {
     "click .start_time": "startObservations",
     "click .stop_time": "stopObservations",

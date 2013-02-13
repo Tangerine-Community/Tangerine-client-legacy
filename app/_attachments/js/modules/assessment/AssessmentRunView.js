@@ -11,6 +11,8 @@ AssessmentRunView = (function(_super) {
     return AssessmentRunView.__super__.constructor.apply(this, arguments);
   }
 
+  AssessmentRunView.prototype.className = "AssessmentRunView";
+
   AssessmentRunView.prototype.initialize = function(options) {
     var hasSequences, i, resultView, sequences, _i, _ref,
       _this = this;

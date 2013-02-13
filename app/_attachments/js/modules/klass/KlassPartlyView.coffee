@@ -1,5 +1,7 @@
 class KlassPartlyView extends Backbone.View
 
+  className : "KlassPartlyView"
+
   events:
     "click .next_part"                : "nextPart"
     "click .prev_part"                : "prevPart"

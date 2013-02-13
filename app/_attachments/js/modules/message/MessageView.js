@@ -11,12 +11,14 @@ MessageView = (function(_super) {
     return MessageView.__super__.constructor.apply(this, arguments);
   }
 
+  MessageView.prototype.className = "MessageView";
+
   MessageView.prototype.initialize = function(options) {
     return this.model = options.model;
   };
 
   MessageView.prototype.render = function() {
-    this.$el.html("    <label for='to'>To</label>    <select id='name'></select>                ");
+    this.$el.html("      <label for='to'>To</label>      <select id='name'></select>    ");
     return this.trigger("rendered");
   };
 

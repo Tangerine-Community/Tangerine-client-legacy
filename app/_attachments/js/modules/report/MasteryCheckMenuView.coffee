@@ -1,5 +1,7 @@
 class MasteryCheckMenuView extends Backbone.View
 
+  className : "MasteryCheckMenuView"
+
   events:
     'change .student_selector' : 'gotoMasteryCheckReport'
 

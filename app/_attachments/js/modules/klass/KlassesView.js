@@ -19,6 +19,8 @@ KlassesView = (function(_super) {
     return KlassesView.__super__.constructor.apply(this, arguments);
   }
 
+  KlassesView.prototype.className = "KlassesView";
+
   KlassesView.prototype.events = {
     'click .add': 'toggleAddForm',
     'click .cancel': 'toggleAddForm',

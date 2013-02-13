@@ -17,6 +17,8 @@ AssessmentsMenuView = (function(_super) {
     return AssessmentsMenuView.__super__.constructor.apply(this, arguments);
   }
 
+  AssessmentsMenuView.prototype.className = "AssessmentsMenuView";
+
   AssessmentsMenuView.prototype.events = {
     'keypress .new_name': 'newSave',
     'click .new_save': 'newSave',

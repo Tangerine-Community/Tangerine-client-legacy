@@ -11,6 +11,8 @@ ErrorView = (function(_super) {
     return ErrorView.__super__.constructor.apply(this, arguments);
   }
 
+  ErrorView.prototype.className = ErrorView;
+
   ErrorView.prototype.initialize = function(options) {
     this.message = options.message;
     return this.details = options.details;

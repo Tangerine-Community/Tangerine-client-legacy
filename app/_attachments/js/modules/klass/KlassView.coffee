@@ -1,5 +1,7 @@
 class KlassView extends Backbone.View
 
+  className : "KlassView"
+
   initialize: ( options ) ->
     @klass = options.klass
     @assessments = @klass.assessments

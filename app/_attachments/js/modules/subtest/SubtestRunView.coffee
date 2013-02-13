@@ -1,5 +1,7 @@
 class SubtestRunView extends Backbone.View
-  
+
+  className : "SubtestRunView"
+
   events:
     'click .next'         : 'next'
     'click .subtest_help' : 'toggleHelp'

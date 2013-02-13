@@ -1,5 +1,7 @@
 class ErrorView extends Backbone.View
 
+  className: "ErrorView"
+
   initialize: ( options ) ->
     @message = options.message
     @details = options.details

@@ -11,9 +11,9 @@ SubtestListElementView = (function(_super) {
     return SubtestListElementView.__super__.constructor.apply(this, arguments);
   }
 
-  SubtestListElementView.prototype.tagName = "li";
-
   SubtestListElementView.prototype.className = "subtest_element";
+
+  SubtestListElementView.prototype.tagName = "li";
 
   SubtestListElementView.prototype.events = {
     'click .icon_edit': 'edit',

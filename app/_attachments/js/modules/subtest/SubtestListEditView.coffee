@@ -1,4 +1,7 @@
 class SubtestListEditView extends Backbone.View
+
+  className: "SubtestListEditView"
+
   tagName : "ul"
   
   initialize: (options) ->

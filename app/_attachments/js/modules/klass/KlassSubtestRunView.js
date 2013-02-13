@@ -13,6 +13,8 @@ KlassSubtestRunView = (function(_super) {
     return KlassSubtestRunView.__super__.constructor.apply(this, arguments);
   }
 
+  KlassSubtestRunView.prototype.className = "KlassSubtestRunView";
+
   KlassSubtestRunView.prototype.events = {
     'click .done': 'done',
     'click .cancel': 'cancel',

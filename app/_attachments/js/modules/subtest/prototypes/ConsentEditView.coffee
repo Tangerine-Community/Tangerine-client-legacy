@@ -1,5 +1,7 @@
 class ConsentEditView extends Backbone.View
 
+  className : "ConsentEditView"
+
   initialize: ( options ) ->
     @model = options.model
     @parent = options.parent

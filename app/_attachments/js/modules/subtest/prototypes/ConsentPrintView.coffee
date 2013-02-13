@@ -1,5 +1,7 @@
 class ConsentPrintView extends Backbone.View
 
+  className : "ConsentPrintView"
+
   initialize: (options) ->
     @confirmedNonConsent = false
     @model  = @options.model

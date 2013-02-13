@@ -11,9 +11,9 @@ QuestionsEditListElementView = (function(_super) {
     return QuestionsEditListElementView.__super__.constructor.apply(this, arguments);
   }
 
-  QuestionsEditListElementView.prototype.tagName = "li";
-
   QuestionsEditListElementView.prototype.className = "question_list_element";
+
+  QuestionsEditListElementView.prototype.tagName = "li";
 
   QuestionsEditListElementView.prototype.events = {
     'click .edit': 'edit',

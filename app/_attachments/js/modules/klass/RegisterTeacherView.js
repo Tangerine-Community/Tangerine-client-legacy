@@ -11,6 +11,8 @@ RegisterTeacherView = (function(_super) {
     return RegisterTeacherView.__super__.constructor.apply(this, arguments);
   }
 
+  RegisterTeacherView.prototype.className = "RegisterTeacherView";
+
   RegisterTeacherView.prototype.events = {
     'click .register': 'register',
     'click .cancel': 'cancel'

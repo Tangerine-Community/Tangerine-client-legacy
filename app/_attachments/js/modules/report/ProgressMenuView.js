@@ -11,6 +11,8 @@ ProgressMenuView = (function(_super) {
     return ProgressMenuView.__super__.constructor.apply(this, arguments);
   }
 
+  ProgressMenuView.prototype.className = "ProgressMenuView";
+
   ProgressMenuView.prototype.events = {
     'change .student_selector': 'gotoProgressTable'
   };

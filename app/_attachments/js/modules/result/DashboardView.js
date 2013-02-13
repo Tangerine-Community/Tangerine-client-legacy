@@ -21,6 +21,8 @@ DashboardView = (function(_super) {
     return DashboardView.__super__.constructor.apply(this, arguments);
   }
 
+  DashboardView.prototype.className = "DashboardView";
+
   DashboardView.prototype.el = '#content';
 
   DashboardView.prototype.events = {

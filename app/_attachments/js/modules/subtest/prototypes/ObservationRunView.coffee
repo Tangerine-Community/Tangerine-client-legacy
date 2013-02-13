@@ -1,5 +1,6 @@
 class ObservationRunView extends Backbone.View
 
+  className: "ObservationRunView"
 
   events:
     "click .start_time" : "startObservations"

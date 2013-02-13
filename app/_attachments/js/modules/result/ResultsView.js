@@ -19,6 +19,8 @@ ResultsView = (function(_super) {
     return ResultsView.__super__.constructor.apply(this, arguments);
   }
 
+  ResultsView.prototype.className = "ResultsView";
+
   ResultsView.prototype.events = {
     'click .cloud': 'cloud',
     'click .csv': 'csv',

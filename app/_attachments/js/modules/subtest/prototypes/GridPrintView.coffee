@@ -1,10 +1,10 @@
 class GridPrintView extends Backbone.View
 
+  className: "grid_prototype"
+
   initialize: (options) ->
     @model         = @options.model
     @parent        = @options.parent
-
-  className: "grid_prototype"
 
   render: ->
     switch @format

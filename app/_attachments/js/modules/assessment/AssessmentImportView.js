@@ -19,6 +19,8 @@ AssessmentImportView = (function(_super) {
     return AssessmentImportView.__super__.constructor.apply(this, arguments);
   }
 
+  AssessmentImportView.prototype.className = "AssessmentImportView";
+
   AssessmentImportView.prototype.events = {
     'click .import': 'import',
     'click .back': 'back',

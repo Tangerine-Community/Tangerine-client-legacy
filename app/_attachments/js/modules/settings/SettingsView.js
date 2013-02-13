@@ -11,6 +11,8 @@ SettingsView = (function(_super) {
     return SettingsView.__super__.constructor.apply(this, arguments);
   }
 
+  SettingsView.prototype.className = "SettingsView";
+
   SettingsView.prototype.events = {
     'click .save': 'save',
     'click .back': 'goBack'

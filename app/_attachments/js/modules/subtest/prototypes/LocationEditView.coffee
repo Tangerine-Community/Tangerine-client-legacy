@@ -1,5 +1,7 @@
 class LocationEditView extends Backbone.View
 
+  className: "LocationEditView"
+
   events: 
     'keyup #data'               : 'updateData'
     'keyup #levels'             : 'updateLevels'

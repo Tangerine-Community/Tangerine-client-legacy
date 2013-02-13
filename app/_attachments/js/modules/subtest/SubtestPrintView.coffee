@@ -1,5 +1,7 @@
 class SubtestPrintView extends Backbone.View
 
+  className : "SubtestPrintView"
+
   initialize: (options) ->
     @protoViews  = Tangerine.config.prototypeViews
     @model       = options.model

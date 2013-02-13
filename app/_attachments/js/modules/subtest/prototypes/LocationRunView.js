@@ -11,6 +11,8 @@ LocationRunView = (function(_super) {
     return LocationRunView.__super__.constructor.apply(this, arguments);
   }
 
+  LocationRunView.prototype.className = "LocationRunView";
+
   LocationRunView.prototype.events = {
     "click .school_list li": "autofill",
     "keyup input": "showOptions",

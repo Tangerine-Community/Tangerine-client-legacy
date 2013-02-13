@@ -1,4 +1,6 @@
 class CurriculaListView extends Backbone.View
+
+  className: "CurriculaListView"
   tagName: "ul"
 
   initialize: (options) ->

@@ -1,5 +1,7 @@
 class SurveyPrintView extends Backbone.View
 
+  className: "SurveyPrintView"
+
   initialize: (options) ->
     @model         = @options.model
     @parent        = @options.parent

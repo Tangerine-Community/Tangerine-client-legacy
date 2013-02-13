@@ -13,6 +13,8 @@ KlassListElementView = (function(_super) {
     return KlassListElementView.__super__.constructor.apply(this, arguments);
   }
 
+  KlassListElementView.prototype.className = "KlassListElementView";
+
   KlassListElementView.prototype.tagName = "li";
 
   KlassListElementView.prototype.events = {

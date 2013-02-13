@@ -11,6 +11,8 @@ AssessmentPrintView = (function(_super) {
     return AssessmentPrintView.__super__.constructor.apply(this, arguments);
   }
 
+  AssessmentPrintView.prototype.className = "AssessmentPrintView";
+
   AssessmentPrintView.prototype.initialize = function(options) {
     var _this = this;
     this.abortAssessment = false;

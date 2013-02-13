@@ -21,7 +21,7 @@ ViewManager = (function(_super) {
       _ref.close();
     }
     this.currentView = view;
-    this.className = String(this.currentView.constructor).split("function ")[1].split("() {")[0];
+    this.className = this.currentView.className;
     Tangerine.log.app("show", this.className);
     this.currentView.on("click", function() {
       return console.log(arguments);

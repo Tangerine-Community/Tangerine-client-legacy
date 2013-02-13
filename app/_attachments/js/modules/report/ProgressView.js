@@ -15,11 +15,11 @@ ProgressView = (function(_super) {
     return ProgressView.__super__.constructor.apply(this, arguments);
   }
 
+  ProgressView.prototype.className = "ProgressView";
+
   ProgressView.prototype.INDIVIDUAL = 1;
 
   ProgressView.prototype.AGGREGATE = 2;
-
-  ProgressView.prototype.className = "ProgressView";
 
   ProgressView.prototype.events = {
     'click .back': 'goBack',

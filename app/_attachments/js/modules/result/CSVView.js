@@ -11,6 +11,8 @@ CSVView = (function(_super) {
     return CSVView.__super__.constructor.apply(this, arguments);
   }
 
+  CSVView.prototype.className = "CSVView";
+
   CSVView.prototype.exportValueMap = {
     "correct": 1,
     "checked": 1,

@@ -13,6 +13,8 @@ AccountView = (function(_super) {
     return AccountView.__super__.constructor.apply(this, arguments);
   }
 
+  AccountView.prototype.className = "AccountView";
+
   AccountView.prototype.events = {
     'click .leave': 'leaveGroup',
     'click .join_cancel': 'joinToggle',

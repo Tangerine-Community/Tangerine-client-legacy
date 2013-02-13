@@ -25,6 +25,8 @@ ObservationRunView = (function(_super) {
     return ObservationRunView.__super__.constructor.apply(this, arguments);
   }
 
+  ObservationRunView.prototype.className = "ObservationRunView";
+
   ObservationRunView.prototype.events = {
     "click .start_time": "startObservations",
     "click .stop_time": "stopObservations",

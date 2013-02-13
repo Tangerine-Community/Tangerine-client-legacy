@@ -13,6 +13,8 @@ AssessmentsView = (function(_super) {
     return AssessmentsView.__super__.constructor.apply(this, arguments);
   }
 
+  AssessmentsView.prototype.className = "AssessmentsView";
+
   AssessmentsView.prototype.tagName = "div";
 
   AssessmentsView.prototype.events = {

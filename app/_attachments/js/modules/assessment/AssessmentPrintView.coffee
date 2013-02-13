@@ -1,4 +1,6 @@
 class AssessmentPrintView extends Backbone.View
+
+  className: "AssessmentPrintView"
   
   initialize: (options) ->
     @abortAssessment = false

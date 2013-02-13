@@ -1,5 +1,7 @@
 class GroupsView extends Backbone.View
 
+  className: "GroupsView"
+
   events:
     'click .account' : 'gotoAccount'
     'click .goto'    : 'gotoGroup'

@@ -1,5 +1,7 @@
 class SurveyEditView extends Backbone.View
 
+  className: "SurveyEditView"
+
   events:
     'click .add_question'        : 'toggleAddQuestion'
     'click .add_question_cancel' : 'toggleAddQuestion'

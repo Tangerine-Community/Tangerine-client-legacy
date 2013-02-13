@@ -1,5 +1,7 @@
 class SettingsView extends Backbone.View
 
+  className : "SettingsView"
+
   events: 
     'click .save' : 'save'
     'click .back' : 'goBack'

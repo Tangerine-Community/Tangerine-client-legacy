@@ -11,6 +11,8 @@ LocationPrintView = (function(_super) {
     return LocationPrintView.__super__.constructor.apply(this, arguments);
   }
 
+  LocationPrintView.prototype.className = "LocationPrintView";
+
   LocationPrintView.prototype.initialize = function(options) {
     this.model = this.options.model;
     this.parent = this.options.parent;

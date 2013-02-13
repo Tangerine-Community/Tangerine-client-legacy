@@ -15,6 +15,8 @@ SubtestListEditView = (function(_super) {
     return SubtestListEditView.__super__.constructor.apply(this, arguments);
   }
 
+  SubtestListEditView.prototype.className = "SubtestListEditView";
+
   SubtestListEditView.prototype.tagName = "ul";
 
   SubtestListEditView.prototype.initialize = function(options) {

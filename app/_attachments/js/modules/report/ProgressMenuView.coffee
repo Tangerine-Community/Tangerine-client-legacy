@@ -1,5 +1,7 @@
 class ProgressMenuView extends Backbone.View
 
+  className : "ProgressMenuView"
+
   events:
     'change .student_selector' : 'gotoProgressTable'
 

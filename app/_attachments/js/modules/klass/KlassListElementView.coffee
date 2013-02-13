@@ -1,5 +1,7 @@
 class KlassListElementView extends Backbone.View
 
+  className : "KlassListElementView"
+
   tagName: "li"
 
   events:

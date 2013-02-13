@@ -11,6 +11,8 @@ ObservationEditView = (function(_super) {
     return ObservationEditView.__super__.constructor.apply(this, arguments);
   }
 
+  ObservationEditView.prototype.className = "ObservationEditView";
+
   ObservationEditView.prototype.initialize = function(options) {
     var surveyAttributes;
     this.model = options.model;

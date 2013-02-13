@@ -11,6 +11,8 @@ MasteryCheckMenuView = (function(_super) {
     return MasteryCheckMenuView.__super__.constructor.apply(this, arguments);
   }
 
+  MasteryCheckMenuView.prototype.className = "MasteryCheckMenuView";
+
   MasteryCheckMenuView.prototype.events = {
     'change .student_selector': 'gotoMasteryCheckReport'
   };

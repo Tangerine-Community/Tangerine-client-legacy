@@ -1,5 +1,7 @@
 class KlassesView extends Backbone.View
 
+  className : "KlassesView"
+
   events :
     'click .add'        : 'toggleAddForm'
     'click .cancel'     : 'toggleAddForm'

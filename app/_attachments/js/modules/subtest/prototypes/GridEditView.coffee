@@ -1,5 +1,7 @@
 class GridEditView extends Backbone.View
 
+  className : "GridEditView"
+
   events:
     'blur #subtest_items' : 'cleanWhitespace'
 

@@ -11,6 +11,8 @@ SubtestPrintView = (function(_super) {
     return SubtestPrintView.__super__.constructor.apply(this, arguments);
   }
 
+  SubtestPrintView.prototype.className = "SubtestPrintView";
+
   SubtestPrintView.prototype.initialize = function(options) {
     this.protoViews = Tangerine.config.prototypeViews;
     this.model = options.model;

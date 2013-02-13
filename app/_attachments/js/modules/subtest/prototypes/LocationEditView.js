@@ -12,6 +12,8 @@ LocationEditView = (function(_super) {
     return LocationEditView.__super__.constructor.apply(this, arguments);
   }
 
+  LocationEditView.prototype.className = "LocationEditView";
+
   LocationEditView.prototype.events = {
     'keyup #data': 'updateData',
     'keyup #levels': 'updateLevels',

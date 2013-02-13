@@ -4,6 +4,7 @@
 #
 class AssessmentsView extends Backbone.View
 
+  className : "AssessmentsView"
   tagName : "div"
 
   events : 

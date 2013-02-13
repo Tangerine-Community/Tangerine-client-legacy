@@ -1,9 +1,9 @@
 class ProgressView extends Backbone.View
 
+  className : "ProgressView"
+
   INDIVIDUAL : 1
   AGGREGATE  : 2
-
-  className : "ProgressView"
 
   events:
     'click .back'            : 'goBack'

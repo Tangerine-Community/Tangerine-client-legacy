@@ -13,9 +13,9 @@ QuestionsEditView = (function(_super) {
     return QuestionsEditView.__super__.constructor.apply(this, arguments);
   }
 
-  QuestionsEditView.prototype.tagName = "ul";
-
   QuestionsEditView.prototype.className = "questions_edit_view";
+
+  QuestionsEditView.prototype.tagName = "ul";
 
   QuestionsEditView.prototype.initialize = function(options) {
     this.views = [];

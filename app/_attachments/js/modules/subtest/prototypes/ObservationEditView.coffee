@@ -1,6 +1,8 @@
 # This prototype runs a survey at specified intervals.
 class ObservationEditView extends Backbone.View
 
+  className: "ObservationEditView"
+
   initialize: ( options ) ->
     @model = options.model
     surveyAttributes = $.extend(@model.get('surveyAttributes'), {"_id":@model.id,"assessmentId":@model.get("assessmentId")})

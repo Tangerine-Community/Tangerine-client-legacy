@@ -11,6 +11,8 @@ KlassView = (function(_super) {
     return KlassView.__super__.constructor.apply(this, arguments);
   }
 
+  KlassView.prototype.className = "KlassView";
+
   KlassView.prototype.initialize = function(options) {
     var allAssessments,
       _this = this;

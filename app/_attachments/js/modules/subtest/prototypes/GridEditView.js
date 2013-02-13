@@ -11,6 +11,8 @@ GridEditView = (function(_super) {
     return GridEditView.__super__.constructor.apply(this, arguments);
   }
 
+  GridEditView.prototype.className = "GridEditView";
+
   GridEditView.prototype.events = {
     'blur #subtest_items': 'cleanWhitespace'
   };

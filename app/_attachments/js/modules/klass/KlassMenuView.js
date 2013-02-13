@@ -11,6 +11,8 @@ KlassMenuView = (function(_super) {
     return KlassMenuView.__super__.constructor.apply(this, arguments);
   }
 
+  KlassMenuView.prototype.className = "KlassMenuView";
+
   KlassMenuView.prototype.events = {
     'click .registration': 'gotoKlasses'
   };

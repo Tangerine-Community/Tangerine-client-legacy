@@ -11,6 +11,8 @@ KlassGroupingMenuView = (function(_super) {
     return KlassGroupingMenuView.__super__.constructor.apply(this, arguments);
   }
 
+  KlassGroupingMenuView.prototype.className = "KlassGroupingMenuView";
+
   KlassGroupingMenuView.prototype.events = {
     'change .part_selector': 'gotoKlassGroupingReport'
   };

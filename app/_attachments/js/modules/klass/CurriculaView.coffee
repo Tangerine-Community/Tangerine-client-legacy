@@ -1,5 +1,7 @@
 class CurriculaView extends Backbone.View
 
+  className : "CurriculaView"
+
   events :
     'click .import' : 'gotoImport'
     'click .back'   : 'goBack'

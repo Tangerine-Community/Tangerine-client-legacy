@@ -11,9 +11,9 @@ StudentListElementView = (function(_super) {
     return StudentListElementView.__super__.constructor.apply(this, arguments);
   }
 
-  StudentListElementView.prototype.tagName = "li";
-
   StudentListElementView.prototype.className = "student_list_element";
+
+  StudentListElementView.prototype.tagName = "li";
 
   StudentListElementView.prototype.events = {
     'click .edit': 'edit',

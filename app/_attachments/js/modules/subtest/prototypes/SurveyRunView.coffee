@@ -13,6 +13,9 @@ ResultOfPrevious = (name) ->
   return vm.currentView.result.getVariable(name)
 
 class SurveyRunView extends Backbone.View
+
+  className: "SurveyRunView"
+
   events:
     'change input'        : 'updateSkipLogic'
     'change textarea'     : 'updateSkipLogic'

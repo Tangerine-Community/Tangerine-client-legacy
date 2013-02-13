@@ -11,6 +11,8 @@ GroupsView = (function(_super) {
     return GroupsView.__super__.constructor.apply(this, arguments);
   }
 
+  GroupsView.prototype.className = "GroupsView";
+
   GroupsView.prototype.events = {
     'click .account': 'gotoAccount',
     'click .goto': 'gotoGroup'
