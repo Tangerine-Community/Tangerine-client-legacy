@@ -88,9 +88,9 @@
     for columnKey in columnKeys
       rawCell = oneRow[columnKey]
       if rawCell != undefined
-        csvRow.push  "\"" + String(rawCell).replace(/"/g,"\"") + "\""
+        csvRow.push  '"' + String(rawCell).replace(/"/g,'\\\"') + '"'
       else
         csvRow.push null
-    send csvRow.join(",")+"\n"
+    send csvRow.join(",") + "\n"
 
   return
