@@ -58,9 +58,7 @@ SubtestListElementView = (function(_super) {
     allAssessments = new Assessments;
     return allAssessments.fetch({
       success: function(collection) {
-        _this.groupAssessments = collection.where({
-          "group": _this.group
-        });
+        _this.groupAssessments = collection;
         return _this.populateAssessmentSelector();
       }
     });

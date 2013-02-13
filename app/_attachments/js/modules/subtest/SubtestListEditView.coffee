@@ -14,7 +14,6 @@ class SubtestListEditView extends Backbone.View
     @assessment.subtests.each (subtest) =>
       oneView = new SubtestListElementView
         "subtest" : subtest
-        "group"   : @assessment.get "group"
       @views.push oneView
       oneView.render()
       oneView.on "subtest:delete", @deleteSubtest

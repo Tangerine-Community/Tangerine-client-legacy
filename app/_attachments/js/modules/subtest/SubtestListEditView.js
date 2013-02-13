@@ -31,8 +31,7 @@ SubtestListEditView = (function(_super) {
     return this.assessment.subtests.each(function(subtest) {
       var oneView;
       oneView = new SubtestListElementView({
-        "subtest": subtest,
-        "group": _this.assessment.get("group")
+        "subtest": subtest
       });
       _this.views.push(oneView);
       oneView.render();

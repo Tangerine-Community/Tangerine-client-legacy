@@ -36,7 +36,7 @@ class SubtestListElementView extends Backbone.View
     allAssessments = new Assessments
     allAssessments.fetch
       success: (collection) =>
-        @groupAssessments = collection.where "group" : @group
+        @groupAssessments = collection
         @populateAssessmentSelector()
   
   populateAssessmentSelector: ->
