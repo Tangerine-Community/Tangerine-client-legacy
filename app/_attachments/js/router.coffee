@@ -90,8 +90,6 @@ class Router extends Backbone.Router
       isRegistered: ->
         view = new GroupsView
         vm.show view
-      isUnregistered: ->
-        Tangerine.router.navigate "login", true
 
   #
   # Class
@@ -105,8 +103,6 @@ class Router extends Backbone.Router
             view = new CurriculaView
               "curricula" : collection
             vm.show view
-      isUnregistered: ->
-        Tangerine.router.navigate "login", true
 
   curriculum: (curriculumId) ->
     Tangerine.user.verify
@@ -122,8 +118,6 @@ class Router extends Backbone.Router
                   "curriculum" : curriculum
                   "subtests"   : subtests
                 vm.show view
-      isUnregistered: ->
-        Tangerine.router.navigate "login", true
 
 
   curriculumEdit: (curriculumId) ->
@@ -143,8 +137,6 @@ class Router extends Backbone.Router
                   "subtests" : subtests
                   "parts" : partCount
                 vm.show view
-      isUnregistered: ->
-        Tangerine.router.navigate "login", true
 
 
   curriculumImport: ->
@@ -153,8 +145,6 @@ class Router extends Backbone.Router
         view = new AssessmentImportView
           noun : "curriculum"
         vm.show view
-      isUnregistered: ->
-        Tangerine.router.navigate "login", true
 
   klass: ->
     Tangerine.user.verify
@@ -194,10 +184,7 @@ class Router extends Backbone.Router
                       students    : klassStudents
                       allStudents : allStudents
                       teachers    : teachers
-
                     vm.show view
-      isUnregistered: ->
-        Tangerine.router.navigate "", true
 
   klassPartly: (klassId, part=null) ->
     Tangerine.user.verify
@@ -229,11 +216,8 @@ class Router extends Backbone.Router
                               "students"   : students
                               "curriculum" : curriculum
                               "klass"      : klass
-
                             vm.show view
 
-      isUnregistered: (options) ->
-        Tangerine.router.navigate "login", true
 
   studentSubtest: (studentId, subtestId) ->
     Tangerine.user.verify
@@ -320,9 +304,6 @@ class Router extends Backbone.Router
                   klasses : klassCollection
                 vm.show view
 
-      isUnregistered: ->
-        Tangerine.router.navigate "", true
-
 
   #
   # Assessment
@@ -333,8 +314,6 @@ class Router extends Backbone.Router
         view = new AssessmentImportView
           noun :"assessment"
         vm.show view
-      isUnregistered: ->
-        Tangerine.router.navigate "login", true
 
   assessments: ->
       Tangerine.user.verify
@@ -349,8 +328,7 @@ class Router extends Backbone.Router
                     "assessments" : assessments
                     "curricula"   : curricula
                   vm.show assessments
-        isUnregistered: ->
-          Tangerine.router.navigate "login", true
+
 
   editId: (id) ->
     id = Utils.cleanURL id
@@ -364,8 +342,7 @@ class Router extends Backbone.Router
             vm.show view
       isUser: ->
         Tangerine.router.navigate "", true
-      isUnregistered: (options) ->
-        Tangerine.router.navigate "login", true
+
 
   edit: (id) ->
     Tangerine.user.verify
@@ -378,9 +355,6 @@ class Router extends Backbone.Router
             vm.show view
       isUser: ->
         Tangerine.router.navigate "", true
-      isUnregistered: (options) ->
-        Tangerine.router.navigate "login", true
-
 
   restart: (name) ->
     Tangerine.router.navigate "run/#{name}", true
@@ -394,8 +368,6 @@ class Router extends Backbone.Router
           success : ( model ) ->
             view = new AssessmentRunView model: model
             vm.show view
-      isUnregistered: (options) ->
-        Tangerine.router.navigate "login", true
 
   print: ( assessmentId, format ) ->
     Tangerine.user.verify
@@ -408,8 +380,6 @@ class Router extends Backbone.Router
               model  : model
               format : format
             vm.show view
-      isUnregistered: (options) ->
-        Tangerine.router.navigate "login", true
 
   resume: (assessmentId, resultId) ->
     Tangerine.user.verify
@@ -446,9 +416,6 @@ class Router extends Backbone.Router
                   assessmentView : view
                 view.index = result.get("subtestData").length
                 vm.show view
-      isUnregistered: ->
-        Tangerine.router.navigate "login", true
-
 
   results: (assessmentId) ->
     Tangerine.user.verify
@@ -466,8 +433,6 @@ class Router extends Backbone.Router
                   "assessment" : assessment
                   "results"    : results.models
                 vm.show view
-      isUnregistered: ->
-        Tangerine.router.navigate "login", true
 
   csv: (id) ->
     Tangerine.user.verify
@@ -475,11 +440,6 @@ class Router extends Backbone.Router
         view = new CSVView
           assessmentId : id
         vm.show view
-      isUser: ->
-        errView = new ErrorView
-          message : "You're not an admin user"
-          details : "How did you get here?"
-        vm.show errView
 
   csv_alpha: (id) ->
     Tangerine.user.verify
@@ -521,8 +481,6 @@ class Router extends Backbone.Router
                         "subtests" : subtests
                         "results"  : results
                       vm.show view
-      isUnregistered: ->
-        Tangerine.router.navigate "login", true
 
   masteryCheck: (studentId) ->
     Tangerine.user.verify
@@ -607,8 +565,6 @@ class Router extends Backbone.Router
                 vm.show view
       isUser: ->
         Tangerine.router.navigate "", true
-      isUnregistereded: ->
-        Tangerine.router.navigate "login", true
 
   editKlassSubtest: (id) ->
 
@@ -640,8 +596,6 @@ class Router extends Backbone.Router
                   onSuccess subtest, curriculum
       isUser: ->
         Tangerine.router.navigate "", true
-      isUnregistereded: ->
-        Tangerine.router.navigate "login", true
 
 
   #
@@ -669,8 +623,6 @@ class Router extends Backbone.Router
                     vm.show view
       isUser: ->
         Tangerine.router.navigate "", true
-      isUnregistered: ->
-        Tangerine.router.navigate "login", true
 
 
   editKlassQuestion: (id) ->
@@ -693,8 +645,6 @@ class Router extends Backbone.Router
                       "subtest"    : subtest
                       "assessment" : curriculum
                     vm.show view
-      isUnregistered: ->
-        Tangerine.router.navigate "login", true
 
 
   #
@@ -720,16 +670,13 @@ class Router extends Backbone.Router
         isRegistered: ->
           view = new AccountView user : Tangerine.user
           vm.show view
-        isUnregistered: (options) ->
-          Tangerine.router.navigate "login", true
 
   settings: ->
     Tangerine.user.verify
       isRegistered: ->
         view = new SettingsView
         vm.show view
-      isUnregistered: (options) ->
-        Tangerine.router.navigate "login", true
+
 
   logs: ->
     Tangerine.user.verify

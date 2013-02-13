@@ -91,9 +91,6 @@ Router = (function(_super) {
         var view;
         view = new GroupsView;
         return vm.show(view);
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -112,9 +109,6 @@ Router = (function(_super) {
             return vm.show(view);
           }
         });
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -145,9 +139,6 @@ Router = (function(_super) {
             });
           }
         });
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -189,9 +180,6 @@ Router = (function(_super) {
             });
           }
         });
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -204,9 +192,6 @@ Router = (function(_super) {
           noun: "curriculum"
         });
         return vm.show(view);
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -282,9 +267,6 @@ Router = (function(_super) {
             });
           }
         });
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("", true);
       }
     });
   };
@@ -348,9 +330,6 @@ Router = (function(_super) {
             });
           }
         });
-      },
-      isUnregistered: function(options) {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -508,9 +487,6 @@ Router = (function(_super) {
             });
           }
         });
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("", true);
       }
     });
   };
@@ -523,9 +499,6 @@ Router = (function(_super) {
           noun: "assessment"
         });
         return vm.show(view);
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -550,9 +523,6 @@ Router = (function(_super) {
             });
           }
         });
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -577,9 +547,6 @@ Router = (function(_super) {
       },
       isUser: function() {
         return Tangerine.router.navigate("", true);
-      },
-      isUnregistered: function(options) {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -603,9 +570,6 @@ Router = (function(_super) {
       },
       isUser: function() {
         return Tangerine.router.navigate("", true);
-      },
-      isUnregistered: function(options) {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -630,9 +594,6 @@ Router = (function(_super) {
             return vm.show(view);
           }
         });
-      },
-      isUnregistered: function(options) {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -654,9 +615,6 @@ Router = (function(_super) {
             return vm.show(view);
           }
         });
-      },
-      isUnregistered: function(options) {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -704,9 +662,6 @@ Router = (function(_super) {
             });
           }
         });
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -737,9 +692,6 @@ Router = (function(_super) {
             });
           }
         });
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -752,14 +704,6 @@ Router = (function(_super) {
           assessmentId: id
         });
         return vm.show(view);
-      },
-      isUser: function() {
-        var errView;
-        errView = new ErrorView({
-          message: "You're not an admin user",
-          details: "How did you get here?"
-        });
-        return vm.show(errView);
       }
     });
   };
@@ -828,9 +772,6 @@ Router = (function(_super) {
             });
           }
         });
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -982,9 +923,6 @@ Router = (function(_super) {
       },
       isUser: function() {
         return Tangerine.router.navigate("", true);
-      },
-      isUnregistereded: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -1040,9 +978,6 @@ Router = (function(_super) {
       },
       isUser: function() {
         return Tangerine.router.navigate("", true);
-      },
-      isUnregistereded: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -1085,9 +1020,6 @@ Router = (function(_super) {
       },
       isUser: function() {
         return Tangerine.router.navigate("", true);
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -1127,9 +1059,6 @@ Router = (function(_super) {
             });
           }
         });
-      },
-      isUnregistered: function() {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
@@ -1162,9 +1091,6 @@ Router = (function(_super) {
             user: Tangerine.user
           });
           return vm.show(view);
-        },
-        isUnregistered: function(options) {
-          return Tangerine.router.navigate("login", true);
         }
       });
     }
@@ -1176,9 +1102,6 @@ Router = (function(_super) {
         var view;
         view = new SettingsView;
         return vm.show(view);
-      },
-      isUnregistered: function(options) {
-        return Tangerine.router.navigate("login", true);
       }
     });
   };
