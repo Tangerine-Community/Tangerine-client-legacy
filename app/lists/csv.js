@@ -93,7 +93,7 @@
       columnKey = columnKeys[_o];
       rawCell = oneRow[columnKey];
       if (rawCell !== void 0) {
-        csvRow.push('"' + String(rawCell).replace(/"/g, '\\\"') + '"');
+        csvRow.push('"' + String(rawCell).replace(/"/g, '”') + '"');
       } else {
         csvRow.push(null);
       }
