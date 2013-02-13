@@ -203,7 +203,7 @@ QuestionEditView = (function(_super) {
   };
 
   QuestionEditView.prototype.goBack = function() {
-    window.history.back();
+    Tangerine.router.navigate("subtest/" + (this.question.get('subtestId')), true);
     return false;
   };
 

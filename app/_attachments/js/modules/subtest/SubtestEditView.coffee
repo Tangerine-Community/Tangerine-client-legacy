@@ -42,6 +42,8 @@ class SubtestEditView extends Backbone.View
         questionSave  : false
         success       : -> Tangerine.router.navigate "question/#{questionId}", true
 
+  goBack: =>
+    Tangerine.router.navigate "edit/" + @model.get("assessmentId"), true
 
   getRichtextConfig: (event) ->
 
@@ -217,7 +219,4 @@ class SubtestEditView extends Backbone.View
 
   onClose: ->
     @prototypeEditor.close?()
-
-  goBack: =>
-    Tangerine.router.navigate "edit/" + @model.get("assessmentId"), true
 

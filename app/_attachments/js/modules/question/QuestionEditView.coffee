@@ -270,7 +270,7 @@ class QuestionEditView extends Backbone.View
     return false
 
   goBack: =>
-    window.history.back()
+    Tangerine.router.navigate "subtest/#{@question.get('subtestId')}", true
     return false
 
   updateModel: =>

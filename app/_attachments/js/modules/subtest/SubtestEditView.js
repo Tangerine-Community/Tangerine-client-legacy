@@ -9,9 +9,9 @@ SubtestEditView = (function(_super) {
   __extends(SubtestEditView, _super);
 
   function SubtestEditView() {
-    this.goBack = __bind(this.goBack, this);
-
     this.save = __bind(this.save, this);
+
+    this.goBack = __bind(this.goBack, this);
     return SubtestEditView.__super__.constructor.apply(this, arguments);
   }
 
@@ -59,6 +59,10 @@ SubtestEditView = (function(_super) {
         }
       });
     });
+  };
+
+  SubtestEditView.prototype.goBack = function() {
+    return Tangerine.router.navigate("edit/" + this.model.get("assessmentId"), true);
   };
 
   SubtestEditView.prototype.getRichtextConfig = function(event) {
@@ -190,10 +194,6 @@ SubtestEditView = (function(_super) {
   SubtestEditView.prototype.onClose = function() {
     var _base;
     return typeof (_base = this.prototypeEditor).close === "function" ? _base.close() : void 0;
-  };
-
-  SubtestEditView.prototype.goBack = function() {
-    return Tangerine.router.navigate("edit/" + this.model.get("assessmentId"), true);
   };
 
   return SubtestEditView;

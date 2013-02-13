@@ -11,15 +11,15 @@ class ObservationEditView extends Backbone.View
   isValid: -> true
 
   save: ->
-    
+
     errors = []
-    
+
     totalSeconds   = parseInt( @$el.find("#total_seconds").val() )
     intervalLength = parseInt( @$el.find("#interval_length").val() )
 
     if totalSeconds == 0 then errors.push "Total seconds needs to be non-zero value."
     if intervalLength == 0 then errors.push "Interval length needs to be a non-zero value."
-    
+
     if errors.length != 0 then alert ("Warning\n\n#{errors.join('\n')}")
 
     @model.set
