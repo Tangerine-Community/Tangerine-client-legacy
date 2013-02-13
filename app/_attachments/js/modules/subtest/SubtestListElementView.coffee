@@ -36,7 +36,7 @@ class SubtestListElementView extends Backbone.View
     allAssessments = new Assessments
     allAssessments.fetch
       success: (collection) =>
-        @groupAssessments = collection
+        @groupAssessments = collection.filter (assessment) -> not assessment.getBoolean("archived")
         @populateAssessmentSelector()
   
   populateAssessmentSelector: ->

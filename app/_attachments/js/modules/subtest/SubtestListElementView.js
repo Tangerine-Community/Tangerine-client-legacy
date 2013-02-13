@@ -58,7 +58,9 @@ SubtestListElementView = (function(_super) {
     allAssessments = new Assessments;
     return allAssessments.fetch({
       success: function(collection) {
-        _this.groupAssessments = collection;
+        _this.groupAssessments = collection.filter(function(assessment) {
+          return !assessment.getBoolean("archived");
+        });
         return _this.populateAssessmentSelector();
       }
     });
