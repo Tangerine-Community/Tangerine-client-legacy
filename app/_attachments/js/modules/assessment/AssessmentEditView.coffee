@@ -159,7 +159,7 @@ class AssessmentEditView extends Backbone.View
         <label for='assessment_name'>Name</label>
         <input id='assessment_name' value='#{@model.escape("name")}'>
 
-        <label for='assessment_d_key' title='This key is used to import the assessment from a tablet'>Download Key</label><br>
+        <label for='assessment_d_key' title='This key is used to import the assessment from a tablet.'>Download Key</label><br>
         <div class='info_box'>#{@model.id.substr(-5,5)}</div>
       </div>
 
