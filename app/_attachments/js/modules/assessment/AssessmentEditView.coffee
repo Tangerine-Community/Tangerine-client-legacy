@@ -28,7 +28,7 @@ class AssessmentEditView extends Backbone.View
         success: =>
           Utils.midAlert "#{@model.get("name")} saved" 
         error: =>
-          Utils.midAlert "Please try again. Assessment save error." 
+          Utils.midAlert "Assessment save error. Please try again." 
 
   goBack: -> Tangerine.router.navigate "assessments", true
 
