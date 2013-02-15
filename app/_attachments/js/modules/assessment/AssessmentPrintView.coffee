@@ -28,6 +28,7 @@ class AssessmentPrintView extends Backbone.View
         <style>
           body{
             font-size: 100%;
+            font-family: Andika;
           }
           #prototype_wrapper .print-page{
             size: 11in 8.5in; 

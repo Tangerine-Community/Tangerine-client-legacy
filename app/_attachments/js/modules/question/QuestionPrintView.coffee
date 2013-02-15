@@ -1,6 +1,6 @@
 class QuestionPrintView extends Backbone.View
 
-  className: "question buttonset"
+#  className: "question buttonset"
 
   initialize: (options) ->
     @model = options.model
@@ -11,6 +11,7 @@ class QuestionPrintView extends Backbone.View
     @options  = @model.get "options"
     @notAsked = options.notAsked
     @isObservation = options.isObservation
+    @parent = options.parent
 
 
     if @model.get("skippable") == "true" || @model.get("skippable") == true
@@ -33,21 +34,26 @@ class QuestionPrintView extends Backbone.View
 
     @$el.attr "id", "question-#{@name}"
 
-    if not @notAsked
+    unless @notAsked
 
-      @$el.html "
-        Prompt: #{@model.get 'prompt'}<br/>
-        Variable Name: #{@model.get 'name'}<br/>
-        Hint: #{@model.get 'hint'}<br/>
-        Type: #{@model.get 'type'}<br/>
-        Options:<br/>
-        #{_.map(@model.get('options'), (option) ->
-          "Label: #{option.label}, Value: #{option.value}"
-        ).join("<br/>")
-        }<br/>
-      "
+      if @parent.format is "stimuli"
+        @$el.html "
+          <div class='stimuli-question'>#{@model.get 'prompt'}</div>
+        "
 
+      if @parent.format is "content"
 
+        @$el.html "
+          Prompt: #{@model.get 'prompt'}<br/>
+          Variable Name: #{@model.get 'name'}<br/>
+          Hint: #{@model.get 'hint'}<br/>
+          Type: #{@model.get 'type'}<br/>
+          Options:<br/>
+          #{_.map(@model.get('options'), (option) ->
+            "Label: #{option.label}, Value: #{option.value}"
+          ).join("<br/>")
+          }<br/>
+        "
 
     else
       @$el.hide()
