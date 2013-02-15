@@ -53,8 +53,7 @@ Router = (function(_super) {
   };
 
   Router.prototype.dashboard = function(options) {
-    var reportViewOptions, _ref;
-    console.log("ASDASD");
+    var reportViewOptions, view;
     options = options != null ? options.split(/\//) : void 0;
     reportViewOptions = {
       assessment: "All",
@@ -65,10 +64,9 @@ Router = (function(_super) {
         return reportViewOptions[option] = options[index + 1];
       }
     });
-    if ((_ref = Tangerine.reportView) == null) {
-      Tangerine.reportView = new DashboardView();
-    }
-    return Tangerine.reportView.render(reportViewOptions);
+    view = new DashboardView();
+    view.options = reportViewOptions;
+    return vm.show(view);
   };
 
   Router.prototype.landing = function() {

@@ -11,6 +11,10 @@ class AssessmentsMenuView extends Backbone.View
     'click .apk'         : 'apk'
     'click .groups'      : 'gotoGroups'
     'click .universal_upload' : 'universalUpload'
+    'click .results'     : 'results'
+
+  results: -> Tangerine.router.navigate "dashboard", true
+
 
   universalUpload: ->
     $.ajax 
@@ -77,10 +81,11 @@ class AssessmentsMenuView extends Backbone.View
     apkButton    = "<button class='apk navigation'>APK</button>"
     groupsButton = "<button class='navigation groups'>Groups</button>"
     uploadButton = "<button class='command universal_upload'>Universal Upload</button>"
+    resultsButton = "<button class='navigation results'>Results</button>"
 
-    html = "
-      #{if Tangerine.settings.get("context") == "server" then groupsButton else ""}
-      #{if Tangerine.settings.get("context") == "server" then apkButton else ""}
+    if Tangerine.settings.get("context") == "server"
+      html = "#{groupsButton} #{apkButton} #{resultsButton}"
+    html += "
       <h1>Assessments</h1>
     "
     if @isAdmin
