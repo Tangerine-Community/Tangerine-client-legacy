@@ -71,7 +71,6 @@ SurveyPrintView = (function(_super) {
 
   SurveyPrintView.prototype.increaseFontUntilOverflow = function(outerDiv, innerDiv) {
     var currentPercentage, incrementAmount, overflow;
-    console.log(innerDiv);
     overflow = 100;
     incrementAmount = 3;
     currentPercentage = 100;
