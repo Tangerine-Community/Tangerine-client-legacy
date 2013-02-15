@@ -385,6 +385,7 @@ class TangerineTree
 
   @make: (options) ->
 
+    Utils.working true
     success = options.success
     error   = options.error
 
@@ -403,6 +404,8 @@ class TangerineTree
         success data
       error: ( data ) =>
         error data, JSON.parse(data.responseText)
+      complete: ->
+        Utils.working false
 
 
 ##UI helpers

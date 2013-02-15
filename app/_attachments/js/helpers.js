@@ -646,6 +646,7 @@ TangerineTree = (function() {
   TangerineTree.make = function(options) {
     var error, success,
       _this = this;
+    Utils.working(true);
     success = options.success;
     error = options.error;
     delete options.success;
@@ -662,6 +663,9 @@ TangerineTree = (function() {
       },
       error: function(data) {
         return error(data, JSON.parse(data.responseText));
+      },
+      complete: function() {
+        return Utils.working(false);
       }
     });
   };
