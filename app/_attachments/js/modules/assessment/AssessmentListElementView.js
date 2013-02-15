@@ -64,7 +64,12 @@ AssessmentListElementView = (function(_super) {
     this.model.updateFromServer();
     return this.model.on("status", function(message) {
       if (message === "import success") {
-        return Utils.midAlert("Updated");
+        Utils.midAlert("Updated");
+        return _this.model.fetch({
+          success: function() {
+            return _this.render();
+          }
+        });
       } else if (message === "import error") {
         return Utils.midAlert("Update failed");
       }
