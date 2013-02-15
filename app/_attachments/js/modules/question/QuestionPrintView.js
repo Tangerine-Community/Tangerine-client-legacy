@@ -11,8 +11,6 @@ QuestionPrintView = (function(_super) {
     return QuestionPrintView.__super__.constructor.apply(this, arguments);
   }
 
-  QuestionPrintView.prototype.className = "question buttonset";
-
   QuestionPrintView.prototype.initialize = function(options) {
     this.model = options.model;
     this.answer = {};
@@ -21,6 +19,7 @@ QuestionPrintView = (function(_super) {
     this.options = this.model.get("options");
     this.notAsked = options.notAsked;
     this.isObservation = options.isObservation;
+    this.parent = options.parent;
     if (this.model.get("skippable") === "true" || this.model.get("skippable") === true) {
       this.isValid = true;
       this.skipped = true;
@@ -43,9 +42,14 @@ QuestionPrintView = (function(_super) {
   QuestionPrintView.prototype.render = function() {
     this.$el.attr("id", "question-" + this.name);
     if (!this.notAsked) {
-      this.$el.html("        Prompt: " + (this.model.get('prompt')) + "<br/>        Variable Name: " + (this.model.get('name')) + "<br/>        Hint: " + (this.model.get('hint')) + "<br/>        Type: " + (this.model.get('type')) + "<br/>        Options:<br/>        " + (_.map(this.model.get('options'), function(option) {
-        return "Label: " + option.label + ", Value: " + option.value;
-      }).join("<br/>")) + "<br/>      ");
+      if (this.parent.format === "stimuli") {
+        this.$el.html("          <div class='stimuli-question'>" + (this.model.get('prompt')) + "</div>        ");
+      }
+      if (this.parent.format === "content") {
+        this.$el.html("          Prompt: " + (this.model.get('prompt')) + "<br/>          Variable Name: " + (this.model.get('name')) + "<br/>          Hint: " + (this.model.get('hint')) + "<br/>          Type: " + (this.model.get('type')) + "<br/>          Options:<br/>          " + (_.map(this.model.get('options'), function(option) {
+          return "Label: " + option.label + ", Value: " + option.value;
+        }).join("<br/>")) + "<br/>        ");
+      }
     } else {
       this.$el.hide();
     }

@@ -35,7 +35,7 @@ GridPrintView = (function(_super) {
   GridPrintView.prototype.renderStimuli = function() {
     var index,
       _this = this;
-    this.$el.html("      <div id='" + (this.model.get("_id")) + "' class='print-page'>        <table>          <tr>            " + (index = 0, _.map(this.model.get("items"), function(item) {
+    this.$el.html("      <div id='" + (this.model.get("_id")) + "' class='print-page'>        <table>          <caption style='text-align:left;font-style:italic;padding-bottom:10px;color:gray;'>" + (this.model.get("name")) + "</caption>          <tr>            " + (index = 0, _.map(this.model.get("items"), function(item) {
       var itemText;
       index += 1;
       itemText = "<td class='item'>" + item + "</td>";
@@ -48,21 +48,20 @@ GridPrintView = (function(_super) {
       return itemText;
     }).join("")) + "          </tr>        </table>      </div>    ");
     return _.delay(function() {
-      var currentSize, overflow;
+      var currentSize, incrementAmount, overflow;
       overflow = 100;
+      incrementAmount = 3;
       while ($("#" + (_this.model.get("_id")))[0].scrollWidth > $("#" + (_this.model.get("_id")) + " table").innerWidth() && $("#" + (_this.model.get("_id")))[0].scrollHeight > $("#" + (_this.model.get("_id")) + " table").innerHeight()) {
         if ((overflow -= 1) === 0) {
           break;
         }
-        console.log($("#" + (_this.model.get("_id")))[0].scrollWidth);
-        console.log($("#" + (_this.model.get("_id")) + " table").innerWidth());
         currentSize = $("#" + (_this.model.get("_id")) + " td").css("font-size");
-        $("#" + (_this.model.get("_id")) + " td").css("font-size", "" + (parseInt(currentSize) + 5) + "px");
+        $("#" + (_this.model.get("_id")) + " td").css("font-size", "" + (parseInt(currentSize) + incrementAmount) + "px");
         $("#navigation").hide();
         $("#footer").hide();
       }
       currentSize = $("#" + (_this.model.get("_id")) + " td").css("font-size");
-      return $("#" + (_this.model.get("_id")) + " td").css("font-size", "" + (parseInt(currentSize) - 10) + "px");
+      return $("#" + (_this.model.get("_id")) + " td").css("font-size", "" + (parseInt(currentSize) - 2 * incrementAmount) + "px");
     }, 1000);
   };
 
