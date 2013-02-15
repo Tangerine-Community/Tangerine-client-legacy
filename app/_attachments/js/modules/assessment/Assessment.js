@@ -78,13 +78,15 @@ Assessment = (function(_super) {
     if (dKey == null) {
       dKey = this.calcDKey();
     }
-    dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/));
+    console.log("trying to update with : " + dKey);
+    dKeys = dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/);
     this.trigger("status", "import lookup");
-    $.ajax(Tangerine.settings.urlView("group", "byDKey"), {
-      type: "POST",
+    $.ajax({
+      url: Tangerine.settings.urlView("group", "byDKey"),
+      type: "GET",
       dataType: "jsonp",
       data: {
-        keys: dKeys
+        keys: JSON.stringify(dKeys)
       },
       success: function(data) {
         var datum, docList, _i, _len, _ref;
@@ -94,15 +96,33 @@ Assessment = (function(_super) {
           datum = _ref[_i];
           docList.push(datum.id);
         }
-        return $.couch.replicate(Tangerine.settings.urlDB("group"), Tangerine.settings.urlDB("local"), {
-          success: function(response) {
-            return _this.trigger("status", "import success", response);
-          },
-          error: function(a, b) {
-            return _this.trigger("status", "import error", "" + a + " " + b);
+        return $.ajax({
+          url: Tangerine.settings.urlView("local", "byDKey"),
+          type: "POST",
+          contentType: "application/json",
+          dataType: "json",
+          data: JSON.stringify({
+            keys: dKeys
+          }),
+          success: function(data) {
+            var _j, _len1, _ref1;
+            _ref1 = data.rows;
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              datum = _ref1[_j];
+              docList.push(datum.id);
+            }
+            docList = _.uniq(docList);
+            return $.couch.replicate(Tangerine.settings.urlDB("group"), Tangerine.settings.urlDB("local"), {
+              success: function(response) {
+                return _this.trigger("status", "import success", response);
+              },
+              error: function(a, b) {
+                return _this.trigger("status", "import error", "" + a + " " + b);
+              }
+            }, {
+              doc_ids: docList
+            });
           }
-        }, {
-          doc_ids: docList
         });
       }
     });

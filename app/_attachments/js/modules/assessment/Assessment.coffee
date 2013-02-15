@@ -38,29 +38,44 @@ class Assessment extends Backbone.Model
     Assessment.__super__.fetch.call @, options
 
   updateFromServer: ( dKey = @calcDKey() ) =>
+
+    console.log "trying to update with : " + dKey
     
     # split to handle multiple dkeys
-    dKeys = JSON.stringify(dKey.replace(/[^a-f0-9]/g," ").split(/\s+/))
+    dKeys = dKey.replace(/[^a-f0-9]/g," ").split(/\s+/)
 
     @trigger "status", "import lookup"
 
-    $.ajax Tangerine.settings.urlView("group", "byDKey"),
-      type: "POST"
+    $.ajax 
+      url: Tangerine.settings.urlView("group", "byDKey"),
+      type: "GET"
       dataType: "jsonp"
-      data: keys: dKeys
+      data: keys: JSON.stringify(dKeys)
       success: (data) =>
         docList = []
         for datum in data.rows
           docList.push datum.id
 
-        $.couch.replicate( 
-          Tangerine.settings.urlDB("group"), 
-          Tangerine.settings.urlDB("local"),
-            success: (response)=> @trigger "status", "import success", response
-            error: (a, b)      => @trigger "status", "import error", "#{a} #{b}"
-          ,
-            doc_ids: docList
-        )
+        $.ajax 
+          url: Tangerine.settings.urlView("local", "byDKey"),
+          type: "POST"
+          contentType: "application/json"
+          dataType: "json"
+          data: JSON.stringify(keys:dKeys)
+          success: (data) =>
+            for datum in data.rows
+              docList.push datum.id
+
+            docList = _.uniq(docList)
+
+            $.couch.replicate( 
+              Tangerine.settings.urlDB("group"), 
+              Tangerine.settings.urlDB("local"),
+                success: (response)=> @trigger "status", "import success", response
+                error: (a, b)      => @trigger "status", "import error", "#{a} #{b}"
+              ,
+                doc_ids: docList
+            )
 
     false
 
