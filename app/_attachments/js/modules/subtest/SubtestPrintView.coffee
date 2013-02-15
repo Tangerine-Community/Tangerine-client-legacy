@@ -29,9 +29,10 @@ class SubtestPrintView extends Backbone.View
         <hr/>
       "
 
-    @$el.append "
-      <div id='prototype_wrapper'></div>
-    "
+    else
+      @$el.append "
+        <div id='prototype_wrapper'></div>
+      "
   
     # Use prototype specific views here
     @prototypeView = new window[@model.get('prototype').humanize() + 'PrintView']

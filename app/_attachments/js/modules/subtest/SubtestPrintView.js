@@ -30,8 +30,9 @@ SubtestPrintView = (function(_super) {
     skippable = this.model.getBoolean("skippable");
     if (this.format === "content") {
       this.$el.html("        <h2>" + (this.model.get('name')) + "</h2>        Enumerator Help:<br/>        " + enumeratorHelp + "        Student Dialog:<br/>        " + studentDialog + "        <div class='format-" + this.format + "' id='prototype_wrapper'></div>        <hr/>      ");
+    } else {
+      this.$el.append("        <div id='prototype_wrapper'></div>      ");
     }
-    this.$el.append("      <div id='prototype_wrapper'></div>    ");
     this.prototypeView = new window[this.model.get('prototype').humanize() + 'PrintView']({
       model: this.model,
       parent: this

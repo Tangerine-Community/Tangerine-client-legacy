@@ -54,7 +54,6 @@ class SurveyPrintView extends Backbone.View
     @trigger "rendered"
 
   increaseFontUntilOverflow: (outerDiv,innerDiv) ->
-    console.log innerDiv
     overflow = 100
     incrementAmount = 3
     currentPercentage = 100
