@@ -24,7 +24,7 @@ class AssessmentPrintView extends Backbone.View
     if @model.subtests.length == 0
       @$el.append "<h1>Oops...</h1><p>This assessment is blank. Perhaps you meant to add some subtests.</p>"
     else
-      @$el.append "
+      @$el.addClass("format-#{@format}").append "
         <style>
           body{
             font-size: 100%;
@@ -40,16 +40,17 @@ class AssessmentPrintView extends Backbone.View
           #prototype_wrapper .print-page table{
             table-layout: fixed;
           }
-          #prototype_wrapper .print-page table td{
+          .format-stimuli table td{
             overflow: hidden;
             text-align: center;
             padding: 1%;
             font-family: Andika;
           }
-
+          .format-stimuli{
+            font-family: Andika;
+          }
         </style>
       "
-
       _.each @subtestViews , (subtestView) =>
 
         subtestView.render()

@@ -2,8 +2,6 @@ class DashboardView extends Backbone.View
 
   className : "DashboardView"
 
-  el: '#content'
-
   events:
     "change #groupBy": "update"
     "change #assessment": "update"
@@ -46,7 +44,8 @@ class DashboardView extends Backbone.View
   update: =>
     Tangerine.router.navigate("dashboard/groupBy/#{$("#groupBy").val()}/assessment/#{$("#assessment").val()}/shiftHours/#{$("#shiftHours").val()}", true)
 
-  render: (options) =>
+  render: =>
+    options = @options
     @groupBy = options.groupBy
     @key = options.assessment
     @shiftHours = options.shiftHours || 0
@@ -54,14 +53,14 @@ class DashboardView extends Backbone.View
     if @key is "All"
       $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/dashboardResults",
         reduce: false
-        success: @successFunction
+        success: @renderResults
     else
       $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/dashboardResults",
         key: @key
         reduce: false
-        success: @successFunction
+        success: @renderResults
 
-  successFunction: (result) =>
+  renderResults: (result) =>
     tableRows = {}
     dates = {}
     propertiesToGroupBy = {}
@@ -191,7 +190,6 @@ class DashboardView extends Backbone.View
       $("#advancedOptions").append dateCheckbox
     )
 
-          
     $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/dashboardResults",
       group: true
       success: (result) =>
@@ -207,3 +205,5 @@ class DashboardView extends Backbone.View
             error: (result) =>
               $("option[value=#{row.key}]").html "Unknown assessment"
 
+
+    @trigger "rendered"

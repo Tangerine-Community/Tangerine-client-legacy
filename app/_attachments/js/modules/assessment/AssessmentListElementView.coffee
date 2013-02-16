@@ -183,7 +183,6 @@ class AssessmentListElementView extends Backbone.View
             #{downloadKey}
             #{deleteConfirm}
             #{printSelector}
-
           </div>
 
 

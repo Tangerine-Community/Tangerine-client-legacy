@@ -59,7 +59,6 @@ class Router extends Backbone.Router
     'dashboard/*options' : 'dashboard'
     
   dashboard: (options) ->
-    console.log "ASDASD"
     options = options?.split(/\//)
     #default view options
     reportViewOptions =
@@ -71,8 +70,9 @@ class Router extends Backbone.Router
       unless index % 2
         reportViewOptions[option] = options[index+1]
 
-    Tangerine.reportView ?= new DashboardView()
-    Tangerine.reportView.render reportViewOptions
+    view = new DashboardView()
+    view.options = reportViewOptions
+    vm.show view
 
   landing: ->
     if Tangerine.settings.get("context") == "server"

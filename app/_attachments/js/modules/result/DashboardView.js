@@ -9,7 +9,7 @@ DashboardView = (function(_super) {
   __extends(DashboardView, _super);
 
   function DashboardView() {
-    this.successFunction = __bind(this.successFunction, this);
+    this.renderResults = __bind(this.renderResults, this);
 
     this.render = __bind(this.render, this);
 
@@ -22,8 +22,6 @@ DashboardView = (function(_super) {
   }
 
   DashboardView.prototype.className = "DashboardView";
-
-  DashboardView.prototype.el = '#content';
 
   DashboardView.prototype.events = {
     "change #groupBy": "update",
@@ -82,25 +80,27 @@ DashboardView = (function(_super) {
     return Tangerine.router.navigate("dashboard/groupBy/" + ($("#groupBy").val()) + "/assessment/" + ($("#assessment").val()) + "/shiftHours/" + ($("#shiftHours").val()), true);
   };
 
-  DashboardView.prototype.render = function(options) {
+  DashboardView.prototype.render = function() {
+    var options;
+    options = this.options;
     this.groupBy = options.groupBy;
     this.key = options.assessment;
     this.shiftHours = options.shiftHours || 0;
     if (this.key === "All") {
       return $.couch.db(Tangerine.db_name).view("" + Tangerine.design_doc + "/dashboardResults", {
         reduce: false,
-        success: this.successFunction
+        success: this.renderResults
       });
     } else {
       return $.couch.db(Tangerine.db_name).view("" + Tangerine.design_doc + "/dashboardResults", {
         key: this.key,
         reduce: false,
-        success: this.successFunction
+        success: this.renderResults
       });
     }
   };
 
-  DashboardView.prototype.successFunction = function(result) {
+  DashboardView.prototype.renderResults = function(result) {
     var dates, propertiesToGroupBy, tableRows,
       _this = this;
     tableRows = {};
@@ -168,7 +168,7 @@ DashboardView = (function(_super) {
       });
       return $("#advancedOptions").append(dateCheckbox);
     });
-    return $.couch.db(Tangerine.db_name).view("" + Tangerine.design_doc + "/dashboardResults", {
+    $.couch.db(Tangerine.db_name).view("" + Tangerine.design_doc + "/dashboardResults", {
       group: true,
       success: function(result) {
         $("select#assessment").html("<option>All</option>" + _.map(result.rows, function(row) {
@@ -189,6 +189,7 @@ DashboardView = (function(_super) {
         });
       }
     });
+    return this.trigger("rendered");
   };
 
   return DashboardView;

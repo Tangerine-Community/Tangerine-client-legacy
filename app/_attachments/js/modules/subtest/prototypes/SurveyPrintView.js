@@ -36,10 +36,10 @@ SurveyPrintView = (function(_super) {
   };
 
   SurveyPrintView.prototype.render = function() {
-    var i, notAskedCount, oneView, question, _base, _i, _len, _ref;
+    var i, notAskedCount, oneView, question, _base, _i, _len, _ref,
+      _this = this;
     if (this.format === "stimuli") {
-      this.trigger("rendered");
-      return;
+      this.$el.html("        <div id='" + (this.model.get("_id")) + "' class='print-page'>          <div style='font-style:italic;padding-bottom:20px;color:gray;'>" + (this.model.get("name")) + "</div>          <div class='survey-questions'></div>        </div>        <style>          .survey-questions .stimuli-question{            padding-bottom: 3%;          }        </style>      ");
     }
     notAskedCount = 0;
     this.questions.sort();
@@ -55,7 +55,7 @@ SurveyPrintView = (function(_super) {
         oneView.on("rendered", this.onQuestionRendered);
         oneView.render();
         this.questionViews[i] = oneView;
-        this.$el.append(oneView.el);
+        this.$el.find('.survey-questions').append(oneView.el);
       }
     }
     if (this.questions.length === notAskedCount) {
@@ -63,7 +63,25 @@ SurveyPrintView = (function(_super) {
         _base.next();
       }
     }
+    _.delay(function() {
+      return _this.increaseFontUntilOverflow($("#" + (_this.model.get("_id")))[0], $("#" + (_this.model.get("_id")) + " .survey-questions"));
+    }, 1000);
     return this.trigger("rendered");
+  };
+
+  SurveyPrintView.prototype.increaseFontUntilOverflow = function(outerDiv, innerDiv) {
+    var currentPercentage, incrementAmount, overflow;
+    overflow = 100;
+    incrementAmount = 3;
+    currentPercentage = 100;
+    while (outerDiv.scrollWidth - 1 <= $(outerDiv).innerWidth() && outerDiv.scrollHeight - 1 <= $(outerDiv).innerHeight()) {
+      if ((overflow -= 1) === 0) {
+        break;
+      }
+      currentPercentage += incrementAmount;
+      innerDiv.css("font-size", currentPercentage + "%");
+    }
+    return innerDiv.css("font-size", currentPercentage - (2 * incrementAmount) + "%");
   };
 
   SurveyPrintView.prototype.onQuestionRendered = function() {
