@@ -83,11 +83,13 @@ class AssessmentsMenuView extends Backbone.View
     uploadButton = "<button class='command universal_upload'>Universal Upload</button>"
     resultsButton = "<button class='navigation results'>Results</button>"
 
-    if Tangerine.settings.get("context") == "server"
-      html = "#{groupsButton} #{apkButton} #{resultsButton}"
-    html += "
+    html = "
+      #{if Tangerine.settings.get("context") == "server" then groupsButton else ""}
+      #{if Tangerine.settings.get("context") == "server" then apkButton else ""}
+      #{if Tangerine.settings.get("context") == "server" then resultsButton else ""}
       <h1>Assessments</h1>
     "
+
     if @isAdmin
       html += "
         #{if Tangerine.settings.get("context") == "server" then newButton else "" }
