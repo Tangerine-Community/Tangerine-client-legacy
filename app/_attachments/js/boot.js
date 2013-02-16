@@ -52,10 +52,6 @@ Tangerine.config.fetch({
 });
 
 Tangerine.onSettingsLoad = function() {
-  $.i18n.init({
-    "lng": Tangerine.settings.get("language")
-  });
-  window.t = $.t;
   Tangerine.templates = new Template({
     "_id": "templates"
   });
@@ -64,45 +60,51 @@ Tangerine.onSettingsLoad = function() {
       return Tangerine.ensureAdmin(function() {
         return $(function() {
           window.vm = new ViewManager();
-          if (Tangerine.settings.get("context") !== "server") {
-            document.addEventListener("deviceready", function() {
-              document.addEventListener("online", function() {
-                return Tangerine.online = true;
-              });
-              document.addEventListener("offline", function() {
-                return Tangerine.online = false;
-              });
-              /* Note, turns on menu button
-              document.addEventListener "menubutton", (event) ->
-                console.log "menu button"
-              , false
-              */
+          return $.i18n.init({
+            "lng": Tangerine.settings.get("language"),
+            "resGetPath": "locales/__lng__/translation.json"
+          }, function(t) {
+            window.t = t;
+            if (Tangerine.settings.get("context") !== "server") {
+              document.addEventListener("deviceready", function() {
+                document.addEventListener("online", function() {
+                  return Tangerine.online = true;
+                });
+                document.addEventListener("offline", function() {
+                  return Tangerine.online = false;
+                });
+                /* Note, turns on menu button
+                document.addEventListener "menubutton", (event) ->
+                  console.log "menu button"
+                , false
+                */
 
-              return document.addEventListener("backbutton", function(event) {
-                if (Tangerine.activity === "assessment run") {
-                  if (confirm("Assessment not finished. Continue to main screen?")) {
-                    Tangerine.activity = "";
-                    return window.history.back();
+                return document.addEventListener("backbutton", function(event) {
+                  if (Tangerine.activity === "assessment run") {
+                    if (confirm(t("NavigationView.msg.incomplete_main_screen"))) {
+                      Tangerine.activity = "";
+                      return window.history.back();
+                    } else {
+                      return false;
+                    }
                   } else {
-                    return false;
+                    return window.history.back();
                   }
-                } else {
-                  return window.history.back();
-                }
+                }, false);
               }, false);
-            }, false);
-          }
-          Tangerine.router = new Router();
-          Tangerine.user = new User();
-          Tangerine.nav = new NavigationView({
-            user: Tangerine.user,
-            router: Tangerine.router
-          });
-          Tangerine.log = new Log();
-          return Tangerine.user.sessionRefresh({
-            success: function() {
-              return Backbone.history.start();
             }
+            Tangerine.router = new Router();
+            Tangerine.user = new User();
+            Tangerine.nav = new NavigationView({
+              user: Tangerine.user,
+              router: Tangerine.router
+            });
+            Tangerine.log = new Log();
+            return Tangerine.user.sessionRefresh({
+              success: function() {
+                return Backbone.history.start();
+              }
+            });
           });
         });
       });
