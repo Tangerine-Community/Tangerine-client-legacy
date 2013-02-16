@@ -39,6 +39,7 @@ class Assessment extends Backbone.Model
 
   updateFromServer: ( dKey = @calcDKey() ) =>
 
+    @lastDKey = dKey
     console.log "trying to update with : " + dKey
     
     # split to handle multiple dkeys
@@ -71,13 +72,79 @@ class Assessment extends Backbone.Model
             $.couch.replicate( 
               Tangerine.settings.urlDB("group"), 
               Tangerine.settings.urlDB("local"),
-                success: (response)=> @trigger "status", "import success", response
+                success: (response)=> 
+                  @checkConflicts docList 
+                  @trigger "status", "import success", response
                 error: (a, b)      => @trigger "status", "import error", "#{a} #{b}"
               ,
                 doc_ids: docList
             )
 
     false
+
+  # this is pretty strange, but it basically undeletes, tries to replicate again, and then deletes the conflicting (local) version as marked by the first time around.
+  checkConflicts: (docList=[], options={}) =>
+
+    @docs = {} unless docs?
+
+    for doc in docList
+      Tangerine.$db.openDoc doc,
+        open_revs : "all"
+        conflicts : true
+        success: (doc) =>
+          if doc.length == 1
+            doc = doc[0].ok # couch is weird
+            if doc.deletedAt == "mobile"
+              $.ajax
+                type: "PUT"
+                dataType: "json"
+                url: "http://localhost:5984/"+Tangerine.settings.urlDB("local") + "/" +doc._id
+                data: JSON.stringify( 
+                  "_rev"      : doc._rev
+                  "deletedAt" : doc.deletedAt
+                  "_deleted"  : false
+                )
+                error: =>
+                  console.log "save new doc error"
+                complete: =>
+                  @docs.checked = 0 unless @docs.checked?
+                  @docs.checked++
+                  if @docs.checked == docList.length
+                    @docs.checked = 0
+                    if not _.isEmpty @lastDKey
+                      @updateFromServer @lastDKey
+                      @lastDKey = ""
+          else
+            docs = doc
+            for doc in docs
+              doc = doc.ok
+              do (doc, docs) =>
+                if doc.deletedAt == "mobile"
+                  $.ajax
+                    type: "PUT"
+                    dataType: "json"
+                    url: "http://localhost:5984/"+Tangerine.settings.urlDB("local") + "/" +doc._id
+                    data: JSON.stringify( 
+                      "_rev"      : doc._rev
+                      "_deleted"  : true
+                    )
+                    error: =>
+                      console.log "Could not delete conflicting version"
+                    complete: =>
+                      @docs.checked = 0 unless @docs.checked?
+                      @docs.checked++
+                      if @docs.checked == docList.length
+                        @docs.checked = 0
+                        if not _.isEmpty @lastDKey
+                          @updateFromServer @lastDKey
+                          @lastDKey = ""
+
+
+        error: ->
+          console.log "error with #{doc}"
+
+
+
 
   updateFromTrunk: ( dKey = @calcDKey() ) =>
 
@@ -172,6 +239,7 @@ class Assessment extends Backbone.Model
         for row in response.rows
           # only absolutely necessary properties are sent back, _id, _rev, _deleted
           row.value["_deleted"] = true
+          row.value["deletedAt"] = Tangerine.settings.get("context")
           docs.push row.value
 
         requestData = 
