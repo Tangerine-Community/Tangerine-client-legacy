@@ -1,19 +1,41 @@
+
 {
-  "app": {
-    "login": {
-      "msg": {
-        "pass-incorrect": "Incorrect password.",
-        "user-taken": "Username has already been taken.",
-        "created": "New user created."
-      },
-      "btn": {
-        "login": "Login",
-        "logout": "Logout"
-      },
-      "lbl": {
-        "username": "Enumerator name",
-        "password": "Password"
-      }
+  "NavigationView": {
+    "label": {
+      "teacher": "Teacher",
+      "user": "User",
+      "enumerator": "Enumerator",
+      "student_id": "Student ID",
+      "version": "Version"
+    },
+    "button": {
+      "logout": "Logout"
+    },
+    "help": {
+      "logo": "Go to main screen.",
+      "account": "Go to account screen."
+    },
+    "message": {
+      "incomplete_main_screen": "Assessment not finished. Continue to main screen?",
+      "incomplete_logout": "Assessment not finished. Continue to logout?",
+      "logout_confirm": "Are you sure you want to logout?"
+    }
+  },
+  "LoginView": {
+    "message": {
+      "error_password_incorrect": "Incorrect password.",
+      "error_password_empty": "Please enter a password.",
+      "error_name_empty": "Please enter a name."
+    },
+    "button": {
+      "login": "Login",
+      "logout": "Logout"
+    },
+    "label": {
+      "teacher": "Teacher name",
+      "user": "User name",
+      "enumerator": "Enumerator name",
+      "password": "Password"
     }
   },
   "abort all observations": "Abort ALL observations",

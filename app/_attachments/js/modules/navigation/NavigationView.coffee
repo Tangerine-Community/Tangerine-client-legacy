@@ -16,15 +16,12 @@ class NavigationView extends Backbone.View
 
   calcWhoAmI: =>
     # who am I
-    if Tangerine.settings.get("context") == "class"
-      @whoAmI = t "teacher"
-    else if Tangerine.settings.get("context") == "server"
-      @whoAmI = t "user"
-    else if Tangerine.settings.get("context") == "mobile"
-      @whoAmI = t "enumerator"
+    @whoAmI = Tangerine.settings.contextualize
+      server: @text.user
+      mobile: @text.enumerator
+      klass : @text.teacher
 
-  enumeratorClick: -> 
-
+  enumeratorClick: ->
     if @user.isAdmin()
         Tangerine.router.navigate "account", true
 
@@ -34,29 +31,30 @@ class NavigationView extends Backbone.View
       @router.navigate '', true
     else
       if Tangerine.activity == "assessment run"
-        if confirm("Assessment not finished. Continue to main screen?")
+        if confirm @text.incomplete_main
           Tangerine.activity = ""
           @router.navigate '', true
       else
           @router.navigate '', true
 
   logout: ->
-    if @user.isAdmin()
+    if @user.isAdmin() || Tangerine.settings.get("context") == "server"
       Tangerine.activity = ""
-      @router.navigate 'logout', true
+      Tangerine.user.logout()
     else
       if Tangerine.activity == "assessment run"
-        if confirm("Assessment not finished. Continue to logout?")
+        if confirm @text.incomplete_logout
           Tangerine.activity = ""
-          @router.navigate 'logout', true
+          Tangerine.user.logout()
       else
-        if confirm("Are you sure you want to logout?")
+        if confirm @text.confirm_logout
           Tangerine.activity = ""
-          @router.navigate 'logout', true
+          Tangerine.user.logout()
 
   onClose: -> # do nothing
 
   initialize: (options) =>
+    @i18n()
     @render()
 
     @user   = options.user
@@ -67,6 +65,20 @@ class NavigationView extends Backbone.View
     @router.on 'all', @handleMenu
     @user.on   'login logout', @handleMenu
 
+  i18n: ->
+    @text =
+      "logout"            : t('NavigationView.button.logout')
+      "user"              : t('NavigationView.label.user')
+      "teacher"           : t('NavigationView.label.teacher')
+      "enumerator"        : t('NavigationView.label.enumerator')
+      "student_id"        : t('NavigationView.label.student_id')
+      "version"           : t('NavigationView.label.version')
+      "account"           : t('NavigationView.help.account')
+      "logo"              : t('NavigationView.help.logo')
+      "incomplete_logout" : t("NavigationView.message.incomplete_logout")
+      "confirm_logout"    : t("NavigationView.message.logout_confirm")
+      "incomplete_main"   : t("NavigationView.message.incomplete_main")
+
   submenuHandler: (event) ->
     vm.currentView.submenuHandler? event
 
@@ -75,20 +87,20 @@ class NavigationView extends Backbone.View
 
   render: ->
     @$el.html "
-    <img id='corner_logo' src='images/corner_logo.png'>
-    <div id='logout_link'>#{t('logout')}</div>
+    <img id='corner_logo' src='images/corner_logo.png' title='#{@text.logo}'>
+    <div id='logout_link'>#{@text.logout}</div>
     <div id='enumerator_box'>
-      <span id='enumerator_label'>#{@whoAmI}</span>
+      <span id='enumerator_label' title='#{@text.account}'>#{@whoAmI}</span>
       <div id='enumerator'>#{Tangerine.user.name || ""}</div>
     </div>
 
     <div id='current_student'>
-      Student ID
+      #{@text.student_id}
       <div id='current_student_id'></div>
     </div>
     <div id='version'>
-    version <br/>
-    <span id='version-uuid'>#{Tangerine.version}</span><br/>
+      #{@text.version} <br>
+      <span id='version-uuid'>#{Tangerine.version}</span><br>
     </div>
     "
 
@@ -112,9 +124,7 @@ class NavigationView extends Backbone.View
     $("#enumerator_label").html @whoAmI
 
     $('#enumerator').html @user.name
-    # @todo put version number someplace
-    #$.ajax {method: 'GET', dataType: 'text', url: 'version', success: (a, b, c) -> $("#corner_logo").attr("title", c.responseText)
-    
+
     # @TODO This needs fixing
     if ~window.location.toString().indexOf("name=") then @$el.find("#logout_link").hide() else  @$el.find("#logout_link").show()
 

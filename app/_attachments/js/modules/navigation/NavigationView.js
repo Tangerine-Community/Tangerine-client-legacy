@@ -32,13 +32,11 @@ NavigationView = (function(_super) {
   };
 
   NavigationView.prototype.calcWhoAmI = function() {
-    if (Tangerine.settings.get("context") === "class") {
-      return this.whoAmI = t("teacher");
-    } else if (Tangerine.settings.get("context") === "server") {
-      return this.whoAmI = t("user");
-    } else if (Tangerine.settings.get("context") === "mobile") {
-      return this.whoAmI = t("enumerator");
-    }
+    return this.whoAmI = Tangerine.settings.contextualize({
+      server: this.text.user,
+      mobile: this.text.enumerator,
+      klass: this.text.teacher
+    });
   };
 
   NavigationView.prototype.enumeratorClick = function() {
@@ -53,7 +51,7 @@ NavigationView = (function(_super) {
       return this.router.navigate('', true);
     } else {
       if (Tangerine.activity === "assessment run") {
-        if (confirm("Assessment not finished. Continue to main screen?")) {
+        if (confirm(this.text.incomplete_main)) {
           Tangerine.activity = "";
           return this.router.navigate('', true);
         }
@@ -64,19 +62,19 @@ NavigationView = (function(_super) {
   };
 
   NavigationView.prototype.logout = function() {
-    if (this.user.isAdmin()) {
+    if (this.user.isAdmin() || Tangerine.settings.get("context") === "server") {
       Tangerine.activity = "";
-      return this.router.navigate('logout', true);
+      return Tangerine.user.logout();
     } else {
       if (Tangerine.activity === "assessment run") {
-        if (confirm("Assessment not finished. Continue to logout?")) {
+        if (confirm(this.text.incomplete_logout)) {
           Tangerine.activity = "";
-          return this.router.navigate('logout', true);
+          return Tangerine.user.logout();
         }
       } else {
-        if (confirm("Are you sure you want to logout?")) {
+        if (confirm(this.text.confirm_logout)) {
           Tangerine.activity = "";
-          return this.router.navigate('logout', true);
+          return Tangerine.user.logout();
         }
       }
     }
@@ -85,12 +83,29 @@ NavigationView = (function(_super) {
   NavigationView.prototype.onClose = function() {};
 
   NavigationView.prototype.initialize = function(options) {
+    this.i18n();
     this.render();
     this.user = options.user;
     this.router = options.router;
     this.calcWhoAmI();
     this.router.on('all', this.handleMenu);
     return this.user.on('login logout', this.handleMenu);
+  };
+
+  NavigationView.prototype.i18n = function() {
+    return this.text = {
+      "logout": t('NavigationView.button.logout'),
+      "user": t('NavigationView.label.user'),
+      "teacher": t('NavigationView.label.teacher'),
+      "enumerator": t('NavigationView.label.enumerator'),
+      "student_id": t('NavigationView.label.student_id'),
+      "version": t('NavigationView.label.version'),
+      "account": t('NavigationView.help.account'),
+      "logo": t('NavigationView.help.logo'),
+      "incomplete_logout": t("NavigationView.message.incomplete_logout"),
+      "confirm_logout": t("NavigationView.message.logout_confirm"),
+      "incomplete_main": t("NavigationView.message.incomplete_main")
+    };
   };
 
   NavigationView.prototype.submenuHandler = function(event) {
@@ -103,7 +118,7 @@ NavigationView = (function(_super) {
   };
 
   NavigationView.prototype.render = function() {
-    this.$el.html("    <img id='corner_logo' src='images/corner_logo.png'>    <div id='logout_link'>" + (t('logout')) + "</div>    <div id='enumerator_box'>      <span id='enumerator_label'>" + this.whoAmI + "</span>      <div id='enumerator'>" + (Tangerine.user.name || "") + "</div>    </div>    <div id='current_student'>      Student ID      <div id='current_student_id'></div>    </div>    <div id='version'>    version <br/>    <span id='version-uuid'>" + Tangerine.version + "</span><br/>    </div>    ");
+    this.$el.html("    <img id='corner_logo' src='images/corner_logo.png' title='" + this.text.logo + "'>    <div id='logout_link'>" + this.text.logout + "</div>    <div id='enumerator_box'>      <span id='enumerator_label' title='" + this.text.account + "'>" + this.whoAmI + "</span>      <div id='enumerator'>" + (Tangerine.user.name || "") + "</div>    </div>    <div id='current_student'>      " + this.text.student_id + "      <div id='current_student_id'></div>    </div>    <div id='version'>      " + this.text.version + " <br>      <span id='version-uuid'>" + Tangerine.version + "</span><br>    </div>    ");
     $("body").ajaxStart(function() {
       return $("#corner_logo").attr("src", "images/spin_orange.gif");
     });

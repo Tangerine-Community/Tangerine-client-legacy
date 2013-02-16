@@ -50,7 +50,7 @@ class User extends Backbone.Model
             @login name, pass
         error: =>
           @intent = ""
-          @trigger "pass-error", "Password incorrect"
+          @trigger "pass-error", t("LoginView.message.error_password_incorrect")
 
 
   login: ( name, pass, callbacks = {}) =>
