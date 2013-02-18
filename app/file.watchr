@@ -35,7 +35,7 @@ watch ( '.*\.coffee$' ) { |match|
   end
 
   if result.index "Error: In"
-    notify("CoffeeScript error", result)
+    notify("CoffeeScript", result.gsub(/.*Error: In.*\/(.*\.coffee)/,"\\1"))
     puts "\n\nCoffeescript error\n******************\n#{result}"
   else
 #    docco_result = `docco #{match}`
