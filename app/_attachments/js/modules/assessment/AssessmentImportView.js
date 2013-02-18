@@ -31,26 +31,43 @@ AssessmentImportView = (function(_super) {
   AssessmentImportView.prototype.groupImport = function() {
     var _this = this;
     return $.ajax({
-      url: Tangerine.settings.urlView("group", "assessmentsNotArchived"),
-      dataType: "jsonp",
+      url: Tangerine.settings.urlView("local", "byDKey"),
+      type: "POST",
+      contentType: "application/json",
+      dataType: "json",
+      data: JSON.stringify({}),
       success: function(data) {
-        var dKeys, doc, newAssessment;
-        dKeys = _.compact((function() {
-          var _i, _len, _ref, _results;
-          _ref = data.rows;
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            doc = _ref[_i];
-            _results.push(doc.id.substr(-5, 5));
+        var datum, keyList, _i, _len, _ref;
+        keyList = [];
+        _ref = data.rows;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          datum = _ref[_i];
+          keyList.push(datum.key);
+        }
+        keyList = _.uniq(keyList);
+        return $.ajax({
+          url: Tangerine.settings.urlView("group", "assessmentsNotArchived"),
+          dataType: "jsonp",
+          success: function(data) {
+            var dKeys, doc, newAssessment;
+            dKeys = _.compact((function() {
+              var _j, _len1, _ref1, _results;
+              _ref1 = data.rows;
+              _results = [];
+              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                doc = _ref1[_j];
+                _results.push(doc.id.substr(-5, 5));
+              }
+              return _results;
+            })()).concat(keyList).join(" ");
+            newAssessment = new Assessment;
+            newAssessment.on("status", _this.updateActivity);
+            return newAssessment.updateFromServer(dKeys);
+          },
+          error: function(a, b) {
+            return Utils.midAlert("Import error");
           }
-          return _results;
-        })()).join(" ");
-        newAssessment = new Assessment;
-        newAssessment.on("status", _this.updateActivity);
-        return newAssessment.updateFromServer(dKeys);
-      },
-      error: function(a, b) {
-        return Utils.midAlert("Import error");
+        });
       }
     });
   };
