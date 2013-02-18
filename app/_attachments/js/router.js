@@ -49,7 +49,18 @@ Router = (function(_super) {
     'subtest/:id': 'editSubtest',
     'question/:id': 'editQuestion',
     'dashboard': 'dashboard',
-    'dashboard/*options': 'dashboard'
+    'dashboard/*options': 'dashboard',
+    'admin': 'admin'
+  };
+
+  Router.prototype.admin = function(options) {
+    return Tangerine.user.verify({
+      isAdmin: function() {
+        var view;
+        view = new AdminView();
+        return vm.show(view);
+      }
+    });
   };
 
   Router.prototype.dashboard = function(options) {

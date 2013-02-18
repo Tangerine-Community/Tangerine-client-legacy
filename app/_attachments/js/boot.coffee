@@ -46,8 +46,6 @@ Tangerine.config.fetch
             Tangerine.onSettingsLoad()
 
 Tangerine.onSettingsLoad = ->
-  $.i18n.init "lng" : Tangerine.settings.get "language"
-  window.t = $.t # give us a nice handle
 
   # Template files for ease of use in grids
   Tangerine.templates = new Template "_id" : "templates"
@@ -61,42 +59,50 @@ Tangerine.onSettingsLoad = ->
 
           #$("<button id='reload'>reload me</button>").appendTo("#footer").click -> document.location.reload()
 
-          if Tangerine.settings.get("context") != "server"
-            document.addEventListener "deviceready"
-            , ->
-              document.addEventListener "online", -> Tangerine.online = true
-              document.addEventListener "offline", -> Tangerine.online = false
+          $.i18n.init 
+            "lng" : Tangerine.settings.get "language"
+            "resGetPath" : "locales/__lng__/translation.json"
+          , (t) ->
+            window.t = t
 
-              ### Note, turns on menu button
-              document.addEventListener "menubutton", (event) ->
-                console.log "menu button"
-              , false
-              ###
 
-              # prevents default
-              document.addEventListener "backbutton", (event) ->
-                if Tangerine.activity == "assessment run"
-                  if confirm("Assessment not finished. Continue to main screen?")
-                    Tangerine.activity = ""
-                    window.history.back()
+            if Tangerine.settings.get("context") != "server"
+              document.addEventListener "deviceready"
+              , ->
+                document.addEventListener "online", -> Tangerine.online = true
+                document.addEventListener "offline", -> Tangerine.online = false
+
+                ### Note, turns on menu button
+                document.addEventListener "menubutton", (event) ->
+                  console.log "menu button"
+                , false
+                ###
+
+                # prevents default
+                document.addEventListener "backbutton", (event) ->
+                  if Tangerine.activity == "assessment run"
+                    if confirm t("NavigationView.msg.incomplete_main_screen")
+                      Tangerine.activity = ""
+                      window.history.back()
+                    else
+                      return false
                   else
-                    return false
-                else
-                  window.history.back()
+                    window.history.back()
+                , false
               , false
-            , false
 
-          # Singletons
-          Tangerine.router = new Router()
-          Tangerine.user   = new User()
-          Tangerine.nav    = new NavigationView
-            user   : Tangerine.user
-            router : Tangerine.router
-          Tangerine.log    = new Log()
 
-          Tangerine.user.sessionRefresh 
-            success: -> 
-              Backbone.history.start()
+            # Singletons
+            Tangerine.router = new Router()
+            Tangerine.user   = new User()
+            Tangerine.nav    = new NavigationView
+              user   : Tangerine.user
+              router : Tangerine.router
+            Tangerine.log    = new Log()
+
+            Tangerine.user.sessionRefresh 
+              success: -> 
+                Backbone.history.start()
 
 
 # if admin user doesn't exist in _users database, create it

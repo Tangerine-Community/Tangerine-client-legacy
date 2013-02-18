@@ -22,6 +22,7 @@ LoginView = (function(_super) {
 
   LoginView.prototype.initialize = function(options) {
     var _this = this;
+    this.i18n();
     this.user = Tangerine.user;
     this.user.on("login", this.goOn);
     this.user.on("pass-error", function(error) {
@@ -33,6 +34,18 @@ LoginView = (function(_super) {
     return $("#watermark").hide();
   };
 
+  LoginView.prototype.i18n = function() {
+    return this.text = {
+      "login": t('LoginView.button.login'),
+      "user": t('LoginView.label.user'),
+      "teacher": t('LoginView.label.teacher'),
+      "enumerator": t('LoginView.label.enumerator'),
+      "password": t('LoginView.label.password'),
+      "error_name": t('LoginView.message.error_name_empty'),
+      "error_pass": t('LoginView.message.error_password_empty')
+    };
+  };
+
   LoginView.prototype.goOn = function() {
     return Tangerine.router.navigate("", true);
   };
@@ -40,15 +53,15 @@ LoginView = (function(_super) {
   LoginView.prototype.render = function() {
     var nameName, parentWidth, width;
     nameName = Tangerine.settings.contextualize({
-      server: "User name",
-      mobile: "Enumerator name",
-      klass: "Teacher name"
+      server: this.text.user,
+      mobile: this.text.enumerator,
+      klass: this.text.teacher
     });
     width = $('#content').width();
     parentWidth = $('#content').offsetParent().width();
     this.oldWidth = 100 * width / parentWidth;
     $("#content").css("width", "100%");
-    this.$el.html("      <img src='images/tangerine_logo.png' id='login_logo'>      <label for='name'>" + nameName + "</label>      <div id='name_message' class='messages'></div>      <input type='text' id='name'>      <label for='pass'>" + (t('password')) + "</label>      <div id='pass_message' class='messages'></div>      <input id='pass' type='password'>      <button class='login'>" + (t('login')) + "</button>    ");
+    this.$el.html("      <img src='images/tangerine_logo.png' id='login_logo'>      <label for='name'>" + nameName + "</label>      <div id='name_message' class='messages'></div>      <input type='text' id='name'>      <label for='pass'>" + this.text.password + "</label>      <div id='pass_message' class='messages'></div>      <input id='pass' type='password'>      <button class='login'>" + this.text.login + "</button>    ");
     this.nameMsg = this.$el.find("#name_message");
     this.passMsg = this.$el.find("#pass_message");
     return this.trigger("rendered");
@@ -77,10 +90,10 @@ LoginView = (function(_super) {
     pass = this.$el.find("#pass");
     this.clearErrors();
     if (name.val() === "") {
-      this.nameError("Please enter a name.");
+      this.nameError(this.text.error_name);
     }
     if (pass.val() === "") {
-      this.passError("Please enter a password.");
+      this.passError(this.text.error_pass);
     }
     if (this.errors === 0) {
       return this.user.login(name.val(), pass.val());

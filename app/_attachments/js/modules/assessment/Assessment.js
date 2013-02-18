@@ -13,6 +13,8 @@ Assessment = (function(_super) {
 
     this.updateFromTrunk = __bind(this.updateFromTrunk, this);
 
+    this.checkConflicts = __bind(this.checkConflicts, this);
+
     this.updateFromServer = __bind(this.updateFromServer, this);
 
     this.fetch = __bind(this.fetch, this);
@@ -78,6 +80,7 @@ Assessment = (function(_super) {
     if (dKey == null) {
       dKey = this.calcDKey();
     }
+    this.lastDKey = dKey;
     console.log("trying to update with : " + dKey);
     dKeys = dKey.replace(/[^a-f0-9]/g, " ").split(/\s+/);
     this.trigger("status", "import lookup");
@@ -114,6 +117,7 @@ Assessment = (function(_super) {
             docList = _.uniq(docList);
             return $.couch.replicate(Tangerine.settings.urlDB("group"), Tangerine.settings.urlDB("local"), {
               success: function(response) {
+                _this.checkConflicts(docList);
                 return _this.trigger("status", "import success", response);
               },
               error: function(a, b) {
@@ -127,6 +131,103 @@ Assessment = (function(_super) {
       }
     });
     return false;
+  };
+
+  Assessment.prototype.checkConflicts = function(docList, options) {
+    var doc, _i, _len, _results,
+      _this = this;
+    if (docList == null) {
+      docList = [];
+    }
+    if (options == null) {
+      options = {};
+    }
+    if (typeof docs === "undefined" || docs === null) {
+      this.docs = {};
+    }
+    _results = [];
+    for (_i = 0, _len = docList.length; _i < _len; _i++) {
+      doc = docList[_i];
+      _results.push(Tangerine.$db.openDoc(doc, {
+        open_revs: "all",
+        conflicts: true,
+        success: function(doc) {
+          var docs, _j, _len1, _results1;
+          if (doc.length === 1) {
+            doc = doc[0].ok;
+            if (doc.deletedAt === "mobile") {
+              return $.ajax({
+                type: "PUT",
+                dataType: "json",
+                url: "http://localhost:5984/" + Tangerine.settings.urlDB("local") + "/" + doc._id,
+                data: JSON.stringify({
+                  "_rev": doc._rev,
+                  "deletedAt": doc.deletedAt,
+                  "_deleted": false
+                }),
+                error: function() {
+                  return console.log("save new doc error");
+                },
+                complete: function() {
+                  if (_this.docs.checked == null) {
+                    _this.docs.checked = 0;
+                  }
+                  _this.docs.checked++;
+                  if (_this.docs.checked === docList.length) {
+                    _this.docs.checked = 0;
+                    if (!_.isEmpty(_this.lastDKey)) {
+                      _this.updateFromServer(_this.lastDKey);
+                      return _this.lastDKey = "";
+                    }
+                  }
+                }
+              });
+            }
+          } else {
+            docs = doc;
+            _results1 = [];
+            for (_j = 0, _len1 = docs.length; _j < _len1; _j++) {
+              doc = docs[_j];
+              doc = doc.ok;
+              _results1.push((function(doc, docs) {
+                if (doc.deletedAt === "mobile") {
+                  return $.ajax({
+                    type: "PUT",
+                    dataType: "json",
+                    url: "http://localhost:5984/" + Tangerine.settings.urlDB("local") + "/" + doc._id,
+                    data: JSON.stringify({
+                      "_rev": doc._rev,
+                      "_deleted": true
+                    }),
+                    error: function() {
+                      return console.log("Could not delete conflicting version");
+                    },
+                    complete: function() {
+                      if (_this.docs.checked == null) {
+                        _this.docs.checked = 0;
+                      }
+                      _this.docs.checked++;
+                      if (_this.docs.checked === docList.length) {
+                        _this.docs.checked = 0;
+                        if (!_.isEmpty(_this.lastDKey)) {
+                          _this.updateFromServer(_this.lastDKey);
+                          return _this.lastDKey = "";
+                        }
+                      }
+                    }
+                  });
+                }
+              })(doc, docs));
+            }
+            return _results1;
+          }
+        },
+        error: function() {
+          return console.log("error with " + doc);
+        }
+      }));
+    }
+    return _results;
   };
 
   Assessment.prototype.updateFromTrunk = function(dKey) {
@@ -244,6 +345,7 @@ Assessment = (function(_super) {
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           row = _ref[_i];
           row.value["_deleted"] = true;
+          row.value["deletedAt"] = Tangerine.settings.get("context");
           docs.push(row.value);
         }
         requestData = {

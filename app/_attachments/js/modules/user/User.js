@@ -75,7 +75,7 @@ User = (function(_super) {
         },
         error: function() {
           _this.intent = "";
-          return _this.trigger("pass-error", "Password incorrect");
+          return _this.trigger("pass-error", t("LoginView.message.error_password_incorrect"));
         }
       });
     }

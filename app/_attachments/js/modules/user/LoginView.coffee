@@ -7,11 +7,22 @@ class LoginView extends Backbone.View
     "keypress input"     : "keyHandler"
 
   initialize: (options) ->
+    @i18n()
     @user = Tangerine.user
     @user.on "login", @goOn
     @user.on "pass-error", (error) => @passError error
     @user.on "name-error", (error) => @nameError error
     $("#watermark").hide()
+
+  i18n: ->
+    @text =
+      "login"      : t('LoginView.button.login')
+      "user"       : t('LoginView.label.user')
+      "teacher"    : t('LoginView.label.teacher')
+      "enumerator" : t('LoginView.label.enumerator')
+      "password"   : t('LoginView.label.password')
+      "error_name" : t('LoginView.message.error_name_empty')
+      "error_pass" : t('LoginView.message.error_password_empty')
 
   goOn: ->
     Tangerine.router.navigate "", true
@@ -19,9 +30,9 @@ class LoginView extends Backbone.View
   render: =>
 
     nameName = Tangerine.settings.contextualize
-      server: "User name"
-      mobile: "Enumerator name"
-      klass : "Teacher name"
+      server: @text.user
+      mobile: @text.enumerator
+      klass : @text.teacher
 
     width = $('#content').width()
     parentWidth = $('#content').offsetParent().width()
@@ -34,10 +45,10 @@ class LoginView extends Backbone.View
       <label for='name'>#{nameName}</label>
       <div id='name_message' class='messages'></div>
       <input type='text' id='name'>
-      <label for='pass'>#{t('password')}</label>
+      <label for='pass'>#{@text.password}</label>
       <div id='pass_message' class='messages'></div>
       <input id='pass' type='password'>
-      <button class='login'>#{t('login')}</button>
+      <button class='login'>#{@text.login}</button>
     "
 
     @nameMsg = @$el.find("#name_message")
@@ -63,8 +74,8 @@ class LoginView extends Backbone.View
     pass = @$el.find("#pass")
 
     @clearErrors()
-    @nameError("Please enter a name.") if name.val() == ""
-    @passError("Please enter a password.") if pass.val() == ""
+    @nameError(@text.error_name) if name.val() == ""
+    @passError(@text.error_pass) if pass.val() == ""
 
     if @errors == 0
       @user.login name.val(), pass.val()

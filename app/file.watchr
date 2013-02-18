@@ -26,11 +26,8 @@ watch ( '.*\.coffee$' ) { |match|
   if match.index "translation.coffee"
     path = match.split("/")
     newFile = path[0..path.length-2].join("/")+"/translation.json"
-
-    puts "\nCompiling translation file for language: #{path[-2]}"
     result = `coffee --bare --compile --print #{match}`
-    bareJson = result.gsub(/[\;\(\)]/, '')
-    puts bareJson
+    bareJson = result.gsub(/[\;\(\)]|\/\/.*$\n/, '')
     File.open(newFile, "w") {|f| f.write(bareJson) }
   else
     puts "\nCompiling:\t\t#{match}"

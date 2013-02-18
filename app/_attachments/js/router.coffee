@@ -57,6 +57,13 @@ class Router extends Backbone.Router
     'question/:id' : 'editQuestion'
     'dashboard' : 'dashboard'
     'dashboard/*options' : 'dashboard'
+    'admin' : 'admin'
+    
+  admin: (options) ->
+    Tangerine.user.verify
+      isAdmin: ->
+        view = new AdminView()
+        vm.show view
     
   dashboard: (options) ->
     options = options?.split(/\//)
