@@ -61,8 +61,7 @@ AssessmentListElementView = (function(_super) {
 
   AssessmentListElementView.prototype.update = function() {
     var _this = this;
-    this.model.updateFromServer();
-    return this.model.on("status", function(message) {
+    this.model.on("status", function(message) {
       if (message === "import success") {
         Utils.midAlert("Updated");
         return _this.model.fetch({
@@ -74,6 +73,7 @@ AssessmentListElementView = (function(_super) {
         return Utils.midAlert("Update failed");
       }
     });
+    return this.model.updateFromServer();
   };
 
   AssessmentListElementView.prototype.togglePrint = function() {

@@ -42,7 +42,6 @@ class AssessmentListElementView extends Backbone.View
       window.location = Tangerine.settings.urlIndex(group, "assessments")
 
   update: ->
-    @model.updateFromServer()
     @model.on "status", (message) =>
       if message == "import success"
         Utils.midAlert "Updated"
@@ -51,6 +50,7 @@ class AssessmentListElementView extends Backbone.View
             @render()
       else if message == "import error"
         Utils.midAlert "Update failed"
+    @model.updateFromServer()
 
 
   togglePrint: ->
