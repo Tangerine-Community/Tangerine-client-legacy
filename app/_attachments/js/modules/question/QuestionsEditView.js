@@ -49,9 +49,21 @@ QuestionsEditView = (function(_super) {
       });
       this.views.push(view);
       view.on("deleted", this.render);
+      view.on("duplicate", function() {
+        console.log("caught a duplicate");
+        console.log("got here sure enough");
+        return _this.questions.fetch({
+          key: question.get("assessmentId"),
+          success: function() {
+            console.log("fetched new questions");
+            _this.questions = new Questions(_this.questions.where({
+              subtestId: question.get("subtestId")
+            }));
+            return _this.render();
+          }
+        });
+      });
       view.on("question-edit", function(questionId) {
-        console.log("passing up a qID");
-        console.log(questionId);
         return _this.trigger("question-edit", questionId);
       });
       view.render();

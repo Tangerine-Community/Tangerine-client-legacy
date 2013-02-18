@@ -9,6 +9,8 @@ QuestionsEditListElementView = (function(_super) {
   __extends(QuestionsEditListElementView, _super);
 
   function QuestionsEditListElementView() {
+    this.copy = __bind(this.copy, this);
+
     this.getSurveys = __bind(this.getSurveys, this);
     return QuestionsEditListElementView.__super__.constructor.apply(this, arguments);
   }
@@ -83,20 +85,28 @@ QuestionsEditListElementView = (function(_super) {
   };
 
   QuestionsEditListElementView.prototype.copy = function(event) {
-    var $target, subtestId;
+    var $target, newQuestion, subtestId,
+      _this = this;
     $target = $(event.target).find("option:selected");
     subtestId = $target.attr("data-subtestId");
     if (subtestId === "cancel") {
       this.$el.find(".copy_container").empty();
       return;
     }
-    return this.question.save({
+    newQuestion = this.question.clone();
+    return newQuestion.save({
       "_id": Utils.guid(),
       "subtestId": subtestId
     }, {
       success: function() {
-        Tangerine.router.navigate("subtest/" + subtestId, true);
-        return Utils.midAlert("Question copied to " + ($target.html()));
+        if (subtestId === _this.question.get("subtestId")) {
+          Utils.midAlert("Question duplicated");
+          console.log("trying to trigger duplicate");
+          return _this.trigger("duplicate");
+        } else {
+          Tangerine.router.navigate("subtest/" + subtestId, true);
+          return Utils.midAlert("Question copied to " + ($target.html()));
+        }
       },
       error: function() {
         return Utils.midAlert("Copy error");

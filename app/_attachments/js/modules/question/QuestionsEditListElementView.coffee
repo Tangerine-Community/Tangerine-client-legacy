@@ -39,19 +39,25 @@ class QuestionsEditListElementView extends Backbone.View
     htmlOptions = ("<option data-subtestId='#{subtest._id}' #{subtest.attrs || ""}>#{subtest.name}</option>" for subtest in subtests).join("")
     @$el.find(".copy_select").html htmlOptions
 
-  copy: (event) ->
+  copy: (event) =>
     $target = $(event.target).find("option:selected")
     subtestId = $target.attr("data-subtestId")
     if subtestId == "cancel"
       @$el.find(".copy_container").empty()
       return
-    @question.save
+    newQuestion = @question.clone()
+    newQuestion.save
       "_id"       : Utils.guid()
       "subtestId" : subtestId
     ,
-      success: ->
-        Tangerine.router.navigate "subtest/#{subtestId}", true # this will guarantee that it assures the order of the target subtest
-        Utils.midAlert("Question copied to #{$target.html()}")
+      success: =>
+        if subtestId == @question.get("subtestId")
+          Utils.midAlert("Question duplicated")
+          console.log "trying to trigger duplicate"
+          @trigger "duplicate" 
+        else
+          Tangerine.router.navigate "subtest/#{subtestId}", true # this will guarantee that it assures the order of the target subtest
+          Utils.midAlert("Question copied to #{$target.html()}")
       error: ->
         Utils.midAlert("Copy error")
 
