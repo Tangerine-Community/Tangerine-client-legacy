@@ -129,12 +129,12 @@ AssessmentListElementView = (function(_super) {
     if (!this.isAdmin && isArchived && Tangerine.settings.get("context") === "mobile") {
       return;
     }
+    archiveClass = isArchived ? " archived_assessment" : "";
     toggleButton = "<span class='assessment_menu_toggle icon_ryte'> </span>";
     name = "<span class='name clickable '>" + (this.model.get('name')) + "</span>";
     adminName = "<span class='admin_name clickable " + archiveClass + "'>" + (this.model.get('name')) + "</span>";
     adminResultCount = "<label class='result_count small_grey no_help' title='Result count. Click to update.'>Results <b>" + this.resultCount + "</b></label>";
     resultCount = "<span class='result_count no_help'>Results <b>" + this.resultCount + "</b></span>";
-    archiveClass = isArchived ? " archived_assessment" : "";
     selected = " selected='selected'";
     editButton = "<a href='#edit/" + this.model.id + "'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>";
     runButton = "<a href='#run/" + this.model.id + "'><img class='link_icon run' title='Run' src='images/icon_run.png'></a>";
