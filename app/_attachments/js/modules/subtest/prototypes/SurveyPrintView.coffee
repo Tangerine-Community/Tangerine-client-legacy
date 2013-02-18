@@ -17,18 +17,17 @@ class SurveyPrintView extends Backbone.View
         @render()
 
   render: ->
-    if @format is "stimuli"
-      @$el.html "
-        <div id='#{@model.get "_id"}' class='print-page'>
-          <div style='font-style:italic;padding-bottom:20px;color:gray;'>#{@model.get "name"}</div>
-          <div class='survey-questions'></div>
-        </div>
-        <style>
-          .survey-questions .stimuli-question{
-            padding-bottom: 3%;
-          }
-        </style>
-      "
+    @$el.html "
+      <div id='#{@model.get "_id"}' class='print-page'>
+        <div style='font-style:italic;padding-bottom:20px;color:gray;'>#{@model.get "name"}</div>
+        <div class='survey-questions'></div>
+      </div>
+      <style>
+        .survey-questions .stimuli-question{
+          padding-bottom: 3%;
+        }
+      </style>
+    "
 
     notAskedCount = 0
     @questions.sort()
@@ -47,9 +46,10 @@ class SurveyPrintView extends Backbone.View
 
     if @questions.length == notAskedCount then @parent.next?()
     
-    _.delay =>
-      @increaseFontUntilOverflow $("##{@model.get "_id"}")[0], $("##{@model.get "_id"} .survey-questions")
-    ,1000
+    if @format is "stimuli"
+      _.delay =>
+        @increaseFontUntilOverflow $("##{@model.get "_id"}")[0], $("##{@model.get "_id"} .survey-questions")
+      ,1000
 
     @trigger "rendered"
 

@@ -11,19 +11,34 @@ class AdminView extends Backbone.View
         groups = _(databases).filter (database) ->
           database.match /^group-/
 
-        @$el.html "<h2>Active Groups</h2>"
+        @$el.html "
+          TODO: <button>Replicate from update database to all existing groups (design doc, views, etc)</button>
+          <h2>Active Groups</h2>
+        "
         _(groups).each (group) =>
+          groupName = group.replace(/group-/,"")
           $.couch.db(group).view Tangerine.design_doc + "/resultCount"
             group: true
             success: (resultCounts) =>
               @$el.append "
-                <h2>#{group.replace(/group-/,"")}</h2>
+                <h2>#{groupName}</h2>
                 <table id='#{group}'>
                   <tr>
                     <td>Version</td><td id='#{group}-version'></td>
                   </tr>
+                  <tr>
+                    <td>Last Result</td><td id='#{group}-last-result'></td>
+                  </tr>
+                  <tr>
+                    <td>Total Assessments</td><td id='#{group}-total-assessments'></td>
+                  </tr>
+                  <tr>
+                    <td>Total Results</td><td id='#{group}-total-results'></td>
+                  </tr>
                 </table>
-                <table>
+                <button onClick='document.location='>#{groupName} Dashboard</button><br/>
+                <button onClick='$(\"##{group}-details\").toggle()'>Details</button>
+                <table style='display:none' id='#{group}-details'>
                   <thead>
                     <th>Assessment</th>
                     <th>Number of Results</th>
@@ -32,13 +47,25 @@ class AdminView extends Backbone.View
                   _(resultCounts.rows).map( (resultCount) ->
                     "
                     <tr>
-                      <td class='result-count' id='#{resultCount.key}'>#{resultCount.key}</td><td>#{resultCount.value}</td>
+                      <td id='#{resultCount.key}'>#{resultCount.key}</td><td class='result-count'>#{resultCount.value}</td>
                     </tr>
                     "
                   ).join("")
                   }
                 </table>
+
               "
+              $("##{group}-total-assessments").html @$el.find("table##{group}-details tr").length
+              $("##{group}-total-results").html _(@$el.find(".result-count")).reduce(((total, amount) -> total += parseInt($(amount).text())), 0)
+              $.couch.db(group).view Tangerine.design_doc + "/resultSummaryByAssessmentId"
+                group: true
+                success: (mostRecentEndTime) =>
+                  _(mostRecentEndTime.rows).each (row) ->
+                    if row.value?
+                      $("##{group}-last-result").html "
+                        <span data-end-time='#{row.value}'>#{moment(row.value).fromNow()}</span>
+                      "
+
               $.ajax "/#{group}/_design/#{Tangerine.design_doc}/js/version.js",
                 dataType: "text"
                 success: (result) ->
@@ -52,4 +79,5 @@ class AdminView extends Backbone.View
                   error: (result) =>
                     $("##{row.key}").html "Unknown assessment"
                 
+
         @trigger "rendered"

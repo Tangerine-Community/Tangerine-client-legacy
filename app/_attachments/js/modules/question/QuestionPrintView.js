@@ -48,7 +48,7 @@ QuestionPrintView = (function(_super) {
       if (this.parent.format === "content") {
         this.$el.html("          Prompt: " + (this.model.get('prompt')) + "<br/>          Variable Name: " + (this.model.get('name')) + "<br/>          Hint: " + (this.model.get('hint')) + "<br/>          Type: " + (this.model.get('type')) + "<br/>          Options:<br/>          " + (_.map(this.model.get('options'), function(option) {
           return "Label: " + option.label + ", Value: " + option.value;
-        }).join("<br/>")) + "<br/>        ");
+        }).join("<br/>")) + "<br/><br/>        ");
       }
     } else {
       this.$el.hide();

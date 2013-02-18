@@ -52,7 +52,7 @@ class QuestionPrintView extends Backbone.View
           #{_.map(@model.get('options'), (option) ->
             "Label: #{option.label}, Value: #{option.value}"
           ).join("<br/>")
-          }<br/>
+          }<br/><br/>
         "
 
     else

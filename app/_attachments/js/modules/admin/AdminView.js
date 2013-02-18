@@ -23,14 +23,30 @@ AdminView = (function(_super) {
         groups = _(databases).filter(function(database) {
           return database.match(/^group-/);
         });
-        _this.$el.html("<h2>Active Groups</h2>");
+        _this.$el.html("          TODO: <button>Replicate from update database to all existing groups (design doc, views, etc)</button>          <h2>Active Groups</h2>        ");
         _(groups).each(function(group) {
+          var groupName;
+          groupName = group.replace(/group-/, "");
           return $.couch.db(group).view(Tangerine.design_doc + "/resultCount", {
             group: true,
             success: function(resultCounts) {
-              _this.$el.append("                <h2>" + (group.replace(/group-/, "")) + "</h2>                <table id='" + group + "'>                  <tr>                    <td>Version</td><td id='" + group + "-version'></td>                  </tr>                </table>                <table>                  <thead>                    <th>Assessment</th>                    <th>Number of Results</th>                  </thead>                  " + (_(resultCounts.rows).map(function(resultCount) {
-                return "                    <tr>                      <td class='result-count' id='" + resultCount.key + "'>" + resultCount.key + "</td><td>" + resultCount.value + "</td>                    </tr>                    ";
+              _this.$el.append("                <h2>" + groupName + "</h2>                <table id='" + group + "'>                  <tr>                    <td>Version</td><td id='" + group + "-version'></td>                  </tr>                  <tr>                    <td>Last Result</td><td id='" + group + "-last-result'></td>                  </tr>                  <tr>                    <td>Total Assessments</td><td id='" + group + "-total-assessments'></td>                  </tr>                  <tr>                    <td>Total Results</td><td id='" + group + "-total-results'></td>                  </tr>                </table>                <button onClick='document.location='>" + groupName + " Dashboard</button><br/>                <button onClick='$(\"#" + group + "-details\").toggle()'>Details</button>                <table style='display:none' id='" + group + "-details'>                  <thead>                    <th>Assessment</th>                    <th>Number of Results</th>                  </thead>                  " + (_(resultCounts.rows).map(function(resultCount) {
+                return "                    <tr>                      <td id='" + resultCount.key + "'>" + resultCount.key + "</td><td class='result-count'>" + resultCount.value + "</td>                    </tr>                    ";
               }).join("")) + "                </table>              ");
+              $("#" + group + "-total-assessments").html(_this.$el.find("table#" + group + "-details tr").length);
+              $("#" + group + "-total-results").html(_(_this.$el.find(".result-count")).reduce((function(total, amount) {
+                return total += parseInt($(amount).text());
+              }), 0));
+              $.couch.db(group).view(Tangerine.design_doc + "/resultSummaryByAssessmentId", {
+                group: true,
+                success: function(mostRecentEndTime) {
+                  return _(mostRecentEndTime.rows).each(function(row) {
+                    if (row.value != null) {
+                      return $("#" + group + "-last-result").html("                        <span data-end-time='" + row.value + "'>" + (moment(row.value).fromNow()) + "</span>                      ");
+                    }
+                  });
+                }
+              });
               $.ajax("/" + group + "/_design/" + Tangerine.design_doc + "/js/version.js", {
                 dataType: "text",
                 success: function(result) {

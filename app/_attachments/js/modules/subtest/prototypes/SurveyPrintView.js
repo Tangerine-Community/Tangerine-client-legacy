@@ -38,9 +38,7 @@ SurveyPrintView = (function(_super) {
   SurveyPrintView.prototype.render = function() {
     var i, notAskedCount, oneView, question, _base, _i, _len, _ref,
       _this = this;
-    if (this.format === "stimuli") {
-      this.$el.html("        <div id='" + (this.model.get("_id")) + "' class='print-page'>          <div style='font-style:italic;padding-bottom:20px;color:gray;'>" + (this.model.get("name")) + "</div>          <div class='survey-questions'></div>        </div>        <style>          .survey-questions .stimuli-question{            padding-bottom: 3%;          }        </style>      ");
-    }
+    this.$el.html("      <div id='" + (this.model.get("_id")) + "' class='print-page'>        <div style='font-style:italic;padding-bottom:20px;color:gray;'>" + (this.model.get("name")) + "</div>        <div class='survey-questions'></div>      </div>      <style>        .survey-questions .stimuli-question{          padding-bottom: 3%;        }      </style>    ");
     notAskedCount = 0;
     this.questions.sort();
     if (this.questions.models != null) {
@@ -63,9 +61,11 @@ SurveyPrintView = (function(_super) {
         _base.next();
       }
     }
-    _.delay(function() {
-      return _this.increaseFontUntilOverflow($("#" + (_this.model.get("_id")))[0], $("#" + (_this.model.get("_id")) + " .survey-questions"));
-    }, 1000);
+    if (this.format === "stimuli") {
+      _.delay(function() {
+        return _this.increaseFontUntilOverflow($("#" + (_this.model.get("_id")))[0], $("#" + (_this.model.get("_id")) + " .survey-questions"));
+      }, 1000);
+    }
     return this.trigger("rendered");
   };
 
