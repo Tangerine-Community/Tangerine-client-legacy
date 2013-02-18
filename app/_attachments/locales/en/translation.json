@@ -38,6 +38,22 @@
       "password": "Password"
     }
   },
+  "QuestionsEditListElementView": {
+    "help": {
+      "copy_to": "Copy to",
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "button": {
+      "delete": "Delete",
+      "cancel": "Cancel"
+    },
+    "label": {
+      "delete_confirm": "Delete?",
+      "loading": "Loading...",
+      "select": "Select a subtest"
+    }
+  },
   "abort all observations": "Abort ALL observations",
   "add": "add",
   "add student": "add student",

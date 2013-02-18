@@ -42,7 +42,6 @@ class AssessmentListElementView extends Backbone.View
       window.location = Tangerine.settings.urlIndex(group, "assessments")
 
   update: ->
-    @model.updateFromServer()
     @model.on "status", (message) =>
       if message == "import success"
         Utils.midAlert "Updated"
@@ -51,6 +50,7 @@ class AssessmentListElementView extends Backbone.View
             @render()
       else if message == "import error"
         Utils.midAlert "Update failed"
+    @model.updateFromServer()
 
 
   togglePrint: ->
@@ -99,17 +99,17 @@ class AssessmentListElementView extends Backbone.View
 
     # do not display archived assessments for enumerators
     return if not @isAdmin and isArchived and Tangerine.settings.get("context") == "mobile"
-
-
+    
     # commands
 
     # indicators and variables
+    archiveClass     = if isArchived then " archived_assessment" else ""
+
     toggleButton     = "<span class='assessment_menu_toggle icon_ryte'> </span>"
     name             = "<span class='name clickable '>#{@model.get('name')}</span>"
     adminName        = "<span class='admin_name clickable #{archiveClass}'>#{@model.get('name')}</span>"
     adminResultCount = "<label class='result_count small_grey no_help' title='Result count. Click to update.'>Results <b>#{@resultCount}</b></label>"
     resultCount      = "<span class='result_count no_help'>Results <b>#{@resultCount}</b></span>"
-    archiveClass     = if isArchived then " archived_assessment" else ""
     selected         = " selected='selected'"
       
     # navigation

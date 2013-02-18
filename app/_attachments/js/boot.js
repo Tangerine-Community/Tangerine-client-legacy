@@ -81,7 +81,7 @@ Tangerine.onSettingsLoad = function() {
 
                 return document.addEventListener("backbutton", function(event) {
                   if (Tangerine.activity === "assessment run") {
-                    if (confirm(t("NavigationView.msg.incomplete_main_screen"))) {
+                    if (confirm(t("NavigationView.message.incomplete_main_screen"))) {
                       Tangerine.activity = "";
                       return window.history.back();
                     } else {

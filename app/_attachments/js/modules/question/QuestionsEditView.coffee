@@ -21,10 +21,16 @@ class QuestionsEditView extends Backbone.View
         "question" : question
       @views.push view
       view.on "deleted", @render
-      view.on "question-edit", (questionId) => 
-        console.log "passing up a qID"
-        console.log questionId
-        @trigger "question-edit", questionId
+      view.on "duplicate", =>
+        console.log "caught a duplicate"
+        console.log "got here sure enough"
+        @questions.fetch 
+          key: question.get("assessmentId")
+          success: =>
+            console.log "fetched new questions"
+            @questions = new Questions(@questions.where {subtestId : question.get("subtestId") })
+            @render()
+      view.on "question-edit", (questionId) => @trigger "question-edit", questionId
       view.render()
       @$el.append view.el
 

@@ -9,16 +9,29 @@ class AssessmentImportView extends Backbone.View
     'click .group_import' : 'groupImport'
 
   groupImport: ->
+
     $.ajax 
-      url: Tangerine.settings.urlView "group", "assessmentsNotArchived"
-      dataType: "jsonp"
+      url: Tangerine.settings.urlView("local", "byDKey"),
+      type: "POST"
+      contentType: "application/json"
+      dataType: "json"
+      data: JSON.stringify({})
       success: (data) =>
-        dKeys = _.compact(doc.id.substr(-5, 5) for doc in data.rows).join(" ")
-        newAssessment = new Assessment
-        newAssessment.on "status", @updateActivity
-        newAssessment.updateFromServer dKeys
-      error: (a, b) ->
-        Utils.midAlert "Import error"
+        keyList = []
+        for datum in data.rows
+          keyList.push datum.key
+        keyList = _.uniq(keyList)
+
+        $.ajax 
+          url: Tangerine.settings.urlView "group", "assessmentsNotArchived"
+          dataType: "jsonp"
+          success: (data) =>
+            dKeys = _.compact(doc.id.substr(-5, 5) for doc in data.rows).concat(keyList).join(" ")
+            newAssessment = new Assessment
+            newAssessment.on "status", @updateActivity
+            newAssessment.updateFromServer dKeys
+          error: (a, b) ->
+            Utils.midAlert "Import error"
 
   verify: ->
     Tangerine.user.ghostLogin Tangerine.settings.upUser, Tangerine.settings.upPass
