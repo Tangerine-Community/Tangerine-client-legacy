@@ -77,7 +77,7 @@ class NavigationView extends Backbone.View
       "logo"              : t('NavigationView.help.logo')
       "incomplete_logout" : t("NavigationView.message.incomplete_logout")
       "confirm_logout"    : t("NavigationView.message.logout_confirm")
-      "incomplete_main"   : t("NavigationView.message.incomplete_main")
+      "incomplete_main"   : t("NavigationView.message.incomplete_main_screen")
 
   submenuHandler: (event) ->
     vm.currentView.submenuHandler? event

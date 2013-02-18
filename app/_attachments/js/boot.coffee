@@ -81,7 +81,7 @@ Tangerine.onSettingsLoad = ->
                 # prevents default
                 document.addEventListener "backbutton", (event) ->
                   if Tangerine.activity == "assessment run"
-                    if confirm t("NavigationView.msg.incomplete_main_screen")
+                    if confirm t("NavigationView.message.incomplete_main_screen")
                       Tangerine.activity = ""
                       window.history.back()
                     else
