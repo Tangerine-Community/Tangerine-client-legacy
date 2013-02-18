@@ -4,9 +4,14 @@ require 'uglifier'
 
 $options = {
   :make_lib  => ARGV.delete("lib") != nil,
-  :make_app  => ARGV.delete("app") != nil
+  :make_app  => ARGV.delete("app") != nil,
+  :make_index_dev => ARGV.delete("dev") != nil
 }
 
+
+# TODO test to see if we can use a glob for modules/* to make this automatic
+# I don't think we have any code that needs to be run in order, but don't do 
+# make this change until we can do regression tests
 jsFiles = [ 
   'helpers.js',
 
@@ -54,6 +59,8 @@ jsFiles = [
   'modules/result/ResultSumView.js',
   'modules/result/CSVView.js',
   'modules/result/DashboardView.js',
+
+  'modules/admin/AdminView.js',
 
   'modules/question/Question.js',
   'modules/question/Questions.js',
@@ -164,6 +171,20 @@ libFiles = [
   'lib/jstz.min.js',
   'lib/coffee-script.js'
 ]
+
+def replace(file_path, contents)
+  startString = "<!-- START -->"
+  endString = "<!-- END -->"
+  regExp = Regexp.new("#{startString}(.*)#{endString}", Regexp::MULTILINE)
+  replacedResult = IO.read(file_path).gsub(regExp, "#{startString}\n#{contents}\n#{endString}")
+  File.open(file_path, 'w') { |f| f.write(replacedResult) }
+end
+
+if $options[:make_index_dev]
+  replace("../index-dev.html", (libFiles + jsFiles).map{|file|
+    "<script src='js/#{file}'></script>"
+  }.join("\n"))
+end
 
 if $options[:make_app]
   app = ''

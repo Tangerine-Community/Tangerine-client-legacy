@@ -2,6 +2,11 @@ def push
   version = `git log --pretty=format:'%h' -n 1`
 
   File.open("_attachments/js/version.js", "w") {|f| f.write("window.Tangerine.version = \"#{version}\"\;") }
+
+  # builds index-dev.html from files listed in uglify.js
+  Dir.chdir( File.join Dir.pwd, "_attachments", "js" ) {
+    `./uglify.rb dev`
+  }
 # Do this twice so you don't have to wait for uglify when in dev mode
   `couchapp push`
 
@@ -30,7 +35,7 @@ watch ( '.*\.coffee$' ) { |match|
   end
 
   if result.index "Error: In"
-    notify("CoffeeScript error", result)
+    notify("CoffeeScript", result.gsub(/.*Error: In.*\/(.*\.coffee)/,"\\1"))
     puts "\n\nCoffeescript error\n******************\n#{result}"
   else
 #    docco_result = `docco #{match}`
