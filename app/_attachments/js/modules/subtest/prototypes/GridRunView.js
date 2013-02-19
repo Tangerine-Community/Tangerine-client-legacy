@@ -342,6 +342,9 @@ GridRunView = (function(_super) {
 
   GridRunView.prototype.initialize = function(options) {
     var fontSizeClass;
+    if (this.model.get("fontFamily") !== "") {
+      this.fontStyle = "style=\"font-family: " + (this.model.get('fontFamily')) + " !important;\"";
+    }
     this.captureAfterSeconds = this.model.has("captureAfterSeconds") ? this.model.get("captureAfterSeconds") : 0;
     this.captureItemAtTime = this.model.has("captureItemAtTime") ? this.model.get("captureItemAtTime") : false;
     this.captureLastAttempted = this.model.has("captureLastAttempted") ? this.model.get("captureLastAttempted") : true;
@@ -363,8 +366,8 @@ GridRunView = (function(_super) {
     this.model = this.options.model;
     this.parent = this.options.parent;
     this.resetVariables();
-    this.gridElement = _.template("<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element " + fontSizeClass + "'>{{label}}</div></td>");
-    this.variableGridElement = _.template("<span data-label='{{label}}' data-index='{{i}}' class='grid_element " + fontSizeClass + "'>{{label}}</span>");
+    this.gridElement = _.template("<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element " + fontSizeClass + "' " + (this.fontStyle || "") + ">{{label}}</div></td>");
+    this.variableGridElement = _.template("<span data-label='{{label}}' data-index='{{i}}' class='grid_element " + fontSizeClass + "' " + (this.fontStyle || "") + ">{{label}}</span>");
     if (this.layoutMode === "fixed") {
       return this.endOfGridLine = _.template("<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>");
     } else {

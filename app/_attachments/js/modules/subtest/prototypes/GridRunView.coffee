@@ -264,6 +264,8 @@ class GridRunView extends Backbone.View
 
   initialize: (options) ->
 
+    @fontStyle = "style=\"font-family: #{@model.get('fontFamily')} !important;\"" if @model.get("fontFamily") != "" 
+
     @captureAfterSeconds  = if @model.has("captureAfterSeconds")  then @model.get("captureAfterSeconds")  else 0
     @captureItemAtTime    = if @model.has("captureItemAtTime")    then @model.get("captureItemAtTime")    else false
     @captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted") else true
@@ -290,8 +292,8 @@ class GridRunView extends Backbone.View
 
     @resetVariables()
 
-    @gridElement         = _.template "<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element #{fontSizeClass}'>{{label}}</div></td>"
-    @variableGridElement = _.template "<span data-label='{{label}}' data-index='{{i}}' class='grid_element #{fontSizeClass}'>{{label}}</span>"
+    @gridElement         = _.template "<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element #{fontSizeClass}' #{@fontStyle || ""}>{{label}}</div></td>"
+    @variableGridElement = _.template "<span data-label='{{label}}' data-index='{{i}}' class='grid_element #{fontSizeClass}' #{@fontStyle || ""}>{{label}}</span>"
     
     if @layoutMode == "fixed"
       @endOfGridLine = _.template "<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>"
@@ -390,9 +392,11 @@ class GridRunView extends Backbone.View
 
     @$el.html html
 
+
+
     @trigger "rendered"
     @trigger "ready"
-    
+
   isValid: ->
     # Stop timer if still running. Issue #240
     @stopTimer() if @timeRunning

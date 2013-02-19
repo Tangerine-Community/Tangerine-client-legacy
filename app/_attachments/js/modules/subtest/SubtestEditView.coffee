@@ -118,6 +118,8 @@ class SubtestEditView extends Backbone.View
       studentDialog     : @$el.find("#dialog_textarea").val()
       transitionComment : @$el.find("#transition_textarea").val()
 
+      fontFamily : @$el.find("#font_family").val()
+
     # important not to let prototypes use success or error
     @prototypeEditor.save(options)
 
@@ -150,6 +152,8 @@ class SubtestEditView extends Backbone.View
     dialog      = @model.get("studentDialog")  || ""
     transition  = @model.get("transitionComment")  || ""
     skippable   = @model.getBoolean("skippable")
+    fontFamily  = @model.getEscapedString("fontFamily")
+
 
     @$el.html "
       <h1>Subtest Editor</h1>
@@ -204,6 +208,10 @@ class SubtestEditView extends Backbone.View
             <button class='richtext_save command'>Save</button>
             <button class='richtext_cancel command'>Cancel</button>
           </div>
+        </div>
+        <div class='label_value'>
+          <label for='font_family' title='Please be aware that whatever font is specified, must be available on the user`s system. When multiple fonts are entered separated by commas, they are ranked in order of preference from left to right. Font names with spaces must be wrapped in double quotes.'>Preferred font</label>
+          <input id='font_family' value='#{fontFamily}'>
         </div>
 
       </div>

@@ -13,6 +13,9 @@ class QuestionRunView extends Backbone.View
 
   initialize: (options) ->
     @model = options.model
+    @parent = options.parent
+    console.log @parent.model.get("fontFamily")
+    @fontStyle = "style=\"font-family: #{@parent.model.get('fontFamily')} !important;\"" if @parent.model.get("fontFamily") != "" 
 
     @answer   = {}
     @name     = @model.escape("name").replace /[^A-Za-z0-9_]/g, "-"
@@ -92,8 +95,8 @@ class QuestionRunView extends Backbone.View
 
     if not @notAsked
 
-      html = "<div class='error_message'></div><div class='prompt'>#{@model.get 'prompt'}</div>
-      <div class='hint'>#{(@model.get('hint') || "")}</div>"
+      html = "<div class='error_message'></div><div class='prompt' #{@fontStyle || ""}>#{@model.get 'prompt'}</div>
+      <div class='hint' #{@fontStyle || ""}>#{(@model.get('hint') || "")}</div>"
 
       if @type == "open"
         if @model.get("multiline")
@@ -105,8 +108,8 @@ class QuestionRunView extends Backbone.View
         checkOrRadio = if @type == "multiple" then "checkbox" else "radio"
         for option, i in @options
           html += "
-            <label for='#{@cid}_#{@name}_#{i}'>#{option.label}</label>
-            <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}'  data-cid='#{@cid}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}'>
+            <label for='#{@cid}_#{@name}_#{i}' #{@fontStyle || ""}>#{option.label}</label>
+            <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}' data-cid='#{@cid}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}'>
           "
       html += "<img src='images/icon_scroll.png' class='icon autoscroll_icon' data-cid='#{@cid}'>" if @isObservation
       @$el.html html

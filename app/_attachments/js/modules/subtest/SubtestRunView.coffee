@@ -13,14 +13,15 @@ class SubtestRunView extends Backbone.View
     @protoViews  = Tangerine.config.get "prototypeViews"
     @model       = options.model
     @parent      = options.parent
-
+    @fontStyle = "style=\"font-family: #{@model.get('fontFamily')} !important;\"" if @model.get("fontFamily") != "" 
+    
     @prototypeRendered = false
 
   render: ->
       
-    enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help'>#{@model.get 'enumeratorHelp'}</div>" else ""
-    studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog'>#{@model.get 'studentDialog'}</div>" else ""
-    transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog'>#{@model.get 'transitionComment'}</div> <br>" else ""
+    enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
+    studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
+    transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
 
     skipButton = "<button class='skip navigation'>Skip</button>"
     skippable = @model.get("skippable") == true || @model.get("skippable") == "true"

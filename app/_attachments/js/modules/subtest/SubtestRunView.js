@@ -31,15 +31,18 @@ SubtestRunView = (function(_super) {
     this.protoViews = Tangerine.config.get("prototypeViews");
     this.model = options.model;
     this.parent = options.parent;
+    if (this.model.get("fontFamily") !== "") {
+      this.fontStyle = "style=\"font-family: " + (this.model.get('fontFamily')) + " !important;\"";
+    }
     return this.prototypeRendered = false;
   };
 
   SubtestRunView.prototype.render = function() {
     var enumeratorHelp, skipButton, skippable, studentDialog, transitionComment,
       _this = this;
-    enumeratorHelp = (this.model.get("enumeratorHelp") || "") !== "" ? "<button class='subtest_help command'>help</button><div class='enumerator_help'>" + (this.model.get('enumeratorHelp')) + "</div>" : "";
-    studentDialog = (this.model.get("studentDialog") || "") !== "" ? "<div class='student_dialog'>" + (this.model.get('studentDialog')) + "</div>" : "";
-    transitionComment = (this.model.get("transitionComment") || "") !== "" ? "<div class='student_dialog'>" + (this.model.get('transitionComment')) + "</div> <br>" : "";
+    enumeratorHelp = (this.model.get("enumeratorHelp") || "") !== "" ? "<button class='subtest_help command'>help</button><div class='enumerator_help' " + (this.fontStyle || "") + ">" + (this.model.get('enumeratorHelp')) + "</div>" : "";
+    studentDialog = (this.model.get("studentDialog") || "") !== "" ? "<div class='student_dialog' " + (this.fontStyle || "") + ">" + (this.model.get('studentDialog')) + "</div>" : "";
+    transitionComment = (this.model.get("transitionComment") || "") !== "" ? "<div class='student_dialog' " + (this.fontStyle || "") + ">" + (this.model.get('transitionComment')) + "</div> <br>" : "";
     skipButton = "<button class='skip navigation'>Skip</button>";
     skippable = this.model.get("skippable") === true || this.model.get("skippable") === "true";
     this.$el.html("      <h2>" + (this.model.get('name')) + "</h2>      " + enumeratorHelp + "      " + studentDialog + "      <div id='prototype_wrapper'></div>      <div class='controlls clearfix'>        " + transitionComment + "        <button class='next navigation'>" + (t('next')) + "</button>" + (skippable ? skipButton : "") + "      </div>    ");

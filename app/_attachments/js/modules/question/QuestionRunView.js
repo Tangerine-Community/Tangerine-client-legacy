@@ -27,6 +27,11 @@ QuestionRunView = (function(_super) {
 
   QuestionRunView.prototype.initialize = function(options) {
     this.model = options.model;
+    this.parent = options.parent;
+    console.log(this.parent.model.get("fontFamily"));
+    if (this.parent.model.get("fontFamily") !== "") {
+      this.fontStyle = "style=\"font-family: " + (this.parent.model.get('fontFamily')) + " !important;\"";
+    }
     this.answer = {};
     this.name = this.model.escape("name").replace(/[^A-Za-z0-9_]/g, "-");
     this.type = this.model.get("type");
@@ -115,7 +120,7 @@ QuestionRunView = (function(_super) {
     var checkOrRadio, html, i, option, _i, _len, _ref;
     this.$el.attr("id", "question-" + this.name);
     if (!this.notAsked) {
-      html = "<div class='error_message'></div><div class='prompt'>" + (this.model.get('prompt')) + "</div>      <div class='hint'>" + (this.model.get('hint') || "") + "</div>";
+      html = "<div class='error_message'></div><div class='prompt' " + (this.fontStyle || "") + ">" + (this.model.get('prompt')) + "</div>      <div class='hint' " + (this.fontStyle || "") + ">" + (this.model.get('hint') || "") + "</div>";
       if (this.type === "open") {
         if (this.model.get("multiline")) {
           html += "<div><textarea id='" + this.cid + "_" + this.name + "' data-cid='" + this.cid + "'></textarea></div>";
@@ -127,7 +132,7 @@ QuestionRunView = (function(_super) {
         _ref = this.options;
         for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
           option = _ref[i];
-          html += "            <label for='" + this.cid + "_" + this.name + "_" + i + "'>" + option.label + "</label>            <input id='" + this.cid + "_" + this.name + "_" + i + "' class='" + this.cid + "_" + this.name + "'  data-cid='" + this.cid + "' name='" + this.name + "' value='" + option.value + "' type='" + checkOrRadio + "'>          ";
+          html += "            <label for='" + this.cid + "_" + this.name + "_" + i + "' " + (this.fontStyle || "") + ">" + option.label + "</label>            <input id='" + this.cid + "_" + this.name + "_" + i + "' class='" + this.cid + "_" + this.name + "' data-cid='" + this.cid + "' name='" + this.name + "' value='" + option.value + "' type='" + checkOrRadio + "'>          ";
         }
       }
       if (this.isObservation) {
