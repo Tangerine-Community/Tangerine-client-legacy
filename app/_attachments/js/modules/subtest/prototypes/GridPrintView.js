@@ -77,6 +77,23 @@ GridPrintView = (function(_super) {
     }).join(", ")) + "    ");
   };
 
+  GridPrintView.prototype.renderBackup = function() {
+    var index,
+      _this = this;
+    return this.$el.html("      <div id='" + (this.model.get("_id")) + "' class='print-page'>        <table>          <caption style='text-align:left;font-style:italic;padding-bottom:10px;color:gray;'>" + (this.model.get("name")) + "</caption>          <tr>            " + (index = 0, _.map(this.model.get("items"), function(item) {
+      var itemText;
+      index += 1;
+      itemText = "<td class='item'>" + item + "</td>";
+      if (index % _this.model.get("columns") === 0 && index !== _this.model.get("items").length) {
+        itemText += "</tr><tr>";
+      } else {
+        "";
+
+      }
+      return itemText;
+    }).join("")) + "          </tr>        </table>      </div>    ");
+  };
+
   return GridPrintView;
 
 })(Backbone.View);
