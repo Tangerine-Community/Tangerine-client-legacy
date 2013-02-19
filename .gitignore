@@ -22,9 +22,16 @@ file.watchr
 bin/
 gen/
 
+
+app/_attachments/js/modules/*.js
+app/_attachments/js/app.js
+app/_attachments/js/boot.js
+app/_attachments/js/router.js
+app/_attachments/js/version.js
+
+
 # Local configuration file (sdk path, etc)
 local.properties
 build.properties
 Android-Couchbase-Callback/assets/tangerine.couch
 Android-Couchbase-Callback/assets/class.couch
-tree/tangerine
