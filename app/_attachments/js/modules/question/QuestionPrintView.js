@@ -40,10 +40,19 @@ QuestionPrintView = (function(_super) {
   };
 
   QuestionPrintView.prototype.render = function() {
+    var _this = this;
     this.$el.attr("id", "question-" + this.name);
     if (!this.notAsked) {
       if (this.parent.format === "stimuli") {
         this.$el.html("          <div class='stimuli-question'>" + (this.model.get('prompt')) + "</div>        ");
+      }
+      if (this.parent.format === "backup") {
+        this.$el.html("          <div class='backup-question'>            <p>              " + (this.model.get('prompt')) + "              " + (this.model.get('hint') !== "" ? "(" + (this.model.get('hint')) + ")" : "") + "            </p>            <table>            " + (this.model.get('type') === "open" ? "<tr>                  <td class='print-question-label'></td>                   <td>                    <div class='free-text'></div>                  </td>                </tr>" : _.map(this.model.get('options'), function(option) {
+          var markingArea, spanClass;
+          spanClass = "print-question-option";
+          markingArea = "<div class='checkbox'></div>";
+          return "                    <tr>                      <td class='print-question-label'><span class='" + spanClass + "'>" + option.label + "<span></td>                       <td>" + markingArea + "</td>                    </tr>                  ";
+        }).join("")) + "            </table>          </div>        ");
       }
       if (this.parent.format === "content") {
         this.$el.html("          Prompt: " + (this.model.get('prompt')) + "<br/>          Variable Name: " + (this.model.get('name')) + "<br/>          Hint: " + (this.model.get('hint')) + "<br/>          Type: " + (this.model.get('type')) + "<br/>          Options:<br/>          " + (_.map(this.model.get('options'), function(option) {

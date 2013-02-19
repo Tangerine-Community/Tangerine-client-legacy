@@ -18,8 +18,8 @@ class SurveyPrintView extends Backbone.View
 
   render: ->
     @$el.html "
-      <div id='#{@model.get "_id"}' class='print-page'>
-        <div style='font-style:italic;padding-bottom:20px;color:gray;'>#{@model.get "name"}</div>
+      <div id='#{@model.get "_id"}' class='print-page #{@format}'>
+        <div class='subtest-title'>#{@model.get "name"}</div>
         <div class='survey-questions'></div>
       </div>
       <style>

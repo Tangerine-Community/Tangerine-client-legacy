@@ -6,8 +6,15 @@ class IdPrintView extends Backbone.View
 
   render: ->
     return if @format is "stimuli"
-    @$el.html "
-      ID
-    "
+    if @format is "backup" or @format is "content"
+
+      @$el.html "
+          <div class='subtest-title'>#{@model.get "name"}</div>
+          <table class='marking-table'>
+            <tr>
+              <td style='vertical-align:middle'>#{@model.get "name"}</td><td class='marking-area'></td>
+            </tr>
+          </table>
+      "
     @trigger "rendered"
 

@@ -27,12 +27,17 @@ LocationPrintView = (function(_super) {
   };
 
   LocationPrintView.prototype.render = function() {
-    var schoolListElements;
     if (this.format === "stimuli") {
       return;
     }
-    schoolListElements = "";
-    this.$el.html("      School Locations<br/>      Levels: " + this.levels + "<br/>      Available Locations:<br/>      " + (this.locations.join("<br/>")) + "<br/>    ");
+    if (this.format === "content") {
+      this.$el.html("        School Locations<br/>        Levels: " + this.levels + "<br/>        Available Locations:<br/>        " + (this.locations.join("<br/>")) + "<br/>      ");
+    }
+    if (this.format === "backup") {
+      this.$el.html("          <div class='subtest-title'>" + (this.model.get("name")) + "</div>          <table class='marking-table'>            " + (_(this.levels).map(function(locationLevel) {
+        return "                <tr>                  <td style='vertical-align:middle'>" + locationLevel + "</td><td class='marking-area'></td>                </tr>              ";
+      }).join("")) + "          </table>      ");
+    }
     return this.trigger("rendered");
   };
 

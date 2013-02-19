@@ -30,6 +30,8 @@ SubtestPrintView = (function(_super) {
     skippable = this.model.getBoolean("skippable");
     if (this.format === "content") {
       this.$el.html("        <h2>" + (this.model.get('name')) + "</h2>        Enumerator Help:<br/>        " + enumeratorHelp + "        Student Dialog:<br/>        " + studentDialog + "        <div class='format-" + this.format + "' id='prototype_wrapper'></div>        <hr/>      ");
+    } else if (this.format === "backup") {
+      this.$el.html("        <div class='student-dialog'>" + studentDialog + "</div>        <div class='format-" + this.format + "' id='prototype_wrapper'></div>        <hr/>      ");
     } else {
       this.$el.append("        <div id='prototype_wrapper'></div>      ");
     }

@@ -38,7 +38,7 @@ SurveyPrintView = (function(_super) {
   SurveyPrintView.prototype.render = function() {
     var i, notAskedCount, oneView, question, _base, _i, _len, _ref,
       _this = this;
-    this.$el.html("      <div id='" + (this.model.get("_id")) + "' class='print-page'>        <div style='font-style:italic;padding-bottom:20px;color:gray;'>" + (this.model.get("name")) + "</div>        <div class='survey-questions'></div>      </div>      <style>        .survey-questions .stimuli-question{          padding-bottom: 3%;        }      </style>    ");
+    this.$el.html("      <div id='" + (this.model.get("_id")) + "' class='print-page " + this.format + "'>        <div class='subtest-title'>" + (this.model.get("name")) + "</div>        <div class='survey-questions'></div>      </div>      <style>        .survey-questions .stimuli-question{          padding-bottom: 3%;        }      </style>    ");
     notAskedCount = 0;
     this.questions.sort();
     if (this.questions.models != null) {

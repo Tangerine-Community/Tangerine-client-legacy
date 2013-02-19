@@ -19,14 +19,32 @@ class LocationPrintView extends Backbone.View
 
   render: ->
     return if @format is "stimuli"
-    schoolListElements = ""
 
-    @$el.html "
-      School Locations<br/>
-      Levels: #{@levels}<br/>
-      Available Locations:<br/>
-      #{@locations.join("<br/>")}<br/>
-    "
+    if @format is "content"
+
+      @$el.html "
+        School Locations<br/>
+        Levels: #{@levels}<br/>
+        Available Locations:<br/>
+        #{@locations.join("<br/>")}<br/>
+      "
+
+    if @format is "backup"
+
+      @$el.html "
+          <div class='subtest-title'>#{@model.get "name"}</div>
+          <table class='marking-table'>
+            #{
+            _(@levels).map( (locationLevel) ->
+              "
+                <tr>
+                  <td style='vertical-align:middle'>#{locationLevel}</td><td class='marking-area'></td>
+                </tr>
+              "
+            ).join("")
+            }
+          </table>
+      "
 
     @trigger "rendered"
 
