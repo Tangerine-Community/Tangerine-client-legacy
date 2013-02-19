@@ -1,6 +1,5 @@
 .project
 .couchapprc
-file.watchr
 *.swp
 *.tmp
 .DS_store
@@ -14,21 +13,12 @@ file.watchr
 # files for the dex VM
 *.dex
 
-
 # Java class files
 *.class
 
 # generated files
 bin/
 gen/
-
-
-app/_attachments/js/modules/*.js
-app/_attachments/js/app.js
-app/_attachments/js/boot.js
-app/_attachments/js/router.js
-app/_attachments/js/version.js
-
 
 # Local configuration file (sdk path, etc)
 local.properties
