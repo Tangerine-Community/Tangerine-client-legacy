@@ -22,7 +22,14 @@ DatetimePrintView = (function(_super) {
     if (this.format === "stimuli") {
       return;
     }
-    this.$el.html("        DateTime      ");
+    if (this.format === "backup") {
+      this.$el.html("          <div class='subtest-title'>" + (this.model.get("name")) + "</div>          <table class='marking-table'>            " + (_("Date,Time".split(/,/)).map(function(locationLevel) {
+        return "                <tr>                  <td style='vertical-align:middle'>" + locationLevel + "</td><td class='marking-area'></td>                </tr>              ";
+      }).join("")) + "          </table>      ");
+    }
+    if (this.format === "content") {
+      this.$el.html("DateTime");
+    }
     return this.trigger("rendered");
   };
 

@@ -85,8 +85,7 @@ class GridPrintView extends Backbone.View
   renderBackup: ->
 
     @$el.html "
-      <div id='#{@model.get "_id"}' class='print-page'>
-        <table>
+        <table class='print-grid'>
           <caption style='text-align:left;font-style:italic;padding-bottom:10px;color:gray;'>#{@model.get "name"}</caption>
           <tr>
             #{
@@ -97,6 +96,31 @@ class GridPrintView extends Backbone.View
                 if index % @model.get("columns") is 0 and index isnt @model.get("items").length then itemText += "</tr><tr>" else ""
                 itemText
               ).join("")
+            }
+          </tr>
+        </table>
+
+        <table class='marking-table'>
+          <tr>
+            #{
+              if @model.get("timer") isnt ""
+                "
+                  <td style='vertical-align:middle'>Time Remaining</td><td class='marking-area'></td>
+                "
+              else
+                "
+                "
+            }
+          </tr>
+          <tr>
+            #{
+              if @model.get("autostop")
+                "
+                  <td style='vertical-align:middle'>Autostop</td><td class='marking-area'></td>
+                "
+              else
+                "
+                "
             }
           </tr>
         </table>

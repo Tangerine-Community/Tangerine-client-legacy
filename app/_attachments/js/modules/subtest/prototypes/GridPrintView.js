@@ -80,7 +80,7 @@ GridPrintView = (function(_super) {
   GridPrintView.prototype.renderBackup = function() {
     var index,
       _this = this;
-    return this.$el.html("      <div id='" + (this.model.get("_id")) + "' class='print-page'>        <table>          <caption style='text-align:left;font-style:italic;padding-bottom:10px;color:gray;'>" + (this.model.get("name")) + "</caption>          <tr>            " + (index = 0, _.map(this.model.get("items"), function(item) {
+    return this.$el.html("        <table class='print-grid'>          <caption style='text-align:left;font-style:italic;padding-bottom:10px;color:gray;'>" + (this.model.get("name")) + "</caption>          <tr>            " + (index = 0, _.map(this.model.get("items"), function(item) {
       var itemText;
       index += 1;
       itemText = "<td class='item'>" + item + "</td>";
@@ -91,7 +91,7 @@ GridPrintView = (function(_super) {
 
       }
       return itemText;
-    }).join("")) + "          </tr>        </table>      </div>    ");
+    }).join("")) + "          </tr>        </table>        <table class='marking-table'>          <tr>            " + (this.model.get("timer") !== "" ? "                  <td style='vertical-align:middle'>Time Remaining</td><td class='marking-area'></td>                " : "                ") + "          </tr>          <tr>            " + (this.model.get("autostop") ? "                  <td style='vertical-align:middle'>Autostop</td><td class='marking-area'></td>                " : "                ") + "          </tr>        </table>      </div>    ");
   };
 
   return GridPrintView;

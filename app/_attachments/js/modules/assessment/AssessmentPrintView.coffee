@@ -36,6 +36,14 @@ class AssessmentPrintView extends Backbone.View
             margin: 0;
             page-break-after: always;
             overflow: hidden;
+            @bottom-right {
+              content: counter(page) \" of \" counter(pages);
+            }
+          }
+          #prototype_wrapper .print-page.backup{
+            page-break-before: always;
+            overflow: visible;
+            height:auto;
           }
           #prototype_wrapper .print-page table{
             table-layout: fixed;
@@ -48,6 +56,59 @@ class AssessmentPrintView extends Backbone.View
           }
           .format-stimuli{
             font-family: Andika;
+          }
+          .print-question-option{
+            display:block;
+          }
+          table.marking-table{
+            border-collapse: separate;
+            border-spacing:10px;
+
+          }
+          td.marking-area, .free-text{
+            margin: 10px;
+            width: 4in;
+            height: 1in;
+            border: solid 1px;
+          }
+          .subtest-title{
+            font-style:italic;
+            padding-bottom:20px;
+            color:gray;
+          }
+          .survey-questions .stimuli-question{
+            padding-bottom: 3%;
+          }
+          .free-text{
+            margin-left:0px;
+            margin-top:0px;
+            margin-bottom:0px;
+          }
+          .print-question-option{
+            text-indent:20px;
+            margin-right:10px;
+          }
+          .backup-question{
+            border: solid 1px;
+            margin-top: 10px;
+            page-break-inside: avoid;
+          }
+          .checkbox{
+            border: solid 1px;
+            height: .25in;
+            width: .25in;
+          }
+          .print-question-label{
+            vertical-align: middle;
+          }
+          .student-dialog{
+            background-color: #EEEEEE;
+          }
+          .format-backup .item{
+            font-size:150%;
+            border: solid 1px;
+            padding: 5px;
+
           }
         </style>
       "

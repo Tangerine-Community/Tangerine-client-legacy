@@ -29,6 +29,13 @@ class SubtestPrintView extends Backbone.View
         <hr/>
       "
 
+    else if @format is "backup"
+      @$el.html "
+        <div class='student-dialog'>#{studentDialog}</div>
+        <div class='format-#{@format}' id='prototype_wrapper'></div>
+        <hr/>
+      "
+
     else
       @$el.append "
         <div id='prototype_wrapper'></div>

@@ -19,7 +19,9 @@ IdPrintView = (function(_super) {
     if (this.format === "stimuli") {
       return;
     }
-    this.$el.html("      ID    ");
+    if (this.format === "backup" || this.format === "content") {
+      this.$el.html("          <div class='subtest-title'>" + (this.model.get("name")) + "</div>          <table class='marking-table'>            <tr>              <td style='vertical-align:middle'>" + (this.model.get("name")) + "</td><td class='marking-area'></td>            </tr>          </table>      ");
+    }
     return this.trigger("rendered");
   };
 

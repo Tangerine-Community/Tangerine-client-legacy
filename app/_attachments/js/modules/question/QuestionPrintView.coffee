@@ -41,6 +41,38 @@ class QuestionPrintView extends Backbone.View
           <div class='stimuli-question'>#{@model.get 'prompt'}</div>
         "
 
+      if @parent.format is "backup"
+        @$el.html "
+          <div class='backup-question'>
+            <p>
+              #{@model.get 'prompt'}
+              #{ if @model.get('hint') isnt "" then "(#{@model.get 'hint'})" else ""}
+            </p>
+            <table>
+            #{
+              if @model.get('type') is "open"
+                "<tr>
+                  <td class='print-question-label'></td> 
+                  <td>
+                    <div class='free-text'></div>
+                  </td>
+                </tr>"
+              else
+                _.map(@model.get('options'), (option) =>
+                  spanClass = "print-question-option"
+                  markingArea = "<div class='checkbox'></div>"
+                  "
+                    <tr>
+                      <td class='print-question-label'><span class='#{spanClass}'>#{option.label}<span></td> 
+                      <td>#{markingArea}</td>
+                    </tr>
+                  "
+                ).join("")
+            }
+            </table>
+          </div>
+        "
+
       if @parent.format is "content"
 
         @$el.html "
