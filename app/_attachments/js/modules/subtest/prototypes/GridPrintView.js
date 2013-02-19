@@ -57,8 +57,6 @@ GridPrintView = (function(_super) {
         }
         currentSize = $("#" + (_this.model.get("_id")) + " td").css("font-size");
         $("#" + (_this.model.get("_id")) + " td").css("font-size", "" + (parseInt(currentSize) + incrementAmount) + "px");
-        $("#navigation").hide();
-        $("#footer").hide();
       }
       currentSize = $("#" + (_this.model.get("_id")) + " td").css("font-size");
       return $("#" + (_this.model.get("_id")) + " td").css("font-size", "" + (parseInt(currentSize) - 2 * incrementAmount) + "px");

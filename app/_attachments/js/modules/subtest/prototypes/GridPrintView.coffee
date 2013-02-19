@@ -43,9 +43,6 @@ class GridPrintView extends Backbone.View
         currentSize = $("##{@model.get "_id"} td").css("font-size")
         # Increase by incrementAmount
         $("##{@model.get "_id"} td").css("font-size", "#{parseInt(currentSize)+incrementAmount}px")
-        # More hackiness
-        $("#navigation").hide()
-        $("#footer").hide()
       currentSize = $("##{@model.get "_id"} td").css("font-size")
       $("##{@model.get "_id"} td").css("font-size", "#{parseInt(currentSize)-2*(incrementAmount)}px")
     ,1000
