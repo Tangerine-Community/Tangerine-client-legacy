@@ -1,7 +1,7 @@
 class SubtestEditView extends Backbone.View
 
   className: "subtest_edit"
-    
+
   events:
     'click .back_button'         : 'goBack'
     'click .save_subtest'        : 'saveSubtest'
@@ -66,16 +66,17 @@ class SubtestEditView extends Backbone.View
     config = @getRichtextConfig event
 
     @$el.find(".#{config.dataKey}_preview, .#{config.dataKey}_edit, .#{config.dataKey}_buttons").fadeToggle(250)
-    @$el.find("textarea##{config.dataKey}_textarea").html(@model.escape(config.attributeName) || "").cleditor()
+    
+    @editor = {} if not @editor?
+    @$el.find("textarea##{config.dataKey}_textarea").html(@model.escape(config.attributeName) || "")
+    @editor[config.dataKey] = CKEDITOR.replace("#{config.dataKey}_textarea")
 
   richtextSave: (event) ->
 
     config = @getRichtextConfig event
-    
     newAttributes = {}
-    newAttributes[config.attributeName] = @$el.find("textarea##{config.dataKey}_textarea").val()
+    newAttributes[config.attributeName] = @editor[config.dataKey].getData()
 
-    @model.save 
     @model.save newAttributes, 
       success: =>
         @richtextCancel(config.dataKey)
@@ -90,10 +91,7 @@ class SubtestEditView extends Backbone.View
     $preview.html @model.get(config.attributeName) || ""
     $preview.fadeIn(250)
     @$el.find("button.#{config.dataKey}_edit, .#{config.dataKey}_buttons").fadeToggle(250)
-    cleditor = @$el.find("##{config.dataKey}_textarea").cleditor()[0]
-    cleditor.$area.insertBefore(cleditor.$main)
-    cleditor.$area.removeData("cleditor")
-    cleditor.$main.remove()
+    @editor[config.dataKey].destroy()
 
   saveSubtest: -> @save()
 

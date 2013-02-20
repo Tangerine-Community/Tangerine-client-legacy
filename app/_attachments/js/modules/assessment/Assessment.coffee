@@ -2,7 +2,7 @@ class Assessment extends Backbone.Model
 
   url: 'assessment'
 
-  initialize: (options={}) ->
+  initialize: ( options={} ) ->
     # this collection doesn't get saved
     # changes update the subtest view, it keeps order
     @subtests = new Subtests
