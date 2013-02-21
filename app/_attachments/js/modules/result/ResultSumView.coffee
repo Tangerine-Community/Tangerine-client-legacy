@@ -24,7 +24,7 @@ class ResultSumView extends Backbone.View
     html = "<div class='detail_box'>"
     html += "<div>Not finished<a href='#resume/#{@result.get('assessmentId')}/#{@result.id}'><button class='command'>Resume</button></a></div>" unless @finished || !@finishCheck
     for datum, i in @result.get("subtestData")
-      html += "<div><span id='#{@cid}_#{i}'></span>#{datum.name} - items #{datum.sum.total}</div>"
+      html += "<div>#{datum.name} - items #{datum.sum.total}</div>"
     html += "
       </div>
     "
@@ -33,12 +33,3 @@ class ResultSumView extends Backbone.View
     
     @trigger "rendered"
 
-  afterRender: =>
-    for datum, i in @result.get("subtestData")
-      spark_id = "##{@cid}_#{i}"
-      @$el.find(spark_id).sparkline [datum.sum.correct,datum.sum.incorrect,datum.sum.missing],
-        type   : 'pie'
-        width  : '30'
-        height : '30'
-        sliceColors: ["#6f6","#c66","#ccc"]
-    null

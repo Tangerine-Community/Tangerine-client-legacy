@@ -3,8 +3,8 @@
 require 'uglifier'
 
 $options = {
-  :make_lib  => ARGV.delete("lib") != nil,
-  :make_app  => ARGV.delete("app") != nil,
+  :make_lib       => ARGV.delete("lib") != nil,
+  :make_app       => ARGV.delete("app") != nil,
   :make_index_dev => ARGV.delete("dev") != nil
 }
 
@@ -153,14 +153,11 @@ libFiles = [
   'lib/sha1.js',
   'lib/jquery.couch.js',
   'lib/jquery.cookie.js',
-  'lib/jquery.sparkline.js',
   'lib/jquery.tablesorter.js',
   'lib/jquery.flot.js',
-  'lib/jquery.cleditor.js',
   'lib/jquery.i18next.js',
   'lib/excanvas.js',
   'lib/jquery-ui.js',
-  'lib/mobile_boilerplate.js',
   'lib/inflection.js',
   'lib/backbone.js',
   'lib/moment.min.js',
@@ -169,7 +166,8 @@ libFiles = [
   'lib/table2CSV.js',
   'lib/base64.js',
   'lib/jstz.min.js',
-  'lib/coffee-script.js'
+  'lib/coffee-script.js',
+  'lib/ckeditor.js'
 ]
 
 def replace(file_path, contents)

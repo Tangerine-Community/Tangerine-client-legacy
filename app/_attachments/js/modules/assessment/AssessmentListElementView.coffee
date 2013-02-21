@@ -52,7 +52,6 @@ class AssessmentListElementView extends Backbone.View
         Utils.midAlert "Update failed"
     @model.updateFromServer()
 
-
   togglePrint: ->
     @$el.find(".print_format_wrapper").fadeToggle(150)
 

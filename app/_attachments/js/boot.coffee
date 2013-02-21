@@ -7,7 +7,7 @@
 # Utils.disableConsoleLog()
 # Utils.disableConsoleAssert()
 
-Tangerine = 
+Tangerine =
   "db_name"    : window.location.pathname.split("/")[1]
   "design_doc" : _.last(String(window.location).split("_design/")).split("/")[0]
 
@@ -60,8 +60,9 @@ Tangerine.onSettingsLoad = ->
           #$("<button id='reload'>reload me</button>").appendTo("#footer").click -> document.location.reload()
 
           $.i18n.init 
-            "lng" : Tangerine.settings.get "language"
-            "resGetPath" : "locales/__lng__/translation.json"
+            "fallbackLng" : "en"
+            "lng"         : Tangerine.settings.get "language"
+            "resGetPath"  : "locales/__lng__/translation.json"
           , (t) ->
             window.t = t
 
