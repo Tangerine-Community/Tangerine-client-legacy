@@ -36,7 +36,7 @@ class AdminView extends Backbone.View
                     <td>Total Results</td><td id='#{group}-total-results'></td>
                   </tr>
                 </table>
-                <button onClick='document.location='>#{groupName} Dashboard</button><br/>
+                <button onClick='document.location=\"/#{group}/_design/#{Tangerine.design_doc}/index.html#dashboard\"'>#{groupName} Dashboard</button><br/>
                 <button onClick='$(\"##{group}-details\").toggle()'>Details</button>
                 <table style='display:none' id='#{group}-details'>
                   <thead>
@@ -57,14 +57,14 @@ class AdminView extends Backbone.View
               "
               $("##{group}-total-assessments").html @$el.find("table##{group}-details tr").length
               $("##{group}-total-results").html _(@$el.find(".result-count")).reduce(((total, amount) -> total += parseInt($(amount).text())), 0)
-              $.couch.db(group).view Tangerine.design_doc + "/resultSummaryByAssessmentId"
-                group: true
-                success: (mostRecentEndTime) =>
-                  _(mostRecentEndTime.rows).each (row) ->
-                    if row.value?
-                      $("##{group}-last-result").html "
-                        <span data-end-time='#{row.value}'>#{moment(row.value).fromNow()}</span>
-                      "
+              $.couch.db(group).view Tangerine.design_doc + "/completedResultsByEndTime"
+                limit: 1
+                descending: true
+                success: (result) =>
+                  if result.rows[0]
+                    $("##{group}-last-result").html "
+                      <span data-end-time='#{result.rows[0].key}'>#{moment(result.rows[0].key).fromNow()}</span>
+                    "
 
               $.ajax "/#{group}/_design/#{Tangerine.design_doc}/js/version.js",
                 dataType: "text"
