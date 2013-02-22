@@ -23,12 +23,12 @@ class QuestionsEditListElementView extends Backbone.View
 
   getSurveys: =>
     $.ajax
-      "url"         : Tangerine.settings.urlView("local", "subtestsByAssessmentId")
+      "url"         : Tangerine.settings.urlView("group", "subtestsByAssessmentId")
       "type"        : "POST"
       "dataType"    : "json"
       "contentType" : "application/json"
       "data"        : JSON.stringify
-        key : @question.get("assessmentId")
+        keys : [@question.get("assessmentId")]
       "success" : (data) =>
         subtests = _.compact((row.value if row.value.prototype == "survey") for row in data.rows)
         @populateSurveySelect subtests
