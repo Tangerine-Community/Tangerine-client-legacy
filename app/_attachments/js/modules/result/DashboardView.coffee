@@ -70,11 +70,12 @@ class DashboardView extends Backbone.View
 
     _.each result.rows, (row) =>
       leftColumn = row.value[@groupBy]
-      date = if row.value.startTime then moment(row.value.startTime).add("h",@shiftHours).format("Do MMM") else "Unknown"
-      dates[date] = date
+      sortingDate = if row.value.startTime then moment(row.value.startTime).add("h",@shiftHours).format("YYYYMMDD") else "Unknown"
+      displayDate = if row.value.startTime then moment(row.value.startTime).add("h",@shiftHours).format("Do MMM") else "Unknown"
+      dates[sortingDate] = displayDate
       tableRows[leftColumn] = {} unless tableRows[leftColumn]?
-      tableRows[leftColumn][date] = [] unless tableRows[leftColumn][date]?
-      tableRows[leftColumn][date].push "
+      tableRows[leftColumn][sortingDate] = [] unless tableRows[leftColumn][sortingDate]?
+      tableRows[leftColumn][sortingDate].push "
         <div style='padding-top:10px;'>
           <table>
           #{
@@ -118,8 +119,8 @@ class DashboardView extends Backbone.View
         <thead>
           <th>#{@groupBy}</th>
           #{
-            _.map(_.sortBy(dates, (date) -> date), (date) ->
-              "<th class='#{date.replace(/\s/g,'-')}'>#{date}</th>"
+            _(dates).keys().sort().map( (sortingDate) ->
+              "<th class='#{sortingDate}'>#{dates[sortingDate]}</th>"
             ).join("")
           }
         </thead>
@@ -129,14 +130,14 @@ class DashboardView extends Backbone.View
               "<tr>
                 <td>#{leftColumn}</td>
                 #{
-                  _.map(_.sortBy(dates, (date) -> date), (date) ->
-                    "<td class='#{date.replace(/\s/g,'-')}'>
+                  _(dates).keys().sort().map( (sortingDate) ->
+                    "<td class='#{sortingDate}'>
                       #{
-                        if dataForDates[date]
+                        if dataForDates[sortingDate]
                           "
-                            <button class='sort-value' onClick='$(this).siblings().toggle()'>#{dataForDates[date].length}</button>
+                            <button class='sort-value' onClick='$(this).siblings().toggle()'>#{dataForDates[sortingDate].length}</button>
                             <div style='display:none'>
-                              #{dataForDates[date].join("")}
+                              #{dataForDates[sortingDate].join("")}
                             </div>
                           "
                         else
@@ -173,7 +174,8 @@ class DashboardView extends Backbone.View
         .key { color: red; }
       </style>
     "
-    $("table").tablesorter
+
+    @$el.find("table#results").tablesorter
       widgets: ['zebra']
       sortList: [[0,0]]
       textExtraction: (node) ->
@@ -183,12 +185,13 @@ class DashboardView extends Backbone.View
         else
           $(node).text()
 
-    $("#advancedOptions").append "Select which dates to show<br/>"
-    _.each(_.sortBy(dates, (date) -> date), (date) ->
-      dateCheckbox = $("<label for='#{date}'>#{date}</label><input name='#{date}' id='#{date}' type='checkbox' checked='true'/>")
+    @$el.find("#advancedOptions").append "Select which dates to show<br/>"
+    _(dates).keys().sort().map( (sortingDate) =>
+      displayDate = dates[sortingDate]
+      dateCheckbox = $("<label for='#{sortingDate}'>#{displayDate}</label><input name='#{sortingDate}' id='#{sortingDate}' type='checkbox' checked='true'/>")
       dateCheckbox.click ->
-        $(".#{date.replace(/\s/,'-')}").toggle()
-      $("#advancedOptions").append dateCheckbox
+        $(".#{sortingDate}").toggle()
+      @$el.find("#advancedOptions").append dateCheckbox
     )
 
     $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/dashboardResults",
