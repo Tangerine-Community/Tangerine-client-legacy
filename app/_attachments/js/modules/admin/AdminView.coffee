@@ -61,9 +61,12 @@ class AdminView extends Backbone.View
                 limit: 1
                 descending: true
                 success: (result) =>
-                  if result.rows[0]
+                  if result.rows[0] and result.rows[0].key
                     @$el.find("##{group}-last-timestamp").html result.rows[0].key
                     @$el.find("##{group}-last-result").html moment(result.rows[0].key).fromNow()
+                  sortTable()
+                error: () =>
+                  console.log "Could not retrieve view 'completedResultsByEndTime' for #{group}"
                   sortTable()
 
               $.ajax "/#{group}/_design/#{Tangerine.design_doc}/js/version.js",
