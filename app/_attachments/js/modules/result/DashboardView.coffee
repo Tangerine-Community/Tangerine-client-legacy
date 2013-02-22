@@ -90,6 +90,7 @@ class DashboardView extends Backbone.View
         <hr/>
       "
     @$el.html "
+      <h1>#{Tangerine.db_name}</h1>
       Assessment:
       <select id='assessment'>
       </select>
