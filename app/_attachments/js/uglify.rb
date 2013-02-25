@@ -166,8 +166,8 @@ libFiles = [
   'lib/table2CSV.js',
   'lib/base64.js',
   'lib/jstz.min.js',
-  'lib/coffee-script.js',
-  'lib/ckeditor.js'
+  'lib/ckeditor.js',
+  'lib/coffee-script.js' # This file tends to like to be last
 ]
 
 def replace(file_path, contents)
