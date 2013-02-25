@@ -29,7 +29,7 @@ class AssessmentPrintView extends Backbone.View
           <h2>#{@model.get("name").titleize()}</h2>
           <h3>
             #{
-              if @model.get "updated"
+              if @model.has "updated"
                 "Last Updated: #{moment(@model.get "updated")}"
               else
                 ""
@@ -48,10 +48,10 @@ class AssessmentPrintView extends Backbone.View
         subtestView.render()
         @$el.append subtestView.el
 
-    _.delay ->
-      alert("Hiding header and footers, press browser back button if you need to return")
-      $('#navigation').hide()
-      $('#footer').hide()
-      print()
-    ,1000
     @trigger "rendered"
+
+  afterRender: =>
+    alert("Hiding header and footers, press browser back button if you need to return")
+    $('#navigation').hide()
+    $('#footer').hide()
+    print()
