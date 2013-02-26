@@ -9,7 +9,7 @@ class User extends Backbone.Model
     @dbAdmins = []
     @name = null
 
-  signup: ( name, pass ) ->
+  signup: ( name, pass ) =>
     Tangerine.log.app "User-signup", name
     if Tangerine.settings.get("context") == "server"
       $.ajax
@@ -70,7 +70,7 @@ class User extends Backbone.Model
       error: ( status, error, message ) =>
         if @intent == "retry_login"
           @intent = ""
-          @trigger "password-error", message
+          @trigger "pass-error", t("LoginView.message.error_password_incorrect")
           Tangerine.log.app "User-login-fail", name + " password incorrect"
         else 
           @intent = "login"
