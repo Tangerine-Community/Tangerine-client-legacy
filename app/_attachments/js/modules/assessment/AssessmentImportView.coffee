@@ -173,7 +173,8 @@ class AssessmentImportView extends Backbone.View
 
     if not @connectionVerified 
       importStep = "
-        <section><p>Please wait while your connection is verified.</p>
+        <section>
+          <p>Please wait while your connection is verified.</p>
           <button class='command verify'>Try now</button>
           <p><small>Note: If verification fails, press back to return to previous screen and please try again when internet connectivity is better.</small></p>
         </section>
@@ -203,3 +204,6 @@ class AssessmentImportView extends Backbone.View
     "
 
     @trigger "rendered"
+
+  onClose: ->
+    clearTimeout @timer
