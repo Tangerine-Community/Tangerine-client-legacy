@@ -27,8 +27,12 @@ def push
 end
 
 def notify( type, message )
-  `growlnotify -t "#{type}" -m "#{message}" -w`
-  `notify-send "#{type} - #{message}" -i /usr/share/icons/Humanity/status/128/dialog-warning.svg &`
+  unless `which osascript`.empty? # on a mac?
+    message = /\.coffee, (.*?)$/.match(message)[1]
+    notifier = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier" 
+    `#{notifier} -message \"#{message}\" -title \"#{type}\"` 
+  end
+  `notify-send "#{type} - #{message}" -i /usr/share/icons/Humanity/status/128/dialog-warning.svg &` unless `which notify-send`.empty?
 end
 
 puts "\nGo ahead, programmer. I'm listening...\n\n"
@@ -60,7 +64,7 @@ Listen.to(".") do |modified, added, removed|
 
       if result.index "Error: In"
         # Show errors
-        notify("CoffeeScript", result.gsub(/.*Error: In.*\/(.*\.coffee)/,"\\1"))
+        notify("CoffeeScript Error", result.gsub(/.*Error: In.*\/(.*\.coffee)/,"\\1"))
         puts "\n\nCoffeescript error\n******************\n#{result}"
       end
 
