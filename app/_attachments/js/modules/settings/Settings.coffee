@@ -80,6 +80,13 @@ class Settings extends Backbone.Model
       list  : "_design/#{groupDDoc}/_list/"
       index : "_design/#{groupDDoc}/index.html"
 
+  urlBulkDocs : ->
+    if @get("context") == "server"
+      bulkDocsURL = "/" + @groupDB + "/_bulk_docs"
+    else
+      bulkDocsURL = @location.local.db + "_bulk_docs"
+
+
   urlIndex : ( groupName, hash = null ) ->
     groupHost = @get "groupHost"
 
