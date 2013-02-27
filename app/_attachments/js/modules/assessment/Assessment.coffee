@@ -232,7 +232,7 @@ class Assessment extends Backbone.Model
   destroy: =>
 
     # get all docs that belong to this assesssment except results
-    Tangerine.$db.view Tangerine.settings.urlView("local", "revByAssessmentId"),
+    Tangerine.$db.view Tangerine.design_doc + "/revByAssessmentId",
       keys:[ @id ]
       success: (response) =>
         docs = []
@@ -253,7 +253,7 @@ class Assessment extends Backbone.Model
           data: JSON.stringify(requestData)
           success: (responses) =>
             okCount = 0
-            (console.log resp; okCount++ if resp.ok?) for resp in responses
+            (okCount++ if resp.ok?) for resp in responses
             if okCount == responses.length
               @collection.remove @id
               @clear()
