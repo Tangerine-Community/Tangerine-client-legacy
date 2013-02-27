@@ -40,9 +40,9 @@ dumpSource = (browser, callback) ->
     callback()
 
 loginAsAdmin = (browser, callback) ->
-  isTextShown "Enumerator", browser, ->
-    fillElementByCss "#login_username","admin", browser, ->
-      fillElementByCss "#login_password",passwords["admin"], browser, ->
+  isTextShown "name", browser, ->
+    fillElementByCss "#name","admin", browser, ->
+      fillElementByCss "#pass",passwords["admin"], browser, ->
         clickElementByCss "button.login", browser, ->
           browser.waitForElementByCssSelector "h1", "1000", ->
             isTextShown "Assessments", browser, ->

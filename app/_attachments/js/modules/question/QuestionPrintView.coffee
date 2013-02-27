@@ -76,15 +76,42 @@ class QuestionPrintView extends Backbone.View
       if @parent.format is "content"
 
         @$el.html "
-          Prompt: #{@model.get 'prompt'}<br/>
-          Variable Name: #{@model.get 'name'}<br/>
-          Hint: #{@model.get 'hint'}<br/>
-          Type: #{@model.get 'type'}<br/>
-          Options:<br/>
-          #{_.map(@model.get('options'), (option) ->
-            "Label: #{option.label}, Value: #{option.value}"
-          ).join("<br/>")
-          }<br/><br/>
+          <table class='print-content question-attributes'>
+            #{
+              _("prompt, name, hint, type, skipLogic, skippable, customValidationCode, customValidationMessage".split(/, */)).map( (attribute) =>
+                "
+                  <tr>
+                    <td class='question-attribute'>#{attribute.underscore().titleize()}</td>
+                    <td>#{@model.get attribute}</td>
+                  </tr>
+                "
+              ).join("")
+            }
+            <tr>
+              <td>Options</td>
+              <td>
+                <!-- Hail Flying Spaghetti Monster, Please forgive me for my nested table -->
+                <table class='print-content question-options'>
+                  <tbody>
+                    <tr>
+                      <td>Label</td>
+                      <td>Value</td>
+                    </tr>
+                    #{
+                      _.map(@model.get('options'), (option) ->
+                        "
+                          <tr>
+                            <td>#{option.label}</td>
+                            <td>#{option.value}</td>
+                          </tr>
+                        "
+                      ).join("")
+                    }
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </table>
         "
 
     else

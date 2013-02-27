@@ -25,6 +25,23 @@ class AssessmentPrintView extends Backbone.View
       @$el.append "<h1>Oops...</h1><p>This assessment is blank. Perhaps you meant to add some subtests.</p>"
     else
       @$el.addClass("format-#{@format}").append "
+        <style>
+          table.print-content.question-attributes{
+            margin: 10px;
+          }
+          table.print-content.question-options{
+            margin-bottom: 5px;
+          }
+          table.print-content{
+            border: solid black 1px;
+          }
+          table.print-content td{
+            border: solid black 1px;
+          }
+          .AssessmentPrintView #prototype_wrapper .print-page.content {
+            height: auto;
+          }
+        </style>
         <div class='print-page #{@format}'>
           <h2>#{@model.get("name").titleize()}</h2>
           <h3>
