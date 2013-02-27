@@ -249,7 +249,7 @@ class Assessment extends Backbone.Model
           type: "POST"
           contentType: "application/json; charset=UTF-8"
           dataType: "json"
-          url: "/" + Tangerine.settings.urlDB("local") + "/_bulk_docs"
+          url: Tangerine.settings.urlBulkDocs()
           data: JSON.stringify(requestData)
           success: (responses) =>
             okCount = 0
