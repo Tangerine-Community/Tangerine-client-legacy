@@ -12,6 +12,9 @@ class SurveyEditView extends Backbone.View
     @model = options.model
     @parent = options.parent
     @model.questions = new Questions
+    @questionsEditView = new QuestionsEditView
+      questions : @model.questions
+
     Utils.working true
     @model.questions.fetch
       key: @model.get "assessmentId"
@@ -19,8 +22,7 @@ class SurveyEditView extends Backbone.View
         Utils.working false
         @model.questions = new Questions(@model.questions.where {subtestId : @model.id  })
         @model.questions.maintainOrder()
-        @questionsEditView = new QuestionsEditView
-          questions : @model.questions
+
         @questionsEditView.on "question-edit", (questionId) => @trigger "question-edit", questionId
         @model.questions.on "change", @renderQuestions
         @renderQuestions()
@@ -99,9 +101,7 @@ class SurveyEditView extends Backbone.View
     @questionsListEdit?.close()
 
   renderQuestions: =>
-    @$el.find("#question_list_wrapper").empty()
     @questionsEditView?.render()
-    @$el.find("#question_list_wrapper").append @questionsEditView?.el
 
   render: ->
       
@@ -122,7 +122,7 @@ class SurveyEditView extends Backbone.View
       <div id='questions'>
         <h2>Questions</h2>
         <div class='menu_box'>
-          <div id='question_list_wrapper'><img class='loading' src='images/loading.gif'></div>
+          <div id='question_list_wrapper'><img class='loading' src='images/loading.gif'><ul></ul></div>
           <button class='add_question command'>Add Question</button>
           <div id='add_question_form' class='confirmation'>
             <div class='menu_box'>
@@ -136,6 +136,9 @@ class SurveyEditView extends Backbone.View
           </div> 
         </div>
       </div>"
+
+    @$el.find("#question_list_wrapper .loading").remove()
+    @questionsEditView.setElement @$el.find("#question_list_wrapper ul")
 
     @renderQuestions()
 
