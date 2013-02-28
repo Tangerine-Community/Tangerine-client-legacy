@@ -41,7 +41,7 @@ class QuestionPrintView extends Backbone.View
           <div class='stimuli-question'>#{@model.get 'prompt'}</div>
         "
 
-      if @parent.format is "backup"
+      else if @parent.format is "backup"
         @$el.html "
           <div class='backup-question'>
             <p>
@@ -73,7 +73,28 @@ class QuestionPrintView extends Backbone.View
           </div>
         "
 
-      if @parent.format is "content"
+      else if @parent.format is "metadata"
+        @$el.html "
+          <tr>
+            #{
+              _("name, prompt, type, hint".split(/, */)).map( (attribute) =>
+                "
+                  <td>#{@model.get attribute}</td>
+                "
+              ).join("")
+            }
+              <td>
+                #{
+                  _.map(@model.get('options'), (option) ->
+                    "#{option.value} \"#{option.label}\" "
+                  ).join("")
+                }
+              </td>
+          </tr>
+        "
+
+
+      else if @parent.format is "content"
 
         @$el.html "
           <table class='print-content question-attributes'>

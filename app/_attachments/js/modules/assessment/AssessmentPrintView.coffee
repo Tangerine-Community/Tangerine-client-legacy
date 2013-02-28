@@ -26,6 +26,9 @@ class AssessmentPrintView extends Backbone.View
     else
       @$el.addClass("format-#{@format}").append "
         <style>
+          table.print-metadata td{
+            border: solid black 1px;
+          }
           table.print-content.question-attributes{
             margin: 10px;
           }

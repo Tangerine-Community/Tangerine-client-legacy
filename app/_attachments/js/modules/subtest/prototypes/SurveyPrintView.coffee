@@ -17,17 +17,33 @@ class SurveyPrintView extends Backbone.View
         @render()
 
   render: ->
-    @$el.html "
-      <div id='#{@model.get "_id"}' class='print-page #{@format}'>
-        <div class='subtest-title'>#{@model.get "name"}</div>
-        <div class='survey-questions'></div>
-      </div>
-      <style>
-        .survey-questions .stimuli-question{
-          padding-bottom: 3%;
-        }
-      </style>
-    "
+    if @format is "metadata"
+      @$el.html "
+        <table class='print-metadata'>
+          <thead>
+            #{
+              _("name, prompt, type, hint,options".split(/, */)).map( (attribute) =>
+                "<th>#{attribute}</th>"
+              ).join("")
+            }
+          </thead>
+          <tbody class='survey-questions'>
+          </tbody>
+        </table>
+      "
+
+    else
+      @$el.html "
+        <div id='#{@model.get "_id"}' class='print-page #{@format}'>
+          <div class='subtest-title'>#{@model.get "name"}</div>
+          <div class='survey-questions'></div>
+        </div>
+        <style>
+          .survey-questions .stimuli-question{
+            padding-bottom: 3%;
+          }
+        </style>
+      "
 
     notAskedCount = 0
     @questions.sort()
@@ -42,7 +58,11 @@ class SurveyPrintView extends Backbone.View
 
         oneView.render()
         @questionViews[i] = oneView
-        @$el.find('.survey-questions').append oneView.el
+        if @format is "metadata"
+          console.log oneView.el
+          @$el.find('.survey-questions').append $(oneView.el).html()
+        else
+          @$el.find('.survey-questions').append oneView.el
 
     if @questions.length == notAskedCount then @parent.next?()
     
