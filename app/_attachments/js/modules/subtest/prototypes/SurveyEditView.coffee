@@ -20,11 +20,11 @@ class SurveyEditView extends Backbone.View
       key: @model.get "assessmentId"
       success: =>
         Utils.working false
-        @model.questions = new Questions(@model.questions.where {subtestId : @model.id  })
-        @model.questions.maintainOrder()
+        @questionsEditView.questions = new Questions(@model.questions.where {subtestId : @model.id  })
+        @questionsEditView.questions.maintainOrder()
 
         @questionsEditView.on "question-edit", (questionId) => @trigger "question-edit", questionId
-        @model.questions.on "change", @renderQuestions
+        @questionsEditView.questions.on "change", @renderQuestions
         @renderQuestions()
       erorr: (a, b) =>
         Utils.working false
@@ -45,11 +45,11 @@ class SurveyEditView extends Backbone.View
       subtestId    : @model.id
       assessmentId : @model.get "assessmentId"
       id           : Utils.guid()
-      order        : @model.questions.length
+      order        : @questionsEditView.questions.length
       prompt       : @$el.find('#question_prompt').val()
       name         : @$el.find('#question_name').val().safetyDance()
 
-    nq = @model.questions.create newAttributes
+    nq = @questionsEditView.questions.create newAttributes
     @renderQuestions()
     @$el.find("#add_question_form input").val ''
     @$el.find("#question_prompt").focus()
@@ -72,7 +72,7 @@ class SurveyEditView extends Backbone.View
     requiresGrid = []
 
     # check for "errors"
-    for question, i in @model.questions.models
+    for question, i in @questionsEditView.questions.models
       if question.get("type") != "open" && question.get("options")?.length == 0
         emptyOptions.push i + 1
       
