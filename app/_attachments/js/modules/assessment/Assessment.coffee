@@ -40,7 +40,6 @@ class Assessment extends Backbone.Model
   updateFromServer: ( dKey = @calcDKey() ) =>
 
     @lastDKey = dKey
-    console.log "trying to update with : " + dKey
     
     # split to handle multiple dkeys
     dKeys = dKey.replace(/[^a-f0-9]/g," ").split(/\s+/)
@@ -105,7 +104,7 @@ class Assessment extends Backbone.Model
                   "_deleted"  : false
                 )
                 error: =>
-                  console.log "save new doc error"
+                  #console.log "save new doc error"
                 complete: =>
                   @docs.checked = 0 unless @docs.checked?
                   @docs.checked++
@@ -129,7 +128,7 @@ class Assessment extends Backbone.Model
                       "_deleted"  : true
                     )
                     error: =>
-                      console.log "Could not delete conflicting version"
+                      #console.log "Could not delete conflicting version"
                     complete: =>
                       @docs.checked = 0 unless @docs.checked?
                       @docs.checked++
@@ -167,7 +166,7 @@ class Assessment extends Backbone.Model
           Tangerine.settings.trunkDB, 
           Tangerine.settings.groupDB,
             success:      => @trigger "status", "import success"
-            error: (a, b) => console.log arguments;@trigger "status", "import error", "#{a} #{b}"
+            error: (a, b) => @trigger "status", "import error", "#{a} #{b}"
           ,
             doc_ids: docList
         )

@@ -58,9 +58,8 @@ Backbone.Model.prototype.getBoolean =       (key) -> return if @has(key) then (@
         scrollTop: $(@).offset().top + 'px'
         }, speed, null, callback
     catch e
-      console.log e
-      console.log "Scroll error with 'this'"
-      console.log @
+      console.log "error", e
+      console.log "Scroll error with 'this'", @
 
     return @
 

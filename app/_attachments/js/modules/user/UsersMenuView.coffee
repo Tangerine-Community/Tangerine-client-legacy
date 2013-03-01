@@ -11,7 +11,6 @@ class UsersMenuView extends Backbone.View
     "click #remove_reader" : "removeReader"
 
   selectAdmin: ( event ) ->
-    console.log $(event.target).attr("data-name")
     @$el.find("#selected_admin").val $(event.target).attr("data-name")
 
   selectReader: ( event ) ->
@@ -42,13 +41,11 @@ class UsersMenuView extends Backbone.View
           "auth_u" : Tangerine.user.get("name")
           "auth_p" : auth_p
           success : ( response ) =>
-            console.log response
             Utils.midAlert response.message
             Tangerine.user.fetch success: =>
               @render()
           error : (error) =>
             Utils.midAlert "Server error\n\n#{error[1]}\n#{error[2]}"
-            console.log arguments
 
   initialize: ->
 

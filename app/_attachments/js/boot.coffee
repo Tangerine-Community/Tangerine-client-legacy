@@ -27,7 +27,6 @@ Tangerine.config = new Config "_id" : "configuration"
 Tangerine.config.fetch
   error   : ->
     console.log "could not fetch configuration"
-    console.log arguments
 
   success : ->
     # get our Tangerine settings
@@ -41,7 +40,6 @@ Tangerine.config.fetch
         Tangerine.settings.save null,
           error: ->
             console.log "couldn't save new settings"
-            console.log arguments
           success: ->
             Tangerine.onSettingsLoad()
 
@@ -122,7 +120,6 @@ Tangerine.ensureAdmin = (callback) ->
                   callback()
                 error: ->
                   console.log "error logging out admin user"
-                  console.log arguments
             error: ->
               $.ajax
                 url      : "/_users/org.couchdb.user:admin"
@@ -140,9 +137,7 @@ Tangerine.ensureAdmin = (callback) ->
                     success: -> callback()
                     error: ->
                       console.log "Error logging out admin user"
-                      console.log arguments
                 error: =>
                   console.log "Error ensuring admin _user doc"
-                  console.log arguments
   else
     callback()

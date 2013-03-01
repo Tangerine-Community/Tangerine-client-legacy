@@ -18,8 +18,6 @@ class ViewManager extends Backbone.View
 
     Tangerine.log.app("show", @className)
 
-    @currentView.on "click", => console.log arguments
-
     @currentView.on "rendered", =>
       Utils.working false
       $("#content").append @currentView.el

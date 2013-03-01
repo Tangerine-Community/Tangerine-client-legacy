@@ -232,8 +232,6 @@ class Router extends Backbone.Router
         student = new Student "_id" : studentId
         student.fetch
           success: ->
-            console.log student
-            console.log studentId
             subtest = new Subtest "_id" : subtestId
             subtest.fetch
               success: ->

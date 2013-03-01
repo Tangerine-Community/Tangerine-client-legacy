@@ -53,7 +53,6 @@ class QuestionsEditListElementView extends Backbone.View
       success: =>
         if subtestId == @question.get("subtestId")
           Utils.midAlert("Question duplicated")
-          console.log "trying to trigger duplicate"
           @trigger "duplicate" 
         else
           Tangerine.router.navigate "subtest/#{subtestId}", true # this will guarantee that it assures the order of the target subtest

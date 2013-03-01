@@ -52,8 +52,6 @@ class AssessmentImportView extends Backbone.View
           clearTimeout @timer
           @connectionVerified = true
           @render()
-      verReq.complete =>
-        console.log "complete"
 
     else
       @connectionVerified = true

@@ -14,7 +14,6 @@ class QuestionRunView extends Backbone.View
   initialize: (options) ->
     @model = options.model
     @parent = options.parent
-    console.log @parent.model.get("fontFamily")
     @fontStyle = "style=\"font-family: #{@parent.model.get('fontFamily')} !important;\"" if @parent.model.get("fontFamily") != "" 
 
     @answer   = {}

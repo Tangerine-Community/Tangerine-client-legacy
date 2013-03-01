@@ -55,10 +55,8 @@ class CSVView extends Backbone.View
           subtestIndex = orderMap.indexOf(rawIndex)
           subtest = result.attributes.subtestData[subtestIndex]
 
-          if not subtest?
-            console.log "#{rawIndex} => #{subtestIndex}"
-            console.log subtest
-            continue
+          continue if not subtest?
+
           subtestName = subtest.name?.toLowerCase().dasherize()
           prototype = subtest.prototype
           keyBucket = []

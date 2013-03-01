@@ -59,7 +59,6 @@ class SurveyPrintView extends Backbone.View
         oneView.render()
         @questionViews[i] = oneView
         if @format is "metadata"
-          console.log oneView.el
           @$el.find('.survey-questions').append $(oneView.el).html()
         else
           @$el.find('.survey-questions').append oneView.el
