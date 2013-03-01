@@ -31,17 +31,17 @@ class SubtestListElementView extends Backbone.View
     @$el.find(".copy_select").append("<option disabled='disabled' selected='selected'>Loading assessments...</option>")
     @fetchAssessments()
 
-  fetchAssessments: ->
-    @groupAssessments = []
-    allAssessments = new Assessments
-    allAssessments.fetch
-      success: (collection) =>
-        @groupAssessments = collection.filter (assessment) -> not assessment.getBoolean("archived")
+
+  fetchAssessments: =>
+    @groupAssessments = new Assessments
+    @groupAssessments.fetch
+      key: @group
+      success: =>
         @populateAssessmentSelector()
   
-  populateAssessmentSelector: ->
+  populateAssessmentSelector: =>
     optionList = ""
-    for assessment in @groupAssessments
+    for assessment in @groupAssessments.models
       optionList += "<option data-assessmentId='#{assessment.id}'>#{assessment.get("name")}</option>"
     $select = @$el.find(".copy_select").html(optionList)
       

@@ -173,8 +173,6 @@ class Assessment extends Backbone.Model
 
     false
 
-
-
   duplicate: (assessmentAttributes, subtestAttributes, questionAttributes, callback) ->
 
     originalId = @id
@@ -187,7 +185,7 @@ class Assessment extends Backbone.Model
       "_id"          : newId
       "assessmentId" : newId
     ,
-      success: ->
+      success: =>
         questions = new Questions
         questions.fetch
           key: originalId

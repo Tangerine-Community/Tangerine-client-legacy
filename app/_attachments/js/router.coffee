@@ -334,7 +334,6 @@ class Router extends Backbone.Router
                     "curricula"   : curricula
                   vm.show assessments
 
-
   editId: (id) ->
     id = Utils.cleanURL id
     Tangerine.user.verify
