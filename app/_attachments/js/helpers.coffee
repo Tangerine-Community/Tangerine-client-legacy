@@ -180,7 +180,7 @@ class Utils
               $.couch.replicate Tangerine.settings.urlDB("update"),
                 Tangerine.settings.location.update.target,
                   success: ->
-                    Tangerine.$db.openDoc "_design/tangerine"
+                    Tangerine.$db.openDoc "_design/tangerine",
                       conflicts: true
                       success: (data) ->
                         if data._conflicts?

@@ -35,7 +35,7 @@ class AdminView extends Backbone.View
         
         _(groups).each (group) =>
           groupName = group.replace(/group-/,"")
-          $.couch.db(group).view Tangerine.design_doc + "/resultCount"
+          $.couch.db(group).view Tangerine.design_doc + "/resultCount",
             group: true
             success: (resultCounts) =>
               groupTotalResults = 0
@@ -57,7 +57,7 @@ class AdminView extends Backbone.View
                   </td>
                 </tr>
               "
-              $.couch.db(group).view Tangerine.design_doc + "/completedResultsByEndTime"
+              $.couch.db(group).view Tangerine.design_doc + "/completedResultsByEndTime",
                 limit: 1
                 descending: true
                 success: (result) =>
