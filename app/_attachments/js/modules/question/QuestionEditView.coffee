@@ -183,7 +183,7 @@ class QuestionEditView extends Backbone.View
 
         <div class='menu_box'>
           <div class='label_value'>
-            <label for='display_code' title='This CoffeeScript code will be executed when this question is shown. This option may only be used when Focus Mode is on.'>Display code</label>
+            <label for='display_code' title='This CoffeeScript code will be executed when this question is shown. This option may only be used when Focus Mode is on.'>Action on display</label>
             <textarea id='display_code'>#{displayCode}</textarea>
           </div>
         </div>
