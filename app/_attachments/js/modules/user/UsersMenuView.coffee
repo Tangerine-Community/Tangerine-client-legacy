@@ -54,7 +54,7 @@ class UsersMenuView extends Backbone.View
     readers = Tangerine.user.dbReaders
 
     adminOptions  = ("<li data-name='#{_.escape(admin)}' class='admin icon'>#{_.escape(admin)}</li>" for admin in admins).join("")
-    readerOptions = if readers.length > 0 then ("<li data-name='#{_.escape(reader)}' class='reader icon'>#{_.escape(reader)}</li>" for reader in readers).join("") else "<span class='grey'>No readers yet.</span>"
+    readerOptions = if readers.length > 0 then ("<li data-name='#{_.escape(reader)}' class='reader icon'>#{_.escape(reader)}</li>" for reader in readers).join("") else "<span class='grey'>No members yet.</span>"
 
     html = "
       <h1>Users</h1>
