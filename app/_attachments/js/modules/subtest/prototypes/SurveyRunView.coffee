@@ -1,7 +1,10 @@
 # these could easily be refactored into one.
 
 ResultOfQuestion = (name) ->
-  $("#question-#{name}").attr("data-result")
+  for candidateView in vm.currentView.subtestViews[vm.currentView.index].prototypeView.questionViews
+    if candidateView.model.get("name") == name
+      returnView = candidateView
+  returnView.answer
 
 ResultOfMultiple = (name) ->
   result = []
@@ -12,6 +15,9 @@ ResultOfMultiple = (name) ->
 ResultOfPrevious = (name) ->
   return vm.currentView.result.getVariable(name)
 
+ResultCSV =  (name) ->
+  return "hey"
+
 class SurveyRunView extends Backbone.View
 
   className: "SurveyRunView"
@@ -19,11 +25,61 @@ class SurveyRunView extends Backbone.View
   events:
     'change input'        : 'updateSkipLogic'
     'change textarea'     : 'updateSkipLogic'
+    'click .next_question' : 'nextQuestion'
+    'click .prev_question' : 'prevQuestion'
+
+  nextQuestion: ->
+    currentQuestionView = @questionViews[@questionIndex]
+    if @isValid(currentQuestionView)
+      while true
+        plannedIndex = @questionIndex + 1 unless plannedIndex >= @questionViews.length
+        # exit loop if last view
+        if @questionIndex + 1 >= @questionViews.length
+          plannedIndex = @questionIndex
+          break
+        else
+          return @updateQuestionVisibility() if @questionIndex + 1 >= @questionViews.length
+          q$el = $(@questionViews[plannedIndex].el)
+          isAutostopped  = q$el.hasClass("disabled_autostop")
+          isLogicSkipped = q$el.hasClass("disabled_skipped")
+        # exit if 
+        break if not (isAutostopped or isLogicSkipped)
+
+      if @questionIndex != plannedIndex
+        @questionIndex = plannedIndex
+        @updateQuestionVisibility()
+
+    else
+      return @showErrors(currentQuestionView)
+
+
+
+  prevQuestion: ->
+    while true
+      plannedIndex = @questionIndex - 1 unless plannedIndex <= 0
+      if @questionIndex - 1 < 0
+        plannedIndex = 0
+        break
+
+      q$el = @questionViews[plannedIndex].$el
+      isAutostopped  = q$el.hasClass("disabled_autostop")
+      isLogicSkipped = q$el.hasClass("disabled_skipped")
+      break if not (isLogicSkipped or isAutostopped)
+
+    if @question != plannedIndex
+      @questionIndex = plannedIndex
+      @updateQuestionVisibility()
+
+  showQuestion: (index) ->
+    @questionIndex = index if _.isNumber(index) && index < @questionViews.length && index > 0
+    @updateQuestionVisibility()
 
   initialize: (options) ->
     @model         = @options.model
     @parent        = @options.parent
     @isObservation = @options.isObservation
+    @focusMode     = @model.getBoolean("focusMode")
+    @questionIndex = 0 if @focusMode
     @questionViews = []
     @answered      = []
     @renderCount   = 0
@@ -33,6 +89,7 @@ class SurveyRunView extends Backbone.View
       success: (collection) =>
         @questions = new Questions(@questions.where { subtestId : @model.id })
         @questions.sort()
+        @ready = true
         @render()
 
   # when a question is answered
@@ -92,13 +149,15 @@ class SurveyRunView extends Backbone.View
     _.each @questionViews, (questionView) ->
       questionView.updateValidity()
       
-  isValid: ->
-    for qv, i in @questionViews
+  isValid: (views = @questionViews) ->
+    return true if not views? # if there's nothing to check, it must be good
+    views = [views] if not _.isArray(views)
+    for qv, i in views
       qv.updateValidity()
       # does it have a method? otherwise it's a string
       if qv.isValid?
         # can we skip it?
-        if not ( qv.model.get("skippable") == "true" || qv.model.get("skippable") == true )
+        if not ( qv.model.getBoolean("skippable"))
           # is it valid
           if not qv.isValid
             # red alert!!
@@ -151,10 +210,11 @@ class SurveyRunView extends Backbone.View
       total     : counts['total']
     }
 
-  showErrors: ->
+  showErrors: (views = @questionViews) ->
     @$el.find('.message').remove()
     first = true
-    for qv, i in @questionViews
+    views = [views] if not _.isArray(views)
+    for qv, i in views
       if not _.isString(qv)
         message = ""
         if not qv.isValid
@@ -167,13 +227,32 @@ class SurveyRunView extends Backbone.View
             message = t("please answer this question")
 
           if first == true
+            @showQuestion(i) if views == @questionViews
             qv.$el.scrollTo()
             Utils.midAlert t("please correct the errors on this page")
             first = false
         qv.setMessage message
 
+  updateQuestionVisibility: ->
+    if @questionIndex == @questionViews.length
+      @$el.find("#summary_container").html "
+        last page here
+      "
+      @$el.find("#next_question").hide()
+    else
+      @$el.find("#summary_container").empty()
+      @$el.find("#next_question").show()
+
+    $questions = @$el.find(".question")
+    $questions.hide()
+    $($questions[@questionIndex]).show()
+
+    @questionViews[@questionIndex].trigger "show"
 
   render: ->
+    return unless @ready
+    @$el.empty()
+
     notAskedCount = 0
     @questions.sort()
     if @questions.models?
@@ -197,6 +276,14 @@ class SurveyRunView extends Backbone.View
         oneView.render()
         @questionViews[i] = oneView
         @$el.append oneView.el
+
+      if @focusMode
+        @updateQuestionVisibility()
+        @$el.append "
+          <div id='summary_container'></div>
+          <button class='navigation prev_question'>Previous Question</button>
+          <button class='navigation next_question'>Next Question</button>
+        "
 
     @updateSkipLogic()
     if @questions.length == notAskedCount then @parent.next?()

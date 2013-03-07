@@ -46,7 +46,7 @@ class SubtestRunView extends Backbone.View
     @prototypeView.on "subRendered", => @trigger "subRendered"
     @prototypeView.on "showNext",    => @showNext()
     @prototypeView.on "hideNext",    => @hideNext()
-    @prototypeView.on "ready",       => @prototypeRendered = true
+    @prototypeView.on "ready",       => @prototypeRendered = true; @onShow()
     @prototypeView.setElement(@$el.find('#prototype_wrapper'))
     @prototypeView.render()
 
@@ -55,6 +55,18 @@ class SubtestRunView extends Backbone.View
   showNext: => @$el.find(".controlls").show() 
   hideNext: => @$el.find(".controlls").hide()
 
+  onShow: ->
+
+    displayCode = @model.getString("displayCode")
+
+    return if _.isEmpty(displayCode.replace(/\s*/,""))
+
+    try
+      CoffeeScript.eval.apply(@, [displayCode])
+    catch error
+      name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
+      message = error.message
+      alert "#{name}\n\n#{message}"
 
   getGridScore: ->
     link = @model.get("gridLinkId") || ""

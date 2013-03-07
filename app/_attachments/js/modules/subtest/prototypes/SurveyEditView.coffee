@@ -65,6 +65,7 @@ class SurveyEditView extends Backbone.View
     @model.set
       "gridLinkId"    : @$el.find("#link_select option:selected").val()
       "autostopLimit" : parseInt(@$el.find("#autostop_limit").val()) || 0
+      "focusMode"     : @$el.find("#focus_mode input:checked").val() == "true"
 
     # blank out our error queues
     notSaved = []
@@ -112,11 +113,22 @@ class SurveyEditView extends Backbone.View
 
     gridLinkId = @model.get("gridLinkId") || ""
     autostopLimit = parseInt(@model.get("autostopLimit")) || 0
+    focusMode = @model.getBoolean("focusMode")
 
     @$el.html "
       <div class='label_value'>
         <label for='autostop_limit' title='The survey will discontinue after the first N questions have been answered with a &quot;0&quot; value option.'>Autostop after N incorrect</label><br>
         <input id='autostop_limit' type='number' value='#{autostopLimit}'>
+      </div>
+      <div class='label_value'>
+          <label title='Displays one question at a time with next and previous buttons.'>Focus mode</label>
+          <div id='focus_mode' class='buttonset'>
+            <label for='focus_true'>Yes</label>
+            <input name='focus_mode' type='radio' value='true' id='focus_true' #{'checked' if focusMode}>
+            <label for='focus_false'>No</label>
+            <input name='focus_mode' type='radio' value='false' id='focus_false' #{'checked' if not focusMode}>
+          </div>
+
       </div>
       <div id='grid_link'></div>
       <div id='questions'>

@@ -9,6 +9,8 @@ class SubtestEditView extends Backbone.View
     'click .richtext_edit'     : 'richtextEdit'
     'click .richtext_save'     : 'richtextSave'
     'click .richtext_cancel'   : 'richtextCancel'
+    'change #display_code' : 'validateSyntax'
+
 
   richtextConfig: [
       "key"           : "enumerator"
@@ -44,6 +46,22 @@ class SubtestEditView extends Backbone.View
 
   goBack: =>
     Tangerine.router.navigate "edit/" + @model.get("assessmentId"), true
+
+
+  validateSyntax: (event) ->
+    $target = $(event.target)
+    code = $target.val()
+    if not _.isEmpty(code)
+      try
+        oldAnswer = @answer
+        @answer = {}
+        @isValid = CoffeeScript.compile.apply(@, [code])
+        if oldAnswer? then @answer = oldAnswer else delete this["answer"]
+      catch error
+        name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
+        where = $target.attr('id').humanize()
+        message = error.message
+        alert "Error in #{where}\n\n#{name}\n\n#{message}"
 
   getRichtextConfig: (event) ->
 
@@ -116,6 +134,8 @@ class SubtestEditView extends Backbone.View
       studentDialog     : @$el.find("#dialog_textarea").val()
       transitionComment : @$el.find("#transition_textarea").val()
 
+      displayCode : @$el.find("#display_code").val()
+
       fontFamily : @$el.find("#font_family").val()
 
     # important not to let prototypes use success or error
@@ -146,11 +166,12 @@ class SubtestEditView extends Backbone.View
     assessmentName = @assessment.escape "name"
     name        = @model.escape "name"
     prototype   = @model.get "prototype"
-    enummerator = @model.get("enumeratorHelp") || ""
-    dialog      = @model.get("studentDialog")  || ""
-    transition  = @model.get("transitionComment")  || ""
+    enummerator = @model.getString("enumeratorHelp")
+    dialog      = @model.getString("studentDialog")
+    transition  = @model.getString("transitionComment")
     skippable   = @model.getBoolean("skippable")
     fontFamily  = @model.getEscapedString("fontFamily")
+    displayCode = @model.getString("displayCode")
 
 
     @$el.html "
@@ -210,6 +231,12 @@ class SubtestEditView extends Backbone.View
         <div class='label_value'>
           <label for='font_family' title='Please be aware that whatever font is specified, must be available on the user`s system. When multiple fonts are entered separated by commas, they are ranked in order of preference from left to right. Font names with spaces must be wrapped in double quotes.'>Preferred font</label>
           <input id='font_family' value='#{fontFamily}'>
+        </div>
+        <div class='menu_box'>
+          <div class='label_value'>
+            <label for='display_code' title='This CoffeeScript code will be executed when this question is shown. This option may only be used when Focus Mode is on.'>Action on display</label>
+            <textarea id='display_code'>#{displayCode}</textarea>
+          </div>
         </div>
 
       </div>

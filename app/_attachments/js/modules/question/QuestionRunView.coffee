@@ -7,11 +7,11 @@ class QuestionRunView extends Backbone.View
     'change textarea'        : 'update'
     'click .autoscroll_icon' : 'scroll'
 
-
   scroll: (event) ->
     @trigger "scroll", event, @model.get("order")
 
   initialize: (options) ->
+    @on "show", @onShow
     @model = options.model
     @parent = options.parent
     @fontStyle = "style=\"font-family: #{@parent.model.get('fontFamily')} !important;\"" if @parent.model.get("fontFamily") != "" 
@@ -35,7 +35,21 @@ class QuestionRunView extends Backbone.View
     if @notAsked == true
       @isValid = true
       @updateResult()
-    
+
+  onShow: ->
+
+    showCode = @model.getString("displayCode")
+
+    return if _.isEmpty(showCode.replace(/\s*/,""))
+
+    try
+      @isValid = CoffeeScript.eval.apply(@, [showCode])
+    catch error
+      name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
+      message = error.message
+      alert "Display code error\n\n#{name}\n\n#{message}"
+
+
   update: (event) ->
     @updateResult()
     @updateValidity()
@@ -59,7 +73,7 @@ class QuestionRunView extends Backbone.View
       else
         for option, i in @options
           @answer[@options[i].value] = if @$el.find("##{@cid}_#{@name}_#{i}").is(":checked") then "checked" else "unchecked"
-    @$el.attr "data-result", if _.isString(@answer) then @answer else JSON.stringify(@answer)
+
 
   updateValidity: ->
 
@@ -84,9 +98,28 @@ class QuestionRunView extends Backbone.View
       else
         @isValid = if _.isEmpty(@answer) then false else true
 
+  setOptions: (options) =>
+    @options = options
+    @render()
+
+  setAnswer: (answer) =>
+    alert "setAnswer Error\nTried to set #{@type} type #{@name} question to string answer." if _.isString(answer) && @type == "multiple"
+    alert "setAnswer Error\n#{@name} question requires an object" if not _.isObject(answer) && @type == "multiple"
+    
+    if @type == "mulitple"
+      @answer = $.extend(@answer, answer)
+    else
+      @answer = answer
+    @render()
 
   setMessage: (message) =>
     @$el.find(".error_message").html message
+
+  setPrompt: (prompt) =>
+    @$el.find(".prompt").html prompt
+
+  setHint: (hint) =>
+    @$el.find(".hint").html hint
 
   render: ->
 
@@ -98,17 +131,27 @@ class QuestionRunView extends Backbone.View
       <div class='hint' #{@fontStyle || ""}>#{(@model.get('hint') || "")}</div>"
 
       if @type == "open"
+        if _.isString(@answer) && not _.isEmpty(@answer)
+          answerValue = @answer
         if @model.get("multiline")
-          html += "<div><textarea id='#{@cid}_#{@name}' data-cid='#{@cid}'></textarea></div>"
+          html += "<div><textarea id='#{@cid}_#{@name}' data-cid='#{@cid}' value='#{answerValue || ''}></textarea></div>"
         else
-          html += "<div><input id='#{@cid}_#{@name}' data-cid='#{@cid}'></div>"
+          html += "<div><input id='#{@cid}_#{@name}' data-cid='#{@cid}' value='#{answerValue || ''}></div>"
       
       else
         checkOrRadio = if @type == "multiple" then "checkbox" else "radio"
         for option, i in @options
+          selected = 
+            if @type == "multiple" && @answer[@options[i].value] == "checked"
+              "checked='checked'"
+            else if @type == "single" && @answer == @options[i].value
+              "checked='checked'"
+            else 
+              ""
+
           html += "
             <label for='#{@cid}_#{@name}_#{i}' #{@fontStyle || ""}>#{option.label}</label>
-            <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}' data-cid='#{@cid}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}'>
+            <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}' data-cid='#{@cid}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}' #{selected}>
           "
       html += "<img src='images/icon_scroll.png' class='icon autoscroll_icon' data-cid='#{@cid}'>" if @isObservation
       @$el.html html
@@ -129,5 +172,25 @@ class QuestionRunView extends Backbone.View
     return
 
 
+class SurveyReviewView extends Backbone.View
 
+  className: "QuestionReviewView"
 
+  initialize: (options) ->
+    @views = options.views
+
+  render: ->
+
+    answers = ("
+      <div class='label_value'>
+        <h3></h3>
+      </div>
+
+    " for view in @views).join("")
+
+    @$el.html "
+
+      <h2>Please review your answers and press next when ready.</h2>
+
+      #{answers}
+    "

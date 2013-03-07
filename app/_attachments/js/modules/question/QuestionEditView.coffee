@@ -15,6 +15,7 @@ class QuestionEditView extends Backbone.View
     'keypress .option_value'  : 'quickAddWithEnter'
     'keypress .option_label'  : 'quickFocusValue'
     'change #custom_validation_code' : 'validateSyntax'
+    'change #display_code' : 'validateSyntax'
 
   initialize: (options) ->
 
@@ -26,15 +27,20 @@ class QuestionEditView extends Backbone.View
     @assessment = options.assessment
 
 
-  validateSyntax: ->
-    if not _.isEmpty(customValidationCode = @$el.find("#custom_validation_code").val())
+  validateSyntax: (event) ->
+    $target = $(event.target)
+    code = $target.val()
+    if not _.isEmpty(code)
       try
         oldAnswer = @answer
         @answer = {}
-        @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
+        @isValid = CoffeeScript.compile.apply(@, [code])
         if oldAnswer? then @answer = oldAnswer else delete this["answer"]
-      catch e
-        alert "Custom Validation error for #{@name} \n\n#{e}"
+      catch error
+        name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
+        where = $target.attr('id').humanize()
+        message = error.message
+        alert "Error in #{where}\n\n#{name}\n\n#{message}"
 
 
   quickAddWithEnter: (event) ->
@@ -94,6 +100,7 @@ class QuestionEditView extends Backbone.View
   # Adding an option
   #
   addOption: ->
+
     @updateModel()
 
     options = @question.get "options"
@@ -111,21 +118,22 @@ class QuestionEditView extends Backbone.View
 
   render: ->
 
-    assessmentName  = @assessment.escape("name")
-    subtestName     = @subtest.escape("name")
+    assessmentName = @assessment.escape("name")
+    subtestName    = @subtest.escape("name")
 
-    name            = @question.escape("name")      || ""
-    prompt          = @question.escape("prompt")    || ""
-    hint            = @question.escape("hint")      || ""
-    skipLogic       = @question.escape("skipLogic") || ""
+    name           = @question.getEscapedString("name")
+    prompt         = @question.getEscapedString("prompt")
+    hint           = @question.getEscapedString("hint")
+    skipLogic      = @question.getEscapedString("skipLogic")
 
-    customValidationCode     = @question.escape("customValidationCode")    || ""
-    customValidationMessage  = @question.escape("customValidationMessage") || ""
+    customValidationCode    = @question.getEscapedString("customValidationCode")
+    customValidationMessage = @question.getEscapedString("customValidationMessage")
+    displayCode             = @question.getString("displayCode")
 
     type            = @question.get "type"
     options         = @question.get "options"
-    linkedGridScore = @question.get("linkedGridScore") || 0
-    skippable       = @question.get("skippable") == true || @question.get("skippable") == "true"
+    linkedGridScore = @question.getNumber("linkedGridScore")
+    skippable       = @question.getBoolean("skippable")
 
     checkOrRadio = if type == "multiple" then "checkbox" else "radio"
 
@@ -157,7 +165,7 @@ class QuestionEditView extends Backbone.View
           <input id='hint' type='text' value='#{hint}'>
         </div>
         <div class='label_value'>
-          <label for='skip-logic'>Skip if <span style='font-size: small;font-weight:normal'>example: ResultOfQuestion(\"maze1\") isnt \"2\" Example 2: \"red\" in ResultOfMultiple(\"fave_colors\")</span></label>
+          <label for='skip-logic' title='This statement will be skiped if it evaluates to true. example: ResultOfQuestion(\"maze1\") isnt \"2\" Example 2: \"red\" in ResultOfMultiple(\"fave_colors\")'>Skip if</label>
           <input id='skip-logic' type='text' value='#{skipLogic}'>
         </div>
 
@@ -172,6 +180,14 @@ class QuestionEditView extends Backbone.View
             <input id='custom_validation_message' type='text' value='#{customValidationMessage}'>
           </div>
         </div>
+
+        <div class='menu_box'>
+          <div class='label_value'>
+            <label for='display_code' title='This CoffeeScript code will be executed when this question is shown. This option may only be used when Focus Mode is on.'>Display code</label>
+            <textarea id='display_code'>#{displayCode}</textarea>
+          </div>
+        </div>
+
 
         <div class='label_value'>
           <label>Skippable</label>
@@ -285,6 +301,7 @@ class QuestionEditView extends Backbone.View
       "skippable"       : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
       "customValidationCode"    : @$el.find("#custom_validation_code").val()
       "customValidationMessage" : @$el.find("#custom_validation_message").val()
+      "displayCode"             : @$el.find("#display_code").val()
       
     # options
     options = []
