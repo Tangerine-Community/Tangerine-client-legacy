@@ -117,7 +117,7 @@ class SurveyEditView extends Backbone.View
 
     @$el.html "
       <div class='label_value'>
-        <label for='autostop_limit' title='The survey will discontinue after the first N questions have been answered with a &quot;0&quot; value option.'>Autostop after N incorrect</label><br>
+        <label for='autostop_limit' title='The survey will discontinue after any N consecutive questions have been answered with a &quot;0&quot; value option.'>Autostop after N incorrect</label><br>
         <input id='autostop_limit' type='number' value='#{autostopLimit}'>
       </div>
       <div class='label_value'>
