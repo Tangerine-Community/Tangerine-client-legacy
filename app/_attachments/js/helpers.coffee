@@ -4,6 +4,7 @@ Backbone.View.prototype.close = ->
   @unbind()
   @onClose?()
 
+
 # Returns an object hashed by a given attribute.
 Backbone.Collection.prototype.indexBy = ( attr ) ->
   result = {}
@@ -176,6 +177,12 @@ class Utils
       else
         "ojai"
 
+    targetDB = 
+      if Tangerine.settings.get("context") != "server"
+        Tangerine.settings.location.update.target
+      else
+        Tangerine.db_name
+
     Utils.midAlert "Updating..."
     Utils.working true
     # save old rev for later
@@ -184,26 +191,25 @@ class Utils
         Tangerine.$db.openDoc "_design/#{dDoc}", 
           success: (oldDoc) -> 
             # replicate from update database
-            $.couch.replicate Tangerine.settings.urlDB("update"),
-              Tangerine.settings.location.update.target,
-                success: ->
-                  Tangerine.$db.openDoc "_design/#{dDoc}",
-                    conflicts: true
-                    success: (data) ->
-                      if data._conflicts?
-                        Tangerine.$db.removeDoc oldDoc,
-                          success: ->
-                            Utils.working false
-                            Utils.onUpdateSuccess()
-                          error: (error) ->
-                            Utils.working false
-                            Utils.midAlert "Update failed resolving conflict<br>#{error}"
-                      else
-                        Utils.onUpdateSuccess()
-                error: (error) ->
-                  Utils.working false
-                  Utils.midAlert "Update failed replicating<br>#{error}"
-              , doc_ids : ["_design/#{dDoc}"]
+            $.couch.replicate Tangerine.settings.urlDB("update"), targetDB,
+              success: ->
+                Tangerine.$db.openDoc "_design/#{dDoc}",
+                  conflicts: true
+                  success: (data) ->
+                    if data._conflicts?
+                      Tangerine.$db.removeDoc oldDoc,
+                        success: ->
+                          Utils.working false
+                          Utils.onUpdateSuccess()
+                        error: (error) ->
+                          Utils.working false
+                          Utils.midAlert "Update failed resolving conflict<br>#{error}"
+                    else
+                      Utils.onUpdateSuccess()
+              error: (error) ->
+                Utils.working false
+                Utils.midAlert "Update failed replicating<br>#{error}"
+            , doc_ids : ["_design/#{dDoc}"]
           error: (error) ->
             Utils.working false
             Utils.midAlert "Update failed openning database<br>#{error}"
