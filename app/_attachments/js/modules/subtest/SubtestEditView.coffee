@@ -250,6 +250,10 @@ class SubtestEditView extends Backbone.View
     
     @trigger "rendered"
 
+  afterRender: ->
+    @prototypeEditor?.afterRender?()
+
+
   onClose: ->
     @prototypeEditor.close?()
 

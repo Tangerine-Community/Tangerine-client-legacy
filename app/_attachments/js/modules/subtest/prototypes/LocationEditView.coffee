@@ -26,11 +26,9 @@ class LocationEditView extends Backbone.View
       hasCommas = data.match(/,/g)?
 
     if hasTabs
-      @$el.find("#data_format :radio[value='Tabs']").attr("checked", "checked")
-      @$el.find("#data_format").buttonset("refresh")
+      @$el.find("#data_format :radio[value='Tabs']").attr("checked", "checked").button("refresh")
     else
-      @$el.find("#data_format :radio[value='Commas']").attr("checked", "checked")
-      @$el.find("#data_format").buttonset("refresh")
+      @$el.find("#data_format :radio[value='Commas']").attr("checked", "checked").button("refresh")
 
   updateLevels: (event) ->
     if event?.type == "click"
@@ -52,12 +50,9 @@ class LocationEditView extends Backbone.View
     hasTabs   = levels.match(/\t/g)?
     hasCommas = levels.match(/,/g)?
     if hasTabs
-      @$el.find("#levels_format :radio[value='Tabs']").attr("checked", "checked")
-      @$el.find("#levels_format").buttonset("refresh")
+      @$el.find("#levels_format :radio[value='Tabs']").attr("checked", "checked").button("refresh")
     else
-      @$el.find("#levels_format :radio[value='Commas']").attr("checked", "checked")
-      @$el.find("#levels_format").buttonset("refresh")
-    
+      @$el.find("#levels_format :radio[value='Commas']").attr("checked", "checked").button("refresh")
 
 
   dataTabToComma: -> @$el.find("#data").val(String(@$el.find("#data").val()).replace(/\t/g,", "))
@@ -67,13 +62,11 @@ class LocationEditView extends Backbone.View
 
   save: ->
     if @$el.find("#data").val().match(/\t/g)?
-      @$el.find("#data_format :radio[value='Tabs']").attr("checked", "checked")
-      @$el.find("#data_format").buttonset("refresh")
+      @$el.find("#data_format :radio[value='Tabs']").attr("checked", "checked").button("refresh")
       @dataTabToComma()
     if @$el.find("#levels").val().match(/\t/g)?
       @levelsTabToComma()
-      @$el.find("#levels_format :radio[value='Tabs']").attr("checked", "checked")
-      @$el.find("#levels_format").buttonset("refresh")
+      @$el.find("#levels_format :radio[value='Tabs']").attr("checked", "checked").button("refresh")
       
     levels = @$el.find("#levels").val().split(/, */g)
     for level, i in levels
@@ -150,7 +143,8 @@ class LocationEditView extends Backbone.View
         
       </div>
     "
-    
+
+  afterRender: ->
     @updateLevels()
     @updateData()
 
