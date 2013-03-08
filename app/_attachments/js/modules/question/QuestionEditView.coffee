@@ -15,7 +15,8 @@ class QuestionEditView extends Backbone.View
     'keypress .option_value'  : 'quickAddWithEnter'
     'keypress .option_label'  : 'quickFocusValue'
     'change #custom_validation_code' : 'validateSyntax'
-    'change #display_code' : 'validateSyntax'
+    'change #display_code'           : 'validateSyntax'
+    'change #skip_logic'             : 'validateSyntax'
 
   initialize: (options) ->
 
@@ -165,8 +166,8 @@ class QuestionEditView extends Backbone.View
           <input id='hint' type='text' value='#{hint}'>
         </div>
         <div class='label_value'>
-          <label for='skip-logic' title='This statement will be skiped if it evaluates to true. example: ResultOfQuestion(\"maze1\") isnt \"2\" Example 2: \"red\" in ResultOfMultiple(\"fave_colors\")'>Skip if</label>
-          <input id='skip-logic' type='text' value='#{skipLogic}'>
+          <label for='skip_logic' title='This statement will be skiped if it evaluates to true. example: ResultOfQuestion(\"maze1\") isnt \"2\" Example 2: \"red\" in ResultOfMultiple(\"fave_colors\")'>Skip if</label>
+          <textarea rows='2' id='skip_logic'>#{skipLogic}</textarea>
         </div>
 
         <div class='menu_box'>
@@ -295,7 +296,7 @@ class QuestionEditView extends Backbone.View
       "prompt"          : @$el.find("#prompt").val()
       "name"            : @$el.find("#name").val().safetyDance()
       "hint"            : @$el.find("#hint").val()
-      "skipLogic"       : @$el.find("#skip-logic").val()
+      "skipLogic"       : @$el.find("#skip_logic").val()
       "linkedGridScore" : parseInt(@$el.find("#linked_grid_score").val())
       "type"            : @$el.find("#question_type input:checked").val()
       "skippable"       : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
