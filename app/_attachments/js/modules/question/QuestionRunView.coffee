@@ -134,9 +134,9 @@ class QuestionRunView extends Backbone.View
         if _.isString(@answer) && not _.isEmpty(@answer)
           answerValue = @answer
         if @model.get("multiline")
-          html += "<div><textarea id='#{@cid}_#{@name}' data-cid='#{@cid}' value='#{answerValue || ''}></textarea></div>"
+          html += "<div><textarea id='#{@cid}_#{@name}' data-cid='#{@cid}' value='#{answerValue || ''}'></textarea></div>"
         else
-          html += "<div><input id='#{@cid}_#{@name}' data-cid='#{@cid}' value='#{answerValue || ''}></div>"
+          html += "<div><input id='#{@cid}_#{@name}' data-cid='#{@cid}' value='#{answerValue || ''}'></div>"
       
       else
         checkOrRadio = if @type == "multiple" then "checkbox" else "radio"
