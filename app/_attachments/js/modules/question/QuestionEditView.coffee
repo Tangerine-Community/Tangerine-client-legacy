@@ -180,7 +180,7 @@ class QuestionEditView extends Backbone.View
             <label for='custom_validation_message'>Error message</label>
             <input id='custom_validation_message' type='text' value='#{customValidationMessage}'>
           </div>
-        </div>
+        </div><br>
 
         <div class='menu_box'>
           <div class='label_value'>
