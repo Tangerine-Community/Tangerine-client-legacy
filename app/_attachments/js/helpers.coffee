@@ -136,7 +136,7 @@ km = {"0":48,"1":49,"2":50,"3":51,"4":52,"5":53,"6":54,"7":55,"8":56,"9":57,"a":
 sks = [ { q : (km["0100ser"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "server"}, { success: -> Tangerine.router.navigate("", true)}) },
         { q : (km["0100mob"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "mobile"}, { success: -> Tangerine.router.navigate("", true)}) },
         { q : (km["0100cla"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "class"},  { success: -> Tangerine.router.navigate("", true)}) },
-        { q : (km["0100update"[i]] for i in [0..9]), i : 0, c : -> return unless Tangerine.settings.get("context")=="server";$.couch.replicate("update",Tangerine.settings.groupDB, { success: -> Utils.midAlert("Updated, please refresh.")},{doc_ids:["_design/ojai"]}) } ]
+        { q : (km["0100update"[i]] for i in [0..9]), i : 0, c : -> Utils.updateTangerine( -> Utils.midAlert("Updated, please refresh.") ) } ]
 $(document).keydown (e) -> ( if e.keyCode == sks[j].q[sks[j].i++] then sks[j]['c']() if sks[j].i == sks[j].q.length else sks[j].i = 0 ) for sk, j in sks 
 
 
@@ -168,42 +168,48 @@ class Utils
 
   @updateTangerine: (callbacks) ->
 
-    if Tangerine.settings.get("context") != "server"
+    return unless Tangerine.user.isAdmin()
 
-      Utils.midAlert "Updating..."
-      Utils.working true
-      # save old rev for later
-      Tangerine.$db.compact
-        success: ->
-          Tangerine.$db.openDoc "_design/tangerine", 
-            success: (oldDoc) -> 
-              # replicate from update database
-              $.couch.replicate Tangerine.settings.urlDB("update"),
-                Tangerine.settings.location.update.target,
-                  success: ->
-                    Tangerine.$db.openDoc "_design/tangerine",
-                      conflicts: true
-                      success: (data) ->
-                        if data._conflicts?
-                          Tangerine.$db.removeDoc oldDoc,
-                            success: ->
-                              Utils.working false
-                              Utils.onUpdateSuccess()
-                            error: (error) ->
-                              Utils.working false
-                              Utils.midAlert "Update failed resolving conflict<br>#{error}"
-                        else
-                          Utils.onUpdateSuccess()
-                  error: (error) ->
-                    Utils.working false
-                    Utils.midAlert "Update failed replicating<br>#{error}"
-                , doc_ids : ["_design/tangerine"]
-            error: (error) ->
-              Utils.working false
-              Utils.midAlert "Update failed openning database<br>#{error}"
-        error: (error) ->
-          Utils.working false
-          Utils.midAlert "Update failed compacting database<br>#{error}"
+    dDoc = 
+      if Tangerine.settings.get("context") != "server"
+        "tangerine"
+      else
+        "ojai"
+
+    Utils.midAlert "Updating..."
+    Utils.working true
+    # save old rev for later
+    Tangerine.$db.compact
+      success: ->
+        Tangerine.$db.openDoc "_design/#{dDoc}", 
+          success: (oldDoc) -> 
+            # replicate from update database
+            $.couch.replicate Tangerine.settings.urlDB("update"),
+              Tangerine.settings.location.update.target,
+                success: ->
+                  Tangerine.$db.openDoc "_design/#{dDoc}",
+                    conflicts: true
+                    success: (data) ->
+                      if data._conflicts?
+                        Tangerine.$db.removeDoc oldDoc,
+                          success: ->
+                            Utils.working false
+                            Utils.onUpdateSuccess()
+                          error: (error) ->
+                            Utils.working false
+                            Utils.midAlert "Update failed resolving conflict<br>#{error}"
+                      else
+                        Utils.onUpdateSuccess()
+                error: (error) ->
+                  Utils.working false
+                  Utils.midAlert "Update failed replicating<br>#{error}"
+              , doc_ids : ["_design/#{dDoc}"]
+          error: (error) ->
+            Utils.working false
+            Utils.midAlert "Update failed openning database<br>#{error}"
+      error: (error) ->
+        Utils.working false
+        Utils.midAlert "Update failed compacting database<br>#{error}"
 
   @log: (self, error) ->
     className = self.constructor.toString().match(/function\s*(\w+)/)[1]
