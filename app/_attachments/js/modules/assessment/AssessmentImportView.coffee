@@ -79,16 +79,20 @@ class AssessmentImportView extends Backbone.View
 
   import: =>
 
-    @updateActivity()
     dKey = @$el.find("#d_key").val()
+
+    selectedGroup = @$el.find("select#group option:selected").attr('data-group') || ""
+
+    return Utils.midAlert "Please select a group." if Tangerine.settings.get("context") == "server" && selectedGroup == "NONE"
 
     @newAssessment = new Assessment
     @newAssessment.on "status", @updateActivity
+    @updateActivity()
 
-    if Tangerine.settings.get("context") == "server"
+    if selectedGroup == "LEGACY"
       @newAssessment.updateFromTrunk dKey
     else
-      @newAssessment.updateFromServer dKey
+      @newAssessment.updateFromServer dKey, selectedGroup
 
     @activeTaskInterval = setInterval @updateFromActiveTasks, 3000
 
@@ -134,7 +138,7 @@ class AssessmentImportView extends Backbone.View
         #{changes || ""}
       "
       @updateProgress null, =>
-        Utils.askToLogout()
+        Utils.askToLogout() unless Tangerine.settings.get("context") == "server"
     else if status == "import error"
       clearInterval @activeTaskInterval
       @activity = "Import error: #{message}"
@@ -169,6 +173,14 @@ class AssessmentImportView extends Backbone.View
       <button class='command group_import'>Group import</button>
     " if Tangerine.settings.get("context") != "server"
 
+    groupSelector = "
+      <select id='group'>
+        <option data-group='NONE' selected='selected'>Please select a group</option>
+        <option data-group='LEGACY'>Legacy Tangerine</option>
+        #{("<option data-group='#{group}'>#{group}</option>" for group in Tangerine.user.get('groups')).join('')}
+      </select>
+    " if Tangerine.settings.get("context") == "server"
+
     if not @connectionVerified 
       importStep = "
         <section>
@@ -181,7 +193,9 @@ class AssessmentImportView extends Backbone.View
       importStep = "
         <div class='question'>
           <label for='d_key'>Download keys</label>
+          
           <input id='d_key' value=''>
+          #{groupSelector}<br>
           <button class='import command'>Import</button> #{groupImport || ""}<br>
           <small>Server connection: <span id='server_connection'>#{@serverStatus}</span></small>
         </div>

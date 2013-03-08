@@ -37,7 +37,7 @@ class Assessment extends Backbone.Model
             oldSuccess? @
     Assessment.__super__.fetch.call @, options
 
-  updateFromServer: ( dKey = @calcDKey() ) =>
+  updateFromServer: ( dKey = @calcDKey(), group ) =>
 
     @lastDKey = dKey
     
@@ -46,8 +46,28 @@ class Assessment extends Backbone.Model
 
     @trigger "status", "import lookup"
 
+
+    if Tangerine.settings.get("context") == "server"
+      sourceDB = "group-" + group
+      targetDB = Tangerine.settings.groupDB
+    else
+      sourceDB = Tangerine.settings.urlDB("group")
+      targetDB = Tangerine.settings.urlDB("local")
+
+    localDKey = 
+      if Tangerine.settings.get("context") != "server"
+        Tangerine.settings.urlView("local", "byDKey")
+      else
+        Tangerine.settings.location.group.db+Tangerine.settings.couch.view + "byDKey"
+
+    sourceDKey =
+      if Tangerine.settings.get("context") != "server"
+        Tangerine.settings.urlView("group", "byDKey")
+      else
+        "/"+sourceDB+"/"+Tangerine.settings.couch.view + "byDKey"
+
     $.ajax 
-      url: Tangerine.settings.urlView("group", "byDKey"),
+      url: sourceDKey,
       type: "GET"
       dataType: "jsonp"
       data: keys: JSON.stringify(dKeys)
@@ -57,7 +77,7 @@ class Assessment extends Backbone.Model
           docList.push datum.id
 
         $.ajax 
-          url: Tangerine.settings.urlView("local", "byDKey"),
+          url: localDKey,
           type: "POST"
           contentType: "application/json"
           dataType: "json"
@@ -69,8 +89,8 @@ class Assessment extends Backbone.Model
             docList = _.uniq(docList)
 
             $.couch.replicate( 
-              Tangerine.settings.urlDB("group"), 
-              Tangerine.settings.urlDB("local"),
+              sourceDB,
+              targetDB,
                 success: (response)=> 
                   @checkConflicts docList 
                   @trigger "status", "import success", response
