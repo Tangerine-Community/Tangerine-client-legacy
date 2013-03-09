@@ -139,9 +139,17 @@ class SurveyRunView extends Backbone.View
 
   updateSkipLogic: =>
     @questions.each (question) ->
-      skipLogic = question.get "skipLogic"
-      if not _.isEmpty(skipLogic)
-        result = CoffeeScript.eval skipLogic
+      skipLogicCode = question.get "skipLogic"
+      if not _.isEmpty(skipLogicCode)
+
+        try
+          CoffeeScript.eval.apply(@, [skipLogicCode])
+        catch error
+          name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
+          message = error.message
+          alert "Skip logic error\n\n#{name}\n\n#{message}"
+
+        
         if result
           $("#question-#{question.get('name')}").addClass "disabled_skipped"
         else

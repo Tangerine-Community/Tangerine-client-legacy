@@ -36,6 +36,9 @@ class QuestionRunView extends Backbone.View
       @isValid = true
       @updateResult()
 
+  previousAnswer: =>
+    @parent.questionViews[@parent.questionIndex-1].answer if @parent.questionIndex >= 0
+
   onShow: ->
 
     showCode = @model.getString("displayCode")

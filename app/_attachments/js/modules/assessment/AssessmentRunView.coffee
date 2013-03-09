@@ -9,6 +9,11 @@ class AssessmentRunView extends Backbone.View
     @model = options.model
     @orderMap = []
 
+    @rendered = {
+      "assessment" : false
+      "subtest" : false
+    }
+
     Tangerine.activity = "assessment run"
     @subtestViews = []
     @model.subtests.sort()
@@ -41,7 +46,7 @@ class AssessmentRunView extends Backbone.View
     @subtestViews.push resultView
 
   render: ->
-
+    console.log "assessment rendering"
     currentView = @subtestViews[@orderMap[@index]]
     
     if @model.subtests.length == 0
@@ -53,14 +58,23 @@ class AssessmentRunView extends Backbone.View
       "
       @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
 
-      currentView.on "rendered", => @trigger "rendered"
+      currentView.on "rendered",    => @flagRender "subtest"
       currentView.on "subRendered", => @trigger "subRendered"
 
       currentView.render()
       @$el.append currentView.el
 
-    @trigger "rendered"
+    @flagRender "assessment"
 
+  flagRender: (object) ->
+    @rendered[object] = true
+
+    if @rendered.assessment && @rendered.subtest
+      @trigger "rendered"
+
+
+  afterRender: ->
+    @subtestViews[@orderMap[@index]]?.afterRender?()
 
   onClose: ->
     for view in @subtestViews
@@ -73,7 +87,8 @@ class AssessmentRunView extends Backbone.View
     @abortAssessment = true
     @next()
 
-  skip: ->
+  skip: =>
+
     currentView = @subtestViews[@orderMap[@index]]
     @result.add
       name      : currentView.model.get "name"
@@ -82,13 +97,16 @@ class AssessmentRunView extends Backbone.View
       skipped   : true
       prototype : currentView.model.get "prototype"
       sum       : currentView.getSum()
+
     currentView.close()
+    @rendered.subtest = false
     @index++ unless @abortAssessment == true
     @index = @subtestViews.length-1 if @abortAssessment == true
+
     @render()
     window.scrollTo 0, 0
 
-  next: ->
+  next: =>
     currentView = @subtestViews[@orderMap[@index]]
     if currentView.isValid()
       subtestResult = currentView.getResult()
@@ -99,6 +117,7 @@ class AssessmentRunView extends Backbone.View
         subtestId   : currentView.model.id
         prototype   : currentView.model.get "prototype"
         sum         : currentView.getSum()
+      @rendered.subtest = false
       currentView.close()
       @index++ unless @abortAssessment == true
       @index = @subtestViews.length-1 if @abortAssessment == true

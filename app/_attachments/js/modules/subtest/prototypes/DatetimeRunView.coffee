@@ -59,3 +59,6 @@ class DatetimeRunView extends Backbone.View
 
   isValid: ->
     true
+
+  showErrors: ->
+    true
