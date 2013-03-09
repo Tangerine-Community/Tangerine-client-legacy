@@ -10,7 +10,6 @@ class QuestionEditView extends Backbone.View
     'click .delete_cancel'    : 'hideDeleteConfirm'
     'click .delete_delete'    : 'deleteOption'
     'click #question_type input:radio'       : 'changeQuestionType'
-    'keypress'                : 'hijackEnter'
     'change .option_select'   : 'templateFill'
     'keypress .option_value'  : 'quickAddWithEnter'
     'keypress .option_label'  : 'quickFocusValue'
@@ -42,7 +41,6 @@ class QuestionEditView extends Backbone.View
         where = $target.attr('id').humanize()
         message = error.message
         alert "Error in #{where}\n\n#{name}\n\n#{message}"
-
 
   quickAddWithEnter: (event) ->
     if event.keyCode? && event.keyCode != 13 then return true
@@ -185,7 +183,7 @@ class QuestionEditView extends Backbone.View
         <div class='menu_box'>
           <div class='label_value'>
             <label for='display_code' title='This CoffeeScript code will be executed when this question is shown. This option may only be used when Focus Mode is on.'>Action on display</label>
-            <textarea id='display_code'>#{displayCode}</textarea>
+            <textarea id='display_code' rows='2'>#{displayCode}</textarea>
           </div>
         </div>
 
