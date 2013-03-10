@@ -46,7 +46,6 @@ class AssessmentRunView extends Backbone.View
     @subtestViews.push resultView
 
   render: ->
-    console.log "assessment rendering"
     currentView = @subtestViews[@orderMap[@index]]
     
     if @model.subtests.length == 0

@@ -143,7 +143,7 @@ class SurveyRunView extends Backbone.View
       if not _.isEmpty(skipLogicCode)
 
         try
-          CoffeeScript.eval.apply(@, [skipLogicCode])
+          result = CoffeeScript.eval.apply(@, [skipLogicCode])
         catch error
           name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
           message = error.message
