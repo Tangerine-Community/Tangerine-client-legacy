@@ -195,7 +195,7 @@ class AssessmentImportView extends Backbone.View
           <label for='d_key'>Download keys</label>
           
           <input id='d_key' value=''>
-          #{groupSelector}<br>
+          #{groupSelector || ''}<br>
           <button class='import command'>Import</button> #{groupImport || ""}<br>
           <small>Server connection: <span id='server_connection'>#{@serverStatus}</span></small>
         </div>
