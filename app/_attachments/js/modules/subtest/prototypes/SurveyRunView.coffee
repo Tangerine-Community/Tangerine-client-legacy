@@ -29,50 +29,106 @@ class SurveyRunView extends Backbone.View
     'click .prev_question' : 'prevQuestion'
 
   nextQuestion: ->
+
     currentQuestionView = @questionViews[@questionIndex]
-    if @isValid(currentQuestionView)
-      while true
-        plannedIndex = @questionIndex + 1 unless plannedIndex >= @questionViews.length
-        # exit loop if last view
-        if @questionIndex + 1 >= @questionViews.length
-          plannedIndex = @questionIndex
-          break
-        else
-          return @updateQuestionVisibility() if @questionIndex + 1 >= @questionViews.length
-          q$el = $(@questionViews[plannedIndex].el)
-          isAutostopped  = q$el.hasClass("disabled_autostop")
-          isLogicSkipped = q$el.hasClass("disabled_skipped")
-        # exit if 
-        break if not (isAutostopped or isLogicSkipped)
 
-      if @questionIndex != plannedIndex
-        @questionIndex = plannedIndex
-        @updateQuestionVisibility()
+    # show errors before doing anything if there are any
+    return @showErrors(currentQuestionView) unless @isValid(currentQuestionView)
 
-    else
-      return @showErrors(currentQuestionView)
-
-
-
-  prevQuestion: ->
-    while true
-      plannedIndex = @questionIndex - 1 unless plannedIndex <= 0
-      if @questionIndex - 1 < 0
-        plannedIndex = 0
-        break
-
-      q$el = @questionViews[plannedIndex].$el
+    # find the non-skipped questions
+    isAvailable = []
+    for question, i in @questionViews
+      q$el = $(@questionViews[i].el)
       isAutostopped  = q$el.hasClass("disabled_autostop")
       isLogicSkipped = q$el.hasClass("disabled_skipped")
-      break if not (isLogicSkipped or isAutostopped)
+      isAvailable.push i if not (isAutostopped or isLogicSkipped)
+    isAvailable  = _.filter isAvailable, (e) => e > @questionIndex
 
-    if @question != plannedIndex
+    # don't go anywhere unless we have somewhere to go
+    if isAvailable.length == 0
+      plannedIndex = @questionIndex
+    else
+      plannedIndex = Math.max.apply(plannedIndex, isAvailable)
+
+    if @questionIndex != plannedIndex
       @questionIndex = plannedIndex
       @updateQuestionVisibility()
+      @updateProgressButtons()
+
+  prevQuestion: ->
+
+    currentQuestionView = @questionViews[@questionIndex]
+
+    # show errors before doing anything if there are any
+    return @showErrors(currentQuestionView) unless @isValid(currentQuestionView)
+
+    # find the non-skipped questions
+    isAvailable = []
+    for question, i in @questionViews
+      q$el = $(@questionViews[i].el)
+      isAutostopped  = q$el.hasClass("disabled_autostop")
+      isLogicSkipped = q$el.hasClass("disabled_skipped")
+      isAvailable.push i if not (isAutostopped or isLogicSkipped)
+    isAvailable  = _.filter isAvailable, (e) => e < @questionIndex
+
+    # don't go anywhere unless we have somewhere to go
+    if isAvailable.length == 0
+      plannedIndex = @questionIndex
+    else
+      plannedIndex = Math.max.apply(plannedIndex, isAvailable)
+
+    if @questionIndex != plannedIndex
+      @questionIndex = plannedIndex
+      @updateQuestionVisibility()
+      @updateProgressButtons()
+
+  updateProgressButtons: ->
+
+    isAvailable = []
+    for question, i in @questionViews
+      q$el = $(@questionViews[i].el)
+      isAutostopped  = q$el.hasClass("disabled_autostop")
+      isLogicSkipped = q$el.hasClass("disabled_skipped")
+      isAvailable.push i if not (isAutostopped or isLogicSkipped)
+    isAvailable.push @questionIndex
+
+    $prev = @$el.find(".prev_question")
+    $next = @$el.find(".next_question")
+
+    minimum = Math.min.apply( minimum, isAvailable )
+    maximum = Math.max.apply( maximum, isAvailable )
+
+    if @questionIndex == minimum
+      $prev.hide()
+    else
+      $prev.show()
+
+    if @questionIndex == maximum
+      $next.hide()
+    else
+      $next.show()
+
+  updateQuestionVisibility: ->
+
+    if @questionIndex == @questionViews.length
+      @$el.find("#summary_container").html "
+        last page here
+      "
+      @$el.find("#next_question").hide()
+    else
+      @$el.find("#summary_container").empty()
+      @$el.find("#next_question").show()
+
+    $questions = @$el.find(".question")
+    $questions.hide()
+    $($questions[@questionIndex]).show()
+
+    @questionViews[@questionIndex].trigger "show"
 
   showQuestion: (index) ->
     @questionIndex = index if _.isNumber(index) && index < @questionViews.length && index > 0
     @updateQuestionVisibility()
+    @updateProgressButtons()
 
   initialize: (options) ->
     @model         = @options.model
@@ -241,22 +297,6 @@ class SurveyRunView extends Backbone.View
             first = false
         qv.setMessage message
 
-  updateQuestionVisibility: ->
-    if @questionIndex == @questionViews.length
-      @$el.find("#summary_container").html "
-        last page here
-      "
-      @$el.find("#next_question").hide()
-    else
-      @$el.find("#summary_container").empty()
-      @$el.find("#next_question").show()
-
-    $questions = @$el.find(".question")
-    $questions.hide()
-    $($questions[@questionIndex]).show()
-
-    @questionViews[@questionIndex].trigger "show"
-
   render: ->
     return unless @ready
     @$el.empty()
@@ -292,6 +332,8 @@ class SurveyRunView extends Backbone.View
           <button class='navigation prev_question'>Previous Question</button>
           <button class='navigation next_question'>Next Question</button>
         "
+        @updateProgressButtons()
+
 
     @updateSkipLogic()
     if @questions.length == notAskedCount then @parent.next?()
