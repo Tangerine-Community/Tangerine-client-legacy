@@ -112,6 +112,8 @@ class SurveyRunView extends Backbone.View
 
   updateQuestionVisibility: ->
 
+    return unless @model.get("focusMode")
+
     if @questionIndex == @questionViews.length
       @$el.find("#summary_container").html "
         last page here
@@ -123,7 +125,7 @@ class SurveyRunView extends Backbone.View
 
     $questions = @$el.find(".question")
     $questions.hide()
-    $($questions[@questionIndex]).show()
+    $questions.eq(@questionIndex).show()
 
     @questionViews[@questionIndex].trigger "show"
 

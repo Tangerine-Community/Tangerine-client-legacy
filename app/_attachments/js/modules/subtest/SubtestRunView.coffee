@@ -40,9 +40,9 @@ class SubtestRunView extends Backbone.View
   
     # Use prototype specific views here
     @prototypeView = new window[@protoViews[@model.get 'prototype']['run']]
-      model: @model
-      parent: @
-    @prototypeView.on "rendered",    => @trigger "rendered"
+      model  : @model
+      parent : @
+    @prototypeView.on "rendered",    => @flagRender("prototype")
     @prototypeView.on "subRendered", => @trigger "subRendered"
     @prototypeView.on "showNext",    => @showNext()
     @prototypeView.on "hideNext",    => @hideNext()
@@ -50,7 +50,14 @@ class SubtestRunView extends Backbone.View
     @prototypeView.setElement(@$el.find('#prototype_wrapper'))
     @prototypeView.render()
 
-    @trigger "rendered"
+    @flagRender "subtest"
+
+  flagRender: ( flag ) =>
+    @renderFlags = {} if not @renderFlags
+    @renderFlags[flag] = true
+
+    if @renderFlags['subtest'] && @renderFlags['prototype']
+      @trigger "rendered"
 
   afterRender: =>
     @prototypeView?.afterRender?()
@@ -60,6 +67,7 @@ class SubtestRunView extends Backbone.View
   hideNext: => @$el.find(".controlls").hide()
 
   onShow: ->
+    console.log "onShow"
     displayCode = @model.getString("displayCode")
 
     return if _.isEmpty(displayCode.replace(/\s*/,""))
