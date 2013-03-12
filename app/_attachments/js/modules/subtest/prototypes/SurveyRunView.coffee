@@ -44,11 +44,13 @@ class SurveyRunView extends Backbone.View
       isAvailable.push i if not (isAutostopped or isLogicSkipped)
     isAvailable  = _.filter isAvailable, (e) => e > @questionIndex
 
+
+
     # don't go anywhere unless we have somewhere to go
     if isAvailable.length == 0
       plannedIndex = @questionIndex
     else
-      plannedIndex = Math.max.apply(plannedIndex, isAvailable)
+      plannedIndex = Math.min.apply(plannedIndex, isAvailable)
 
     if @questionIndex != plannedIndex
       @questionIndex = plannedIndex
