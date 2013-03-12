@@ -147,7 +147,7 @@ class SurveyRunView extends Backbone.View
         catch error
           name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
           message = error.message
-          alert "Skip logic error\n\n#{name}\n\n#{message}"
+          alert "Skip logic error in question #{question.get('name')}\n\n#{name}\n\n#{message}"
 
         
         if result
