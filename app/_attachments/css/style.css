@@ -12,6 +12,14 @@
     src: url('./rabiat.ttf') format('truetype');
 }
 
+
+@font-face {
+    font-family: 'Gentium';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./gentium.ttf') format('truetype');
+}
+
 /*
  * Media queries for responsive design https://github.com/shichuan/mobile-html5-boilerplate/wiki/The-Style
  */
