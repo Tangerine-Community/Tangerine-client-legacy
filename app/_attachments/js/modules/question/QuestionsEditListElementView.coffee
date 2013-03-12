@@ -99,7 +99,7 @@ class QuestionsEditListElementView extends Backbone.View
             
             <img src='images/icon_edit.png' class='link_icon edit' title='#{@text.edit}'>
             <img src='images/icon_copy_to.png' class='link_icon show_copy' title='#{@text.copy}'>
-            <div class='copy_container'></div>
+            <span class='copy_container'></span>
             <img src='images/icon_delete.png' class='link_icon delete' title='#{@text.delete}'><br>
             <div class='confirmation delete_confirm'>
               <div class='menu_box'>#{@text.delete_confirm}<br><button class='delete_delete command_red'>Delete</button><button class='delete_cancel command'>#{@text.delete_button}</button>
