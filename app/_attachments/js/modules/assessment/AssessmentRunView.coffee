@@ -9,6 +9,8 @@ class AssessmentRunView extends Backbone.View
     @model = options.model
     @orderMap = []
 
+    Tangerine.tempData = {}
+
     @rendered = {
       "assessment" : false
       "subtest" : false

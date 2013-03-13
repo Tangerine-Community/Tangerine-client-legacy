@@ -67,7 +67,6 @@ class SubtestRunView extends Backbone.View
   hideNext: => @$el.find(".controlls").hide()
 
   onShow: ->
-    console.log "onShow"
     displayCode = @model.getString("displayCode")
 
     return if _.isEmpty(displayCode.replace(/\s*/,""))

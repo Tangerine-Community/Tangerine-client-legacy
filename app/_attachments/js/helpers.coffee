@@ -221,6 +221,27 @@ class Utils
     className = self.constructor.toString().match(/function\s*(\w+)/)[1]
     console.log "#{className}: #{error}"
 
+  # if args is one object save it to temporary hash
+  # if two strings, save key value pair
+  # if one string, use as key, return value
+  @data: (args...) ->
+    if args.length == 1
+      arg = args[0]
+      if _.isString(arg)
+        return Tangerine.tempData[arg]
+      else if _.isObject(arg)
+        Tangerine.tempData = $.extend(Tangerine.tempData, arg)
+      else if arg == null
+        Tangerine.tempData = {}
+    else if args.length == 2
+      key = args[0]
+      value = args[1]
+      Tangerine.tempData[key] = value
+      return Tangerine.tempData
+    else if args.length == 0
+      return Tangerine.tempData
+
+
   @working: (isWorking) ->
     if isWorking
       if not Tangerine.loadingTimer?
