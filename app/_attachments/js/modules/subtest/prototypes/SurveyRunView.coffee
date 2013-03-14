@@ -110,6 +110,14 @@ class SurveyRunView extends Backbone.View
     else
       $next.show()
 
+  updateExecuteReady: (ready) =>
+    @executeReady = ready
+    if @triggerShowList.length > 0
+      for index in @triggerShowList
+        @questionViews[index]?.trigger "show"
+      @triggerShowList = []
+
+
   updateQuestionVisibility: ->
 
     return unless @model.get("focusMode")
@@ -127,7 +135,13 @@ class SurveyRunView extends Backbone.View
     $questions.hide()
     $questions.eq(@questionIndex).show()
 
-    @questionViews[@questionIndex].trigger "show"
+    # trigger the question to run it's display code if the subtest's displaycode has already ran
+    # if not, add it to a list to run later.
+    if @executeReady 
+      @questionViews[@questionIndex].trigger "show"
+    else
+      @triggerShowList = [] if not @triggerShowList
+      @triggerShowList.push @questionIndex
 
   showQuestion: (index) ->
     @questionIndex = index if _.isNumber(index) && index < @questionViews.length && index > 0

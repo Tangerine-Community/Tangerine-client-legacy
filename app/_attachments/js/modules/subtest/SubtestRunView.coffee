@@ -77,6 +77,8 @@ class SubtestRunView extends Backbone.View
       name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
       message = error.message
       alert "#{name}\n\n#{message}"
+    finally
+      @prototypeView.updateExecuteReady?(true)
 
   getGridScore: ->
     link = @model.get("gridLinkId") || ""

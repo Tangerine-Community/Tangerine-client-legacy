@@ -11,7 +11,7 @@ class QuestionRunView extends Backbone.View
     @trigger "scroll", event, @model.get("order")
 
   initialize: (options) ->
-    @on "show", @onShow
+    @on "show", => @onShow()
     @model = options.model
     @parent = options.parent
     @fontStyle = "style=\"font-family: #{@parent.model.get('fontFamily')} !important;\"" if @parent.model.get("fontFamily") != "" 
@@ -39,7 +39,7 @@ class QuestionRunView extends Backbone.View
   previousAnswer: =>
     @parent.questionViews[@parent.questionIndex-1].answer if @parent.questionIndex >= 0
 
-  onShow: ->
+  onShow: =>
 
     showCode = @model.getString("displayCode")
 
