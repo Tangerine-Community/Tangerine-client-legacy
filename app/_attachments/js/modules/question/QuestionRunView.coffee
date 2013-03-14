@@ -46,7 +46,7 @@ class QuestionRunView extends Backbone.View
     return if _.isEmpty(showCode.replace(/\s*/,""))
 
     try
-      @isValid = CoffeeScript.eval.apply(@, [showCode])
+      CoffeeScript.eval.apply(@, [showCode])
     catch error
       name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
       message = error.message
