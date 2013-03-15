@@ -39,11 +39,19 @@
     },
     "datetime": {
       "prototype" : "datetime"
+    },
+    "gps": {
+      "prototype" : "gps"
     }
   },
+
   "subtestTemplates" : {
+    "gps":
+    {
+      "GPS Coordinates": {}
+    },
     "consent" : {
-      "Consent Page": {}
+      "Consent Screen": {}
     },
     "id" : {
       "Student ID": {}

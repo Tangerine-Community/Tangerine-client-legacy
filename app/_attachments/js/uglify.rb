@@ -52,6 +52,9 @@ jsFiles = [
   'modules/subtest/prototypes/ObservationRunView.js',
   'modules/subtest/prototypes/ObservationEditView.js',
 
+  'modules/subtest/prototypes/GPSRunView.js',
+  'modules/subtest/prototypes/GPSEditView.js',
+
   'modules/result/Result.js',
   'modules/result/Results.js',
   'modules/result/ResultView.js',

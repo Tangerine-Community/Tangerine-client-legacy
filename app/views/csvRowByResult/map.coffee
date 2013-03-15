@@ -121,15 +121,21 @@
             else # single type question or open
               row.push pair("#{surveyVariable}_#{i+1}", exportValue(surveyValue))
 
+      else if prototype == "gps"
+        row.push pair("latitude", subtest.data.lat)
+        row.push pair("longitude", subtest.data.long)
+        row.push pair("accuracy", subtest.data.acc)
+        row.push pair("altitude", subtest.data.alt)
+        row.push pair("altitudeAccuracy", subtest.data.altAcc)
+        row.push pair("heading", subtest.data.heading)
+        row.push pair("speed", subtest.data.speed)
+        row.push pair("timestamp", subtest.data.timestamp)
+
       else if prototype == "complete"
         row.push pair("additional_comments", subtest.data.comment)
         row.push pair("end_time"           , subtest.data.end_time)
-        if subtest.data.gps?
-          row.push pair("gps_latitude",  subtest.data.gps.latitude)
-          row.push pair("gps_longitude", subtest.data.gps.longitude)
-          row.push pair("gps_accuracy",  subtest.data.gps.accuracy)
 
-      row.push pair("time_stamp_#{subtestIndex+1}", subtest.timestamp)
+      row.push pair("time_stamp_#{rawIndex+1}", subtest.timestamp)
 
       bySubtest.push row
 

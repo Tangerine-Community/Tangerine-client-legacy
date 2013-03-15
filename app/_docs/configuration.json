@@ -37,7 +37,9 @@
 		"location":    {"run" : "LocationRunView",    "edit" : "LocationEditView" },
 		"survey":      {"run" : "SurveyRunView",      "edit" : "SurveyEditView" },
 		"grid":        {"run" : "GridRunView",        "edit" : "GridEditView" },
-		"id":          {"run" : "IdRunView",          "edit" : "IdEditView" }
+		"id":          {"run" : "IdRunView",          "edit" : "IdEditView" },
+		"gps":         {"run" : "GPSRunView",         "edit" : "GPSEditView" }
+
 	},
 
 	"reports" : 
@@ -76,7 +78,7 @@
 	{
 		"settings" : 
 		{
-			"context" : "class",
+			"context" : "mobile",
 			"language"         : "en",
 			"groupName"        : "",
 			"groupHost"        : "http://tangerine.iriscouch.com",

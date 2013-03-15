@@ -16,7 +16,6 @@ class ResultView extends Backbone.View
       data :
         "comment" : @$el.find('#additional_comments').val() || ""
         "end_time" : (new Date()).getTime()
-        "gps" : @gpsData
       subtestId : "result"
       sum :
         correct : 1
@@ -40,21 +39,6 @@ class ResultView extends Backbone.View
 
   initialize: ( options ) ->
 
-    # Try to get GPS coordinates
-    @gpsData = {}
-    try
-      navigator.geolocation.getCurrentPosition(
-          (geo) => 
-            @gpsData = geo.coords
-        , 
-          => @gpsData[error] = arguments
-        , 
-          "enableHighAccuracy" : true
-      )
-    catch error
-      @gpsData =
-        "error" : error
-  
     @model = options.model
     @assessment = options.assessment
     @saved = false
@@ -83,8 +67,6 @@ class ResultView extends Backbone.View
 
     @resultSumView.setElement(@$el.find("#result_sum"))
     @resultSumView.render()
-
-
 
     @trigger "rendered"
     

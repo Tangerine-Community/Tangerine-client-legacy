@@ -40,6 +40,25 @@
       "delete_confirm" : "Delete?"
       "loading" : "Loading..."
       "select" : "Select a subtest"
+  "GPSRunView" :
+    "button" :
+      "clear" : "Clear"
+    "label" :
+      "good" : "Good"
+      "ok" : "Ok"
+      "poor" : "Poor"
+      "meters" : "meters"
+      "latitude" : "Latitude"
+      "longitude" : "Longitude"
+      "accuracy" : "Accuracy"
+      "gps_status" : "GPS Status"
+      "best_reading" : "Best reading"
+      "current_reading" : "Current reading"
+    "message" :
+      "gps_ok" : "GPS signal ok"
+      "attempt" : "Attempt #__count__"
+      "retrying" : "Retrying..."
+      "searching" : "Searching..."
 
   "abort all observations" : "Abort ALL observations"
   "add" : "add"
