@@ -21,6 +21,10 @@ class SubtestPrintView extends Backbone.View
 
       @$el.html "
         <h2>#{@model.get 'name'}</h2>
+        #{
+          displayCode = @model.get 'displayCode'
+          if displayCode? then "Action on Display:<br/>#{@displayCode}<br/>"
+        }
         Enumerator Help:<br/>
         #{enumeratorHelp}
         Student Dialog:<br/>
