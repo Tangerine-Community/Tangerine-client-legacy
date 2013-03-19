@@ -99,7 +99,7 @@ class QuestionPrintView extends Backbone.View
         @$el.html "
           <table class='print-content question-attributes'>
             #{
-              _("prompt, name, hint, type, skipLogic, skippable, customValidationCode, customValidationMessage, displayCode".split(/, */)).map( (attribute) =>
+              _("prompt, name, hint, type, skipLogic, skippable, customValidationCode, customValidationMessage".split(/, */)).map( (attribute) =>
                 "
                   <tr>
                     <td class='question-attribute'>#{attribute.underscore().titleize()}</td>
@@ -108,6 +108,10 @@ class QuestionPrintView extends Backbone.View
                 "
               ).join("")
             }
+            <tr>
+              <td class='question-attribute'>Action on Display</td>
+              <td><pre style='font-size:80%'>#{@model.get("displayCode") || ""}</pre></td>
+            </tr>
             <tr>
               <td>Options</td>
               <td>

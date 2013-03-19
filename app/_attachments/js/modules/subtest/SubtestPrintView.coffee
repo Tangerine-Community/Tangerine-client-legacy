@@ -23,7 +23,10 @@ class SubtestPrintView extends Backbone.View
         <h2>#{@model.get 'name'}</h2>
         #{
           displayCode = @model.get 'displayCode'
-          if displayCode? then "Action on Display:<br/>#{@displayCode}<br/>"
+          if displayCode? and displayCode isnt ""
+            "Subtest Action on Display:<pre style='font-size:80%'>#{displayCode}</pre>"
+          else
+            ""
         }
         Enumerator Help:<br/>
         #{enumeratorHelp}
