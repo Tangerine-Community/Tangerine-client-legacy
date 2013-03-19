@@ -43,7 +43,7 @@ class QuestionRunView extends Backbone.View
 
     showCode = @model.getString("displayCode")
 
-    return if _.isEmpty(showCode.replace(/\s*/,""))
+    return if _.isEmptyString(showCode)
 
     try
       CoffeeScript.eval.apply(@, [showCode])
@@ -88,18 +88,18 @@ class QuestionRunView extends Backbone.View
     if isSkippable or ( isLogicSkipped or isAutostopped )
       # YES, ok, I guess we're valid
       @isValid = true
-      @skipped = if _.isEmpty(@answer) then true else false
+      @skipped = if _.isEmptyString(@answer) then true else false
     else
       # NO, some kind of validation must occur now
       customValidationCode = @model.get("customValidationCode")
 
-      if not _.isEmpty(customValidationCode)
+      if not _.isEmptyString(customValidationCode)
         try
           @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
         catch e
           alert "Custom Validation error\n\n#{e}"
       else
-        @isValid = if _.isEmpty(@answer) then false else true
+        @isValid = if _.isEmptyString(@answer) then false else true # don't use isEmpty here
 
   setOptions: (options) =>
     @options = options
@@ -113,6 +113,7 @@ class QuestionRunView extends Backbone.View
       @answer = $.extend(@answer, answer)
     else
       @answer = answer
+    @updateValidity()
     @render()
 
   setMessage: (message) =>
