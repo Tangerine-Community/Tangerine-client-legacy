@@ -33,12 +33,17 @@ class Result extends Backbone.Model
   beforeSave: ->
     # do nothing
 
-  add: ( subtestDataElement ) ->
+  add: ( subtestDataElement, callback = {}) ->
+    callback.success = $.noop if not callback.success?
+    callback.error = $.noop if not callback.error?
     subtestDataElement['timestamp'] = (new Date()).getTime()
     subtestData = @get 'subtestData'
     subtestData.push subtestDataElement
     @save
       'subtestData' : subtestData
+    , 
+      success: callback.success
+      error: callback.error
 
   getVariable: ( key ) ->
     for subtest in @get("subtestData")

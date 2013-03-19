@@ -74,7 +74,7 @@ class SurveyEditView extends Backbone.View
 
     # check for "errors"
     for question, i in @questionsEditView.questions.models
-      if question.get("type") != "open" && question.get("options")?.length == 0
+      if question.get("type") != "open" && question.get("options")?.length == 0 && !~question.getString('displayCode').indexOf('setOptions')
         emptyOptions.push i + 1
       
         if options.questionSave
