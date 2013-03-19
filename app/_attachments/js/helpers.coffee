@@ -155,6 +155,17 @@ Math.decimals = (num, decimals) -> m = Math.pow( 10, decimals ); num *= m; num =
 Math.commas   = (num) -> parseInt(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 Math.limit    = (min, num, max) -> Math.max(min, Math.min(num, max))
 
+# method name slightly misleading
+# returns true for falsy values
+#   null, undefined, and '\s*'
+# other false values like
+#   false, 0
+# return false
+_.isEmptyString = ( aString ) ->
+  return true if aString is null or aString is undefined
+  return false if not _.isString(aString)
+  return true if aString.replace(/\s*/, '') == ''
+  return false
 
 class Utils
 
@@ -165,7 +176,6 @@ class Utils
       Utils.askToLogout() unless Tangerine.settings.get("context") == "server"
       document.location.reload()
     , 2000)
-
 
   @updateTangerine: (callbacks) ->
 
