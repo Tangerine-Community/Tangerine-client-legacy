@@ -37,10 +37,11 @@ class GPSRunView extends Backbone.View
       "searching" : t('GPSRunView.message.searching')
 
   poll: =>
+
     navigator.geolocation.getCurrentPosition(
         (position) =>
-          @updateDisplay @easify position
-          @updatePosition @easify position
+          @updateDisplay position
+          @updatePosition position
           @updateStatus @text.gpsOk
           @retryCount = 0
           setTimeout(@poll(), 5 * 1000) unless @stopPolling # not recursion, no stackoverflow
@@ -57,23 +58,25 @@ class GPSRunView extends Backbone.View
 
   easify: ( position ) ->
     return {
-      lat       : position.coords.latitude
-      long      : position.coords.longitude
-      alt       : position.coords.altitude
-      acc       : position.coords.accuracy
-      altAcc    : position.coords.altitudeAccuracy
-      heading   : position.coords.heading
-      speed     : position.coords.speed
-      timestamp : position.timestamp
+      lat       : if position?.coords?.latitude? then position.coords.latitude else "..."
+      long      : if position?.coords?.longitude? then position.coords.longitude else "..."
+      alt       : if position?.coords?.altitude? then position.coords.altitude else "..."
+      acc       : if position?.coords?.accuracy? then position.coords.accuracy else "..."
+      altAcc    : if position?.coords?.altitudeAccuracy? then position.coords.altitudeAccuracy else "..."
+      heading   : if position?.coords?.heading? then position.coords.heading else "..."
+      speed     : if position?.coords?.speed? then position.coords.speed else "..."
+      timestamp : if position?.timestamp? then position.timestamp else "..."
     }
 
-  updatePosition: ( newPostition ) ->
-    @position = newPostition unless @position?
+  updatePosition: ( newPosition ) ->
+    newPosition = @easify(newPosition)
+    @position = newPosition unless @position?
     # prefer most accurate result
-    if (newPostition?.acc? && @position?.acc?) && newPostition.acc <= @position.acc
-      @position = newPostition
+    if (newPosition?.acc? && @position?.acc?) && newPosition.acc <= @position.acc
+      @position = newPosition
 
   updateDisplay: (position) ->
+    position = @easify position
     positions = [
       el   : @$el.find(".gps_current")
       data : position
@@ -88,8 +91,9 @@ class GPSRunView extends Backbone.View
       el   = pos.el
 
       lat  = if data?.lat  then parseFloat(data.lat).toFixed(4)   else "..."
-      long = if data?.long then parseFloat(data?.long).toFixed(4) else "..."
-      acc  = if data?.acc  then parseInt(data?.acc) + " #{@text.meters}"   else "..."
+      long = if data?.long then parseFloat(data.long).toFixed(4) else "..."
+      acc  = if data?.acc  then parseInt(data.acc) + " #{@text.meters}" 
+      else "..."
 
       acc = acc +
         if parseInt(data?.acc) < 50
@@ -116,21 +120,33 @@ class GPSRunView extends Backbone.View
 
   render: ->
 
-    @$el.html "
-      <section>
-        <h3>#{@text.bestReading}</h3>
-        <div class='gps_best'></div><button class='clear command'>#{@text.clear}</button>
-        <h3>#{@text.currentReading}</h3>
-        <div class='gps_current'></div>
-      </section>
-      <section>
-        <h2>#{@text.gpsStatus}</h2>
-        <div class='status'>#{@text.searching}</div>
-      </section>
+    if not Modernizr.geolocation
+      
+      @$el.html "
+        Your system does not support geolocations.
       "
-    @trigger "rendered"
-    @trigger "ready"
-    @poll()
+
+      @position = @easify(null)
+
+      @trigger "rendered"
+      @trigger "ready"
+
+    else
+      @$el.html "
+        <section>
+          <h3>#{@text.bestReading}</h3>
+          <div class='gps_best'></div><button class='clear command'>#{@text.clear}</button>
+          <h3>#{@text.currentReading}</h3>
+          <div class='gps_current'></div>
+        </section>
+        <section>
+          <h2>#{@text.gpsStatus}</h2>
+          <div class='status'>#{@text.searching}</div>
+        </section>
+        "
+      @trigger "rendered"
+      @trigger "ready"
+      @poll()
   
   getResult: ->
     return @position
@@ -142,7 +158,7 @@ class GPSRunView extends Backbone.View
     return {}
 
   onClose: ->
-    navigator.geolocation.clearWatch @watchId
+    @stopPolling = true
 
   isValid: ->
     true
