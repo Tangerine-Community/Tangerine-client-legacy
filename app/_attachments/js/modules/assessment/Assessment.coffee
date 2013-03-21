@@ -107,60 +107,61 @@ class Assessment extends Backbone.Model
     @docs = {} unless docs?
 
     for doc in docList
-      Tangerine.$db.openDoc doc,
-        open_revs : "all"
-        conflicts : true
-        success: (doc) =>
-          if doc.length == 1
-            doc = doc[0].ok # couch is weird
-            if doc.deletedAt == "mobile"
-              $.ajax
-                type: "PUT"
-                dataType: "json"
-                url: "http://localhost:5984/"+Tangerine.settings.urlDB("local") + "/" +doc._id
-                data: JSON.stringify( 
-                  "_rev"      : doc._rev
-                  "deletedAt" : doc.deletedAt
-                  "_deleted"  : false
-                )
-                error: =>
-                  #console.log "save new doc error"
-                complete: =>
-                  @docs.checked = 0 unless @docs.checked?
-                  @docs.checked++
-                  if @docs.checked == docList.length
-                    @docs.checked = 0
-                    if not _.isEmpty @lastDKey
-                      @updateFromServer @lastDKey
-                      @lastDKey = ""
-          else
-            docs = doc
-            for doc in docs
-              doc = doc.ok
-              do (doc, docs) =>
-                if doc.deletedAt == "mobile"
-                  $.ajax
-                    type: "PUT"
-                    dataType: "json"
-                    url: "http://localhost:5984/"+Tangerine.settings.urlDB("local") + "/" +doc._id
-                    data: JSON.stringify( 
-                      "_rev"      : doc._rev
-                      "_deleted"  : true
-                    )
-                    error: =>
-                      #console.log "Could not delete conflicting version"
-                    complete: =>
-                      @docs.checked = 0 unless @docs.checked?
-                      @docs.checked++
-                      if @docs.checked == docList.length
-                        @docs.checked = 0
-                        if not _.isEmpty @lastDKey
-                          @updateFromServer @lastDKey
-                          @lastDKey = ""
+      do (doc) =>
+        Tangerine.$db.openDoc doc,
+          open_revs : "all"
+          conflicts : true
+          error: ->
+            console.log "error with #{doc}"
+          success: (doc) =>
+            if doc.length == 1
+              doc = doc[0].ok # couch is weird
+              if doc.deletedAt == "mobile"
+                $.ajax
+                  type: "PUT"
+                  dataType: "json"
+                  url: "http://localhost:5984/"+Tangerine.settings.urlDB("local") + "/" +doc._id
+                  data: JSON.stringify( 
+                    "_rev"      : doc._rev
+                    "deletedAt" : doc.deletedAt
+                    "_deleted"  : false
+                  )
+                  error: =>
+                    #console.log "save new doc error"
+                  complete: =>
+                    @docs.checked = 0 unless @docs.checked?
+                    @docs.checked++
+                    if @docs.checked == docList.length
+                      @docs.checked = 0
+                      if not _.isEmpty @lastDKey
+                        @updateFromServer @lastDKey
+                        @lastDKey = ""
+            else
+              docs = doc
+              for doc in docs
+                doc = doc.ok
+                do (doc, docs) =>
+                  if doc.deletedAt == "mobile"
+                    $.ajax
+                      type: "PUT"
+                      dataType: "json"
+                      url: "http://localhost:5984/"+Tangerine.settings.urlDB("local") + "/" +doc._id
+                      data: JSON.stringify( 
+                        "_rev"      : doc._rev
+                        "_deleted"  : true
+                      )
+                      error: =>
+                        #console.log "Could not delete conflicting version"
+                      complete: =>
+                        @docs.checked = 0 unless @docs.checked?
+                        @docs.checked++
+                        if @docs.checked == docList.length
+                          @docs.checked = 0
+                          if not _.isEmpty @lastDKey
+                            @updateFromServer @lastDKey
+                            @lastDKey = ""
 
 
-        error: ->
-          console.log "error with #{doc}"
 
 
 
