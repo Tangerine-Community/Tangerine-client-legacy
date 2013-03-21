@@ -16,3 +16,33 @@ Some commands used to setup tangerine/tree/robbert on Ubuntu (digital ocean serv
     sudo touch tree.log
     sudo chmod 777 tree.log 
  
+
+
+Stuff appended to /etc/apache2/apache2.conf 
+
+    LoadModule passenger_module /var/lib/gems/1.9.1/gems/passenger-3.0.19/ext/apache2/mod_passenger.so
+    PassengerRoot /var/lib/gems/1.9.1/gems/passenger-3.0.19
+    PassengerRuby /usr/bin/ruby1.9.1
+
+
+    <VirtualHost *:80>
+        ServerName tree.tangerinecentral.org
+        DocumentRoot /var/www/tree/public
+        <Directory /var/www/tree/public>
+            Allow from all
+            Options -MultiViews
+        </Directory>
+    </VirtualHost>
+
+    <VirtualHost *:80>
+        ServerName robbert.tangerinecentral.org
+        DocumentRoot /var/www/robbert
+        <Directory /var/www/robbert>
+            Allow from all
+        </Directory>
+    </VirtualHost>
+
+    <VirtualHost *:80>
+        ServerName databases.tangerinecentral.org
+        Redirect 301 / http://databases.tangerinecentral.org:5984/_utils
+    </VirtualHost>
