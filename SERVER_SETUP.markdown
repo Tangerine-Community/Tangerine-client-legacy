@@ -7,7 +7,9 @@ Setup apache with passenger:
     sudo vim /etc/bash.bashrc 
     sudo passenger-install-apache2-module
     sudo vim /etc/apache2/apache2.conf 
-
+    sudo a2enmod proxy
+    sudo a2enmod proxy_http
+    
 Stuff appended to /etc/apache2/apache2.conf 
 
     LoadModule passenger_module /var/lib/gems/1.9.1/gems/passenger-3.0.19/ext/apache2/mod_passenger.so
@@ -33,8 +35,18 @@ Stuff appended to /etc/apache2/apache2.conf
 
     <VirtualHost *:80>
         ServerName databases.tangerinecentral.org
-        Redirect 301 / http://databases.tangerinecentral.org:5984/_utils
+        ServerAdmin webmaster@dummy-host.example.com
+        DocumentRoot "/var/www/databases"
+        AllowEncodedSlashes On
+        ProxyRequests Off
+        KeepAlive Off
+        <Proxy *>
+            Allow from all
+        </Proxy>
+        ProxyPass / http://localhost:5984/ nocanon
+        ProxyPassReverse / http://localhost:5984/
     </VirtualHost>
+
 
 Setup tree:
 
