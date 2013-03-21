@@ -1,10 +1,12 @@
 # these could easily be refactored into one.
 
 ResultOfQuestion = (name) ->
+  returnView = {}
   for candidateView in vm.currentView.subtestViews[vm.currentView.index].prototypeView.questionViews
     if candidateView.model.get("name") == name
       returnView = candidateView
-  returnView.answer
+  return returnView.answer if returnView.answer
+  return null
 
 ResultOfMultiple = (name) ->
   result = []
