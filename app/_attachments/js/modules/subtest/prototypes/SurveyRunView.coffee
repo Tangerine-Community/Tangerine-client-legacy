@@ -1,10 +1,11 @@
 # these could easily be refactored into one.
 
 ResultOfQuestion = (name) ->
-  returnView = {}
+  returnView = null
   for candidateView in vm.currentView.subtestViews[vm.currentView.index].prototypeView.questionViews
     if candidateView.model.get("name") == name
       returnView = candidateView
+  throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
   return returnView.answer if returnView.answer
   return null
 
