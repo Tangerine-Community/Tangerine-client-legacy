@@ -1,6 +1,7 @@
 Some commands used to setup tangerine/tree/robbert on Ubuntu (digital ocean server)
 
 Setup apache with passenger:
+
     sudo apt-get install ruby-dev git apache2 couchdb curl wget android-tools-adb ant help2man make gcc zlib1g-dev libssl-dev rake help2man rubygems libcurl4-openssl-dev ruby1.8-dev  apache2-prefork-dev libapr1-dev   libaprutil1-dev ruby1.9.1-dev
     sudo gem install passenger sinatra sinatra-cross_origin rest-client
     sudo vim /etc/bash.bashrc 
@@ -36,6 +37,7 @@ Stuff appended to /etc/apache2/apache2.conf
     </VirtualHost>
 
 Setup tree:
+
     cd /var/www
     sudo git clone https://github.com/Tangerine-Community/tree.git
     cd tree/
@@ -44,11 +46,13 @@ Setup tree:
     sudo touch tree.log
     sudo chmod 777 tree.log 
     cd /var/www
-    
+
 Setup robbert:
+
     sudo git clone git://github.com/Tangerine-Community/robbert.git
     sudo cp Config.sample.php Config.php
     sudo vim Config.php
 
-Restart apache
+Restart apache:
+
     sudo /etc/init.d/apache2 restart
