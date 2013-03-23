@@ -10,9 +10,13 @@ class AccountView extends Backbone.View
     'click .back'        : 'goBack'
     'click #mode_buttons input' : 'changeMode'
     'click .update' : 'update'
+    'click .restart' : 'restart'
 
   update: ->
     Utils.updateTangerine()
+
+  restart: ->
+    Utils.restartTangerine()
 
   changeMode: (event) ->
     settings = new Settings "_id" : "TangerineSettings"
@@ -84,12 +88,19 @@ class AccountView extends Backbone.View
       <button class='command update'>Update Tangerine</button>
     " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") != "server"
 
+    restartButton = "
+      <button class='command restart'>Restart Tangerine</button>
+    " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") != "server"
+
     html = "
       <button class='back navigation'>Back</button>
       <h1>Account</h1>
       #{settingsButton || ""}
       #{logsButton || ""}<br>
-      #{updateButton || ""}
+      #{updateButton || ""}<br>
+      #{restartButton || ""}
+
+
       <section>
         <div class='label_value'>
           <label>Name</label>
