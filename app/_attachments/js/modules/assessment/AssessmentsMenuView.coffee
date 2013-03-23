@@ -19,11 +19,12 @@ class AssessmentsMenuView extends Backbone.View
   universalUpload: ->
     $.ajax 
       url: Tangerine.settings.urlView("local", "byCollection")
-      type: "GET"
+      type: "POST"
       dataType: "json"
       contentType: "application/json"
-      data: 
-        keys : JSON.stringify(["result"])
+      data: JSON.stringify(
+        keys : ["result"]
+      )
       success: (data) ->
         rows = data.rows
         docList = []
@@ -33,10 +34,10 @@ class AssessmentsMenuView extends Backbone.View
         $.couch.replicate(
           Tangerine.settings.urlDB("local"),
           Tangerine.settings.urlDB("group"),
-            success:      =>
+            success: =>
               Utils.midAlert "Results synced to cloud successfully"
-            error: (a, b) =>
-              Utils.midAlert "Upload error<br>#{a} #{b}"
+            error: (code, message) =>
+              Utils.midAlert "Upload error<br>#{code} #{message}"
           ,
             doc_ids: docList
         )

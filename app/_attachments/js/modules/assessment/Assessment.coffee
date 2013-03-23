@@ -12,12 +12,13 @@ class Assessment extends Backbone.Model
 
   getResultCount: =>
     $.ajax Tangerine.settings.urlView("local", "resultCount")
-      type: "GET"
+      type: "POST"
       dataType: "json"
-      data: 
+      data: JSON.stringify(
         group       : true
         group_level : 1
-        key         : JSON.stringify(@id)
+        key         : @id
+      )
       success: (data) =>
         @resultCount = if data.rows.length != 0 then data.rows[0].value else 0
         @trigger "resultCount"

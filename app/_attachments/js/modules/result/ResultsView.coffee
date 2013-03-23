@@ -193,7 +193,8 @@ class ResultsView extends Backbone.View
         #{if Tangerine.settings.get("context") == "mobile" then tabletButton else ""}
         #{csvButton}
         <button class='command csv_beta'>CSV (beta)</button>
-      </div>"
+      </div>
+    "
 
     if Tangerine.settings.get("context") == "mobile"
       html += "
@@ -251,14 +252,15 @@ class ResultsView extends Backbone.View
 
     $.ajax 
       url: Tangerine.settings.urlView(location, "resultSummaryByAssessmentId")
-      type: "GET"
+      type: "POST"
       dataType: "json"
       contentType: "application/json"
-      data: 
-        keys        : JSON.stringify([@assessment.id])
+      data: JSON.stringify(
+        keys        : [@assessment.id]
         descending  : true
         limit       : @resultLimit
         skip        : @resultOffset
+      )
       success: ( data ) =>
 
         rows  = data.rows
