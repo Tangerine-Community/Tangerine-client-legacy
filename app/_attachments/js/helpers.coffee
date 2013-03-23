@@ -30,7 +30,7 @@ Backbone.Model.prototype.toHash = ->
   significantAttributes = {}
   for key, value of @attributes
     significantAttributes[key] = value if !~['_rev', '_id','hash','updated'].indexOf(key)
-  b64_sha1(JSON.stringify(significantAttributes))
+  return b64_sha1(JSON.stringify(significantAttributes))
 
 # by default all models will save a timestamp and hash of significant attributes
 Backbone.Model.prototype.beforeSave = ->
@@ -169,13 +169,19 @@ _.isEmptyString = ( aString ) ->
 
 class Utils
 
-  @onUpdateSuccess: ->
-    Utils.midAlert "Update successful<br>Restarting Tangerine"
+  @restartTangerine: (message, callback) ->
+    message = message + "<br>" if message?
+    Utils.midAlert "#{message || ''}Restarting Tangerine"
     _.delay( ->
+      document.location.reload()
+      callback?()
+    , 2000 )
+
+  @onUpdateSuccess: ->
+    Utils.restartTangerine "Update successful", ->
       Tangerine.router.navigate "", false
       Utils.askToLogout() unless Tangerine.settings.get("context") == "server"
-      document.location.reload()
-    , 2000)
+
 
   @updateTangerine: (callbacks) ->
 
@@ -202,13 +208,10 @@ class Utils
         Utils.midAlert "Update failed compacting database<br>#{error}"
       success: ->
         $.getJSON "/#{Tangerine.db_name}/_all_docs?startkey=%22_design%22&endkey=%22_design0%22", (response) ->
-          console.log response
           oldDoc = _id : "_design/#{dDoc}"
           for row in response.rows
             if row.id == "_design/#{dDoc}"
               oldDoc._rev = row.value.rev
-          console.log "oldDoc: "
-          console.log oldDoc
           # replicate from update database
           $.couch.replicate Tangerine.settings.urlDB("update"), targetDB,
             error: (error) ->
