@@ -54,7 +54,7 @@
       "select": "Select a subtest"
     }
   },
-  "GPSRunView": {
+  "GpsRunView": {
     "button": {
       "clear": "Clear"
     },

@@ -49,6 +49,8 @@ class SubtestPrintView extends Backbone.View
       "
   
     # Use prototype specific views here
+    console.log @model.get('prototype').humanize() + 'PrintView'
+
     @prototypeView = new window[@model.get('prototype').humanize() + 'PrintView']
       model: @model
       parent: @

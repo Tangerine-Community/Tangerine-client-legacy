@@ -1,6 +1,6 @@
-class GPSPrintView extends Backbone.View
+class GpsPrintView extends Backbone.View
 
-  className: "gps"
+  className: "Gps"
 
   initialize: (options) ->
     @model  = @options.model
@@ -10,6 +10,6 @@ class GPSPrintView extends Backbone.View
     return if @format is "stimuli" or @format is "backup"
 
     if @format is "content"
-      @$el.html "Capture GPS location"
+      @$el.html "Capture Gps location"
 
     @trigger "rendered"

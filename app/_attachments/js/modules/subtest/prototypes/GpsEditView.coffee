@@ -1,6 +1,6 @@
-class GPSEditView extends Backbone.View
+class GpsEditView extends Backbone.View
 
-  className : "GPSEditView"
+  className : "GpsEditView"
 
   initialize: ( options ) ->
     @model = options.model

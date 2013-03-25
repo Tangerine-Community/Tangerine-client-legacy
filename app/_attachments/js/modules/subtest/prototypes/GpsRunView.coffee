@@ -1,10 +1,10 @@
-class GPSRunView extends Backbone.View
+class GpsRunView extends Backbone.View
 
-  className: "GPSRunView"
+  className: "GpsRunView"
 
   events: 'click .clear' : 'clear'
 
-  clear: -> 
+  clear: ->
     @position = null
     @updateDisplay()
 
@@ -18,23 +18,23 @@ class GPSRunView extends Backbone.View
 
   i18n: ->
     @text =
-      "clear" : t('GPSRunView.button.clear')
+      "clear" : t('GpsRunView.button.clear')
 
-      "good"           : t('GPSRunView.label.good')
-      "ok"             : t('GPSRunView.label.ok')
-      "poor"           : t('GPSRunView.label.poor')
-      "latitude"       : t('GPSRunView.label.latitude')
-      "longitude"      : t('GPSRunView.label.longitude')
-      "accuracy"       : t('GPSRunView.label.accuracy')
-      "meters"         : t('GPSRunView.label.meters')
+      "good"           : t('GpsRunView.label.good')
+      "ok"             : t('GpsRunView.label.ok')
+      "poor"           : t('GpsRunView.label.poor')
+      "latitude"       : t('GpsRunView.label.latitude')
+      "longitude"      : t('GpsRunView.label.longitude')
+      "accuracy"       : t('GpsRunView.label.accuracy')
+      "meters"         : t('GpsRunView.label.meters')
 
-      "currentReading" : t('GPSRunView.label.current_reading')
-      "bestReading"    : t('GPSRunView.label.best_reading')
-      "gpsStatus"      : t('GPSRunView.label.gps_status')
+      "currentReading" : t('GpsRunView.label.current_reading')
+      "bestReading"    : t('GpsRunView.label.best_reading')
+      "gpsStatus"      : t('GpsRunView.label.gps_status')
 
-      "gpsOk"     : t('GPSRunView.message.gps_ok')
-      "retrying"  : t('GPSRunView.message.retrying')
-      "searching" : t('GPSRunView.message.searching')
+      "gpsOk"     : t('GpsRunView.message.gps_ok')
+      "retrying"  : t('GpsRunView.message.retrying')
+      "searching" : t('GpsRunView.message.searching')
 
   poll: =>
 
@@ -114,7 +114,7 @@ class GPSRunView extends Backbone.View
       el.html html
 
   updateStatus: (message = '') ->
-    retries = if @retryCount > 0 then t('GPSRunView.message.attempt', count: @retryCount+1) else ""
+    retries = if @retryCount > 0 then t('GpsRunView.message.attempt', count: @retryCount+1) else ""
     polling = if not @stopPolling then "<br>#{@text.retrying} #{retries}" else ""
     @$el.find(".status").html message + polling
 

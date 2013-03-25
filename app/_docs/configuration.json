@@ -8,14 +8,14 @@
 	},
 	"update" :
 	{
-		"host"   : "tangerine.iriscouch.com",
+		"host"   : "databases.tangerinecentral.org",
 		"dbName" : "update",
 		"login"  : "",
 		"target" : "http://localadmin:localpassword@localhost:5984/tangerine"
 	},
 	"trunk" :
 	{
-		"host"   : "tangerine.iriscouch.com",
+		"host"   : "databases.tangerinecentral.org",
 		"dbName" : "tangerine"
 	},
 
@@ -24,8 +24,8 @@
 		"base"   : "192.168.1."
 	},
 
-	"robbert" : "http://backup.tangerinecentral.org:82/",
-	"tree"    : "http://backup.tangerinecentral.org:81/",
+	"robbert" : "http://robbert.tangerinecentral.org/",
+	"tree"    : "http://tree.tangerinecentral.org/",
 	"port"            : 5984,
 	"groupDBPrefix"   : "group-",
 
@@ -38,7 +38,7 @@
 		"survey":      {"run" : "SurveyRunView",      "edit" : "SurveyEditView" },
 		"grid":        {"run" : "GridRunView",        "edit" : "GridEditView" },
 		"id":          {"run" : "IdRunView",          "edit" : "IdEditView" },
-		"gps":         {"run" : "GPSRunView",         "edit" : "GPSEditView" }
+		"gps":         {"run" : "GpsRunView",         "edit" : "GpsEditView" }
 
 	},
 
@@ -81,7 +81,7 @@
 			"context" : "mobile",
 			"language"         : "en",
 			"groupName"        : "",
-			"groupHost"        : "http://tangerine.iriscouch.com",
+			"groupHost"        : "http://databases.tangerinecentral.org",
 			"groupDDoc"        : "ojai",
 			"upPass"           : "pass",
 			"log"              : [""]

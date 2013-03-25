@@ -40,7 +40,7 @@
       "delete_confirm" : "Delete?"
       "loading" : "Loading..."
       "select" : "Select a subtest"
-  "GPSRunView" :
+  "GpsRunView" :
     "button" :
       "clear" : "Clear"
     "label" :
