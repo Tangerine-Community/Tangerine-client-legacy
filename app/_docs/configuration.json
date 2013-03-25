@@ -1,92 +1,105 @@
 {
-
-	"local" :
-	{
-		"host"   : "http://localhost",
-		"login"  : "localuser:localpass",
-		"dbName" : "tangerine"
-	},
-	"update" :
-	{
-		"host"   : "databases.tangerinecentral.org",
-		"dbName" : "update",
-		"login"  : "",
-		"target" : "http://localadmin:localpassword@localhost:5984/tangerine"
-	},
-	"trunk" :
-	{
-		"host"   : "databases.tangerinecentral.org",
-		"dbName" : "tangerine"
-	},
-
-	"subnet" :
-	{
-		"base"   : "192.168.1."
-	},
-
-	"robbert" : "http://robbert.tangerinecentral.org/",
-	"tree"    : "http://tree.tangerinecentral.org/",
-	"port"            : 5984,
-	"groupDBPrefix"   : "group-",
-
-	"prototypeViews" : 
-	{
-		"observation": {"run" : "ObservationRunView", "edit" : "ObservationEditView" },
-		"consent":     {"run" : "ConsentRunView",     "edit" : "ConsentEditView" },
-		"datetime":    {"run" : "DatetimeRunView",    "edit" : "DatetimeEditView" },
-		"location":    {"run" : "LocationRunView",    "edit" : "LocationEditView" },
-		"survey":      {"run" : "SurveyRunView",      "edit" : "SurveyEditView" },
-		"grid":        {"run" : "GridRunView",        "edit" : "GridEditView" },
-		"id":          {"run" : "IdRunView",          "edit" : "IdEditView" },
-		"gps":         {"run" : "GpsRunView",         "edit" : "GpsEditView" }
-
-	},
-
-	"reports" : 
-	[
-		{
-			"name"       : "progress graph",
-			"menuView"   : "ProgressMenuView",
-			"reportType" : "progress"
-		},
-		{
-			"name"       : "mastery check table",
-			"menuView"   : "MasteryCheckMenuView",
-			"reportType" : "mastery"
-		},
-		{
-			"name"       : "class grouping table",
-			"menuView"   : "KlassGroupingMenuView"
-		}
-	],
-	"printFormats" :
-	[
-		{
-			"name" : "Content",
-			"key" : "content"
-		},
-		{
-			"name" : "Stimuli",
-			"key"  : "stimuli"
-		},
-		{
-			"name" : "Backup",
-			"key"  : "backup"
-		}
-	],
-	"defaults" :
-	{
-		"settings" : 
-		{
-			"context" : "mobile",
-			"language"         : "en",
-			"groupName"        : "",
-			"groupHost"        : "http://databases.tangerinecentral.org",
-			"groupDDoc"        : "ojai",
-			"upPass"           : "pass",
-			"log"              : [""]
-		}
-	},
-	
-	"collection" : "config"
+   "tree" : "http://backup.tangerinecentral.org:81/",
+   "_id" : "configuration",
+   "defaults" : {
+      "settings" : {
+         "groupDDoc" : "ojai",
+         "language" : "en",
+         "context" : "mobile",
+         "log" : [
+            ""
+         ],
+         "groupName" : "",
+         "groupHost" : "http://tangerine.iriscouch.com",
+         "upPass" : "pass"
+      }
+   },
+   "collection" : "config",
+   "local" : {
+      "dbName" : "tangerine",
+      "login" : "localuser:localpass",
+      "host" : "http://localhost"
+   },
+   "reports" : [
+      {
+         "reportType" : "progress",
+         "name" : "progress graph",
+         "menuView" : "ProgressMenuView"
+      },
+      {
+         "reportType" : "mastery",
+         "name" : "mastery check table",
+         "menuView" : "MasteryCheckMenuView"
+      },
+      {
+         "name" : "class grouping table",
+         "menuView" : "KlassGroupingMenuView"
+      }
+   ],
+   "groupDBPrefix" : "group-",
+   "subnet" : {
+      "base" : "192.168.1."
+   },
+   "robbert" : "http://backup.tangerinecentral.org:82/",
+   "trunk" : {
+      "dbName" : "tangerine",
+      "host" : "tangerine.iriscouch.com"
+   },
+   "_rev" : "115-1bf7d6f8ef1756716e56b4112f1204db",
+   "port" : 5984,
+   "couchapp" : {},
+   "prototypeViews" : {
+      "grid" : {
+         "run" : "GridRunView",
+         "edit" : "GridEditView"
+      },
+      "location" : {
+         "run" : "LocationRunView",
+         "edit" : "LocationEditView"
+      },
+      "datetime" : {
+         "run" : "DatetimeRunView",
+         "edit" : "DatetimeEditView"
+      },
+      "observation" : {
+         "run" : "ObservationRunView",
+         "edit" : "ObservationEditView"
+      },
+      "survey" : {
+         "run" : "SurveyRunView",
+         "edit" : "SurveyEditView"
+      },
+      "gps" : {
+         "run" : "GpsRunView",
+         "edit" : "GpsEditView"
+      },
+      "id" : {
+         "run" : "IdRunView",
+         "edit" : "IdEditView"
+      },
+      "consent" : {
+         "run" : "ConsentRunView",
+         "edit" : "ConsentEditView"
+      }
+   },
+   "printFormats" : [
+      {
+         "name" : "Content",
+         "key" : "content"
+      },
+      {
+         "name" : "Stimuli",
+         "key" : "stimuli"
+      },
+      {
+         "name" : "Backup",
+         "key" : "backup"
+      }
+   ],
+   "update" : {
+      "target" : "http://localadmin:localpassword@localhost:5984/tangerine",
+      "dbName" : "update",
+      "host" : "tangerine.iriscouch.com",
+      "login" : ""
+   }
 }
