@@ -99,7 +99,13 @@ class QuestionRunView extends Backbone.View
         catch e
           alert "Custom Validation error\n\n#{e}"
       else
-        @isValid = if _.isEmptyString(@answer) then false else true # don't use isEmpty here
+        if @type == "open"
+          @isValid = if _.isEmptyString(@answer) then false else true # don't use isEmpty here
+        else if @type == "multiple"
+          @isValid = if ~_.values(@answer).indexOf("checked") then true else false
+        else if @type == "single"
+          @isValid = if _.isEmpty(@answer) || @answer == "" then false else true
+          
 
   setOptions: (options) =>
     @options = options
