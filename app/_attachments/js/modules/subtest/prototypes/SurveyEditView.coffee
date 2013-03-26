@@ -67,6 +67,16 @@ class SurveyEditView extends Backbone.View
       "autostopLimit" : parseInt(@$el.find("#autostop_limit").val()) || 0
       "focusMode"     : @$el.find("#focus_mode input:checked").val() == "true"
 
+    if @model.get("gridLinkId") != "" && @model.questions?
+      linkedQuestions = []
+      for question in @model.questions.models
+        applicable = question.getNumber("linkedGridScore") != 0 && @itemNumberByLinkId[@model.get("gridLinkId")]?
+        if applicable && question.get("linkedGridScore") > @itemNumberByLinkId[@model.get("gridLinkId")]
+          linkedQuestions.push question.get("name")
+
+      if linkedQuestions.length > 0
+        alert "Unreachable question warning\n\nThe linked grid contains fewer items than question#{("s" if linkedQuestions.length>1)||""}: #{linkedQuestions.join(", ")} demand#{("s" if not linkedQuestions.length>1)||""}."
+
     # blank out our error queues
     notSaved = []
     emptyOptions = []
@@ -169,6 +179,8 @@ class SurveyEditView extends Backbone.View
               <select id='link_select'>
               <option value=''>None</option>"
         for subtest in collection
+          @itemNumberByLinkId = {} if not @itemNumberByLinkId?
+          @itemNumberByLinkId[subtest.id] = subtest.get("items").length
           linkSelect += "<option value='#{subtest.id}' #{if (gridLinkId == subtest.id) then 'selected' else ''}>#{subtest.get 'name'}</option>"
         linkSelect += "</select></div></div>"
         @$el.find('#grid_link').html linkSelect
