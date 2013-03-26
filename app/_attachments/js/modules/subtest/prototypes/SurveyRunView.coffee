@@ -115,6 +115,7 @@ class SurveyRunView extends Backbone.View
 
   updateExecuteReady: (ready) =>
     @executeReady = ready
+    return if not @triggerShowList?
     if @triggerShowList.length > 0
       for index in @triggerShowList
         @questionViews[index]?.trigger "show"
@@ -225,27 +226,24 @@ class SurveyRunView extends Backbone.View
           message = error.message
           alert "Skip logic error in question #{question.get('name')}\n\n#{name}\n\n#{message}"
 
-        
         if result
           $("#question-#{question.get('name')}").addClass "disabled_skipped"
         else
           $("#question-#{question.get('name')}").removeClass "disabled_skipped"
     _.each @questionViews, (questionView) ->
       questionView.updateValidity()
-      
+
   isValid: (views = @questionViews) ->
     return true if not views? # if there's nothing to check, it must be good
     views = [views] if not _.isArray(views)
     for qv, i in views
       qv.updateValidity()
-      # does it have a method? otherwise it's a string
-      if qv.isValid?
-        # can we skip it?
-        if not ( qv.model.getBoolean("skippable"))
-          # is it valid
-          if not qv.isValid
-            # red alert!!
-            return false
+      # can we skip it?
+      if not qv.model.getBoolean("skippable")
+        # is it valid
+        if not qv.isValid
+          # red alert!!
+          return false
     return true
 
   getSkipped: ->
