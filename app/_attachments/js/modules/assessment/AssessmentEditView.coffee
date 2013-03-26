@@ -145,7 +145,7 @@ class AssessmentEditView extends Backbone.View
     subtestTypeSelect = "<select id='subtest_type_select'>
       <option value='none' disabled='disabled' selected='selected'>Please select a subtest type</option>"
     for key, value of Tangerine.templates.get("subtestTemplates")
-      subtestTypeSelect += "<optgroup label='#{key}'>"
+      subtestTypeSelect += "<optgroup label='#{key.humanize()}'>"
       for subKey, subValue of value
         subtestTypeSelect += "<option value='#{key}' data-template='#{subKey}'>#{subKey}</option>"
       subtestTypeSelect += "</optgroup>"
