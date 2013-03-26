@@ -195,6 +195,9 @@ class GridRunView extends Backbone.View
 
   resetVariables: ->
 
+    @timer    = parseInt(@model.get("timer")) || 0
+    @untimed  = @timer == 0
+
     @gotMinuteItem = false
     @minuteMessage = false
     @itemAtTime = null
@@ -217,8 +220,6 @@ class GridRunView extends Backbone.View
 
     @timeRunning = false
 
-    @timer    = parseInt(@model.get("timer")) || 0
-    @untimed  = @timer == 0
 
     @items    = _.compact(@model.get("items")) # mild sanitization, happens at save too
 
@@ -401,17 +402,31 @@ class GridRunView extends Backbone.View
     # Stop timer if still running. Issue #240
     @stopTimer() if @timeRunning
 
-    if @captureLastAttempted && @lastAttempted == 0 then return false
+    return false if @captureLastAttempted && @lastAttempted == 0
     # might need to let it know if it's timed or untimed too ::shrug::
-    if @timeRunning == true then return false
+    return false if @timeRunning == true
+    return false if @timer != 0 && @timeRemaining == @timer
     true
-    
+
   showErrors: ->
-    if @captureLastAttempted && @lastAttempted == 0
-      Utils.midAlert t("please touch last item read")
+    messages = []
+
+    timerHasntRun    = @timer != 0 && @timeRemaining == @timer
+    noLastItem       = @captureLastAttempted && @lastAttempted == 0
+    timeStillRunning = @timeRuning == true
+
+    if timerHasntRun
+      messages.push "Subtest not completed."
+
+    if noLastItem && not timerHasntRun
+      messages.push t("please touch last item read")
       @updateMode null, "last"
-    Utils.midAlert t("time still running") if @timeRuning == true
-  
+
+    if timeStillRunning
+      messages.push t("time still running")
+
+    Utils.midAlert messages.join("<br>"), 3000
+
   getResult: ->
     completeResults = []
     itemResults = []
