@@ -219,4 +219,4 @@ class User extends Backbone.Model
 
   ghostLogin: (user, pass) ->
     Tangerine.log.db "User", "ghostLogin"
-    document.location = "http://tangerine.iriscouch.com:5984/uploader/_design/uploader/uploader.html?name=#{user}&pass=#{pass}"
+    document.location = Tangerine.settings.location.group.url.replace(/\:\/\/.*@/,'://')+"uploader/_design/uploader/uploader.html?name=#{user}&pass=#{pass}"
