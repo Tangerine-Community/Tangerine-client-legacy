@@ -26,6 +26,7 @@ class Result extends Backbone.Model
         'enumerator'  : Tangerine.user.name
         'tangerine_version' : Tangerine.version
         'device' : deviceInfo
+        'instanceId' : Tangerine.getString("instanceId")
 
       @unset "blank" # options automatically get added to the model. Lame.
 

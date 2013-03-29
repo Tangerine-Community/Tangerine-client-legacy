@@ -37,6 +37,9 @@ Tangerine.config.fetch
       error: ->
         Tangerine.settings.set Tangerine.config.getDefault "settings"
 
+        # generate a random ID for this individual instance
+        Tangerine.settings.set "instanceId", Utils.humanGUID()
+
         Tangerine.settings.save null,
           error: ->
             console.log "couldn't save new settings"
