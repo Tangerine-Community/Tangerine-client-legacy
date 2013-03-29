@@ -46,7 +46,9 @@ class AssessmentsMenuView extends Backbone.View
   apk: ->
     TangerineTree.make
       success: (data) ->
-        Utils.sticky("<h1>APK link</h1><p>tangerine.xen.prgmr.com:81/apk/#{data.token}</p>")
+        a = document.createElement("a")
+        a.href = Tangerine.settings.config.get("tree")
+        Utils.sticky("<h1>APK link</h1><p>#{a.host}/apk/#{data.token}</p>")
       error: (xhr, response) ->
         Utils.sticky response.error
 
