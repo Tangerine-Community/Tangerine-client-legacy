@@ -163,7 +163,8 @@ Math.limit    = (min, num, max) -> Math.max(min, Math.min(num, max))
 # return false
 _.isEmptyString = ( aString ) ->
   return true if aString is null or aString is undefined
-  return false if not _.isString(aString)
+  return false unless _.isString(aString) or _.isNumber(aString)
+  aString = String(aString) if _.isNumber(aString)
   return true if aString.replace(/\s*/, '') == ''
   return false
 
