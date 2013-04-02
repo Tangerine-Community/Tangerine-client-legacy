@@ -89,7 +89,6 @@ class AssessmentRunView extends Backbone.View
     @next()
 
   skip: =>
-
     currentView = @subtestViews[@orderMap[@index]]
     @result.add
       name      : currentView.model.get "name"
@@ -100,15 +99,13 @@ class AssessmentRunView extends Backbone.View
       sum       : currentView.getSum()
     ,
       success: =>
-        currentView.close()
-        @rendered.subtest = false
-        @index++ unless @abortAssessment == true
-        @index = @subtestViews.length-1 if @abortAssessment == true
-
-        @render()
-        window.scrollTo 0, 0
+        @resetNext()
 
   next: =>
+    if @abortAssessment == true
+      @resetNext()
+      return 
+
     currentView = @subtestViews[@orderMap[@index]]
     if currentView.isValid()
       subtestResult = currentView.getResult()
@@ -121,11 +118,18 @@ class AssessmentRunView extends Backbone.View
         sum         : currentView.getSum()
       ,
         success : =>
-          @rendered.subtest = false
-          currentView.close()
-          @index++ unless @abortAssessment == true
-          @index = @subtestViews.length-1 if @abortAssessment == true
-          @render()
-          window.scrollTo 0, 0
+          @resetNext()
     else
       currentView.showErrors()
+  
+  resetNext: =>
+    @rendered.subtest = false
+    currentView = @subtestViews[@orderMap[@index]]
+    currentView.close()
+    @index = 
+      if @abortAssessment == true
+        @subtestViews.length-1
+      else
+        @index + 1
+    @render()
+    window.scrollTo 0, 0
