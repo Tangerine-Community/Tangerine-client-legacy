@@ -104,7 +104,7 @@ class QuestionRunView extends Backbone.View
         else if @type == "multiple"
           @isValid = if ~_.values(@answer).indexOf("checked") then true else false
         else if @type == "single"
-          @isValid = if _.isEmpty(@answer) || @answer == "" then false else true
+          @isValid = if _.isEmptyString(@answer) then false else true
           
 
   setOptions: (options) =>
