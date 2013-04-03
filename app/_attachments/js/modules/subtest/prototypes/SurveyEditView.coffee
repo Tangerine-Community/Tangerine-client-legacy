@@ -69,7 +69,7 @@ class SurveyEditView extends Backbone.View
 
     if @model.get("gridLinkId") != "" && @model.questions?
       linkedQuestions = []
-      for question in @model.questions.models
+      for question in @model.questions.where {"subtestId" : @model.id}
         applicable = question.getNumber("linkedGridScore") != 0 && @itemNumberByLinkId[@model.get("gridLinkId")]?
         if applicable && question.get("linkedGridScore") > @itemNumberByLinkId[@model.get("gridLinkId")]
           linkedQuestions.push question.get("name")
