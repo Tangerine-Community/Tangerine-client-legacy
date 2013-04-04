@@ -102,7 +102,7 @@ class QuestionRunView extends Backbone.View
         @isValid = 
           switch @type
             when "open"
-              if _.isEmptyString(@answer)              then false else true # don't use isEmpty here
+              if _.isEmptyString(@answer) || (_.isEmpty(@answer) && _.isObject(@answer)) then false else true # don't use isEmpty here
             when "multiple"
               if ~_.values(@answer).indexOf("checked") then true  else false
             when "single"
