@@ -1,24 +1,46 @@
 {
-   "tree" : "http://backup.tangerinecentral.org:81/",
    "_id" : "configuration",
-   "defaults" : {
-      "settings" : {
-         "groupDDoc" : "ojai",
-         "language" : "en",
-         "context" : "mobile",
-         "log" : [
-            ""
-         ],
-         "groupName" : "",
-         "groupHost" : "http://tangerine.iriscouch.com",
-         "upPass" : "pass"
-      }
-   },
-   "collection" : "config",
+   "_rev" : "115-1bf7d6f8ef1756716e56b4112f1204db",
+
+
    "local" : {
       "dbName" : "tangerine",
-      "login" : "localuser:localpass",
-      "host" : "http://localhost"
+      "login"  : "localuser:localpass",
+      "host"   : "http://localhost"
+   },
+
+   "update" : {
+      "target" : "http://localadmin:localpassword@localhost:5984/tangerine",
+      "dbName" : "update",
+      "host"   : "databases.tangerinecentral.org",
+      "login"  : ""
+   },
+
+   "subnet" : {
+      "base" : "192.168.1."
+   },
+
+   "trunk" : {
+      "dbName" : "tangerine",
+      "host" : "databases.tangerinecentral.org"
+   },
+
+   "groupDBPrefix" : "group-",
+   "port" : 5984,
+
+   "tree"    : "",
+   "robbert" : "",
+
+   "defaults" : {
+      "settings" : {
+         "context" : "mobile",
+         "groupDDoc" : "ojai",
+         "language" : "en",
+         "log" : [""],
+         "groupName" : "",
+         "groupHost" : "http://databases.tangerinecentral.org",
+         "upPass" : "pass"
+      }
    },
    "reports" : [
       {
@@ -36,18 +58,7 @@
          "menuView" : "KlassGroupingMenuView"
       }
    ],
-   "groupDBPrefix" : "group-",
-   "subnet" : {
-      "base" : "192.168.1."
-   },
-   "robbert" : "http://backup.tangerinecentral.org:82/",
-   "trunk" : {
-      "dbName" : "tangerine",
-      "host" : "tangerine.iriscouch.com"
-   },
-   "_rev" : "115-1bf7d6f8ef1756716e56b4112f1204db",
-   "port" : 5984,
-   "couchapp" : {},
+
    "prototypeViews" : {
       "grid" : {
          "run" : "GridRunView",
@@ -82,6 +93,7 @@
          "edit" : "ConsentEditView"
       }
    },
+
    "printFormats" : [
       {
          "name" : "Content",
@@ -96,10 +108,7 @@
          "key" : "backup"
       }
    ],
-   "update" : {
-      "target" : "http://localadmin:localpassword@localhost:5984/tangerine",
-      "dbName" : "update",
-      "host" : "tangerine.iriscouch.com",
-      "login" : ""
-   }
+
+   "collection" : "config"
+
 }
