@@ -60,6 +60,11 @@
         log(doc);
         continue;
       }
+      if (subtest.data == null) {
+        log("skipped subtest with null data");
+        log(doc);
+        continue;
+      }
       prototype = subtest.prototype;
       if (prototype === "id") {
         row.push(pair("id", subtest.data.participant_id));

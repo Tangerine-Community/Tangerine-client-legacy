@@ -68,6 +68,11 @@
         log doc
         continue 
 
+      if not subtest.data?
+        log "skipped subtest with null data"
+        log doc
+        continue 
+
       prototype = subtest.prototype
 
       # each prototype provides different data, handle them accordingly
@@ -122,14 +127,15 @@
               row.push pair("#{surveyVariable}_#{i+1}", exportValue(surveyValue))
 
       else if prototype == "gps"
-        row.push pair("latitude", subtest.data.lat)
-        row.push pair("longitude", subtest.data.long)
-        row.push pair("accuracy", subtest.data.acc)
-        row.push pair("altitude", subtest.data.alt)
-        row.push pair("altitudeAccuracy", subtest.data.altAcc)
-        row.push pair("heading", subtest.data.heading)
-        row.push pair("speed", subtest.data.speed)
-        row.push pair("timestamp", subtest.data.timestamp)
+
+        row.push pair("latitude",         subtest.data.lat )
+        row.push pair("longitude",        subtest.data.long )
+        row.push pair("accuracy",         subtest.data.acc )
+        row.push pair("altitude",         subtest.data.alt )
+        row.push pair("altitudeAccuracy", subtest.data.altAcc )
+        row.push pair("heading",          subtest.data.heading )
+        row.push pair("speed",            subtest.data.speed )
+        row.push pair("timestamp",        subtest.data.timestamp )
 
       else if prototype == "complete"
         row.push pair("additional_comments", subtest.data.comment)
