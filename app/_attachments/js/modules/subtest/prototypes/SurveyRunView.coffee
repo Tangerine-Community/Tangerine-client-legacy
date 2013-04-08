@@ -18,6 +18,9 @@ ResultOfMultiple = (name) ->
 ResultOfPrevious = (name) ->
   return vm.currentView.result.getVariable(name)
 
+ResultOfGrid = (name) ->
+  return vm.currentView.result.getItemResultCountByVariableName(name, "correct")
+
 ResultCSV =  (name) ->
   return "hey"
 

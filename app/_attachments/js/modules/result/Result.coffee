@@ -61,6 +61,18 @@ class Result extends Backbone.Model
     for datum in @get 'subtestData'
       return parseInt(datum.data.attempted) if datum.subtestId == id
 
+  getItemResultCountByVariableName: (name, result) ->
+    found = false
+    count = 0
+    for datum in @get 'subtestData'
+      if datum.data.variable_name == name
+        found = true
+        items = datum.data.items
+        for item in items
+          count++ if item.itemResult == result
+    throw new Error("Variable name \"#{name}\" not found") if not found
+    return count
+
   gridWasAutostopped: (id) ->
     for datum in @get 'subtestData'
       return datum.data.auto_stop if datum.subtestId == id
