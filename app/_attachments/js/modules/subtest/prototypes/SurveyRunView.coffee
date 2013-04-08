@@ -217,7 +217,7 @@ class SurveyRunView extends Backbone.View
         view.$el.removeClass "disabled_autostop" if not @autostopped
 
   updateSkipLogic: =>
-    @questions.each (question) ->
+    @questions.each (question) =>
       skipLogicCode = question.get "skipLogic"
       if not _.isEmptyString(skipLogicCode)
         try
