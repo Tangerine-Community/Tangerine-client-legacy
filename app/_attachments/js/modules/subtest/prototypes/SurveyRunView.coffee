@@ -228,9 +228,9 @@ class SurveyRunView extends Backbone.View
           alert "Skip logic error in question #{question.get('name')}\n\n#{name}\n\n#{message}"
 
         if result
-          $("#question-#{question.get('name')}").addClass "disabled_skipped"
+          @$el.find("#question-#{question.get('name')}").addClass "disabled_skipped"
         else
-          $("#question-#{question.get('name')}").removeClass "disabled_skipped"
+          @$el.find("#question-#{question.get('name')}").removeClass "disabled_skipped"
     _.each @questionViews, (questionView) ->
       questionView.updateValidity()
 
