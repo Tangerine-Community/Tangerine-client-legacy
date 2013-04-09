@@ -53,12 +53,25 @@ class QuestionRunView extends Backbone.View
       alert "Display code error\n\n#{name}\n\n#{message}"
 
 
-  update: (event) ->
+  update: (event) =>
     @updateResult()
     @updateValidity()
     @trigger "answer", event, @model.get("order")
 
-  updateResult: ->
+  updateResult: =>
+    if @notAsked == true
+      if @type == "multiple"
+        for option, i in @options
+          @answer[@options[i].value] = "not_asked"
+      else
+        @answer = "not_asked"
+    else
+      if @type == "open"
+        @answer = @$el.find("##{@cid}_#{@name}").val()
+      else
+        @answer = @button.answer
+
+    return
     if @type == "open"
       if @notAsked == true
         @answer = "not_asked"
@@ -165,8 +178,17 @@ class QuestionRunView extends Backbone.View
             <label for='#{@cid}_#{@name}_#{i}' #{@fontStyle || ""}>#{option.label}</label>
             <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}' data-cid='#{@cid}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}' #{selected}>
           "
+      html += "<div class='button_container'></div>"
       html += "<img src='images/icon_scroll.png' class='icon autoscroll_icon' data-cid='#{@cid}'>" if @isObservation
       @$el.html html
+
+      @button = new ButtonView
+        options: @options
+        mode:    @type
+      @button.on "change", => @update()
+      @button.setElement(@$el.find(".button_container"))
+      @button.render()
+
 
     else
       @$el.hide()
