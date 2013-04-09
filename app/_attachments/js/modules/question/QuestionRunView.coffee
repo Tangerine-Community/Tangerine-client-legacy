@@ -164,21 +164,8 @@ class QuestionRunView extends Backbone.View
           html += "<div><input id='#{@cid}_#{@name}' data-cid='#{@cid}' value='#{answerValue || ''}'></div>"
       
       else
-        checkOrRadio = if @type == "multiple" then "checkbox" else "radio"
-        for option, i in @options
-          selected = 
-            if @type == "multiple" && @answer[@options[i].value] == "checked"
-              "checked='checked'"
-            else if @type == "single" && @answer == @options[i].value
-              "checked='checked'"
-            else 
-              ""
+        html += "<div class='button_container'></div>"
 
-          html += "
-            <label for='#{@cid}_#{@name}_#{i}' #{@fontStyle || ""}>#{option.label}</label>
-            <input id='#{@cid}_#{@name}_#{i}' class='#{@cid}_#{@name}' data-cid='#{@cid}' name='#{@name}' value='#{option.value}' type='#{checkOrRadio}' #{selected}>
-          "
-      html += "<div class='button_container'></div>"
       html += "<img src='images/icon_scroll.png' class='icon autoscroll_icon' data-cid='#{@cid}'>" if @isObservation
       @$el.html html
 
