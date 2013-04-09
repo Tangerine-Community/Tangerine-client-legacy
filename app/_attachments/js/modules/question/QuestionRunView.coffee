@@ -112,8 +112,8 @@ class QuestionRunView extends Backbone.View
 
 
   setOptions: (options) =>
-    @options = options
-    @render()
+    @button.options = options
+    @button.render()
 
   setAnswer: (answer) =>
     alert "setAnswer Error\nTried to set #{@type} type #{@name} question to string answer." if _.isString(answer) && @type == "multiple"
