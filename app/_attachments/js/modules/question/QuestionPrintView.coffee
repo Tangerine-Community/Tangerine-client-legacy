@@ -48,24 +48,23 @@ class QuestionPrintView extends Backbone.View
               #{@model.get 'prompt'}
               #{ if @model.get('hint') isnt "" then "(#{@model.get 'hint'})" else ""}
             </p>
-            <table>
             #{
               if @model.get('type') is "open"
-                "<tr>
-                  <td class='print-question-label'></td> 
-                  <td>
-                    <div class='free-text'></div>
-                  </td>
-                </tr>"
+                "<table>
+                  <tr>
+                    <td class='print-question-label'></td> 
+                    <td>
+                      <div class='free-text'></div>
+                    </td>
+                  </tr>
+                </table>"
               else
                 _.map(@model.get('options'), (option) =>
-                  spanClass = "print-question-option"
-                  markingArea = "<div class='checkbox'></div>"
                   "
-                    <tr>
-                      <td class='print-question-label'><span class='#{spanClass}'>#{option.label}<span></td> 
-                      <td>#{markingArea}</td>
-                    </tr>
+                    <div class='backup-question-checkbox-label'>
+                      <span class='checkbox'>&nbsp;</span>
+                      <span class='print-question-label'><span class='print-question-option'>#{option.label}<span></span> 
+                    </div>
                   "
                 ).join("")
             }

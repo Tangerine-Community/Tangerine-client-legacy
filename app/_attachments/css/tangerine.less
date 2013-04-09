@@ -823,21 +823,14 @@ span.delete_confirm
 {
   #prototype_wrapper {
     .print-page {
-      size: 11in 8.5in; 
-      height: 11in;
-      width: 8.5in;
+      /* A4 */
+      size: 297mm 210mm; 
+      height: 297mm;
+      width: 297mm;
       margin: 0;
-      page-break-after: always;
       overflow: hidden;
-      /*
-      Mike, I don't know what this part is supposed to do
-      @bottom-right {
-        content: counter(page) \" of \" counter(pages);
-      }
-      */
     }
     .print-page.backup {
-      page-break-before: always;
       overflow: visible;
       height:auto;
     }
@@ -864,8 +857,8 @@ span.delete_confirm
   td.marking-area, 
   .free-text {
     margin: 10px;
-    width: 4in;
-    height: 1in;
+    width: 14cm;
+    height: 1cm;
     border: solid 1px;
   }
   .subtest-title {
@@ -881,22 +874,34 @@ span.delete_confirm
     margin-top:0px;
     margin-bottom:0px;
   }
-  .print-question-option {
-    text-indent:20px;
-    margin-right:10px;
-  }
   .backup-question {
     border: solid 1px;
-    margin-top: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-bottom:5px;
+    padding-left:5px;
+    padding-right:5px;
+    page-break-inside: avoid;
+  }
+  .backup-question-checkbox-label{
+    display: inline-block;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+  }
+  .format-backup .print-grid{
     page-break-inside: avoid;
   }
   .checkbox {
     border: solid 1px;
     height: .25in;
     width: .25in;
+    display: inline-block;
   }
   .print-question-label {
     vertical-align: middle;
+    display: inline-block;
   }
   .student-dialog {
     background-color: #EEEEEE;
@@ -905,8 +910,21 @@ span.delete_confirm
     font-size:150%;
     border: solid 1px;
     padding: 5px;
-
+    text-align:center;
+    min-width: 50px;
   }
+  .stimulus-grid tr{
+    border-bottom: 1px solid gray;
+  }
+  .stimulus-grid td.item{
+    padding-top: 20px;
+    padding-left:10px;
+    padding-right:10px;
+  }
+  .format-stimuli{
+    page-break-after: always;
+  }
+
 }
 
 /*

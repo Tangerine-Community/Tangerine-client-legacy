@@ -38,6 +38,7 @@ class SubtestPrintView extends Backbone.View
 
     else if @format is "backup"
       @$el.html "
+        <div class='subtest-title'>#{@model.get "name"}</div>
         <div class='student-dialog'>#{studentDialog}</div>
         <div class='format-#{@format}' id='prototype_wrapper'></div>
         <hr/>
@@ -45,7 +46,7 @@ class SubtestPrintView extends Backbone.View
 
     else
       @$el.append "
-        <div id='prototype_wrapper'></div>
+        <div class='format-#{@format}' id='prototype_wrapper'></div>
       "
   
     # Use prototype specific views here

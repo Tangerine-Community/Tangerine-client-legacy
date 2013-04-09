@@ -9,11 +9,13 @@ class SurveyPrintView extends Backbone.View
     @questionViews = []
     @answered      = []
     @questions     = new Questions
+    @questions.db.view = "questionsBySubtestId"
     @questions.fetch
-      key: @model.get "assessmentId"
+      key: @model.id
       success: (collection) =>
-        @questions = new Questions(@questions.where { subtestId : @model.id })
+        @questions = collection
         @questions.sort()
+        @ready = true
         @render()
 
   render: ->
@@ -35,7 +37,6 @@ class SurveyPrintView extends Backbone.View
     else
       @$el.html "
         <div id='#{@model.get "_id"}' class='print-page #{@format}'>
-          <div class='subtest-title'>#{@model.get "name"}</div>
           <div class='survey-questions'></div>
         </div>
         <style>

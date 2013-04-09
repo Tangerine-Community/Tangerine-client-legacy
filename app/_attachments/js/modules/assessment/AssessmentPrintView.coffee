@@ -26,6 +26,9 @@ class AssessmentPrintView extends Backbone.View
     else
       @$el.addClass("format-#{@format}").append "
         <style>
+          @page :right { @bottom-right-corner {
+            content: counter(page) \" of \" counter(pages);
+          }}
           table.print-metadata td{
             border: solid black 1px;
           }
@@ -71,7 +74,7 @@ class AssessmentPrintView extends Backbone.View
     @trigger "rendered"
 
   afterRender: =>
-    alert("Hiding header and footers, press browser back button if you need to return")
-    $('#navigation').hide()
-    $('#footer').hide()
-    print()
+    _.delay () ->
+      $('#navigation').hide()
+      $('#footer').hide()
+     ,1000
