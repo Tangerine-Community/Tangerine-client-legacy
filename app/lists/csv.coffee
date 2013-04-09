@@ -15,7 +15,7 @@
 
   rowCache = []
 
-  columnsBySubtest = []
+  columnsBySubtest = {}
 
   #
   # same results to create column headings
@@ -33,11 +33,15 @@
     break if not row?
 
     rowCache.push row
-    for subtest, subtestIndex in row.value
+
+    for subtestIndex, subtestValue of row.value
       columnsBySubtest[subtestIndex] = [] if not columnsBySubtest[subtestIndex]?
-      for pair in subtest
+      
+      for pair in subtestValue
+
         undone = unpair(pair)
         continue if not undone?
+
         key   = undone[0] || ""
         value = undone[1] || ""
         if not ~columnsBySubtest[subtestIndex].indexOf(key)
@@ -51,7 +55,7 @@
 
   columnNames = []
   columnKeys  = []
-  for subtest in columnsBySubtest
+  for subtestKey, subtest of columnsBySubtest
     for key in subtest
       columnKeys.push key
       columnNames.push "\"" + key + "\""
@@ -74,7 +78,7 @@
 
     # flatten
     oneRow = {}
-    for subtest, subtestIndex in row.value
+    for subtestIndex, subtest of row.value
       for pair in subtest
         undone = unpair(pair)
         continue if not undone?

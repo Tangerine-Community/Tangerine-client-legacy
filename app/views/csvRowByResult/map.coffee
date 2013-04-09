@@ -45,7 +45,7 @@
     metaData.push pair("order_map",  if doc['order_map']? then doc['order_map'].join(",") else "no_record")
 
     # first "subtest" is always metadata
-    bySubtest = [metaData]
+    bySubtest = {"meta_data" : metaData}
 
     #
     # Subtest loop
@@ -143,6 +143,6 @@
 
       row.push pair("time_stamp_#{rawIndex+1}", subtest.timestamp)
 
-      bySubtest.push row
+      bySubtest[subtest.subtestId] = row
 
     emit(doc.assessmentId, bySubtest)

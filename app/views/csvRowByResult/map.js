@@ -42,7 +42,9 @@
     startTime = doc['starttime'] || doc['start_time'];
     metaData.push(pair("start_time", startTime));
     metaData.push(pair("order_map", doc['order_map'] != null ? doc['order_map'].join(",") : "no_record"));
-    bySubtest = [metaData];
+    bySubtest = {
+      "meta_data": metaData
+    };
     datetimeCount = 0;
     linearOrder = (function() {
       _results = [];
@@ -145,7 +147,7 @@
         row.push(pair("end_time", subtest.data.end_time));
       }
       row.push(pair("time_stamp_" + (rawIndex + 1), subtest.timestamp));
-      bySubtest.push(row);
+      bySubtest[subtest.subtestId] = row;
     }
     return emit(doc.assessmentId, bySubtest);
   }
