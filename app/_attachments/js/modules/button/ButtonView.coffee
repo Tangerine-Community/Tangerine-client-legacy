@@ -55,7 +55,6 @@ class ButtonView extends Backbone.View
   initialize : ( options ) ->
     @mode    = options.mode
     @options = options.options
-    
     @answer = "" if @mode == "single" or @mode == "open"
     if @mode == "multiple"
       @answer = {}
@@ -79,7 +78,15 @@ class ButtonView extends Backbone.View
       value = option.value
       label = option.label
 
-      htmlOptions += "<div class='button #{styleClass}' data-value='#{value}'>#{label}</div>"
+      selectedClass = 
+        if @mode == "multiple" && @answer[value] == "checked"
+          "selected"
+        else if @mode == "single" && @answer == value
+          "selected"
+        else
+          ""
+
+      htmlOptions += "<div class='button #{styleClass} #{selectedClass}' data-value='#{value}'>#{label}</div>"
 
     @$el.html("
       #{htmlOptions}

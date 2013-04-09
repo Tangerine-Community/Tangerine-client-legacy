@@ -36,6 +36,14 @@ class QuestionRunView extends Backbone.View
       @isValid = true
       @updateResult()
 
+    if @type == "single" or @type == "multiple"
+      @button = new ButtonView
+        options : @options
+        mode    : @type
+      console.log @type
+      @button.on "change rendered", => @update()
+
+
   previousAnswer: =>
     @parent.questionViews[@parent.questionIndex-1].answer if @parent.questionIndex >= 0
 
@@ -70,25 +78,6 @@ class QuestionRunView extends Backbone.View
         @answer = @$el.find("##{@cid}_#{@name}").val()
       else
         @answer = @button.answer
-
-    return
-    if @type == "open"
-      if @notAsked == true
-        @answer = "not_asked"
-      else
-        @answer = @$el.find("##{@cid}_#{@name}").val()
-    else if @type == "single"
-      if @notAsked == true
-        @answer = "not_asked"
-      else
-        @answer = @$el.find(".#{@cid}_#{@name}:checked").val()
-    else if @type == "multiple"
-      if @notAsked == true
-        for option, i in @options
-          @answer[@options[i].value] = "not_asked"
-      else
-        for option, i in @options
-          @answer[@options[i].value] = if @$el.find("##{@cid}_#{@name}_#{i}").is(":checked") then "checked" else "unchecked"
 
 
   updateValidity: ->
@@ -129,13 +118,16 @@ class QuestionRunView extends Backbone.View
   setAnswer: (answer) =>
     alert "setAnswer Error\nTried to set #{@type} type #{@name} question to string answer." if _.isString(answer) && @type == "multiple"
     alert "setAnswer Error\n#{@name} question requires an object" if not _.isObject(answer) && @type == "multiple"
-    
-    if @type == "mulitple"
-      @answer = $.extend(@answer, answer)
+
+    if @type == "multiple"
+      @button.answer = $.extend(@button.answer, answer)
+    else if @type == "single"
+      @button.answer = answer
     else
       @answer = answer
+
     @updateValidity()
-    @render()
+    @button.render()
 
   setMessage: (message) =>
     @$el.find(".error_message").html message
@@ -169,12 +161,9 @@ class QuestionRunView extends Backbone.View
       html += "<img src='images/icon_scroll.png' class='icon autoscroll_icon' data-cid='#{@cid}'>" if @isObservation
       @$el.html html
 
-      @button = new ButtonView
-        options: @options
-        mode:    @type
-      @button.on "change", => @update()
-      @button.setElement(@$el.find(".button_container"))
-      @button.render()
+      if @type == "single" or @type == "multiple"
+        @button.setElement(@$el.find(".button_container"))
+        @button.render()
 
 
     else
