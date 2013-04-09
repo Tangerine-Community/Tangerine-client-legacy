@@ -183,6 +183,8 @@ class SurveyRunView extends Backbone.View
   # when a question is answered
   onQuestionAnswer: (element) =>
 
+    return unless @renderCount == @questions.length
+
     if @isObservation
 
       # find the view of the question
