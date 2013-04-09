@@ -12,7 +12,6 @@ class DatetimePrintView extends Backbone.View
     if @format is "backup"
 
       @$el.html "
-          <div class='subtest-title'>#{@model.get "name"}</div>
           <table class='marking-table'>
             #{
             _("Date,Time".split(/,/)).map( (locationLevel) ->

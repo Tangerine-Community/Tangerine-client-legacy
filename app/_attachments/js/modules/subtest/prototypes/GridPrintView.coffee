@@ -16,9 +16,8 @@ class GridPrintView extends Backbone.View
   
   renderStimuli: ->
     @$el.html "
-      <div id='#{@model.get "_id"}' class='print-page'>
+      <div id='#{@model.get "_id"}' class='print-page stimulus-grid'>
         <table>
-          <caption style='text-align:left;font-style:italic;padding-bottom:10px;color:gray;'>#{@model.get "name"}</caption>
           <tr>
             #{
               index = 0
@@ -37,7 +36,9 @@ class GridPrintView extends Backbone.View
     _.delay =>
       overflow = 100
       incrementAmount = 3
+      console.log "TARGET: " + $("##{@model.get "_id"}")[0].scrollHeight
       while $("##{@model.get "_id"}")[0].scrollWidth > $("##{@model.get "_id"} table").innerWidth() and  $("##{@model.get "_id"}")[0].scrollHeight > $("##{@model.get "_id"} table").innerHeight()
+        console.log $("##{@model.get "_id"} table").innerHeight()
         break if (overflow-=1) is 0
 
         currentSize = $("##{@model.get "_id"} td").css("font-size")
@@ -83,13 +84,14 @@ class GridPrintView extends Backbone.View
 
     @$el.html "
         <table class='print-grid'>
-          <caption style='text-align:left;font-style:italic;padding-bottom:10px;color:gray;'>#{@model.get "name"}</caption>
           <tr>
             #{
               index = 0
               _.map(@model.get("items"), (item) =>
                 index += 1
                 itemText = "<td class='item'>#{item}</td>"
+
+                console.log @model.get("columns")
                 if index % @model.get("columns") is 0 and index isnt @model.get("items").length then itemText += "</tr><tr>" else ""
                 itemText
               ).join("")
@@ -113,7 +115,7 @@ class GridPrintView extends Backbone.View
             #{
               if @model.get("autostop")
                 "
-                  <td style='vertical-align:middle'>Autostop</td><td class='marking-area'></td>
+                  <td style='vertical-align:middle'>Autostop?</td><td><span class='checkbox'></span></td>
                 "
               else
                 "

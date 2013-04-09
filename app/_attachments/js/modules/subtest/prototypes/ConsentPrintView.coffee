@@ -13,7 +13,6 @@ class ConsentPrintView extends Backbone.View
       spanClass = "print-question-option"
       markingArea = "☐"
       @$el.html "
-        <div class='subtest-title'>#{@model.get "name"}</div>
         <span class='#{spanClass}'>#{@model.get('prompt') || 'Does the child consent?'} #{markingArea}</span>
       "
 

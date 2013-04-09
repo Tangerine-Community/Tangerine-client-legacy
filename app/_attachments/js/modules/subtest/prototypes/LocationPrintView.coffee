@@ -32,7 +32,6 @@ class LocationPrintView extends Backbone.View
     if @format is "backup"
 
       @$el.html "
-          <div class='subtest-title'>#{@model.get "name"}</div>
           <table class='marking-table'>
             #{
             _(@levels).map( (locationLevel) ->
