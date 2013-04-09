@@ -10,13 +10,28 @@ ResultOfQuestion = (name) ->
   return null
 
 ResultOfMultiple = (name) ->
+  returnView = null
+  for candidateView in vm.currentView.subtestViews[vm.currentView.index].prototypeView.questionViews
+    if candidateView.model.get("name") == name
+      returnView = candidateView
+  throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
+  
   result = []
-  for input in $("#question-#{name} input:checked")
-    result.push $(input).val()
+  for key, value of returnView.answer
+    result.push key if value == "checked" 
   return result
+
+
+  return null
+
+
+  
 
 ResultOfPrevious = (name) ->
   return vm.currentView.result.getVariable(name)
+
+ResultOfGrid = (name) ->
+  return vm.currentView.result.getItemResultCountByVariableName(name, "correct")
 
 ResultCSV =  (name) ->
   return "hey"
@@ -26,8 +41,6 @@ class SurveyRunView extends Backbone.View
   className: "SurveyRunView"
 
   events:
-    'change input'        : 'updateSkipLogic'
-    'change textarea'     : 'updateSkipLogic'
     'click .next_question' : 'nextQuestion'
     'click .prev_question' : 'prevQuestion'
 
@@ -41,13 +54,10 @@ class SurveyRunView extends Backbone.View
     # find the non-skipped questions
     isAvailable = []
     for question, i in @questionViews
-      q$el = $(@questionViews[i].el)
-      isAutostopped  = q$el.hasClass("disabled_autostop")
-      isLogicSkipped = q$el.hasClass("disabled_skipped")
+      isAutostopped  = question.$el.hasClass("disabled_autostop")
+      isLogicSkipped = question.$el.hasClass("disabled_skipped")
       isAvailable.push i if not (isAutostopped or isLogicSkipped)
     isAvailable  = _.filter isAvailable, (e) => e > @questionIndex
-
-
 
     # don't go anywhere unless we have somewhere to go
     if isAvailable.length == 0
@@ -70,9 +80,8 @@ class SurveyRunView extends Backbone.View
     # find the non-skipped questions
     isAvailable = []
     for question, i in @questionViews
-      q$el = $(@questionViews[i].el)
-      isAutostopped  = q$el.hasClass("disabled_autostop")
-      isLogicSkipped = q$el.hasClass("disabled_skipped")
+      isAutostopped  = question.$el.hasClass("disabled_autostop")
+      isLogicSkipped = question.$el.hasClass("disabled_skipped")
       isAvailable.push i if not (isAutostopped or isLogicSkipped)
     isAvailable  = _.filter isAvailable, (e) => e < @questionIndex
 
@@ -91,9 +100,8 @@ class SurveyRunView extends Backbone.View
 
     isAvailable = []
     for question, i in @questionViews
-      q$el = $(@questionViews[i].el)
-      isAutostopped  = q$el.hasClass("disabled_autostop")
-      isLogicSkipped = q$el.hasClass("disabled_skipped")
+      isAutostopped  = question.$el.hasClass("disabled_autostop")
+      isLogicSkipped = question.$el.hasClass("disabled_skipped")
       isAvailable.push i if not (isAutostopped or isLogicSkipped)
     isAvailable.push @questionIndex
 
@@ -161,22 +169,24 @@ class SurveyRunView extends Backbone.View
     @questionViews = []
     @answered      = []
     @renderCount   = 0
-    @questions     = new Questions
-    @questions.db.view = "questionsBySubtestId"
+
+    @questions     = new Questions()
+    # @questions.db.view = "questionsBySubtestId" Bring this back when prototypes make sense again
     @questions.fetch
-      key: @model.id
+      key: @model.get("assessmentId")
       success: (collection) =>
-        @questions = collection
+        @questions = new Questions collection.where {"subtestId":@model.id} 
         @questions.sort()
         @ready = true
         @render()
 
   # when a question is answered
-  onQuestionAnswer: (event) =>
+  onQuestionAnswer: (element) =>
+
     if @isObservation
 
       # find the view of the question
-      cid = $(event.target).attr("data-cid")
+      cid = $(element).attr("data-cid")
       for view in @questionViews
         if view.cid == cid && view.type != "multiple" # if it's multiple don't go scrollin
 
@@ -208,6 +218,7 @@ class SurveyRunView extends Backbone.View
           @autostopped = true
           @autostopIndex = i
     @updateAutostop()
+    @updateSkipLogic()
   
   updateAutostop: ->
     autostopLimit = parseInt(@model.get("autostopLimit")) || 0
@@ -217,8 +228,11 @@ class SurveyRunView extends Backbone.View
         view.$el.removeClass "disabled_autostop" if not @autostopped
 
   updateSkipLogic: =>
-    @questions.each (question) =>
+
+    _.each @questionViews, (questionView) =>
+      question = questionView.model
       skipLogicCode = question.get "skipLogic"
+
       if not _.isEmptyString(skipLogicCode)
         try
           result = CoffeeScript.eval.apply(@, [skipLogicCode])
@@ -228,10 +242,10 @@ class SurveyRunView extends Backbone.View
           alert "Skip logic error in question #{question.get('name')}\n\n#{name}\n\n#{message}"
 
         if result
-          @$el.find("#question-#{question.get('name')}").addClass "disabled_skipped"
+          questionView.$el.addClass "disabled_skipped"
         else
-          @$el.find("#question-#{question.get('name')}").removeClass "disabled_skipped"
-    _.each @questionViews, (questionView) ->
+          questionView.$el.removeClass "disabled_skipped"
+
       questionView.updateValidity()
 
   isValid: (views = @questionViews) ->
@@ -338,7 +352,7 @@ class SurveyRunView extends Backbone.View
           notAsked      : isNotAsked
           isObservation : @isObservation
         oneView.on "rendered", @onQuestionRendered
-        oneView.on "answer scroll",   @onQuestionAnswer
+        oneView.on "answer scroll", @onQuestionAnswer
 
         oneView.render()
         @questionViews[i] = oneView

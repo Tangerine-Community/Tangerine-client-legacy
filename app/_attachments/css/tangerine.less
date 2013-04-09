@@ -35,7 +35,7 @@ html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-
 
 body { margin: 0; font-size: 13px; line-height: 1.231; }
 
-body, button, input, select, textarea { font-family: sans-serif; color: #222; }
+body, button, input, select, textarea { font-family: sans-serif; color: #222; -webkit-tap-highlight-color: rgba(0,0,0,0);}
 
 
 /* =============================================================================
@@ -1897,6 +1897,57 @@ body[rtl]
     font-weight: normal;
   }
 }
+
+/*
+ * ButtonView
+ */
+
+.ButtonView
+{
+  .button {
+    min-width: 1.2em;
+    background: @grey-1;
+    color: @grey-2;
+    display: inline-block;
+    border-radius: 0;
+    margin: 0 !important;
+    padding: 7px 10px 5px;
+    cursor: pointer;
+    margin: 1px !important;
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+
+  .button:hover
+  {
+    color: @grey-3;
+  }
+
+  .selected
+  {
+    background: @orange-3 !important;
+    color: white !important;
+  }
+
+  .left
+  {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+
+  }
+
+  .right
+  {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+}
+
 
 /*
  * Table sorter

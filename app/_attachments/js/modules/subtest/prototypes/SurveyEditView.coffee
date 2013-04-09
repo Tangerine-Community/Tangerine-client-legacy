@@ -60,7 +60,7 @@ class SurveyEditView extends Backbone.View
 
   save: (options) ->
 
-    options.questionSave = if options.questionSave then options.questionSave else true
+    options.questionSave = if options.questionSave? then options.questionSave else true
 
     @model.set
       "gridLinkId"    : @$el.find("#link_select option:selected").val()
@@ -96,7 +96,7 @@ class SurveyEditView extends Backbone.View
     # display errors
     if notSaved.length != 0
       Utils.midAlert "Error<br><br>Questions: <br>#{notSaved.join(', ')}<br>not saved"
-    if emptyOptions.length != 0
+    if options.questionSave && emptyOptions.length != 0
       plural = emptyOptions.length > 1
       _question = if plural then "Questions" else "Question"
       _has      = if plural then "have" else "has"

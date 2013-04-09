@@ -29,13 +29,15 @@ Backbone.Collection.prototype.indexArrayBy = ( attr ) ->
 Backbone.Model.prototype.toHash = ->
   significantAttributes = {}
   for key, value of @attributes
-    significantAttributes[key] = value if !~['_rev', '_id','hash','updated'].indexOf(key)
+    significantAttributes[key] = value if !~['_rev', '_id','hash','updated','editedBy'].indexOf(key)
   return b64_sha1(JSON.stringify(significantAttributes))
 
 # by default all models will save a timestamp and hash of significant attributes
 Backbone.Model.prototype.beforeSave = ->
-  @set "updated", (new Date()).toString()
-  @set "hash", @toHash()
+  @set 
+    "editedBy" : Tangerine?.user?.name || "unknown"
+    "updated" : (new Date()).toString()
+    "hash" : @toHash()
 
 #
 # This series of functions returns properties with default values if no property is found

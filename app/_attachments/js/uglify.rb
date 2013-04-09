@@ -15,6 +15,8 @@ $options = {
 jsFiles = [ 
   'helpers.js',
 
+  'modules/button/ButtonView.js',
+
   'modules/assessment/Assessment.js',
   'modules/assessment/Assessments.js',
   'modules/assessment/AssessmentsView.js',
