@@ -1,5 +1,5 @@
 class ButtonView extends Backbone.View
-  
+
   className : "ButtonView"
 
   events : 
@@ -11,11 +11,13 @@ class ButtonView extends Backbone.View
         "change .answer_selector" : "onChange"
 
   onChange: (event) ->
+
     value = _.map($(event.target).find("option:selected"), (x) -> $(x).attr('data-answer'))
+    @trigger "change", @el
 
   onClick : (event) ->
 
-    $target = $(event.target  )
+    $target = $(event.target)
 
     value         = $target.attr('data-value')
     checkedBefore = $target.hasClass("selected")
@@ -39,8 +41,6 @@ class ButtonView extends Backbone.View
 
     else if @mode == "multiple"
 
-      @answer = {} if not _.isObject(@answer)
-
       if checkedBefore
         $target.removeClass "selected"
       else 
@@ -48,58 +48,40 @@ class ButtonView extends Backbone.View
 
       @answer[value] =
         if checkedBefore
-          "checked"
-        else
           "unchecked"
+        else
+          "checked"
 
-
+    @trigger "change", @el
 
   initialize : ( options ) ->
     @mode    = options.mode
     @options = options.options
-    @answer  = {}
+    
+    @answer = "" if @mode == "single" or @mode == "open"
+    if @mode == "multiple"
+      @answer = {}
+      for option in @options
+        @answer[option.value] = "unchecked"
 
   render : ->
 
-    if @options.length < 8 && @mode != "multiple"
+    htmlOptions = ""
 
-      htmlOptions = ""
+    for option, i in @options
 
-      for option, i in @options
-
-        styleClass = 
-          if i == 0
-            "left"
-          else if i == @options.length-1
-            "right"
-          else
-            ""
-
-        value = option.value
-        label = option.label
-
-        htmlOptions += "<div class='button #{styleClass}' data-value='#{value}'>#{label}</div>" 
-
-    else
-
-      selectMultiple = 
-        if @mode == "multiple"
-          "multiple='multiple'"
-        else
-          ''
-
-      firstOption =
-        if @mode != "multiple"
-          "<option data-answer='NONE' selected='selected'>Please select an answer</option>"
+      styleClass = 
+        if i == 0
+          "left"
+        else if i == @options.length-1
+          "right"
         else
           ""
 
-      htmlOptions = "
-        <select class='answer_selector' #{selectMultiple}>
-          #{firstOption}
-          #{("<option data-answer='#{option.value}'>#{option.label}</option>" for option in @options).join('')}
-        </select>
-      " if Tangerine.settings.get("context") == "server"
+      value = option.value
+      label = option.label
+
+      htmlOptions += "<div class='button #{styleClass}' data-value='#{value}'>#{label}</div>"
 
     @$el.html("
       #{htmlOptions}
