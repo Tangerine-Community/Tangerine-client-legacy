@@ -149,10 +149,10 @@ class GpsRunView extends Backbone.View
       @poll()
   
   getResult: ->
-    return @position
+    return @position || {}
 
   getSkipped: ->
-    return @position
+    return @position || {}
 
   getSum: ->
     return {}

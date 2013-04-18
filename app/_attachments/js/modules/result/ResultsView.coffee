@@ -244,22 +244,19 @@ class ResultsView extends Backbone.View
       @$el.find('#results_header').html "No results yet!"
       return
 
-    location = if Tangerine.settings.get("context") == "server"
-      "group"
-    else if Tangerine.settings.get("context") == "mobile"
-      "local"
-
+    location =
+      if Tangerine.settings.get("context") == "server"
+        "group"
+      else if Tangerine.settings.get("context") == "mobile"
+        "local"
 
     $.ajax 
-      url: Tangerine.settings.urlView(location, "resultSummaryByAssessmentId")
+      url: Tangerine.settings.urlView(location, "resultSummaryByAssessmentId")+"?descending=true&limit=#{@resultLimit}&skip=#{@resultOffset}"
       type: "POST"
       dataType: "json"
       contentType: "application/json"
       data: JSON.stringify(
-        keys        : [@assessment.id]
-        descending  : true
-        limit       : @resultLimit
-        skip        : @resultOffset
+        keys : [@assessment.id]
       )
       success: ( data ) =>
 

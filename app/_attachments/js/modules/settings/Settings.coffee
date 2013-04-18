@@ -12,12 +12,16 @@ class Settings extends Backbone.Model
     if @get("context") == "server"
       return callbacks.server() if _.isFunction(callbacks.server)
       return callbacks.server if callbacks.server?
+      return ""
     else if @get("context") == "mobile"
       return callbacks.mobile() if _.isFunction(callbacks.mobile)
       return callbacks.mobile if callbacks.mobile?
+      return ""
     else if @get("context") == "class"
       return callbacks.klass() if _.isFunction(callbacks.klass)
       return callbacks.klass if callbacks.klass?
+      return ""
+    return ""
 
   update: =>
     groupHost = @get "groupHost"

@@ -31,7 +31,7 @@ class SubtestRunView extends Backbone.View
       #{enumeratorHelp}
       #{studentDialog}
       <div id='prototype_wrapper'></div>
-
+      
       <div class='controlls clearfix'>
         #{transitionComment}
         <button class='next navigation'>#{t('next')}</button>#{if skippable then skipButton else "" }
@@ -77,6 +77,7 @@ class SubtestRunView extends Backbone.View
         name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
         message = error.message
         alert "#{name}\n\n#{message}"
+        console.log "displayCode Error: " + JSON.stringify(error)
 
     @prototypeView.updateExecuteReady?(true)
 

@@ -40,7 +40,6 @@ class QuestionRunView extends Backbone.View
       @button = new ButtonView
         options : @options
         mode    : @type
-      console.log @type
       @button.on "change rendered", => @update()
 
 

@@ -65,7 +65,7 @@ class Result extends Backbone.Model
     found = false
     count = 0
     for datum in @get 'subtestData'
-      if datum.data.variable_name == name
+      if datum.data? and datum.data.variable_name? and datum.data.variable_name == name
         found = true
         items = datum.data.items
         for item in items

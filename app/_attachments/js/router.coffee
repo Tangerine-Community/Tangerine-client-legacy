@@ -406,7 +406,7 @@ class Router extends Backbone.Router
                   view.orderMap = orderMap
 
                 for subtest in result.get("subtestData")
-                  if subtest.data.participant_id?
+                  if subtest.data? && subtest.data.participant_id?
                     Tangerine.nav.setStudent subtest.data.participant_id
 
                 # replace the view's result with our old one
