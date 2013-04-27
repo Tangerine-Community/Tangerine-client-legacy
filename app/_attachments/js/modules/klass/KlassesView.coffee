@@ -3,14 +3,18 @@ class KlassesView extends Backbone.View
   className : "KlassesView"
 
   events :
-    'click .add'        : 'toggleAddForm'
-    'click .cancel'     : 'toggleAddForm'
-    'click .save'       : 'saveNewKlass'
-    'click .goto_class' : 'gotoKlass'
-    'click .curricula'  : 'gotoCurricula'
-    'click .pull_data'  : 'pullData' 
+    'click .add'         : 'toggleAddForm'
+    'click .cancel'      : 'toggleAddForm'
+    'click .save'        : 'saveNewKlass'
+    'click .goto_class'  : 'gotoKlass'
+    'click .curricula'   : 'gotoCurricula'
+    'click .pull_data'   : 'pullData' 
 
   initialize: ( options ) ->
+    @ipBlock  = 32
+    @totalIps = 256
+    @tabletOffset = 0
+
     @views = []
     @klasses   = options.klasses
     @curricula = options.curricula
@@ -19,14 +23,16 @@ class KlassesView extends Backbone.View
     @klasses.on "add remove change", @render
 
   pullData: ->
-    @tablets = # if you can think of a better idea I'd like to see it
-      checked    : 0
-      complete   : 0
-      successful : 0
-      okCount    : 0
-      ips        : []
-      result     : 0
-    Utils.midAlert "Please wait, detecting tablets."
+    if @tabletOffset == 0
+      @tablets = # if you can think of a better idea I'd like to see it
+        checked    : 0
+        complete   : 0
+        successful : 0
+        okCount    : 0
+        ips        : []
+        result     : 0
+      Utils.midAlert "Please wait, detecting tablets."
+
     Utils.working true
     @randomIdDoc = hex_sha1(""+Math.random())
     Tangerine.$db.saveDoc 
@@ -34,7 +40,7 @@ class KlassesView extends Backbone.View
     ,
       success: (doc) =>
         @randomDoc = doc
-        for local in [0..15]
+        for local in [@tabletOffset..(@ipBlock-1)+@tabletOffset]
           do (local) =>
             ip = Tangerine.settings.subnetIP(local)
             req = $.ajax
@@ -53,32 +59,61 @@ class KlassesView extends Backbone.View
         Utils.midAlert "Internal database error"
 
   updatePull: =>
-    return if @tablets.checked < 16
+    # do not process unless we're done with checking this block
+    return if @tablets.checked < @ipBlock + @tabletOffset
 
-    if @tablets.okCount > 1
+    # give the choice to keep looking if not all tablets found
+    if @tabletOffset != @totalIps - @ipBlock #&& confirm("#{Math.max(@tablets.okCount-1, 0)} tablets found.\n\nContinue searching?")
+      @tabletOffset += @ipBlock
+      @pullData()
+    else
+
       # -1 because one of them will be this computer
-      @tablets.okCount--
+      @tablets.okCount = Math.max(@tablets.okCount-1, 0)
+
+      if @tablets.okCount == 0
+        @tabletOffset = 0
+        Utils.working false
+        Utils.midAlert "#{@tablets.okCount} tablets found."
+        Tangerine.$db.removeDoc
+          "_id"  : @randomDoc.id
+          "_rev" : @randomDoc.rev
+        return
+
+      unless confirm("#{@tablets.okCount} tablets found.\n\nStart data pull?")
+        @tabletOffset = 0
+        Utils.working false
+        Tangerine.$db.removeDoc
+          "_id"  : @randomDoc.id
+          "_rev" : @randomDoc.rev
+        return
+
+
       Utils.midAlert "Pulling from #{@tablets.okCount} tablets."
       for ip in @tablets.ips
+
         do (ip) =>
           # see if our random document is on the server we just found
           selfReq = $.ajax
             "url"         : Tangerine.settings.urlSubnet(ip) + "/" + @randomIdDoc
             "dataType"    : "jsonp"
             "timeout"     : 10000
-            "contentType" : "application/json;charset=utf-8",
+            "contentType" : "application/json;charset=utf-8"
+
           selfReq.success (data, xhr, error) =>
             # if found self then do nothing
+
           selfReq.complete (xhr, error) => do (xhr) =>
             return if parseInt(xhr.status) == 200
             # if not, then we found another tablet
             viewReq = $.ajax
-              "url"      : Tangerine.settings.urlSubnet(ip) + "/_design/tangerine/_view/byCollection"
-              "dataType" : "jsonp"
+              "url"         : Tangerine.settings.urlSubnet(ip) + "/_design/tangerine/_view/byCollection"
+              "dataType"    : "jsonp"
               "contentType" : "application/json;charset=utf-8",
-              "data"     : 
+              "data"        : 
                 include_docs : false
-                keys : JSON.stringify(['result', 'klass', 'student','curriculum', 'teacher'])
+                keys : JSON.stringify(['result', 'klass', 'student','curriculum', 'teacher', 'logs'])
+
             viewReq.success (data) =>
               docList = (datum.id for datum in data.rows)
               $.couch.replicate(
@@ -94,12 +129,6 @@ class KlassesView extends Backbone.View
                 ,
                   doc_ids: docList
               )
-    else
-      Utils.working false
-      Utils.midAlert "Cannot detect tablets"
-      Tangerine.$db.removeDoc 
-        "_id"  : @randomDoc.id
-        "_rev" : @randomDoc.rev
 
   updatePullResult: =>
     if @tablets.complete == @tablets.okCount
@@ -114,27 +143,43 @@ class KlassesView extends Backbone.View
     Tangerine.router.navigate "curricula", true
 
   saveNewKlass: ->
+
+    schoolName = $.trim(@$el.find("#school_name").val())
+    year       = $.trim(@$el.find("#year").val())
+    grade      = $.trim(@$el.find("#grade").val())
+    stream     = $.trim(@$el.find("#stream").val())
+    curriculum = @$el.find("#curriculum option:selected").attr("data-id")
+
     errors = []
-    errors.push " - No school name." if $.trim(@$el.find("#school_name").val()) == ""
-    errors.push " - No year."   if $.trim(@$el.find("#year").val())   == "" 
-    errors.push " - No grade."  if $.trim(@$el.find("#grade").val())  == "" 
-    errors.push " - No stream." if $.trim(@$el.find("#stream").val()) == "" 
-    errors.push " - No curriculum selected." if @$el.find("#curriculum option:selected").val() == "_none" 
+    errors.push " - No school name."         if schoolName == ""
+    errors.push " - No year."                if year       == "" 
+    errors.push " - No grade."               if grade      == "" 
+    errors.push " - No stream."              if stream     == "" 
+    errors.push " - No curriculum selected." if curriculum == "_none" 
     
-    
+    for klass in @klasses.models
+      if klass.get("year")   == year && 
+         klass.get("grade")  == grade &&
+         klass.get("stream") == stream
+        errors.push " - Duplicate year, grade, stream."
+
     if errors.length == 0
       teacherId = if Tangerine.user.has("teacherId")
         Tangerine.user.get("teacherId")
       else
         "admin"
-      @klasses.create
+      klass = new Klass
+      klass.save 
         teacherId    : teacherId
-        schoolName   : @$el.find("#school_name").val()
-        year         : @$el.find("#year").val()
-        grade        : @$el.find("#grade").val()
-        stream       : @$el.find("#stream").val()
+        schoolName   : schoolName
+        year         : year
+        grade        : grade
+        stream       : stream
         curriculumId : @$el.find("#curriculum option:selected").attr("data-id")
         startDate    : (new Date()).getTime()
+      ,
+        success: =>
+          @klasses.add klass
     else
       alert ("Please correct the following errors:\n\n#{errors.join('\n')}")
 
@@ -171,7 +216,7 @@ class KlassesView extends Backbone.View
 
   render: =>
 
-    curriculaOptionList = "<option value='_none' disabled='disabled' selected='selected'>#{t('select a curriculum')}</option>"
+    curriculaOptionList = "<option data-id='_none' disabled='disabled' selected='selected'>#{t('select a curriculum')}</option>"
     for curricula in @curricula.models
       curriculaOptionList += "<option data-id='#{curricula.id}'>#{curricula.get 'name'}</option>"
 

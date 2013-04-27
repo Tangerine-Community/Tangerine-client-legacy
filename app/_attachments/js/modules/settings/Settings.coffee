@@ -5,6 +5,7 @@ class Settings extends Backbone.Model
 
   initialize: ->
 
+    @ipRange = _.uniq((x for x in [100..200]).concat((x for x in [0..255])))
     @config = Tangerine.config
     @on "all", => @update()
 
@@ -66,8 +67,8 @@ class Settings extends Backbone.Model
         db  : "http://#{update.host}/#{update.dbName}/"
         target : update.target
       subnet : 
-        url : ("http://#{subnetBase}#{x}:#{port}/"                 for x in [0..255])
-        db  : ("http://#{subnetBase}#{x}:#{port}/#{local.dbName}/" for x in [0..255])
+        url : ("http://#{subnetBase}#{@ipRange[x]}:#{port}/"                 for x in [0..255])
+        db  : ("http://#{subnetBase}#{@ipRange[x]}:#{port}/#{local.dbName}/" for x in [0..255])
       satellite : 
         url : ("#{subnetBase}#{x}:#{port}/"                       for x in [0..255])
         db  : ("#{subnetBase}#{x}:#{port}/#{prefix}#{groupName}/" for x in [0..255])
@@ -143,14 +144,15 @@ class Settings extends Backbone.Model
       "#{@location[location].db}#{@couch.show}#{show}"
   
   # these two are a little weird. I feel like subnetAddress should be a class with properties IP, URL and index
-  urlSubnet: ( ip ) -> 
+  urlSubnet: ( ip ) ->
     port   = @config.get "port"
     dbName = @config.get("local").dbName
+
     "http://#{ip}:#{port}/#{dbName}"
 
   subnetIP: ( index ) ->
     base = @config.get("subnet").base
-    "#{base}#{index}"
+    "#{base}#{@ipRange[index]}"
 
 
 
