@@ -145,10 +145,14 @@ class KlassEditView extends Backbone.View
 
     startDate  = new Date @klass.getNumber "startDate"
 
-    if teacherId = @klass.get("teacherId") == "admin"
+    if @klass.get("teacherId") == "admin"
       teacherName = "admin"
     else 
-      teacherName = @teachers.get(@klass.get('teacherId')).get('name')
+      teacherName = 
+        if @teachers.get(@klass.get('teacherId')) && @teachers.get(@klass.get('teacherId')).has('name')
+          @teachers.get(@klass.get('teacherId')).get('name')
+        else
+          "unknown"
 
     htmlInfoTeacher = "
       <tr><td><label>Teacher</label></td><td>#{teacherName}</td></tr>
