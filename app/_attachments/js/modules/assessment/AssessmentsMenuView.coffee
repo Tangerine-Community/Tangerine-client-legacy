@@ -11,10 +11,50 @@ class AssessmentsMenuView extends Backbone.View
     'click .apk'         : 'apk'
     'click .groups'      : 'gotoGroups'
     'click .universal_upload' : 'universalUpload'
-    'click .results'     : 'results'
+    'click .results'        : 'results'
+    'click .settings'       : 'editInPlace'
+    'keyup .edit_in_place'  : 'saveInPlace'
+    'change .edit_in_place'  : 'saveInPlace'
+
+  editInPlace: (event) ->
+    return unless Tangerine.user.isAdmin()
+    $target    = $(event.target)
+    attribute  = $target.attr("data-attribtue")
+    @oldTarget = $target.clone()
+    classes = $target.attr("class").replace("settings","")
+    margins = $target.css("margin")
+    $target.after("<input type='text' style='margin:#{margins};' data-attribute='#{attribute}' class='edit_in_place #{classes}' value='#{$target.html()}'>")
+    input = $target.next().focus()
+    $target.remove()
+
+  saveInPlace: (event) ->
+    return if @alreadySaving
+    if event.keyCode
+      if event.keyCode == 27
+        $(event.target).after(@oldTarget).remove()
+        return
+      else if event.keyCode != 13
+        return true
+
+    @alreadySaving = true
+    $target   = $(event.target)
+    attribute = $target.attr("data-attribute")
+    value     = $target.val()
+
+    updatedAttributes            = {}
+    updatedAttributes[attribute] = value
+
+    Tangerine.settings.save updatedAttributes, 
+      success: =>
+        @alreadySaving = false
+        Utils.topAlert("Saved")
+        $target.after(@oldTarget.html(value)).remove()
+      error: =>
+        @alreadySaving = false
+        Utils.topAlert("Save error")
+        $target.after(@oldTarget).remove()
 
   results: -> Tangerine.router.navigate "dashboard", true
-
 
   universalUpload: ->
     $.ajax 
@@ -52,8 +92,6 @@ class AssessmentsMenuView extends Backbone.View
       error: (xhr, response) ->
         Utils.sticky response.error
 
-
-
   gotoGroups: -> Tangerine.router.navigate "groups", true
 
   import:     -> Tangerine.router.navigate "import", true
@@ -65,6 +103,9 @@ class AssessmentsMenuView extends Backbone.View
 
     @assessments.each (assessment) =>
       assessment.on "new", @addToCollection
+
+    @curricula.each (curriculum) =>
+      curriculum.on "new", @addToCollection
 
     @isAdmin = Tangerine.user.isAdmin()
 
@@ -78,18 +119,23 @@ class AssessmentsMenuView extends Backbone.View
     @usersMenuView = new UsersMenuView
 
   render: =>
-
-    newButton    = "<button class='new command'>New</button>"
-    importButton = "<button class='import command'>Import</button>"
-    apkButton    = "<button class='apk navigation'>APK</button>"
-    groupsButton = "<button class='navigation groups'>Groups</button>"
-    uploadButton = "<button class='command universal_upload'>Universal Upload</button>"
+    newButton     = "<button class='new command'>New</button>"
+    importButton  = "<button class='import command'>Import</button>"
+    apkButton     = "<button class='apk navigation'>APK</button>"
+    groupsButton  = "<button class='navigation groups'>Groups</button>"
+    uploadButton  = "<button class='command universal_upload'>Universal Upload</button>"
     resultsButton = "<button class='navigation results'>Results</button>"
+    groupHandle   = "<h2 class='settings grey' data-attribtue='groupHandle'>#{Tangerine.settings.getEscapedString('groupHandle') || Tangerine.settings.get('groupName')}</h2>"
 
     html = "
-      #{if Tangerine.settings.get("context") == "server" then groupsButton else ""}
-      #{if Tangerine.settings.get("context") == "server" then apkButton else ""}
-      #{if Tangerine.settings.get("context") == "server" then resultsButton else ""}
+      #{Tangerine.settings.contextualize(
+        server : "
+          #{groupsButton}
+          #{apkButton}
+          #{resultsButton} 
+          #{groupHandle}
+          "
+        ) }
       <h1>Assessments</h1>
     "
 
