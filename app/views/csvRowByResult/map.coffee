@@ -1,6 +1,79 @@
 (doc) ->
 
+  subtest = {}
+
   if doc.collection is "result"
+
+
+    clone = `function (item) {
+        if (!item) { return item; } // null, undefined values check
+
+        var types = [ Number, String, Boolean ], 
+            result;
+
+        // normalizing primitives if someone did new String('aaa'), or new Number('444');
+        types.forEach(function(type) {
+            if (item instanceof type) {
+                result = type( item );
+            }
+        });
+
+        if (typeof result == "undefined") {
+            if (Object.prototype.toString.call( item ) === "[object Array]") {
+                result = [];
+                item.forEach(function(child, index, array) { 
+                    result[index] = clone( child );
+                });
+            } else if (typeof item == "object") {
+                // testing that this is DOM
+                if (item.nodeType && typeof item.cloneNode == "function") {
+                    var result = item.cloneNode( true );    
+                } else if (!item.prototype) { // check that this is a literal
+                    if (item instanceof Date) {
+                        result = new Date(item);
+                    } else {
+                        // it is an object literal
+                        result = {};
+                        for (var i in item) {
+                            result[i] = clone( item[i] );
+                        }
+                    }
+                } else {
+                    // depending what you would like here,
+                    // just keep the reference, or create new object
+                    if (false && item.constructor) {
+                        // would not advice to do that, reason? Read below
+                        result = new item.constructor();
+                    } else {
+                        result = item;
+                    }
+                }
+            } else {
+                result = item;
+            }
+        }
+
+        return result;
+    }`
+
+    subtestData = doc.subtestData
+    keyId = doc.assessmentId
+
+    # turn class results into regular results
+    if doc.klassId?
+
+      keyId = doc.klassId
+
+      newData = clone(doc.subtestData)
+      newData["variable_name"] = doc.itemType + "_" + doc.reportType + "_" + doc.part + "_"
+      subtestData = [ {
+        data      : newData
+        prototype : doc.prototype
+        subtestId : doc.subtestId
+      } ]
+      
+      log "NEW SUBTEST DATA"
+      log JSON.stringify(subtestData)
 
     exportValueMap = {
       "correct" : 1
@@ -51,24 +124,24 @@
     # Subtest loop
     #
     datetimeCount = 0
-    linearOrder = [0..doc.subtestData.length-1]
+    linearOrder = [0..subtestData.length-1]
     orderMap = if doc["order_map"]? then doc["order_map"] else if doc["orderMap"] then doc["orderMap"] else linearOrder
 
     # go through each subtest in this result
-    for rawIndex in linearOrder
+    for rawIndex in linearOrder 
       row = []
 
       # use the order map for randomized subtests
       subtestIndex = orderMap.indexOf(rawIndex)
-      subtest = doc.subtestData[subtestIndex]
+      subtest = subtestData[subtestIndex]
 
       # skip subtests with no data in unfinished assessments
-      if not subtest?
+      unless subtest?
         log "skipped empty subtest"
         log doc
         continue 
 
-      if not subtest.data?
+      unless subtest.data?
         log "skipped subtest with null data"
         log doc
         continue 
@@ -145,4 +218,4 @@
 
       bySubtest[subtest.subtestId] = row
 
-    emit(doc.assessmentId, bySubtest)
+    emit(keyId, bySubtest)
