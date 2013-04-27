@@ -82,6 +82,7 @@ class Router extends Backbone.Router
     vm.show view
 
   landing: ->
+
     if Tangerine.settings.get("context") == "server"
       if ~String(window.location.href).indexOf("tangerine/_design") # in main group?
         Tangerine.router.navigate "groups", true
@@ -121,10 +122,18 @@ class Router extends Backbone.Router
             allSubtests.fetch
               success: ->
                 subtests = new Subtests allSubtests.where "curriculumId" : curriculumId
-                view = new CurriculumView
-                  "curriculum" : curriculum
-                  "subtests"   : subtests
-                vm.show view
+                allQuestions = new Questions
+                allQuestions.fetch
+                  success: ->
+                    questions = []
+                    subtests.each (subtest) -> questions = questions.concat(allQuestions.where "subtestId" : subtest.id )
+                    questions = new Questions questions
+                    view = new CurriculumView
+                      "curriculum" : curriculum
+                      "subtests"   : subtests
+                      "questions"  : questions
+
+                    vm.show view
 
 
   curriculumEdit: (curriculumId) ->
@@ -420,6 +429,8 @@ class Router extends Backbone.Router
                   assessmentView : view
                 view.index = result.get("subtestData").length
                 vm.show view
+
+
 
   results: (assessmentId) ->
     Tangerine.user.verify
