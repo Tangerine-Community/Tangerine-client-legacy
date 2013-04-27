@@ -2,25 +2,22 @@
 
 require 'listen'
 
+$jsDir = File.join Dir.pwd, "_attachments", "js"
+
 def push
 
   # Save current version number
   version = `git log --pretty=format:'%h' -n 1`
-  File.open("_attachments/js/version.js", "w") {|f| f.write("window.Tangerine.version = \"#{version}\"\;") }
+  File.open( File.join($jsDir, "version.js"), "w") {|f| f.write("window.Tangerine.version = \"#{version}\"\;") }
 
   # builds index-dev.html from files listed in uglify.js
-  Dir.chdir( File.join Dir.pwd, "_attachments", "js" ) {
+  Dir.chdir( $jsDir ) {
     `./uglify.rb dev`
     puts "\nGenerated:\t\tindex-dev.html"
   }
 
-  # Do this twice so you don't have to wait for uglify to compile app.js
-  puts "\nPushing with couchapp\n\n"
-  `couchapp push`
-
-  Dir.chdir( File.join Dir.pwd, "_attachments", "js" ) {
+  Dir.chdir( $jsDir ) {
     `./uglify.rb app`
-    puts "\nCompiled\t\tapp.js\n\n"
     puts "\nCompiled\t\tapp.js\n\n"
   }
   `couchapp push`
@@ -28,7 +25,7 @@ end
 
 def notify( type, message )
   unless `which osascript`.empty? # on a mac?
-    message = /\.coffee, (.*?)$/.match(message)[1]
+    message = /\.coffee:(.*?)$/.match(message)[1]
     notifier = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier" 
     `#{notifier} -message \"#{message}\" -title \"#{type}\"` 
   end
@@ -59,12 +56,19 @@ Listen.to(".") do |modified, added, removed|
       else
         # Otherwise, just compile
         puts "\nCompiling:\t\t#{match}"
-        result = `coffee --bare --compile #{match} 2>&1`
-      end
+        mapOption = if /views/.match(match) then "" else "--map" end
+        result = `coffee #{mapOption} --bare --compile #{match} 2>&1`
+        Dir.chdir( $jsDir ) {
+          jsFile = match.gsub(".coffee", ".js")
+          puts `./uglify.rb #{jsFile}`
+        }
 
-      if result.index "Error: In"
+      end
+      #puts result
+
+      if result.index "error"
         # Show errors
-        notify("CoffeeScript Error", result.gsub(/.*Error: In.*\/(.*\.coffee)/,"\\1"))
+        notify("CoffeeScript Error", result.gsub(/.*error.*\/(.*\.coffee)/,"\\1"))
         puts "\n\nCoffeescript error\n******************\n#{result}"
       end
 
@@ -85,7 +89,7 @@ Listen.to(".") do |modified, added, removed|
     /.*\.css|.*\.js$|.*\.html$|.*\.json$/.match(file) { |match|
 
       # Don't trigger push for these files
-      unless /version\.js|app\.js|index-dev/.match(file)
+      unless /version\.js|app\.js|index-dev|\/min\//.match(file)
         puts "\nUpdating:\t\t#{match}"
         push()
       end

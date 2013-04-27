@@ -1,11 +1,20 @@
 #! /usr/bin/ruby
 
 require 'uglifier'
+require 'pathname'
 
 $options = {
   :make_lib       => ARGV.delete("lib") != nil,
   :make_app       => ARGV.delete("app") != nil,
   :make_index_dev => ARGV.delete("dev") != nil
+}
+
+
+ARGV.each { |arg|
+  if /\.js/.match(arg) then
+    $options[:compile] = [] if not $options[:compile]
+    $options[:compile] << arg
+  end
 }
 
 
@@ -200,13 +209,25 @@ if $options[:make_app]
   app = ''
   for path in jsFiles
     puts "reading #{path}"
-    app += File.read(path)
+    path = File.join(Dir.pwd, "min", Pathname.new(path).basename.to_s.gsub(".js",".min.js"))
+    app += File.read path 
+
   end
 
   File.open( "app.js", 'w' ) { |f| 
     puts "writing app.js"
-    f.write( Uglifier.new.compile(app)) 
+    f.write( app )
   }
+end
+
+if $options[:compile]
+  for file in $options[:compile]
+    oldFile = File.read file
+    File.open( File.join(Dir.pwd, "min", Pathname.new(file).basename.to_s.gsub(".js",".min.js")), "w" ) { |f|
+      puts "\nUglifying\t\t#{file}"
+      f.write Uglifier.new.compile(oldFile)
+    }
+  end
 end
 
 if $options[:make_lib]
