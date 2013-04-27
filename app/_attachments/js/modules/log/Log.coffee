@@ -76,39 +76,61 @@ class Logs extends Backbone.Collection
 class LogView extends Backbone.View
 
   className : "LogView"
+  events :
+    "change #user_selector" : "update"
 
   initialize: (options) ->
     @logs = options.logs
+    @logsByUser  = @logs.indexBy "user"
+    @selectedUser = _.first _.keys @logsByUser
 
   render: =>
-    html = "
+
+    htmlOptions = ("<option data-user='#{user}' #{("selected='selected'" if @selectedUser == user) || ""}>#{user}</option>" for user in _.keys(@logsByUser)).join ""
+    @$el.html "
       <h1>Logs</h1>
-      <table><tr>
-        <th>User</th>
-        <th>Code</th>
-        <th>Details</th>
-        <th>Time</th>
-      </tr>
-      "
 
-
-    @logs.each (log) =>
-      return if not log.get("event")? 
-      ev = log.get "event"
-      name = log.get("user")
-      code = ev.code
-      details = ev.details
-      time = (new Date(parseInt(ev.timestamp))).toString()
-
-      html += "
-      <tr>
-        <td>#{name}</td>
-        <td>#{code}</td>
-        <td>#{details}</td>
-        <td>#{time}</td>
-      </tr>
-      "
-
-    @$el.html html
-    
+      <select id='user_selector'>#{htmlOptions}</select>
+      <div class='log_container'></div>
+    "
+    @update()
     @trigger "rendered"
+
+  update: ->
+
+    @selectedUser = @$el.find("#user_selector option:selected").attr("data-user")
+
+    logs = @logsByUser[@selectedUser]
+
+    htmlTable = "
+    <h2>User #{@selectedUser}</h2>
+
+      <table>
+        <tr>
+          <th>Code</th>
+          <th>Details</th>
+          <th>Time</th>
+        </tr>
+    "
+
+
+    for log in logs
+      return if not log.get("event")? 
+
+      ev      = log.get "event"
+      name    = log.get("user")
+      code    = ev.code
+      details = ev.details
+      time    = (new Date(parseInt(ev.timestamp))).toString()
+
+      htmlTable += "
+        <tr>
+          <td>#{code}</td>
+          <td>#{details}</td>
+          <td>#{time}</td>
+        </tr>
+      "
+
+    htmlTable += "</table>"
+
+    @$el.find(".log_container").html htmlTable
