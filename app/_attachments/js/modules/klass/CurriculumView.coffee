@@ -18,7 +18,9 @@ class CurriculumView extends Backbone.View
 
     # arguments
     @curriculum = options.curriculum
-    @subtests = options.subtests
+    @subtests   = options.subtests
+    @questions  = options.questions
+    @questionsBySubtestId = @questions.indexBy "subtestId"
 
     # primaries
     @totalAssessments  = Math.max.apply Math, @subtests.pluck("part")
@@ -37,12 +39,6 @@ class CurriculumView extends Backbone.View
           "escaped"  : true
         },
         {
-          "key"      : "items"
-          "label"    : "Items"
-          "count"    : true
-          "editable" : true
-        },
-        {
           "key"      : "timer"
           "label"    : "Time<br>allowed"
           "editable" : true
@@ -51,12 +47,18 @@ class CurriculumView extends Backbone.View
           "key"      : "reportType"
           "label"    : "Report"
           "editable" : true
+        },
+        {
+          "key"      : "items"
+          "label"    : "Items"
+          "count"    : true
+          "editable" : true
         }
       ],
       "survey" : [
         {
           "key" : "part"
-          "label" : "assessment"
+          "label" : "Assessment"
           "editable" : true
         },
         {
@@ -107,42 +109,21 @@ class CurriculumView extends Backbone.View
     html = "<table class='subtests'>"
 
     html += "
-      <thead class='auto_fixed'>
-        <tr>
-    "
-
-    html += "<th>#{prop.label}</th>" for prop in @subtestProperties
-
-    html += "
-        </tr>
-      </thead>
-    "
-
-
-    html += "
       <tbody>
     "
     @subtestsByPart = @subtests.indexArrayBy "part"
     for part, subtests of @subtestsByPart
       html += "<tr><td>&nbsp;</td></tr>"
       for subtest in subtests
+        headerHtml = bodyHtml = ""
 
-
-        html += "<tr>"
         for prop in @subtestProperties[subtest.get("prototype")]
+          headerHtml += "<th>#{prop.label}</th>"
+          bodyHtml += @propCook(prop, subtest)
 
-          # cook the value
-          value = if prop.key?   then subtest.get(prop.key)    else "&nbsp;"
-          value = if prop.escape then subtest.escape(prop.key) else value
-          value = value.length if prop.count?
-          value = "" if not value?
+        html += "<tr>#{headerHtml}</tr>"
+        html += "<tr>#{bodyHtml}"
 
-          # what is it
-          editOrNot   = if prop.editable && Tangerine.settings.get("context") == "server" then "class='edit_in_place'" else ""
-
-          numberOrNot = if _.isNumber(value) then "data-isNumber='true'" else "data-isNumber='false'" 
-
-          html += "<td class='edit_in_place'><span data-subtestId='#{subtest.id}' data-key='#{prop.key}' data-value='#{value}' #{editOrNot} #{numberOrNot}>#{value}</div></td>"
 
         # add buttons for serverside editing
         if Tangerine.settings.get("context") == "server"
@@ -150,9 +131,19 @@ class CurriculumView extends Backbone.View
             <td>
               <a href='#class/subtest/#{subtest.id}'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>
               <img class='link_icon delete_subtest' title='Delete' data-subtestId='#{subtest.id}' src='images/icon_delete.png'>
-            </td>"
+            </td>
+          </tr>
+          "
 
-        html += "</tr>"
+        # quick previews of subtest contents
+        if subtest.get("prototype") == "grid"
+          items = subtest.get("items").join " "
+          html += "<tr><td colspan='#{@subtestProperties['grid'].length}'>#{items}</td></tr>"
+        
+        if subtest.get("prototype") == "survey"
+          prompts = (question.get("prompt") for question in @questionsBySubtestId[subtest.id]).join(", ")
+          html += "<tr><td colspan='#{@subtestProperties['survey'].length}'>#{prompts}</td></tr>"
+
 
     html += "
       </tbody>
@@ -160,6 +151,22 @@ class CurriculumView extends Backbone.View
     "
 
     return html
+
+  propCook: (prop, subtest)->
+
+    # cook the value
+    value = if prop.key?   then subtest.get(prop.key)    else "&nbsp;"
+    value = if prop.escape then subtest.escape(prop.key) else value
+    value = value.length if prop.count?
+    value = "" if not value?
+
+    # what is it
+    editOrNot   = if prop.editable && Tangerine.settings.get("context") == "server" then "class='edit_in_place'" else ""
+
+    numberOrNot = if _.isNumber(value) then "data-isNumber='true'" else "data-isNumber='false'" 
+
+    return "<td class='edit_in_place'><span data-subtestId='#{subtest.id}' data-key='#{prop.key}' data-value='#{value}' #{editOrNot} #{numberOrNot}>#{value}</div></td>"
+
 
   editInPlace: (event) ->
 
@@ -180,7 +187,6 @@ class CurriculumView extends Backbone.View
 
     return if $span.prop("tagName") == "TEXTAREA"
 
-
     guid         = Utils.guid()
 
     key          = $span.attr("data-key")
@@ -190,13 +196,17 @@ class CurriculumView extends Backbone.View
     subtest      = @subtests.get(subtestId)
     oldValue     = subtest.get(key)
 
+    $target = $(event.target)
+    classes = ($target.attr("class") || "").replace("settings","")
+    margins = $target.css("margin")
+
     #special case
     oldValue = oldValue.join " " if key == 'items'
 
-    transferVariables = "data-isNumber='#{}' data-key='#{key}' data-subtestId='#{subtestId}' "
+    transferVariables = "data-isNumber='#{isNumber}' data-key='#{key}' data-subtestId='#{subtestId}' "
 
     # sets width/height with style attribute
-    $td.html("<textarea id='#{guid}' #{transferVariables} class='editing'>#{oldValue}</textarea>")
+    $td.html("<textarea id='#{guid}' #{transferVariables} class='editing #{classes}' style='margin:#{margins}'>#{oldValue}</textarea>")
     # style='width:#{oldWidth}px; height: #{oldHeight}px;'
     $textarea = $("##{guid}")
     $textarea.focus()
