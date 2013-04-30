@@ -23,7 +23,7 @@ class AssessmentsMenuView extends Backbone.View
     @oldTarget = $target.clone()
     classes = $target.attr("class").replace("settings","")
     margins = $target.css("margin")
-    $target.after("<input type='text' style='margin:#{margins};' data-attribute='#{attribute}' class='edit_in_place #{classes}' value='#{$target.html()}'>")
+    $target.after("<input type='text' style='margin:#{margins};' data-attribute='#{attribute}' class='edit_in_place #{classes}' value='#{_.escape($target.html())}'>")
     input = $target.next().focus()
     $target.remove()
 
