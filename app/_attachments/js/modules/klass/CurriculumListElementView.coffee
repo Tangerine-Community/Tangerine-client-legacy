@@ -35,22 +35,25 @@ class CurriculumListElementView extends Backbone.View
 
 
   render: ->
-    toggleButton     = "<span class='toggle_menu icon_ryte'> </span>"
+    toggleButton    = "<span class='toggle_menu icon_ryte'> </span>"
     editButton      = "<a href='#curriculum/#{@curriculum.id}'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>"
     duplicateButton = "<img class='link_icon duplicate' title='Duplicate' src='images/icon_duplicate.png'>"
     deleteButton    = "<img class='delete link_icon' title='Delete' src='images/icon_delete.png'>"
     deleteConfirm   = "<span class='delete_confirm'><div class='menu_box'>Confirm <button class='delete_yes command_red'>Delete</button> <button class='delete_cancel command'>Cancel</button></div></span>"
+    downloadKey     = "<span class='download_key small_grey'>Download key <b>#{@curriculum.id.substr(-5,5)}</b></span>"
 
     name = "<span class='toggle_menu clickable'>#{@curriculum.escape('name')}</span>"
     menu = "
       #{editButton}
       #{duplicateButton}
       #{deleteButton}
+      #{downloadKey}
       #{deleteConfirm}
     " if Tangerine.user.isAdmin()
 
     menu = "
       #{editButton}
+      #{downloadKey}
     " if not Tangerine.user.isAdmin()
 
     @$el.html "
