@@ -268,32 +268,48 @@ class Router extends Backbone.Router
         subtest.fetch
           success: ->
             student = new Student "_id" : studentId
-            student.fetch
-              success: ->
 
-                onSuccess = (student, subtest, question=null, linkedResult={}) ->
-                  view = new KlassSubtestRunView
-                    "student"      : student
-                    "subtest"      : subtest
-                    "questions"    : questions
-                    "linkedResult" : linkedResult
-                  vm.show view
+            # this function for later, real code below
+            onStudentReady = (student, subtest) ->
+              student.fetch
+                success: ->
 
-                questions = null
-                if subtest.get("prototype") == "survey"
-                  Tangerine.$db.view "tangerine/resultsByStudentSubtest",
-                    key : [studentId,subtest.get("gridLinkId")]
-                    success: (response) =>
-                      if response.rows != 0
-                        linkedResult = new KlassResult _.last(response.rows)?.value
-                      questions = new Questions
-                      questions.fetch
-                        key: subtest.get("curriculumId")
-                        success: ->
-                          questions = new Questions(questions.where {subtestId : subtestId })
-                          onSuccess(student, subtest, questions, linkedResult)
-                else
-                  onSuccess(student, subtest)
+                  # this function for later, real code below
+                  onSuccess = (student, subtest, question=null, linkedResult={}) ->
+                    view = new KlassSubtestRunView
+                      "student"      : student
+                      "subtest"      : subtest
+                      "questions"    : questions
+                      "linkedResult" : linkedResult
+                    vm.show view
+
+                  questions = null
+                  if subtest.get("prototype") == "survey"
+                    Tangerine.$db.view "tangerine/resultsByStudentSubtest",
+                      key : [studentId,subtest.get("gridLinkId")]
+                      success: (response) =>
+                        if response.rows != 0
+                          linkedResult = new KlassResult _.last(response.rows)?.value
+                        questions = new Questions
+                        questions.fetch
+                          key: subtest.get("curriculumId")
+                          success: ->
+                            questions = new Questions(questions.where {subtestId : subtestId })
+                            onSuccess(student, subtest, questions, linkedResult)
+                  else
+                    onSuccess(student, subtest)
+              # end of onStudentReady
+
+            if studentId == "test"
+              student.fetch
+                success: -> onStudentReady( student, subtest)
+                error: ->
+                  student.save null,
+                    success: -> onStudentReady( student, subtest)
+            else
+              student.fetch
+                success: ->
+                  onStudentReady(student, subtest)
 
   register: ->
     Tangerine.user.verify
@@ -491,10 +507,15 @@ class Router extends Backbone.Router
                   students.fetch
                     success: ->
                       students = new Students students.where "klassId" : klassId
+                      studentIds = students.pluck("_id")
+                      resultsFromCurrentStudents = []
+                      for result in results.models
+                        resultsFromCurrentStudents.push(result) if result.get("studentId") in studentIds
+                      filteredResults = new KlassResults resultsFromCurrentStudents
                       view = new KlassGroupingView
                         "students" : students
                         "subtests" : subtests
-                        "results"  : results
+                        "results"  : filteredResults
                       vm.show view
 
   masteryCheck: (studentId) ->

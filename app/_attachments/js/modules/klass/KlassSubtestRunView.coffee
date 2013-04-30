@@ -98,9 +98,17 @@ class KlassSubtestRunView extends Backbone.View
       throw "Prototype skipping not implemented"
 
   cancel: ->
+    if @student.id == "test"
+      history.back()
+      return
+
     Tangerine.router.navigate "class/#{@options.student.get('klassId')}/#{@options.subtest.get('part')}", true
 
   done: ->
+    if @student.id == "test"
+      history.back()
+      return
+
     if @isValid()
       # Gaurantee single "new" result
       Tangerine.$db.view "tangerine/resultsByStudentSubtest",
