@@ -180,15 +180,20 @@ class Utils
       callback?()
     , 2000 )
 
-  @onUpdateSuccess: ->
-    Utils.restartTangerine "Update successful", ->
-      Tangerine.router.navigate "", false
-      Utils.askToLogout() unless Tangerine.settings.get("context") == "server"
+  @onUpdateSuccess: (totalDocs) ->
+    Utils.documentCounter++
+    if Utils.documentCounter == totalDocs
+      Utils.restartTangerine "Update successful", ->
+        Tangerine.router.navigate "", false
+        Utils.askToLogout() unless Tangerine.settings.get("context") == "server"
+      Utils.documentCounter = null
 
 
   @updateTangerine: (callbacks) ->
 
     return unless Tangerine.user.isAdmin()
+
+    Utils.documentCounter = 0
 
     dDoc = 
       if Tangerine.settings.get("context") != "server"
@@ -202,39 +207,46 @@ class Utils
       else
         Tangerine.db_name
 
+    docIds = ["_design/#{dDoc}", "configuration"]
+
     Utils.midAlert "Updating..."
     Utils.working true
     # save old rev for later
-    Tangerine.$db.compact
-      error: (error) ->
-        Utils.working false
-        Utils.midAlert "Update failed compacting database<br>#{error}"
-      success: ->
-        $.getJSON "/#{Tangerine.db_name}/_all_docs?startkey=%22_design%22&endkey=%22_design0%22", (response) ->
-          oldDoc = _id : "_design/#{dDoc}"
-          for row in response.rows
-            if row.id == "_design/#{dDoc}"
-              oldDoc._rev = row.value.rev
-          # replicate from update database
-          $.couch.replicate Tangerine.settings.urlDB("update"), targetDB,
-            error: (error) ->
-              Utils.working false
-              Utils.midAlert "Update failed replicating<br>#{error}"
-            success: ->
-              Tangerine.$db.openDoc "_design/#{dDoc}",
-                conflicts: true
-                success: (data) ->
-                  if data._conflicts?
-                    Tangerine.$db.removeDoc oldDoc,
-                      success: ->
-                        Utils.working false
-                        Utils.onUpdateSuccess()
-                      error: (error) ->
-                        Utils.working false
-                        Utils.midAlert "Update failed resolving conflict<br>#{error}"
-                  else
-                    Utils.onUpdateSuccess()
-          , doc_ids : ["_design/#{dDoc}"]
+    Tangerine.$db.allDocs
+      keys : docIds
+      success: (response) ->
+        oldDocs = []
+        for row in response.rows
+          oldDocs.push {
+            "_id"  : row.id
+            "_rev" : row.value.rev
+          }
+        # replicate from update database
+        $.couch.replicate Tangerine.settings.urlDB("update"), targetDB,
+          error: (error) ->
+            Utils.working false
+            Utils.midAlert "Update failed replicating<br>#{error}"
+            Utils.documentCounter = null
+          success: ->
+            totalDocs = docIds.length
+            for docId, i in docIds
+              oldDoc = oldDocs[i]
+              do (docId, oldDoc, totalDocs) ->
+                Tangerine.$db.openDoc docId,
+                  conflicts: true
+                  success: (data) ->
+                    if data._conflicts?
+                      Tangerine.$db.removeDoc oldDoc,
+                        success: ->
+                          Utils.working false
+                          Utils.onUpdateSuccess(totalDocs)
+                        error: (error) ->
+                          Utils.documentCounter = null
+                          Utils.working false
+                          Utils.midAlert "Update failed resolving conflict<br>#{error}"
+                    else
+                      Utils.onUpdateSuccess(totalDocs)
+        , doc_ids : docIds
 
   @log: (self, error) ->
     className = self.constructor.toString().match(/function\s*(\w+)/)[1]
