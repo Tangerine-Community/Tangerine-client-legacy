@@ -64,7 +64,7 @@ class KlassSubtestResultView extends Backbone.View
           <td><label>Subtest</label></td>
           <td>#{@subtest.escape("name")}</td>
         </tr>
-        #{taken}
+        #{taken || ""}
       </tbody></table>
       #{resultHTML || ""}
       #{runButton || ""}
