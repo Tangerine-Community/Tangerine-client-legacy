@@ -1,7 +1,5 @@
 {
    "_id" : "configuration",
-   "_rev" : "115-1bf7d6f8ef1756716e56b4112f1204db",
-
 
    "local" : {
       "dbName" : "tangerine",
