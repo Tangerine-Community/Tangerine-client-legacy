@@ -26,8 +26,8 @@
    "groupDBPrefix" : "group-",
    "port" : 5984,
 
-   "tree"    : "http://tree.tangerinecentral.org",
-   "robbert" : "http://robbert.tangerinecentral.org",
+   "tree"    : "http://tree.tangerinecentral.org/",
+   "robbert" : "http://robbert.tangerinecentral.org/",
 
    "defaults" : {
       "settings" : {
