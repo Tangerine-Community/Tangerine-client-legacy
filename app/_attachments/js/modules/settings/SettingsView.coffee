@@ -14,6 +14,7 @@ class SettingsView extends Backbone.View
 
   save: ->
     @settings.save
+      context   : @$el.find('#group_handle').val()
       context   : @$el.find('#context').val()
       language  : @$el.find('#language').val()
       groupName : @$el.find("#group_name").val()
@@ -27,12 +28,13 @@ class SettingsView extends Backbone.View
         Utils.midAlert "Error. Settings weren't saved"
 
   render: ->
-    context   = @settings.escape "context"
-    language  = @settings.escape "language"
-    groupName = @settings.escape "groupName"
-    groupHost = @settings.escape "groupHost"
-    upPass    = @settings.escape "upPass"
-    log       = _.escape( @settings.getArray("log").join(", ") )
+    context     = @settings.getEscapedString "context"
+    language    = @settings.getEscapedString "language"
+    groupName   = @settings.getEscapedString "groupName"
+    groupHandle = @settings.getEscapedString "groupHandle"
+    groupHost   = @settings.getEscapedString "groupHost"
+    upPass      = @settings.getEscapedString "upPass"
+    log         = _.escape( @settings.getArray("log").join(", ") )
 
     @$el.html "
     <button class='back navigation'>Back</button>
@@ -46,6 +48,10 @@ class SettingsView extends Backbone.View
       <div class='label_value'>
         <label for='language'>Language code</label><br>
         <input id='language' type='text' value='#{language}'>
+      </div>
+      <div class='label_value'>
+        <label for='group_handle' title='A human readable name. Only for display purposes. Any change here will not affect the address of the group or any internal functionality.'>Group handle</label><br>
+        <input id='group_handle' type='text' value='#{groupHandle}'>
       </div>
       <div class='label_value'>
         <label for='group_name'>Group name</label><br>
