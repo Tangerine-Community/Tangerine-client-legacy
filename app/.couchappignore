@@ -7,10 +7,14 @@
   "Vagrantfile",
   "features*",
   ".*\\.coffee$",
+  ".*\\.map$",
+  ".*\\.min\\.js$",
   "scripts",
   "docs",
   ".DS_Store",
   "Makefile",
-  "file.watchr"
+  "file.watchr",
+  "listen.rb"
+
 
 ]
