@@ -80,6 +80,11 @@ class CurriculumView extends Backbone.View
 
     deleteButton = if Tangerine.settings.get("context") == "server" then "<button class='command_red delete'>Delete</button>" else ""
 
+    newButtons = "
+        <button class='command new_subtest' data-prototype='grid'>New Grid Subtest</button><br>
+        <button class='command new_subtest' data-prototype='survey'>New Survey Subtest</button>
+    " if Tangerine.settings.get("context") == "server"
+
     html = "
 
       <button class='navigation back'>#{t('back')}</button>
@@ -91,8 +96,7 @@ class CurriculumView extends Backbone.View
         #{subtestTable}
       </div>
 
-      <button class='command new_subtest' data-prototype='grid'>New Grid Subtest</button><br>
-      <button class='command new_subtest' data-prototype='survey'>New Survey Subtest</button>
+      #{newButtons || ""}
       <br><br>
 
       #{deleteButton}
