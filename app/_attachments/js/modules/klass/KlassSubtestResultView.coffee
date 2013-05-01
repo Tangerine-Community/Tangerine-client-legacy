@@ -3,19 +3,43 @@ class KlassSubtestResultView extends Backbone.View
   className: "KlassSubtestResultView"
 
   events: 
-    "click .run"           : "gotoRun"
+    "click .run"           : "checkRun"
     "click .back"          : "back"
     "click .show_itemized" : "showItemized"
 
   initialize: (options) ->
+    @allResults = options.allResults
     @results = options.results
     @result = @results[0]
     @previous = options.previous
     @subtest = options.subtest
     @student = options.student
 
+  gotoRun: ->
+    Tangerine.router.navigate "class/run/#{@options.student.id}/#{@options.subtest.id}", true
+
+  checkRun: ->
+    if @subtest.has("gridLinkId") && @subtest.get("gridLinkId") != ""
+      gridLinkId = @subtest.get("gridLinkId")
+    else
+      @gotoRun()
+      return
+
+    result = @allResults.where 
+      "subtestId" : gridLinkId
+      "studentId" : @student.id
+      "subtestId" : @subtest.id
+
+    if result.length != 0 && gridLinkId?
+      @gotoRun()
+    else
+      subtest = new Subtest "_id" : gridLinkId
+      subtest.fetch
+        success: =>
+          Utils.midAlert "Please complete<br><b>#{subtest.escape("name")}</b><br>for<br><b>#{@student.escape('name')}</b><br>before this test.", 5000
+
   showItemized: -> @$el.find(".itemized").fadeToggle()
-  gotoRun: -> Tangerine.router.navigate "class/run/#{@options.student.id}/#{@options.subtest.id}", true
+
   back: -> Tangerine.router.navigate "class/#{@options.student.get("klassId")}/#{@options.subtest.get("part")}", true
 
   render: ->
@@ -45,7 +69,7 @@ class KlassSubtestResultView extends Backbone.View
 
     runButton = "
       <div class='menu_box'>
-        <img src='images/icon_run.png' class='run'>
+        <img src='images/icon_run.png' class='run clickable'>
       </div><br>
     " if not @result? || @result.get?("reportType") != "progress"
 
