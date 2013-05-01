@@ -54,12 +54,7 @@
       {
          "name" : "class grouping table",
          "menuView" : "KlassGroupingMenuView"
-      },
-      {
-         "name" : "CSV",
-         "menuView" : "klassCSVMenuView"
       }
-
    ],
 
    "prototypeViews" : {
