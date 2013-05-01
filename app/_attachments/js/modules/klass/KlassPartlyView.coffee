@@ -9,16 +9,10 @@ class KlassPartlyView extends Backbone.View
     "click .student_subtest"          : "gotoStudentSubtest"
     "keyup #current_part"             : "gotoAssessment"
     "keyup #search_student_name"      : "filterStudents"
+    "focus #search_student_name"      : "scrollToName"
 
-    #"click .part_subtest_report"      : "partSubtestReport"
-    #"click .student"                  : "gotoStudentReport"
-
-#  gotoStudentReport: ->
-#    Tangerine.router.navigate "report/student/" + $(event.target).attr("data-studentId")
-#
-#  partSubtestReport: (event) ->
-#    id = $(event.target).attr("data-id")
-#    Tangerine.router.navigate "report/#{id}", true
+  scrollToName: ->
+    @$el.find("#search_student_name").scrollTo()
 
   filterStudents: ->
     val = @$el.find("#search_student_name").val()
@@ -34,7 +28,6 @@ class KlassPartlyView extends Backbone.View
   update: ->
     @render()
     Tangerine.router.navigate "class/#{@options.klass.id}/#{@currentPart}"
-
 
   back: ->
     Tangerine.router.navigate "class", true
@@ -63,8 +56,6 @@ class KlassPartlyView extends Backbone.View
 
     @lastPart = Math.max.apply(@, _.compact(options.subtests.pluck("part"))) || 1
 
-
-
   updateGridPage:->
     @$el.find("#grid_container").html @getGridPage()
 
@@ -81,14 +72,30 @@ class KlassPartlyView extends Backbone.View
       for subtest, j in subtestsThisPart
         studentResult = resultsForThisStudent.where "subtestId" : subtest.id
         taken = studentResult.length != 0
-        
         if ~student.get("name").toLowerCase().indexOf(@search.toLowerCase()) || @search == ""
+
+          # count back to forward to get recency of last result for color coding
+          for k in [6..0]
+            partTest = @currentPart - k
+            search = resultsForThisStudent.where("part" : partTest, "itemType" : subtest.get("itemType"))
+            recency = k if search.length
+
+          background =
+            if recency <= 2
+              ""
+            else if recency <= 4
+              "rgb(229, 208, 149)"
+            else
+              "rgb(222, 156, 117)"
+
           table[i].push
             "content"   : if taken then "&#x2714;" else "?"
             "taken"     : taken
             "studentId" : student.id
             "studentName" : student.get("name")
             "subtestId" : subtest.id
+            "background" : background
+
 
     # make headers
     gridPage = "<table class='info_box_wide'><tbody><tr><th></th>"
@@ -100,9 +107,12 @@ class KlassPartlyView extends Backbone.View
         gridPage += "<tr><td><div class='student' data-studentId='#{row[0].studentId}'>#{row[0].studentName}</div></td>"
         for cell, column in row
           takenClass = if cell.taken then " subtest_taken" else ""
-          gridPage += "<td><div class='student_subtest command #{takenClass}' data-taken='#{cell.taken}' data-studentId='#{cell.studentId}' data-subtestId='#{cell.subtestId}'>#{cell.content}</div></td>"
+          gridPage += "<td><div class='student_subtest command #{takenClass}' data-taken='#{cell.taken}' data-studentId='#{cell.studentId}' data-subtestId='#{cell.subtestId}' style='background-color:#{cell.background} !important;'>#{cell.content}</div></td>"
         gridPage += "</tr>"
     gridPage += "</tbody></table>"
+
+    if _.flatten(table).length == 0
+      gridPage = "<p class='grey'>No students found.</p>"
 
     return gridPage
 
@@ -113,7 +123,7 @@ class KlassPartlyView extends Backbone.View
     
     @$el.html "
       <h1>#{t('assessment status')}</h1>
-      <input id='search_student_name' placeholder='#{t('search student name')}' type='text'>
+      <input id='search_student_name' style='width: 92% !important' placeholder='#{t('search student name')}' type='text'>
 
       <div id='grid_container'>#{gridPage}</div><br>
       <h2>#{t('current assessment')} </h2>
