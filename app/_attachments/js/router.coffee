@@ -255,6 +255,7 @@ class Router extends Backbone.Router
                           "studentId" : studentId
                           "klassId"   : student.get("klassId")
                         view = new KlassSubtestResultView
+                          "allResults" : allResults
                           "results"  : results
                           "subtest"  : subtest
                           "student"  : student
@@ -506,12 +507,15 @@ class Router extends Backbone.Router
                   students = new Students
                   students.fetch
                     success: ->
+
+                      # filter `Results` by `Klass`'s current `Students`
                       students = new Students students.where "klassId" : klassId
                       studentIds = students.pluck("_id")
                       resultsFromCurrentStudents = []
                       for result in results.models
                         resultsFromCurrentStudents.push(result) if result.get("studentId") in studentIds
                       filteredResults = new KlassResults resultsFromCurrentStudents
+
                       view = new KlassGroupingView
                         "students" : students
                         "subtests" : subtests
@@ -554,7 +558,7 @@ class Router extends Backbone.Router
       isRegistered: ->
         # save this crazy function for later
         # studentId can have the value "all", in which case student should == null
-        afterFetch = ( student ) ->
+        afterFetch = ( student, students ) ->
           klass = new Klass "_id" : klassId
           klass.fetch
             success: (klass) ->
@@ -568,18 +572,31 @@ class Router extends Backbone.Router
                   allResults.fetch
                     success: ( collection ) ->
                       results = new KlassResults collection.where "klassId" : klassId, "reportType" : "progress"
+
+                      console.log students
+                      if students?
+                        # filter `Results` by `Klass`'s current `Students`
+                        studentIds = students.pluck("_id")
+                        resultsFromCurrentStudents = []
+                        for result in results.models
+                          resultsFromCurrentStudents.push(result) if result.get("studentId") in studentIds
+                        results = new KlassResults resultsFromCurrentStudents
+
                       view = new ProgressView
                         "subtests" : subtests
                         "student"  : student
                         "results"  : results
                         "klass"    : klass
                       vm.show view
+
         if studentId != "all"
           student = new Student "_id" : studentId
           student.fetch
-            success: afterFetch
+            success: -> afterFetch student
         else
-          afterFetch null
+          students = new Students
+          students.fetch
+            success: -> afterFetch null, students
 
   #
   # Subtests
