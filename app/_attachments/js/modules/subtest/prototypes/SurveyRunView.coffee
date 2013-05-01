@@ -369,8 +369,13 @@ class SurveyRunView extends Backbone.View
         "
         @updateProgressButtons()
 
+    if @questions.length == notAskedCount
 
-    if @questions.length == notAskedCount then @parent.next?()
+      if Tangerine.settings.get("context") != "class"
+        @parent.next?()
+      else
+        @$el.append "<p class='grey'>Student did not read enough words to ask comprehension questions.</p>"
+
     @trigger "rendered"
 
   onQuestionRendered: =>
