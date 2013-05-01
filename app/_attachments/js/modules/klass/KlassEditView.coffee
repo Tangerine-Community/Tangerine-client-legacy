@@ -39,7 +39,7 @@ class KlassEditView extends Backbone.View
       newStudent.save
         klassId : @klass.id
       ,
-        success: ->
+        success: =>
           @students.add newStudent
           @addStudentToggle()
 
