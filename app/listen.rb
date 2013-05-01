@@ -60,7 +60,7 @@ Listen.to(".") do |modified, added, removed|
         result = `coffee #{mapOption} --bare --compile #{match} 2>&1`
         Dir.chdir( $jsDir ) {
           jsFile = match.gsub(".coffee", ".js")
-          puts `./uglify.rb #{jsFile}`
+          puts `./uglify.rb #{jsFile} version.js`
         }
 
       end
