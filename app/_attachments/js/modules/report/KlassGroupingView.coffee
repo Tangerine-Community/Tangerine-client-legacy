@@ -89,9 +89,9 @@ class KlassGroupingView extends Backbone.View
 
       @table.push person
 
-    @summary.aCorrect  = Math.decimals( @summary.aCorrect / @table.length, 2)
-    @summary.anCorrect = Math.decimals( @summary.anCorrect / @table.length, 2)
-    @summary.attempted = Math.decimals( @summary.attempted / @table.length, 2)
+    @summary.aCorrect  = Math.decimals( @summary.aCorrect / @table.length, 0 )
+    @summary.anCorrect = Math.decimals( @summary.anCorrect / @table.length, 2 )
+    @summary.attempted = Math.decimals( @summary.attempted / @table.length, 2 )
 
     for person in @table
       @summary.stdDev += Math.pow(person.pCorrect - @summary.aCorrect, 2)
