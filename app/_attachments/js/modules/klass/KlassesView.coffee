@@ -8,7 +8,9 @@ class KlassesView extends Backbone.View
     'click .save'        : 'saveNewKlass'
     'click .goto_class'  : 'gotoKlass'
     'click .curricula'   : 'gotoCurricula'
-    'click .pull_data'   : 'pullData' 
+    'click .pull_data'   : 'pullData'
+    'click .verify'      : 'ghostLogin'
+    'click .upload_data' : 'uploadData'
 
   initialize: ( options ) ->
     @ipBlock  = 32
@@ -21,6 +23,61 @@ class KlassesView extends Backbone.View
     @teachers  = options.teachers
     
     @klasses.on "add remove change", @render
+
+    if Tangerine.user.isAdmin()
+      # timeout for the verification attempt
+      @timer = setTimeout =>
+        @updateUploader(false)
+      , 20 * 1000
+
+      # try to verify the connection to the server
+      verReq = $.ajax 
+        url: Tangerine.settings.urlView("group", "byDKey")
+        dataType: "jsonp"
+        data: keys: ["testtest"]
+        timeout: 5000
+        success: =>
+          clearTimeout @timer 
+          @updateUploader true
+
+  ghostLogin: ->
+    Tangerine.user.ghostLogin Tangerine.settings.upUser, Tangerine.settings.upPass
+
+  uploadData: ->
+    $.ajax
+      "url"         : "/" + Tangerine.db_name + "/_design/tangerine/_view/byCollection?include_docs=false"
+      "type"        : "POST"
+      "dataType"    : "json"
+      "contentType" : "application/json;charset=utf-8",
+      "data"        : JSON.stringify(
+          include_docs: false
+          keys : ['result', 'klass', 'student', 'teacher', 'logs']
+        )
+      "success" : (data) =>
+        docList = _.pluck(data.rows,"id")
+        $.couch.replicate(
+          Tangerine.settings.urlDB("local"),
+          Tangerine.settings.urlDB("group"),
+            success:      =>
+              Utils.midAlert "Sync successful"
+            error: (a, b) =>
+              Utils.midAlert "Sync error<br>#{a} #{b}"
+          ,
+            doc_ids: docList
+        )
+
+
+  updateUploader: (status) =>
+    html =
+      if status == true
+        "<button class='upload_data command'>Upload</button>"
+      else if status == false 
+        "<div class='menu_box'><small>No connection</small><br><button class='command verify'>Verify connection</button></div>"
+      else
+        "<button class='command' disabled='disabled'>Verifying connection...</button>"
+
+    @$el.find(".uploader").html html
+
 
   pullData: ->
     if @tabletOffset == 0
@@ -223,6 +280,7 @@ class KlassesView extends Backbone.View
     adminPanel = "
       <h1>Admin menu</h1>
       <button class='pull_data command'>Pull data</button>
+      <div class='uploader'></div>
     " if Tangerine.user.isAdmin()
 
 
@@ -259,8 +317,9 @@ class KlassesView extends Backbone.View
       </div>
       <button class='command curricula'>#{t('all curricula')}</button>
     "
-    
-    
+
+    @updateUploader() if Tangerine.user.isAdmin()
+
     @renderKlasses()
     
     @trigger "rendered"
