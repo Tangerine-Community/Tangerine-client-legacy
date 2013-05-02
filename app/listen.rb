@@ -17,6 +17,7 @@ def push
   }
 
   Dir.chdir( $jsDir ) {
+    `./uglify.rb version.js`
     `./uglify.rb app`
     puts "\nCompiled\t\tapp.js\n\n"
   }
@@ -60,7 +61,7 @@ Listen.to(".") do |modified, added, removed|
         result = `coffee #{mapOption} --bare --compile #{match} 2>&1`
         Dir.chdir( $jsDir ) {
           jsFile = match.gsub(".coffee", ".js")
-          puts `./uglify.rb #{jsFile} version.js`
+          puts `./uglify.rb #{jsFile}`
         }
 
       end
