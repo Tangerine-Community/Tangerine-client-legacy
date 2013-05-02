@@ -19,24 +19,25 @@ class KlassSubtestResultView extends Backbone.View
     Tangerine.router.navigate "class/run/#{@options.student.id}/#{@options.subtest.id}", true
 
   checkRun: ->
-    if @subtest.has("gridLinkId") && @subtest.get("gridLinkId") != ""
-      gridLinkId = @subtest.get("gridLinkId")
-    else
+    hasGridLink = @subtest.has("gridLinkId") && @subtest.get("gridLinkId") != ""
+    if not hasGridLink
       @gotoRun()
       return
+
+    gridLinkId = @subtest.get("gridLinkId")
 
     result = @allResults.where 
       "subtestId" : gridLinkId
       "studentId" : @student.id
-      "subtestId" : @subtest.id
 
-    if result.length != 0 && gridLinkId?
-      @gotoRun()
-    else
+    if result.length == 0
       subtest = new Subtest "_id" : gridLinkId
       subtest.fetch
         success: =>
           Utils.midAlert "Please complete<br><b>#{subtest.escape("name")}</b><br>for<br><b>#{@student.escape('name')}</b><br>before this test.", 5000
+      return
+
+    @gotoRun()
 
   showItemized: -> @$el.find(".itemized").fadeToggle()
 
