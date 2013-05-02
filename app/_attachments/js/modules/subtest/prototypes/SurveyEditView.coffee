@@ -81,9 +81,17 @@ class SurveyEditView extends Backbone.View
     notSaved = []
     emptyOptions = []
     requiresGrid = []
+    duplicateVariables = []
+
+    variableNames = {}
 
     # check for "errors"
     for question, i in @questionsEditView.questions.models
+
+      if question.get("name") != ""
+        variableNames[question.get("name")] = 0 if not _.isNumber(variableNames[question.get("name")])
+        variableNames[question.get("name")]++
+
       if question.get("type") != "open" && question.get("options")?.length == 0 && !~question.getString('displayCode').indexOf('setOptions')
         emptyOptions.push i + 1
       
@@ -93,19 +101,29 @@ class SurveyEditView extends Backbone.View
           if question.has("linkedGridScore") && question.get("linkedGridScore") != "" && question.get("linkedGridScore") != 0 && @model.has("gridLinkId") == "" && @model.get("gridLinkId") == ""
             requiresGrid.push i
         
+    for name, count of variableNames
+      duplicateVariables.push name if count != 1
+
     # display errors
+    aWarnings = []
     if notSaved.length != 0
       Utils.midAlert "Error<br><br>Questions: <br>#{notSaved.join(', ')}<br>not saved"
     if options.questionSave && emptyOptions.length != 0
       plural = emptyOptions.length > 1
       _question = if plural then "Questions" else "Question"
       _has      = if plural then "have" else "has"
-      alert "Warning\n\n#{_question} #{emptyOptions.join(' ,')} #{ _has } no options."
+      aWarnings.push "- #{_question} #{emptyOptions.join(' ,')} #{ _has } no options."
     if requiresGrid.length != 0
       plural = emptyOptions.length > 1
       _question = if plural then "Questions" else "Question"
       _require  = if plural then "require" else "requires"
-      alert "Warning\n\n#{ _question } #{requiresGrid.join(' ,')} #{ _require } a grid to be linked to this test."
+      aWarnings.push "- #{ _question } #{requiresGrid.join(' ,')} #{ _require } a grid to be linked to this test."
+    if duplicateVariables.length != 0
+      aWarnings.push "- The following variables are duplicates\n #{duplicateVariables.join(', ')}"
+
+    if aWarnings.length != 0
+      tWarnings = aWarnings.join("\n\n")
+      alert "Warning\n\n#{tWarnings}"
 
 
   onClose: ->
