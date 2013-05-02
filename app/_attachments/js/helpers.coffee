@@ -139,6 +139,8 @@ km = {"0":48,"1":49,"2":50,"3":51,"4":52,"5":53,"6":54,"7":55,"8":56,"9":57,"a":
 sks = [ { q : (km["0100ser"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "server"}, { success: -> Tangerine.router.navigate("", true)}) },
         { q : (km["0100mob"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "mobile"}, { success: -> Tangerine.router.navigate("", true)}) },
         { q : (km["0100cla"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "class"},  { success: -> Tangerine.router.navigate("", true)}) },
+        { q : (km["0900redo"[i]] for i in [0..7]), i : 0, c : -> vm.currentView.index--; vm.currentView.resetNext(); },
+        { q : (km["0900back"[i]] for i in [0..7]), i : 0, c : -> vm.currentView.index -= 2; vm.currentView.index = Math.max(0, vm.currentView.index); vm.currentView.resetNext(); },
         { q : (km["0100update"[i]] for i in [0..9]), i : 0, c : -> Utils.updateTangerine( -> Utils.midAlert("Updated, please refresh.") ) } ]
 $(document).keydown (e) -> ( if e.keyCode == sks[j].q[sks[j].i++] then sks[j]['c']() if sks[j].i == sks[j].q.length else sks[j].i = 0 ) for sk, j in sks 
 
