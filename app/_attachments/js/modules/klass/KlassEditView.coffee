@@ -127,6 +127,8 @@ class KlassEditView extends Backbone.View
 
     @$el.find("#student_list_wrapper").html $ul
     
+    ###
+    # Add student feature
     studentOptionList = "<option value='_none' disabled='disabled' selected='selected'>(#{$.t('name')}) - (#{$.t('age')})</option>"
     for student in @allStudents.models
       isInClass = false
@@ -136,6 +138,7 @@ class KlassEditView extends Backbone.View
         studentOptionList += "<option data-id='#{student.id}'>#{student.get 'name'} - #{student.get 'age'}</option>"
 
     @$el.find("#add_student_select").html studentOptionList
+    ###
 
   render: ->
 
@@ -212,7 +215,8 @@ class KlassEditView extends Backbone.View
     
     <h2>#{t('students').capitalize()}</h2>
     <div id='student_list_wrapper'></div>
-    <button class='add_student command'>Add student</button>
+    <!-- add student feature -->
+    <!--button class='add_student command'>Add student</button>
     <div class='add_student_form menu_box confirmation'>
       <div class='label_value'>
         <label for='add_student_select'>#{t('add student')}</label><br>
@@ -220,7 +224,7 @@ class KlassEditView extends Backbone.View
         </select>
       </div>      
       <button class='add_student_add command'>#{t('add')}</button><button class='add_student_cancel command'>#{t('cancel')}</button>
-    </div>
+    </div-->
 
 
     <button class='register_student command'>#{$.t("register student")}</button>
