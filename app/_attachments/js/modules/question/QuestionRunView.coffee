@@ -162,13 +162,15 @@ class QuestionRunView extends Backbone.View
 
       if @type == "single" or @type == "multiple"
         @button.setElement(@$el.find(".button_container"))
+        @button.on "rendered", => @trigger "rendered"
         @button.render()
+      else
+        @trigger "rendered"
 
 
     else
       @$el.hide()
-
-    @trigger "rendered"
+      @trigger "rendered"
   
   defineSpecialCaseResults: ->
     list = ["missing", "notAsked", "skipped", "logicSkipped", "notAskedAutostop"]
