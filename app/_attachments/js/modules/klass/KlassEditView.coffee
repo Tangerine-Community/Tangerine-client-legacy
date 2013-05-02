@@ -44,14 +44,15 @@ class KlassEditView extends Backbone.View
           @addStudentToggle()
 
   registerStudent: =>
-    @students.create
+    @students.add new Student
       name    : @$el.find("#register_student_name").val()
       gender  : @$el.find("#register_student_gender").val()
       age     : @$el.find("#register_student_age").val()
       klassId : @klass.id
-    , wait : true
-    @registerStudentToggle()
-    @$el.find("#register_student_form input").val()
+    , 
+      success: =>
+        @registerStudentToggle()
+        @$el.find("#register_student_form input").val()
     
 
   basicInfoToggle: ->
