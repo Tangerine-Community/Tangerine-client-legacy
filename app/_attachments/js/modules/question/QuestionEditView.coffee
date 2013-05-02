@@ -285,7 +285,8 @@ class QuestionEditView extends Backbone.View
     return false
 
   goBack: =>
-    Tangerine.router.navigate "subtest/#{@question.get('subtestId')}", true
+    classOrNot = 'class/' if @question.has("curriculumId")
+    Tangerine.router.navigate "#{classOrNot||""}subtest/#{@question.get('subtestId')}", true
     return false
 
   updateModel: =>
