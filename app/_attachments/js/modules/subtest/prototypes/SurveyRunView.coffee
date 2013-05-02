@@ -230,11 +230,9 @@ class SurveyRunView extends Backbone.View
         view.$el.removeClass "disabled_autostop" if not @autostopped
 
   updateSkipLogic: =>
-
-    _.each @questionViews, (questionView) =>
+    for questionView in @questionViews
       question = questionView.model
       skipLogicCode = question.get "skipLogic"
-
       if not _.isEmptyString(skipLogicCode)
         try
           result = CoffeeScript.eval.apply(@, [skipLogicCode])
@@ -247,7 +245,6 @@ class SurveyRunView extends Backbone.View
           questionView.$el.addClass "disabled_skipped"
         else
           questionView.$el.removeClass "disabled_skipped"
-
       questionView.updateValidity()
 
   isValid: (views = @questionViews) ->
@@ -356,9 +353,12 @@ class SurveyRunView extends Backbone.View
         oneView.on "rendered", @onQuestionRendered
         oneView.on "answer scroll", @onQuestionAnswer
 
-        oneView.render()
         @questionViews[i] = oneView
         @$el.append oneView.el
+
+      for questionView in @questionViews
+        questionView.render()
+
 
       if @focusMode
         @updateQuestionVisibility()
@@ -370,7 +370,6 @@ class SurveyRunView extends Backbone.View
         @updateProgressButtons()
 
     if @questions.length == notAskedCount
-
       if Tangerine.settings.get("context") != "class"
         @parent.next?()
       else
