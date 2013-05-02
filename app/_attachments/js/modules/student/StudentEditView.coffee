@@ -47,7 +47,7 @@ class StudentEditView extends Backbone.View
         <input id='age' value='#{age}'>
       </div>
       <div class='label_value'>
-        <label for='klass_select'>#{t('class')}</label>
+        <label for='klass_select'>#{t('class')}</label><br>
         <select id='klass_select'>"
     html += "<option data-id='null' #{if klassId == null then "selected='selected'"}>#{t('none')}</option>"
     for klass in @klasses.models
