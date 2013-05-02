@@ -145,7 +145,7 @@ class CurriculumView extends Backbone.View
           items = subtest.get("items").join " "
           html += "<tr><td colspan='#{@subtestProperties['grid'].length}'>#{items}</td></tr>"
         
-        if subtest.get("prototype") == "survey"
+        if subtest.get("prototype") == "survey" && @questionsBySubtestId[subtest.id]?
           prompts = (question.get("prompt") for question in @questionsBySubtestId[subtest.id]).join(", ")
           html += "<tr><td colspan='#{@subtestProperties['survey'].length}'>#{prompts}</td></tr>"
 
