@@ -75,9 +75,9 @@ class AssessmentsMenuView extends Backbone.View
           Tangerine.settings.urlDB("local"),
           Tangerine.settings.urlDB("group"),
             success: =>
-              Utils.midAlert "Results synced to cloud successfully"
+              Utils.sticky "Results synced to cloud successfully."
             error: (code, message) =>
-              Utils.midAlert "Upload error<br>#{code} #{message}"
+              Utils.sticky "Upload error<br>#{code} #{message}"
           ,
             doc_ids: docList
         )
