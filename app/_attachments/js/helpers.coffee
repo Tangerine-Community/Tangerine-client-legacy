@@ -194,7 +194,7 @@ class Utils
       Utils.documentCounter = null
 
 
-  @updateTangerine: (callbacks) ->
+  @updateTangerine: (callbacks, doResolve = true) ->
 
     return unless Tangerine.user.isAdmin()
 
@@ -221,7 +221,7 @@ class Utils
       keys : docIds
       success: (response) ->
         oldDocs = []
-        for row in response.rows
+        for row in response.rows  
           oldDocs.push {
             "_id"  : row.id
             "_rev" : row.value.rev
@@ -233,6 +233,9 @@ class Utils
             Utils.midAlert "Update failed replicating<br>#{error}"
             Utils.documentCounter = null
           success: ->
+            if not doResolve
+              Utils.onUpdateSuccess(0)
+              return
             totalDocs = docIds.length
             for docId, i in docIds
               oldDoc = oldDocs[i]
