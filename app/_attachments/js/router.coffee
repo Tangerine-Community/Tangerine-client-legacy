@@ -37,6 +37,8 @@ class Router extends Backbone.Router
     'report/masteryCheck/:studentId'      : 'masteryCheck'
     'report/progress/:studentId/:klassId' : 'progressReport'
 
+    'teachers' : 'teachers'
+
     # server / mobile
     'groups' : 'groups'
 
@@ -739,6 +741,17 @@ class Router extends Backbone.Router
           success: =>
             view = new LogView
               logs: logs
+            vm.show view
+
+
+  teachers: ->
+    Tangerine.user.verify
+      isRegistered: ->
+        teachers = new Teachers
+        teachers.fetch
+          success: =>
+            view = new TeachersView
+              teachers: teachers
             vm.show view
 
 
