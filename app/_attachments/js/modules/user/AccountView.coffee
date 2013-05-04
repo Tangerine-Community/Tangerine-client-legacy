@@ -8,23 +8,22 @@ class AccountView extends Backbone.View
     'click .join'        : 'joinToggle'
     'click .join_group'  : 'join'
     'click .back'        : 'goBack'
-    'click #mode_buttons input' : 'changeMode'
     'click .update' : 'update'
     'click .restart' : 'restart'
 
+    "click .edit_in_place"  : "editInPlace"
+    "focusout .editing" : "editing"
+    "keyup    .editing" : "editing"
+    "keydown  .editing" : "editing"
+
+
   update: ->
-    Utils.updateTangerine()
+    doResolve = @$el.find("#attempt_resolve").is(":checked")
+    
+    Utils.updateTangerine(null, doResolve)
 
   restart: ->
     Utils.restartTangerine()
-
-  changeMode: (event) ->
-    settings = new Settings "_id" : "TangerineSettings"
-    settings.fetch
-      success: (settingsModel) =>
-        settingsModel.set
-          "context" : $(event.target).val()
-        settingsModel.save()
 
   goBack: ->
     if Tangerine.settings.get("context") == "server"
@@ -48,6 +47,7 @@ class AccountView extends Backbone.View
 
   initialize: ( options ) ->
     @user = options.user
+    @models = new Backbone.Collection(@user)
     @user.on "group-join group-leave group-refresh", @renderGroups
   
   renderGroups: =>
@@ -57,7 +57,6 @@ class AccountView extends Backbone.View
     html += "</ul>"
     @$el.find("#group_wrapper").html html
 
-  
   render: ->
 
     groupSection = "
@@ -84,28 +83,44 @@ class AccountView extends Backbone.View
       settingsButton = "<a href='#settings' class='navigation'><button class='navigation'>Settings</button></a>"
       logsButton = "<a href='#logs' class='navigation'><button class='navigation'>Logs</button></a>"
 
-    updateButton = "
-      <button class='command update'>Update Tangerine</button>
+    applicationMenu = "
+      <section>
+        <h2>Application</h2>
+        <table class='menu_box'>
+          <tr>
+            <td><button class='command update'>Update</button></td>
+            <td><input type='checkbox' id='attempt_resolve'></td>
+            <td><label for='attempt_resolve'>Legacy method</label></td>
+          </tr>
+        </table><br>
+        <button class='command restart'>Restart</button>
+      </section>
+
+      
     " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") != "server"
 
-    restartButton = "
-      <button class='command restart'>Restart Tangerine</button>
-    " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") != "server"
+    teachersButton = "
+      <a href='#teachers' class='navigation'><button class='navigation'>Teachers</button></a>
+    " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") == "class"
 
     html = "
       <button class='back navigation'>Back</button>
-      <h1>Account</h1>
+      <h1>Manage</h1>
       #{settingsButton || ""}
-      #{logsButton || ""}<br>
-      #{updateButton || ""}<br>
-      #{restartButton || ""}
-
+      #{logsButton || ""}
+      #{teachersButton || ""}
+      
+      #{applicationMenu || ""}
 
       <section>
-        <div class='label_value'>
-          <label>Name</label>
-          <div>#{@user.name}</div>
-        </div>
+        <h2>Account</h2>
+          <table class='class_table'>
+            <tr>
+              <td>Name</td>
+              <td>#{@user.name}</td>
+            </tr>
+            #{@getEditableRow({key:"email", name:"E-mail"}, @user)}
+          </table>
       </section>
       #{groupSection || ""}
       </div>
@@ -115,3 +130,121 @@ class AccountView extends Backbone.View
     @renderGroups() if Tangerine.settings.get("context") == "server"
 
     @trigger "rendered"
+
+
+  getEditableRow: (prop, model) ->
+    "<tr><td>#{prop.name}</td><td>#{@getEditable(prop, model)}</td></tr>"
+
+  getEditable: (prop, model) ->
+
+    # cook the value
+    value = if prop.key?   then model.get(prop.key)    else "&nbsp;"
+    value = if prop.escape then model.escape(prop.key) else value
+    value = "not set" if not value? or _.isEmptyString(value)
+
+    # what is it
+    editOrNot   = if prop.editable && Tangerine.settings.get("context") == "server" then "class='edit_in_place'" else ""
+
+    numberOrNot = if _.isNumber(value) then "data-isNumber='true'" else "data-isNumber='false'" 
+
+    return "<div class='edit_in_place'><span data-modelId='#{model.id}' data-key='#{prop.key}' data-value='#{value}' data-name='#{prop.name}' #{editOrNot} #{numberOrNot}>#{value}</div></div>"
+
+
+  editInPlace: (event) ->
+
+    return if @alreadyEditing
+    @alreadyEditing = true
+
+    # save state
+    # replace with text area
+    # on save, save and re-replace
+    $span = $(event.target)
+
+    $td  = $span.parent()
+
+    @$oldSpan = $span.clone()
+
+    return if $span.hasClass("editing")
+
+    guid     = Utils.guid()
+
+    key      = $span.attr("data-key")
+    name     = $span.attr("data-name")
+    isNumber = $span.attr("data-isNumber") == "true"
+
+    modelId  = $span.attr("data-modelId")
+    model    = @models.get(modelId)
+    oldValue = model.get(key) || ""
+    oldValue = "" if oldValue == "not set"
+
+    $target = $(event.target)
+    classes = ($target.attr("class") || "").replace("settings","")
+    margins = $target.css("margin")
+
+    transferVariables = "data-isNumber='#{isNumber}' data-key='#{key}' data-modelId='#{modelId}' "
+
+    # sets width/height with style attribute
+    $td.html("<textarea placeholder='#{name}' id='#{guid}' rows='#{1+oldValue.count("\n")}' #{transferVariables} class='editing #{classes}' style='margin:#{margins}' data-name='#{name}'>#{oldValue}</textarea>")
+    # style='width:#{oldWidth}px; height: #{oldHeight}px;'
+    $textarea = $("##{guid}")
+    $textarea.focus()
+
+  editing: (event) ->
+
+    $target = $(event.target)
+    $td = $target.parent()
+
+    if event.which == 27 or event.type == "focusout"
+      $target.remove()
+      $td.html(@$oldSpan)
+      @alreadyEditing = false
+      return
+
+    # act normal, unless it's an enter key on keydown
+    return true unless event.which == 13 and event.type == "keydown"
+
+    #return true if event.which == 13 and event.altKey
+
+    @alreadyEditing = false
+
+    key        = $target.attr("data-key")
+    isNumber   = $target.attr("data-isNumber") == "true"
+
+    modelId    = $target.attr("data-modelId")
+    name       = $target.attr("data-name")
+
+    model      = @models.get(modelId)
+    oldValue   = model.get(key)
+
+    newValue = $target.val()
+    newValue = if isNumber then parseInt(newValue) else newValue
+
+    # If there was a change, save it
+    if String(newValue) != String(oldValue)
+      attributes = {}
+      attributes[key] = newValue
+      model.save attributes,
+        success: =>
+          Utils.midAlert "#{name} saved"
+          model.fetch 
+            success: =>
+              if @updateDisplay?
+                @updateDisplay()
+              else
+                @render()
+        error: =>
+          model.fetch 
+            success: =>
+              if @updateDisplay?
+                @updateDisplay()
+              else
+                @render()
+              # ideally we wouldn't have to save this but conflicts happen sometimes
+              # @TODO make the model try again when unsuccessful.
+              alert "Please try to save again, it didn't work that time."
+    
+    # this ensures we do not insert a newline character when we press enter
+    return false
+
+  goBack: ->
+    window.history.back()
