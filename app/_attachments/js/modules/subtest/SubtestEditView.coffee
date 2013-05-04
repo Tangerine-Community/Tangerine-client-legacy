@@ -172,11 +172,15 @@ class SubtestEditView extends Backbone.View
     skippable   = @model.getBoolean("skippable")
     fontFamily  = @model.getEscapedString("fontFamily")
     displayCode = @model.getString("displayCode")
-
+    groupHandle = Tangerine.settings.getEscapedString("groupHandle")
 
     @$el.html "
       <h1>Subtest Editor</h1>
       <table class='basic_info'>
+        <tr>
+          <th>Group</th>
+          <td>#{groupHandle}</td>
+        </tr>
         <tr>
           <th>Assessment</th>
           <td>#{assessmentName}</td>
