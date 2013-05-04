@@ -147,6 +147,9 @@ $(document).keydown (e) -> ( if e.keyCode == sks[j].q[sks[j].i++] then sks[j]['c
 
 String.prototype.safetyDance = -> this.replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g,"")
 String.prototype.databaseSafetyDance = -> this.replace(/\s/g, "_").toLowerCase().replace(/[^a-z0-9_-]/g,"")
+String.prototype.count = (substring) -> this.match(new RegExp substring, "g")?.length || 0
+
+
 
 Math.ave = ->
   result = 0
