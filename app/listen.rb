@@ -9,6 +9,7 @@ def push
   # Save current version number
   version = `git log --pretty=format:'%h' -n 1`
   File.open( File.join($jsDir, "version.js"), "w") {|f| f.write("window.Tangerine.version = \"#{version}\"\;") }
+  File.open( "updated", "w") {|f| f.write( (Time.now.to_f * 1000).to_i ) }
 
   # builds index-dev.html from files listed in uglify.js
   Dir.chdir( $jsDir ) {
@@ -57,12 +58,15 @@ Listen.to(".") do |modified, added, removed|
       else
         # Otherwise, just compile
         puts "\nCompiling:\t\t#{match}"
-        mapOption = if /views/.match(match) then "" else "--map" end
+        couchSpecial = /shows\/|views\/|lists\//.match(match)
+        mapOption = if couchSpecial then "" else "--map" end
         result = `coffee #{mapOption} --bare --compile #{match} 2>&1`
-        Dir.chdir( $jsDir ) {
+        if not couchSpecial
           jsFile = match.gsub(".coffee", ".js")
-          puts `./uglify.rb #{jsFile}`
-        }
+          Dir.chdir($jsDir) {
+            puts `./uglify.rb #{jsFile}`
+          }
+        end
 
       end
       #puts result
@@ -90,7 +94,7 @@ Listen.to(".") do |modified, added, removed|
     /.*\.css|.*\.js$|.*\.html$|.*\.json$/.match(file) { |match|
 
       # Don't trigger push for these files
-      unless /version\.js|app\.js|index-dev|\/min\//.match(file)
+      unless /updated$|version\.js|app\.js|index-dev|\/min\//.match(file)
         puts "\nUpdating:\t\t#{match}"
         push()
       end
