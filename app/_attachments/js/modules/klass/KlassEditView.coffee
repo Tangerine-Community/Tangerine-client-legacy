@@ -22,7 +22,9 @@ class KlassEditView extends Backbone.View
     teacherId = @$el.find("#teacher_select option:selected").attr("data-teacherId")
     @klass.set "teacherId", teacherId
 
-  addStudentToggle: -> @$el.find(".add_student_form, .add_student").toggle()
+  addStudentToggle: -> 
+    @$el.find(".register_student_form input").val("")
+    @$el.find(".add_student_form, .add_student").toggle()
 
   registerStudentToggle: -> 
     @$el.find(".register_student_form, .register_student").toggle()
@@ -44,15 +46,17 @@ class KlassEditView extends Backbone.View
           @addStudentToggle()
 
   registerStudent: =>
-    @students.add new Student
+    student = new Student
+    student.save
       name    : @$el.find("#register_student_name").val()
       gender  : @$el.find("#register_student_gender").val()
       age     : @$el.find("#register_student_age").val()
       klassId : @klass.id
     , 
       success: =>
+        @students.add student
         @registerStudentToggle()
-        @$el.find("#register_student_form input").val()
+        
     
 
   basicInfoToggle: ->
