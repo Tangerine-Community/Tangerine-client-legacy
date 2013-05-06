@@ -194,7 +194,7 @@ class Utils
       Utils.documentCounter = null
 
 
-  @updateTangerine: (callbacks, doResolve = true) ->
+  @updateTangerine: (doResolve = true) ->
 
     return unless Tangerine.user.isAdmin()
 
@@ -234,7 +234,7 @@ class Utils
             Utils.documentCounter = null
           success: ->
             if not doResolve
-              Utils.onUpdateSuccess(0)
+              Utils.onUpdateSuccess(1)
               return
             totalDocs = docIds.length
             for docId, i in docIds

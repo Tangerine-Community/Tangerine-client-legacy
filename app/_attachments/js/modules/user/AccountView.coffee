@@ -20,7 +20,7 @@ class AccountView extends Backbone.View
   update: ->
     doResolve = @$el.find("#attempt_resolve").is(":checked")
     
-    Utils.updateTangerine(null, doResolve)
+    Utils.updateTangerine(doResolve)
 
   restart: ->
     Utils.restartTangerine()
