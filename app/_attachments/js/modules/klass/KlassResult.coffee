@@ -8,11 +8,23 @@ class KlassResult extends Backbone.Model
     ,
       success: => callback()
 
+  getItemized: (options) ->
+  
+    if @attributes.prototype == "grid"
+      itemized = @attributes.subtestData
+    else if @attributes.prototype == "survey"
+      itemized = []
+      for key, value of @attributes.subtestData
+        itemized.push
+          itemLabel: key
+          itemResult: value
+
+    return itemized
+
   get: (options) ->
     if options == "correct"     then return @gridCount ["correct", 1]
     if options == "incorrect"   then return @gridCount ["incorrect", 0]
     if options == "missing"     then return @gridCount ["missing", 9]
-
 
     if options == "total"
       if @attributes.prototype == "grid"

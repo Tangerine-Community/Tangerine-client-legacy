@@ -65,13 +65,13 @@ class KlassGroupingView extends Backbone.View
       "anCorrect"   : 0
       "stdDev"      : 0
       "attempted"   : 0
-      "totalItems"  : @subtest.get("items").length
+      "totalItems"  : @selected.results[0]?.get("total")
       "watchList"   : []
 
     for result in @selected.results
       person =
         'studentId'  : result.get("studentId")
-        'items'      : result.get("subtestData").items
+        'items'      : result.getItemized()
         'name'       : @students.get( result.get("studentId") ).get("name")
         'pCorrect'   : 0
         'nCorrect'   : result.get("correct")
@@ -247,6 +247,7 @@ class KlassGroupingView extends Backbone.View
         <table class='itemized_results confirmation student_#{person.studentId}'>
           <tbody><tr><th>Item</th><th>Result</th></tr>
       "
+
       for datum, i in person.items
         itemizedResults += "<tr><td>#{datum.itemLabel}</td><td>#{t(datum.itemResult)}</td></tr>"
       itemizedResults += "</tbody></table>"
