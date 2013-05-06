@@ -46,6 +46,7 @@ class AccountView extends Backbone.View
     @user.leaveGroup group
 
   initialize: ( options ) ->
+
     @user = options.user
     @models = new Backbone.Collection(@user)
     @user.on "group-join group-leave group-refresh", @renderGroups
@@ -119,7 +120,7 @@ class AccountView extends Backbone.View
               <td>Name</td>
               <td>#{@user.name}</td>
             </tr>
-            #{@getEditableRow({key:"email", name:"E-mail"}, @user)}
+            #{@getEditableRow({key:"email", name:"Email"}, @user)}
           </table>
       </section>
       #{groupSection || ""}
