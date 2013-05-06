@@ -152,7 +152,7 @@ class KlassGroupingView extends Backbone.View
     isClassReady = pNotReady < 20
 
     warningIcon = "<img src='images/icon_warn.png'>"
-    @readyPercentage = "<p>#{pNotReady}% of your students are not ready to move on to the next lessons.</p>"
+    @readyPercentage = "<p>#{Math.round(pNotReady)}% of your students are not ready to move on to the next lessons.</p>"
 
     classReady = "It is ok to move on in the lesson sequence. Make sure that those children performing in the “poor” or “concerning” category get extra attention and practice and don’t fall behind. This can be done during practice lessons on Tuesday and Thursdays, or during another subject on the timetable."
     classNotReady = "Your class needs extra practice. Consider re-teaching Monday and Wednesday lessons introducing the new curriculum items or organize intense practice activities for the entire class. To find out which items students are particularly struggling with, select the name of a few students in the “poor” or “concerning” category and review their performance item by item. Take note of items that seem particularly troublesome."
