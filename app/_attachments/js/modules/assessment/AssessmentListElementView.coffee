@@ -41,16 +41,37 @@ class AssessmentListElementView extends Backbone.View
     @model.replicate group, =>
       window.location = Tangerine.settings.urlIndex(group, "assessments")
 
-  update: ->
-    @model.on "status", (message) =>
-      if message == "import success"
-        Utils.midAlert "Updated"
-        @model.fetch
-          success: =>
-            @render()
-      else if message == "import error"
-        Utils.midAlert "Update failed"
-    @model.updateFromServer()
+  ghostLogin: =>
+    Tangerine.user.ghostLogin Tangerine.settings.upUser, Tangerine.settings.upPass
+
+  update: =>
+    Utils.midAlert "Verifying connection"
+    Utils.working true
+
+    @model.verifyConnection
+      error: =>
+        Utils.working false
+        Utils.midAlert "Verifying connection<br>Please retry update."
+        _.delay =>
+          @ghostLogin()
+        , 5000
+
+      success: =>
+        Utils.working false
+        @model.on "status", (message) =>
+          if message == "import lookup"
+            Utils.midAlert "Update starting"
+          else if message == "import success"
+            Utils.midAlert "Updated"
+            Utils.working false
+            @model.fetch
+              success: =>
+                @render()
+          else if message == "import error"
+            Utils.working false
+            Utils.midAlert "Update failed"
+        Utils.working true
+        @model.updateFromServer()
 
   togglePrint: ->
     @$el.find(".print_format_wrapper").fadeToggle(150)

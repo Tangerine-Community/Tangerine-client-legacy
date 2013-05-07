@@ -10,6 +10,17 @@ class Assessment extends Backbone.Model
 
   calcDKey: => @id.substr(-5, 5)
 
+  verifyConnection: ( callbacks ) =>
+    @timer = setTimeout callbacks.error, 20 * 1000
+    $.ajax 
+      url: Tangerine.settings.urlView("group", "byDKey")
+      dataType: "jsonp"
+      data: keys: ["testtest"]
+      timeout: 5000
+      success: =>
+        clearTimeout @timer
+        callbacks.success()
+
   getResultCount: =>
     $.ajax Tangerine.settings.urlView("local", "resultCount")
       type: "POST"
@@ -40,13 +51,14 @@ class Assessment extends Backbone.Model
 
   updateFromServer: ( dKey = @calcDKey(), group ) =>
 
+    console.log "trying to update from server"
+
     @lastDKey = dKey
     
     # split to handle multiple dkeys
     dKeys = dKey.replace(/[^a-f0-9]/g," ").split(/\s+/)
 
     @trigger "status", "import lookup"
-
 
     if Tangerine.settings.get("context") == "server"
       sourceDB = "group-" + group
@@ -72,6 +84,7 @@ class Assessment extends Backbone.Model
       type: "GET"
       dataType: "jsonp"
       data: keys: JSON.stringify(dKeys)
+      error: (a, b) => @trigger "status", "import error", "#{a} #{b}"
       success: (data) =>
         docList = []
         for datum in data.rows
@@ -83,6 +96,7 @@ class Assessment extends Backbone.Model
           contentType: "application/json"
           dataType: "json"
           data: JSON.stringify(keys:dKeys)
+          error: (a, b) => @trigger "status", "import error", "#{a} #{b}"
           success: (data) =>
             for datum in data.rows
               docList.push datum.id
