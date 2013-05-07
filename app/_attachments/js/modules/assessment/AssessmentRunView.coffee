@@ -109,6 +109,7 @@ class AssessmentRunView extends Backbone.View
     currentView = @subtestViews[@orderMap[@index]]
     if currentView.isValid()
       subtestResult = currentView.getResult()
+
       @result.add
         name        : currentView.model.get "name"
         data        : subtestResult.body
@@ -124,6 +125,7 @@ class AssessmentRunView extends Backbone.View
   
   resetNext: =>
     @rendered.subtest = false
+    @rendered.assessment = false
     currentView = @subtestViews[@orderMap[@index]]
     currentView.close()
     @index = 
