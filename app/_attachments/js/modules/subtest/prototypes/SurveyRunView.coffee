@@ -2,7 +2,9 @@
 
 ResultOfQuestion = (name) ->
   returnView = null
-  for candidateView in vm.currentView.subtestViews[vm.currentView.index].prototypeView.questionViews
+  index = vm.currentView.orderMap[vm.currentView.index]
+
+  for candidateView in vm.currentView.subtestViews[index].prototypeView.questionViews
     if candidateView.model.get("name") == name
       returnView = candidateView
   throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
@@ -11,7 +13,9 @@ ResultOfQuestion = (name) ->
 
 ResultOfMultiple = (name) ->
   returnView = null
-  for candidateView in vm.currentView.subtestViews[vm.currentView.index].prototypeView.questionViews
+  index = vm.currentView.orderMap[vm.currentView.index]
+
+  for candidateView in vm.currentView.subtestViews[index].prototypeView.questionViews
     if candidateView.model.get("name") == name
       returnView = candidateView
   throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
@@ -20,12 +24,6 @@ ResultOfMultiple = (name) ->
   for key, value of returnView.answer
     result.push key if value == "checked" 
   return result
-
-
-  return null
-
-
-  
 
 ResultOfPrevious = (name) ->
   return vm.currentView.result.getVariable(name)
