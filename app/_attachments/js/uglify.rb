@@ -34,6 +34,7 @@ jsFiles = [
   'modules/assessment/AssessmentEditView.js',
   'modules/assessment/AssessmentRunView.js',
   'modules/assessment/AssessmentImportView.js',
+  'modules/assessment/AssessmentSyncView.js',
 
   'modules/subtest/Subtest.js',
   'modules/subtest/Subtests.js',
