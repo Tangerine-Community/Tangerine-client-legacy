@@ -31,8 +31,10 @@ class LoginView extends Backbone.View
 
     nameName = Tangerine.settings.contextualize
       server: @text.user
+      satellite: @text.user
       mobile: @text.enumerator
       klass : @text.teacher
+
 
     width = $('#content').width()
     parentWidth = $('#content').offsetParent().width()
