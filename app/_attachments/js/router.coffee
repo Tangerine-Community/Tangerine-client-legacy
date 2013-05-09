@@ -39,6 +39,7 @@ class Router extends Backbone.Router
 
     'teachers' : 'teachers'
 
+
     # server / mobile
     'groups' : 'groups'
 
@@ -60,6 +61,9 @@ class Router extends Backbone.Router
     'dashboard' : 'dashboard'
     'dashboard/*options' : 'dashboard'
     'admin' : 'admin'
+
+    'sync/:id'      : 'sync'
+
     
   admin: (options) ->
     Tangerine.user.verify
@@ -85,15 +89,18 @@ class Router extends Backbone.Router
 
   landing: ->
 
-    if Tangerine.settings.get("context") == "server"
-      if ~String(window.location.href).indexOf("tangerine/_design") # in main group?
-        Tangerine.router.navigate "groups", true
-      else
+    Tangerine.settings.contextualize
+      server: ->
+        if ~String(window.location.href).indexOf("tangerine/_design") # in main group?
+          Tangerine.router.navigate "groups", true
+        else
+          Tangerine.router.navigate "assessments", true
+      satellite: ->
         Tangerine.router.navigate "assessments", true
-    else if Tangerine.settings.get("context") == "mobile"
-      Tangerine.router.navigate "assessments", true
-    else if Tangerine.settings.get("context") == "class"
-      Tangerine.router.navigate "class", true
+      mobile: ->
+        Tangerine.router.navigate "assessments", true
+      klass: ->
+        Tangerine.router.navigate "class", true
 
   groups: ->
     Tangerine.user.verify
@@ -341,6 +348,16 @@ class Router extends Backbone.Router
   #
   # Assessment
   #
+
+
+  sync: ( assessmentId ) ->
+    Tangerine.user.verify
+      isAdmin: ->    
+        assessment = new Assessment "_id" : assessmentId
+        assessment.fetch
+          success: ->
+            vm.show new AssessmentSyncView "assessment": assessment
+
   import: ->
     Tangerine.user.verify
       isRegistered: ->
