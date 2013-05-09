@@ -17,7 +17,6 @@ class AssessmentListElementView extends Backbone.View
     'click .print'                     : 'togglePrint'
     'change #print_format'             : 'print'
 
-
   blankResultCount: "-"
 
   initialize: (options) ->
@@ -159,6 +158,8 @@ class AssessmentListElementView extends Backbone.View
     duplicateButton = "<img class='link_icon duplicate' title='Duplicate' src='images/icon_duplicate.png'>"
     updateButton    = "<img class='link_icon update' title='Update' src='images/icon_sync.png'>"
 
+    syncButton      = "<a href='#sync/#{@model.id}'><img class='link_icon' title='Sync' src='images/icon_sync.png'></a>"
+
     downloadKey     = "<span class='download_key small_grey'>Download key <b>#{@model.id.substr(-5,5)}</b></span>"
     archiveSwitch   = "
     <select class='archive'>
@@ -175,38 +176,40 @@ class AssessmentListElementView extends Backbone.View
           #{adminName}
         </div>
       "
-      # Admin on mobile
-      if Tangerine.settings.get("context") == "mobile"
-        html += "
-          <div class='assessment_menu'>
-            #{runButton}
-            #{resultsButton}
-            #{updateButton}
-            #{deleteButton}
-            #{deleteConfirm}
-          </div>
-        "
-      ##{resultCount}
-      # not on mobile
-      else
-        # admin and group
-        # #{adminResultCount}
-
-        html += "
+      html += Tangerine.settings.contextualize
+        server: "
           <div class='assessment_menu'>
             #{runButton}
             #{resultsButton}
             #{editButton}
+            #{syncButton}
             #{printButton}
             #{duplicateButton}
             #{deleteButton}
             #{downloadKey}
             #{deleteConfirm}
             #{printSelector}
-          </div>
-
-
-        "
+          </div>"
+        satellite: "
+          <div class='assessment_menu'>
+            #{runButton}
+            #{editButton}
+            #{syncButton}
+            #{printButton}
+            #{duplicateButton}
+            #{deleteButton}
+            #{downloadKey}
+            #{deleteConfirm}
+            #{printSelector}
+          </div>"
+        allElse: "
+          <div class='assessment_menu'>
+            #{runButton}
+            #{resultsButton}
+            #{updateButton}
+            #{deleteButton}
+            #{deleteConfirm}
+          </div>"
     # enumerator user
     else
       html = "<div>#{runButton}#{name} #{resultsButton}</div>"
