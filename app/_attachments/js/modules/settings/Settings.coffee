@@ -10,19 +10,27 @@ class Settings extends Backbone.Model
     @on "all", => @update()
 
   contextualize: (callbacks={}) ->
-    if @get("context") == "server"
-      return callbacks.server() if _.isFunction(callbacks.server)
-      return callbacks.server if callbacks.server?
-      return ""
-    else if @get("context") == "mobile"
-      return callbacks.mobile() if _.isFunction(callbacks.mobile)
-      return callbacks.mobile if callbacks.mobile?
-      return ""
-    else if @get("context") == "class"
-      return callbacks.klass() if _.isFunction(callbacks.klass)
-      return callbacks.klass if callbacks.klass?
-      return ""
-    return ""
+    result = ""
+    if @get("context") == "server" and callbacks.server?
+      result += if _.isFunction(callbacks.server) then callbacks.server() else callbacks.server
+    else if @get("context") == "satellite" and callbacks.satellite?
+      result += if _.isFunction(callbacks.satellite) then callbacks.satellite() else callbacks.satellite
+    else if @get("context") == "mobile" and callbacks.mobile?
+      result += if _.isFunction(callbacks.mobile) then callbacks.mobile() else callbacks.mobile
+    else if @get("context") == "class" and callbacks.klass?
+      result += if _.isFunction(callbacks.klass) then callbacks.klass() else callbacks.klass
+    else if @get("context") != "server" and callbacks.notServer?
+      result += if _.isFunction(callbacks.notServer) then callbacks.notServer() else callbacks.notServer
+    else if @get("context") != "satellite" and callbacks.notSatellite?
+      result += if _.isFunction(callbacks.notSatellite) then callbacks.notSatellite() else callbacks.notSatellite
+    else if @get("context") != "mobile" and callbacks.notMobile?
+      result += if _.isFunction(callbacks.notMobile) then callbacks.notMobile() else callbacks.notMobile
+    else if @get("context") != "class" and callbacks.notKlass?
+      result += if _.isFunction(callbacks.notKlass) then callbacks.notKlass() else callbacks.notKlass
+    else if callbacks.allElse
+      result += if _.isFunction(callbacks.allElse) then callbacks.allElse() else callbacks.allElse
+
+    return result
 
   update: =>
     groupHost = @get "groupHost"
