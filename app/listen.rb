@@ -11,13 +11,9 @@ def push
   File.open( File.join($jsDir, "version.js"), "w") {|f| f.write("window.Tangerine.version = \"#{version}\"\;") }
   File.open( "updated", "w") {|f| f.write( (Time.now.to_f * 1000).to_i ) }
 
-  # builds index-dev.html from files listed in uglify.js
   Dir.chdir( $jsDir ) {
     `./uglify.rb dev`
     puts "\nGenerated:\t\tindex-dev.html"
-  }
-
-  Dir.chdir( $jsDir ) {
     `./uglify.rb version.js`
     `./uglify.rb app`
     puts "\nCompiled\t\tapp.js\n\n"
