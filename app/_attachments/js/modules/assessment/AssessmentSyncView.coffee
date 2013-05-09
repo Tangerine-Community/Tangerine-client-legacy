@@ -19,8 +19,8 @@ class AssessmentSyncView extends Backbone.View
     @getDocIds ( docIds ) =>
 
       $.couch.replicate( 
-        groupDB, #from
-        localDB, #to
+        groupDB, # from
+        localDB, # to
           success: (response)=>
             Utils.midAlert "Download success" 
             @updateConflicts() 
@@ -122,6 +122,8 @@ class AssessmentSyncView extends Backbone.View
 
   keep: (event) ->
 
+    return if not confirm "This will permanently remove the other versions, are you sure?"
+
     @deletedCount = 0
     @toDeleteCount = 0
     $target = $(event.target)
@@ -133,9 +135,11 @@ class AssessmentSyncView extends Backbone.View
 
     onComplete = (response) =>
       @deletedCount++
+
       @updateConflicts() if @deletedCount == @toDeleteCount
 
-    @toDeleteCount++ unless doc._rev == docRev for doc in docsById[docId]
+    for doc in docsById[docId]
+      @toDeleteCount++ unless doc._rev == docRev 
 
     for doc in docsById[docId]
 
@@ -244,6 +248,7 @@ class AssessmentSyncView extends Backbone.View
             for key, value of combined
               differences.push(key) if _.uniq(value).length > 1
 
+            revCount = 1
             for rev in doc
               presentables = {}
               for key, value of rev
@@ -251,6 +256,7 @@ class AssessmentSyncView extends Backbone.View
                 presentables[key] = value
               html += "
               <div class='menu_box'>
+                <h3>Version #{revCount++}</h3>
                 <table class='conflict_table'>
                   <tr><td><b>#{rev.name}</b></td><td><button class='command keep' data-docId='#{rev._id}' data-docRev='#{rev._rev}'>Keep</button></td></tr>
                   <tr><th>Updated</th><td>#{rev.updated}</td></tr>
