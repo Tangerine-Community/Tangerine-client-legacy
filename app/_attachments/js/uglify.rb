@@ -182,12 +182,12 @@ libFiles = [
   'lib/jquery.ui.progressbar.js',
   'lib/inflection.js',
   'lib/backbone.js',
-  'lib/moment.min.js',
+  'lib/moment.js',
   'lib/backbone-couchdb.js',
   'lib/transcriptionCheckdigit.js',
   'lib/table2CSV.js',
   'lib/base64.js',
-  'lib/jstz.min.js',
+  'lib/jstz.js',
   'lib/ckeditor.js',
   'lib/coffee-script.js' # This file tends to like to be last
 ]
