@@ -17,9 +17,9 @@ class NavigationView extends Backbone.View
   calcWhoAmI: =>
     # who am I
     @whoAmI = Tangerine.settings.contextualize
-      server: @text.user
       mobile: @text.enumerator
       klass : @text.teacher
+      allElse : @text.user
 
   enumeratorClick: ->
     if @user.isAdmin()
@@ -54,6 +54,7 @@ class NavigationView extends Backbone.View
   onClose: -> # do nothing
 
   initialize: (options) =>
+
     @i18n()
     @render()
 
