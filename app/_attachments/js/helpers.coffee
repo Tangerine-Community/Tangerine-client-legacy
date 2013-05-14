@@ -211,17 +211,15 @@ class Utils
 
     Utils.documentCounter = 0
 
-    dDoc = 
-      if Tangerine.settings.get("context") != "server"
-        "tangerine"
-      else
-        "ojai"
+    dDoc = Tangerine.settings.contextualize
+      server: "ojai"
+      satellite: "ojai"
+      allElse: "tangerine"
 
-    targetDB = 
-      if Tangerine.settings.get("context") != "server"
-        Tangerine.settings.location.update.target
-      else
-        Tangerine.db_name
+    targetDB = Tangerine.settings.contextualize
+      server : Tangerine.db_name
+      satellite : Tangerine.db_name
+      allElse: Tangerine.settings.location.update.target
 
     docIds = ["_design/#{dDoc}", "configuration"]
 
