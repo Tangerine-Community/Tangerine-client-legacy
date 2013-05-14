@@ -56,7 +56,7 @@ class AssessmentSyncView extends Backbone.View
     localDKey = Tangerine.settings.urlView("local", "byDKey")
     groupDKey = (Tangerine.settings.location.group.db+Tangerine.settings.couch.view + "byDKey").replace(/\/\/(.*)@/,"//")
 
-    $.ajax 
+    $.ajax
       url: groupDKey
       type: "GET"
       dataType: "jsonp"
@@ -67,7 +67,7 @@ class AssessmentSyncView extends Backbone.View
         for datum in data.rows
           docList.push datum.id
 
-        $.ajax 
+        $.ajax
           url: localDKey
           type: "POST"
           contentType: "application/json"
@@ -77,9 +77,7 @@ class AssessmentSyncView extends Backbone.View
           success: (data) =>
             for datum in data.rows
               docList.push datum.id
-
             docList = _.uniq(docList)
-
             callback docList
 
 
@@ -97,28 +95,16 @@ class AssessmentSyncView extends Backbone.View
 
     @$el.find(".loads").removeClass("confirmation")
 
-
   login: ->
     @user = @$el.find("#user").val()
     @pass = @$el.find("#pass").val()
 
-
-    @timer = setTimeout @verifyTimeout, 20 * 1000
-
-    $.ajax 
-      url: Tangerine.settings.urlView("group", "byDKey").replace(/\/\/(.*)@/,"//#{@user}:#{@pass}@")
-      dataType: "jsonp"
-      data: keys: ["testtest"]
-      timeout: 15000
-      success: => @onVerifySuccess()
-
-    @$el.find(".login_box").toggleClass "confirmation"
-    @$el.find(".show_login").toggle()
+    Tangerine.user.ghostLogin(@user, @pass)
 
   verifyTimeout: =>
-    @$el.find("#connection").html @loginButton(status:"<br>Failed. Try logging in.")
-    @$el.find(".loads").addClass("confirmation")
 
+    @$el.find("#connection").html @loginButton(status:"<br>Failed. Check connection or try again.")
+    @$el.find(".loads").addClass("confirmation")
 
   keep: (event) ->
 
@@ -159,12 +145,24 @@ class AssessmentSyncView extends Backbone.View
     @$el.find("#table_#{docRev}").toggleClass "confirmation"
 
   initialize: (options) ->
+
     @assessment = options.assessment
     @docList = []
 
     @dKey = @assessment.id.substr(-5, 5)
 
     @connectionVerified = false
+
+    @timer = setTimeout @verifyLogout, 20 * 1000
+
+    $.ajax 
+      url: Tangerine.settings.urlView("group", "byDKey").replace(/\/\/(.*)@/,"//#{@user}:#{@pass}@")
+      dataType: "jsonp"
+      data: keys: ["testtest"]
+      timeout: 15000
+      success: => 
+        clearTimeout @timer
+        @onVerifySuccess()
 
     @readyTemplates()
 
@@ -178,7 +176,7 @@ class AssessmentSyncView extends Backbone.View
     connectionBox = "
       <div class='info_box grey'>
         Server connection<br>
-        <span id='connection'>#{@loginButton({status:""})}</span>
+        <span id='connection'>#{@loginButton({status:"Checking..."})}</span>
       </div>
     " if Tangerine.settings.get("context") != "server"
 
