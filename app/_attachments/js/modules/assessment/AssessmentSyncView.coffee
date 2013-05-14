@@ -109,20 +109,20 @@ class AssessmentSyncView extends Backbone.View
       url: Tangerine.settings.urlView("group", "byDKey").replace(/\/\/(.*)@/,"//#{@user}:#{@pass}@")
       dataType: "jsonp"
       data: keys: ["testtest"]
-      timeout: 5000
+      timeout: 15000
       success: => @onVerifySuccess()
 
     @$el.find(".login_box").toggleClass "confirmation"
     @$el.find(".show_login").toggle()
 
   verifyTimeout: =>
-    @$el.find("#connection").html @loginButton(status:"<br>Failed. Try loging in.")
+    @$el.find("#connection").html @loginButton(status:"<br>Failed. Try logging in.")
     @$el.find(".loads").addClass("confirmation")
 
 
   keep: (event) ->
 
-    return if not confirm "This will permanently remove the other versions, are you sure?"
+    return unless confirm "This will permanently remove the other versions, are you sure?"
 
     @deletedCount = 0
     @toDeleteCount = 0
