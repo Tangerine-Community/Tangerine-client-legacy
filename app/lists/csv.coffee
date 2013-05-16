@@ -38,18 +38,14 @@
 
     rowCache.push row
 
-    for subtestIndex, subtestValue of row.value
-      columnsBySubtest[subtestIndex] = [] if not columnsBySubtest[subtestIndex]?
-      
-      for pair in subtestValue
+    for subtest in row.value
+      for subtestIndex, subtestValue of subtest
+        columnsBySubtest[subtestIndex] = [] if not columnsBySubtest[subtestIndex]?
+        for pair in subtestValue
+          key = unpair(pair)[0] || ''
+          if !~columnsBySubtest[subtestIndex].indexOf(key)
+            columnsBySubtest[subtestIndex].push key
 
-        undone = unpair(pair)
-        continue if not undone?
-
-        key   = undone[0] || ""
-        value = undone[1] || ""
-        if not ~columnsBySubtest[subtestIndex].indexOf(key)
-          columnsBySubtest[subtestIndex].push key
 
     break if toSample-- == 0
 
@@ -65,6 +61,7 @@
       columnNames.push "\"" + key + "\""
   send columnNames.join(",") + "\n"
 
+
   row = true
 
   #limit = 50
@@ -78,26 +75,28 @@
     else
       row = getRow()
 
-    break if not row?
+    break unless row?
 
     # flatten
     oneRow = {}
-    for subtestIndex, subtest of row.value
-      for pair in subtest
-        undone = unpair(pair)
-        continue if not undone?
-        key   = undone[0]
-        value = undone[1]
-        
-        oneRow[key] = value
+    for oneSubtest in row.value
+      for subtestIndex, subtest of oneSubtest
+        for pair in subtest
+          undone = unpair(pair)
+          continue unless undone?
+          key   = undone[0]
+          value = undone[1]
+          
+          oneRow[key] = value
 
     # send one csv row
     csvRow = []
     for columnKey in columnKeys
       rawCell = oneRow[columnKey]
-      if rawCell != undefined
+      if rawCell?
         csvRow.push  '"' + String(rawCell).replace(/"/g,'”') + '"'
       else
+
         csvRow.push null
     send csvRow.join(",") + "\n"
 

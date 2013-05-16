@@ -4,60 +4,14 @@
 
   if doc.collection is "result"
 
+    utils = require("views/lib/utils")
 
-    clone = `function (item) {
-        if (!item) { return item; } // null, undefined values check
-
-        var types = [ Number, String, Boolean ], 
-            result;
-
-        // normalizing primitives if someone did new String('aaa'), or new Number('444');
-        types.forEach(function(type) {
-            if (item instanceof type) {
-                result = type( item );
-            }
-        });
-
-        if (typeof result == "undefined") {
-            if (Object.prototype.toString.call( item ) === "[object Array]") {
-                result = [];
-                item.forEach(function(child, index, array) { 
-                    result[index] = clone( child );
-                });
-            } else if (typeof item == "object") {
-                // testing that this is DOM
-                if (item.nodeType && typeof item.cloneNode == "function") {
-                    var result = item.cloneNode( true );    
-                } else if (!item.prototype) { // check that this is a literal
-                    if (item instanceof Date) {
-                        result = new Date(item);
-                    } else {
-                        // it is an object literal
-                        result = {};
-                        for (var i in item) {
-                            result[i] = clone( item[i] );
-                        }
-                    }
-                } else {
-                    // depending what you would like here,
-                    // just keep the reference, or create new object
-                    if (false && item.constructor) {
-                        // would not advice to do that, reason? Read below
-                        result = new item.constructor();
-                    } else {
-                        result = item;
-                    }
-                }
-            } else {
-                result = item;
-            }
-        }
-
-        return result;
-    }`
+    clone       = utils.clone
+    exportValue = utils.exportValue
+    pair        = utils.pair
 
     subtestData = doc.subtestData
-    keyId = doc.assessmentId
+    keyId       = doc.assessmentId
 
     # turn class results into regular results
     if doc.klassId?
@@ -71,54 +25,20 @@
         prototype : doc.prototype
         subtestId : doc.subtestId
       } ]
-      
-      log "NEW SUBTEST DATA"
-      log JSON.stringify(subtestData)
 
-    exportValueMap = {
-      "correct" : 1
-      "checked" : 1
 
-      "incorrect" : "0"
-      "unchecked" : "0"
+    ###
+    Handle universal fields
+    ###
 
-      "missing"   : "."
-      "not_asked" : "."
-      
-      "skipped"   : 999
-    }
+    universal = []
+    universal.push pair("enumerator", doc['enumerator'])
+    universal.push pair("start_time", doc['starttime'] || doc['start_time'])
+    universal.push pair("order_map",  if doc['order_map']? then doc['order_map'].join(",") else "no_record")
 
-    metaKeys = [
-      "enumerator"
-      "start_time"
-      "order_map"
-    ]
-
-    exportValue = (databaseValue="no_record") ->
-      if exportValueMap[databaseValue]?
-        return exportValueMap[databaseValue]
-      else
-        return String(databaseValue)
-
-    # returns an object {key: value}
-    pair = (key, value) ->
-      if value == undefined then value = "no_record"
-      o = {}
-      o[key] = value
-      return o
-
-    metaData = []
-    # meta columns go first
-    for metaKey in metaKeys
-      metaData.push pair(metaKey, doc[metaKey]) if doc[metaKey]?
-
-    # a little backwards compatibility
-    startTime = doc['starttime'] || doc['start_time']
-    metaData.push pair("start_time", startTime)
-    metaData.push pair("order_map",  if doc['order_map']? then doc['order_map'].join(",") else "no_record")
-
-    # first "subtest" is always metadata
-    bySubtest = {"meta_data" : metaData}
+    # first "subtest" is always universal
+    bySubtest = []
+    bySubtest.push pair("universal", universal)
 
     #
     # Subtest loop
@@ -126,6 +46,8 @@
     datetimeCount = 0
     linearOrder = [0..subtestData.length-1]
     orderMap = if doc["order_map"]? then doc["order_map"] else if doc["orderMap"] then doc["orderMap"] else linearOrder
+
+    timestamps = []
 
     # go through each subtest in this result
     for rawIndex in linearOrder 
@@ -146,7 +68,7 @@
         log doc
         continue 
 
-      prototype = subtest.prototype
+      prototype = subtest['prototype']
 
       # each prototype provides different data, handle them accordingly
       if prototype == "id"
@@ -214,8 +136,13 @@
         row.push pair("additional_comments", subtest.data.comment)
         row.push pair("end_time"           , subtest.data.end_time)
 
-      row.push pair("time_stamp_#{rawIndex+1}", subtest.timestamp)
+      timestamps.push subtest.timestamp
 
-      bySubtest[subtest.subtestId] = row
+      bySubtest.push pair(subtest.subtestId, row)
+
+
+    timestamps = timestamps.sort()
+
+    bySubtest.push pair("timestamps", [pair("timestamps",subtest.join(',')) ] )
 
     emit(keyId, bySubtest)
