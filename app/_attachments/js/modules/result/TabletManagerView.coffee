@@ -44,7 +44,7 @@ class TabletManagerView extends Backbone.View
               url: Tangerine.settings.urlSubnet(ip)
               dataType: "jsonp"
               contentType: "application/json;charset=utf-8",
-              timeout: 10000
+              timeout: 20000
             req.complete (xhr, error) =>
               @tablets.checked++
               if parseInt(xhr.status) == 200
