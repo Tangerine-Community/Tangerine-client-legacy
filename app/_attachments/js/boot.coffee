@@ -22,6 +22,17 @@ Backbone.couch_connector.config.global_changes = false
 # set underscore's template engine to accept handlebar-style variables
 _.templateSettings = interpolate : /\{\{(.+?)\}\}/g
 
+Tangerine.onBackButton = (event) ->
+  if Tangerine.activity == "assessment run"
+    if confirm t("NavigationView.message.incomplete_main_screen")
+      Tangerine.activity = ""
+      window.history.back()
+    else
+      return false
+  else
+    window.history.back()
+
+
 # Grab our system config doc
 Tangerine.config = new Config "_id" : "configuration"
 Tangerine.config.fetch
@@ -81,16 +92,7 @@ Tangerine.onSettingsLoad = ->
                 ###
 
                 # prevents default
-                document.addEventListener "backbutton", (event) ->
-                  if Tangerine.activity == "assessment run"
-                    if confirm t("NavigationView.message.incomplete_main_screen")
-                      Tangerine.activity = ""
-                      window.history.back()
-                    else
-                      return false
-                  else
-                    window.history.back()
-                , false
+                document.addEventListener "backbutton", Tangerine.onBackButton, false
               , false
 
 

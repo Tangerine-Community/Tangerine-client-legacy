@@ -19,6 +19,8 @@ class ResultsView extends Backbone.View
 
   csvBeta: ->
     if Tangerine.settings.get("context") == "mobile"
+      document.removeEventListener "backbutton", Tangerine.onBackButton, false
+
       download = "&download=false"
     filename = @assessment.get("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
     document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}#{download||''}"
@@ -156,20 +158,11 @@ class ResultsView extends Backbone.View
       @$el.find('button.tablets').removeAttr('disabled')
 
 
-  readyCSVBeta: ->
-    $.ajax
-      dataType: "json"
-      contentType: "application/json;charset=utf-8",
-      url: "http://localhost:5984/tangerine/_design/tangerine/_list/csvHeaders/csvRowByResult"
-      data: {key:"\""+@assessment.id+"\""}
-      success:  (data) =>
-        $button = @$el.find(".csv_beta")
-        $button.removeAttr "disabled"
-        $button.html "CSV"
-        
-        @columnHeaders = data
-
   initialize: ( options ) ->
+
+    document.removeEventListener "backbutton", Tangerine.onBackButton, false
+    document.addEventListener "backbutton", Tangerine.onBackButton, false
+
 
     @resultLimit  = 100
     @resultOffset = 0
