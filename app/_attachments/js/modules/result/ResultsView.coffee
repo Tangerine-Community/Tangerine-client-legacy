@@ -271,7 +271,7 @@ class ResultsView extends Backbone.View
           @$el.find("#page").val(currentPage)
           @$el.find("#limit").val(@resultLimit)
 
-        @$el.find('#result_position').html "#{@resultOffset}-#{Math.min(@resultOffset+@resultLimit,@results.length)} of #{@results.length}"
+        @$el.find('#result_position').html "#{@resultOffset+1}-#{Math.min(@resultOffset+@resultLimit,@results.length)} of #{@results.length}"
 
         htmlRows = ""
         for row in rows

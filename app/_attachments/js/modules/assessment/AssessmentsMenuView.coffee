@@ -11,10 +11,16 @@ class AssessmentsMenuView extends Backbone.View
     'click .apk'         : 'apk'
     'click .groups'      : 'gotoGroups'
     'click .universal_upload' : 'universalUpload'
+
+    'click .sync_tablets' : 'syncTablets'
+
     'click .results'        : 'results'
     'click .settings'       : 'editInPlace'
     'keyup .edit_in_place'  : 'saveInPlace'
     'change .edit_in_place'  : 'saveInPlace'
+
+  syncTablets: =>
+    @tabletManager.sync()
 
   editInPlace: (event) ->
     return unless Tangerine.user.isAdmin()
@@ -98,6 +104,13 @@ class AssessmentsMenuView extends Backbone.View
 
   initialize: (options) ->
 
+    if Tangerine.settings.get("context") == "mobile"
+      @tabletManager = new TabletManagerView
+        docTypes : ["result"]
+        callbacks: 
+          completePull: => @tabletManager.pushDocs()
+
+
     @assessments = options.assessments
     @curricula = options.curricula
 
@@ -124,6 +137,7 @@ class AssessmentsMenuView extends Backbone.View
     apkButton     = "<button class='apk navigation'>APK</button>"
     groupsButton  = "<button class='navigation groups'>Groups</button>"
     uploadButton  = "<button class='command universal_upload'>Universal Upload</button>"
+    syncTabletsButton = "<button class='command sync_tablets'>Sync Tablets</button>"
     resultsButton = "<button class='navigation results'>Results</button>"
     groupHandle   = "<h2 class='settings grey' data-attribtue='groupHandle'>#{Tangerine.settings.getEscapedString('groupHandle') || Tangerine.settings.get('groupName')}</h2>"
 
@@ -142,6 +156,7 @@ class AssessmentsMenuView extends Backbone.View
     if @isAdmin
       html += "
         #{if Tangerine.settings.get("context") == "server" then newButton else "" }
+        #{if Tangerine.settings.get("context") == "mobile" then syncTabletsButton else "" }
         #{importButton}
 
         

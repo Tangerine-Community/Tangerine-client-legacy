@@ -72,6 +72,7 @@ jsFiles = [
   'modules/result/Results.js',
   'modules/result/ResultView.js',
   'modules/result/ResultsView.js',
+  'modules/result/TabletManagerView.js',
   'modules/result/ResultSumView.js',
   'modules/result/CSVView.js',
   'modules/result/DashboardView.js',
