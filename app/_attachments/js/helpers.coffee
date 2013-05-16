@@ -189,8 +189,7 @@ _.indexBy = ( propertyName, objectArray ) ->
 class Utils
 
   @restartTangerine: (message, callback) ->
-    message = message + "<br>" if message?
-    Utils.midAlert "#{message || ''}Restarting Tangerine"
+    Utils.midAlert "#{message || 'Restarting Tangerine'}"
     _.delay( ->
       document.location.reload()
       callback?()

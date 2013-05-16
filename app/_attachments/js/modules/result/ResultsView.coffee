@@ -9,9 +9,13 @@ class ResultsView extends Backbone.View
     'click .detect'   : 'detectOptions'
     'click .details'  : 'showResultSumView'
     'click .csv_beta' : 'csvBeta'
+    'click .refresh'  : 'refresh'
 
     'change #limit' : "setLimit"
     'change #page' : "setOffset"
+
+  refresh: ->
+    Utils.restartTangerine("Please wait...")
 
   csvBeta: ->
     filename = @assessment.get("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
@@ -212,7 +216,9 @@ class ResultsView extends Backbone.View
         <label for='page' class='small_grey'>Page</label><input id='page' type='number' value='0'>
         <label for='limit' class='small_grey'>Per page</label><input id='limit' type='number' value='0'>
       </div>
-      <div id='results_container'></div>
+      <section id='results_container'></section>
+      <br>
+      <button class='command refresh'>Refresh</button>
     "
     
     @$el.html html
