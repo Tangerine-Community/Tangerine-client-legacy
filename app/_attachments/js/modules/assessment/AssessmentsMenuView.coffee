@@ -80,6 +80,7 @@ class AssessmentsMenuView extends Backbone.View
         $.couch.replicate(
           Tangerine.settings.urlDB("local"),
           Tangerine.settings.urlDB("group"),
+            timeout: 5 * 60 * 1000
             success: =>
               Utils.sticky "Results synced to cloud successfully."
             error: (code, message) =>
