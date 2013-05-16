@@ -138,7 +138,7 @@
       bySubtest.push(pair(subtest.subtestId, row));
     }
     timestamps = timestamps.sort();
-    bySubtest.push(pair("timestamps", [pair("timestamps", subtest.join(','))]));
+    bySubtest.push(pair("timestamps", [pair("timestamps", timestamps.join(','))]));
     return emit(keyId, bySubtest);
   }
 });

@@ -143,6 +143,6 @@
 
     timestamps = timestamps.sort()
 
-    bySubtest.push pair("timestamps", [pair("timestamps",subtest.join(',')) ] )
+    bySubtest.push pair( "timestamps", [ pair("timestamps",timestamps.join(',') ) ] )
 
     emit(keyId, bySubtest)
