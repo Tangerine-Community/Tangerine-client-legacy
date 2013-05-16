@@ -156,7 +156,6 @@ class AssessmentsMenuView extends Backbone.View
     if @isAdmin
       html += "
         #{if Tangerine.settings.get("context") == "server" then newButton else "" }
-        #{if Tangerine.settings.get("context") == "mobile" then syncTabletsButton else "" }
         #{importButton}
 
         
@@ -173,7 +172,9 @@ class AssessmentsMenuView extends Backbone.View
         </div>
         <div id='assessments_container'></div>
         <div id='curricula_container'></div>
+        <div id='klass_container'></div>
         <br>
+        #{if Tangerine.settings.get("context") == "mobile" then syncTabletsButton else "" }
         #{if Tangerine.settings.get("context") == "mobile" then uploadButton else "" }
 
         <div id='users_menu_container' class='UsersMenuView'></div>
@@ -182,6 +183,7 @@ class AssessmentsMenuView extends Backbone.View
       html += "
         <div id='assessments_container'></div>
         <br>
+        #{if Tangerine.settings.get("context") == "mobile" then syncTabletsButton else "" }
         #{if Tangerine.settings.get("context") == "mobile" then uploadButton else "" }
       "
 
