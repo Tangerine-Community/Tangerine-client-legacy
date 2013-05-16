@@ -2,8 +2,12 @@
 
   start
     "headers" : {
-      "content-type": "text/csv; charset=UTF-8"
-      "Content-Disposition": "attachment; filename=\"#{req.query.filename}.csv\""
+      "Content-Type": "text/csv; charset=UTF-8"
+      "Content-Disposition": 
+        if req.query.download == "false"
+          ""
+        else
+          "attachment; filename=\"#{req.query.filename}.csv\""
     }
 
   `unpair = function(pair) { for (var key in pair) {return [key, pair[key]] }} `

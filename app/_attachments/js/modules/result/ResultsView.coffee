@@ -18,8 +18,10 @@ class ResultsView extends Backbone.View
     Utils.restartTangerine("Please wait...")
 
   csvBeta: ->
+    if Tangerine.settings.get("context") == "mobile"
+      download = "&download=false"
     filename = @assessment.get("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
-    document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}"
+    document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}#{download||''}"
 
   showResultSumView: (event) ->
     targetId = $(event.target).attr("data-result-id")
