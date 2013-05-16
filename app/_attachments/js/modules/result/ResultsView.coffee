@@ -160,8 +160,9 @@ class ResultsView extends Backbone.View
 
   initialize: ( options ) ->
 
-    document.removeEventListener "backbutton", Tangerine.onBackButton, false
-    document.addEventListener "backbutton", Tangerine.onBackButton, false
+    if Tangerine.settings.get("context") == "mobile"
+      document.removeEventListener "backbutton", Tangerine.onBackButton, false
+      document.addEventListener "backbutton", Tangerine.onBackButton, false
 
 
     @resultLimit  = 100
