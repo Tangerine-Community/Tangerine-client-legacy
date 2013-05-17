@@ -1,35 +1,5 @@
 utils = 
-  clone : (item) ->
-    return item unless item?
-    types = [ Number, String, Boolean ]
-    result = null
-
-    # normalize
-    types.forEach (type) -> result = type(item) if item instanceof type
-
-
-    if typeof result == "undefined"
-      if Object.prototype.toString.call( item ) == "[object Array]"
-        result = []
-        item.forEach (child, index, array) ->
-          result[index] = Utils.clone child
-      else if typeof item == "object"
-        if (item.nodeType && typeof item.cloneNode == "function")
-          result = item.cloneNode( true )
-        else if !item.prototype
-          if item instanceof Date
-            result = new Date(item)
-          else # Object
-            result = {}
-            for key, value of item
-                result[key] = utils.clone value
-        else
-          result = if false && item.constructor then new item.constructor() else item
-      else
-        result = item
-
-    return result
-
+  
   exportValueMap :
     "correct" : 1
     "checked" : 1
@@ -42,8 +12,7 @@ utils =
     
     "skipped"   : 999
 
-  exportValue : (databaseValue="no_record") ->
-
+  exportValue : ( databaseValue = "no_record" ) ->
     if utils.exportValueMap[databaseValue]?
       return utils.exportValueMap[databaseValue]
     else
@@ -56,8 +25,14 @@ utils =
     o[key] = value
     return o
 
+  unpair : (pair) ->
+    for key, value of pair
+      return [key, value]
+    "object not found" # coffeescript return weirdness
+
 
 if typeof(exports) == "object"
-  exports.clone = utils.clone
+  exports.clone       = utils.clone
   exports.exportValue = utils.exportValue
-  exports.pair = utils.pair
+  exports.pair        = utils.pair
+  exports.unpair      = utils.unpair

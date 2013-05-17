@@ -2,47 +2,6 @@
 var utils;
 
 utils = {
-  clone: function(item) {
-    var key, result, types, value;
-
-    if (item == null) {
-      return item;
-    }
-    types = [Number, String, Boolean];
-    result = null;
-    types.forEach(function(type) {
-      if (item instanceof type) {
-        return result = type(item);
-      }
-    });
-    if (typeof result === "undefined") {
-      if (Object.prototype.toString.call(item) === "[object Array]") {
-        result = [];
-        item.forEach(function(child, index, array) {
-          return result[index] = Utils.clone(child);
-        });
-      } else if (typeof item === "object") {
-        if (item.nodeType && typeof item.cloneNode === "function") {
-          result = item.cloneNode(true);
-        } else if (!item.prototype) {
-          if (item instanceof Date) {
-            result = new Date(item);
-          } else {
-            result = {};
-            for (key in item) {
-              value = item[key];
-              result[key] = utils.clone(value);
-            }
-          }
-        } else {
-          result = false && item.constructor ? new item.constructor() : item;
-        }
-      } else {
-        result = item;
-      }
-    }
-    return result;
-  },
   exportValueMap: {
     "correct": 1,
     "checked": 1,
@@ -71,6 +30,15 @@ utils = {
     o = {};
     o[key] = value;
     return o;
+  },
+  unpair: function(pair) {
+    var key, value;
+
+    for (key in pair) {
+      value = pair[key];
+      return [key, value];
+    }
+    return "object not found";
   }
 };
 
@@ -78,4 +46,5 @@ if (typeof exports === "object") {
   exports.clone = utils.clone;
   exports.exportValue = utils.exportValue;
   exports.pair = utils.pair;
+  exports.unpair = utils.unpair;
 }
