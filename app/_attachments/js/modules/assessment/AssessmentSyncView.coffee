@@ -13,6 +13,8 @@ class AssessmentSyncView extends Backbone.View
 
   download: =>
 
+    @ensureCredentials()
+
     groupDB = Tangerine.settings.urlDB("group").replace(/\/\/(.*)@/,"//#{@user}:#{@pass}@")
     localDB = Tangerine.settings.urlDB("local")
 
@@ -31,6 +33,8 @@ class AssessmentSyncView extends Backbone.View
 
 
   upload: =>
+
+    @ensureCredentials()
 
     groupDB = Tangerine.settings.urlDB("group").replace(/\/\/(.*)@/,"//#{@user}:#{@pass}@")
     localDB = Tangerine.settings.urlDB("local")
@@ -98,6 +102,9 @@ class AssessmentSyncView extends Backbone.View
   login: ->
     @user = @$el.find("#user").val()
     @pass = @$el.find("#pass").val()
+    Tangerine.settings.save
+      "server_user" : @user
+      "server_pass" : @pass
 
     Tangerine.user.ghostLogin(@user, @pass)
 
@@ -155,6 +162,8 @@ class AssessmentSyncView extends Backbone.View
 
     @timer = setTimeout @verifyLogout, 20 * 1000
 
+    @ensureCredentials()
+
     $.ajax 
       url: Tangerine.settings.urlView("group", "byDKey").replace(/\/\/(.*)@/,"//#{@user}:#{@pass}@")
       dataType: "jsonp"
@@ -165,6 +174,12 @@ class AssessmentSyncView extends Backbone.View
         @onVerifySuccess()
 
     @readyTemplates()
+
+  ensureCredentials: =>
+    if Tangerine.settings.get("server_user") && Tangerine.settings.get("server_pass")
+      @user = Tangerine.settings.get("server_user")
+      @pass = Tangerine.settings.get("server_pass")
+
 
   goBack: ->
     Tangerine.router.navigate "", true
@@ -296,6 +311,9 @@ class AssessmentSyncView extends Backbone.View
 
   onClose: ->
     clearTimeout @timer
+    Tangerine.settings.unset("server_user")
+    Tangerine.settings.unset("server_pass")
+    Tangerine.settings.save()
 
   readyTemplates: ->
     @loginButton = _.template("{{status}}
