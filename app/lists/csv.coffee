@@ -12,6 +12,8 @@
 
   `unpair = function(pair) { for (var key in pair) {return [key, pair[key]] }} `
 
+  excludes = if req.query.excludes? then JSON.parse(req.query.excludes) else []
+
   dump = (obj) ->
     out = ""
     for i in obj
@@ -43,9 +45,16 @@
         columnsBySubtest[subtestIndex] = [] if not columnsBySubtest[subtestIndex]?
         for pair in subtestValue
           key = unpair(pair)[0] || ''
-          if !~columnsBySubtest[subtestIndex].indexOf(key)
-            columnsBySubtest[subtestIndex].push key
+          isExcluded = false
+          for exclude in excludes
 
+            if exclude.match(/[^\w]/)
+              isExcluded = true if key.match( new RegExp(exclude.replace(/\//g,""), "g") )
+            else
+              isExcluded = true if key == exclude
+
+          if !~columnsBySubtest[subtestIndex].indexOf(key) && not isExcluded
+            columnsBySubtest[subtestIndex].push key
 
     break if toSample-- == 0
 

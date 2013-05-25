@@ -10,20 +10,28 @@ class ResultsView extends Backbone.View
     'click .details'  : 'showResultSumView'
     'click .csv_beta' : 'csvBeta'
     'click .refresh'  : 'refresh'
+    'click .show_advanced' : 'toggleAdvanced'
 
     'change #limit' : "setLimit"
     'change #page' : "setOffset"
+
+  toggleAdvanced: ->
+    @$el.find("#advanced").toggleClass("confirmation")
 
   refresh: ->
     Utils.restartTangerine("Please wait...")
 
   csvBeta: ->
+
     if Tangerine.settings.get("context") == "mobile"
       document.removeEventListener "backbutton", Tangerine.onBackButton, false
-
       download = "&download=false"
+
+    if not _.isEmptyString(vExcludes = @$el.find("#excludes").val())
+      aExcludes = vExcludes.split(/\s+/) #grab list of variables
+      hExcludes = "&excludes=#{JSON.stringify(aExcludes)}"
     filename = @assessment.get("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
-    document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}#{download||''}"
+    document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}#{download||''}#{hExcludes||''}"
 
   showResultSumView: (event) ->
     targetId = $(event.target).attr("data-result-id")
@@ -193,6 +201,17 @@ class ResultsView extends Backbone.View
         #{if Tangerine.settings.get("context") == "mobile" then tabletButton else ""}
         #{csvButton}
         <button class='command csv_beta'>CSV (beta)</button>
+        <div class='small_grey clickable show_advanced'>Advanced</div>
+        <div id='advanced' class='confirmation'>
+          <div class='menu_box'>
+            <table class='class_table'>
+              <tr>
+                <td><label for='excludes'>Exclude variables</label></td>
+                <td><input id='excludes'></td>
+              </tr>
+            </table>
+          </div>
+        </div>
       </div>
     "
 
