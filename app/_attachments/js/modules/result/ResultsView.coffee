@@ -29,9 +29,14 @@ class ResultsView extends Backbone.View
 
     if not _.isEmptyString(vExcludes = @$el.find("#excludes").val())
       aExcludes = vExcludes.split(/\s+/) #grab list of variables
-      hExcludes = "&excludes=#{JSON.stringify(aExcludes)}"
+      uExcludes = "&excludes=#{JSON.stringify(aExcludes)}"
+
+    if not _.isEmptyString(vIncludes = @$el.find("#includes").val())
+      aIncludes = vIncludes.split(/\s+/) #grab list of variables
+      uIncludes = "&includes=#{JSON.stringify(aIncludes)}"
+
     filename = @assessment.get("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
-    document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}#{download||''}#{hExcludes||''}"
+    document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}#{download||''}#{uExcludes||''}#{uIncludes||''}"
 
   showResultSumView: (event) ->
     targetId = $(event.target).attr("data-result-id")
@@ -206,8 +211,12 @@ class ResultsView extends Backbone.View
           <div class='menu_box'>
             <table class='class_table'>
               <tr>
-                <td><label for='excludes'>Exclude variables</label></td>
+                <td><label for='excludes' title='Space delimited, accepts string literals or regular expressions wrapped in / characters.'>Exclude variables</label></td>
                 <td><input id='excludes'></td>
+              </tr>
+              <tr>
+                <td><label for='includes' title='Space delimited, accepts string literals or regular expressions wrapped in / characters. Overrides exclusions.'>Include variables</label></td>
+                <td><input id='includes'></td>
               </tr>
             </table>
           </div>
