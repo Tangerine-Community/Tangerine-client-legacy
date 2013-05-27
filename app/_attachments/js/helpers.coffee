@@ -204,7 +204,7 @@ class Utils
       Utils.documentCounter = null
 
 
-  @updateTangerine: (doResolve = true) ->
+  @updateTangerine: (doResolve = true, options = {}) ->
 
     return unless Tangerine.user.isAdmin()
 
@@ -221,6 +221,9 @@ class Utils
       allElse: Tangerine.settings.location.update.target
 
     docIds = ["_design/#{dDoc}", "configuration"]
+
+    targetDB = options.targetDB if options.targetDB?
+    docIds   = options.docIds   if options.docIds?
 
     Utils.midAlert "Updating..."
     Utils.working true
