@@ -86,9 +86,15 @@ click_with_javascript ("#prototype_wrapper div[data-index=4]")
 click_button "Next"
 end
 
+def grid_autostop
+page.execute_script('$("button.start_time").click()')
+click_with_javascript ("#prototype_wrapper div[data-index=1]")
+click_with_javascript ("#prototype_wrapper div[data-index=2]")
+click_with_javascript ("#prototype_wrapper div[data-index=3]")
+end
+
 
 def reading_comprehension
-#has_content? "EGRA 3b: Reading Comprehension"
 click_with_javascript ("#question-read_comp1 div[data-value=0]")
 click_with_javascript ("#question-read_comp2 div[data-value=0]")
 click_with_javascript ("#question-read_comp3 div[data-value=0]")
@@ -101,7 +107,38 @@ end
 #
 # This section is where the actual steps happen
 #
-#
+
+
+#test autostop, doesn't respond as the normal web browser does. Come back to this
+#test skip logic, this test moves through perfectly if skip logic works, if it doesn't it will return an error
+
+login
+visit_group "sweetgroup"
+run_assessment "simple test ( server )"
+
+#this checks if you can skip subtest without entering data (both if the skip button is there when it's not supposed to be and if you are able to click next without entering data)
+click_button "Next"
+has_no_button? "Skip"
+home_location
+has_content? "words"
+#grid_autostop
+#sleep 2
+#click_button "Next"
+grid_question
+click_button "Next"
+
+#test skip logic, this test moves through perfectly if skip logic works, if it doesn't it will return an error
+has_content?("survey")
+page.execute_script('$("#question-testcase div[data-value=0]").click()')
+click_button "Next"
+stop
+
+
+
+
+#run through an EGRA assessment
+#check if non-skippable instruments can be skipped
+
 login
 visit_group "sweetgroup"
 run_assessment "EGRA_demo" 
@@ -122,6 +159,7 @@ grid_question
 has_content? "EGRA 3a: Oral Passage Reading"
 grid_question
 has_content? "EGRA 3b: Reading Comprehension"
+sleep 1
 reading_comprehension
 
 sleep 2 
