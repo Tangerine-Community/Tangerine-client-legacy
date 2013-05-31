@@ -131,7 +131,7 @@ class AssessmentImportView extends Backbone.View
     else if status == "import success"
       clearInterval @activeTaskInterval
       headline = "Import successful"
-      headline = "Nothing imported" if read == 0
+      headline = "Nothing imported" if read == 0 || not read?
       @activity = "#{headline}<br>
         <b>#{written}</b> document#{writtenPlural} written<br>
         #{failures || ""}
@@ -173,10 +173,12 @@ class AssessmentImportView extends Backbone.View
       <button class='command group_import'>Group import</button>
     " if Tangerine.settings.get("context") != "server"
 
+    legacyOption = "<option data-group='LEGACY'>Legacy Tangerine</option>" if String(window.location.href).indexOf("databases")
+
     groupSelector = "
       <select id='group'>
         <option data-group='NONE' selected='selected'>Please select a group</option>
-        <option data-group='LEGACY'>Legacy Tangerine</option>
+        #{legacyOption || ""}
         #{("<option data-group='#{group}'>#{group}</option>" for group in Tangerine.user.get('groups')).join('')}
       </select>
     " if Tangerine.settings.get("context") == "server"
