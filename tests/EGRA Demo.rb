@@ -86,9 +86,16 @@ click_with_javascript ("#prototype_wrapper div[data-index=4]")
 click_button "Next"
 end
 
+def grid_autostop
+page.execute_script('$("button.start_time").click()')
+click_with_javascript ("#prototype_wrapper div[data-index=1]")
+click_with_javascript ("#prototype_wrapper div[data-index=2]")
+sleep 1
+click_with_javascript ("#prototype_wrapper div[data-index=3]")
+end
+
 
 def reading_comprehension
-#has_content? "EGRA 3b: Reading Comprehension"
 click_with_javascript ("#question-read_comp1 div[data-value=0]")
 click_with_javascript ("#question-read_comp2 div[data-value=0]")
 click_with_javascript ("#question-read_comp3 div[data-value=0]")
@@ -101,8 +108,53 @@ end
 #
 # This section is where the actual steps happen
 #
-#
+
+
 login
+visit_group "sweetgroup"
+run_assessment "simple test ( server )"
+
+#this checks if you can skip subtest without entering data (both if the skip button is there when it's not supposed to be and if you are able to click next without entering data)
+click_button "Next"
+has_no_button? "Skip"
+home_location
+
+#this checks autostop, returns error if not working
+has_content? "words"
+grid_autostop
+click_button "Next"
+
+
+#test skip logic, this test moves through perfectly if skip logic works, if it doesn't it will return an error
+has_content?("survey")
+sleep 1
+page.execute_script('$("#question-testcase div[data-value=0]").click()')
+click_button "Next"
+
+#if AOD - skipping entire subtests isn't working, the program will stop here on Student Information. If fine, it will simply skip over the subtest
+
+
+#Testing that reading comprehension questions are properly linked to how far the student has read
+has_content? "EGRA 3a: Oral Passage Reading"
+grid_question
+sleep 1
+has_no_content? "EGRA 3b: Reading Comprehension"
+
+#testing survey early stop logic, will show error message if not working for has_content? "Assessment complete"
+visit_group "sweetgroup"
+run_assessment "earlyabort_test"
+has_content? "Student_Information"
+click_with_javascript("#question-Gender div[data-value=1]")
+click_button "Next Question"
+has_content? "Assessment complete"
+
+
+
+
+#run through an EGRA assessment
+
+
+#login (don't include if it's already been done earlier)
 visit_group "sweetgroup"
 run_assessment "EGRA_demo" 
 has_content? "Date and Time"
@@ -122,6 +174,7 @@ grid_question
 has_content? "EGRA 3a: Oral Passage Reading"
 grid_question
 has_content? "EGRA 3b: Reading Comprehension"
+sleep 1
 reading_comprehension
 
 sleep 2 
