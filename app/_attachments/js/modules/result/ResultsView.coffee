@@ -35,7 +35,7 @@ class ResultsView extends Backbone.View
       aIncludes = vIncludes.split(/\s+/) #grab list of variables
       uIncludes = "&includes=#{JSON.stringify(aIncludes)}"
 
-    filename = @assessment.get("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
+    filename = @assessment.getEscapedString("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
     document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}#{download||''}#{uExcludes||''}#{uIncludes||''}"
 
   showResultSumView: (event) ->
@@ -98,7 +98,7 @@ class ResultsView extends Backbone.View
       assessmentId : @assessment.id
     view.render()
     view.on "ready", => # when it's ready, get a link to the doc it saved
-      filename = @assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
+      filename = @assessment.getEscapedString("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
       # point browser to file
       # do it in a new window because otherwise it will cancel the fetching/updating of the file
       csvLocation = Tangerine.settings.urlShow("local", "csv/Tangerine-#{@assessment.id.substr(-5, 5)}.csv?filename=#{filename}")
@@ -199,7 +199,7 @@ class ResultsView extends Backbone.View
     csvButton    = "<button class='csv command'>CSV</button>"
 
     html = "
-      <h1>#{@assessment.get('name')} results</h1>
+      <h1>#{@assessment.getEscapedString('name')} results</h1>
       <h2>Save options</h2>
       <div class='menu_box'>
         #{if Tangerine.settings.get("context") == "mobile" then cloudButton  else ""}

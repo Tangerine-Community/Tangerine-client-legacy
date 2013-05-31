@@ -52,7 +52,7 @@ class Router extends Backbone.Router
     
     'restart/:id'   : 'restart'
     'edit/:id'      : 'edit'
-    'results/:name' : 'results'
+    'results/:id'   : 'results'
     'import'        : 'import'
     
     'subtest/:id'       : 'editSubtest'
@@ -471,19 +471,26 @@ class Router extends Backbone.Router
   results: (assessmentId) ->
     Tangerine.user.verify
       isRegistered: ->
+        afterFetch = (assessment = new Assessment("_id":assessmentId), assessmentId) ->
+          allResults = new Results
+          allResults.fetch
+            include_docs: false
+            key: assessmentId
+            success: (results) =>
+              view = new ResultsView
+                "assessment" : assessment
+                "results"    : results.models
+              vm.show view
+
         assessment = new Assessment
           "_id" : assessmentId
         assessment.fetch
           success :  ->
-            allResults = new Results
-            allResults.fetch
-              include_docs: false
-              key: assessmentId
-              success: (results) =>
-                view = new ResultsView
-                  "assessment" : assessment
-                  "results"    : results.models
-                vm.show view
+            console.log "success"
+            afterFetch(assessment, assessmentId)
+          error :  ->
+            console.log "eerror"
+            afterFetch(assessment, assessmentId)
 
   csv: (id) ->
     Tangerine.user.verify
