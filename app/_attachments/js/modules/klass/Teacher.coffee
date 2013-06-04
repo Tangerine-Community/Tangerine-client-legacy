@@ -87,6 +87,9 @@ class TeachersView extends Backbone.View
     $.couch.userDb (db) =>
       db.openDoc "org.couchdb.user:#{teacherModel.get('name')}",
         success: ( userDoc ) =>
+          delete userDoc.salt
+          delete userDoc.password_sha
+
           userDoc.password = @$el.find(".#{teacherId}_password").val()
           db.saveDoc userDoc,
             success: =>
