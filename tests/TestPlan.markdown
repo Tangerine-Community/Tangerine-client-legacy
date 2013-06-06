@@ -12,6 +12,13 @@
     
     v.	….many more things….
     
+    vi. Action on Display items
+                -skipping entire subtests
+                -survey early stop logic
+                -dynamic question prompts
+    vii. Custom validation
+
+    
   b.	Examining the results and making sure they look right
   
     i.	Expand the result on the results page and sanity check
