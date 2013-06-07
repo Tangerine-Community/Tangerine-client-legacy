@@ -36,9 +36,21 @@ def login
   has_content?("Groups")
 end
 
+def local_login
+  visit("http://localhost:5984/tangerine/_design/ojai/index.html")
+  fill_in('User name', :with => 'admin')
+  fill_in('Password', :with => 'password')
+  click_button('Login')
+end
+
 def visit_group(group_name)
   # Note that #{} is how you insert a variable into a string
-  visit("http://databases.tangerinecentral.org/group-#{group_name}/_design/ojai/index.html")
+  visit("http://databases.tangerinecentral.org/group-sweetgroup/_design/ojai/index.html#assessments")
+  has_content?("Assessments")
+end
+
+def loca_visit_group(group_name)
+visit("http://databases.tangerinecentral.org/group-sweetgroup/_design/ojai/index.html#assessments")
   has_content?("Assessments")
 end
 
@@ -110,8 +122,77 @@ end
 #
 
 
-login
-visit_group "sweetgroup"
+local_login
+sleep 1
+#login
+#visit_group "sweetgroup"
+
+
+#This is supposed to be to test custom validation but it is not working so far. Not sure how to fix this.  
+#run_assessment("Button test")
+#has_content? "All button stuff"
+#fill_in('view1303', :with => '50')
+#sleep 3
+#has_no_content? "words"
+#has_content? "Enter a number between 1 and 49"
+#fill_in('view1383_age', :with => '4')
+#click_button "Next"
+
+
+
+#testing if a subtest can be copied to another instrument
+page.execute_script("$('span:contains(Button test)').click()")
+page.execute_script("$('img.edit:visible').click()")
+has_content? "Assessment Builder"
+page.execute_script("$('img.icon_copy').click()")
+click_button "Copy"
+has_content? "Assessment Builder"
+sleep 1
+page.execute_script("$('img.icon_delete').click()")
+click_button "Delete"
+
+
+#duplicating an assessment
+page.execute_script("$('span:contains(simple test ( server ))').click()")
+page.execute_script("$('img.duplicate:visible').click()")
+has_content? "Copy of simple test ( server )"
+page.execute_script("$('span:contains(Copy of simple test ( server ))').click()")
+page.execute_script("$('img.assessment_delete:visible').click()")
+page.execute_script('$("button.assessment_delete_yes:visible").click()')
+sleep 2
+
+
+#testing if questions can be copied to other assessments 
+page.execute_script("$('span:contains(Button test)').click()")
+page.execute_script("$('img.edit:visible').click()")
+has_content? "Assessment Builder"
+page.execute_script("$('img.icon_edit').click()")
+has_content? "Subtest Editor"
+page.execute_script("$('img.show_copy').click()")
+#the last part doesn't work on the local server but it should not be too complicated
+
+
+#abort and resume w/o randomization
+#run_assessment(abortresumetest)
+#answer first couple of questions, then hit logout
+#page.execute_script("$('span:contains(simple test ( server ))').click()")
+#page.execute_script("$('img.results:visible').click()")
+#click_button "details"
+#click_button "Resume" 
+#now finish the rest of the assessment (can't be done on the local server)
+
+#abort and resume w/randomization (need to think about this some) 
+#run_assessment(abortresumetest)
+#answer first couple of questions, then hit logout
+#page.execute_script("$('span:contains(simple test ( server ))').click()")
+#page.execute_script("$('img.results:visible').click()")
+#click_button "details"
+#click_button "Resume" 
+#now finish the rest of the assessment
+
+
+
+
 run_assessment "simple test ( server )"
 
 #this checks if you can skip subtest without entering data (both if the skip button is there when it's not supposed to be and if you are able to click next without entering data)
@@ -119,9 +200,11 @@ click_button "Next"
 has_no_button? "Skip"
 home_location
 
+
 #this checks autostop, returns error if not working
 has_content? "words"
 grid_autostop
+grid_question
 click_button "Next"
 
 
