@@ -15,8 +15,9 @@ require 'capybara'
 require 'capybara/dsl'
 
 Capybara.register_driver :selenium do |app|
-  Capybara::Selenium::Driver.new(app, :browser => :chrome)
+ Capybara::Selenium::Driver.new(app, :browser => :chrome)
 end
+
 
 Capybara.run_server = false
 Capybara.current_driver = :selenium
@@ -45,14 +46,10 @@ end
 
 def visit_group(group_name)
   # Note that #{} is how you insert a variable into a string
-  visit("http://databases.tangerinecentral.org/group-sweetgroup/_design/ojai/index.html#assessments")
+  visit("http://databases.tangerinecentral.org/group-#{group_name}/_design/ojai/index.html#assessments")
   has_content?("Assessments")
 end
 
-def loca_visit_group(group_name)
-visit("http://databases.tangerinecentral.org/group-sweetgroup/_design/ojai/index.html#assessments")
-  has_content?("Assessments")
-end
 
 def run_assessment(assessment_name)
   # Executes javascript on the page
@@ -122,25 +119,60 @@ end
 #
 
 
-local_login
+#local_login
+#sleep 1
+login
+visit_group "blah"
+
+
+
+#dynamic question prompts, will show error for has_content? "What is the age of Nicky" if not working
+run_assessment "Dynamics Questions and Custom Validation"
+has_content? "Dynamic Question"
+fill_in('view38_name', :with => 'Nicky')
+click_button "Next Question"
+has_content? "What is the age of Nicky"
+
+
+#testing custom validation, if not working will show error for has_no_content? "Assessment Complete"
+fill_in('view39_age', :with => '100')
+click_button "Next"
+has_no_content? "Abort_Resume"
+has_content? "Enter a number between 1 and 49"
+fill_in('view39_age', :with => '12')
+click_button "Next"
+has_content? "Abort_Resume"
+
+
+#abort and resume w/o randomization
+page.execute_script("$('#logout_link').click()")
 sleep 1
-#login
-#visit_group "sweetgroup"
-
-
-#This is supposed to be to test custom validation but it is not working so far. Not sure how to fix this.  
-#run_assessment("Button test")
-#has_content? "All button stuff"
-#fill_in('view1303', :with => '50')
-#sleep 3
-#has_no_content? "words"
-#has_content? "Enter a number between 1 and 49"
-#fill_in('view1383_age', :with => '4')
-#click_button "Next"
-
+fill_in('User name', :with => 'tangerine')
+  fill_in('Password', :with => 'tangytangerine')
+  click_button('Login')
+has_content? "Groups"
+visit_group "blah"
+page.execute_script("$('span:contains(Dynamics Questions and Custom Validation)').click()")
+find('img.results').click()
+has_content? "Save options"
+sleep 1
+page.execute_script("$('.details').first().click()")
+has_content? "Not finished"
+click_button "Resume"
+sleep 2
+page.execute_script('$("button.start_time").click()')
+click_with_javascript ("#prototype_wrapper div[data-index=3]")
+sleep 1
+click_button "Stop"
+sleep 1
+click_with_javascript ("#prototype_wrapper div[data-index=3]")
+click_button "Next"
+has_content? "Assessment complete"
 
 
 #testing if a subtest can be copied to another instrument
+page.execute_script("$('#corner_logo').click()")
+has_content? "Assessments"
 page.execute_script("$('span:contains(Button test)').click()")
 page.execute_script("$('img.edit:visible').click()")
 has_content? "Assessment Builder"
@@ -151,8 +183,8 @@ sleep 1
 page.execute_script("$('img.icon_delete').click()")
 click_button "Delete"
 
-
 #duplicating an assessment
+page.execute_script("$('#corner_logo').click()")
 page.execute_script("$('span:contains(simple test ( server ))').click()")
 page.execute_script("$('img.duplicate:visible').click()")
 has_content? "Copy of simple test ( server )"
@@ -170,25 +202,6 @@ page.execute_script("$('img.icon_edit').click()")
 has_content? "Subtest Editor"
 page.execute_script("$('img.show_copy').click()")
 #the last part doesn't work on the local server but it should not be too complicated
-
-
-#abort and resume w/o randomization
-#run_assessment(abortresumetest)
-#answer first couple of questions, then hit logout
-#page.execute_script("$('span:contains(simple test ( server ))').click()")
-#page.execute_script("$('img.results:visible').click()")
-#click_button "details"
-#click_button "Resume" 
-#now finish the rest of the assessment (can't be done on the local server)
-
-#abort and resume w/randomization (need to think about this some) 
-#run_assessment(abortresumetest)
-#answer first couple of questions, then hit logout
-#page.execute_script("$('span:contains(simple test ( server ))').click()")
-#page.execute_script("$('img.results:visible').click()")
-#click_button "details"
-#click_button "Resume" 
-#now finish the rest of the assessment
 
 
 
@@ -233,7 +246,6 @@ has_content? "Assessment complete"
 
 
 
-
 #run through an EGRA assessment
 
 
@@ -260,4 +272,81 @@ has_content? "EGRA 3b: Reading Comprehension"
 sleep 1
 reading_comprehension
 
-sleep 2 
+sleep 8
+
+
+#download CSV file
+page.execute_script("$('span:contains(Abort_Resume with Randomization)').click()")
+find('img.results').click()
+click_button "CSV (beta)"
+#now need to work on file using some other kind of check
+
+#Using text editor, bold, changing size, etc. (having problems inserting information into text editor)
+page.execute_script("$('span:contains(Abort_Resume with Randomization)').click()")
+find('img.edit').click()
+has_content? "Assessment Builder"
+page.execute_script("$('.icon_edit').first().click()")
+#click_button "Edit"
+sleep 2
+page.execute_script("$('.richtext_edit').first().click()")
+sleep 3
+page.execute_script("$('.cke').html('Hi my name is Nicky')")
+click_button "Save"
+sleep 4
+#clicks bold button
+#$('#cke_15_label').click()
+#clicks font box, now just select font you would like
+#$('#cke_34_text').click()
+
+#abort and resume w/randomization (also tests if randomization is actually working)
+#isn't working at the moment may be a problem with randomization not working in Tangerine
+run_assessment "Abort_Resume with Randomization"
+has_content? "Dynamic Question"
+fill_in('view39_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Dynamic Question1"
+fill_in('view48_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Dynamic Question3"
+fill_in('view57_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Dynamic Question2"
+fill_in('view66_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Dynamic Question4"
+fill_in('view75_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Assessment Complete"
+click_button "Save result"
+click_button "Perform another assessment"
+has_content? "Dynamic Question"
+fill_in('view99_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Dynamic Question1"
+fill_in('view108_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Dynamic Question2"
+fill_in('view117_name', :with => 'Nicky')
+click_button "Next"
+page.execute_script("$('#logout_link').click()")
+sleep 1
+fill_in('User name', :with => 'tangerine')
+  fill_in('Password', :with => 'tangytangerine')
+  click_button('Login')
+has_content? "Groups"
+visit_group "blah"
+page.execute_script("$('span:contains(Abort_Resume with Randomization)').click()")
+find('img.results').click()
+has_content? "Save options"
+sleep 1
+page.execute_script("$('.details').first().click()")
+has_content? "Not finished"
+click_button "Resume"
+has_content? "Dynamic Question3"
+fill_in('view66_name', :with => 'Nicky')
+sleep 5
+click_button "Next"
+has_content? "Dynamic Question4"
+fill_in('view75_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Assessment Complete"
