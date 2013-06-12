@@ -21,7 +21,8 @@
                 
     vii. Custom validation (done)
     
-    viii. Testing if abort and resume work with and w/o randomization (still working on this) 
+    viii. Testing if abort and resume work with and w/o randomization (w/o randomization working, w/ is having some
+    problems that may be associated with Tangerine)) 
 
     
   b.	Examining the results and making sure they look right
@@ -32,7 +33,7 @@
     
 2)	Creating assessments using the editor
 
-    i. Using text editor, bold, italic, font size, etc. 
+    i. Using text editor, bold, italic, font size, etc. (working on this atm but having difficulty inserting text into text editor)
     
     ii. Testing if a subtest can be copied to another assessment (done) 
     
