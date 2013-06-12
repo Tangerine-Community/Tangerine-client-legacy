@@ -6,7 +6,7 @@
 
     ii.	Testing that skiplogic works (done)
   
-    iii.	Testing that reading comprehension questions are properly linked to how far the student has read (done)
+    iii. Testing that reading comprehension questions are properly linked to how far the student has read (done)
     
     iv.	Testing that you can’t skip subtests without entering data (done)
     
@@ -17,9 +17,9 @@
                 
                 -survey early stop logic (done) 
                 
-                -dynamic question prompts
+                -dynamic question prompts (done)
                 
-    vii. Custom validation (still working on this)
+    vii. Custom validation (done)
     
     viii. Testing if abort and resume work with and w/o randomization (still working on this) 
 
