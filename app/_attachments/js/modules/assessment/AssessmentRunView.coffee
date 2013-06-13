@@ -51,7 +51,8 @@ class AssessmentRunView extends Backbone.View
     currentView = @subtestViews[@orderMap[@index]]
     
     if @model.subtests.length == 0
-      @$el.append "<h1>Oops...</h1><p>This assessment is blank. Perhaps you meant to add some subtests.</p>"
+      @$el.html "<h1>Oops...</h1><p>\"#{@model.get 'name'}\" is blank. Perhaps you meant to add some subtests.</p>"
+      @trigger "rendered"
     else
       @$el.html "
         <h1>#{@model.get 'name'}</h1>
