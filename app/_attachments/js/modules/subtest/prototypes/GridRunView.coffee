@@ -169,7 +169,15 @@ class GridRunView extends Backbone.View
     @timeRemaining = @timer - @timeElapsed
     
     @$el.find(".timer").html @timeRemaining
-    if @timeRemaining <= 0 && @timeRunning == true && @captureLastAttempted then @stopTimer null, t("time please mark last item attempted")
+    
+    if @timeRemaining <= 0 && @timeRunning == true && @captureLastAttempted
+      @stopTimer(simpleStop:true)
+      Utils.background "red"
+      alert t("time please mark last item attempted"), "Ok"
+      Utils.background ""
+      @updateMode event, "last"
+
+
     if @captureItemAtTime && !@gotIntermediate && !@minuteMessage && @timeElapsed >= @captureAfterSeconds
       Utils.flash "yellow"
       Utils.midAlert t("please select the item the child is currently attempting")
