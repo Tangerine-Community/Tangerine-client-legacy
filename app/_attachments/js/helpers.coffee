@@ -244,7 +244,7 @@ class Utils
             Utils.midAlert "Update failed replicating<br>#{error}"
             Utils.documentCounter = null
           success: ->
-            if not doResolve
+            unless doResolve
               Utils.onUpdateSuccess(1)
               return
             totalDocs = docIds.length
