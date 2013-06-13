@@ -349,8 +349,19 @@ class Utils
   @midAlert: (alert_text, delay=2000) ->
     $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").middleCenter().delay(delay).fadeOut(250, -> $(this).remove())
 
-  @sticky: (html) ->
-    $("<div class='sticky_alert'>#{html}<br><button class='command parent_remove'>Close</button></div>").appendTo("#content").middleCenter().on("keyup", (event) -> if event.which == 27 then $(this).remove())
+
+  @sticky: (html, buttonText = "Close", callback, position = "middle") ->
+    div = $("<div class='sticky_alert'>#{html}<br><button class='command parent_remove'>#{buttonText}</button></div>").appendTo("#content")
+    if position == "middle"
+      div.middleCenter()
+    else if position == "top"
+      div.topCenter()
+    div.on("keyup", (event) -> if event.which == 27 then $(this).remove()).find("button").click callback
+
+  @topSticky: (html, buttonText = "Close", callback) ->
+    Utils.sticky(html, buttonText, callback, "top")
+
+
 
   @modal: (html) ->
     if html == false
@@ -408,12 +419,16 @@ class Utils
     return result
 
   # turns the body background a color and then returns to white
-  @flash: (color="red") ->
-    $("#content_wrapper").css "backgroundColor" : color
-    setTimeout ->
-      $("#content_wrapper").css "backgroundColor" : ""
-    , 1000
+  @flash: (color="red", shouldTurnItOn = null) ->
 
+    if not shouldTurnItOn?
+      Utils.background color
+      setTimeout ->
+        Utils.background ""
+      , 1000
+
+  @background: (color) ->
+    $("#content_wrapper").css "backgroundColor" : color
 
   # Retrieves GET variables
   # http://ejohn.org/blog/search-and-dont-replace/
