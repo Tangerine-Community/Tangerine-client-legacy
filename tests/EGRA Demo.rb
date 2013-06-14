@@ -81,7 +81,7 @@ click_with_javascript("#question-age div[data-value=15]")
 has_content? "What grade are you in"
 click_with_javascript("#question-grade div[data-value=5]")
 has_content? "Is the participant a girl?"
-click_with_javascript("#question-female div[data-value=1]")
+click_with_javascript("#question-girl div[data-value=1]")
 click_button "Next"
 end
 
@@ -123,6 +123,26 @@ end
 #sleep 1
 login
 visit_group "blah"
+
+
+#testing if questions can be copied to other assessments, able to select value from dropbox menu but unable to actually go to the link
+#has_content? "Assessments"
+#page.execute_script("$('span:contains(Button test)').click()")
+#page.execute_script("$('img.edit:visible').click()")
+#has_content? "Assessment Builder"
+#page.execute_script("$('img.icon_edit').click()")
+#has_content? "Subtest Editor"
+#page.execute_script("$('img.show_copy').first().click()")
+#has_content? "Copy to"
+#sleep 2
+#$('.copy_select').val("Question_copy").click()
+#select('Question_copy', :from => 'Select a subtest')
+#sleep 5
+#has_content? "Question_copy"
+#page.execute_script("$('.delete').click()")
+#click_button "Delete"
+#sleep 5
+#page.execute_script("$('#logout_link').click()")
 
 
 
@@ -176,7 +196,7 @@ has_content? "Assessments"
 page.execute_script("$('span:contains(Button test)').click()")
 page.execute_script("$('img.edit:visible').click()")
 has_content? "Assessment Builder"
-page.execute_script("$('img.icon_copy').click()")
+page.execute_script("$('img.icon_copy').first().click()")
 click_button "Copy"
 has_content? "Assessment Builder"
 sleep 1
@@ -191,22 +211,13 @@ has_content? "Copy of simple test ( server )"
 page.execute_script("$('span:contains(Copy of simple test ( server ))').click()")
 page.execute_script("$('img.assessment_delete:visible').click()")
 page.execute_script('$("button.assessment_delete_yes:visible").click()')
-sleep 2
 
-
-#testing if questions can be copied to other assessments 
-page.execute_script("$('span:contains(Button test)').click()")
-page.execute_script("$('img.edit:visible').click()")
-has_content? "Assessment Builder"
-page.execute_script("$('img.icon_edit').click()")
-has_content? "Subtest Editor"
-page.execute_script("$('img.show_copy').click()")
-#the last part doesn't work on the local server but it should not be too complicated
 
 
 
 
 run_assessment "simple test ( server )"
+
 
 #this checks if you can skip subtest without entering data (both if the skip button is there when it's not supposed to be and if you are able to click next without entering data)
 click_button "Next"
@@ -236,8 +247,10 @@ grid_question
 sleep 1
 has_no_content? "EGRA 3b: Reading Comprehension"
 
+
 #testing survey early stop logic, will show error message if not working for has_content? "Assessment complete"
-visit_group "sweetgroup"
+page.execute_script("$('#corner_logo').click()")
+has_content? "Assessments"
 run_assessment "earlyabort_test"
 has_content? "Student_Information"
 click_with_javascript("#question-Gender div[data-value=1]")
@@ -248,9 +261,8 @@ has_content? "Assessment complete"
 
 #run through an EGRA assessment
 
-
-#login (don't include if it's already been done earlier)
-visit_group "sweetgroup"
+page.execute_script("$('#corner_logo').click()")
+has_content? "Assessments"
 run_assessment "EGRA_demo" 
 has_content? "Date and Time"
 click_button "Next"
@@ -279,7 +291,7 @@ sleep 8
 page.execute_script("$('span:contains(Abort_Resume with Randomization)').click()")
 find('img.results').click()
 click_button "CSV (beta)"
-#now need to work on file using some other kind of check
+#need to specify where this file goes so that seperate check can be run on it
 
 #Using text editor, bold, changing size, etc. (having problems inserting information into text editor)
 page.execute_script("$('span:contains(Abort_Resume with Randomization)').click()")
@@ -302,31 +314,31 @@ sleep 4
 #isn't working at the moment may be a problem with randomization not working in Tangerine
 run_assessment "Abort_Resume with Randomization"
 has_content? "Dynamic Question"
-fill_in('view39_name', :with => 'Nicky')
+fill_in('view49_name', :with => 'Nicky')
 click_button "Next"
 has_content? "Dynamic Question1"
-fill_in('view48_name', :with => 'Nicky')
+fill_in('view58_name', :with => 'Nicky')
 click_button "Next"
 has_content? "Dynamic Question3"
-fill_in('view57_name', :with => 'Nicky')
+fill_in('view67_name', :with => 'Nicky')
 click_button "Next"
 has_content? "Dynamic Question2"
-fill_in('view66_name', :with => 'Nicky')
+fill_in('view76_name', :with => 'Nicky')
 click_button "Next"
 has_content? "Dynamic Question4"
-fill_in('view75_name', :with => 'Nicky')
+fill_in('view85_name', :with => 'Nicky')
 click_button "Next"
 has_content? "Assessment Complete"
 click_button "Save result"
 click_button "Perform another assessment"
 has_content? "Dynamic Question"
-fill_in('view99_name', :with => 'Nicky')
+fill_in('view109_name', :with => 'Nicky')
 click_button "Next"
 has_content? "Dynamic Question1"
-fill_in('view108_name', :with => 'Nicky')
+fill_in('view118_name', :with => 'Nicky')
 click_button "Next"
 has_content? "Dynamic Question2"
-fill_in('view117_name', :with => 'Nicky')
+fill_in('view127_name', :with => 'Nicky')
 click_button "Next"
 page.execute_script("$('#logout_link').click()")
 sleep 1
