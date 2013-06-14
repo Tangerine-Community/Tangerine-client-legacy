@@ -10,11 +10,47 @@ class AccountView extends Backbone.View
     'click .back'        : 'goBack'
     'click .update' : 'update'
     'click .restart' : 'restart'
+    'click .send_debug' : 'sendDebug'
 
     "click .edit_in_place"  : "editInPlace"
     "focusout .editing" : "editing"
     "keyup    .editing" : "editing"
     "keydown  .editing" : "editing"
+
+
+  sendDebug: ->
+    Tangerine.$db.view "#{Tangerine.design_doc}/byCollection"
+    ,
+
+      keys: ["teacher", "klass", "student", "config", "settings"]
+
+      success: (response) -> 
+        
+        docId = "debug-report-#{Tangerine.settings.get('instanceId')}"
+
+        saveReport = (response, oldRev = null, docId) ->
+          doc =
+            _id        : docId
+            _rev       : oldRev
+            docs       : _.pluck(response.rows,"value")
+            collection : "debug_report"
+
+          delete doc._rev unless doc._rev?
+
+          Tangerine.$db.saveDoc doc, 
+            success: ->
+              $.couch.replicate Tangerine.db_name, Tangerine.settings.urlDB("group"),
+                success: ->
+                  Utils.sticky "Debug report sent", "Ok"
+              ,
+                doc_ids: [docId]
+
+
+        Tangerine.$db.openDoc docId, 
+          success: (oldDoc) ->
+            saveReport response, oldDoc._rev, docId
+          error: (error) ->
+            saveReport response, null, docId
 
 
   update: ->
@@ -94,7 +130,8 @@ class AccountView extends Backbone.View
             <td><label for='attempt_resolve'>Legacy method</label></td>
           </tr>
         </table><br>
-        <button class='command restart'>Restart</button>
+        <button class='command restart'>Restart</button><br>
+        <button class='command send_debug'>Send debug report</button>
       </section>
 
       
