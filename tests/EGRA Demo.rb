@@ -72,7 +72,6 @@ has_content? ("Home Location")
 fill_in('Region', :with => 'Practice')
   fill_in('District', :with => 'District')
 	fill_in('Village', :with => 'Village')
-  click_button('Next')
 end
 
 def child_information
@@ -125,6 +124,125 @@ login
 visit_group "blah"
 
 
+has_content? "Assessments"
+run_assessment "EGRA_demo" 
+has_content? "Date and Time"
+click_button "Next"
+
+#test clear button on school location subtest
+home_location
+click_button "Clear"
+home_location
+click_button "Next"
+
+#checks if generate works, checks if a pupil id with numbers is possible
+has_content? "Child ID"
+fill_in('participant_id', :with => 'ABCEG5')
+click_button "Next"
+has_no_content? "Consent"
+click_button "Generate" 
+click_button "Next" 
+
+#check if "no" to consent terminates assessment
+has_content? "Does the child consent?"
+click_with_javascript("#consent_no")
+click_button "Confirm"
+has_content? "Assessment complete" 
+page.execute_script("$('#corner_logo').click()")
+
+#doing various grid question tests
+has_content? "Assessments"
+run_assessment "EGRA_demo" 
+has_content? "Date and Time"
+click_button "Next"
+home_location
+click_button "Next"
+has_content? "Child ID"
+click_button "Generate" 
+click_button "Next" 
+has_content? "Does the child consent?"
+click_with_javascript("#consent_yes")
+click_button "Next" 
+child_information
+has_content? "EGRA 1: Letter Sound Identification"
+
+#check if you can move on without hitting "last item attempted"
+page.execute_script('$("button.start_time").click()')
+click_with_javascript ("#prototype_wrapper div[data-index=4]")
+sleep 1
+click_button "Stop"
+sleep 1
+click_button "Next" 
+has_no_content? "EGRA 2: Non-word Reading"
+click_with_javascript ("#prototype_wrapper div[data-index=4]")
+click_button "Next" 
+
+
+#check if you can click a "last item attempted" prior to last item marked incorrect
+has_content? "EGRA 2: Non-word Reading"
+page.execute_script('$("button.start_time").click()')
+click_with_javascript ("#prototype_wrapper div[data-index=4]")
+sleep 1
+click_button "Stop"
+sleep 1
+click_with_javascript ("#prototype_wrapper div[data-index=3]")
+click_button "Next" 
+has_no_content? "EGRA 3a: Oral Passage Reading"
+click_with_javascript ("#prototype_wrapper div[data-index=4]")
+click_button "Next"
+
+#test Restart button, re-run test
+has_content? "EGRA 3a: Oral Passage Reading"
+page.execute_script('$("button.start_time").click()')
+click_with_javascript ("#prototype_wrapper div[data-index=4]")
+sleep 1
+click_button "Stop"
+sleep 1
+click_with_javascript ("#prototype_wrapper div[data-index=4]")
+click_button "Restart"
+page.execute_script('$("button.start_time").click()')
+click_with_javascript ("#prototype_wrapper div[data-index=4]")
+sleep 1
+click_button "Stop"
+sleep 1
+click_with_javascript ("#prototype_wrapper div[data-index=4]")
+sleep 5
+
+#checking correct functionality of input mode after test has run
+page.execute_script("$('span:contains(Mark)').click()")
+click_with_javascript ("#prototype_wrapper div[data-index=2]")
+click_with_javascript ("#prototype_wrapper div[data-index=3]")
+page.execute_script("$('span:contains(Last attempted)').click()")
+click_with_javascript ("#prototype_wrapper div[data-index=5]")
+sleep 5
+click_button "Next"
+
+
+#test skip logic, this test moves through perfectly if skip logic works, if it doesn't it will return an error (all specific types of skip logic)
+run_assessment "Button test"
+has_content? "Previous"
+page.execute_script('$("#question-teacher_like div[data-value=0]").click()')
+page.execute_script('$("#question-school_like div[data-value=1]").click()')
+click_button "Next"
+has_content? "All button stuff"
+sleep 1
+page.execute_script('$("#question-q1 div[data-value=1]").click()')
+click_button "Next Question"
+page.execute_script('$("#question-q2 div[data-value=0]").click()')
+click_button "Next Question"
+has_content? "What kind of pet do you have?"
+fill_in('view79_q3', :with => 'dog')
+click_button "Next Question"
+has_content? "What is your favorite icecream?"
+page.execute_script('$("#question-q7 div[data-value=0]").click()')
+click_button "Next Question"
+has_content? "test"
+page.execute_script('$("#question-testcase div[data-value=0]").click()')
+click_button "Next"
+has_content? "Question_copy"
+page.execute_script("$('#corner_logo').click()")
+
+
 #testing if questions can be copied to other assessments, able to select value from dropbox menu but unable to actually go to the link
 #has_content? "Assessments"
 #page.execute_script("$('span:contains(Button test)').click()")
@@ -147,6 +265,7 @@ visit_group "blah"
 
 
 #dynamic question prompts, will show error for has_content? "What is the age of Nicky" if not working
+has_content? "Assessments"
 run_assessment "Dynamics Questions and Custom Validation"
 has_content? "Dynamic Question"
 fill_in('view38_name', :with => 'Nicky')
@@ -223,7 +342,7 @@ run_assessment "simple test ( server )"
 click_button "Next"
 has_no_button? "Skip"
 home_location
-
+click_button "Next"
 
 #this checks autostop, returns error if not working
 has_content? "words"
@@ -232,8 +351,7 @@ grid_question
 click_button "Next"
 
 
-#test skip logic, this test moves through perfectly if skip logic works, if it doesn't it will return an error
-has_content?("survey")
+has_content?("Multiple skip test (not)")
 sleep 1
 page.execute_script('$("#question-testcase div[data-value=0]").click()')
 click_button "Next"
@@ -258,7 +376,6 @@ click_button "Next Question"
 has_content? "Assessment complete"
 
 
-
 #run through an EGRA assessment
 
 page.execute_script("$('#corner_logo').click()")
@@ -267,6 +384,7 @@ run_assessment "EGRA_demo"
 has_content? "Date and Time"
 click_button "Next"
 home_location
+click_button "Next"
 has_content? "Child ID"
 click_button "Generate" 
 click_button "Next" 
