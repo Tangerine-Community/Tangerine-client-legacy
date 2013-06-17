@@ -4,14 +4,14 @@
 
     i.	Testing that autostop works (done)
       
-      a. Consent autostop (if "No" consent, entire assessment should end).
+      a. Consent autostop (if "No" consent, entire assessment should end) (done).
      
 
     ii.	Testing that skiplogic works (done)
     
-      a. ResultOfQuestion  (is / isnt)
-      b. ResultOfMultiple  (not "4" in / is / isnt)
-      c. ResultOfPrevious  (is / isnt)
+      a. ResultOfQuestion  (is / isnt) (done)
+      b. ResultOfMultiple  (not "4" in / is / isnt) (done)
+      c. ResultOfPrevious  (is / isnt) (done)
   
     iii. Testing that reading comprehension questions are properly linked to how far the student has read (done)
     
@@ -19,8 +19,8 @@
     
     v.	Pre-assessment subtests
     
-      a. Enter data into "School ID", test clear button, re-enter data.
-      b. Attempt a Pupil ID containing numbers, which should fail. Validate that "Generate" button works, allows user to advance.
+      a. Enter data into "School ID", test clear button, re-enter data (done)
+      b. Attempt a Pupil ID containing numbers, which should fail. Validate that "Generate" button works, allows user to advance (done)
       
     
     vi. Action on Display items
@@ -38,11 +38,11 @@
     
     ix.  Grid (timed) subtests:
     
-      a. Valiidate the asterisk "mark entire line" button functions. 
-      b. Validate that the "last item attempted" cannot be placed on a grid item located prior to the last item marked incorrect. 
+      a. Valiidate the asterisk "mark entire line" button functions (still working on this, need to actually look at results window to see if it works)
+      b. Validate that the "last item attempted" cannot be placed on a grid item located prior to the last item marked incorrect (done) 
       c. Validate the correct functionality of input mode (e.g. after test has ended, mark item #2 incorrect; move "last attempted" from x to y).
-      d. Validate the "Restart" button, re-run test. 
-      e. Attempt to advance past subtest without having indicated last item attempted. 
+      d. Validate the "Restart" button, re-run test (done)
+      e. Attempt to advance past subtest without having indicated last item attempted (done)
 
     
   b.	Examining the results and making sure they look right
