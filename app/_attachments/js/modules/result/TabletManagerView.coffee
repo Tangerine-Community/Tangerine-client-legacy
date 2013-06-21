@@ -5,7 +5,7 @@ class TabletManagerView extends Backbone.View
   initialize: ( options ) ->
 
     @ipBlock  = 32
-    @totalIps = 64
+    @totalIps = 256
     @tabletOffset = 0
 
     @callbacks = options.callbacks
