@@ -15,7 +15,6 @@ class RegisterTeacherView extends Backbone.View
     Tangerine.router.login()
 
   register: ->
-
     @validate => @saveUser()
 
   validate: (callback) ->
@@ -47,16 +46,14 @@ class RegisterTeacherView extends Backbone.View
       "_id" : Utils.humanGUID()
     ,
       success: =>
-        $.couch.userDb (db) =>
-          db.openDoc "org.couchdb.user:#{@name}",
-            success: ( userDoc ) =>
-              newUserDoc = $.extend(userDoc, {teacherId : teacher.id})
-              db.saveDoc userDoc,
-                success: =>
-                  Utils.midAlert "New teacher registered"
-                  Tangerine.user.login @name, @pass
-                error: (error) ->
-                  Utils.midAlert "Registration error<br>#{error}", 5000
+        Tangerine.user.save
+          "teacherId" : teacher.id
+        ,
+          success: =>
+            Utils.midAlert "New teacher registered"
+            Tangerine.user.login @name, @pass, success: -> Tangerine.router.navigate '', true 
+          error: (error) ->
+            Utils.midAlert "Registration error<br>#{error}", 5000
 
 
   render: ->
