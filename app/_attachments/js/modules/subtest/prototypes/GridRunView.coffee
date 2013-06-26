@@ -173,7 +173,7 @@ class GridRunView extends Backbone.View
     if @timeRemaining <= 0 && @timeRunning == true && @captureLastAttempted
       @stopTimer(simpleStop:true)
       Utils.background "red"
-      alert t("time please mark last item attempted"), "Ok"
+      alert t("time please mark last item attempted") 
       Utils.background ""
       @updateMode event, "last"
 
