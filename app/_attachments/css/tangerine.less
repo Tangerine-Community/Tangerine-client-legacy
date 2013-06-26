@@ -832,7 +832,7 @@ button{
 
 .clickable
 {
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
 span.delete_confirm
@@ -1641,34 +1641,54 @@ label.no_help
  * Login form
  */
 
-.login_view
+.LoginView
 {
-  width: 300px;
+
+  width: 90%;
+  max-width: 500px;
   margin: 0 auto;
   display: block;
+  text-align: center;
 
-  label
+  background: white;
+
+  table
   {
-    margin-top: 10px;
-    color: #888;
-    display: block;
-    clear: both;
-    font-size: @h1;
+    width: 100%;
+  }
+
+  section
+  {
+    text-align: left !important;
   }
 
   input
   {
-    width: 290px;
-    size: 10;
+    @media only screen and (max-width : 450px) {
+      font-size: @h2;
+    }
+    
     font-size: @h1;
     border: 1px solid #888;
     padding: 5px !important;
-    clear: both;
+    clear: left;
   }
+
+
 
   button
   {
-    width: 300px;
+
+    display: block;
+    clear: both;
+
+    width: 99%;
+
+    @media only screen and (max-width : 450px) { 
+      width: 97%;
+      font-size: @h2;
+    }
+
     font-size: @h1;
     color: white;
     background-color: @orange-2;
@@ -1685,8 +1705,7 @@ label.no_help
   
   #login_logo
   {
-    width: 300px;
-    height: 283px;
+    @media only screen and (max-width : 450px) { width: 75%; height: auto; }
   }
 
 }
@@ -2258,3 +2277,88 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 
 
 
+
+/* Auto complete and menu */
+
+.ui-autocomplete {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  background: @orange-4;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: default;
+  .box-shadow-spread (1px, 15px, 25px, -5px, rgba(0,0,0,0.5));
+}
+
+.ui-menu {
+  list-style: none;
+  padding: 2px;
+  margin: 0;
+  display: block;
+  outline: none;
+}
+.ui-menu .ui-menu {
+  margin-top: -3px;
+  position: absolute;
+}
+.ui-menu .ui-menu-item {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  /* support: IE10, see #8844 */
+  list-style-image: url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7);
+}
+.ui-menu .ui-menu-divider {
+  margin: 5px -2px 5px -2px;
+  height: 0;
+  font-size: 0;
+  line-height: 0;
+  border-width: 1px 0 0 0;
+}
+.ui-menu .ui-menu-item a {
+  text-decoration: none;
+  display: block;
+  padding: 2px .4em;
+  line-height: 1.5;
+  min-height: 0; /* support: IE7 */
+  font-weight: normal;
+}
+.ui-menu .ui-menu-item a.ui-state-focus,
+.ui-menu .ui-menu-item a.ui-state-active {
+  color: white;
+  background: @green;
+  font-weight: normal;
+  //margin: -1px;
+}
+
+.ui-menu .ui-state-disabled {
+  font-weight: normal;
+  margin: .4em 0 .2em;
+  line-height: 1.5;
+}
+.ui-menu .ui-state-disabled a {
+  cursor: default;
+}
+
+/* icon support */
+.ui-menu-icons {
+  position: relative;
+}
+.ui-menu-icons .ui-menu-item a {
+  position: relative;
+  padding-left: 2em;
+}
+
+/* left-aligned */
+.ui-menu .ui-icon {
+  position: absolute;
+  top: .2em;
+  left: .2em;
+}
+
+/* right-aligned */
+.ui-menu .ui-menu-icon {
+  position: static;
+  float: right;
+}
