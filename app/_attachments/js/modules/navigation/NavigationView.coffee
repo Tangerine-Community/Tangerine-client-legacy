@@ -8,7 +8,7 @@ class NavigationView extends Backbone.View
     'touchstart #corner_logo'      : 'logoClick'
     'touchstart #enumerator'       : 'enumeratorClick'
   } else {
-    'click div#logout_link'  : 'logout'
+    'click div#logout_link'   : 'logout'
     'click button'            : 'submenuHandler'
     'click #corner_logo'      : 'logoClick'
     'click #enumerator'       : 'enumeratorClick'
@@ -92,7 +92,7 @@ class NavigationView extends Backbone.View
     <div id='logout_link'>#{@text.logout}</div>
     <div id='enumerator_box'>
       <span id='enumerator_label' title='#{@text.account}'>#{@whoAmI}</span>
-      <div id='enumerator'>#{Tangerine.user.name || ""}</div>
+      <div id='enumerator'>#{Tangerine.user.name() || ""}</div>
     </div>
 
     <div id='current_student'>
@@ -124,13 +124,13 @@ class NavigationView extends Backbone.View
 
     $("#enumerator_label").html @whoAmI
 
-    $('#enumerator').html @user.name
+    $('#enumerator').html @user.name()
 
     # @TODO This needs fixing
     if ~window.location.toString().indexOf("name=") then @$el.find("#logout_link").hide() else  @$el.find("#logout_link").show()
 
     @user.verify
-      isRegistered: =>
+      isAuthenticated: =>
         @render()
         $( '#navigation' ).fadeIn(250)
       isUnregistered: =>
