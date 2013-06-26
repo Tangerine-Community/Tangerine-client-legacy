@@ -125,7 +125,7 @@ class Settings extends Backbone.Model
     splitDB = result.split("://")
 
     if pass?
-      result = "#{splitDB[0]}://#{Tangerine.user.name}:#{pass}@#{splitDB[1]}"
+      result = "#{splitDB[0]}://#{Tangerine.user.name()}:#{pass}@#{splitDB[1]}"
 
     return result
 
