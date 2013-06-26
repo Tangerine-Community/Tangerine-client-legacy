@@ -34,7 +34,8 @@ Tangerine.onBackButton = (event) ->
 
 
 # Grab our system config doc
-Tangerine.config = new Config "_id" : "configuration"
+Tangerine.config = new Backbone.Model "_id" : "configuration"
+
 Tangerine.config.fetch
   error   : ->
     console.log "could not fetch configuration"
@@ -44,6 +45,10 @@ Tangerine.config.fetch
     Tangerine.settings = new Settings "_id" : "settings"
     Tangerine.settings.fetch
       success: ->
+
+        # guarentee instanceId
+        Tangerine.settings.set "instanceId", Utils.humanGUID() unless Tangerine.settings.has("instanceId")
+
         Tangerine.onSettingsLoad()
       error: ->
         Tangerine.settings.set Tangerine.config.getDefault "settings"
@@ -63,50 +68,121 @@ Tangerine.onSettingsLoad = ->
   Tangerine.templates = new Template "_id" : "templates"
   Tangerine.templates.fetch
     success: ->
-      Tangerine.ensureAdmin ->
-        $ ->
-          # Start the application
+      Tangerine.transitionUsers ->
+        Tangerine.ensureAdmin ->
+          $ ->
+            # Start the application
 
-          window.vm = new ViewManager()
+            window.vm = new ViewManager()
 
-          #$("<button id='reload'>reload me</button>").appendTo("#footer").click -> document.location.reload()
+            #$("<button id='reload'>reload me</button>").appendTo("#footer").click -> document.location.reload()
 
-          $.i18n.init 
-            "fallbackLng" : "en"
-            "lng"         : Tangerine.settings.get "language"
-            "resGetPath"  : "locales/__lng__/translation.json"
-          , (t) ->
-            window.t = t
+            $.i18n.init 
+              "fallbackLng" : "en"
+              "lng"         : Tangerine.settings.get "language"
+              "resGetPath"  : "locales/__lng__/translation.json"
+            , (t) ->
+              window.t = t
 
 
-            if Tangerine.settings.get("context") != "server"
-              document.addEventListener "deviceready"
-              , ->
-                document.addEventListener "online", -> Tangerine.online = true
-                document.addEventListener "offline", -> Tangerine.online = false
+              if Tangerine.settings.get("context") != "server"
+                document.addEventListener "deviceready"
+                , ->
+                  document.addEventListener "online", -> Tangerine.online = true
+                  document.addEventListener "offline", -> Tangerine.online = false
 
-                ### Note, turns on menu button
-                document.addEventListener "menubutton", (event) ->
-                  console.log "menu button"
+                  ### Note, turns on menu button
+                  document.addEventListener "menubutton", (event) ->
+                    console.log "menu button"
+                  , false
+                  ###
+
+                  # prevents default
+                  document.addEventListener "backbutton", Tangerine.onBackButton, false
                 , false
-                ###
-
-                # prevents default
-                document.addEventListener "backbutton", Tangerine.onBackButton, false
-              , false
 
 
-            # Singletons
-            Tangerine.router = new Router()
-            Tangerine.user   = new User()
-            Tangerine.nav    = new NavigationView
-              user   : Tangerine.user
-              router : Tangerine.router
-            Tangerine.log    = new Log()
+              # Singletons
+              Tangerine.router = new Router()
+              Tangerine.user   = if Tangerine.settings.get("context") is "server"
+                  new User()
+                else
+                  new TabletUser()
+              Tangerine.nav    = new NavigationView
+                user   : Tangerine.user
+                router : Tangerine.router
+              Tangerine.log    = new Log()
 
-            Tangerine.user.sessionRefresh 
-              success: -> 
-                Backbone.history.start()
+              Tangerine.user.sessionRefresh 
+                success: -> 
+                  Backbone.history.start()
+
+# make sure all users in the _users database have a local user model for future use
+Tangerine.transitionUsers = (callback) ->
+
+  return callback() if Tangerine.settings.get("context") is "server" or Tangerine.settings.has("usersTransitioned")
+
+  $.couch.login
+    name     : "admin"
+    password : "password"
+    success: ->
+      $.couch.userDb (uDB) => 
+        uDB.allDocs
+          success: (resp) ->
+            docIds = _.pluck(resp.rows, "id").filter (a) -> ~a.indexOf("org.couchdb")
+            nextDoc = () ->
+              id = docIds.pop()
+              return finish() unless id?
+              uDB.openDoc id,
+                success: (doc) ->
+                  # console.log doc
+                  name = doc._id.split(":")[1]
+
+                  hashes = 
+                    if doc.password_sha?
+                      pass : doc.password_sha
+                      salt : doc.salt
+                    else
+                      TabletUser.generateHash("password")
+
+                  teacherId = doc.teacherId
+                  unless teacherId?
+                    teacherId = Utils.humanGUID()
+                    teacher = new Teacher "_id" : teacherId, "name" : name
+                    
+
+                  roles =
+                    if name is "admin"
+                      ["_admin"]
+                    else
+                      doc.roles || []
+
+                  newDoc = 
+                    "_id"   : TabletUser.calcId(name)
+                    "name"  : name
+                    "roles" : roles
+                    "pass"  : hashes.pass
+                    "salt"  : hashes.salt
+                    "teacherId"  : teacherId
+                    "collection" : "user"
+                  #return
+                  Tangerine.$db.saveDoc newDoc,
+                    success: (doc) ->
+                      teacher.save null,
+                        success: ->
+                          nextDoc()
+
+                    error: (doc) ->
+                      nextDoc()
+
+            finish = ->
+              Tangerine.settings.save "usersTransitioned" : true,
+                success: ->
+                  $.couch.logout
+                    success: ->
+                      callback()
+
+            nextDoc() # kick it off
 
 
 # if admin user doesn't exist in _users database, create it
