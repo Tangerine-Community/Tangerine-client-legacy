@@ -1,10 +1,3 @@
-class Teacher extends Backbone.Model
-  url : "teacher"
-
-class Teachers extends Backbone.Collection
-  model : Teacher
-  url : "teacher"
-
 class TeachersView extends Backbone.View
 
   className: "TeachersView"
@@ -22,9 +15,12 @@ class TeachersView extends Backbone.View
   goBack: ->
     window.history.back()
 
-
   initialize: (options) ->
     @teachers = options.teachers
+    @users    = options.users
+    console.log @teachers
+    console.log @users
+    @usersByTeacherId = @users.indexBy("teacherId")
 
     @teacherProperties = 
       [
@@ -81,23 +77,19 @@ class TeachersView extends Backbone.View
   savePassword: (event) ->
     $target = $(event.target)
     teacherId = $target.attr("data-teacherId")
-    
-    teacherModel = @teachers.get(teacherId)
-    
-    $.couch.userDb (db) =>
-      db.openDoc "org.couchdb.user:#{teacherModel.get('name')}",
-        success: ( userDoc ) =>
-          delete userDoc.salt
-          delete userDoc.password_sha
 
-          userDoc.password = @$el.find(".#{teacherId}_password").val()
-          db.saveDoc userDoc,
-            success: =>
-              Utils.midAlert "Teacher's password saved"
-              @$el.find(".#{teacherId}_password").val("")
-              @$el.find(".#{teacherId}_menu").toggleClass("confirmation")
-            error: =>
-              Utils.midAlert "Save error"
+    teacherModel = @teachers.get(teacherId)
+    console.log @usersByTeacherId
+    userModel    = @usersByTeacherId[teacherId][0]
+    console.log userModel
+    userModel.setPassword @$el.find(".#{teacherId}_password").val()
+    userModel.save null,
+      success: =>
+        Utils.midAlert "Teacher's password saved"
+        @$el.find(".#{teacherId}_password").val("")
+        @$el.find(".#{teacherId}_menu").toggleClass("confirmation")
+      error: =>
+        Utils.midAlert "Save error"
 
 
 
@@ -145,7 +137,7 @@ class TeachersView extends Backbone.View
               <div class='menu_box'>
                 <input type='password' class='#{teacher.id}_password'>
                 <table><tr>
-                  <th><label for='#{teacher.id}_show_password'>Show password</label></th>
+                  <th style='padding:0;'><label for='#{teacher.id}_show_password'>Show password</label></th>
                   <th style='padding:10px'><input type='checkbox' id='#{teacher.id}_show_password' class='show_password' data-teacherId='#{teacher.id}'></th>
                 </tr></table>
                 <button class='save_password command' data-teacherId='#{teacher.id}'>Save</button>
@@ -175,7 +167,7 @@ class TeachersView extends Backbone.View
     # cook the value
     value = if prop.key?   then teacher.get(prop.key)    else "&nbsp;"
     value = if prop.escape then teacher.escape(prop.key) else value
-    value = "" if not value?
+    value = "_" if not value?
 
     # calculate tag
     tagName = prop.tagName || "td"
@@ -214,7 +206,11 @@ class TeachersView extends Backbone.View
 
     teacherId    = $span.attr("data-teacherId")
     teacher      = @teachers.get(teacherId)
-    oldValue     = teacher.get(key)
+    oldValue     = 
+      if isNumber 
+        teacher.getNumber(key)
+      else
+        teacher.getString(key)
 
     $target = $(event.target)
     classes = ($target.attr("class") || "").replace("settings","")
