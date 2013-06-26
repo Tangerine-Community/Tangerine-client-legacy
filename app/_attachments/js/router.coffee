@@ -104,7 +104,7 @@ class Router extends Backbone.Router
 
   groups: ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         view = new GroupsView
         vm.show view
 
@@ -113,7 +113,7 @@ class Router extends Backbone.Router
   #
   curricula: ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         curricula = new Curricula
         curricula.fetch
           success: (collection) ->
@@ -123,7 +123,7 @@ class Router extends Backbone.Router
 
   curriculum: (curriculumId) ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         curriculum = new Curriculum "_id" : curriculumId
         curriculum.fetch
           success: ->
@@ -147,7 +147,7 @@ class Router extends Backbone.Router
 
   curriculumEdit: (curriculumId) ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         curriculum = new Curriculum "_id" : curriculumId
         curriculum.fetch
           success: ->
@@ -166,14 +166,14 @@ class Router extends Backbone.Router
 
   curriculumImport: ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         view = new AssessmentImportView
           noun : "curriculum"
         vm.show view
 
   klass: ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         allKlasses = new Klasses
         allKlasses.fetch
           success: ( klassCollection ) ->
@@ -193,7 +193,7 @@ class Router extends Backbone.Router
 
   klassEdit: (id) ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         klass = new Klass _id : id
         klass.fetch
           success: ( model ) ->
@@ -213,7 +213,7 @@ class Router extends Backbone.Router
 
   klassPartly: (klassId, part=null) ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         klass = new Klass "_id" : klassId
         klass.fetch
           success: ->
@@ -246,7 +246,7 @@ class Router extends Backbone.Router
 
   studentSubtest: (studentId, subtestId) ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         student = new Student "_id" : studentId
         student.fetch
           success: ->
@@ -273,7 +273,7 @@ class Router extends Backbone.Router
 
   runSubtest: (studentId, subtestId) ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         subtest = new Subtest "_id" : subtestId
         subtest.fetch
           success: ->
@@ -327,12 +327,12 @@ class Router extends Backbone.Router
         view = new RegisterTeacherView
           user : new User
         vm.show view
-      isRegistered: ->
+      isAuthenticated: ->
         Tangerine.router.navigate "", true
 
   studentEdit: ( studentId ) ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         student = new Student _id : studentId
         student.fetch
           success: (model) ->
@@ -360,14 +360,14 @@ class Router extends Backbone.Router
 
   import: ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         view = new AssessmentImportView
           noun :"assessment"
         vm.show view
 
   assessments: ->
       Tangerine.user.verify
-        isRegistered: ->
+        isAuthenticated: ->
           assessments = new Assessments
           assessments.fetch
             success: ( assessments ) ->
@@ -410,7 +410,7 @@ class Router extends Backbone.Router
 
   run: (id) ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         assessment = new Assessment
           "_id" : id
         assessment.fetch
@@ -420,7 +420,7 @@ class Router extends Backbone.Router
 
   print: ( assessmentId, format ) ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         assessment = new Assessment
           "_id" : assessmentId
         assessment.fetch
@@ -432,7 +432,7 @@ class Router extends Backbone.Router
 
   resume: (assessmentId, resultId) ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         assessment = new Assessment
           "_id" : assessmentId
         assessment.fetch
@@ -470,7 +470,7 @@ class Router extends Backbone.Router
 
   results: (assessmentId) ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         afterFetch = (assessment = new Assessment("_id":assessmentId), assessmentId) ->
           allResults = new Results
           allResults.fetch
@@ -521,7 +521,7 @@ class Router extends Backbone.Router
   klassGrouping: (klassId, part) ->
     part = parseInt(part)
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
           allSubtests = new Subtests
           allSubtests.fetch
             success: ( collection ) ->
@@ -550,7 +550,7 @@ class Router extends Backbone.Router
 
   masteryCheck: (studentId) ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         student = new Student "_id" : studentId
         student.fetch
           success: (student) ->
@@ -581,7 +581,7 @@ class Router extends Backbone.Router
 
   progressReport: (studentId, klassId) ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         # save this crazy function for later
         # studentId can have the value "all", in which case student should == null
         afterFetch = ( student, students ) ->
@@ -731,11 +731,24 @@ class Router extends Backbone.Router
   #
   login: ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         Tangerine.router.navigate "", true
       isUnregistered: ->
-        view = new LoginView
-        vm.show view
+
+        showView = (users = []) ->
+          view = new LoginView
+            users: users
+          vm.show view
+
+        if Tangerine.settings.get("context") is "server"
+          showView()
+        else
+          users = new TabletUsers
+          users.fetch
+            success: ->
+              showView(users)
+
+
 
   logout: ->
     Tangerine.user.logout()
@@ -746,20 +759,20 @@ class Router extends Backbone.Router
       window.location = Tangerine.settings.urlIndex("trunk", "account")
     else
       Tangerine.user.verify
-        isRegistered: ->
+        isAuthenticated: ->
           view = new AccountView user : Tangerine.user
           vm.show view
 
   settings: ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         view = new SettingsView
         vm.show view
 
 
   logs: ->
     Tangerine.user.verify
-      isRegistered: ->
+      isAuthenticated: ->
         logs = new Logs
         logs.fetch
           success: =>
@@ -770,13 +783,17 @@ class Router extends Backbone.Router
 
   teachers: ->
     Tangerine.user.verify
-      isRegistered: ->
-        teachers = new Teachers
-        teachers.fetch
-          success: =>
-            view = new TeachersView
-              teachers: teachers
-            vm.show view
+      isAuthenticated: ->
+        users = new TabletUsers
+        users.fetch
+          success: -> 
+            teachers = new Teachers
+            teachers.fetch
+              success: =>
+                view = new TeachersView
+                  teachers: teachers
+                  users: users
+                vm.show view
 
 
   # Transfer a new user from tangerine-central into tangerine
@@ -813,9 +830,5 @@ class Router extends Backbone.Router
                     success : ->
                       Tangerine.router.navigate ""
                       window.location.reload()
-                    error : ->
-                      view = new ErrorView
-                        message : "There was a username collision"
-                        details : ""
-                      vm.show view
-
+                    error: ->
+                      Utils.sticky "Error transfering user."
