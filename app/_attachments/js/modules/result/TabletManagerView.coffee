@@ -17,6 +17,7 @@ class TabletManagerView extends Backbone.View
       internalError : "Internal database error"
 
   sync: =>
+    return unless @tabletOffset is 0
     @pullDocs()
 
   pullDocs: =>
