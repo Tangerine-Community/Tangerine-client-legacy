@@ -23,7 +23,7 @@ class Result extends Backbone.Model
       @set
         'subtestData' : []
         'start_time'  : (new Date()).getTime()
-        'enumerator'  : Tangerine.user.name
+        'enumerator'  : Tangerine.user.name()
         'tangerine_version' : Tangerine.version
         'device' : deviceInfo
         'instanceId' : Tangerine.settings.getString("instanceId")
