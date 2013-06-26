@@ -109,15 +109,17 @@ jsFiles = [
   'modules/report/ProgressView.js',
   'modules/report/ProgressMenuView.js',
 
-  'modules/klass/Curriculum.js',
-  'modules/klass/CurriculumView.js',
-  'modules/klass/Curricula.js',
-  'modules/klass/CurriculaView.js',
-  'modules/klass/CurriculaListView.js',
-  'modules/klass/CurriculumListElementView.js',
-  'modules/klass/CurriculaView.js',
+  'modules/curriculum/Curriculum.js',
+  'modules/curriculum/CurriculumView.js',
+  'modules/curriculum/Curricula.js',
+  'modules/curriculum/CurriculaView.js',
+  'modules/curriculum/CurriculaListView.js',
+  'modules/curriculum/CurriculumListElementView.js',
+  'modules/curriculum/CurriculaView.js',
 
-  'modules/klass/Teacher.js',
+  'modules/teacher/Teacher.js',
+  'modules/teacher/Teachers.js',
+  'modules/teacher/TeachersView.js',
 
   'modules/student/Student.js',
   'modules/student/Students.js',
@@ -125,14 +127,14 @@ jsFiles = [
   'modules/student/StudentEditView.js',
 
   'modules/user/User.js',
+  'modules/user/Users.js',
+  'modules/user/TabletUser.js',
+  'modules/user/TabletUsers.js',
+
   'modules/user/LoginView.js',
   'modules/user/AccountView.js',
   'modules/user/GroupsView.js',
   'modules/user/UsersMenuView.js',
-
-  'modules/error/ErrorView.js',
-
-  'modules/breadcrumb/breadcrumb.js',
 
   'modules/assessment/AssessmentPrintView.js',
   'modules/question/QuestionPrintView.js',
@@ -148,7 +150,6 @@ jsFiles = [
   'modules/log/Log.js',
 
   'modules/template/Template.js',
-  'modules/config/Config.js',
   'modules/settings/Settings.js',
   'modules/settings/SettingsView.js',
 
@@ -176,6 +177,9 @@ libFiles = [
   'lib/excanvas.js',
   'lib/jquery.ui.core.js',
   'lib/jquery.ui.widget.js',
+  'lib/jquery.ui.position.js',
+  'lib/jquery.ui.menu.js',
+  'lib/jquery.ui.autocomplete.js',
   'lib/jquery.ui.mouse.js',
   'lib/jquery.ui.sortable.js',
   'lib/jquery.ui.accordion.js',
