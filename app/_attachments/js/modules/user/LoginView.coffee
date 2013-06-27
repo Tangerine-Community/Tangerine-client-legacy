@@ -147,7 +147,7 @@ class LoginView extends Backbone.View
           background: #fff;
         }
 
-        input
+        input:focus
         {
           text-transform: lowercase;
         }
