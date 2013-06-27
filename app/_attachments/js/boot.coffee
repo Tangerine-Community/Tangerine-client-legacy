@@ -135,6 +135,7 @@ Tangerine.transitionUsers = (callback) ->
               return finish() unless id?
               uDB.openDoc id,
                 success: (doc) ->
+                  teacher = null
                   # console.log doc
                   name = doc._id.split(":")[1]
 
@@ -168,9 +169,12 @@ Tangerine.transitionUsers = (callback) ->
                   #return
                   Tangerine.$db.saveDoc newDoc,
                     success: (doc) ->
-                      teacher.save null,
-                        success: ->
-                          nextDoc()
+                      if teacher?
+                        teacher.save null,
+                          success: ->
+                            nextDoc()
+                      else
+                        nextDoc()
 
                     error: (doc) ->
                       nextDoc()
