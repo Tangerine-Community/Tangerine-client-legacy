@@ -51,7 +51,7 @@ class KlassesView extends Backbone.View
       "contentType" : "application/json;charset=utf-8",
       "data"        : JSON.stringify(
           include_docs: false
-          keys : ['result', 'klass', 'student', 'teacher', 'logs']
+          keys : ['result', 'klass', 'student', 'teacher', 'logs', 'user']
         )
       "success" : (data) =>
         docList = _.pluck(data.rows,"id")
