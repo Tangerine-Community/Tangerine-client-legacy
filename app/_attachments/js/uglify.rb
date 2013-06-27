@@ -98,7 +98,6 @@ jsFiles = [
   'modules/klass/KlassPartlyView.js',
   'modules/klass/KlassResult.js',
   'modules/klass/KlassResults.js',
-  'modules/klass/RegisterTeacherView.js',
 
   'modules/subtest/KlassSubtestEditView.js',
 
@@ -120,6 +119,7 @@ jsFiles = [
   'modules/teacher/Teacher.js',
   'modules/teacher/Teachers.js',
   'modules/teacher/TeachersView.js',
+  'modules/teacher/RegisterTeacherView.js',
 
   'modules/student/Student.js',
   'modules/student/Students.js',
