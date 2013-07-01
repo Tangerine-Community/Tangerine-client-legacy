@@ -76,7 +76,7 @@ class User extends Backbone.Model
           success: =>
             callbacks.success?()
             @trigger "login"
-            recentUsers = @recentUsers.filter( (a) => !~a.indexOf(@name()))
+            recentUsers = @recentUsers().filter( (a) => !~a.indexOf(@name()))
             recentUsers.unshift(@name())
             recentUsers.pop() if recentUsers.length >= @RECENT_USER_MAX
             $.cookie("recentUsers", recentUsers)
