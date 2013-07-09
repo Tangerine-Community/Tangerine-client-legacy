@@ -10,14 +10,19 @@
 
 
 require 'rubygems'
-require 'selenium-webdriver'
+#require 'selenium-webdriver'
+require "selenium/webdriver"
 require 'capybara'
 require 'capybara/dsl'
 
 
 Capybara.register_driver :selenium do |app|
- Capybara::Selenium::Driver.new(app, :browser => :chrome)
+ profile = Selenium::WebDriver::Chrome::Profile.new
+ profile["download.default_directory"] = DownloadHelpers::PATH.to_s
+ Capybara::Selenium::Driver.new(app, :browser => :chrome, :profile => profile)
 end
+
+Capybara.default_driver = Capybara.javascript_driver = :chrome
 
 
 Capybara.run_server = false
@@ -124,58 +129,15 @@ end
 login
 visit_group "blah"
 
-
-
-#Using text editor, bold, changing size, etc. 
-#has_content? "Assessments"
-#page.execute_script("$('span:contains(simple test ( server ))').click()")
-#page.execute_script("$('img.edit:visible').click()")
-#has_content? "Assessment Builder"
-#page.execute_script("$('.icon_edit').first().click()")
-#has_content? "Subtest Editor"
-#sleep 1
-#page.execute_script("$('.richtext_edit').first().click()")
-#sleep 1
-#page.execute_script("CKEDITOR.instances.enumerator_textarea.insertText('Hi')")
-#click_button "Save"
-#sleep 1
-#page.execute_script("$('.richtext_edit:eq(1)').click()")
-#sleep 1
-#tests bold
-#page.execute_script("$('#cke_63_label').click()")
-#sleep 1
-#page.execute_script("CKEDITOR.instances.dialog_textarea.insertText('Hello')")
-#click_button "Save"page.execute_script("$('#corner_logo').click()")
-#sleep 1
-#page.execute_script("$('.richtext_edit:eq(2)').click()")
-#sleep 1
-#page.execute_script("$('#cke_113_label').click()")
-#sleep 1
-#page.execute_script("CKEDITOR.instances.transition_textarea.insertText('Watsup')")
-#click_button "Save"
-#sleep 1
-#page.execute_script("$('.save_subtest').click()")
-#has_content? "Assessment Builder"
-#page.execute_script("$('.icon_edit:eq(1)').click()")
-#has_content? "Subtest Editor"
-#sleep 1 
-#page.execute_script("$('.richtext_edit').first().click()")
-#sleep 1
-#page.execute_script("$('#corner_logo').click()")
-#has_content? "Assessments"
-#run_assessment("simple test ( server )")
-#has_content? "Home Location"
-#test bullets, numbered lists too(but this feature of Tangerine is not yet working)
-#test that it's actually there
-#click_button "help"
-#sleep 1
-#has_content? "Hi"
-#page.execute_script("$('.student_dialog').html().match('strong')") == '["strong"]'
-#page.execute_script("$('.controlls').html().match('u')") == '["u"]'
-#sleep 5
-
-
-#need to figure out how to delete content too?
+#Accessing results dashboard
+click_button "Results"
+#this puts the most recent result at the top
+page.execute_script("$('.20130617').first().click()")
+#this select the most recent value
+page.execute_script("$('.sort-value').first().click()")
+#could check here for items like number of subtests, tangerine version, names of subtests, etc. 
+#this pulls up the assessment results
+page.execute_script("$('.result:visible').click()")
 
 
 has_content? "Assessments"
@@ -261,51 +223,25 @@ click_button "Stop"
 sleep 1
 click_with_javascript ("#prototype_wrapper div[data-index=4]")
 sleep 1
-click_button "Next"
-has_content? "EGRA 3b: Reading Comprehension"
-page.execute_script("$('#corner_logo').click()")
 
-
-#checking correct functionality of input mode after test has run (having some difficulty with functionality on wizard)
+#checking correct functionality of input mode after test has run (clicks on "Mark" but not clicking on any of the buttons after that)
 #Validate the asterisk "mark entire row"
-#has_content? "Assessments"
-#run_assessment "EGRA_demo" 
-#has_content? "Date and Time"
-#click_button "Next"
-#home_location
-#click_button "Next"
-#content? "Child ID"
-#click_button "Generate" 
-#click_button "Next" 
-#has_content? "Does the child consent?"
-#click_with_javascript("#consent_yes")
-#click_button "Next" 
-#child_information
-#has_content? "EGRA 1: Letter Sound Identification"
-#page.execute_script('$("button.start_time").click()')
-#click_with_javascript ("#prototype_wrapper div[data-index=4]")
-#sleep 1
-#click_button "Stop"
-#sleep 1
-#page.execute_script("$('#prototype_wrapper div[data-index=5]').click()")
-#sleep 2
-#page.execute_script("$('span:contains(Mark)').click()")
-#sleep 1
-#page.execute_script("$('#prototype_wrapper div[data-index=2]').click()")
-#sleep 1
-#click_with_javascript ("#prototype_wrapper div[data-index=3]")
-#sleep 1
-#page.execute_script("$('span:contains(Last attempted)').click()")
-#click_with_javascript ("#prototype_wrapper div[data-index=6]")
-#sleep 1
-#sleep 10
-#click_button "Next"
-#has_content? "EGRA 2: Non-word Reading"
-#page.execute_script("$('#corner_logo').click()")
+page.execute_script("$('span:contains(Mark)').click()")
+sleep 1
+page.execute_script("$('#prototype_wrapper div[data-index=2]').click()")
+page.execute_script("$('#prototype_wrapper div[data-index=2]').click()")
+sleep 5
+click_with_javascript ("#prototype_wrapper div[data-index=3]")
+sleep 5
+page.execute_script("$('span:contains(Last attempted)').click()")
+sleep 5
+click_with_javascript ("#prototype_wrapper div[data-index=5]")
+sleep 5
+page.execute_script("$('#prototype_wrapper div[data-index=15]').click()")
+click_button "Next"
 
 
 #test skip logic, this test moves through perfectly if skip logic works, if it doesn't it will return an error (all specific types of skip logic)
-has_content? "Assessments"
 run_assessment "Button test"
 has_content? "Previous"
 page.execute_script('$("#question-teacher_like div[data-value=0]").click()')
@@ -318,7 +254,7 @@ click_button "Next Question"
 page.execute_script('$("#question-q2 div[data-value=0]").click()')
 click_button "Next Question"
 has_content? "What kind of pet do you have?"
-fill_in('view214_q3', :with => 'dog')
+fill_in('view79_q3', :with => 'dog')
 click_button "Next Question"
 has_content? "What is your favorite icecream?"
 page.execute_script('$("#question-q7 div[data-value=0]").click()')
@@ -331,21 +267,23 @@ page.execute_script("$('#corner_logo').click()")
 
 
 #testing if questions can be copied to other assessments, able to select value from dropbox menu but unable to actually go to the link
-has_content? "Assessments"
-page.execute_script("$('span:contains(Button test)').click()")
-page.execute_script("$('img.edit:visible').click()")
-has_content? "Assessment Builder"
-page.execute_script("$('img.icon_edit').first().click()")
-has_content? "Subtest Editor"
-page.execute_script("$('img.show_copy').first().click()")
-has_content? "Copy to"
-page.execute_script("$('.copy_select').val('Question_copy')")
-page.execute_script("$('.copy_select').trigger('change')")
-has_content? "Question_copy"
-sleep 1
-page.execute_script("$('.delete').click()")
-click_button "Delete"
-page.execute_script("$('#corner_logo').click()")
+#has_content? "Assessments"
+#page.execute_script("$('span:contains(Button test)').click()")
+#page.execute_script("$('img.edit:visible').click()")
+#has_content? "Assessment Builder"
+#page.execute_script("$('img.icon_edit').click()")
+#has_content? "Subtest Editor"
+#page.execute_script("$('img.show_copy').first().click()")
+#has_content? "Copy to"
+#sleep 2
+#$('.copy_select').val("Question_copy").click()
+#select('Question_copy', :from => 'Select a subtest')
+#sleep 5
+#has_content? "Question_copy"
+#page.execute_script("$('.delete').click()")
+#click_button "Delete"
+#sleep 5
+#page.execute_script("$('#logout_link').click()")
 
 
 
@@ -353,17 +291,17 @@ page.execute_script("$('#corner_logo').click()")
 has_content? "Assessments"
 run_assessment "Dynamics Questions and Custom Validation"
 has_content? "Dynamic Question"
-fill_in('view362_name', :with => 'Nicky')
+fill_in('view38_name', :with => 'Nicky')
 click_button "Next Question"
 has_content? "What is the age of Nicky"
 
 
 #testing custom validation, if not working will show error for has_no_content? "Assessment Complete"
-fill_in('view363_age', :with => '100')
+fill_in('view39_age', :with => '100')
 click_button "Next"
 has_no_content? "Abort_Resume"
 has_content? "Enter a number between 1 and 49"
-fill_in('view363_age', :with => '12')
+fill_in('view39_age', :with => '12')
 click_button "Next"
 has_content? "Abort_Resume"
 
@@ -415,6 +353,8 @@ has_content? "Copy of simple test ( server )"
 page.execute_script("$('span:contains(Copy of simple test ( server ))').click()")
 page.execute_script("$('img.assessment_delete:visible').click()")
 page.execute_script('$("button.assessment_delete_yes:visible").click()')
+
+
 
 
 
@@ -484,47 +424,44 @@ grid_question
 has_content? "EGRA 3b: Reading Comprehension"
 sleep 1
 reading_comprehension
-has_content? "Assessment complete" 
-click_button "Save result"
-page.execute_script("$('#corner_logo').click()")
 
-#Accessing results dashboard
-has_content? "Assessments" 
-click_button "Results"
-has_content? "group-blah"
-#this puts the most recent result at the top
-page.execute_script("$('#groupBy').val('startTime')")
-page.execute_script("$('#groupBy').trigger('change')")
-sleep 2
-page.execute_script("$('.headerSortDown').click()")
-#this select the most recent value
-page.execute_script("$('.sort-value').first().click()")
-has_content? "resultId"
-has_content? "Date and Time,Home Location,Child ID,Consent,Child Information,EGRA 1: Letter Sound Identification,EGRA 2: Non-word Reading,EGRA 3a: Oral Passage Reading,EGRA 3b: Reading Comprehension,Assessment complete"
-page.execute_script("$('#corner_logo').click()")
-sleep 5
+sleep 8
+
 
 #download CSV file
-has_content? "Assessments"
 page.execute_script("$('span:contains(Abort_Resume with Randomization)').click()")
 find('img.results').click()
 click_button "CSV (beta)"
-sleep 1
-page.execute_script("$('#corner_logo').click()")
+#need to specify where this file goes so that seperate check can be run on it
+
+#Using text editor, bold, changing size, etc. (having problems inserting information into text editor)
+page.execute_script("$('span:contains(Abort_Resume with Randomization)').click()")
+find('img.edit').click()
+has_content? "Assessment Builder"
+page.execute_script("$('.icon_edit').first().click()")
+#click_button "Edit"
+sleep 2
+page.execute_script("$('.richtext_edit').first().click()")
+sleep 3
+page.execute_script("$('.cke').html('Hi my name is Nicky')")
+click_button "Save"
+sleep 4
+#clicks bold button
+#$('#cke_15_label').click()
+#clicks font box, now just select font you would like
+#$('#cke_34_text').click()
 
 
 #abort and resume w/randomization (also tests if randomization is actually working)
 #isn't working at the moment may be a problem with randomization not working in Tangerine
-has_content? "Assessments"
 run_assessment "Abort_Resume with Randomization"
 has_content? "Dynamic Question"
-fill_in('view51_name', :with => 'Nicky')
+fill_in('view49_name', :with => 'Nicky')
 click_button "Next"
 has_content? "Dynamic Question1"
-fill_in('view60_name', :with => 'Nicky')
+fill_in('view58_name', :with => 'Nicky')
 click_button "Next"
-sleep 1
-name_of_subtest = page.evaluate_script('$("h2")')
+has_content? "Dynamic Question3"
 page.execute_script("$('#logout_link').click()")
 sleep 1
 fill_in('User name', :with => 'tangerine')
@@ -539,10 +476,46 @@ sleep 1
 page.execute_script("$('.details').first().click()")
 has_content? "Not finished"
 click_button "Resume"
+has_content? "Dynamic Questions2"
+fill_in('view67_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Dynamic Question2"
+fill_in('view76_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Dynamic Question4"
+fill_in('view85_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Assessment Complete"
+click_button "Save result"
+click_button "Perform another assessment"
+has_content? "Dynamic Question"
+fill_in('view109_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Dynamic Question1"
+fill_in('view118_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Dynamic Question2"
+fill_in('view127_name', :with => 'Nicky')
+click_button "Next"
+page.execute_script("$('#logout_link').click()")
 sleep 1
-name_of_subtest_after_resume = page.evaluate_script('$("h2")')
-if name_of_subtest != name_of_subtest_after_resume
-  puts “BROKEN!”
-end
-
-
+fill_in('User name', :with => 'tangerine')
+  fill_in('Password', :with => 'tangytangerine')
+  click_button('Login')
+has_content? "Groups"
+visit_group "blah"
+page.execute_script("$('span:contains(Abort_Resume with Randomization)').click()")
+find('img.results').click()
+has_content? "Save options"
+sleep 1
+page.execute_script("$('.details').first().click()")
+has_content? "Not finished"
+click_button "Resume"
+has_content? "Dynamic Question3"
+fill_in('view66_name', :with => 'Nicky')
+sleep 5
+click_button "Next"
+has_content? "Dynamic Question4"
+fill_in('view75_name', :with => 'Nicky')
+click_button "Next"
+has_content? "Assessment Complete"
