@@ -51,7 +51,7 @@ Tangerine.config.fetch
 
         Tangerine.onSettingsLoad()
       error: ->
-        Tangerine.settings.set Tangerine.config.getDefault "settings"
+        Tangerine.settings.set Tangerine.config.get("defaults")['settings']
 
         # generate a random ID for this individual instance
         Tangerine.settings.set "instanceId", Utils.humanGUID()
