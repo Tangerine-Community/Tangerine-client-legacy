@@ -354,10 +354,40 @@ class Utils
       url
 
   # Disposable alerts
-  @topAlert: (alert_text, delay=2000) ->
-    $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").topCenter().delay(delay).fadeOut(250, -> $(this).remove())
-  @midAlert: (alert_text, delay=2000) ->
-    $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").middleCenter().delay(delay).fadeOut(250, -> $(this).remove())
+  @topAlert: (alertText, delay = 2000) ->
+    Utils.alert "top", alertText, delay
+
+  @midAlert: (alertText, delay=2000) ->
+    Utils.alert "middle", alertText, delay
+
+  @alert: ( where, alertText, delay = 2000 ) ->
+
+    switch where
+      when "top"
+        selector = ".top_alert"
+        aligner = ( $el ) -> return $el.topCenter()
+      when "middle"
+        selector = ".mid_alert"
+        aligner = ( $el ) -> return $el.middleCenter()
+
+
+    if Utils["#{where}AlertTimer"]?
+      clearTimeout Utils["#{where}AlertTimer"] 
+      $alert = $(selector)
+      $alert.html( $alert.html() + "<br>" + alertText )
+    else
+      $alert = $("<div class='#{selector.substring(1)} disposable_alert'>#{alertText}</div>").appendTo("#content")
+
+    aligner($alert)
+
+    do ($alert, selector, delay) ->
+      computedDelay = ((""+$alert.html()).match(/<br>/g)||[]).length * 1500
+      Utils["#{where}AlertTimer"] = setTimeout -> 
+          Utils["#{where}AlertTimer"] = null
+          $alert.fadeOut(250, -> $(this).remove() )
+      , Math.max(computedDelay, delay)
+      
+
 
   @sticky: (html, buttonText = "Close", callback, position = "middle") ->
     div = $("<div class='sticky_alert'>#{html}<br><button class='command parent_remove'>#{buttonText}</button></div>").appendTo("#content")
