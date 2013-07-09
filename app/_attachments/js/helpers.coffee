@@ -25,6 +25,16 @@ Backbone.Collection.prototype.indexArrayBy = ( attr ) ->
       result[key].push(oneModel)
   return result
 
+Backbone.Model.prototype.conform = ( standard = {} ) ->
+  throw "Cannot conform to empty standard. Use @clear() instead." if _.isEmpty(standard)
+  for key, value of standard
+    @set(key, value()) if @has(key) or @get(key) is ""
+
+Backbone.Model.prototype.prune = ( shape = {} ) ->
+  throw "Cannot conform to empty standard. Use @clear() instead." if _.isEmpty(standard)
+  for key, value of @attributes
+    @unset(key) unless key in standard
+
 # hash the attributes of a model
 Backbone.Model.prototype.toHash = ->
   significantAttributes = {}
@@ -38,6 +48,7 @@ Backbone.Model.prototype.beforeSave = ->
     "editedBy" : Tangerine?.user?.name || "unknown"
     "updated" : (new Date()).toString()
     "hash" : @toHash()
+    "fromInstanceId" : Tangerine.settings.getString("instanceId")
 
 #
 # This series of functions returns properties with default values if no property is found
@@ -342,13 +353,11 @@ class Utils
     else
       url
 
-
   # Disposable alerts
   @topAlert: (alert_text, delay=2000) ->
     $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").topCenter().delay(delay).fadeOut(250, -> $(this).remove())
   @midAlert: (alert_text, delay=2000) ->
     $("<div class='disposable_alert'>#{alert_text}</div>").appendTo("#content").middleCenter().delay(delay).fadeOut(250, -> $(this).remove())
-
 
   @sticky: (html, buttonText = "Close", callback, position = "middle") ->
     div = $("<div class='sticky_alert'>#{html}<br><button class='command parent_remove'>#{buttonText}</button></div>").appendTo("#content")
@@ -490,7 +499,7 @@ class TangerineTree
     delete options.success
     delete options.error
 
-    options.user = Tangerine.user.name
+    options.user = Tangerine.user.name()
 
     $.ajax
       type     : "POST"

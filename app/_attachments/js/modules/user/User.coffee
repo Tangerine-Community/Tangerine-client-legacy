@@ -5,9 +5,17 @@ class User extends Backbone.Model
   url: 'user'
 
   initialize: (options) ->
-    @roles = []
+    @myRoles  = []
     @dbAdmins = []
-    @name = null
+    @myName = null
+
+  ###
+    Accessors
+  ###
+  name:  -> @myName  || null
+  roles: -> @myRoles || null
+  recentUsers: -> ($.cookie("recentUsers")||'').split(",")
+
 
   signup: ( name, pass ) =>
     Tangerine.log.app "User-signup", name
@@ -25,6 +33,7 @@ class User extends Backbone.Model
             @intent = "retry_login"
             @login name, pass
     else
+      # sign up with user docs
       $.couch.signup name : name, pass,
         success: ( data ) =>
 
@@ -37,8 +46,8 @@ class User extends Backbone.Model
               password : pass
               success: ( user ) =>
                 @intent = ""
-                @name   = name
-                @roles  = user.roles
+                @myName   = name
+                @myRoles  = user.roles
                 view = new RegisterTeacherView
                   name : name
                   pass : pass
@@ -60,13 +69,18 @@ class User extends Backbone.Model
       password : pass
       success: ( user ) =>
         @intent = ""
-        @name   = name
-        @roles  = user.roles
+        @myName   = name
+        @myRoles  = user.roles
         Tangerine.log.app "User-login-success", name
         @fetch
           success: =>
             callbacks.success?()
             @trigger "login"
+            recentUsers = @recentUsers.filter( (a) => !~a.indexOf(@name()))
+            recentUsers.unshift(@name())
+            recentUsers.pop() if recentUsers.length >= @RECENT_USER_MAX
+            $.cookie("recentUsers", recentUsers)
+
       error: ( status, error, message ) =>
         if @intent == "retry_login"
           @intent = ""
@@ -81,40 +95,40 @@ class User extends Backbone.Model
     $.couch.session
       success: (response) =>
         if response.userCtx.name?
-          @name  = response.userCtx.name
-          @roles = response.userCtx.roles
+          @myName  = response.userCtx.name
+          @myRoles = response.userCtx.roles
           @fetch
             success: =>
               @trigger "login"
-              callbacks['success'].apply(@, arguments)
+              callbacks.success.apply(@, arguments)
               Tangerine.log.app "User-login", "Resumed session"
         else
-          callbacks['success'].apply(@, arguments)
+          callbacks.success.apply(@, arguments)
       error: ->
         alert "Couch session error.\n\n#{arguments.join("\n")}"
 
-  # @callbacks Supports isAdmin, isUser, isRegistered, isUnregistered
+  # @callbacks Supports isAdmin, isUser, isAuthenticated, isUnregistered
   verify: ( callbacks ) ->
-    if @name == null
+    if @myName == null
       if callbacks?.isUnregistered?
         callbacks.isUnregistered()
       else
         Tangerine.router.navigate "login", true
     else
-      callbacks?.isRegistered?()
+      callbacks?.isAuthenticated?()
       if @isAdmin()
         callbacks?.isAdmin?()
       else
         callbacks?.isUser?()
 
-  isAdmin: -> @name in @dbAdmins or "_admin" in @roles
+  isAdmin: -> @myName in @dbAdmins or "_admin" in @myRoles
 
   logout: ->
     $.couch.logout
       success: =>
         $.cookie "AuthSession", null
-        @name  = null
-        @roles = []
+        @myName  = null
+        @myRoles = []
         @clear()
         @trigger "logout"
         if Tangerine.settings.get("context") == "server"
@@ -146,7 +160,7 @@ class User extends Backbone.Model
   ###
   fetch: ( callbacks={} ) =>
     $.couch.userDb (db) =>
-      db.openDoc "org.couchdb.user:#{@name}",
+      db.openDoc "org.couchdb.user:#{@myName}",
         success: ( userDoc ) =>
           Tangerine.$db.openDoc "_security",
             success: (securityDoc) =>

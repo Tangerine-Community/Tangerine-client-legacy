@@ -51,7 +51,7 @@ class Log extends Backbone.Model
   add: ( logEvent ) ->
     d = new Date()
     name = "not-signed-in"
-    name = Tangerine.user.name unless not Tangerine.user.name?
+    name = Tangerine.user.name() if Tangerine.user.name()?
     @unset "_rev"
     @save 
       "_id"       : @calcName()
@@ -65,7 +65,7 @@ class Log extends Backbone.Model
   calcName: ->
     d = new Date()
     user = "not-signed-in"
-    user = Tangerine.user.name unless not Tangerine.user.name?
+    user = Tangerine.user.name() if Tangerine.user.name()?
     return hex_sha1 "#{user}_#{d.getTime()}"
 
 class Logs extends Backbone.Collection

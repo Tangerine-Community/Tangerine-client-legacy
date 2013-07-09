@@ -1,3 +1,3 @@
 class Users extends Backbone.Collection
-  url   : "users"
+  url   : "user"
   model : User

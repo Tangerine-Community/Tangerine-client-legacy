@@ -9,7 +9,6 @@ def push
   # Save current version number
   version = `git log --pretty=format:'%h' -n 1`
   File.open( File.join($jsDir, "version.js"), "w") {|f| f.write("window.Tangerine.version = \"#{version}\"\;") }
-  File.open( "updated", "w") {|f| f.write( (Time.now.to_f * 1000).to_i ) }
 
   Dir.chdir( $jsDir ) {
     `./uglify.rb dev`
@@ -37,7 +36,6 @@ Listen.to(".") do |modified, added, removed|
   files = modified.concat(added).concat(removed)
 
   files.each { |file|
-
     # Handle coffeescript files
     /.*\.coffee$/.match(file) { |match|
 
@@ -48,9 +46,10 @@ Listen.to(".") do |modified, added, removed|
         path = match.split("/")
         puts "\nCompiling translation file for language: #{path[-2]}"
         newFile = path[0..path.length-2].join("/")+"/translation.json"
-        result = `coffee --bare --compile --print #{match}`
+        result = `coffee --compile --bare --print #{match}`
         bareJson = result.gsub(/[\;\(\)]|\/\/.*$\n/, '')
-        File.open(newFile, "w") {|f| f.write(bareJson) }
+        File.open(newFile, "w") {|f| f.write(bareJson)}
+        result = "" # to pass error checking
       else
         # Otherwise, just compile
         puts "\nCompiling:\t\t#{match}"
@@ -65,16 +64,14 @@ Listen.to(".") do |modified, added, removed|
         end
 
       end
-      #puts result
 
-      if result.index "error"
+      if result.index "error" 
         # Show errors
         notify("CoffeeScript Error", result.gsub(/.*error.*\/(.*\.coffee)/,"\\1"))
         puts "\n\nCoffeescript error\n******************\n#{result}"
       end
 
     } # END of coffeescripts
-
 
     # handle LESS -> CSS
     /.*\.less$/.match(file) { |match|
@@ -88,9 +85,8 @@ Listen.to(".") do |modified, added, removed|
 
     # Handle all the resulting compiled files
     /.*\.css|.*\.js$|.*\.html$|.*\.json$/.match(file) { |match|
-
       # Don't trigger push for these files
-      unless /updated$|version\.js|app\.js|index-dev|\/min\//.match(file)
+      unless /version\.js|app\.js|index-dev|\/min\//.match(file)
         puts "\nUpdating:\t\t#{match}"
         push()
       end

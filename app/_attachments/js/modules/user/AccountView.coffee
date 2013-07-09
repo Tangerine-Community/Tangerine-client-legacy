@@ -155,7 +155,7 @@ class AccountView extends Backbone.View
           <table class='class_table'>
             <tr>
               <td>Name</td>
-              <td>#{@user.name}</td>
+              <td>#{@user.name()}</td>
             </tr>
             #{@getEditableRow({key:"email", name:"Email"}, @user)}
           </table>

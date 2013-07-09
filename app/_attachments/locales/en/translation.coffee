@@ -19,7 +19,9 @@
       "error_password_incorrect" : "Incorrect password."
       "error_password_empty" : "Please enter a password."
       "error_name_empty" : "Please enter a name."
+      "pass_mismatch" : "Passwords do not match"
     "button" :
+      "sign_up" : "Sign up"
       "login" : "Login"
       "logout" : "Logout"
     "label" :
@@ -27,6 +29,8 @@
       "user"    : "User name"
       "enumerator" : "Enumerator name"
       "password" : "Password"
+      "password_confirm" : "Confirm Password"
+
 
   "QuestionsEditListElementView" :
     "help" :

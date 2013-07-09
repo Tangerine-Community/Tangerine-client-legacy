@@ -15,7 +15,7 @@ class AssessmentImportView extends Backbone.View
       type: "POST"
       contentType: "application/json"
       dataType: "json"
-      data: JSON.stringify({})
+      data: "{}"
       success: (data) =>
         keyList = []
         for datum in data.rows
