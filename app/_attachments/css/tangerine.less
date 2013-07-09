@@ -572,6 +572,7 @@ progress
 .disposable_alert,
 .sticky_alert
 {
+  position: fixed;
   text-align:center;
   background: @orange-4;
   color: black;
@@ -579,7 +580,7 @@ progress
   padding: 20px;
   font-size: 30px;
 
-  .box-shadow-spread (1px, 15px, 25px, -5px, rgba(0,0,0,0.1));
+  .box-shadow-spread (1px, 15px, 25px, -5px, rgba(0,0,0,0.5));
   z-index: 9999999;
 }
 
@@ -1710,7 +1711,84 @@ label.no_help
     @media only screen and (max-width : 450px) { width: 75%; height: auto; }
   }
 
+  .tab
+  {
+
+    padding: 10px 10px 4px 10px;
+    display: inline-block;
+    margin: 0 2px;
+    background: #fefefe;
+    color: #aaa;
+    top: 5px;
+    border: 1px solid #eee;
+
+    &.first
+    {
+      border-top-left-radius: 10px;
+      margin-left: 10px;
+    }
+
+    &.last
+    {
+      border-top-right-radius: 10px;
+    }
+
+    &.selected
+    {
+      padding-bottom: 5px;
+      border-bottom: none !important;
+      color: #f49b00;
+      background: #fff;
+    }
+
+  }
+
+  .tab_container
+  {
+    vertical-align: middle;
+    margin-bottom: -1px;
+    z-index: 10;
+  }
+
+  input:focus
+  {
+    text-transform: lowercase;
+  }
+
+  section
+  {
+    border-top: 1px solid #eee;
+    /*width: 120%;*/
+  }
+
+
 }
+
+
+.AdminView
+{
+
+  table td
+  {
+    font-size   : 0.6em;
+    font-weight : normal;
+  }
+
+  table th
+  {
+    font-size : 0.7em;
+  }
+
+  button
+  {
+    font-size : 1em;
+    padding: 0.5em !important;
+    margin: 0 2px;
+  }
+
+
+}
+
 
 .messages 
 {
