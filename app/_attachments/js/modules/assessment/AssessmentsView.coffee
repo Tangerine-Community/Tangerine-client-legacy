@@ -5,7 +5,7 @@
 class AssessmentsView extends Backbone.View
 
   className : "AssessmentsView"
-  tagName : "div"
+  tagName : "section"
 
   events : 
     "click .toggle_archived" : "toggleArchived"
