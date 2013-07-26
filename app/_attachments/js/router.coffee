@@ -47,6 +47,7 @@ class Router extends Backbone.Router
 
     'run/:id'       : 'run'
     'print/:id/:format'       : 'print'
+    'dataEntry/:id' : 'dataEntry'
 
     'resume/:assessmentId/:resultId'    : 'resume'
     
@@ -352,6 +353,23 @@ class Router extends Backbone.Router
   #
   # Assessment
   #
+
+
+  dataEntry: ( assessmentId ) ->
+    Tangerine.user.verify
+      isAdmin: ->    
+        assessment = new Assessment "_id" : assessmentId
+        assessment.fetch
+          success: ->
+            questions = new Questions
+            questions.fetch
+              key: assessmentId
+              success: ->
+                questionsBySubtestId = questions.indexBy("subtestId")
+                for subtestId, questions of questionsBySubtestId
+                  assessment.subtests.get(subtestId).questions = new Questions questions
+                vm.show new AssessmentDataEntryView assessment: assessment
+
 
 
   sync: ( assessmentId ) ->
