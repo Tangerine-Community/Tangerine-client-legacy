@@ -34,7 +34,9 @@ class AssessmentsMenuView extends Backbone.View
     $target.remove()
 
   saveInPlace: (event) ->
+
     return if @alreadySaving
+
     if event.keyCode
       if event.keyCode == 27
         $(event.target).after(@oldTarget).remove()
@@ -85,17 +87,12 @@ class AssessmentsMenuView extends Backbone.View
         callbacks: 
           completePull: => @tabletManager.pushDocs()
 
+    @[key] = value for key, value of options
+      
 
-    @assessments = options.assessments
-    @curricula = options.curricula
 
-    @assessments.each (assessment) =>
-      assessment.on "new", @addToCollection
-
-    @curricula.each (curriculum) =>
-      curriculum.on "new", @addToCollection
-
-    @isAdmin = Tangerine.user.isAdmin()
+    @assessments.each (assessment) => assessment.on "new", @addAssessmenet
+    @curricula.each   (curriculum) => curriculum.on "new", @addCurriculum
 
     @curriculaListView = new CurriculaListView
       "curricula" : @curricula
@@ -107,6 +104,9 @@ class AssessmentsMenuView extends Backbone.View
     @usersMenuView = new UsersMenuView
 
   render: =>
+    
+    isAdmin = Tangerine.user.isAdmin
+    
     newButton     = "<button class='new command'>New</button>"
     importButton  = "<button class='import command'>Import</button>"
     apkButton     = "<button class='apk navigation'>APK</button>"
@@ -115,6 +115,16 @@ class AssessmentsMenuView extends Backbone.View
     syncTabletsButton = "<button class='command sync_tablets'>Sync Tablets</button>"
     resultsButton = "<button class='navigation results'>Results</button>"
     groupHandle   = "<h2 class='settings grey' data-attribtue='groupHandle'>#{Tangerine.settings.getEscapedString('groupHandle') || Tangerine.settings.get('groupName')}</h2>"
+
+
+    containers = []
+    containers.push "<section id='curricula_container' class='CurriculaListView'></section>"
+    if Tangerine.settings.get("context") is "server"
+      containers.push "<section id='klass_container' class='KlassesView'></section>"
+      containers.push "<section id='teachers_container' class='TeachersView'></section>"
+      containers.push "<section id='users_menu_container' class='UsersMenuView'></section>"
+
+
 
     html = "
       #{Tangerine.settings.contextualize(
@@ -125,38 +135,40 @@ class AssessmentsMenuView extends Backbone.View
           #{groupHandle}
           "
         ) }
-      <h1>Assessments</h1>
+      <section>
+        <h1>Assessments</h1>
     "
 
-    if @isAdmin
+    if isAdmin
       html += "
-        #{if Tangerine.settings.get("context") == "server" then newButton else "" }
-        #{importButton}
+          #{if Tangerine.settings.get("context") == "server" then newButton else "" }
+          #{importButton}
 
-        
+          
 
-        <div class='new_form confirmation'>
-          <div class='menu_box_wide'>
-            <input type='text' class='new_name' placeholder='Name'>
-            <select id='new_type'>
-              <option value='assessment'>Assessment</option>
-              <option value='curriculum'>Curriculum</option>
-            </select><br>
-            <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>
+          <div class='new_form confirmation'>
+            <div class='menu_box'>
+              <input type='text' class='new_name' placeholder='Name'>
+              <select id='new_type'>
+                <option value='assessment'>Assessment</option>
+                <option value='curriculum'>Curriculum</option>
+              </select><br>
+              <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>
+            </div>
           </div>
-        </div>
-        <div id='assessments_container'></div>
-        <div id='curricula_container'></div>
-        <div id='klass_container'></div>
-        <br>
+          <div id='assessments_container'></div>
+        </section>
+
+        #{containers.join('')}
+
         #{if Tangerine.settings.get("context") == "mobile" then syncTabletsButton else "" }
         #{if Tangerine.settings.get("context") == "mobile" then uploadButton else "" }
 
-        <div id='users_menu_container' class='UsersMenuView'></div>
       "
     else
       html += "
         <div id='assessments_container'></div>
+      </section>
         <br>
         #{if Tangerine.settings.get("context") == "mobile" then syncTabletsButton else "" }
         #{if Tangerine.settings.get("context") == "mobile" then uploadButton else "" }
@@ -173,18 +185,41 @@ class AssessmentsMenuView extends Backbone.View
     if Tangerine.settings.get("context") == "server"
       @usersMenuView.setElement( @$el.find("#users_menu_container") )
       @usersMenuView.render()
+
+      if @klasses.length > 0
+        @klassesView = new KlassesView
+          klasses : @klasses
+          curricula : @curricula
+          teachers : @teachers
+        @klassesView.setElement @$el.find("#klass_container")
+        @klassesView.render()
+      else
+        @$el.find("#klass_container").remove()
+
+
+      if @teachers.length > 0
+        @teachersView = new TeachersView
+          teachers : @teachers
+          users : @users
+        @teachersView.setElement @$el.find("#teachers_container")
+        @teachersView.render()
+      else
+        @$el.find("#teachers_container").remove()
+
     
 
     @trigger "rendered"
 
     return
 
-  addToCollection: (newAssessment) =>
-    if newAssessment.has("curriculumId")
-      @curricula.add newAssessment    
-    else
-      @assessments.add newAssessment
-    newAssessment.on "new", @addToCollection
+
+  addAssessmenet: (newOne) ->
+    @assessments.add newOne
+    newOne.on "new", @addAssessmenet
+
+  addCurriculum: (newOne) ->
+    @curricula.add newOne
+    newOne.on "new", @addCurriculum
 
   # Making a new assessment
   newToggle: -> @$el.find('.new_form, .new').fadeToggle(250); false
