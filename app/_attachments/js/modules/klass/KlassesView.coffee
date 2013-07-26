@@ -3,11 +3,11 @@ class KlassesView extends Backbone.View
   className : "KlassesView"
 
   events :
-    'click .add'         : 'toggleAddForm'
-    'click .cancel'      : 'toggleAddForm'
-    'click .save'        : 'saveNewKlass'
-    'click .goto_class'  : 'gotoKlass'
-    'click .curricula'   : 'gotoCurricula'
+    'click .klass_add'         : 'toggleAddForm'
+    'click .klass_cancel'      : 'toggleAddForm'
+    'click .klass_save'        : 'saveNewKlass'
+    'click .klass_curricula'   : 'gotoCurricula'
+    'click .goto_class'        : 'gotoKlass'
     'click .pull_data'   : 'pullData'
     'click .verify'      : 'ghostLogin'
     'click .upload_data' : 'uploadData'
@@ -281,15 +281,18 @@ class KlassesView extends Backbone.View
       <h1>Admin menu</h1>
       <button class='pull_data command'>Pull data</button>
       <div class='uploader'></div>
-    " if Tangerine.user.isAdmin()
+    " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") isnt "server"
 
+    curriculaButton = "
+      <button class='command curricula'>#{t('all curricula')}</button>
+    " if Tangerine.settings.get("context") isnt "server"
 
     @$el.html "
       #{adminPanel || ""}
       <h1>#{t('classes')}</h1>
       <div id='klass_list_wrapper'></div>
 
-      <button class='add command'>#{t('add')}</button>
+      <button class='klass_add command'>#{t('add')}</button>
       <div id='add_form' class='confirmation'>
         <div class='menu_box'> 
           <div class='label_value'>
@@ -312,10 +315,10 @@ class KlassesView extends Backbone.View
             <label for='curriculum'>#{t('curriculum')}</label><br>
             <select id='curriculum'>#{curriculaOptionList}</select>
           </div>
-          <button class='command save'>#{t('save')}</button><button class='command cancel'>#{t('cancel')}</button>
+          <button class='command klass_save'>#{t('save')}</button><button class='command klass_cancel'>#{t('cancel')}</button>
         </div>
       </div>
-      <button class='command curricula'>#{t('all curricula')}</button>
+      #{curriculaButton || ''}
     "
 
     @updateUploader() if Tangerine.user.isAdmin()
