@@ -68,8 +68,12 @@ class Router extends Backbone.Router
   admin: (options) ->
     Tangerine.user.verify
       isAdmin: ->
-        view = new AdminView()
-        vm.show view
+        $.couch.allDbs
+          success: (databases) =>
+            groups = databases.filter (database) -> database.indexOf("group-") == 0
+            view = new AdminView
+              groups : groups
+            vm.show view
     
   dashboard: (options) ->
     options = options?.split(/\//)
