@@ -1,15 +1,9 @@
 class Result extends Backbone.Model
 
   url: "result"
-  
-  # name : currentView.model.get "name"
-  # data : currentView.getResult()
-  # subtestId : currentView.model.id
-  # sum : currentView.getSum()
-  #   { correct, incorrect, missing, total }
-  #   
 
   initialize: ( options ) ->
+
     # could use defaults but it messes things up
     if options.blank == true
       device = device || Device || {}
@@ -21,30 +15,37 @@ class Result extends Backbone.Model
         'userAgent' : navigator.userAgent
 
       @set
-        'subtestData' : []
-        'start_time'  : (new Date()).getTime()
-        'enumerator'  : Tangerine.user.name()
+        'subtestData'       : []
+        'start_time'        : (new Date()).getTime()
+        'enumerator'        : Tangerine.user.name()
         'tangerine_version' : Tangerine.version
-        'device' : deviceInfo
-        'instanceId' : Tangerine.settings.getString("instanceId")
+        'device'            : deviceInfo
+        'instanceId'        : Tangerine.settings.getString("instanceId")
 
       @unset "blank" # options automatically get added to the model. Lame.
 
-  # Defined by default for all Models to provide a hash at save. not needed for results
-  beforeSave: ->
-    # do nothing
+  add: ( subtestDataElement, callbacks = {}) ->
+    @setSubtestData subtestDataElement, callbacks
+    @save null, 
+      success: callback.success || $.noop
+      error:   callback.error   || $.noop
 
-  add: ( subtestDataElement, callback = {}) ->
-    callback.success = $.noop if not callback.success?
-    callback.error = $.noop if not callback.error?
+  insert: (newElement) ->
+    oldSubtestData = @get("subtestData")
+    newSubtestData = oldSubtestData
+    for oldElement, i in oldSubtestData
+      if oldElement.subtestId is newElement.subtestId
+        newSubtestData[i] = newElement
+        break
+
+    @set "subtestData", newSubtestData
+
+
+  setSubtestData: (subtestDataElement, subtestId) ->
     subtestDataElement['timestamp'] = (new Date()).getTime()
     subtestData = @get 'subtestData'
     subtestData.push subtestDataElement
-    @save
-      'subtestData' : subtestData
-    , 
-      success: callback.success
-      error: callback.error
+    @set 'subtestData', subtestData
 
   getVariable: ( key ) ->
     for subtest in @get("subtestData")
