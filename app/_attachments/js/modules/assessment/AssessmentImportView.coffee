@@ -179,7 +179,7 @@ class AssessmentImportView extends Backbone.View
       <select id='group'>
         <option data-group='NONE' selected='selected'>Please select a group</option>
         #{legacyOption || ""}
-        #{("<option data-group='#{group}'>#{group}</option>" for group in Tangerine.user.get('groups')).join('')}
+        #{("<option data-group='#{group}'>#{group}</option>" for group in Tangerine.user.getArray('groups')).join('')}
       </select>
     " if Tangerine.settings.get("context") == "server"
 

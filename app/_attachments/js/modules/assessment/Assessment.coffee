@@ -51,8 +51,6 @@ class Assessment extends Backbone.Model
 
   updateFromServer: ( dKey = @calcDKey(), group ) =>
 
-    console.log "trying to update from server"
-
     @lastDKey = dKey
     
     # split to handle multiple dkeys
