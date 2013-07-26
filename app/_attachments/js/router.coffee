@@ -258,7 +258,7 @@ class Router extends Backbone.Router
             subtest = new Subtest "_id" : subtestId
             subtest.fetch
               success: ->
-                Tangerine.$db.view "tangerine/resultsByStudentSubtest",
+                Tangerine.$db.view "#{Tangerine.design_doc}/resultsByStudentSubtest",
                   key : [studentId,subtestId]
                   success: (response) =>
                     allResults = new KlassResults 
@@ -300,7 +300,7 @@ class Router extends Backbone.Router
 
                   questions = null
                   if subtest.get("prototype") == "survey"
-                    Tangerine.$db.view "tangerine/resultsByStudentSubtest",
+                    Tangerine.$db.view "#{Tangerine.design_doc}/resultsByStudentSubtest",
                       key : [studentId,subtest.get("gridLinkId")]
                       success: (response) =>
                         if response.rows != 0
