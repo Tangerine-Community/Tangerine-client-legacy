@@ -5,6 +5,7 @@ class LoginView extends Backbone.View
   events: 
     if Modernizr.touch
       'keypress input'     : 'keyHandler'
+      'change input'       : 'onInputChange'
       'change select#name' : 'onSelectChange'
       'touchstart .mode'   : 'updateMode'
       'touchstart button'  : 'action'
@@ -12,6 +13,7 @@ class LoginView extends Backbone.View
       'blur .recent'       : 'blurRecent'
     else
       'keypress input'     : 'keyHandler'
+      'change input'       : 'onInputChange'
       'change select#name' : 'onSelectChange'
       'click .mode'        : 'updateMode'
       'click button'       : 'action'
@@ -30,6 +32,12 @@ class LoginView extends Backbone.View
     @oldBackground = $("body").css("background")
     $("body").css("background", "white")
     $("#footer").hide()
+
+  onInputChange: (event) ->
+    $target = $(event.target)
+    type = $target.attr("type")
+    return unless type is 'text' or not type?
+    $target.val($target.val().toLowerCase())
 
   showRecent: ->
     @$el.find("#name").autocomplete(
@@ -108,58 +116,6 @@ class LoginView extends Backbone.View
     "
 
     tabletHtml = "
-      <style>
-        .tab
-        {
-          padding: 10px 10px 4px 10px;
-          display: inline-block;
-          margin: 0 2px;
-          background: #fefefe;
-          color: #aaa;
-          top: 5px;
-          border: 1px solid #eee;
-
-        }
-
-        .tab_container
-        {
-          vertical-align: middle;
-          margin-bottom: -1px;
-          z-index: 10;
-        }
-
-        .tab.first
-        {
-          border-top-left-radius: 10px;
-          margin-left: 10px;
-        }
-
-        .tab.last
-        {
-          border-top-right-radius: 10px;
-        }
-
-        .tab.selected
-        {
-          padding-bottom: 5px;
-          border-bottom: none !important;
-          color: #f49b00;
-          background: #fff;
-        }
-
-        input:focus
-        {
-          text-transform: lowercase;
-        }
-
-        section
-        {
-          border-top: 1px solid #eee;
-          /*width: 120%;*/
-        }
-
-      </style>
-
       <img src='images/login_logo.png' id='login_logo'>
 
       <div class='tab_container'>
@@ -218,12 +174,22 @@ class LoginView extends Backbone.View
     $("body").css("background", @oldBackground)
 
   keyHandler: (event) ->
+
+    key =
+      ENTER     : 13
+      TAB       : 9
+      BACKSPACE : 8
+
     $('.messages').html('')
     char = event.which
     if char?
+      isSpecial = 
+        char is key.ENTER              or 
+        event.keyCode is key.TAB       or 
+        event.keyCode is key.BACKSPACE
       # Allow upper case here but make it so it's not later
-      return false if not /[a-zA-Z0-9]/.test(String.fromCharCode(char)) and char isnt 13
-      return @action() if char is 13
+      return false if not /[a-zA-Z0-9]/.test(String.fromCharCode(char)) and not isSpecial
+      return @action() if char is key.ENTER
     else
       return true
 
