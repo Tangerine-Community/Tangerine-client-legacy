@@ -33,9 +33,14 @@ audio:not([controls]) { display: none; }
 
 html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
 
-body { margin: 0; font-size: 13px; line-height: 1.231; }
+body { margin: 0; font-size: 100%; line-height: 1.231; }
 
 body, button, input, select, textarea { font-family: sans-serif; color: #222; -webkit-tap-highlight-color: rgba(0,0,0,0);}
+
+body.server 
+{
+  font-family: "Helvetica Std", Helvetica, Arial, sans-serif;
+}
 
 
 /* =============================================================================
@@ -367,9 +372,14 @@ body
   background: #999 url("../images/noise.png");
 }
 
+body.server
+{
+  font-size: 100%;
+}
+
 p
 {
-  text-indent: 10px;
+  margin-bottom: 1em;
 }
 
 section
@@ -738,7 +748,7 @@ nav#submenu
 // Things that start out hidden
 .assessment_menu
 {
-  display: none;
+  display:none;
 }
 
 #logout_link
@@ -749,18 +759,6 @@ nav#submenu
   color: black;
   cursor: pointer;
 }
-
-.edit_icon,
-.run_icon,
-.delete_icon,
-.link_icon
-{
-  height: 36px;
-  width: 36px;
-  cursor: pointer !important;
-  margin-right: 6px;
-}
-
 
 #save_all_new_subtests
 {
@@ -962,15 +960,21 @@ span.delete_confirm
 {
   cursor: pointer;
   vertical-align: middle;
-  display: inline-block;
-  width: 35px;
-  height: 37px;
-  background: url('../images/icon_ryte.png');
+  
+  .sp_right;
 }
 
 .icon_down
 {
-  background: url('../images/icon_down.png') !important;
+  .sp_down;
+}
+
+
+
+.assessment_menu_toggle
+{
+  display: inline-block;
+  vertical-align:middle;
 }
 
 
@@ -980,14 +984,35 @@ ul.assessment_list
   margin: 0px;
   padding-left: 0px;
   
-  li
+  li.AssessmentListElementView
   {
     list-style: none;
     margin-top: 20px;
     padding-bottom: 10px;
     border-bottom: 1px solid @grey;
     font-size: @h2;
+
+    li
+    {
+      display: inline-block;
+    }
+
+    .sub_menus
+    {
+      margin-left: 40px;
+    }
+
+    .non_admin
+    {
+      span
+      {
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
+
   }
+
 
   .archived_assessment
   {
@@ -996,9 +1021,61 @@ ul.assessment_list
   
   .assessment_menu
   {
-    margin-left: 40px;
+    margin-left: 46px;
+
   }
 }
+
+
+/*sprites*/
+
+
+.hide_text
+{
+   text-indent: -999em;
+   letter-spacing: -999em;
+   overflow: hidden;
+}
+
+.sprite_helper
+{
+  .hide_text;
+  width: 36px;
+  height: 36px;
+  background: url('sprites.png') no-repeat;
+  border: 0;
+  cursor: pointer !important;
+  margin-right: 6px;
+  a 
+  {
+    display: block;
+  }
+}
+
+
+
+
+.sp_edit       { background-position:    0   0 !important; .sprite_helper; }
+.sp_results    { background-position:  -36px 0 !important; .sprite_helper; }
+.sp_delete     { background-position:  -72px 0 !important; .sprite_helper; }
+
+.sp_assessment_delete     { background-position:  -72px 0 !important; .sprite_helper; }
+
+.sp_add        { background-position: -108px 0 !important; .sprite_helper; }
+.sp_drag       { background-position: -144px 0 !important; .sprite_helper; }
+.sp_run        { background-position: -180px 0 !important; .sprite_helper; }
+.sp_right      { background-position: -216px 0 !important; .sprite_helper; }
+.sp_down       { background-position: -252px 0 !important; .sprite_helper; }
+.sp_duplicate  { background-position: -288px 0 !important; .sprite_helper; }
+.sp_help       { background-position: -324px 0 !important; .sprite_helper; }
+.sp_copy_to    { background-position: -360px 0 !important; .sprite_helper; }
+.sp_sync       { background-position: -396px 0 !important; .sprite_helper; }
+.sp_update     { background-position: -396px 0 !important; .sprite_helper; }
+.sp_grey_down  { background-position: -432px 0 !important; .sprite_helper; }
+.sp_warning    { background-position: -468px 0 !important; .sprite_helper; }
+.sp_print      { background-position: -504px 0 !important; .sprite_helper; }
+.sp_recent     { background-position: -540px 0 !important; .sprite_helper; }
+.sp_data_entry { background-position: -575px 0 !important; .sprite_helper; }
 
 
 .resultCount
@@ -1036,6 +1113,11 @@ ul.assessment_list
   .menu
   {
     margin-left: 40px;
+  }
+  .toggle_menu
+  {
+    display: inline-block;
+    vertical-align: middle;
   }
 }
 
@@ -1386,25 +1468,37 @@ table.basic_info
  */
 
 
-
-h1
+body
 {
-  font-size: @h1;
-  margin: @htop @hside @hbottom;
+  h1
+  {
+    font-size: @h1;
+    margin: @htop @hside @hbottom;
+  }
+
+  h2
+  {
+   font-size: @h2;
+   margin: 20px @hside @hbottom;
+  }
+
+  h3
+  {
+    font-size: @h3;
+    font-weight: bold;
+    margin: 20px @hside @hbottom;
+  }
 }
 
-h2
+body.server
 {
- font-size: @h2;
- margin: 20px @hside @hbottom;
+  h1 { font-size: 1.5em; }
+  h2 { font-size: 1.2em; }
+  h3 { font-size: 1.1em; }
+  h4 { font-size: 1.05em; }
 }
 
-h3
-{
-  font-size: @h3;
-  font-weight: bold;
-  margin: 20px @hside @hbottom;
-}
+
 
 /*
  * Subtests
@@ -1494,6 +1588,16 @@ button.navigation
   &:hover
   {
     background-color: @orange-1;
+  }
+
+}
+
+
+body.server
+{
+  button
+  {
+    font-size: 1em;
   }
 }
 
@@ -1768,6 +1872,10 @@ label.no_help
 .AdminView
 {
 
+  tr.odd  { background-color: #fefbf3; }
+  tr.even { background-color: #fdf1cd; }
+
+
   table td
   {
     font-size   : 0.6em;
@@ -1897,6 +2005,15 @@ label.no_help
 }
 
 
+
+.KlassListElementView
+{
+  th
+  {
+    font-size: 85%;
+    padding-right: 1em;
+  }
+}
 
 .MasteryCheckView
 {
@@ -2322,6 +2439,13 @@ button.ui-button-icons-only { width: 3.7em; }
 
 /*button text element */
 .ui-button .ui-button-text { display: block; line-height: 1;font-size:22px; border:2px solid white}
+
+body.server
+{
+  .ui-button-text
+
+  {}
+}
 .ui-button-text-only .ui-button-text { padding: 8px; margin: 0 -2px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: .4em; text-indent: -9999999px; }
 .ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: .4em 1em .4em 2.1em; }
@@ -2442,3 +2566,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
   position: static;
   float: right;
 }
+
+
+
+
