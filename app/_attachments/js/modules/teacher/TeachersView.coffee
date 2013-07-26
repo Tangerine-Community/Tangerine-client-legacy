@@ -18,8 +18,7 @@ class TeachersView extends Backbone.View
   initialize: (options) ->
     @teachers = options.teachers
     @users    = options.users
-    console.log @teachers
-    console.log @users
+
     @usersByTeacherId = @users.indexBy("teacherId")
 
     @teacherProperties = 
@@ -79,9 +78,7 @@ class TeachersView extends Backbone.View
     teacherId = $target.attr("data-teacherId")
 
     teacherModel = @teachers.get(teacherId)
-    console.log @usersByTeacherId
     userModel    = @usersByTeacherId[teacherId][0]
-    console.log userModel
     userModel.setPassword @$el.find(".#{teacherId}_password").val()
     userModel.save null,
       success: =>
@@ -99,9 +96,13 @@ class TeachersView extends Backbone.View
 
     deleteButton = if Tangerine.settings.get("context") == "server" then "<button class='command_red delete'>Delete</button>" else ""
 
+    backButton = "
+      <button class='navigation back'>#{t('back')}</button>
+    " unless Tangerine.settings.get("context") is "server"
+
     html = "
 
-      <button class='navigation back'>#{t('back')}</button>
+      #{backButton||''}
 
       <h1>Teachers</h1>
 
@@ -268,7 +269,7 @@ class TeachersView extends Backbone.View
       attributes[key] = newValue
       teacher.save attributes,
         success: =>
-          Utils.midAlert "Teacher saved"
+          Utils.topAlert "Teacher saved"
           teacher.fetch 
             success: =>
               @updateTable()
