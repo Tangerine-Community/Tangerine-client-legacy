@@ -7,14 +7,15 @@ class AssessmentListElementView extends Backbone.View
   events:
     'click .assessment_menu_toggle'    : 'assessmentMenuToggle'
     'click .admin_name'                : 'assessmentMenuToggle'
-    'click .assessment_delete'         : 'assessmentDeleteToggle'
-    'click .assessment_delete_cancel'  : 'assessmentDeleteToggle'
-    'click .assessment_delete_confirm' : 'assessmentDelete'
-    'click .copy'                      : 'copyTo'
-    'click .duplicate'                 : 'duplicate'
+    'click .sp_assessment_delete'         : 'assessmentDeleteToggle'
+    'click .sp_assessment_delete_cancel'  : 'assessmentDeleteToggle'
+    'click .sp_assessment_delete_confirm' : 'assessmentDelete'
+    'click .sp_copy'                      : 'copyTo'
+    'click .sp_duplicate'                 : 'duplicate'
+    'click .sp_update'                    : 'update'
+    'click .sp_print'                     : 'togglePrint'
     'click .archive'                   : 'archive'
-    'click .update'                    : 'update'
-    'click .print'                     : 'togglePrint'
+
     'change #print_format'             : 'print'
 
   blankResultCount: "-"
@@ -102,15 +103,35 @@ class AssessmentListElementView extends Backbone.View
     return true
 
   assessmentMenuToggle: ->
-    @$el.find('.assessment_menu_toggle').toggleClass 'icon_down'
+    @$el.find('.assessment_menu_toggle').toggleClass('sp_down').toggleClass('sp_right')
     @$el.find('.assessment_menu').fadeToggle(250)
 
-  assessmentDeleteToggle: -> @$el.find(".assessment_delete_confirm").fadeToggle(250); false
+  assessmentDeleteToggle: ->
+    @$el.find(".sp_assessment_delete_confirm").fadeToggle(250); false
 
   # deep non-gerneric delete
   assessmentDelete: =>
     # remove from collection
     @model.destroy()
+
+  spriteListLink: ( tagName, names... ) ->
+    result = ""
+    for name in names
+      result += "<#{tagName} class='sp_#{name.underscore()}'><a href='##{name}/#{@model.id}'>#{name.underscore().titleize()}</a></#{tagName}>"
+    return result
+
+  spriteEvents: ( tagName, names...) ->
+    result = ""
+    for name in names
+      result += "<#{tagName}><div class='sp_#{name.underscore()}' title='#{name.underscore().titleize()}'>#{name.underscore().titleize()}</div></#{tagName}>"
+    return result
+
+  ul: (options)->
+    
+    html = "<ul #{if options.cssClass then "class='#{options.cssClass}'" else ''}>"
+    html += @spriteListLink.apply @, ["li"].concat(options.links)
+    html += options.other || ''
+    html += "</ul>"
 
   render: ->
 
@@ -124,23 +145,15 @@ class AssessmentListElementView extends Backbone.View
     # indicators and variables
     archiveClass     = if isArchived then " archived_assessment" else ""
 
-    toggleButton     = "<span class='assessment_menu_toggle icon_ryte'> </span>"
-    name             = "<span class='name clickable '>#{@model.get('name')}</span>"
+    toggleButton     = "<div class='assessment_menu_toggle sp_right'><div></div></div>"
+    name             = "<span class='name clickable'>#{@model.get('name')}</span>"
     adminName        = "<span class='admin_name clickable #{archiveClass}'>#{@model.get('name')}</span>"
     adminResultCount = "<label class='result_count small_grey no_help' title='Result count. Click to update.'>Results <b>#{@resultCount}</b></label>"
     resultCount      = "<span class='result_count no_help'>Results <b>#{@resultCount}</b></span>"
     selected         = " selected='selected'"
       
-    # navigation
-    editButton      = "<a href='#edit/#{@model.id}'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>"
-    runButton       = "<a href='#run/#{@model.id}'><img class='link_icon run' title='Run' src='images/icon_run.png'></a>"
-    resultsButton   = "<a href='#results/#{@model.id}'><img class='link_icon results' title='Results' src='images/icon_results.png'></a>"
-    printButton    = "<img class='link_icon print' title='Print' src='images/icon_print.png'> "
-    printButtons    = "
-      <a href='#print/#{@model.id}/content'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>
-      <a href='#print/#{@model.id}/stimuli'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>
-      <a href='#print/#{@model.id}/backup'><img class='link_icon print' title='Print' src='images/icon_print.png'></a>
-    "
+    deleteConfirm   = "<span class='sp_assessment_delete_confirm confirmation'><div class='menu_box'>Confirm <button class='sp_assessment_delete_yes command_red'>Delete</button> <button class='sp_assessment_delete_cancel command'>Cancel</button></div></span>"
+
     printSelector   = "
       <div class='print_format_wrapper confirmation'>
         <select id='print_format'>
@@ -148,72 +161,67 @@ class AssessmentListElementView extends Backbone.View
         #{("<option data-format='#{format.key}'>#{format.name}</option>") for format in Tangerine.settings.config.get("printFormats")}
         <option data-format='cancel'>Cancel</option>
         </select>
-
       </div>
     "
 
-    copyButton      = "<img class='link_icon copy' title='Copy to' src='images/icon_copy_to.png'>"
-    deleteButton    = "<img class='assessment_delete link_icon' title='Delete' src='images/icon_delete.png'>"
-    deleteConfirm   = "<span class='assessment_delete_confirm'><div class='menu_box'>Confirm <button class='assessment_delete_yes command_red'>Delete</button> <button class='assessment_delete_cancel command'>Cancel</button></div></span>"
-    duplicateButton = "<img class='link_icon duplicate' title='Duplicate' src='images/icon_duplicate.png'>"
-    updateButton    = "<img class='link_icon update' title='Update' src='images/icon_sync.png'>"
 
-    syncButton      = "<a href='#sync/#{@model.id}'><img class='link_icon' title='Sync' src='images/icon_sync.png'></a>"
-
-    downloadKey     = "<span class='download_key small_grey'>Download key <b>#{@model.id.substr(-5,5)}</b></span>"
-    archiveSwitch   = "
-    <select class='archive'>
-      <option value='false' #{if isArchived then selected else ''}>Active</option>
-      <option value='true'  #{if isArchived then selected else ''}>Archived</option>
-    </select>
+    downloadKey   = "<li class='download_key small_grey'>Download key <b>#{@model.id.substr(-5,5)}</b></li>"
+    archiveSwitch = "
+      <select class='archive'>
+        <option value='false' #{if isArchived then selected else ''}>Active</option>
+        <option value='true'  #{if isArchived then selected else ''}>Archived</option>
+      </select>
     "
 
-    if @isAdmin
+    if @isAdmin && "server" is Tangerine.settings.get("context")
       # admin standard
-      html = "
+      @$el.html "
         <div>
           #{toggleButton}
           #{adminName}
         </div>
-      "
-      html += Tangerine.settings.contextualize
-        server: "
-          <div class='assessment_menu'>
-            #{runButton}
-            #{resultsButton}
-            #{editButton}
-            #{syncButton}
-            #{printButton}
-            #{duplicateButton}
-            #{deleteButton}
-            #{downloadKey}
-            #{deleteConfirm}
-            #{printSelector}
-          </div>"
-        satellite: "
-          <div class='assessment_menu'>
-            #{runButton}
-            #{editButton}
-            #{syncButton}
-            #{printButton}
-            #{duplicateButton}
-            #{deleteButton}
-            #{downloadKey}
-            #{deleteConfirm}
-            #{printSelector}
-          </div>"
-        allElse: "
-          <div class='assessment_menu'>
-            #{runButton}
-            #{resultsButton}
-            #{updateButton}
-            #{deleteButton}
-            #{deleteConfirm}
-          </div>"
-    # enumerator user
-    else
-      html = "<div>#{runButton}#{name} #{resultsButton}</div>"
+        #{@ul
+          cssClass : "assessment_menu"
+          links : ["run", "dataEntry", "results", "edit", "sync", "print" ]
+          other : @spriteEvents("li", "duplicate", "assessment_delete") + downloadKey
+        }
+        <div class='sub_menus'>
+          #{deleteConfirm}
+          #{printSelector}
+        </div>
+        "
 
-    @$el.html html
+    else if @isAdmin && "satellite" is Tangerine.settings.get("context")
+
+      @$el.html "
+        <div>
+          #{toggleButton}
+          #{adminName}
+        </div>
+        #{@ul 
+          cssClass: "assessment_menu"
+          links : ["run","results","edit","sync","print"]
+        }
+        <div class='sub_menus'>
+          #{deleteConfirm}
+          #{printSelector}
+        </div>
+      "
+    
+
+    else if @isAdmin
+      @$el.html @ul 
+          class: "assessment_menu"
+          links : ["run","results","update","delete"]
+          other : deleteConfirm
+
+    
+    else
+      @$el.html "
+        <div class='non_admin'>
+          #{@spriteListLink("span",'run')}#{name} #{@spriteListLink("span",'results')}
+        </div>
+      "
+
 
     @trigger "rendered"
