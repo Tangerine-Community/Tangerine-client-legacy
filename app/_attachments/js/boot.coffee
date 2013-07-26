@@ -115,6 +115,8 @@ Tangerine.onSettingsLoad = ->
 
               Tangerine.user.sessionRefresh 
                 success: -> 
+                  $("body").addClass(Tangerine.settings.get("context"))
+
                   Backbone.history.start()
 
 # make sure all users in the _users database have a local user model for future use
