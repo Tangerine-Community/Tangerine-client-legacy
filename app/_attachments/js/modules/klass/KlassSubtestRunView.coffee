@@ -111,7 +111,7 @@ class KlassSubtestRunView extends Backbone.View
 
     if @isValid()
       # Gaurantee single "new" result
-      Tangerine.$db.view "tangerine/resultsByStudentSubtest",
+      Tangerine.$db.view "#{Tangerine.design_doc}/resultsByStudentSubtest",
         key : [@options.student.id,@subtest.id]
         success: (data) =>
           rows = data.rows
