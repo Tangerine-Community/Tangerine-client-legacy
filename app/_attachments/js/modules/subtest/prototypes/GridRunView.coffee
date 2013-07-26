@@ -3,7 +3,7 @@ class GridRunView extends Backbone.View
   className: "grid_prototype"
 
   events: if Modernizr.touch then {
-    'touchstart .grid_element' : 'gridClick'
+    'touchstart .grid_element'     : 'gridClick'
     'touchstart .end_of_grid_line' : 'endOfGridLineClick'
     'click .grid_mode'   : 'updateMode'
     'click .start_time'  : 'startTimer'
@@ -187,13 +187,13 @@ class GridRunView extends Backbone.View
 
   updateMode: (event, mode = null) =>
     # dont' change the mode if the time has never been started
-    if (mode==null && @timeElapsed == 0) || mode == "disabled"
-      @$el.find("#grid_mode :radio").removeAttr("checked")
-      @$el.find("#grid_mode").buttonset("refresh")
+    if (mode==null && @timeElapsed == 0 && not @dataEntry) || mode == "disabled"
+      @$el.find(".grid_mode").removeAttr("checked")
+      @$el.find("#grid_mode_wrapper").buttonset("refresh")
       return
     if mode?
       @mode = mode
-      @$el.find("#grid_mode :radio[value=#{mode}]").attr("checked", "checked")
+      @$el.find(".grid_mode [value=#{mode}]").attr("checked", "checked")
       @$el.find("#grid_mode").buttonset("refresh").click @updateMode
       return
     @mode = $(event.target).val() unless @autostopped
@@ -204,7 +204,7 @@ class GridRunView extends Backbone.View
   resetVariables: ->
 
     @timer    = parseInt(@model.get("timer")) || 0
-    @untimed  = @timer == 0
+    @untimed  = @timer == 0 || @dataEntry # Do not show the timer if it's disasbled or data entry mode
 
     @gotMinuteItem = false
     @minuteMessage = false
@@ -256,6 +256,9 @@ class GridRunView extends Backbone.View
       @mode = "disabled"
 
 
+    @mode = "mark" if @dataEntry
+
+
     @gridOutput = []
     for item, i in @items
       @gridOutput[i] = 'correct'
@@ -295,6 +298,8 @@ class GridRunView extends Backbone.View
       "last"       : @lastHandler
       "minuteItem" : @intermediateItemHandler
       disabled : $.noop
+
+    @dataEntry = options.dataEntry
 
     @model  = @options.model
     @parent = @options.parent
@@ -350,11 +355,11 @@ class GridRunView extends Backbone.View
     stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>#{t('stop')}</button><div class='timer'>#{@timer}</div></div>"
 
     resetButton = "
-    <div>
-      <button class='restart command'>#{t('restart')}</button>
-      <br>
-    </div>"
-
+      <div>
+        <button class='restart command'>#{t('restart')}</button>
+        <br>
+      </div>
+    "
 
     #
     # Mode selector
@@ -379,9 +384,8 @@ class GridRunView extends Backbone.View
           <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>
         "
 
-
       modeSelector = "
-        <div id='grid_mode' class='question buttonset clearfix'>
+        <div id='grid_mode_wrapper' class='question buttonset clearfix'>
           <label>#{t('input mode')}</label><br>
           <label for='mark'>#{t('mark')}</label>
           <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark'>
@@ -390,11 +394,24 @@ class GridRunView extends Backbone.View
         </div>
       "
 
+    dataEntry = "
+      <table class='class_table'>
+
+        <tr>
+          <td>Was autostopped</td><td><input type='checkbox' class='data_autostopped'></td>
+        </tr>
+
+        <tr>
+          <td>Time remaining</td><td><input type='number' class='data_time_remain'></td>
+        </tr>
+      </table>
+    "
 
     html += "
       #{if not @untimed then stopTimerHTML else ""}
       #{if not @untimed then resetButton else ""}
       #{modeSelector}
+      #{(dataEntry if @dataEntry) || ''}
     "
     
 
@@ -453,15 +470,22 @@ class GridRunView extends Backbone.View
 
     @lastAttempted = false if not @captureLastAttempted
 
+    if @dataEntry
+      autostopped = @$el.find(".data_autostopped").is(":checked")
+      timeRemaining = parseInt(@$el.find(".data_time_remain").val())
+    else
+      autostopped   = @autostopped
+      timeRemaining = @timeRemaining
+
     result =
       "capture_last_attempted"     : @captureLastAttempted
       "item_at_time"               : @itemAtTime
       "time_intermediate_captured" : @timeIntermediateCaptured
       "capture_item_at_time"       : @captureItemAtTime
-      "auto_stop"     : @autostopped
+      "auto_stop"     : autostopped
       "attempted"     : @lastAttempted
       "items"         : itemResults
-      "time_remain"   : @timeRemaining
+      "time_remain"   : timeRemaining
       "mark_record"   : @markRecord
       "variable_name" : @model.get("variableName")
 
