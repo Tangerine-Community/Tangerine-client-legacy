@@ -94,10 +94,7 @@ class Settings extends Backbone.Model
       index : "_design/#{groupDDoc}/index.html"
 
   urlBulkDocs : ->
-    if @get("context") == "server"
-      bulkDocsURL = "/" + @groupDB + "/_bulk_docs"
-    else
-      bulkDocsURL = @location.local.db + "_bulk_docs"
+    bulkDocsURL = "/" + Tangerine.db_name + "/_bulk_docs"
 
 
   urlIndex : ( groupName, hash = null ) ->
