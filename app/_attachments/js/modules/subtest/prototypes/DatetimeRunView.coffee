@@ -9,7 +9,8 @@ class DatetimeRunView extends Backbone.View
   render: ->
     dateTime = new Date()
     year     = dateTime.getFullYear()
-    month    = [t("jan"),t("feb"),t("mar"),t("apr"),t("may"),t("jun"),t("jul"),t("aug"),t("sep"),t("oct"),t("nov"),t("dec")][dateTime.getMonth()]
+    months   = [t("jan"),t("feb"),t("mar"),t("apr"),t("may"),t("jun"),t("jul"),t("aug"),t("sep"),t("oct"),t("nov"),t("dec")]
+    month    = months[dateTime.getMonth()]
     day      = dateTime.getDate()
     minutes  = dateTime.getMinutes()
     minutes  = "0" + minutes if minutes < 10
@@ -20,7 +21,7 @@ class DatetimeRunView extends Backbone.View
         <table>
           <tr>
             <td><label for='year'>#{t('year')}</label><input id='year' name='year' value='#{year}'></td>
-            <td><label for='month'>#{t('month')}</label><input id='month' type='month' name='month' value='#{month}'></td>
+            <td><label for='month'>#{t('month')}</label><select id='month' name='month' value='#{month}'>#{("<option value='#{m}' #{("selected='selected'" if m is month) || ''}>#{m.titleize()} </option>" for m in months).join('')}</select></td>
             <td><label for='day'>#{t('day')}</label><input id='day' type='day' name='day' value='#{day}'></td>
           </tr>
           <tr>
