@@ -62,32 +62,7 @@ class AssessmentsMenuView extends Backbone.View
 
   results: -> Tangerine.router.navigate "dashboard", true
 
-  universalUpload: ->
-    $.ajax 
-      url: Tangerine.settings.urlView("local", "byCollection")
-      type: "POST"
-      dataType: "json"
-      contentType: "application/json"
-      data: JSON.stringify(
-        keys : ["result"]
-      )
-      success: (data) ->
-        rows = data.rows
-        docList = []
-        for result in rows
-          docList.push result.id
-
-        $.couch.replicate(
-          Tangerine.settings.urlDB("local"),
-          Tangerine.settings.urlDB("group"),
-            success: =>
-              Utils.sticky "Results synced to cloud successfully."
-            error: (code, message) =>
-              Utils.sticky "Upload error<br>#{code} #{message}"
-          ,
-            doc_ids: docList
-        )
-
+  universalUpload: -> Utils.universalUpload()
 
   apk: ->
     TangerineTree.make
