@@ -390,16 +390,17 @@ class Router extends Backbone.Router
   assessments: ->
       Tangerine.user.verify
         isAuthenticated: ->
-          assessments = new Assessments
-          assessments.fetch
-            success: ( assessments ) ->
-              curricula = new Curricula
-              curricula.fetch
-                success: ( curricula ) ->
-                  assessments = new AssessmentsMenuView
-                    "assessments" : assessments
-                    "curricula"   : curricula
-                  vm.show assessments
+          Utils.loadCollections
+            collections: [
+              "Klasses"
+              "Teachers"
+              "Curricula"
+              "Assessments"
+              "TabletUsers"
+            ]
+            complete: (options) ->
+              options.users = options.tabletUsers
+              vm.show new AssessmentsMenuView options
 
   editId: (id) ->
     id = Utils.cleanURL id
