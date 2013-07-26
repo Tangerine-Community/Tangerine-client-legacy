@@ -5,14 +5,14 @@ class KlassListElementView extends Backbone.View
   tagName: "li"
 
   events:
-    'click .run'           : 'run'
-    'click .results'       : 'showReportSelect'
+    'click .klass_run'           : 'run'
+    'click .klass_results'       : 'showReportSelect'
     'change #report'       : 'getReportMenu'
     'click .cancel_report' : 'cancelReport'
-    'click .edit'          : 'edit'
-    'click .delete'        : 'toggleDelete'
-    'click .delete_cancel' : 'toggleDelete'
-    'click .delete_delete' : 'delete'
+    'click .klass_edit'          : 'edit'
+    'click .klass_delete'        : 'toggleDelete'
+    'click .klass_delete_cancel' : 'toggleDelete'
+    'click .klass_delete_delete' : 'delete'
 
   initialize: (options) ->
     @availableReports = Tangerine.config.get("reports")
@@ -49,7 +49,7 @@ class KlassListElementView extends Backbone.View
   run: ->
     Tangerine.router.navigate "class/" + @options.klass.id, true
 
-  toggleDelete: -> @$el.find(".delete_confirm").toggle()
+  toggleDelete: -> @$el.find(".klass_delete_confirm").toggle()
 
   delete: ->
     @options.klass.collection.get(@options.klass).destroy()
@@ -64,37 +64,42 @@ class KlassListElementView extends Backbone.View
       teacherName = teacher?.getEscapedString('name') || ""
 
     htmlTeacher = "
-      <tr><td><small>Teacher</small></td><td>#{teacherName}</td></tr>
+      <tr><th>Teacher</th><td>#{teacherName}</td></tr>
     " if Tangerine.user.isAdmin() 
+
+    menuOptions = ""
+    for report in @availableReports
+      if not report.context? or report.context is Tangerine.settings.get('context')
+        menuOptions += "<option data-menu_view='#{report.menuView}'>#{t(report.name)}</option>" 
 
     @$el.html "
       <table>
         #{htmlTeacher || ""}
-        <tr><td><small>School name</small></td><td>#{klass.getEscapedString('schoolName')}</td></tr>
-        <tr><td><small>School year</small></td><td>#{klass.getString('year')}</td></tr>
-        <tr><td><small>#{t('grade')}</small></td><td>#{klass.getString('grade')}</td></tr>
-        <tr><td><small>#{t('stream')}</small></td><td>#{klass.getString('stream')}</td></tr>
-        <tr><td><small>#{t('curriculum')}</small></td><td>#{@curriculum.getEscapedString('name')}</td></tr>
+        <tr><th>School name</th><td>#{klass.getEscapedString('schoolName')}</td></tr>
+        <tr><th>School year</th><td>#{klass.getString('year')}</td></tr>
+        <tr><th>#{t('grade')}</th><td>#{klass.getString('grade')}</td></tr>
+        <tr><th>#{t('stream')}</th><td>#{klass.getString('stream')}</td></tr>
+        <tr><th>#{t('curriculum')}</th><td>#{@curriculum.getEscapedString('name')}</td></tr>
       </table>
-      <img src='images/icon_run.png'     class='icon run'> 
-      <img src='images/icon_results.png' class='icon results'> 
-      <img src='images/icon_edit.png'    class='icon edit'> 
-      <img src='images/icon_delete.png'  class='icon delete'> 
+      <img src='images/icon_run.png'     class='icon klass_run'> 
+      <img src='images/icon_results.png' class='icon klass_results'> 
+      <img src='images/icon_edit.png'    class='icon klass_edit'> 
+      <img src='images/icon_delete.png'  class='icon klass_delete'> 
       <div class='report_select_container confirmation'>
         <div class='menu_box'>
           <select id='report'>
             <option selected='selected' disabled='disabled'>#{t('select report type')}</option>
-            #{("<option data-menu_view='#{report.menuView}'>#{t(report.name)}</option>" for report in @availableReports).join("")}
+            #{menuOptions}
           </select>
         </div>
         <div id='report_menu_container'></div>
         <button class='command cancel_report'>#{t('cancel')}</button>
       </div>
-      <div class='delete_confirm confirmation'>
+      <div class='klass_delete_confirm confirmation'>
         <div class='menu_box'>
           #{t('confirm')}<br>
-          <button class='delete_delete command_red'>#{t('delete')}</button>
-          <button class='delete_cancel command'>#{t('cancel')}</button>
+          <button class='klass_delete_delete command_red'>#{t('delete')}</button>
+          <button class='klass_delete_cancel command'>#{t('cancel')}</button>
         </div>
       </div>
     "
