@@ -198,6 +198,7 @@ class AssessmentListElementView extends Backbone.View
           #{toggleButton}
           #{adminName}
         </div>
+
         #{@ul 
           cssClass: "assessment_menu"
           links : ["run","results","edit","sync","print"]
@@ -210,8 +211,13 @@ class AssessmentListElementView extends Backbone.View
     
 
     else if @isAdmin
-      @$el.html @ul 
-          class: "assessment_menu"
+      @$el.html "
+        <div>
+          #{toggleButton}
+          #{adminName}
+        </div>
+      " + @ul 
+          cssClass: "assessment_menu"
           links : ["run","results","update","delete"]
           other : deleteConfirm
 
