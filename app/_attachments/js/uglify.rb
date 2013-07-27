@@ -35,6 +35,8 @@ jsFiles = [
   'modules/assessment/AssessmentRunView.js',
   'modules/assessment/AssessmentImportView.js',
   'modules/assessment/AssessmentSyncView.js',
+  'modules/assessment/AssessmentDataEntryView.js',
+
 
   'modules/subtest/Subtest.js',
   'modules/subtest/Subtests.js',
@@ -107,6 +109,7 @@ jsFiles = [
   'modules/report/MasteryCheckMenuView.js',
   'modules/report/ProgressView.js',
   'modules/report/ProgressMenuView.js',
+  'modules/report/CsvMenuView.js',
 
   'modules/curriculum/Curriculum.js',
   'modules/curriculum/CurriculumView.js',
