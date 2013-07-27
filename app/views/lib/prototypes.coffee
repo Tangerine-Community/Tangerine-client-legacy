@@ -3,11 +3,13 @@ pair        = utils.pair
 exportValue = utils.exportValue
 
 pairsLocation = ( subtest ) ->
+  row = []
   for label, i in subtest.data.labels
     row.push pair(label, subtest.data.location[i])
-
+  return row
 
 pairsDatetime = ( subtest, datetimeSuffix ) ->
+  row = []
   months = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
 
   if ~months.indexOf(subtest.data.month.toLowerCase())
@@ -19,8 +21,10 @@ pairsDatetime = ( subtest, datetimeSuffix ) ->
   row.push pair("month#{datetimeSuffix}",       monthData)
   row.push pair("date#{datetimeSuffix}",        subtest.data.day)
   row.push pair("assess_time#{datetimeSuffix}", subtest.data.time)
+  return row
 
 pairsObservation = ( subtest ) ->
+  row = []
   for observations, i in subtest.data.surveys
     observationData = observations.data
     for surveyVariable, surveyValue of observationData
@@ -29,12 +33,9 @@ pairsObservation = ( subtest ) ->
           row.push pair("#{surveyVariable}_#{optionKey}_#{i+1}", exportValue(optionValue))
       else # single type question or open
         row.push pair("#{surveyVariable}_#{i+1}", exportValue(surveyValue))
-
+  return row
 
 pairsGrid = ( subtest ) ->
-
-  log "subtest exists? #{subtest?}"
-
   row = []
 
   variableName = subtest.data.variable_name
@@ -50,18 +51,18 @@ pairsGrid = ( subtest ) ->
   return row
 
 pairsSurvey = ( subtest ) ->
-
+  row = []
   for surveyVariable, surveyValue of subtest.data
     if surveyValue is Object(surveyValue) # multiple type question
       for optionKey, optionValue of surveyValue
         row.push pair("#{surveyVariable}_#{optionKey}", exportValue(optionValue))
     else # single type question or open
       row.push pair(surveyVariable, exportValue(surveyValue)) # if open just show result, otherwise translate not_asked
-
+  return row
 
 
 pairsGps = (subtest) ->
-
+  row = []
   row.push pair("latitude",         subtest.data.lat )
   row.push pair("longitude",        subtest.data.long )
   row.push pair("accuracy",         subtest.data.acc )
@@ -70,12 +71,13 @@ pairsGps = (subtest) ->
   row.push pair("heading",          subtest.data.heading )
   row.push pair("speed",            subtest.data.speed )
   row.push pair("timestamp",        subtest.data.timestamp )
-
+  return row
 
 if typeof(exports) == "object"
+
   exports.pairsGrid        = pairsGrid
   exports.pairsGps         = pairsGps
   exports.pairsSurvey      = pairsSurvey
   exports.pairsObservation = pairsObservation
   exports.pairsDatetime    = pairsDatetime
-  exports.pairsLocation    = pairsLocaiton
+  exports.pairsLocation    = pairsLocation

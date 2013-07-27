@@ -1,9 +1,9 @@
-(doc) ->
+( doc ) ->
 
   return unless doc.collection is "subtest"
 
   id = doc.assessmentId or doc.curriculumId
 
-  return unless id?
+  return unless id != null
 
-  emit doc.id, doc
+  emit id, doc

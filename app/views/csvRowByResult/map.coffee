@@ -1,6 +1,7 @@
 (doc) ->
 
   return unless doc.collection is "result"
+  log "RESULT"
 
   utils = require("views/lib/utils")
   clone       = `function (item) { if (!item) { return item; } var types = [ Number, String, Boolean ], result; types.forEach(function(type) { if (item instanceof type) { result = type( item ); } }); if (typeof result == "undefined") { if (Object.prototype.toString.call( item ) === "[object Array]") { result = []; item.forEach(function(child, index, array) { result[index] = clone( child ); }); } else if (typeof item == "object") { if (item.nodeType && typeof item.cloneNode == "function") { var result = item.cloneNode( true ); } else if (!item.prototype) { if (item instanceof Date) { result = new Date(item); } else { result = {}; for (var i in item) { result[i] = clone( item[i] ); } } } else { if (false && item.constructor) { result = new item.constructor(); } else { result = item; } } } else { result = item; } } return result; }`
@@ -8,7 +9,13 @@
   pair        = utils.pair
 
   prototypes  = require("views/lib/prototypes")
-  pairsGrid   = prototypes.pairsGrid
+
+  pairsGrid        = prototypes.pairsGrid
+  pairsSurvey      = prototypes.pairsSurvey
+  pairsDatetime    = prototypes.pairsDatetime
+  pairsObservation = prototypes.pairsObservation
+  pairsGps         = prototypes.pairsGps
+  pairsLocation    = prototypes.pairsLocation
 
 
   subtestData = doc.subtestData
@@ -142,4 +149,6 @@
 
   bySubtest.push "timestamps" : [ pair( "timestamps", timestamps.join(',') )]
 
+  log "OUTPUTTING"
+  log JSON.stringify(bySubtest)
   emit(keyId, bySubtest)
