@@ -27,8 +27,8 @@ class Result extends Backbone.Model
   add: ( subtestDataElement, callbacks = {}) ->
     @setSubtestData subtestDataElement, callbacks
     @save null, 
-      success: callback.success || $.noop
-      error:   callback.error   || $.noop
+      success: callbacks.success || $.noop
+      error:   callbacks.error   || $.noop
 
   insert: (newElement) ->
     oldSubtestData = @get("subtestData")
