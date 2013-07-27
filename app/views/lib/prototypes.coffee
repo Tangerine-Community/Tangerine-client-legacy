@@ -22,13 +22,13 @@ pairsDatetime = ( subtest, datetimeSuffix ) ->
 
 pairsObservation = ( subtest ) ->
   for observations, i in subtest.data.surveys
-  observationData = observations.data
-  for surveyVariable, surveyValue of observationData
-    if surveyValue is Object(surveyValue) # multiple type question
-      for optionKey, optionValue of surveyValue
-        row.push pair("#{surveyVariable}_#{optionKey}_#{i+1}", exportValue(optionValue))
-    else # single type question or open
-      row.push pair("#{surveyVariable}_#{i+1}", exportValue(surveyValue))
+    observationData = observations.data
+    for surveyVariable, surveyValue of observationData
+      if surveyValue is Object(surveyValue) # multiple type question
+        for optionKey, optionValue of surveyValue
+          row.push pair("#{surveyVariable}_#{optionKey}_#{i+1}", exportValue(optionValue))
+      else # single type question or open
+        row.push pair("#{surveyVariable}_#{i+1}", exportValue(surveyValue))
 
 
 pairsGrid = ( subtest ) ->
@@ -52,11 +52,11 @@ pairsGrid = ( subtest ) ->
 pairsSurvey = ( subtest ) ->
 
   for surveyVariable, surveyValue of subtest.data
-  if surveyValue is Object(surveyValue) # multiple type question
-    for optionKey, optionValue of surveyValue
-      row.push pair("#{surveyVariable}_#{optionKey}", exportValue(optionValue))
-  else # single type question or open
-    row.push pair(surveyVariable, exportValue(surveyValue)) # if open just show result, otherwise translate not_asked
+    if surveyValue is Object(surveyValue) # multiple type question
+      for optionKey, optionValue of surveyValue
+        row.push pair("#{surveyVariable}_#{optionKey}", exportValue(optionValue))
+    else # single type question or open
+      row.push pair(surveyVariable, exportValue(surveyValue)) # if open just show result, otherwise translate not_asked
 
 
 
@@ -73,4 +73,9 @@ pairsGps = (subtest) ->
 
 
 if typeof(exports) == "object"
-  exports.pairsGrid = pairsGrid
+  exports.pairsGrid        = pairsGrid
+  exports.pairsGps         = pairsGps
+  exports.pairsSurvey      = pairsSurvey
+  exports.pairsObservation = pairsObservation
+  exports.pairsDatetime    = pairsDatetime
+  exports.pairsLocation    = pairsLocaiton

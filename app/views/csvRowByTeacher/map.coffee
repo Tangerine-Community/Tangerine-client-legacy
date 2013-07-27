@@ -1,6 +1,6 @@
 (doc) ->
 
-  return if doc.collection isnt "teacher"
+  return unless doc.collection is "teacher"
 
   utils = require("views/lib/utils")
 
@@ -19,5 +19,3 @@
   ]
 
   emit(doc.name,[ pair("info", teacher ) ])
-
-  return

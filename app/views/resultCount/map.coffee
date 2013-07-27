@@ -1,3 +1,5 @@
-(doc) ->
-  if doc.collection == 'result'
-    emit doc.assessmentId, 1
+( doc ) ->
+
+  return unless doc.collection is 'result'
+
+  emit doc.assessmentId, 1
