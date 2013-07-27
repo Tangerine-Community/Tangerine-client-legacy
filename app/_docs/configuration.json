@@ -54,6 +54,11 @@
       {
          "name" : "class grouping table",
          "menuView" : "KlassGroupingMenuView"
+      },
+      {
+         "name" : "csv",
+         "menuView" : "CsvMenuView",
+         "context" : "server"
       }
    ],
 
