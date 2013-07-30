@@ -249,15 +249,17 @@ class AssessmentsMenuView extends Backbone.View
         "_id"          : newId
         "assessmentId" : newId
         "archived"     : false
+      callback = @addAssessmenet
     else if newType == "curriculum"
       newObject = new Curriculum
         "name"         : name
         "_id"          : newId
         "curriculumId" : newId
+      callback = @addCurriculum
 
     newObject.save null,
       success : => 
-        @addToCollection(newObject)
+        callback(newObject)
         @$el.find('.new_form, .new').fadeToggle(250, => @$el.find('.new_name').val(""))
         Utils.midAlert "#{name} saved"
       error: =>

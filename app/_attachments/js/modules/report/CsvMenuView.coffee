@@ -5,4 +5,4 @@ class CsvMenuView extends Backbone.View
   initialize: (options) ->
     klassId   = options.parent.options.klass.id
     groupName = Tangerine.settings.get("groupName")
-    document.location = "http://csv.tangerinecentral.org/class/#{groupName}/#{klassId}"
+    document.location = "http://databases.tangerinecentral.org/_csv/class/#{groupName}/#{klassId}"
