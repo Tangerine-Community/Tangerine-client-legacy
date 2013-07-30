@@ -8,21 +8,26 @@ class AssessmentDataEntryView extends Backbone.View
 
   prevSubtest: ->
     select = document.getElementById("subtest_select")
+    return if select.selectedIndex == 0
     select.selectedIndex = select.selectedIndex - 1
     @updateCurrent()
     
 
   nextSubtest: ->
     select = document.getElementById("subtest_select")
+    return if select.selectedIndex == $("#subtest_select option").length - 1
     select.selectedIndex = select.selectedIndex + 1
+
     @updateCurrent()
 
   initialize: (options) ->
+    @savedOn = {}
     # assessment
     @[key] = value for key, value of options
     @result = new Result
       assessmentId : @assessment.id
       dataEntry    : true
+      blank        : true
     @views = []
     @viewsBySubtestId = {}
 
@@ -57,7 +62,6 @@ class AssessmentDataEntryView extends Backbone.View
       prototype = subtest.get("prototype")
       @["#{prototype}Init"](subtest)
 
-
     @$subEl = @$el.find("#current_subtest")
 
     @updateCurrent()
@@ -66,30 +70,57 @@ class AssessmentDataEntryView extends Backbone.View
 
     @trigger "rendered"
 
-  updateCurrent: ->
+  updateCurrent: =>
 
-    @saveResult()
+    Utils.working true
 
-    @subtestId = @$el.find("#subtest_select option:selected").attr("data-subtestId")
-    @$subEl.find(".subtest_container").hide()
-    @$subEl.find("##{@subtestId}").show()
-    @subtest = @assessment.subtests.get(@subtestId)
-    @trigger "rendered"
+    @saveResult
+      error: =>
+        Utils.midAlert "Result save error"
+        Utils.working false
+      success: =>
+        Utils.working false
+        @subtestId = @$el.find("#subtest_select option:selected").attr("data-subtestId")
+        @$subEl.find(".subtest_container").hide()
+        @$subEl.find("##{@subtestId}").show()
+        @subtest = @assessment.subtests.get(@subtestId)
+        @trigger "rendered"
+        @savedOn[@subtestId] = true
 
+  saveResult: (callbacks = {}) =>
 
-  saveResult: ->
-
-    return unless @subtest?
+    return callbacks.success() unless @subtest?
 
     @result.insert @subtestDataObject(@subtest)
 
     @result.save null,
-      success: =>
-        console.log "got here"
+      success: (model) =>
         @$el.find(".last_saved").html "Last saved: " + moment(new Date(@result.get('updated'))).format('MMM DD HH:mm')
-      error: =>
+        callbacks.success?(model)
+      error: (error, msg) =>
         console.log "save error"
         console.log arguments
+        callbacks.error?(error, msg)
+
+
+  updateCompletedResult: ->
+    if _.keys(@savedOn).length == @views.length
+
+      result = 
+        name : "Assessment complete"
+        prototype: "complete"
+        data :
+          "comment" : @$el.find('#additional_comments').val() || ""
+          "end_time" : (new Date()).getTime()
+        subtestId : "result"
+
+      if not @completedAlready
+        @result.add result
+        @completedAlready = true
+      else
+        @result.insert result
+        @resultSave()
+
 
   subtestDataObject: (subtest) ->
 
