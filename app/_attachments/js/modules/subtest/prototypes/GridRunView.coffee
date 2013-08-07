@@ -189,12 +189,12 @@ class GridRunView extends Backbone.View
     # dont' change the mode if the time has never been started
     if (mode==null && @timeElapsed == 0 && not @dataEntry) || mode == "disabled"
       @$el.find(".grid_mode").removeAttr("checked")
-      @$el.find("#grid_mode_wrapper").buttonset("refresh")
+      @$el.find(".grid_mode_wrapper").buttonset("refresh")
       return
     if mode?
       @mode = mode
       @$el.find(".grid_mode [value=#{mode}]").attr("checked", "checked")
-      @$el.find("#grid_mode").buttonset("refresh").click @updateMode
+      @$el.find(".grid_mode_wrapper").buttonset("refresh").click @updateMode
       return
     @mode = $(event.target).val() unless @autostopped
 
@@ -373,22 +373,25 @@ class GridRunView extends Backbone.View
       if @captureItemAtTime
         labelText = t('item at __seconds__ seconds', seconds : @captureAfterSeconds)
         minuteItemButton = "
-          <label for='minute_item'>#{labelText}</label>
-          <input class='grid_mode' name='grid_mode' id='minute_item' type='radio' value='minuteItem'>
+          <label for='minute_item_#{@cid}'>#{labelText}</label>
+          <input class='grid_mode' name='grid_mode' id='minute_item_#{@cid}' type='radio' value='minuteItem'>
         "
 
       captureLastButton = ""
       if @captureLastAttempted
         captureLastButton = "
-          <label for='last_attempted'>#{t('last attempted')}</label>
-          <input class='grid_mode' name='grid_mode' id='last_attempted' type='radio' value='last'>
+          <label for='last_attempted_#{@cid}'>#{t('last attempted')}</label>
+          <input class='grid_mode' name='grid_mode' id='last_attempted_#{@cid}' type='radio' value='last'>
         "
+      markButton = "
+        <label for='mark_#{@cid}'>#{t('mark')}</label>
+        <input class='grid_mode' name='grid_mode' id='mark_#{@cid}' type='radio' value='mark'>
+      "
 
       modeSelector = "
-        <div id='grid_mode_wrapper' class='question buttonset clearfix'>
+        <div class='grid_mode_wrapper question buttonset clearfix'>
           <label>#{t('input mode')}</label><br>
-          <label for='mark'>#{t('mark')}</label>
-          <input class='grid_mode' name='grid_mode' id='mark' type='radio' value='mark'>
+          #{markButton}
           #{minuteItemButton}
           #{captureLastButton}
         </div>
