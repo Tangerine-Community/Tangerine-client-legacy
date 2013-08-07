@@ -4,11 +4,10 @@ class ResultsView extends Backbone.View
 
   events:
     'click .cloud'    : 'cloud'
-    'click .csv'      : 'csv'
     'click .tablets'  : 'tablets'
     'click .detect'   : 'detectOptions'
     'click .details'  : 'showResultSumView'
-    'click .csv_beta' : 'csvBeta'
+    'click .csv'      : 'csv'
     'click .refresh'  : 'refresh'
     'click .show_advanced' : 'toggleAdvanced'
 
@@ -21,7 +20,7 @@ class ResultsView extends Backbone.View
   refresh: ->
     Utils.restartTangerine("Please wait...")
 
-  csvBeta: ->
+  csv: ->
 
     if Tangerine.settings.get("context") == "mobile"
       document.removeEventListener "backbutton", Tangerine.onBackButton, false
@@ -91,20 +90,6 @@ class ResultsView extends Backbone.View
     else
       Utils.midAlert "Cannot detect tablets"
     return false
-
-  csv: ->
-    @$el.find("button.csv").html "Preparing CSV..." # show message
-    view = new CSVView # make a new CSV view, but don't show it, just let it work
-      assessmentId : @assessment.id
-    view.render()
-    view.on "ready", => # when it's ready, get a link to the doc it saved
-      filename = @assessment.getEscapedString("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
-      # point browser to file
-      # do it in a new window because otherwise it will cancel the fetching/updating of the file
-      csvLocation = Tangerine.settings.urlShow("local", "csv/Tangerine-#{@assessment.id.substr(-5, 5)}.csv?filename=#{filename}")
-      $button = @$el.find "button.csv"
-      $button.after "<a href='#{csvLocation}' class='command'>Download CSV</a>"
-      $button.remove()
 
   initDetectOptions: ->
     @available = 
@@ -205,7 +190,6 @@ class ResultsView extends Backbone.View
         #{if Tangerine.settings.get("context") == "mobile" then cloudButton  else ""}
         #{if Tangerine.settings.get("context") == "mobile" then tabletButton else ""}
         #{csvButton}
-        <button class='command csv_beta'>CSV (beta)</button>
         <div class='small_grey clickable show_advanced'>Advanced</div>
         <div id='advanced' class='confirmation'>
           <div class='menu_box'>
