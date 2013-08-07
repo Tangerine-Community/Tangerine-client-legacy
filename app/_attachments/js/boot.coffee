@@ -153,12 +153,12 @@ Tangerine.transitionUsers = (callback) ->
                     teacherId = Utils.humanGUID()
                     teacher = new Teacher "_id" : teacherId, "name" : name
                     
-
-                  roles =
-                    if name is "admin"
-                      ["_admin"]
-                    else
-                      doc.roles || []
+                  if name is "admin"
+                    roles = ["_admin"]
+                    hashes = TabletUser.generateHash("password")
+                  else
+                    roles = doc.roles || []
+                    
 
                   newDoc = 
                     "_id"   : TabletUser.calcId(name)
