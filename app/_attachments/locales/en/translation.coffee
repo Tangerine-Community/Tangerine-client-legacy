@@ -19,6 +19,7 @@
       "error_password_incorrect" : "Incorrect password."
       "error_password_empty" : "Please enter a password."
       "error_name_empty" : "Please enter a name."
+      "error_name_taken" : "Name already taken."
       "pass_mismatch" : "Passwords do not match"
     "button" :
       "sign_up" : "Sign up"

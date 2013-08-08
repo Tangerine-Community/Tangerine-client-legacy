@@ -11,6 +11,7 @@ class LoginView extends Backbone.View
       'touchstart button'  : 'action'
       'touchstart .recent' : 'showRecent'
       'blur .recent'       : 'blurRecent'
+      'keyup #new_name'    : 'checkNewName'
     else
       'keypress input'     : 'keyHandler'
       'change input'       : 'onInputChange'
@@ -19,6 +20,7 @@ class LoginView extends Backbone.View
       'click button'       : 'action'
       'click .recent'      : 'showRecent'
       'blur .recent'       : 'blurRecent'
+      'keyup #new_name'    : 'checkNewName'
 
   initialize: (options) ->
     $(window).on('orientationchange scroll resize', @recenter)
@@ -32,6 +34,17 @@ class LoginView extends Backbone.View
     @oldBackground = $("body").css("background")
     $("body").css("background", "white")
     $("#footer").hide()
+
+  checkNewName: (event) ->
+    console.log "checking new name"
+    $target = $(event.target)
+    name = ( $target.val().toLowerCase() || '' )
+    console.log "name: #{name}"
+    if name.length > 4 and name in @users.pluck("name")
+      @nameError(@text['error_name_taken'])
+    else
+      @clearErrors()
+
 
   onInputChange: (event) ->
     $target = $(event.target)
@@ -68,6 +81,8 @@ class LoginView extends Backbone.View
       "password_confirm" : t('LoginView.label.password_confirm')
       "error_name" : t('LoginView.message.error_name_empty')
       "error_pass" : t('LoginView.message.error_password_empty')
+      "error_name_taken" : t('LoginView.message.error_name_taken')
+
 
   onSelectChange: (event) ->
     $target = $(event.target)

@@ -783,8 +783,26 @@ class Router extends Backbone.Router
     else
       Tangerine.user.verify
         isAuthenticated: ->
-          view = new AccountView user : Tangerine.user
-          vm.show view
+          showView = (teacher) ->
+            view = new AccountView 
+              user : Tangerine.user
+              teacher: teacher
+            vm.show view
+
+          if "class" is Tangerine.settings.get("context")
+            if Tangerine.user.has("teacherId")
+              teacher = new Teacher "_id": Tangerine.user.get("teacherId")
+              teacher.fetch
+                success: ->
+                  showView(teacher)
+            else
+              teacher = new Teacher "_id": Utils.humanGUID()
+              teacher.save null,
+                success: ->
+                  showView(teacher)
+
+          else
+            showView()
 
   settings: ->
     Tangerine.user.verify

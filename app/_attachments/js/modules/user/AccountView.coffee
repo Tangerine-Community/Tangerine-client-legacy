@@ -17,6 +17,25 @@ class AccountView extends Backbone.View
     "keyup    .editing" : "editing"
     "keydown  .editing" : "editing"
 
+    'click .change_password' : "togglePassword"
+    'click .confirm_password' : "saveNewPassword"
+
+  togglePassword: -> 
+    $menu = @$el.find(".password_menu")
+    $menu.toggle()
+    if $menu.is(":visible")
+      @$el.find("#new_password").focus().scrollTo()
+
+
+  saveNewPassword: ->
+    pass = @$el.find(".new_password").val()
+    Tangerine.user.setPassword(pass)
+    Tangerine.user.save null,
+      success: =>
+        @$el.find(".new_password").val('')
+        @togglePassword()
+        Utils.midAlert "Password changed"
+
 
   sendDebug: ->
     Tangerine.$db.view "#{Tangerine.design_doc}/byCollection"
@@ -84,7 +103,13 @@ class AccountView extends Backbone.View
   initialize: ( options ) ->
 
     @user = options.user
-    @models = new Backbone.Collection(@user)
+    @teacher = options.teacher
+
+    models = []
+    models.push @user if @user?
+    models.push @teacher if @teacher?
+
+    @models = new Backbone.Collection(models)
     @user.on "group-join group-leave group-refresh", @renderGroups
   
   renderGroups: =>
@@ -116,7 +141,7 @@ class AccountView extends Backbone.View
     " if Tangerine.settings.get("context") == "server"
 
 
-    if Tangerine.settings.get("context") != "server"
+    if Tangerine.settings.get("context") != "server" && Tangerine.user.isAdmin()
       settingsButton = "<a href='#settings' class='navigation'><button class='navigation'>Settings</button></a>"
       logsButton = "<a href='#logs' class='navigation'><button class='navigation'>Logs</button></a>"
 
@@ -141,6 +166,28 @@ class AccountView extends Backbone.View
       <a href='#teachers' class='navigation'><button class='navigation'>Teachers</button></a>
     " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") == "class"
 
+    userEdits = 
+      if "mobile" is Tangerine.settings.get("context")
+        @getEditableRow({key:"email", name:"Email"}, @user)
+
+      else if "class" is Tangerine.settings.get("context")
+        @getEditableRow({key:"first",   name:"First name"}, @teacher)   +
+        @getEditableRow({key:"last",    name:"Last name"}, @teacher)    +
+        @getEditableRow({key:"gender",  name:"Gender"}, @teacher)       +
+        @getEditableRow({key:"school",  name:"School"}, @teacher)       +
+        @getEditableRow({key:"contact", name:"Contact info"}, @teacher)
+    
+    passwordReset = "
+      <button class='change_password command'>Change password</button></td>
+      <div class='password_menu' style='display:none;'>
+        <label for='new_password'>New Password</label><br>
+        <input id='new_password'><br>
+        <button class='confirm_password command'>Change</button>
+      </div>
+    " if "class" is Tangerine.settings.get("context")
+
+
+
     html = "
       <button class='back navigation'>Back</button>
       <h1>Manage</h1>
@@ -154,11 +201,12 @@ class AccountView extends Backbone.View
         <h2>Account</h2>
           <table class='class_table'>
             <tr>
-              <td>Name</td>
-              <td>#{@user.name()}</td>
+              <td style='color:black'>Name</td>
+              <td style='color:black'>#{@user.name()}</td>
             </tr>
-            #{@getEditableRow({key:"email", name:"Email"}, @user)}
+            #{userEdits || ''}
           </table>
+          #{passwordReset || ''}
       </section>
       #{groupSection || ""}
       </div>
