@@ -187,7 +187,7 @@ class KlassSubtestEditView extends Backbone.View
     if @prototype == "grid"
       endOfLine    = if @model.has("endOfLine") then @model.get("endOfLine") else true
       randomize    = if @model.has("randomize") then @model.get("randomize") else false
-      captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted") else false
+      captureLastAttempted = if @model.has("captureLastAttempted") then @model.get("captureLastAttempted") else true
 
       items        = @model.get("items").join " "
       timer        = @model.get("timer")        || 0
