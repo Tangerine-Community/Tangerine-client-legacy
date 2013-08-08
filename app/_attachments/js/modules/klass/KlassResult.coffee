@@ -11,7 +11,7 @@ class KlassResult extends Backbone.Model
   getItemized: (options) ->
   
     if @attributes.prototype == "grid"
-      itemized = @attributes.subtestData
+      itemized = @attributes.subtestData.items
     else if @attributes.prototype == "survey"
       itemized = []
       for key, value of @attributes.subtestData
