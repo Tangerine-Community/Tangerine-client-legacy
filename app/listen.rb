@@ -4,6 +4,29 @@ require 'listen'
 
 $jsDir = File.join Dir.pwd, "_attachments", "js"
 
+class String
+  # colorization
+  def colorize(color_code)
+    "\e[#{color_code}m#{self}\e[0m"
+  end
+
+  def red
+    colorize(31)
+  end
+
+  def green
+    colorize(32)
+  end
+
+  def yellow
+    colorize(33)
+  end
+
+  def pink
+    colorize(35)
+  end
+end
+
 def push
 
   # Save current version number
@@ -21,6 +44,7 @@ def push
 end
 
 def notify( type, message )
+  printf "\a"
   unless `which osascript`.empty? # on a mac?
     message = /\.coffee:(.*?)$/.match(message)[1]
     notifier = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier" 
@@ -68,7 +92,7 @@ Listen.to(".") do |modified, added, removed|
       if result.index "error" 
         # Show errors
         notify("CoffeeScript Error", result.gsub(/.*error.*\/(.*\.coffee)/,"\\1"))
-        puts "\n\nCoffeescript error\n******************\n#{result}"
+        puts "\nCoffeescript error\n******************\n#{result}".red()
       end
 
     } # END of coffeescripts
@@ -79,7 +103,7 @@ Listen.to(".") do |modified, added, removed|
       result = `lessc #{match} --yui-compress > #{match}.css`
       if result.index "Error"
         notify("LESS error",result)
-        puts "\n\nLESS error\n******************\n#{result}"
+        puts "\nLESS error\n******************\n#{result}".red()
       end
     } # END of LESS
 
