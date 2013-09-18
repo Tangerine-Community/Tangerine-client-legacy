@@ -68,8 +68,8 @@ Tangerine.onSettingsLoad = ->
   Tangerine.templates = new Template "_id" : "templates"
   Tangerine.templates.fetch
     success: ->
-      Tangerine.transitionUsers ->
-        Tangerine.ensureAdmin ->
+      Tangerine.ensureAdmin ->
+        Tangerine.transitionUsers ->
           $ ->
             # Start the application
 
