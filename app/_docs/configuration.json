@@ -109,6 +109,10 @@
       {
          "name" : "Backup",
          "key" : "backup"
+      },
+      {
+         "name" : "Metadata",
+         "key" : "metadata"
       }
    ],
 
