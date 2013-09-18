@@ -68,6 +68,19 @@ class AssessmentDataEntryView extends Backbone.View
 
     @result.set "subtestData", (@subtestDataObject(view.model) for view in @views)
 
+    @result.add
+      name : "Assessment complete"
+      prototype: "complete"
+      data :
+        "comment" : "Data entry feature"
+        "end_time" : (new Date()).getTime()
+      sum :
+        correct : 1
+        incorrect : 0
+        missing : 0
+        total : 1
+      subtestId : "result"
+
     @trigger "rendered"
 
   updateCurrent: =>
