@@ -91,7 +91,7 @@ class AssessmentsMenuView extends Backbone.View
       
 
 
-    @assessments.each (assessment) => assessment.on "new", @addAssessmenet
+    @assessments.each (assessment) => assessment.on "new", @addAssessment
     @curricula.each   (curriculum) => curriculum.on "new", @addCurriculum
 
     @curriculaListView = new CurriculaListView
@@ -118,11 +118,11 @@ class AssessmentsMenuView extends Backbone.View
 
 
     containers = []
-    containers.push "<section id='curricula_container' class='CurriculaListView'></section>"
+    containers.push "<section id='curricula_container' class='CurriculaListView'></section>" if @curricula.length isnt 0
     if Tangerine.settings.get("context") is "server"
-      containers.push "<section id='klass_container' class='KlassesView'></section>"
-      containers.push "<section id='teachers_container' class='TeachersView'></section>"
-      containers.push "<section id='users_menu_container' class='UsersMenuView'></section>"
+      containers.push "<section id='klass_container' class='KlassesView'></section>"         if @klasses.length isnt 0
+      containers.push "<section id='teachers_container' class='TeachersView'></section>"     if @teachers.length isnt 0
+      containers.push "<section id='users_menu_container' class='UsersMenuView'></section>"  if @users.length isnt 0
 
 
 
@@ -213,11 +213,11 @@ class AssessmentsMenuView extends Backbone.View
     return
 
 
-  addAssessmenet: (newOne) ->
+  addAssessment: (newOne) =>
     @assessments.add newOne
-    newOne.on "new", @addAssessmenet
+    newOne.on "new", @addAssessment
 
-  addCurriculum: (newOne) ->
+  addCurriculum: (newOne) =>
     @curricula.add newOne
     newOne.on "new", @addCurriculum
 
@@ -249,7 +249,7 @@ class AssessmentsMenuView extends Backbone.View
         "_id"          : newId
         "assessmentId" : newId
         "archived"     : false
-      callback = @addAssessmenet
+      callback = @addAssessment
     else if newType == "curriculum"
       newObject = new Curriculum
         "name"         : name
