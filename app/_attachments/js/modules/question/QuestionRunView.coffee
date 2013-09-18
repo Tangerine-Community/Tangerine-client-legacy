@@ -137,6 +137,13 @@ class QuestionRunView extends Backbone.View
   setHint: (hint) =>
     @$el.find(".hint").html hint
 
+  setName: ( newName = @model.get('name') ) =>
+    @model.set("name", newName)
+    @name = @model.escape("name").replace /[^A-Za-z0-9_]/g, "-"
+
+  getName: =>
+    @model.get("name")
+
   render: ->
 
     @$el.attr "id", "question-#{@name}"
