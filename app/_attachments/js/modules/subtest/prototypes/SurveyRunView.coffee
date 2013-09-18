@@ -120,12 +120,17 @@ class SurveyRunView extends Backbone.View
       $next.show()
 
   updateExecuteReady: (ready) =>
+
     @executeReady = ready
+
     return if not @triggerShowList?
+
     if @triggerShowList.length > 0
       for index in @triggerShowList
         @questionViews[index]?.trigger "show"
       @triggerShowList = []
+
+    @updateSkipLogic() if @executeReady
 
 
   updateQuestionVisibility: ->
@@ -379,7 +384,6 @@ class SurveyRunView extends Backbone.View
     @renderCount++
     if @renderCount == @questions.length
       @trigger "ready"
-      @updateSkipLogic()
     @trigger "subRendered"
 
   onClose:->
