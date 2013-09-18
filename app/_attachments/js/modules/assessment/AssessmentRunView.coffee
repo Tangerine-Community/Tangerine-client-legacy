@@ -111,27 +111,33 @@ class AssessmentRunView extends Backbone.View
         @resetNext()
 
   next: =>
+
     if @abortAssessment == true
+      @saveResult( currentView )
       @resetNext()
       return 
 
     currentView = @subtestViews[@orderMap[@index]]
     if currentView.isValid()
-      subtestResult = currentView.getResult()
-
-      @result.add
-        name        : currentView.model.get "name"
-        data        : subtestResult.body
-        subtestHash : subtestResult.meta.hash
-        subtestId   : currentView.model.id
-        prototype   : currentView.model.get "prototype"
-        sum         : currentView.getSum()
-      ,
-        success : =>
-          @resetNext()
+      @saveResult( currentView )
     else
       currentView.showErrors()
-  
+
+  saveResult: ( currentView ) =>
+
+    subtestResult = currentView.getResult()
+
+    @result.add
+      name        : currentView.model.get "name"
+      data        : subtestResult.body
+      subtestHash : subtestResult.meta.hash
+      subtestId   : currentView.model.id
+      prototype   : currentView.model.get "prototype"
+      sum         : currentView.getSum()
+    ,
+      success : =>
+        @resetNext()
+
   resetNext: =>
     @rendered.subtest = false
     @rendered.assessment = false
