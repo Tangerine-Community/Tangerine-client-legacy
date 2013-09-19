@@ -45,7 +45,7 @@ Backbone.Model.prototype.toHash = ->
 # by default all models will save a timestamp and hash of significant attributes
 Backbone.Model.prototype.beforeSave = ->
   @set 
-    "editedBy" : Tangerine?.user?.name || "unknown"
+    "editedBy" : Tangerine?.user?.name() || "unknown"
     "updated" : (new Date()).toString()
     "hash" : @toHash()
     "fromInstanceId" : Tangerine.settings.getString("instanceId")
