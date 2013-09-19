@@ -103,6 +103,7 @@ class AssessmentsMenuView extends Backbone.View
 
     @usersMenuView = new UsersMenuView
 
+
   render: =>
     
     isAdmin = Tangerine.user.isAdmin
@@ -122,7 +123,7 @@ class AssessmentsMenuView extends Backbone.View
     if Tangerine.settings.get("context") is "server"
       containers.push "<section id='klass_container' class='KlassesView'></section>"         if @klasses.length isnt 0
       containers.push "<section id='teachers_container' class='TeachersView'></section>"     if @teachers.length isnt 0
-      containers.push "<section id='users_menu_container' class='UsersMenuView'></section>"  if @users.length isnt 0
+      containers.push "<section id='users_menu_container' class='UsersMenuView'></section>"
 
 
 
