@@ -31,13 +31,18 @@ class AssessmentRunView extends Backbone.View
 
       # get or initialize sequence places
       places = Tangerine.settings.get("sequencePlaces")
-      places = {} unless index?
+      places = {} unless places?
       places[@model.id] = 0 unless places[@model.id]?
       
-      places[@model.id] += if places[@model.id] < sequences.length then -sequences.length else 1
+      if places[@model.id] < sequences.length
+        places[@model.id]++
+      else
+        places[@model.id] = 0
+
       Tangerine.settings.save("sequencePlaces", places)
-      @orderMap = sequences[index]
-      @orderMap[@orderMap.length] = @orderMap.length
+
+      @orderMap = sequences[places[@model.id]]
+      @orderMap[@orderMap.length] = @subtestViews.length
     else
       for i in [0..@subtestViews.length]
         @orderMap[i] = i
