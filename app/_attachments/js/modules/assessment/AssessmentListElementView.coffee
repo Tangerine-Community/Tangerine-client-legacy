@@ -4,9 +4,23 @@ class AssessmentListElementView extends Backbone.View
 
   tagName : "li"
 
-  events:
-    'click .assessment_menu_toggle'    : 'assessmentMenuToggle'
-    'click .admin_name'                : 'assessmentMenuToggle'
+  events: if Modernizr.touch then {
+    'touchstart .assessment_menu_toggle'       : 'assessmentMenuToggle'
+    'touchstart .admin_name'                   : 'assessmentMenuToggle'
+    'touchstart .sp_assessment_delete'         : 'assessmentDeleteToggle'
+    'touchstart .sp_assessment_delete_cancel'  : 'assessmentDeleteToggle'
+    'touchstart .sp_assessment_delete_confirm' : 'assessmentDelete'
+    'touchstart .sp_copy'                      : 'copyTo'
+    'touchstart .sp_duplicate'                 : 'duplicate'
+    'touchstart .sp_update'                    : 'update'
+    'touchstart .sp_print'                     : 'togglePrint'
+    'touchstart .archive'                      : 'archive'
+    'touchstart a' : 'respondToLink'
+
+    'change #print_format'             : 'print'
+  } else {
+    'click .assessment_menu_toggle'       : 'assessmentMenuToggle'
+    'click .admin_name'                   : 'assessmentMenuToggle'
     'click .sp_assessment_delete'         : 'assessmentDeleteToggle'
     'click .sp_assessment_delete_cancel'  : 'assessmentDeleteToggle'
     'click .sp_assessment_delete_confirm' : 'assessmentDelete'
@@ -14,9 +28,10 @@ class AssessmentListElementView extends Backbone.View
     'click .sp_duplicate'                 : 'duplicate'
     'click .sp_update'                    : 'update'
     'click .sp_print'                     : 'togglePrint'
-    'click .archive'                   : 'archive'
+    'click .archive'                      : 'archive'
 
     'change #print_format'             : 'print'
+  }
 
   blankResultCount: "-"
 
@@ -31,6 +46,12 @@ class AssessmentListElementView extends Backbone.View
 
     # switches and things
     @isAdmin     = Tangerine.user.isAdmin()
+
+  respondToLink: (event) ->
+    $target = $(event.target)
+    route   = $target.attr("href")
+    Tangerine.router.navigate(route, true)
+
 
   duplicate: ->
     newName = "Copy of " + @model.get("name")
@@ -151,7 +172,7 @@ class AssessmentListElementView extends Backbone.View
     adminResultCount = "<label class='result_count small_grey no_help' title='Result count. Click to update.'>Results <b>#{@resultCount}</b></label>"
     resultCount      = "<span class='result_count no_help'>Results <b>#{@resultCount}</b></span>"
     selected         = " selected='selected'"
-      
+
     deleteConfirm   = "<span class='sp_assessment_delete_confirm confirmation'><div class='menu_box'>Confirm <button class='sp_assessment_delete_yes command_red'>Delete</button> <button class='sp_assessment_delete_cancel command'>Cancel</button></div></span>"
 
     printSelector   = "
