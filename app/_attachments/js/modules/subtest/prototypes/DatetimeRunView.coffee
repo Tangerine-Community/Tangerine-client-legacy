@@ -21,7 +21,7 @@ class DatetimeRunView extends Backbone.View
         <table>
           <tr>
             <td><label for='year'>#{t('year')}</label><input id='year' name='year' value='#{year}'></td>
-            <td><label for='month'>#{t('month')}</label><select id='month' name='month' value='#{month}'>#{("<option value='#{m}' #{("selected='selected'" if m is month) || ''}>#{m.titleize()} </option>" for m in months).join('')}</select></td>
+            <td><label for='month'>#{t('month')}</label><br><select id='month' name='month' value='#{month}'>#{("<option value='#{m}' #{("selected='selected'" if m is month) || ''}>#{m.titleize()} </option>" for m in months).join('')}</select></td>
             <td><label for='day'>#{t('day')}</label><input id='day' type='day' name='day' value='#{day}'></td>
           </tr>
           <tr>
