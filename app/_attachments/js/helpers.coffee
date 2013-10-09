@@ -508,7 +508,10 @@ class Utils
       , 1000
 
   @background: (color) ->
-    $("#content_wrapper").css "backgroundColor" : color
+    if color?
+      $("#content_wrapper").css "backgroundColor" : color
+    else
+      $("#content_wrapper").css "backgroundColor"
 
   # Retrieves GET variables
   # http://ejohn.org/blog/search-and-dont-replace/
