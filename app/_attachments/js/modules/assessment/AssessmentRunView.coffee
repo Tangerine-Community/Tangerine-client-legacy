@@ -34,7 +34,7 @@ class AssessmentRunView extends Backbone.View
       places = {} unless places?
       places[@model.id] = 0 unless places[@model.id]?
       
-      if places[@model.id] < sequences.length
+      if places[@model.id] < sequences.length - 1
         places[@model.id]++
       else
         places[@model.id] = 0
