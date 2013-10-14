@@ -117,7 +117,8 @@ class AssessmentRunView extends Backbone.View
 
   next: =>
 
-    if @abortAssessment == true
+    if @abortAssessment
+      currentView = @subtestViews[@orderMap[@index]]
       @saveResult( currentView )
       @resetNext()
       return 
