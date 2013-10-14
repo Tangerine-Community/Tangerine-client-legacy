@@ -223,6 +223,7 @@ class AssessmentListElementView extends Backbone.View
         #{@ul 
           cssClass: "assessment_menu"
           links : ["run","results","edit","sync","print"]
+          other : @spriteEvents("li", "duplicate", "assessment_delete") + downloadKey
         }
         <div class='sub_menus'>
           #{deleteConfirm}
