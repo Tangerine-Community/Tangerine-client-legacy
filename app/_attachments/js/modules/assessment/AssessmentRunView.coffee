@@ -51,13 +51,13 @@ class AssessmentRunView extends Backbone.View
       assessmentId   : @model.id
       assessmentName : @model.get "name"
       blank          : true
-    
+
     if hasSequences then @result.set("order_map" : @orderMap)
-      
+
     resultView = new ResultView
-        model          : @result
-        assessment     : @model
-        assessmentView : @
+      model          : @result
+      assessment     : @model
+      assessmentView : @
     @subtestViews.push resultView
 
   render: ->
@@ -120,7 +120,6 @@ class AssessmentRunView extends Backbone.View
     if @abortAssessment
       currentView = @subtestViews[@orderMap[@index]]
       @saveResult( currentView )
-      @resetNext()
       return 
 
     currentView = @subtestViews[@orderMap[@index]]
