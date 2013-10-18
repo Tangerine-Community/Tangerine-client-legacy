@@ -198,7 +198,7 @@ class GridRunView extends Backbone.View
       return
     if mode?
       @mode = mode
-      @$el.find(".grid_mode [value=#{mode}]").attr("checked", "checked")
+      @$el.find("input.grid_mode[value=#{mode}]").attr("checked", "checked")
       @$el.find(".grid_mode_wrapper").buttonset("refresh").click @updateMode
       return
     @mode = $(event.target).val() unless @autostopped
