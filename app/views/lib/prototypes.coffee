@@ -35,7 +35,7 @@ pairsObservation = ( subtest ) ->
         row.push pair("#{surveyVariable}_#{i+1}", exportValue(surveyValue))
   return row
 
-pairsGrid = ( subtest ) ->
+pairsGrid = ( subtest, isClass ) ->
   row = []
 
   variableName = subtest.data.variable_name
@@ -46,7 +46,12 @@ pairsGrid = ( subtest ) ->
   row.push pair("#{variableName}_time_intermediate_captured", subtest.data.time_intermediate_captured)
 
   for item, i in subtest.data.items
-    row.push pair("#{variableName}#{i+1}", exportValue(item.itemResult))
+    if isClass == true
+      letterLabel = "#{i+1}_#{item.itemLabel}"
+    else
+      letterLabel = "#{variableName}#{i+1}"
+
+    row.push pair(letterLabel, exportValue(item.itemResult))
 
   return row
 

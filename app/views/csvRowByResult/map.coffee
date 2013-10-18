@@ -124,7 +124,7 @@
       datetimeCount++
 
     else if prototype == "grid"
-      row = row.concat pairsGrid subtest
+      row = row.concat pairsGrid subtest, isClassResult
 
     else if prototype == "survey"
       row = row.concat pairsSurvey subtest
@@ -136,7 +136,7 @@
       row = row.concat pairsGps subtest
 
     else if prototype == "complete"
-      row.concat [
+      row = row.concat [
         pair("additional_comments", subtest.data.comment)
         pair("end_time"           , subtest.data.end_time)
       ]
@@ -149,6 +149,4 @@
 
   bySubtest.push "timestamps" : [ pair( "timestamps", timestamps.join(',') )]
 
-  log "OUTPUTTING"
-  log JSON.stringify(bySubtest)
   emit(keyId, bySubtest)
