@@ -63,7 +63,7 @@ class Settings extends Backbone.Model
     @location =
       local:
         url : "#{local.host}:#{port}/"
-        db  : "/#{local.dbName}/"
+        db  : "/#{Tangerine.db_name}/"
       trunk:
         url : "http://#{trunk.host}/"
         db  : "http://#{trunk.host}/#{trunk.dbName}/"
@@ -75,8 +75,8 @@ class Settings extends Backbone.Model
         db  : "http://#{update.host}/#{update.dbName}/"
         target : update.target
       subnet : 
-        url : ("http://#{subnetBase}#{@ipRange[x]}:#{port}/"                 for x in [0..255])
-        db  : ("http://#{subnetBase}#{@ipRange[x]}:#{port}/#{local.dbName}/" for x in [0..255])
+        url : ("http://#{subnetBase}#{@ipRange[x]}:#{port}/"                      for x in [0..255])
+        db  : ("http://#{subnetBase}#{@ipRange[x]}:#{port}/#{Tangerine.db_name}/" for x in [0..255])
       satellite : 
         url : ("#{subnetBase}#{x}:#{port}/"                       for x in [0..255])
         db  : ("#{subnetBase}#{x}:#{port}/#{prefix}#{groupName}/" for x in [0..255])
@@ -151,7 +151,7 @@ class Settings extends Backbone.Model
   # these two are a little weird. I feel like subnetAddress should be a class with properties IP, URL and index
   urlSubnet: ( ip ) ->
     port   = @config.get "port"
-    dbName = @config.get("local").dbName
+    dbName = Tangerine.db_name
 
     "http://#{ip}:#{port}/#{dbName}"
 

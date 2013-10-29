@@ -2,7 +2,6 @@
    "_id" : "configuration",
 
    "local" : {
-      "dbName" : "tangerine",
       "login"  : "localuser:localpass",
       "host"   : "http://localhost"
    },
