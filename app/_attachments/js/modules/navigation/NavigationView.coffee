@@ -106,8 +106,12 @@ class NavigationView extends Backbone.View
     "
 
     # Spin the logo on ajax calls
-    $("body").ajaxStart -> $("#corner_logo").attr "src", "images/spin_orange.gif"
-    $("body").ajaxStop ->  $("#corner_logo").attr "src", "images/corner_logo.png"
+    $(document).ajaxStart -> 
+      if $("#corner_logo").attr("src") isnt "images/spin_orange.gif"
+        $("#corner_logo").attr "src", "images/spin_orange.gif"
+    $(document).ajaxStop ->
+      if $("#corner_logo").attr("src") isnt "images/corner_logo.png"
+        $("#corner_logo").attr "src", "images/corner_logo.png"
 
   setStudent: ( id ) ->
     if id == ""
