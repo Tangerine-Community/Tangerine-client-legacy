@@ -109,9 +109,9 @@ class AssessmentSyncView extends Backbone.View
     Tangerine.user.ghostLogin(@user, @pass)
 
   verifyTimeout: =>
-
     @$el.find("#connection").html @loginButton(status:"<br>Failed. Check connection or try again.")
     @$el.find(".loads").addClass("confirmation")
+    @removeCredentials()
 
   keep: (event) ->
 
@@ -153,27 +153,20 @@ class AssessmentSyncView extends Backbone.View
 
   initialize: (options) ->
 
-    @assessment = options.assessment
+    @readyTemplates()
+
     @docList = []
+
+    @assessment = options.assessment
 
     @dKey = @assessment.id.substr(-5, 5)
 
     @connectionVerified = false
 
-    @timer = setTimeout @verifyLogout, 20 * 1000
+    @timer = setTimeout @verifyTimeout, 20 * 1000
 
     @ensureCredentials()
 
-    $.ajax 
-      url: Tangerine.settings.urlView("group", "byDKey").replace(/\/\/(.*)@/,"//#{@user}:#{@pass}@")
-      dataType: "jsonp"
-      data: keys: ["testtest"]
-      timeout: 15000
-      success: => 
-        clearTimeout @timer
-        @onVerifySuccess()
-
-    @readyTemplates()
 
   ensureCredentials: =>
     if Tangerine.settings.get("server_user") && Tangerine.settings.get("server_pass")
@@ -219,6 +212,21 @@ class AssessmentSyncView extends Backbone.View
     @updateConflicts()
 
     @trigger "rendered"
+
+  afterRender: ->
+    if @user and @pass
+      $.ajax 
+        url: Tangerine.settings.urlView("group", "byDKey").replace(/\/\/(.*)@/,"//#{@user}:#{@pass}@")
+        dataType: "jsonp"
+        data: keys: ["testtest"]
+        timeout: 15000
+        success: => 
+          clearTimeout @timer
+          @onVerifySuccess()
+    else
+      clearTimeout @timer
+      @verifyTimeout()
+
 
   updateConflicts: ->
 
@@ -311,6 +319,8 @@ class AssessmentSyncView extends Backbone.View
 
   onClose: ->
     clearTimeout @timer
+
+  removeCredentials: ->
     Tangerine.settings.unset("server_user")
     Tangerine.settings.unset("server_pass")
     Tangerine.settings.save()
