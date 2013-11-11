@@ -284,7 +284,7 @@ class KlassesView extends Backbone.View
     " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") isnt "server"
 
     curriculaButton = "
-      <button class='command curricula'>#{t('all curricula')}</button>
+      <button class='command klass_curricula'>#{t('all curricula')}</button>
     " if Tangerine.settings.get("context") isnt "server"
 
     @$el.html "
