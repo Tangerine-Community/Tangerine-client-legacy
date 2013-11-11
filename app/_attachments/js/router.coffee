@@ -94,6 +94,74 @@ class Router extends Backbone.Router
 
   landing: ->
 
+    workflow = new Workflow
+      "_id" : "demo"
+      "children": [
+        {
+          "_id"      : "step0"
+          "type"     : "login"
+          "userType" : "tac"
+        },
+        {
+          "_id"       : "step2"
+          "type"      : "new"
+          "viewClass" : NewKlassView
+          "viewOptions" :
+            "selector" : true
+        },
+        {
+          "_id"     : "step3"
+          "type"    : "assessment"
+          "typesId" : "assessment3"
+          "model" : {
+            "_id" : "assessment3"
+            "name" : "classroom inventory"
+            "subtests": []
+          }
+        },
+        {
+          "_id"     : "step4"
+          "type"    : "assessment"
+          "typesId" : "assessment4"
+          "model" : {
+            "_id" : "assessment4"
+            "name" : "Observation A"
+            "subtests": []
+          }
+        },
+        {
+          "_id"     : "step5"
+          "type"    : "curriculum"
+          "typesId" : "curriculum4"
+          "model" : {
+            "_id" : "curriculum4"
+            "name" : "Curriculum"
+            "subtests": []
+          }
+        },
+        {
+          "_id"     : "step6"
+          "type"    : "Observation B"
+          "typesId" : "assessment5"
+          "model" : {
+            "_id" : "observationB"
+            "name" : "Curriculum"
+            "subtests": []
+          }
+        },
+
+      ]
+
+    workflow.updateCollection()
+
+    view = new WorkflowRunView
+      workflow: workflow
+
+    vm.show view
+
+
+    return
+
     Tangerine.settings.contextualize
       server: ->
         if ~String(window.location.href).indexOf("tangerine/_design") # in main group?
@@ -388,19 +456,22 @@ class Router extends Backbone.Router
         vm.show view
 
   assessments: ->
-      Tangerine.user.verify
-        isAuthenticated: ->
-          Utils.loadCollections
-            collections: [
-              "Klasses"
-              "Teachers"
-              "Curricula"
-              "Assessments"
-              "TabletUsers"
-            ]
-            complete: (options) ->
-              options.users = options.tabletUsers
-              vm.show new AssessmentsMenuView options
+    Tangerine.user.verify
+      isAuthenticated: ->
+        collections = [
+          "Klasses"
+          "Teachers"
+          "Curricula"
+          "Assessments"
+        ]
+
+        collections.push if "server" == Tangerine.settings.get("context") then "Users" else "TabletUsers"
+
+        Utils.loadCollections
+          collections: collections
+          complete: (options) ->
+            options.users = options.tabletUsers || options.users
+            vm.show new AssessmentsMenuView options
 
   editId: (id) ->
     id = Utils.cleanURL id
@@ -530,7 +601,7 @@ class Router extends Backbone.Router
         assessment.fetch
           success :  ->
             filename = assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
-            document.location = "/" + Tangerine.dbName + "/_design/" + Tangerine.designDoc + "/_list/csv/csvRowByResult?key=\"#{id}\"&filename=#{filename}"
+            document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.designDoc + "/_list/csv/csvRowByResult?key=\"#{id}\"&filename=#{filename}"
         
       isUser: ->
         errView = new ErrorView
