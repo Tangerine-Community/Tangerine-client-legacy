@@ -150,7 +150,7 @@ class QuestionRunView extends Backbone.View
 
     if not @notAsked
 
-      html = "<div class='error_message'></div><div class='prompt' #{@fontStyle || ""}>#{@model.get 'prompt'}</div>
+      html = "<div class='error_message'></div><label class='prompt' for='#{@cid}_#{@name}'' #{@fontStyle || ""}>#{@model.get 'prompt'}</label>
       <div class='hint' #{@fontStyle || ""}>#{(@model.get('hint') || "")}</div>"
 
       if @type == "open"
