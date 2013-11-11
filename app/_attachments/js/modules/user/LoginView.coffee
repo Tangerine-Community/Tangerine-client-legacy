@@ -36,10 +36,8 @@ class LoginView extends Backbone.View
     $("#footer").hide()
 
   checkNewName: (event) ->
-    console.log "checking new name"
     $target = $(event.target)
     name = ( $target.val().toLowerCase() || '' )
-    console.log "name: #{name}"
     if name.length > 4 and name in @users.pluck("name")
       @nameError(@text['error_name_taken'])
     else
