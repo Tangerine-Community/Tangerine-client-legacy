@@ -987,7 +987,12 @@
     this.cid = _.uniqueId('view');
     options || (options = {});
     _.extend(this, _.pick(options, viewOptions));
+
     this._ensureElement();
+
+    // JOSH added this to make it add options to the view like previous versions of backbone
+    this.options = options;
+
     this.initialize.apply(this, arguments);
     this.delegateEvents();
   };

@@ -54,12 +54,229 @@ Backbone.Model.prototype.beforeSave = ->
 # This series of functions returns properties with default values if no property is found
 # @gotcha be mindful of the default "blank" values set here
 #
-Backbone.Model.prototype.getNumber =        (key) -> return if @has(key) then parseInt(@get(key)) else 0
-Backbone.Model.prototype.getArray =         (key) -> return if @has(key) then @get(key)           else []
-Backbone.Model.prototype.getString =        (key) -> return if @has(key) then @get(key)           else ""
-Backbone.Model.prototype.getEscapedString = (key) -> return if @has(key) then @escape(key)        else ""
-Backbone.Model.prototype.getBoolean =       (key) -> return if @has(key) then (@get(key) == true or @get(key) == 'true')
+Backbone.Model.prototype.getNumber =        (key, defaultValue = 0 )    -> return if @has(key) then parseInt(@get(key)) else defaultValue
+Backbone.Model.prototype.getArray =         (key, defaultValue = [])    -> return if @has(key) then @get(key)           else defaultValue
+Backbone.Model.prototype.getString =        (key, defaultValue = "")    -> return if @has(key) then @get(key)           else defaultValue
+Backbone.Model.prototype.getEscapedString = (key, defaultValue = "")    -> return if @has(key) then @escape(key)        else defaultValue
+Backbone.Model.prototype.getBoolean =       (key, defaultValue = false) -> return if @has(key) then (@get(key) == true or @get(key) == 'true') else defaultValue
 
+Backbone.Model.prototype.getAttachments = -> 
+  result = []
+
+  if @has("_attachments")
+    for filename, attachment of @get("_attachments")
+      splitName = filename.split(".")
+      result.push(
+        "filename"     : filename
+        "itemType"     : splitName[0]
+        "resourceType" : splitName[1]
+        "size"         : attachment.length
+        "digest"       : attachment.digest
+        "contentType"  : attachment.content_type
+        "revpos"       : attachment.revpos
+        "stub"         : attachment.stub
+      )
+  return result
+
+Backbone.Model.prototype.fetchAttachment = (options) ->
+  $.ajax
+    url      : "/#{Tangerine.db_name}/#{@id}/#{options.filename}"
+    success  : options.success  || $.noop
+    error    : options.error    || $.noop
+    complete : options.complete || $.noop
+
+
+class Backbone.EditView extends Backbone.View
+
+  events :
+    "click .edit_in_place" : "editInPlace"
+    "focusout .editing"    : "editing"
+    "keyup    .editing"    : "editing"
+    "keydown  .editing"    : "editing"
+
+  getEditable: (model, prop, name="Value", defaultValue = "none") =>
+
+    @htmlGenCatelog = {} unless @htmlGenCatelog?
+    @htmlGenCatelog[model.id] = {} unless @htmlGenCatelog[model.id]?
+    @htmlGenCatelog[model.id][prop.key] = htmlFunction = do (model, prop, name, defaultValue) -> 
+      -> 
+
+        key    = prop.key
+        escape = prop.escape
+
+        # cook the value
+        value = if model.has(key) then model.get(key) else defaultValue
+
+        value = _(value).escape() if escape
+        untitled = " data-untitled='true' " if value is defaultValue
+
+        # what is it
+        editOrNot   = if prop.editable && Tangerine.settings.get("context") == "server" then "class='edit_in_place'" else ""
+
+        numberOrNot = if _.isNumber(value) then "data-is-number='true'" else "data-is-number='false'" 
+
+        return "<div class='edit_in_place' id='#{model.id}-#{key}'><span data-model-id='#{model.id}' data-key='#{key}' data-value='#{value}' data-name='#{name}' #{editOrNot} #{numberOrNot} #{untitled||''}>#{value}</span></div>"
+
+    return htmlFunction()
+
+
+  editInPlace: (event) =>
+
+    return if @alreadyEditing
+    @alreadyEditing = true
+
+    # save state
+    # replace with text area
+    # on save, save and re-replace
+    $span = $(event.target)
+
+    $parent  = $span.parent()
+
+    return if $span.hasClass("editing")
+
+    guid     = Utils.guid()
+
+    key      = $span.attr("data-key")
+    name     = $span.attr("data-name")
+    isNumber = $span.attr("data-is-number") == "true"
+
+    modelId  = $span.attr("data-model-id")
+    model    = @models.get(modelId)
+
+    oldValue = model.get(key) || ""
+    oldValue = "" if $span.attr("data-untitled") == "true"
+
+    $target = $(event.target)
+    classes = ($target.attr("class") || "").replace("settings","")
+    margins = $target.css("margin")
+
+    transferVariables = "data-is-number='#{isNumber}' data-key='#{key}' data-model-id='#{modelId}' "
+
+    # sets width/height with style attribute
+    $parent.html("<textarea placeholder='#{name}' id='#{guid}' rows='#{1+oldValue.count("\n")}' #{transferVariables} class='editing #{classes}' style='margin:#{margins}' data-name='#{name}'>#{oldValue}</textarea>")
+    # style='width:#{oldWidth}px; height: #{oldHeight}px;'
+    $textarea = $("##{guid}")
+    $textarea.select()
+
+  editing: (event) =>
+
+    return false if event.which == 13 and event.type == "keyup"
+
+    $target = $(event.target)
+
+    $parent = $target.parent()
+
+    key        = $target.attr("data-key")
+    isNumber   = $target.attr("data-is-number") == "true"
+
+    modelId    = $target.attr("data-model-id")
+    name       = $target.attr("data-name")
+
+    model      = @models.get(modelId)
+    oldValue   = model.get(key)
+
+    newValue = $target.val()
+    newValue = if isNumber then parseInt(newValue) else newValue
+
+    if event.which == 27 or event.type == "focusout"
+      @$el.find("##{modelId}-#{key}").html @htmlGenCatelog[modelId][key]?()
+      @alreadyEditing = false
+      return
+
+    # act normal, unless it's an enter key on keydown
+    return true unless event.which == 13 and event.type == "keydown"
+
+    #return true if event.which == 13 and event.altKey
+    @alreadyEditing = false
+
+    # If there was a change, save it
+    if String(newValue) != String(oldValue)
+      attributes = {}
+      attributes[key] = newValue
+      model.save attributes,
+        success: =>
+          Utils.topAlert "#{name} saved"
+          @$el.find("##{modelId}-#{key}").html @htmlGenCatelog[modelId][key]?()
+        error: =>
+          alert "Please try to save again, it didn't work that time."
+          @render()
+    else
+      @$el.find("##{modelId}-#{key}").html @htmlGenCatelog[modelId][key]?()
+
+    # this ensures we do not insert a newline character when we press enter
+    return false
+
+
+
+class Backbone.ChildModel extends Backbone.Model
+
+  save: (attributes, options={}) =>
+    options.success = $.noop unless options.success?
+    options.error = $.noop unless options.error?
+    @set attributes
+    options.childSelf = @
+    @parent.childSave(options)
+
+
+class Backbone.ChildCollection extends Backbone.Collection
+
+
+class Backbone.ParentModel extends Backbone.Model
+
+  Child: null
+  ChildCollection: null
+
+  constructor: (options) ->
+    @collection = new @ChildCollection()
+    @collection.on "remove", => @updateAttributes()
+    super(options)
+
+  getLength: -> @collection.length || @attributes.children.length
+
+  fetch: (options) ->
+    oldSuccess = options.success
+    delete options.success
+    
+    options.success = (model, response, options) =>
+      childrenModels = []
+      for child in @getChildren()
+        childModel = new @Child(child)
+        childModel.parent = @
+        childrenModels.push childModel
+      @collection.reset childrenModels
+      @collection.sort()
+      oldSuccess(model, response, options)
+
+    super(options)
+
+  getChildren: ->
+    @getArray("children")
+
+  updateAttributes: ->
+    @attributes.children = []
+    for model in @collection.models
+      @attributes.children.push model.attributes
+
+  updateCollection: ->
+    @collection.reset(@attributes.children)
+
+  newChild: (attributes={}, options) =>
+    newChild = new @Child
+    newChild.set("_id", Utils.guid())
+    newChild.parent = @
+    @collection.add(newChild, options)
+    newChild.save attributes,
+      success: =>
+        
+
+  childSave: (options = {}) =>
+    oldSuccess = options.success
+    delete options.success
+    options.success = (a, b, c) =>
+      oldSuccess.apply(options.childSelf, [a, b, c])
+    @updateAttributes()
+
+    @save null, options
 
 #
 # handy jquery functions
@@ -198,6 +415,28 @@ _.indexBy = ( propertyName, objectArray ) ->
 
 
 class Utils
+
+  @readyForUpdate: ->
+    # Replicate to PouchDB data store
+
+    Tangerine.pouch = new PouchDB(Tangerine.db_name)
+
+    PouchDB.replicate "http://0.0.0.0:5984/#{Tangerine.db_name}", Tangerine.db_name,
+      complete: ->
+        $.couch.login
+          name     : "admin"
+          password : "password"
+          success: ->
+            $.ajax
+              url : "http://0.0.0.0:5984/#{Tangerine.db_name}"
+              type: "DELETE"
+              success: ->
+                Utils.midAlert "Database 'ready'"
+                $("body").empty()
+              error: (err1, err) ->
+                Utils.midAlert "Database could not be readied"
+                Utils.midAlert err
+
 
   @loadCollections : ( loadOptions ) ->
 
@@ -343,6 +582,7 @@ class Utils
     else if args.length == 0
       return Tangerine.tempData
 
+  @dataClear: -> Tangerine.tempData = {}
 
   @working: (isWorking) ->
     if isWorking
