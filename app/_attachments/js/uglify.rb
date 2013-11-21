@@ -99,6 +99,8 @@ jsFiles = [
   'modules/klass/KlassPartlyView.js',
   'modules/klass/KlassResult.js',
   'modules/klass/KlassResults.js',
+  'modules/klass/NewKlassView.js',
+
 
   'modules/subtest/KlassSubtestEditView.js',
 
@@ -137,6 +139,20 @@ jsFiles = [
   'modules/user/AccountView.js',
   'modules/user/GroupsView.js',
   'modules/user/UsersMenuView.js',
+
+
+  'modules/workflow/WorkflowStep.js',
+  'modules/workflow/WorkflowSteps.js',
+  'modules/workflow/Workflow.js',
+  'modules/workflow/Workflows.js',
+  'modules/workflow/WorkflowEditView.js',
+  'modules/workflow/WorkflowRunView.js',
+  'modules/workflow/WorkflowMenuView.js',
+
+  'modules/feedback/Critique.js',
+  'modules/feedback/Critiques.js',
+  'modules/feedback/Feedback.js',
+  'modules/feedback/FeedbackEditView.js',
 
   'modules/assessment/AssessmentPrintView.js',
   'modules/question/QuestionPrintView.js',

@@ -40,7 +40,7 @@ def push
     `./uglify.rb app`
     puts "\nCompiled\t\tapp.js\n\n"
   }
-  `couchapp push`
+  puts `couchapp push`
 end
 
 def notify( type, message )
@@ -55,7 +55,7 @@ end
 
 puts "\nGo ahead, programmer. I'm listening...\n\n"
 
-Listen.to(".") do |modified, added, removed|
+listen = Listen.to(".") do |modified, added, removed|
 
   files = modified.concat(added).concat(removed)
 
@@ -111,7 +111,17 @@ Listen.to(".") do |modified, added, removed|
     /.*\.css|.*\.js$|.*\.html$|.*\.json$/.match(file) { |match|
       # Don't trigger push for these files
       unless /version\.js|app\.js|index-dev|\/min\//.match(file)
-        puts "\nUpdating:\t\t#{match}"
+
+        libFile = /lib\//.match(file)
+        if libFile
+          puts "\nUpdating:\t\tlib.js with match"
+          Dir.chdir($jsDir) {
+            puts `./uglify.rb lib`
+          }
+        else
+          puts "\nUpdating:\t\t#{match}"
+        end
+
         push()
       end
     } # END of compiled files
@@ -119,3 +129,6 @@ Listen.to(".") do |modified, added, removed|
   } # END of each file
 
 end
+
+listen.start
+sleep

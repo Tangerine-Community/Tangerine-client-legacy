@@ -12,7 +12,7 @@ class NewKlassView extends Backbone.View
   initialize: (options) ->
     @[key] = value for key, value of options
 
-    if @selector is true
+    if true#@selector is true
       @updateSelector()
 
   updateSelector: ->
@@ -29,25 +29,37 @@ class NewKlassView extends Backbone.View
             @collection = new Klasses collection.filter @collectionFilter
             
             html = "
-              <label for='#{@cid}_klass_selector'>Select class</label>
               <select id='#{@cid}_klass_select'>
             "
             @collection.each (klass) ->
-              html += "<option value='#{klass.id}'>#{klass.get("school_name")} - #{klass.get("year")} - #{klass.get("grade")} - #{klass.get("stream")}</option>"
+              html += "<option value='#{klass.id}'>#{klass.get("schoolName")} - #{klass.get("year")} - #{klass.get("grade")} - #{klass.get("stream")}</option>"
             
-            $("#{@cid}_klass_selector").html html
+            $("##{@cid}_klass_selector").html html
 
   render: ->
-    console.log "rendering awesomely"
+    
+
+    htmlSelector = "
+      <div>
+        <h2>Select class</h2>
+        <div id='#{@cid}_klass_selector'></div>
+      </div>
+      <span class='centered'>or</span>
+    "
+
 
     curriculaOptionList = "<option data-id='_none' disabled='disabled' selected='selected'>#{t('select a curriculum')}</option>"
     for curricula in @curricula.models
       curriculaOptionList += "<option data-id='#{curricula.id}'>#{curricula.get 'name'}</option>"
 
+    controls = "
+      <button class='command klass_save'>Save</button><button class='command klass_cancel'>Cancel</button>
+    "
 
     @$el.html "
-      <div> 
-        <div id='#{@cid}_klass_selector'></div>
+      #{htmlSelector || ''}
+      <div>
+        <h2>Create new class</h2>
         <div class='label_value'>
           <label for='school_name'>School name</label>
           <input id='school_name'>
@@ -68,7 +80,7 @@ class NewKlassView extends Backbone.View
           <label for='curriculum'>Curiculum</label><br>
           <select id='curriculum'>#{curriculaOptionList}</select>
         </div>
-        <button class='command klass_save'>Save</button><button class='command klass_cancel'>Cancel</button>
+        #{controls||''}
       </div>
     "
 
