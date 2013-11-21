@@ -1115,6 +1115,7 @@ ul.assessment_list
   font-size: @h2;
 }
 
+
 /*
  *  CurriculumListElementView
  */
@@ -1927,8 +1928,13 @@ label.no_help
 .edit_in_place
 {
   cursor: pointer;
-
 }
+
+.edit_in_place span
+{
+  display: block;
+}
+
 
 .editing
 {
@@ -2195,7 +2201,22 @@ body[rtl]
       vertical-align: text-top;
     }
   }
+
+  input[type='file']
+  {
+    padding: 0 !important;
+    border: 0;
+  }
+
+  .file_box
+  {
+    .border-radius(5px);
+    padding: 5px;
+    border: 2px lightgrey solid;
+  }
+
 }
+
 
 /*
  * Users Menu View 
