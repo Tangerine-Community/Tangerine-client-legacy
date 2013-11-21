@@ -1,4 +1,4 @@
-#! /usr/bin/ruby
+#!/usr/bin/env ruby
 
 require 'uglifier'
 require 'pathname'
@@ -19,9 +19,9 @@ ARGV.each { |arg|
 
 
 # TODO test to see if we can use a glob for modules/* to make this automatic
-# I don't think we have any code that needs to be run in order, but don't do 
+# I don't think we have any code that needs to be run in order, but don't do
 # make this change until we can do regression tests
-jsFiles = [ 
+jsFiles = [
   'helpers.js',
 
   'modules/button/ButtonView.js',
@@ -235,11 +235,11 @@ if $options[:make_app]
   for path in jsFiles
     puts "reading #{path}"
     path = File.join(Dir.pwd, "min", Pathname.new(path).basename.to_s.gsub(".js",".min.js"))
-    app += File.read path 
+    app += File.read path
 
   end
 
-  File.open( "app.js", 'w' ) { |f| 
+  File.open( "app.js", 'w' ) { |f|
     puts "writing app.js"
     f.write( app )
   }
@@ -262,8 +262,8 @@ if $options[:make_lib]
     lib += File.read(path)
   end
 
-  File.open( "lib.js", 'w' ) { |f| 
+  File.open( "lib.js", 'w' ) { |f|
     puts "writing lib.js"
-    f.write lib 
+    f.write lib
   }
 end
