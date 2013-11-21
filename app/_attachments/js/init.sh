@@ -11,6 +11,7 @@ rm lib.js app.js
 ./uglify.rb `ls *.js`
 ./uglify.rb lib
 ./uglify.rb app
+./uglify.rb dev
 
 coffee -bc `find ../../views -name "*.coffee"`
 coffee -bc `find ../../lists -name "*.coffee"`
