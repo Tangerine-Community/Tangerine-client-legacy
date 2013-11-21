@@ -14,6 +14,13 @@ class Router extends Backbone.Router
 
     'logs' : 'logs'
 
+    # Tutor
+
+    'workflow/edit/:id' : 'workflowEdit'
+    'workflow/run/:id'  : 'workflowRun'
+
+    'feedback/edit/:id' : 'feedbackEdit'
+
     # Class
     'class'          : 'klass'
     'class/edit/:id' : 'klassEdit'
@@ -92,75 +99,32 @@ class Router extends Backbone.Router
     view.options = reportViewOptions
     vm.show view
 
+  workflowEdit: ( workflowId ) ->
+    workflow = new Workflow "_id" : workflowId
+    workflow.fetch
+      success: ->
+        view = new WorkflowEditView workflow : workflow
+        vm.show view
+
+  feedbackEdit: ( feedbackId ) ->
+    feedback = new Feedback "_id" : feedbackId
+    feedback.fetch
+      success: ->
+        view = new FeedbackEditView feedback : feedback
+        vm.show view
+
+  workflowRun: ( workflowId ) ->
+    workflow = new Workflow "_id" : workflowId
+    workflow.fetch
+      success: ->
+        workflow.updateCollection()
+        view = new WorkflowRunView
+          workflow: workflow
+        vm.show view
+
+
+
   landing: ->
-
-    workflow = new Workflow
-      "_id" : "demo"
-      "children": [
-        {
-          "_id"      : "step0"
-          "type"     : "login"
-          "userType" : "tac"
-        },
-        {
-          "_id"       : "step2"
-          "type"      : "new"
-          "viewClass" : NewKlassView
-          "viewOptions" :
-            "selector" : true
-        },
-        {
-          "_id"     : "step3"
-          "type"    : "assessment"
-          "typesId" : "assessment3"
-          "model" : {
-            "_id" : "assessment3"
-            "name" : "classroom inventory"
-            "subtests": []
-          }
-        },
-        {
-          "_id"     : "step4"
-          "type"    : "assessment"
-          "typesId" : "assessment4"
-          "model" : {
-            "_id" : "assessment4"
-            "name" : "Observation A"
-            "subtests": []
-          }
-        },
-        {
-          "_id"     : "step5"
-          "type"    : "curriculum"
-          "typesId" : "curriculum4"
-          "model" : {
-            "_id" : "curriculum4"
-            "name" : "Curriculum"
-            "subtests": []
-          }
-        },
-        {
-          "_id"     : "step6"
-          "type"    : "Observation B"
-          "typesId" : "assessment5"
-          "model" : {
-            "_id" : "observationB"
-            "name" : "Curriculum"
-            "subtests": []
-          }
-        },
-
-      ]
-
-    workflow.updateCollection()
-
-    view = new WorkflowRunView
-      workflow: workflow
-
-    vm.show view
-
-
-    return
 
     Tangerine.settings.contextualize
       server: ->
@@ -463,6 +427,7 @@ class Router extends Backbone.Router
           "Teachers"
           "Curricula"
           "Assessments"
+          "Workflows"
         ]
 
         collections.push if "server" == Tangerine.settings.get("context") then "Users" else "TabletUsers"
