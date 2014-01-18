@@ -3,7 +3,7 @@ class Results extends Backbone.Collection
   url : "result"
   model : Result
   db:
-    view: "resultsByAssessmentId"
+    view: "results"
 
   comparator: (model) ->
     model.get('start_time') || 0

@@ -1,7 +1,8 @@
 class Critique extends Backbone.ChildModel
 
-  initialize: ( options ) ->
+  url: "critique"
 
+  initialize: ->
 
-
-
+  shouldShowNotes: ->
+    @getString("showNotes") == "true" or @getString("showNotes") == true

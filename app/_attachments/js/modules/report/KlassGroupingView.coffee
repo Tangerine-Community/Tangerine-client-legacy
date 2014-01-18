@@ -39,9 +39,11 @@ class KlassGroupingView extends Backbone.View
 
   initialize: ( options ) -> 
 
-    @results = options.results
-    @subtests = options.subtests
-    @students = options.students
+    @results    = options.results
+    @subtests   = options.subtests
+    @students   = options.students
+    @curriculum = options.curriculum
+    @previousSubtests = options.previousSubtests
 
     @selected = {}
     
@@ -178,11 +180,55 @@ class KlassGroupingView extends Backbone.View
       warningsHTML += '
       <section>
         <p>Refer to the file “Kiswahili Wordlists” on your tablet for a list of additional words that may be useful for such group-based activities or practice for students performing in the “poor” or “concerning” category.</p>
+        
+        <p>Here are some practice words that include relevant letters.</p>
+
+        <p id="feedback">Loading feedback.<br><img src="images/loading.gif" class="loading"></p>
         <p>For the students to watch – consider also communicating with parents for extra practice at home.</p>
         <p>Identify items these students need further practice on by selecting their name in the grouping report to see their performance on each item.</p>
         <p>Give parents some help: Write out on a piece of paper the letters for them to practice with their child; or copy applicable words from the “Kiswahili Wordlists” that contain the letters for the child to practice.</p>
       </section>
       '
+
+      # if a word list for this type exists, use it to provide practice
+      lettersKnown = []
+      for subtest in @previousSubtests
+
+        subtestBefore = subtest.get("part")     <= @subtest.get("part")
+        rightItemType = subtest.get("itemType") == @subtest.get("itemType")
+        rightReport   = subtest.get("reportType") == @subtest.get("reportType")
+
+        if subtestBefore and rightItemType and rightReport
+          oldLetters = lettersKnown.slice(0)
+          for item in subtest.get "items"
+            lettersKnown.push(item.toLowerCase()) unless ~lettersKnown.indexOf(item.toLowerCase())
+
+
+      console.log oldLetters
+      console.log lettersKnown
+
+      for attachment in @curriculum.getAttachments()
+
+        hasItemType = attachment["itemType"] == @subtest.get("itemType")
+        hasWordList = attachment["resourceType"] == "words"
+        if hasWordList and hasWordList
+          @curriculum.fetchAttachment
+            filename: attachment['filename']
+            success: (data) ->
+              window.wordFinder = new WordFinder
+                "words" : data
+              console.log "got here"
+              wordFinder.findWords(lettersKnown)
+              # 
+              #
+              allWords = wordFinder.findWords(lettersKnown)
+              oldWords = wordFinder.findWords(oldLetters)
+
+              console.log allWords
+              console.log oldWords
+
+              words = allWords.filter (el) -> !~oldWords.indexOf(el)
+              $("#feedback").html(words.join(", "))
 
 
 
@@ -278,3 +324,103 @@ class KlassGroupingView extends Backbone.View
   
   # 0-indexed quartile
   getQuartile: (percentile) -> Math.round ((percentile / 100) * 3)
+
+
+class WordFinder
+
+  constructor: (options) ->
+
+    @wordTree = {}
+
+    # configured for swahili
+    @multigraphs = "sh ny dh th ch gh ng'".split(" ")
+    @longestMultigraph = Math.max.apply(@, [0].concat(m.length for m in @multigraphs)) 
+
+    if options.letters?
+      @setLetters(options.letters)
+
+    if options.words?
+      @setWords(options.words) 
+      @makeTree()
+
+  setLetters: ( value ) ->
+    value = value.join(",") if _(value).isArray()
+    @letters = value.toLowerCase().replace(/[^a-z'\s,]/g, "").split(/[\s,]/)
+
+  setWords: ( value ) ->
+    value.join(",") if _(value).isArray()
+    @words = value.toLowerCase().replace(/[^a-z'\s]/g, "").split(/\s+/)
+
+
+  makeTree: ->
+
+    # go through all the words
+    for word in @words
+
+      tempBranch = @wordTree
+
+      i = 0
+      while i < word.length # this needs to be a while loop, see: coffeescript
+
+
+        l1 = word[i+0]
+        l2 = word[i+1]
+        l3 = word[i+2]
+        digraph = l1+l2
+        trigraph = l1+l2+l3
+
+        if i == word.length - 1 # if this is the end of the word
+          unless tempBranch[l1]?
+            tempBranch[l1] = "end" : true
+          else
+            tempBranch[l1]['end'] = true
+
+        else
+          # handle digraphs
+          if i < word.length - 1
+            if ~@multigraphs.indexOf(trigraph)
+
+              tempBranch[trigraph] = {} unless tempBranch[trigraph]?
+              if i == word.length - 3
+                unless tempBranch[trigraph]?
+                  tempBranch[trigraph] = "end" : true
+                else
+                  tempBranch[trigraph]["end"] = true
+
+              tempBranch = tempBranch[trigraph]
+              i += 2
+
+            else if ~@multigraphs.indexOf(digraph)
+              # initialize branch
+              tempBranch[digraph] = {} unless tempBranch[digraph]?
+
+              if i == word.length - 2
+                unless tempBranch[digraph]?
+                  tempBranch[digraph] = "end" : true
+                else
+                  tempBranch[digraph]["end"] = true
+
+              tempBranch = tempBranch[digraph]
+
+              i += 1
+
+            else
+              tempBranch[l1] = {} unless tempBranch[l1]?
+              tempBranch = tempBranch[l1]
+
+        i++
+
+
+  _findWords : (node, letters, current_word) ->
+    words = []
+    for key, value of node
+      words.push(current_word) if key is "end"
+      if ~letters.indexOf(key)
+        child_words = @_findWords(value, letters, current_word+key)
+        words = words.concat(child_words) if child_words.length != 0
+    return words
+
+  findWords: (letters = "") ->
+    letters = letters.split(/\s+/) if _(letters).isString()
+    return @_findWords(@wordTree, letters, "")
+

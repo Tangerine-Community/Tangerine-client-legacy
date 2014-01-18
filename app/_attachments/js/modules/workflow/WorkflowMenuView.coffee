@@ -25,21 +25,57 @@ class WorkflowMenuView extends Backbone.View
   initialize: (options) ->
     @[key] = value for key, value of options
 
+
   render: ->
+
+    if Tangerine.settings.get("context") isnt "server"
+      return @renderMobile()
+
     htmlWorkflows = ""
 
     for workflow in @workflows.models
+      csvUrl = "/_csv/workflow/#{Tangerine.db_name}/#{workflow.id}"
       htmlWorkflows += "
-        <li id='#{workflow.id}'>
+        <li id='#{workflow.id}' style='margin-bottom:15px;'>
           #{workflow.get('name')}
+          <br>
           <a href='#workflow/run/#{workflow.id}'>run</a>
+          <a href='#feedback/#{workflow.id}'>feedback</a>
           <a href='#workflow/edit/#{workflow.id}'>edit</a>
+          <a href='#{csvUrl}'>csv</a>
           <span class='workflow-delete link'>delete</span>
         </li>
         "
 
     @$el.html "
       <h1>Workflows</h1>
-      <button class='workflow-new'>New</button>
+      <button class='workflow-new command'>New</button>
       <ul class='workflow-menu'>#{htmlWorkflows}</ul>
     "
+
+
+  renderMobile: ->
+
+    htmlWorkflows = ""
+
+    for workflow in @workflows.models
+
+      htmlWorkflows += "
+        <li id='#{workflow.id}' style='margin-bottom:25px;'>
+          <button class='navigation'><a href='#workflow/run/#{workflow.id}'>#{workflow.get('name')}</a></button><br>
+          <button class='command'><a href='#feedback/#{workflow.id}'>Feedback</a></button>
+        </li>
+        "
+
+    @$el.html "
+      <h1>Tutor menu</h1>
+      <ul class='workflow-menu'>#{htmlWorkflows}</ul>
+      <div id='sync-manager' class='SyncManagerView'></div>
+
+    "
+
+    @syncManagerView = new SyncManagerView
+    @syncManagerView.setElement(@$el.find("#sync-manager"))
+    @syncManagerView.render()
+
+    @trigger "rendered"

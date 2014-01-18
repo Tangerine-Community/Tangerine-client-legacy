@@ -10,6 +10,11 @@ class KlassSubtestRunView extends Backbone.View
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
   initialize: (options) ->
+
+    @inWorkflow   = options.inWorkflow
+    @tripId       = options.tripId
+    @workflowId   = options.workflowId
+
     @linkedResult = options.linkedResult
     @student      = options.student
     @subtest      = options.subtest
@@ -22,27 +27,34 @@ class KlassSubtestRunView extends Backbone.View
     @prototypeRendered = false
 
 
-    if @prototype == "grid"
-      @result = new KlassResult
-        prototype    : "grid"
-        startTime    : (new Date()).getTime()
-        itemType     : @subtest.get("itemType")
-        reportType   : @subtest.get("reportType")
-        studentId    : @student.id
-        subtestId    : @subtest.id
-        part         : @subtest.get("part")
-        klassId      : @student.get("klassId")
-        timeAllowed  : @subtest.get("timer")
-    else if @prototype == "survey"
-      @result = new KlassResult
-        prototype    : "survey"
-        startTime    : (new Date()).getTime()
-        studentId    : @student.id
-        subtestId    : @subtest.id
-        part         : @subtest.get("part")
-        klassId      : @student.get("klassId")
-        itemType     : @subtest.get("itemType")
-        reportType   : @subtest.get("reportType")
+    resultAttributes =
+      if @prototype is "grid"
+        prototype   : "grid"
+        startTime   : (new Date()).getTime()
+        itemType    : @subtest.get("itemType")
+        reportType  : @subtest.get("reportType")
+        studentId   : @student.id
+        subtestId   : @subtest.id
+        part        : @subtest.get("part")
+        klassId     : @student.get("klassId")
+        timeAllowed : @subtest.get("timer")
+      else if @prototype is "survey"
+        prototype   : "survey"
+        startTime   : (new Date()).getTime()
+        studentId   : @student.id
+        subtestId   : @subtest.id
+        part        : @subtest.get("part")
+        klassId     : @student.get("klassId")
+        itemType    : @subtest.get("itemType")
+        reportType  : @subtest.get("reportType")
+
+    if @inWorkflow
+      resultAttributes.tripId     = @tripId
+      resultAttributes.workflowId = @workflowId
+
+    @result = new KlassResult resultAttributes
+
+    if @questions?
       @questions.sort()
       @render()
 
@@ -66,7 +78,11 @@ class KlassSubtestRunView extends Backbone.View
     @$el.append @prototypeView.el
     @prototypeRendered = true
 
-    @$el.append "<button class='done navigation'>Done</button> <button class='cancel navigation'>Cancel</button>"
+    htmlButton = "<button class='done navigation'>Done</button>"
+    
+    htmlButton += "<button class='cancel navigation'>Cancel</button>" unless @inWorkflow
+
+    @$el.append htmlButton
 
     @trigger "rendered"
 
@@ -110,15 +126,18 @@ class KlassSubtestRunView extends Backbone.View
       return
 
     if @isValid()
-      # Gaurantee single "new" result
-      Tangerine.$db.view "#{Tangerine.design_doc}/resultsByStudentSubtest",
-        key : [@options.student.id,@subtest.id]
-        success: (data) =>
-          rows = data.rows
-          for datum in rows
-            Tangerine.$db.saveDoc $.extend(datum.value, "old":true)
-          # save this result
-          @result.add @prototypeView.getResult(), =>
-            Tangerine.router.navigate "class/#{@options.student.get('klassId')}/#{@options.subtest.get('part')}", true
+      if @inWorkflow
+        @result.add @prototypeView.getResult(), => @trigger "subViewDone"
+      else
+        # Gaurantee single "new" result
+        Tangerine.$db.view "#{Tangerine.design_doc}/resultsByStudentSubtest",
+          key : [@options.student.id,@subtest.id]
+          success: (data) =>
+            rows = data.rows
+            for datum in rows
+              Tangerine.$db.saveDoc $.extend(datum.value, "old":true)
+            # save this result
+            @result.add @prototypeView.getResult(), =>
+              Tangerine.router.navigate "class/#{@options.student.get('klassId')}/#{@options.subtest.get('part')}", true
     else
       @prototypeView.showErrors()

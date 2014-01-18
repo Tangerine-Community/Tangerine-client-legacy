@@ -21,10 +21,7 @@ class SubtestRunView extends Backbone.View
 
     enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
     studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
-    transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
-
-    skipButton = "<button class='skip navigation'>Skip</button>"
-    skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+    transitionComment = @getTransitionComment()
 
     @$el.html "
       <h2>#{@model.get 'name'}</h2>
@@ -32,9 +29,8 @@ class SubtestRunView extends Backbone.View
       #{studentDialog}
       <div id='prototype_wrapper'></div>
       
-      <div class='controlls clearfix'>
+      <div class='clearfix' id='transition-comment-container'>
         #{transitionComment}
-        <button class='next navigation'>#{t('next')}</button>#{if skippable then skipButton else "" }
       </div>
     "
   
@@ -44,13 +40,21 @@ class SubtestRunView extends Backbone.View
       parent : @
     @prototypeView.on "rendered",    => @flagRender("prototype")
     @prototypeView.on "subRendered", => @trigger "subRendered"
-    @prototypeView.on "showNext",    => @showNext()
-    @prototypeView.on "hideNext",    => @hideNext()
+    @prototypeView.on "showNext",    => @trigger "showNext"
+    @prototypeView.on "hideNext",    => @trigger "hideNext"
     @prototypeView.on "ready",       => @prototypeRendered = true;
     @prototypeView.setElement(@$el.find('#prototype_wrapper'))
     @prototypeView.render()
 
     @flagRender "subtest"
+
+  getTransitionComment: (html = @model.getString('transitionComment')) ->
+    return "<div class='student_dialog' #{@fontStyle || ""}>#{html}</div> <br>" if html isnt ""
+    return ""
+
+  setTransitionComment: (html = "") ->
+    @$el.find("#transition-comment-container").html @getTransitionComment(html)
+
 
   flagRender: ( flag ) =>
     @renderFlags = {} if not @renderFlags
@@ -63,14 +67,20 @@ class SubtestRunView extends Backbone.View
     @prototypeView?.afterRender?()
     @onShow()
 
-  showNext: => @$el.find(".controlls").show() 
-  hideNext: => @$el.find(".controlls").hide()
+  WithPrevious: (callback) ->
+
+    if @parent.inWorkflow
+      Utils.withPrevious
+        workflow : @parent.workflowId
+        callback : callback
+    else
+      Utils.withPrevious
+        assessmentId : @model.get("assessmentId")
+        callback : callback
 
   onShow: ->
     displayCode = @model.getString("displayCode")
-
     if not _.isEmptyString(displayCode)
-
       try
         CoffeeScript.eval.apply(@, [displayCode])
       catch error
@@ -133,5 +143,3 @@ class SubtestRunView extends Backbone.View
     else
       throw "Prototype skipping not implemented"
 
-  next: -> @parent.next()
-  skip: -> @parent.skip()

@@ -44,7 +44,7 @@ class TabletUser extends Backbone.Model
   @calcId: (name) -> "user-#{name}"
 
   @generateHash: ( pass, salt ) ->
-    salt = hex_sha1(""+Math.random()) if not salt?
+    salt = hex_sha1(""+Math.random()) unless salt?
     pass = hex_sha1(pass+salt)
     return {
       pass : pass
@@ -70,12 +70,17 @@ class TabletUser extends Backbone.Model
     document.location = Tangerine.settings.location.group.url.replace(/\:\/\/.*@/,'://')+"uploader/_design/uploader/uploader.html?name=#{user}&pass=#{pass}"
 
   signup: ( name, pass, attributes, callbacks={} ) =>
+
     @set "_id" : TabletUser.calcId(name)
     @fetch
       success: => @trigger "name-error", "User already exists."
       error: =>
         @set "name" : name
         @setPassword pass
+
+        if attributes.response?
+          attributes.response = hex_sha1(attributes.response+@get "salt")
+
         @save attributes,
           success: =>
             if Tangerine.settings.get("context") is "class"

@@ -1,9 +1,22 @@
+#
+#  ____             _    _                         _     
+# | __ )  __ _  ___| | _| |__   ___  _ __   ___   (_)___ 
+# |  _ \ / _` |/ __| |/ / '_ \ / _ \| '_ \ / _ \  | / __|
+# | |_) | (_| | (__|   <| |_) | (_) | | | |  __/_ | \__ \
+# |____/ \__,_|\___|_|\_\_.__/ \___/|_| |_|\___(_)/ |___/
+#                                               |__/     
+#
+
 # Extend every view with a close method, used by ViewManager
 Backbone.View.prototype.close = ->
   @remove()
   @unbind()
   @onClose?()
 
+Backbone.View.prototype.select = (selector, update=false) ->
+  @selectors = {} unless @selectors?
+  return @selectors[selector] if @selectors[selector]? or update is true
+  @selectors[selector] = @$el.find(selector)
 
 # Returns an object hashed by a given attribute.
 Backbone.Collection.prototype.indexBy = ( attr ) ->
@@ -94,7 +107,11 @@ class Backbone.EditView extends Backbone.View
     "keyup    .editing"    : "editing"
     "keydown  .editing"    : "editing"
 
-  getEditable: (model, prop, name="Value", defaultValue = "none") =>
+  getEditable: (model, prop, name="Value", defaultValue = "none", prep) =>
+
+    @preps                     = {} unless @preps?
+    @preps[model.id]           = {} unless @preps[model.id]?
+    @preps[model.id][prop.key] = prep
 
     @htmlGenCatelog = {} unless @htmlGenCatelog?
     @htmlGenCatelog[model.id] = {} unless @htmlGenCatelog[model.id]?
@@ -103,9 +120,11 @@ class Backbone.EditView extends Backbone.View
 
         key    = prop.key
         escape = prop.escape
+        type   = prop.type || ''
 
         # cook the value
         value = if model.has(key) then model.get(key) else defaultValue
+        value = defaultValue if _(value).isEmptyString()
 
         value = _(value).escape() if escape
         untitled = " data-untitled='true' " if value is defaultValue
@@ -115,7 +134,9 @@ class Backbone.EditView extends Backbone.View
 
         numberOrNot = if _.isNumber(value) then "data-is-number='true'" else "data-is-number='false'" 
 
-        return "<div class='edit_in_place' id='#{model.id}-#{key}'><span data-model-id='#{model.id}' data-key='#{key}' data-value='#{value}' data-name='#{name}' #{editOrNot} #{numberOrNot} #{untitled||''}>#{value}</span></div>"
+        result = "<div class='edit_in_place #{key}-edit-in-place' id='#{model.id}-#{key}'><span data-model-id='#{model.id}' data-type='#{type}' data-key='#{key}' data-value='#{value}' data-name='#{name}' #{editOrNot} #{numberOrNot} #{untitled||''}>#{value}</span></div>"
+
+        return result
 
     return htmlFunction()
 
@@ -138,6 +159,7 @@ class Backbone.EditView extends Backbone.View
 
     key      = $span.attr("data-key")
     name     = $span.attr("data-name")
+    type     = $span.attr("data-type")
     isNumber = $span.attr("data-is-number") == "true"
 
     modelId  = $span.attr("data-model-id")
@@ -152,8 +174,13 @@ class Backbone.EditView extends Backbone.View
 
     transferVariables = "data-is-number='#{isNumber}' data-key='#{key}' data-model-id='#{modelId}' "
 
+    if type is "boolean"
+      $span
+
     # sets width/height with style attribute
-    $parent.html("<textarea placeholder='#{name}' id='#{guid}' rows='#{1+oldValue.count("\n")}' #{transferVariables} class='editing #{classes}' style='margin:#{margins}' data-name='#{name}'>#{oldValue}</textarea>")
+    rows = 1 + oldValue.count("\n")
+    rows = parseInt(Math.max(oldValue.length / 30, rows))
+    $parent.html("<textarea placeholder='#{name}' id='#{guid}' rows='#{rows}' #{transferVariables} class='editing #{classes} #{key}-editing' style='margin:#{margins}' data-name='#{name}'>#{oldValue}</textarea>")
     # style='width:#{oldWidth}px; height: #{oldHeight}px;'
     $textarea = $("##{guid}")
     $textarea.select()
@@ -184,15 +211,25 @@ class Backbone.EditView extends Backbone.View
       return
 
     # act normal, unless it's an enter key on keydown
-    return true unless event.which == 13 and event.type == "keydown"
+    keyDown = event.type is "keydown"
+    enter   = event.which is 13
+    altKey  = event.altKey
 
-    #return true if event.which == 13 and event.altKey
+    return true if enter and altKey
+    return true unless enter and keyDown
+
     @alreadyEditing = false
 
     # If there was a change, save it
     if String(newValue) != String(oldValue)
       attributes = {}
       attributes[key] = newValue
+      if @preps?[modelId]?[key]?
+        try
+          attributes[key+"-cooked"] = @preps[modelId][key](newValue)
+        catch e
+          Utils.sticky("Problem cooking value<br>#{e.message}")
+          return
       model.save attributes,
         success: =>
           Utils.topAlert "#{name} saved"
@@ -257,8 +294,10 @@ class Backbone.ParentModel extends Backbone.Model
     for model in @collection.models
       @attributes.children.push model.attributes
 
-  updateCollection: ->
+  updateCollection: =>
     @collection.reset(@attributes.children)
+    @collection.each (child) =>
+      child.parent = @
 
   newChild: (attributes={}, options) =>
     newChild = new @Child
@@ -278,9 +317,16 @@ class Backbone.ParentModel extends Backbone.Model
 
     @save null, options
 
+
+
+#    _  ___                        
+#   (_)/ _ \ _   _  ___ _ __ _   _ 
+#   | | | | | | | |/ _ \ '__| | | |
+#   | | |_| | |_| |  __/ |  | |_| |
+#  _/ |\__\_\\__,_|\___|_|   \__, |
+# |__/                       |___/ 
 #
-# handy jquery functions
-#
+
 ( ($) -> 
 
   $.fn.scrollTo = (speed = 250, callback) ->
@@ -348,73 +394,81 @@ class Backbone.ParentModel extends Backbone.Model
 
 )(jQuery)
 
+
 #
-# CouchDB error handling
+#  _   _ _   _ _     
+# | | | | |_(_) |___ 
+# | | | | __| | / __|
+# | |_| | |_| | \__ \
+#  \___/ \__|_|_|___/
+#                    
 #
-$.ajaxSetup
-  statusCode:
-    404: (xhr, status, message) ->
-      code = xhr.status
-      statusText = xhr.statusText
-      seeUnauthorized = ~xhr.responseText.indexOf("unauthorized")
-      if seeUnauthorized
-        Utils.midAlert "Session closed<br>Please log in and try again."
-        Tangerine.user.logout()
+
+class CsvRow
+
+  constructor: ( row ) ->
+    @row = row
+
+  get: ( key ) -> 
+    candidate = _(@row).where({key:key})
+    if candidate.length isnt 0
+      return candidate[0].value
+    return null 
+
+  getStartTime: ->
+    @get("start_time")
 
 
-# debug codes
-km = {"0":48,"1":49,"2":50,"3":51,"4":52,"5":53,"6":54,"7":55,"8":56,"9":57,"a":65,"b":66,"c":67,"d":68,"e":69,"f":70,"g":71,"h":72,"i":73,"j":74,"k":75,"l":76,"m":77,"n":78,"o":79,"p":80,"q":81,"r":82,"s":83,"t":84,"u":85,"v":86,"w":87,"x":88,"y":89,"z":90}
-sks = [ { q : (km["0100ser"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "server"}, { success: -> Tangerine.router.navigate("", true)}) },
-        { q : (km["0100mob"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "mobile"}, { success: -> Tangerine.router.navigate("", true)}) },
-        { q : (km["0100cla"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "class"},  { success: -> Tangerine.router.navigate("", true)}) },
-        { q : (km["0100sat"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "satellite"},  { success: -> Tangerine.router.navigate("", true)}) },
-        { q : (km["0900redo"[i]] for i in [0..7]), i : 0, c : -> vm.currentView.index--; vm.currentView.resetNext(); },
-        { q : (km["0900back"[i]] for i in [0..7]), i : 0, c : -> vm.currentView.index -= 2; vm.currentView.index = Math.max(0, vm.currentView.index); vm.currentView.resetNext(); },
-        { q : (km["0100update"[i]] for i in [0..9]), i : 0, c : -> Utils.updateTangerine( -> Utils.midAlert("Updated, please refresh.") ) } ]
-$(document).keydown (e) -> ( if e.keyCode == sks[j].q[sks[j].i++] then sks[j]['c']() if sks[j].i == sks[j].q.length else sks[j].i = 0 ) for sk, j in sks 
+class CsvRows
 
+  constructor: ( rows ) ->
+    @rows = rows
 
-String.prototype.safetyDance = -> this.replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g,"")
-String.prototype.databaseSafetyDance = -> this.replace(/\s/g, "_").toLowerCase().replace(/[^a-z0-9_-]/g,"")
-String.prototype.count = (substring) -> this.match(new RegExp substring, "g")?.length || 0
+  where: (criteria) ->
+    result = []
+    for row in @rows
+      if _(row).where(criteria).length > 0
+        result.push row
+    return new CSVRows result
 
-
-
-Math.ave = ->
-  result = 0
-  result += x for x in arguments
-  result /= arguments.length
-  return result
-
-Math.isInt    = -> return typeof n == 'number' && parseFloat(n) == parseInt(n, 10) && !isNaN(n)
-Math.decimals = (num, decimals) -> m = Math.pow( 10, decimals ); num *= m; num =  num+(num<0?-0.5:+0.5)>>0; num /= m
-Math.commas   = (num) -> parseInt(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-Math.limit    = (min, num, max) -> Math.max(min, Math.min(num, max))
-
-# method name slightly misleading
-# returns true for falsy values
-#   null, undefined, and '\s*'
-# other false values like
-#   false, 0
-# return false
-_.isEmptyString = ( aString ) ->
-  return true if aString is null or aString is undefined
-  return false unless _.isString(aString) or _.isNumber(aString)
-  aString = String(aString) if _.isNumber(aString)
-  return true if aString.replace(/\s*/, '') == ''
-  return false
-
-_.indexBy = ( propertyName, objectArray ) ->
-  result = {}
-  for oneObject in objectArray
-    if oneObject[propertyName]?
-      key = oneObject[propertyName]
-      result[key] = [] if not result[key]?
-      result[key].push(oneObject)
-  return result
+  getRecent: =>
+    return null if @rows.length is 0
+    @rows.sort((a, b) -> b.getStartTime() - a.getStartTime())[0]
 
 
 class Utils
+
+
+  @withPrevious: ( options = {} ) =>
+
+    workflowId   = options.workflowId
+    assessmentId = options.assessmentId
+    callback     = options.callback
+
+    getRows = ( ids = [] ) ->
+
+      Tangerine.$db.view "#{Tangerine.design_doc}/csvRows", 
+        keys : ids
+        success : ( response ) ->
+          rows = new CsvRows(response.rows.map( (a) -> new CsvRow a.value ))
+          try
+            callback?( rows )
+          catch e
+            Utils.sticky "Error during WithPrevious<br>#{e}"
+
+    if workflowId?
+
+      Tangerine.$db.view "#{Tangerine.design_doc}/results",
+        key: workflowId
+        success: (response) -> 
+          ids = response.rows.filter( (row) ->
+            row.value != "assessment" && row.value != "klass"
+          ).map (result) -> result.id
+          getRows ids
+    else
+      getRows [ assessmentId ]
+
+
 
   @readyForUpdate: ->
     # Replicate to PouchDB data store
@@ -490,7 +544,7 @@ class Utils
     Utils.documentCounter++
     if Utils.documentCounter == totalDocs
       Utils.restartTangerine "Update successful", ->
-        Tangerine.router.navigate "", false
+        Tangerine.router.landing()
         Utils.askToLogout() unless Tangerine.settings.get("context") == "server"
       Utils.documentCounter = null
 
@@ -670,13 +724,13 @@ class Utils
       
 
 
-  @sticky: (html, buttonText = "Close", callback, position = "middle") ->
+  @sticky: (html, buttonText = "Close", callback = $.noop, position = "middle") ->
     div = $("<div class='sticky_alert'>#{html}<br><button class='command parent_remove'>#{buttonText}</button></div>").appendTo("#content")
     if position == "middle"
       div.middleCenter()
     else if position == "top"
       div.topCenter()
-    div.on("keyup", (event) -> if event.which == 27 then $(this).remove()).find("button").click callback
+    div.on("keyup", (event) -> if event.which == 27 then $(this).remove()).find("button").click -> callback()
 
   @topSticky: (html, buttonText = "Close", callback) ->
     Utils.sticky(html, buttonText, callback, "top")
@@ -719,6 +773,47 @@ class Utils
       $pass.off "change"
 
       callback $pass.val() if $(event.target).attr("data-verify") == "true"
+
+      Utils.modal false
+
+  @modalPrompt: (options) ->
+    prompt   = options.prompt || ''
+    pass     = options.pass || false
+    callback = options.callback || $.noop
+
+    type = 
+      if pass
+        "password"
+      else
+        "text"
+
+    html = "
+      <div id='modal_form' title='User verification'>
+        <label for='modal-input'>#{prompt}</label>
+        <input id='modal-input' type='#{type}' value=''>
+        <button class='command' data-ok='true'>Ok</button>
+        <button class='command'>Cancel</button>
+      </div>
+    "
+
+    Utils.modal html
+
+    $pass = $("#modal-input")
+    $button = $("#modal_form button")
+
+    $pass.on "keyup", (event) ->
+      return true unless event.which == 13
+      $button.off "click" 
+      $pass.off "change"
+
+      callback $pass.val()
+      Utils.modal false
+
+    $button.on "click", (event) ->
+      $button.off "click"
+      $pass.off "change"
+
+      callback $pass.val() if $(event.target).attr("data-ok") == "true"
 
       Utils.modal false
 
@@ -778,6 +873,20 @@ class Utils
   @oldConsoleAssert = null
   @enableConsoleAssert: -> return unless oldConsoleAssert?    ; window.console.assert = oldConsoleAssert
   @disableConsoleAssert: -> oldConsoleAssert = console.assert ; window.console.assert = $.noop
+
+
+# debug codes
+km = {"0":48,"1":49,"2":50,"3":51,"4":52,"5":53,"6":54,"7":55,"8":56,"9":57,"a":65,"b":66,"c":67,"d":68,"e":69,"f":70,"g":71,"h":72,"i":73,"j":74,"k":75,"l":76,"m":77,"n":78,"o":79,"p":80,"q":81,"r":82,"s":83,"t":84,"u":85,"v":86,"w":87,"x":88,"y":89,"z":90}
+sks = [ { q : (km["0100ser"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "server"}, { success: -> Tangerine.router.navigate("", true)}) },
+        { q : (km["0100mob"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "mobile"}, { success: -> Tangerine.router.navigate("", true)}) },
+        { q : (km["0100cla"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "class"},  { success: -> Tangerine.router.navigate("", true)}) },
+        { q : (km["0100sat"[i]] for i in [0..6]), i : 0, c : -> Tangerine.settings.save({"context": "satellite"},  { success: -> Tangerine.router.navigate("", true)}) },
+        { q : (km["0900redo"[i]] for i in [0..7]), i : 0, c : -> vm.currentView.index--; vm.currentView.resetNext(); },
+        { q : (km["0900back"[i]] for i in [0..7]), i : 0, c : -> vm.currentView.index -= 2; vm.currentView.index = Math.max(0, vm.currentView.index); vm.currentView.resetNext(); },
+        { q : (km["0100update"[i]] for i in [0..9]), i : 0, c : -> Utils.updateTangerine( -> Utils.midAlert("Updated, please refresh.") ) } ]
+$(document).keydown (e) -> ( if e.keyCode == sks[j].q[sks[j].i++] then sks[j]['c']() if sks[j].i == sks[j].q.length else sks[j].i = 0 ) for sk, j in sks 
+
+
 
 # Robbert interface
 class Robbert
@@ -847,3 +956,136 @@ $ ->
   
   # $(window).resize Utils.resizeScrollPane
   # Utils.resizeScrollPane()
+
+
+#
+# CouchDB error handling
+#
+
+$.ajaxSetup
+  statusCode:
+    404: (xhr, status, message) ->
+      code = xhr.status
+      statusText = xhr.statusText
+      seeUnauthorized = ~xhr.responseText.indexOf("unauthorized")
+      if seeUnauthorized
+        Utils.midAlert "Session closed<br>Please log in and try again."
+        Tangerine.user.logout()
+
+
+#
+#      _ ____    _   _       _   _           
+#     | / ___|  | \ | | __ _| |_(_)_   _____ 
+#  _  | \___ \  |  \| |/ _` | __| \ \ / / _ \
+# | |_| |___) | | |\  | (_| | |_| |\ V /  __/
+#  \___/|____/  |_| \_|\__,_|\__|_| \_/ \___|
+#                                            
+#
+
+
+String.prototype.safetyDance = -> this.replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g,"")
+String.prototype.databaseSafetyDance = -> this.replace(/\s/g, "_").toLowerCase().replace(/[^a-z0-9_-]/g,"")
+String.prototype.count = (substring) -> this.match(new RegExp substring, "g")?.length || 0
+
+Math.ave = ->
+  result = 0
+  result += x for x in arguments
+  result /= arguments.length
+  return result
+
+Math.isInt    = -> return typeof n == 'number' && parseFloat(n) == parseInt(n, 10) && !isNaN(n)
+Math.decimals = (num, decimals) -> m = Math.pow( 10, decimals ); num *= m; num =  num+(num<0?-0.5:+0.5)>>0; num /= m
+Math.commas   = (num) -> parseInt(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+Math.limit    = (min, num, max) -> Math.max(min, Math.min(num, max))
+
+# method name slightly misleading
+# returns true for falsy values
+#   null, undefined, and '\s*'
+# other false values like
+#   false, 0
+# return false
+_.isEmptyString = ( aString ) ->
+  return true if aString is null or aString is undefined
+  return false unless _.isString(aString) or _.isNumber(aString)
+  aString = String(aString) if _.isNumber(aString)
+  return true if aString.replace(/\s*/, '') == ''
+  return false
+
+_.prototype.isEmptyString = ->
+  _.isEmptyString(@_wrapped)
+
+
+_.indexBy = ( propertyName, objectArray ) ->
+  result = {}
+  for oneObject in objectArray
+    property = oneObject.attributes?[propertyName] or oneObject[propertyName]
+    if property?
+      key = oneObject[propertyName]
+      result[key] = [] if not result[key]?
+      result[key].push(oneObject)
+  return result
+
+_.prototype.indexBy = ( index ) ->
+
+  anArray = @_wrapped
+  anArray = @_wrapped.models if @_wrapped.models?
+
+  _.indexBy(index, anArray)
+
+_.prototype.tally = ->
+  _.tally(@_wrapped)
+
+_.tally = ( anArray ) ->
+  counts = {}
+  for element in anArray
+    if element?
+      counts[element] = 0 unless counts[element]?
+      counts[element]++
+  counts
+
+# these could easily be refactored into one.
+
+ResultOfQuestion = (name) ->
+  returnView = null
+  view = vm.currentView.subView || vm.currentView
+  index = view.orderMap[view.index]
+
+  for candidateView in view.subtestViews[index].prototypeView.questionViews
+    if candidateView.model.get("name") == name
+      returnView = candidateView
+  throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
+  return returnView.answer if returnView.answer
+  return null
+
+ResultOfMultiple = (name) ->
+  returnView = null
+  view = vm.currentView.subView || vm.currentView
+  index = view.orderMap[view.index]
+
+  for candidateView in view.subtestViews[index].prototypeView.questionViews
+    if candidateView.model.get("name") == name
+      returnView = candidateView
+  throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
+  
+  result = []
+  for key, value of returnView.answer
+    result.push key if value == "checked" 
+  return result
+
+ResultOfPrevious = (name) ->
+  view = vm.currentView.subView || vm.currentView
+  return view.result.getVariable(name)
+
+ResultOfGrid = (name) ->
+  view = vm.currentView.subView || vm.currentView
+  return view.result.getItemResultCountByVariableName(name, "correct")
+
+ResultCSV =  (name) ->
+  return "hey"
+
+ThisSchool = ( name ) ->
+  return "not in workflow" unless vm.currentView.steps
+  for step in vm.currentView.steps
+    if step?.result?.attributes?.subtestData[0]?.data[name]?
+      return step?.result?.attributes?.subtestData[0]?.data[name]
+

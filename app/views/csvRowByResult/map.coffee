@@ -23,6 +23,8 @@
 
   isClassResult = doc.klassId?
 
+  isWorkflowResult = doc.workflowId?
+
 
   # turn class results into regular results
   if isClassResult
@@ -41,6 +43,9 @@
     log "ONE KLASS RESULT"
     log JSON.stringify(subtestData)
 
+
+  if isWorkflowResult
+    keyId = doc._id
 
   ###
   Fix doubles (temporary)

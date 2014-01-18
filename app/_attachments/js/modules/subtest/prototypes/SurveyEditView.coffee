@@ -37,7 +37,7 @@ class SurveyEditView extends Backbone.View
     return false
 
   addQuestion: (event) ->
-    
+
     if event.type != "click" && event.which != 13
       return true
     

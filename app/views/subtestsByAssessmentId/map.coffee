@@ -4,6 +4,6 @@
 
   id = doc.assessmentId or doc.curriculumId
 
-  return unless id != null
+  return unless id?
 
   emit id, doc

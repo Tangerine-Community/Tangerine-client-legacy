@@ -1,39 +1,3 @@
-# these could easily be refactored into one.
-
-ResultOfQuestion = (name) ->
-  returnView = null
-  index = vm.currentView.orderMap[vm.currentView.index]
-
-  for candidateView in vm.currentView.subtestViews[index].prototypeView.questionViews
-    if candidateView.model.get("name") == name
-      returnView = candidateView
-  throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
-  return returnView.answer if returnView.answer
-  return null
-
-ResultOfMultiple = (name) ->
-  returnView = null
-  index = vm.currentView.orderMap[vm.currentView.index]
-
-  for candidateView in vm.currentView.subtestViews[index].prototypeView.questionViews
-    if candidateView.model.get("name") == name
-      returnView = candidateView
-  throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
-  
-  result = []
-  for key, value of returnView.answer
-    result.push key if value == "checked" 
-  return result
-
-ResultOfPrevious = (name) ->
-  return vm.currentView.result.getVariable(name)
-
-ResultOfGrid = (name) ->
-  return vm.currentView.result.getItemResultCountByVariableName(name, "correct")
-
-ResultCSV =  (name) ->
-  return "hey"
-
 class SurveyRunView extends Backbone.View
 
   className: "SurveyRunView"
@@ -319,8 +283,10 @@ class SurveyRunView extends Backbone.View
         if not qv.isValid
 
           # handle custom validation error messages
-          customMessage = qv.model.get("customValidationMessage")
-          if not _.isEmpty(customMessage)
+          customMessage = qv.model.getString("customValidationMessage")
+          customCode    = qv.model.getString("customValidationCode")
+
+          unless _.isEmptyString(customCode)
             message = customMessage
           else
             message = t("please answer this question")

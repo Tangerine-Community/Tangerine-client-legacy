@@ -1,6 +1,8 @@
 
 class WorkflowEditView extends Backbone.EditView
   
+  className: "WorkflowEditView"
+
   events : $.extend
     'click  .add'           : "stepAdd"
     'change .type-selector' : 'onTypeSelectorChange'
@@ -10,6 +12,7 @@ class WorkflowEditView extends Backbone.EditView
     'click .open-selector'  : 'openSelector'
 
     'click .remove-step'    : 'removeStep'
+
   , Backbone.EditView.prototype.events
 
 
@@ -26,11 +29,6 @@ class WorkflowEditView extends Backbone.EditView
     modelId = $target.attr('data-model-id')
     stepType = $target.attr('data-step-type')
     @updateSelector(modelId, stepType)
-
-  openUserTypeSelector: (event) ->
-    $target = $(event.target)
-    stepId = $target.attr('data-step-id')
-    @$el("#-user-type")
 
   onTypesIdChange: (event) ->
     $target = $(event.target)
@@ -72,12 +70,14 @@ class WorkflowEditView extends Backbone.EditView
       selectedAssessment = "selected='selected'" if stepType is "assessment"
       selectedCurriculum = "selected='selected'" if stepType is "curriculum"
       selectedNewObject  = "selected='selected'" if stepType is "new"
+      selectedMessage    = "selected='selected'" if stepType is "message"
       selectedLogin      = "selected='selected'" if stepType is "login"
       selectedNoType     = "selected='selected'" if stepType is ""
 
       displayAssessment = "display:none;" if stepType is "" or stepType isnt "assessment"
       displayCurriculum = "display:none;" if stepType is "" or stepType isnt "curriculum"
       displayNew        = "display:none;" if stepType is "" or stepType isnt "new"
+      displayMessage    = "display:none;" if stepType is "" or stepType isnt "message"
       displayLogin      = "display:none;" if stepType is "" or stepType isnt "login"
 
       typeSelector = "
@@ -85,6 +85,7 @@ class WorkflowEditView extends Backbone.EditView
           <option disabled='disabled' #{selectedNoType || ''} >Select type</option>
           <option #{selectedAssessment || ''} value='assessment'>Assessment</option>
           <option #{selectedCurriculum || ''} value='curriculum'>Curriculum</option>
+          <option #{selectedMessage    || ''} value='message'>Message</option>
           <option #{selectedNewObject  || ''} value='new'>New Object</option>
           <option #{selectedLogin      || ''} value='login'>Login</option>
         </select>"
@@ -105,22 +106,36 @@ class WorkflowEditView extends Backbone.EditView
 
             <tr>
               <th>Skip logic</th>
-              <td>#{@getEditable(stepModel, { key : 'skipLogic' }, 'Skip logic', 'Skip logic')}</td>
+              <td>#{@getEditable(stepModel, { key : 'skipLogic', escape: true }, 'Skip logic', 'Skip logic', ((prop)->CoffeeScript.compile("return #{prop}")) )}</td>
             </tr>
 
             <tr>
-              <th>Step</th>
+              <th>Type</th>
               <td>
                 #{typeSelector}<br>
                 <div id='typeSelectorContainer-#{stepModel.id}'></div>
               </td>
             </tr>
 
+            <tr class='message-only not-new not-login not-assessment not-curriculum' style='#{displayMessage||''}'>
+              <th>Message</th>
+              <td>#{@getEditable(stepModel, { key : 'message', escape: true }, 'Message', 'Message')}</td>
+            </tr>
+
+            <tr class='new-only not-login not-assessment not-new not-curriculum' style='#{displayNew||''}'>
+              <th>Object Type</th>
+              <td>#{@getEditable(stepModel, { key : 'className' }, 'Class name', 'Class name')}</td>
+            </tr>
+            <tr class='new-only not-login not-assessment not-new not-curriculum' style='#{displayNew||''}'>
+              <th>Object options</th>
+              <td>#{@getEditable(stepModel, { key : 'classOptions' }, 'Class Options', 'Class options', ((prop)->CoffeeScript.compile("return #{prop}")) )}</td>
+            </tr>
+
             <tr class='login-only not-assessment not-new not-curriculum' style='#{displayLogin||''}'>
               <th>Login type</th>
               <td id='user-type-selector-container-#{stepModel.id}'>
                 #{stepModel.getUserType()}
-                <span class='link open-user-type-selector' data-model-id='#{model.id}'>Change</span>
+                <span class='link open-selector' data-model-id='#{stepModel.id}' data-step-type='login'>Change</span>
               </td>
             </tr>
 
@@ -132,6 +147,18 @@ class WorkflowEditView extends Backbone.EditView
               <th>Week variable</th>
               <td>#{@getEditable(stepModel, { key : 'curriculumWeek' }, 'Week variable', 'Week variable')}</td>
             </tr>
+            <tr class='curriculum-only not-assessment not-new not-login' style='#{displayCurriculum||''}'>
+              <th>Grade variable</th>
+              <td>#{@getEditable(stepModel, { key : 'curriculumGrade' }, 'Grade variable', 'Grade variable')}</td>
+            </tr>
+
+            <tr>
+              <th>Show lesson viewer</th>
+              <td>
+                #{@getEditable(stepModel, { key : 'showLesson' }, 'Lesson viewer status', 'true or false', ((prop)->prop is "true") ) }
+              </td>
+            </tr>
+
 
             <tr>
               <td><button class='command remove-step' data-model-id='#{stepModel.id}'>Remove</button></td>
@@ -149,24 +176,15 @@ class WorkflowEditView extends Backbone.EditView
 
     html = "
       <h1>#{@getEditable(@workflow, {key:'name',escape:true}, "Workflow name", "Untitled workflow")}</h1>
-      <style>
-        #stepList li
-        {
-          margin: 1em 0;
-          border-bottom: 1px solid grey;
-        }
-        .link
-        {
-          cursor: pointer;
-          font-size: 0.6em;
-          text-decoration: underline;
-        }
-      </style>
       <div class='menubox'>
-        <ul id='stepList'>#{stepList}</ul>
+        <h2>Steps</h2>
+        <ul id='step-list'>#{stepList}</ul>
       </div>
       <div id='controls'>
         <button class='add command'>Add step</button>
+      </div>
+      <div id='feedback'>
+        <button class='feedback navigation'><a href='#feedback/edit/#{@workflow.id}'>Feedback</a></button>
       </div>
     "
 
@@ -177,17 +195,14 @@ class WorkflowEditView extends Backbone.EditView
         do (model) =>
           typeModel = new Backbone.Model "_id" : model.getTypesId()
           typeModel.fetch
-            error: => @$el.find("#typeSelectorContainer-#{model.id}").html "Not found <span class='link open-types-id-selector' data-model-id='#{model.id}' data-step-type='#{model.getType()}'>Change</span>"
+            error: => @$el.find("#typeSelectorContainer-#{model.id}").html "Not found <span class='link open-selector' data-model-id='#{model.id}' data-step-type='#{model.getType()}'>Change</span>"
             success: =>
-              @$el.find("#typeSelectorContainer-#{model.id}").html typeModel.get("name") + " <span class='link open-types-id-selector' data-model-id='#{model.id}' data-step-type='#{model.getType()}'>Change</span>"
+              @$el.find("#typeSelectorContainer-#{model.id}").html typeModel.get("name") + " <span class='link open-selector' data-model-id='#{model.id}' data-step-type='#{model.getType()}'>Change</span>"
 
     for model in @needSelector
       @updateSelector(model.id, model.getType())
-        
 
     @trigger "rendered"
-
-
 
   onTypeSelectorChange: (event) =>
 
@@ -230,7 +245,7 @@ class WorkflowEditView extends Backbone.EditView
           @$el.find("#typeSelectorContainer-#{modelId}").html "
             <select class='types-id' data-step-id='#{modelId}'>
               #{promptSelection||''}
-              #{assessmentOptions}
+              #{htmlOptions}
             </select>
           "
 

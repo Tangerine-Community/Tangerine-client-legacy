@@ -56,6 +56,8 @@ class KlassSubtestEditView extends Backbone.View
       @model.save
         name           : @$el.find("#name").val()
         part           : Math.max(parseInt( @$el.find("#part").val() ), 1)
+        grade          : Math.max(parseInt( @$el.find("#grade").val() ), 1)
+
         reportType     : @$el.find("#report_type").val().toLowerCase()
         itemType       : @$el.find("#item_type").val().toLowerCase()
         scoreTarget    : parseInt(@$el.find("#score_target").val())
@@ -114,10 +116,10 @@ class KlassSubtestEditView extends Backbone.View
         alert "Warning\n\n#{ _question } #{requiresGrid.join(' ,')} #{ _require } a grid to be linked to this test."
 
 
-
       @model.save
         name           : @$el.find("#name").val()
         part           : Math.max(parseInt( @$el.find("#part").val() ), 1)
+        grade          : Math.max(parseInt( @$el.find("#grade").val() ), 1)
         reportType     : @$el.find("#report_type").val().toLowerCase()
         itemType       : @$el.find("#item_type").val().toLowerCase()
         scoreTarget    : parseInt(@$el.find("#score_target").val())
@@ -174,6 +176,8 @@ class KlassSubtestEditView extends Backbone.View
     curriculumName = @curriculum.escape "name"
     name           = @model.escape "name"
     part           = @model.getNumber "part"
+    grade          = @model.getNumber "grade"
+
     reportType     = @model.escape "reportType"
     itemType       = @model.escape "itemType"
 
@@ -323,6 +327,11 @@ class KlassSubtestEditView extends Backbone.View
       <div class='label_value'>
         <label for='part'>Assessment Number</label><br>
         <input type='number' id='part' value='#{part}'>
+      </div>
+
+      <div class='label_value'>
+        <label for='grade'>Grade</label><br>
+        <input type='number' id='grade' value='#{grade}'>
       </div>
 
       <div class='label_value'>

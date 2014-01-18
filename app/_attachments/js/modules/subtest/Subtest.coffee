@@ -17,8 +17,9 @@ class Subtest extends Backbone.Model
       @set key, value
     @save()
 
-  copyTo: (assessmentId) ->
-    newSubtest = @clone()
+  copyTo: ( assessmentId ) ->
+    newSubtest = new Subtest
+    newSubtest.attributes = @attributes
     newId = Utils.guid()
 
     if newSubtest.has("surveyAttributes")
@@ -34,8 +35,9 @@ class Subtest extends Backbone.Model
 
     questions = new Questions
     questions.fetch
-      key: @.get("assessmentId")
+      key: @get("assessmentId")
       success: (questionCollection) =>
+        return if questionCollection.length is 0
         subtestQuestions = questionCollection.where "subtestId" : @id
         for question in subtestQuestions
           newQuestion = question.clone()

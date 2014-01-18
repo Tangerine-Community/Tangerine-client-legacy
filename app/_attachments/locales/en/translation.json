@@ -26,7 +26,8 @@
       "error_password_empty": "Please enter a password.",
       "error_name_empty": "Please enter a name.",
       "error_name_taken": "Name already taken.",
-      "pass_mismatch": "Passwords do not match"
+      "pass_mismatch": "Passwords do not match",
+      "challenge_explanation": "Challenge questions are asked during password resetting. The user must produce the challenge response in order to reset the password."
     },
     "button": {
       "sign_up": "Sign up",
@@ -38,7 +39,15 @@
       "user": "User name",
       "enumerator": "Enumerator name",
       "password": "Password",
-      "password_confirm": "Confirm Password"
+      "password_confirm": "Confirm Password",
+      "challenge_question": "Challenge question",
+      "challenge_response": "Challenge response",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "zone_name": "Zone name",
+      "gender": "Gender",
+      "phone": "Phone",
+      "email": "Email"
     }
   },
   "QuestionsEditListElementView": {

@@ -17,7 +17,6 @@ class NavigationView extends Backbone.View
   calcWhoAmI: =>
     # who am I
     @whoAmI = Tangerine.settings.contextualize
-      mobile: @text.enumerator
       klass : @text.teacher
       allElse : @text.user
 
@@ -28,14 +27,14 @@ class NavigationView extends Backbone.View
   logoClick: -> 
     if @user.isAdmin()
       Tangerine.activity = ""
-      @router.navigate '', true
+      @router.landing()
     else
       if Tangerine.activity == "assessment run"
         if confirm @text.incomplete_main
           Tangerine.activity = ""
-          @router.navigate '', true
+          @router.landing()
       else
-          @router.navigate '', true
+          @router.landing()
 
   logout: ->
     if @user.isAdmin() || Tangerine.settings.get("context") == "server"

@@ -3,13 +3,22 @@ class ResultView extends Backbone.View
   className: "result_view"
 
   events:
-    'click .save'    : 'save'
-    'click .another' : 'another'
+    'click .result_save' : 'save'
+    'click .another'     : 'another'
+
+  initialize: ( options ) ->
+    @model = options.model
+    @assessment = options.assessment
+    @saved = false
+    @resultSumView = new ResultSumView
+      model       : @model
+      finishCheck : false
 
   another: ->
     Tangerine.router.navigate "restart/#{@assessment.id}", true
 
-  save: ->
+  save: =>
+    console.log "getting saved"
     @model.add
       name : "Assessment complete"
       prototype: "complete"
@@ -22,35 +31,25 @@ class ResultView extends Backbone.View
         incorrect : 0
         missing : 0
         total : 1
+    ,
+      success: =>
+        Tangerine.activity = ""
+        Utils.midAlert "Result saved"
+        @$el.find('.save_status').html "saved"
+        @$el.find('.save_status').removeClass('not_saved')
+        @$el.find('.question').fadeOut(250)
 
-    if @model.save()
-      Tangerine.activity = ""
-      Utils.midAlert "Result saved"
-      @$el.find('.save_status').html "saved"
-      @$el.find('.save_status').removeClass('not_saved')
-      @$el.find('.question').fadeOut(250)
+        $button = @$el.find("button.result_save")
 
-      $button = @$el.find("button.save")
-
-      $button.removeClass('save').addClass('another').html "Perform another assessment"
-    else
-      Utils.midAlert "Save error"
-      @$el.find('.save_status').html "Results may not have saved"
-
-  initialize: ( options ) ->
-
-    @model = options.model
-    @assessment = options.assessment
-    @saved = false
-    @resultSumView = new ResultSumView
-      model       : @model
-      finishCheck : false
+        $button.removeClass('result_save').addClass('another').html "Perform another assessment"
+      error: =>
+        Utils.midAlert "Save error"
+        @$el.find('.save_status').html "Results may not have saved"
 
   render: ->
     @$el.html "
       <h2>Assessment complete</h2>
-
-      <button class='save command'>Save result</button>
+      <button class='result_save command'>Save result</button>
       <div class='info_box save_status not_saved'>Not saved yet</div>
       <br>
 

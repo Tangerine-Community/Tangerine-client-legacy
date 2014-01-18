@@ -2,10 +2,10 @@ class Result extends Backbone.Model
 
   url: "result"
 
-  initialize: ( options ) ->
+  initialize: ( options = {} ) ->
 
     # could use defaults but it messes things up
-    if options.blank == true
+    if options.blank
       device = device || Device || {}
       deviceInfo =
         'name'      : device.name

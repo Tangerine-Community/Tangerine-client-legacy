@@ -111,10 +111,10 @@ Backbone.couch_connector = con = {
         _ref = data.rows;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           doc = _ref[_i];
-          if (doc.value) {
-            _temp.push(doc.value);
-          } else {
+          if (doc.doc) {
             _temp.push(doc.doc);
+          } else {
+            _temp.push(doc.value);
           }
         }
         opts.success(_temp);

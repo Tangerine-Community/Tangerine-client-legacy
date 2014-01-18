@@ -30,6 +30,19 @@ utils = {
     o[key] = value;
     return o;
   },
+  cell: function(subtest, key, value) {
+    var machineName;
+    if (typeof subtest === "string") {
+      machineName = "" + subtest + "-" + key;
+    } else {
+      machineName = "" + subtest.subtestId + "-" + key;
+    }
+    return {
+      key: key,
+      value: value,
+      machineName: machineName
+    };
+  },
   unpair: function(pair) {
     var key, value;
     for (key in pair) {
@@ -44,5 +57,6 @@ if (typeof exports === "object") {
   exports.clone = utils.clone;
   exports.exportValue = utils.exportValue;
   exports.pair = utils.pair;
+  exports.cell = utils.cell;
   exports.unpair = utils.unpair;
 }

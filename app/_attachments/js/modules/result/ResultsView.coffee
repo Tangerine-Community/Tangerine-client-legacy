@@ -34,8 +34,7 @@ class ResultsView extends Backbone.View
       aIncludes = vIncludes.split(/\s+/) #grab list of variables
       uIncludes = "&includes=#{JSON.stringify(aIncludes)}"
 
-    filename = @assessment.getEscapedString("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
-    document.location = "/" + Tangerine.db_name + "/_design/" + Tangerine.design_doc + "/_list/csv/csvRowByResult?key=\"#{@assessment.id}\"&filename=#{filename}#{download||''}#{uExcludes||''}#{uIncludes||''}"
+    document.location = "/_csv/assessment/#{Tangerine.db_name}/#{@assessment.id}?#{download||''}"
 
   showResultSumView: (event) ->
     targetId = $(event.target).attr("data-result-id")

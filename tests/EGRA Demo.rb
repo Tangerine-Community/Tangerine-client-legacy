@@ -14,9 +14,11 @@ require 'selenium-webdriver'
 require 'capybara'
 require 'capybara/dsl'
 
+require './config.rb'
+
 
 Capybara.register_driver :selenium do |app|
- Capybara::Selenium::Driver.new(app, :browser => :chrome)
+  Capybara::Selenium::Driver.new( app, :browser => :chrome )
 end
 
 
@@ -26,24 +28,26 @@ Capybara.current_driver = :selenium
 include Capybara::DSL
 
 #
-# This section is for common actions that can be reused
+# Helper functions
 #
-#
+
 def login
   visit("http://databases.tangerinecentral.org/tangerine/_design/ojai/index.html")
-  fill_in('User name', :with => 'tangerine')
-  fill_in('Password', :with => 'tangytangerine')
+  fill_in('User name', :with => $cred[:server][:user])
+  fill_in('Password',  :with => $cred[:server][:pass])
   click_button('Login')
   # Checking for content causes the browser to wait until it's there
   has_content?("Groups")
 end
 
+
 def local_login
   visit("http://localhost:5984/tangerine/_design/ojai/index.html")
-  fill_in('User name', :with => 'admin')
-  fill_in('Password', :with => 'password')
+  fill_in('User name', :with => $cred[:server][:user])
+  fill_in('Password',  :with => $cred[:server][:pass])
   click_button('Login')
 end
+
 
 def visit_group(group_name)
   # Note that #{} is how you insert a variable into a string
@@ -53,69 +57,103 @@ end
 
 
 def run_assessment(assessment_name)
+  has_content?("Assessments")
   # Executes javascript on the page
   # I could've done this with capybara functions but it was really slow
   # find a span element that contains the text [assessment_name] and click on it
   page.execute_script("$('span:contains(#{assessment_name})').click()")
 
   # find an image element with the class run that is visible and click on it
-  page.execute_script("$('img.run:visible').click()")
+  page.execute_script("$('.sp_run a:visible')[0].click()")
 end
+
 
 def click_with_javascript(css_selector)
- page.execute_script("$('#{css_selector}').click()")
+  page.execute_script("$('#{css_selector}').click()")
+end
+
+def click_next
+  subtest_name = page.evaluate_script("$('h2').first().html()")
+  puts "Finishing #{subtest_name}"
+  click_with_javascript(".navigation.next")
+  puts "OK\n\n"
 end
 
 
+
+
+
+# Completes the Home Location instrument
 def home_location
-#Completes the Home Location instrument
-has_content? ("Home Location")
-fill_in('Region', :with => 'Practice')
+
+  has_content? ("Home Location")
+  fill_in('Region',   :with => 'Practice')
   fill_in('District', :with => 'District')
-	fill_in('Village', :with => 'Village')
+  fill_in('Village',  :with => 'Village')
+
 end
+
 
 def child_information
-has_content? "How old are you?"
-click_with_javascript("#question-age div[data-value=15]")
-has_content? "What grade are you in"
-click_with_javascript("#question-grade div[data-value=5]")
-has_content? "Is the participant a girl?"
-click_with_javascript("#question-girl div[data-value=1]")
-click_button "Next"
+
+  has_content? "How old are you?"
+  click_with_javascript("#question-age div[data-value=15]")
+
+  has_content? "What grade are you in"
+  click_with_javascript("#question-grade div[data-value=5]")
+
+  has_content? "Is the participant a girl?"
+  click_with_javascript("#question-girl div[data-value=1]")
+
+  click_button "Next"
+
 end
+
 
 def grid_question
-page.execute_script('$("button.start_time").click()')
-click_with_javascript ("#prototype_wrapper div[data-index=4]")
-sleep 1
-click_button "Stop"
-sleep 1
-click_with_javascript ("#prototype_wrapper div[data-index=4]")
-click_button "Next"
+  
+  page.execute_script('$("button.start_time").click()')
+  click_with_javascript("#prototype_wrapper div[data-index=4]")
+
+  sleep 1
+
+  click_button "Stop"
+
+  sleep 1
+
+  click_with_javascript("#prototype_wrapper div[data-index=4]")
+
+  click_button "Next"
+
 end
 
+
 def grid_autostop
-page.execute_script('$("button.start_time").click()')
-click_with_javascript ("#prototype_wrapper div[data-index=1]")
-click_with_javascript ("#prototype_wrapper div[data-index=2]")
-sleep 1
-click_with_javascript ("#prototype_wrapper div[data-index=3]")
+
+  page.execute_script('$("button.start_time").click()')
+  click_with_javascript("#prototype_wrapper div[data-index=1]")
+  click_with_javascript("#prototype_wrapper div[data-index=2]")
+
+  sleep 1
+
+  click_with_javascript("#prototype_wrapper div[data-index=3]")
+
 end
 
 
 def reading_comprehension
-click_with_javascript ("#question-read_comp1 div[data-value=0]")
-click_with_javascript ("#question-read_comp2 div[data-value=0]")
-click_with_javascript ("#question-read_comp3 div[data-value=0]")
-click_with_javascript ("#question-read_comp4 div[data-value=0]")
-click_with_javascript ("#question-read_comp5 div[data-value=0]")
-click_button "Next"
+
+  click_with_javascript ("#question-read_comp1 div[data-value=0]")
+  click_with_javascript ("#question-read_comp2 div[data-value=0]")
+  click_with_javascript ("#question-read_comp3 div[data-value=0]")
+  click_with_javascript ("#question-read_comp4 div[data-value=0]")
+  click_with_javascript ("#question-read_comp5 div[data-value=0]")
+  click_button "Next"
+
 end
 
 # 
-#
-# This section is where the actual steps happen
+# Testing begins here
 #
 
 
@@ -123,8 +161,6 @@ end
 #sleep 1
 login
 visit_group "blah"
-
-
 
 #Using text editor, bold, changing size, etc. 
 #has_content? "Assessments"
@@ -178,8 +214,14 @@ visit_group "blah"
 #need to figure out how to delete content too?
 
 
+#
+# Go through EGRA_demo assessment
+#
+
 has_content? "Assessments"
 run_assessment "EGRA_demo" 
+
+# Date and time screen
 has_content? "Date and Time"
 click_button "Next"
 
@@ -212,12 +254,13 @@ click_button "Next"
 home_location
 click_button "Next"
 has_content? "Child ID"
+
 click_button "Generate" 
 click_button "Next" 
 has_content? "Does the child consent?"
 click_with_javascript("#consent_yes")
 click_button "Next" 
-child_information
+child_information()
 has_content? "EGRA 1: Letter Sound Identification"
 
 #check if you can move on without hitting "last item attempted"
@@ -473,8 +516,12 @@ click_button "Generate"
 click_button "Next" 
 has_content? "Does the child consent?"
 click_with_javascript("#consent_yes")
-click_button "Next" 
-child_information
+click_button "Next"
+click_button "Next"
+
+
+child_information()
+
 has_content? "EGRA 1: Letter Sound Identification"
 grid_question
 has_content? "EGRA 2: Non-word Reading"

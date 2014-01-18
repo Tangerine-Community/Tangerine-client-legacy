@@ -5,6 +5,4 @@ class Feedback extends Backbone.ParentModel
   Child           : Critique
   ChildCollection : Critiques
 
-  initialize: ( options ) ->
-
 

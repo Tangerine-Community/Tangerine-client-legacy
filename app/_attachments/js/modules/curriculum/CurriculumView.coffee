@@ -10,9 +10,16 @@ class CurriculumView extends Backbone.View
     "click .edit_in_place"  : "editInPlace"
     'click .new_subtest'    : "newSubtest"
 
+    'change #file' : 'uploadFile'
+
     "focusout .editing" : "editing"
     "keyup    .editing" : "editing"
     "keydown  .editing" : "editing"
+
+    "click .name-controls .edit"   : "editName"
+    "click .name-controls .save"   : "saveName"
+    "click .name-controls .cancel" : "cancelEditName"
+
 
   initialize: (options) ->
 
@@ -30,6 +37,11 @@ class CurriculumView extends Backbone.View
         {
           "key"      : "part"
           "label"    : "Assessment"
+          "editable" : true
+        },
+        {
+          "key"      : "grade"
+          "label"    : "Grade"
           "editable" : true
         },
         {
@@ -73,25 +85,68 @@ class CurriculumView extends Backbone.View
         }
       ]
 
+  htmlFileTable: ->
+
+    return "" if _(@curriculum.getAttachments()).isEmpty()
+
+    prefixes = ["", "KB", "MB", "GB"]
+    html = "
+      <h2>Attachments</h2>
+      <table>
+    "
+    for attachment in @curriculum.getAttachments()
+      bytes = attachment.size
+      index  = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
+      size   = Math.decimals(bytes / Math.pow(1024, index), 1) + " " + prefixes[index]
+      html += "<tr><td>#{attachment.filename} (#{size})</td></tr>"
+
+    html += "</table>"
+
+    return html
+
+  uploadFile: (event) ->
+
+    file = event.target.files[0]
+
+    @curriculum.addAttachment
+      file: file
+      error: =>
+        Utils.midAlert "Error uploading."
+      success: =>
+        Utils.midAlert "File uploaded"
+      complete: =>
+        @curriculum.fetch
+          success: => @render()
+
 
   render: ->
 
-    subtestTable = @getSubtestTable()
+    subtestTable = ""
+    grades = _(@subtests.pluck("grade")).uniq()
+    for grade in grades
+      subtestTable += @getSubtestTable(grade)
 
     deleteButton = if Tangerine.settings.get("context") == "server" then "<button class='command_red delete'>Delete</button>" else ""
 
     newButtons = "
         <button class='command new_subtest' data-prototype='grid'>New Grid Subtest</button><br>
         <button class='command new_subtest' data-prototype='survey'>New Survey Subtest</button>
+        <div class='file_box'>
+          #{@htmlFileTable()}
+          <label for='file'>Upload file</label>
+          <input type='file' id='file'>
+        </div>
+
     " if Tangerine.settings.get("context") == "server"
 
     html = "
 
       <button class='navigation back'>#{t('back')}</button>
-      <h1>#{@options.curriculum.get('name')}</h1>
+      <h1 class='curriculum-name'></h1>
+      <small class='name-controls'></small><br>
 
       <div class='small_grey'>Download key <b>#{@curriculum.id.substr(-5,5)}</b></div>
-      
+
       <div id='subtest_table_container'>
         #{subtestTable}
       </div>
@@ -104,18 +159,55 @@ class CurriculumView extends Backbone.View
     "
 
     @$el.html html
+
+    @renderName()
+
     @trigger "rendered"
+
+  renderName: ->
+    @$el.find(".curriculum-name").html @options.curriculum.getEscapedString('name')
+    @$el.find(".name-controls").html "
+      <span class='edit'>Edit</span>
+    "
+
+  editName: ->
+    $h1 = @$el.find(".curriculum-name").html "<input class='new-name' value='#{@options.curriculum.getEscapedString('name')}'>"
+    $h1.find("input").select()
+    @$el.find(".name-controls").html "
+      <span class='save'>Save</span> 
+      <span class='cancel'>Cancel</span>
+    "
+  
+  saveName: ->
+    newName = @$el.find(".new-name").val()
+    @options.curriculum.save 
+      name : newName
+    ,
+      success: =>
+        Utils.topAlert "Name saved"
+        @renderName()
+      error: =>
+        Utils.topAlert "New name did not save. Please try again."
+        @renderName()
+
+  cancelEditName: -> @renderName()
 
   updateTable: -> @$el.find("#subtest_table_container").html @getSubtestTable()
 
-  getSubtestTable: ->
+  getSubtestTable: (grade) ->
 
     html = "<table class='subtests'>"
 
     html += "
       <tbody>
     "
-    @subtestsByPart = @subtests.indexArrayBy "part"
+
+    if grade?
+      subtests = new Backbone.Collection @subtests.where grade : grade
+    else
+      subtests = @subtests
+
+    @subtestsByPart = subtests.indexArrayBy "part"
     for part, subtests of @subtestsByPart
       html += "<tr><td>&nbsp;</td></tr>"
       for subtest in subtests

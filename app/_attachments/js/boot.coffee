@@ -36,6 +36,7 @@ Tangerine.bootSequence =
 
   pouchCheck : (callback) ->
     # Restore previous if exists
+    return callback() unless Modernizr.touch # only if mobile
     db = new PouchDB(Tangerine.db_name)
     db.info (err, response) ->
       if response.doc_count isnt 0
@@ -53,7 +54,22 @@ Tangerine.bootSequence =
       else
         callback()
               
+  mmlpCheck: (callback) ->
+    includes = [
+      "/mmlp/_design/mmlp/app/constants.js"
+      "/mmlp/_design/mmlp/app/classes.js"
+    ]
+    getAnother = ->
+      file = includes.shift()
+      $.getScript(file, (data, status, jqxhr) ->
+        return getAnother() if includes.length > 0
+        callback()
+      ).fail( ( jqxhr, settings, exception ) ->
+        return getAnother() if includes.length > 0
+        callback()
+      )
 
+    getAnother()
 
   getConfiguration : ( callback ) ->
     # Grab our system config doc
@@ -87,6 +103,44 @@ Tangerine.bootSequence =
             console.log "couldn't save new settings"
           success: ->
             callback()
+
+
+  hitViews: (callback) ->
+
+    return callback() if Tangerine.settings.get("context") is "server"
+
+    $.couch.login
+      name     : "admin"
+      password : "password"
+      success: ->
+        checkActiveTasks = ->
+          $.couch.activeTasks
+            error: -> clearInterval(Tangerine.activeTasksInterval)
+            success: (activities) ->
+              progress = 0
+              for activity in activities 
+                progress += activity.progress
+
+              Utils.midAlert "Loading<br>#{JSON.stringify(arguments)}"
+
+        
+        Tangerine.$db.view "#{Tangerine.design_doc}/byCollection",
+          success: -> 
+            $.couch.logout
+              success: -> callback()
+              error: -> callback()
+
+          error: ->
+            $.couch.logout
+              success: -> callback()
+              error: -> callback()
+
+                
+        Tangerine.activeTasksInterval = setInterval(checkActiveTasks, 1000)
+    
+
+
+
 
   getTemplates : (callback) ->
 
@@ -224,10 +278,17 @@ Tangerine.bootSequence =
 
 
         if Tangerine.settings.get("context") != "server"
+
           document.addEventListener "deviceready"
           , ->
-            document.addEventListener "online", -> Tangerine.online = true
-            document.addEventListener "offline", -> Tangerine.online = false
+
+            document.addEventListener "online", -> 
+              Tangerine.syncManager.online true
+              Tangerine.online = true
+
+            document.addEventListener "offline", ->
+              Tangerine.syncManager.online false
+              Tangerine.online = false
 
             ### Note, turns on menu button
             document.addEventListener "menubutton", (event) ->
@@ -260,7 +321,6 @@ Tangerine.bootSequence =
 Tangerine.load = (functions) ->
 
   doStep = ->
-
     nextFunction = functions.shift()
     nextFunction?(doStep)
   
@@ -268,8 +328,10 @@ Tangerine.load = (functions) ->
 
 Tangerine.load [
     Tangerine.bootSequence.pouchCheck
+    Tangerine.bootSequence.mmlpCheck
     Tangerine.bootSequence.getConfiguration
     Tangerine.bootSequence.getSettings
+    #Tangerine.bootSequence.hitViews
     Tangerine.bootSequence.getTemplates
     Tangerine.bootSequence.ensureAdmin
     Tangerine.bootSequence.transitionUsers

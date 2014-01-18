@@ -34,9 +34,9 @@
          "groupDDoc" : "ojai",
          "language" : "en",
          "log" : [""],
-         "groupName" : "",
+         "groupName" : "empty",
          "groupHost" : "http://databases.tangerinecentral.org",
-         "upPass" : "pass"
+         "upPass" : "icomciulovklwkar"
       }
    },
    "reports" : [

@@ -20,10 +20,22 @@ utils =
 
   # returns an object {key: value}
   pair : (key, value) ->
-    if value == undefined then value = "no_record"
+    value = "no_record" if value == undefined
     o = {}
     o[key] = value
     return o
+
+  # Makes an object that descrbes a csv value
+  cell : ( subtest, key, value ) ->
+    if typeof subtest is "string"
+      machineName = "#{subtest}-#{key}"
+    else
+      machineName = "#{subtest.subtestId}-#{key}"
+    return {
+      key         : key
+      value       : value
+      machineName : machineName
+    }
 
   unpair : (pair) ->
     for key, value of pair
@@ -35,4 +47,5 @@ if typeof(exports) == "object"
   exports.clone       = utils.clone
   exports.exportValue = utils.exportValue
   exports.pair        = utils.pair
+  exports.cell        = utils.cell
   exports.unpair      = utils.unpair

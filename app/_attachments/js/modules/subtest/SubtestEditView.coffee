@@ -6,10 +6,10 @@ class SubtestEditView extends Backbone.View
     'click .back_button'         : 'goBack'
     'click .save_subtest'        : 'saveSubtest'
 
-    'click .richtext_edit'     : 'richtextEdit'
-    'click .richtext_save'     : 'richtextSave'
-    'click .richtext_cancel'   : 'richtextCancel'
-    'change #display_code' : 'validateSyntax'
+    'click .richtext_edit'   : 'richtextEdit'
+    'click .richtext_save'   : 'richtextSave'
+    'click .richtext_cancel' : 'richtextCancel'
+    'change #display-code'   : 'validateSyntax'
 
 
   richtextConfig: [
@@ -134,7 +134,7 @@ class SubtestEditView extends Backbone.View
       studentDialog     : @$el.find("#dialog_textarea").val()
       transitionComment : @$el.find("#transition_textarea").val()
 
-      displayCode : @$el.find("#display_code").val()
+      displayCode : @$el.find("#display-code").val()
 
       fontFamily : @$el.find("#font_family").val()
 
@@ -173,6 +173,8 @@ class SubtestEditView extends Backbone.View
     fontFamily  = @model.getEscapedString("fontFamily")
     displayCode = @model.getString("displayCode")
     groupHandle = Tangerine.settings.getEscapedString("groupHandle")
+
+    displayCodeLines = (displayCode.match(/\n/g)||[]).length + 1
 
     @$el.html "
       <h1>Subtest Editor</h1>
@@ -238,8 +240,8 @@ class SubtestEditView extends Backbone.View
         </div>
         <div class='menu_box'>
           <div class='label_value'>
-            <label for='display_code' title='This CoffeeScript code will be executed when this question is shown. This option may only be used when Focus Mode is on.'>Action on display</label>
-            <textarea id='display_code'>#{displayCode}</textarea>
+            <label for='display-code' title='This CoffeeScript code will be executed when this question is shown. This option may only be used when Focus Mode is on.'>Action on display</label>
+            <textarea id='display-code' rows='#{displayCodeLines}'>#{displayCode}</textarea>
           </div>
         </div>
 
@@ -251,7 +253,7 @@ class SubtestEditView extends Backbone.View
 
     @prototypeEditor.setElement @$el.find('#prototype_attributes')
     @prototypeEditor.render?()
-    
+
     @trigger "rendered"
 
   afterRender: ->

@@ -14,7 +14,7 @@ class QuestionEditView extends Backbone.View
     'keypress .option_value'  : 'quickAddWithEnter'
     'keypress .option_label'  : 'quickFocusValue'
     'change #custom_validation_code' : 'validateSyntax'
-    'change #display_code'           : 'validateSyntax'
+    'change #display-code'           : 'validateSyntax'
     'change #skip_logic'             : 'validateSyntax'
 
   initialize: (options) ->
@@ -182,8 +182,8 @@ class QuestionEditView extends Backbone.View
 
         <div class='menu_box'>
           <div class='label_value'>
-            <label for='display_code' title='This CoffeeScript code will be executed when this question is shown. This option may only be used when Focus Mode is on.'>Action on display</label>
-            <textarea id='display_code' rows='2'>#{displayCode}</textarea>
+            <label for='display-code' title='This CoffeeScript code will be executed when this question is shown. This option may only be used when Focus Mode is on.'>Action on display</label>
+            <textarea id='display-code' rows='2'>#{displayCode}</textarea>
           </div>
         </div>
 
@@ -301,7 +301,7 @@ class QuestionEditView extends Backbone.View
       "skippable"       : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
       "customValidationCode"    : @$el.find("#custom_validation_code").val()
       "customValidationMessage" : @$el.find("#custom_validation_message").val()
-      "displayCode"             : @$el.find("#display_code").val()
+      "displayCode"             : @$el.find("#display-code").val()
       
     # options
     options = []

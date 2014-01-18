@@ -1,0 +1,294 @@
+class TripResult extends Backbone.Model
+
+  initialize: ->
+
+  fetch: ->
+    @save()
+
+  save: ->
+    # do nothing, just in case
+
+  getVariable: ( key ) ->
+    result = _(@get("data")).where("key":key)
+    return result[0].value if result.length > 0
+    return "not found"
+
+  add: (results) ->
+    results = [results] unless _(results).isArray()
+    @models = @models.concat results
+
+
+class TripResultCollection extends Backbone.Collection
+
+  url   : "result"
+  model : TripResult
+
+  setWorkflowId: (workflowId = "") ->
+    @workflowId = workflowId
+
+  fetch: ( options = {} ) =>
+
+    Tangerine.$db.view "#{Tangerine.design_doc}/results",
+      key     : @workflowId
+      success : (response) =>
+
+        resultIds = response.rows.filter( (row) ->
+          row.value != "assessment" && row.value != "klass"
+        ).map (result) -> result.id
+
+
+        resultsByTripId = _(response.rows.filter( (row) ->
+          row.value != "assessment" && row.value != "klass"
+        ).map (result) -> {tripId:result.value,docId:result.id}).indexBy("tripId")
+
+        tripIdByResultId = _(response.rows.filter( (row) ->
+          row.value != "assessment" && row.value != "klass"
+        ).map (result) -> {tripId:result.value,docId:result.id}).indexBy("docId")
+
+        Tangerine.$db.view "#{Tangerine.design_doc}/csvRows",
+          keys : resultIds
+          success : (csvRows) =>
+            trips = _(csvRows.rows.map (result) -> {cells:result.value,docId:result.id, tripId:tripIdByResultId[result.id][0].tripId}).indexBy("tripId")
+            tripModels = []
+
+            for tripId, tripResults of trips
+              allCells = []
+              attributes = {}
+
+              for result in tripResults
+
+                allCells = allCells.concat result.cells
+                for cell in result.cells
+                  tryCount = 1
+                  tryKey   = cell.key
+                  tryValue = cell.value
+                  suffix   = ''
+
+                  while true
+                    if attributes[tryKey]?
+                      tryKey = cell.key + "_#{tryCount}"
+                      tryCount++
+
+                    else
+                      attributes[tryKey] = tryValue
+                      break
+
+              attributes.tripId  = tripId
+              attributes._id  = tripId
+              attributes.rawData = allCells
+              @add new TripResult attributes
+
+            options.success()
+
+
+class FeedbackTripsView extends Backbone.View
+
+  events: ->
+
+    "change #county" : "onCountySelectionChange"
+    "change #zone"   : "onZoneSelectionChange"
+
+    "click .show-feedback"    : "showFeedback"
+    "click .show-lesson-plan" : "showLessonPlan"
+
+    "click .hide-feedback"    : "hideFeedback"
+    "click .hide-lesson-plan" : "hideLessonPlan"
+
+  initialize: (options) ->
+    @[key] = value for key, value of options
+
+    @subViews = []
+
+    @trips = new TripResultCollection
+    @trips.setWorkflowId @workflow.id
+    @trips.fetch 
+      success: => 
+        @isReady = true
+        @render()
+
+  hideLessonPlan: (event) ->
+
+    $target = $(event.target)
+
+    $target.toggle()
+    $target.siblings().toggle()
+
+    tripId = $target.attr("data-tripId")
+    @$el.find(".#{tripId}-lesson").empty()
+
+
+  showLessonPlan: (event) ->
+
+    $target = $(event.target)
+
+    $target.toggle()
+    $target.siblings().toggle()
+
+    tripId = $target.attr("data-tripId")
+    trip   = @trips.get(tripId)
+
+    $lessonContainer = @$el.find(".#{tripId}-lesson")
+
+    @$el.find(".#{tripId}-lesson").html "<img class='loading' src='images/loading.gif'>"
+
+    lessonView = new LessonView
+    lessonView.setElement $lessonContainer
+
+    subject = ({"word": "2", "english_word" : "1"})[trip.get("subject")]
+    grade   = trip.get("class")
+    week    = trip.get("week")
+    day     = trip.get("day")
+
+    lessonView.lesson.fetch subject, grade, week, day, =>
+      lessonView.render()
+    
+    @subViews.push lessonView
+
+
+  hideFeedback: (event) ->
+
+    $target = $(event.target)
+
+    $target.toggle()
+    $target.siblings().toggle()
+
+    tripId = $target.attr("data-tripId")
+    @$el.find(".#{tripId}").empty()
+
+
+  showFeedback: (event) ->
+    $target = $(event.target)
+
+    $target.toggle()
+    $target.siblings().toggle()
+
+
+    tripId = $target.attr("data-tripId")
+
+    trip = @trips.get(tripId)
+    
+    view = new FeedbackRunView
+      trip     : trip
+      feedback : @feedback
+
+    view.render()
+
+    @subViews.push view
+
+    @$el.find(".#{tripId}").empty().append view.$el
+
+  onClose: ->
+    for view in @subViews
+      view.close()
+
+  render: =>
+
+    if @isReady and @trips.length > 0
+      @$el.html " 
+        <h1>Feedback</h1>
+        <p>No visits yet.</p>
+      "
+      @trigger "rendered"
+    return unless @trips?.length > 0
+
+    tripsByCounty = @trips.indexBy("County")
+    counties = _(@trips.pluck("County")).chain().compact().uniq().value().sort()
+    countyOptions = ("<option value='#{county}'>#{county} (#{tripsByCounty[county]?.length || 0})</option>" for county in counties).join('')
+    countyOptions = "<option disabled='disabled' selected='selected'>Select a county</option>" + countyOptions
+
+    html = "
+      <h1>Feedback</h1>
+      <h2>Visits</h2>
+      <div id='county-selection'>
+        <label for='county'>County</label>
+        <select id='county'>
+          #{countyOptions}
+        </select>
+      </div>
+      
+      <div id='zone-selection'>
+        <label for='zone'>Zone</label>
+        <select id='zone'>
+          <option disabled='disabled' selected='selected'></option>
+        </select>
+      </div>
+      <br>
+      <div id='feedback-list'>
+
+      </div>
+    "
+
+    @$el.html html
+
+    @trigger "rendered"
+
+  onCountySelectionChange: (event) ->
+
+    selectedCounty = $(event.target).val()
+    tripsByCounty  = @trips.indexBy("County")
+
+    zones = _(tripsByCounty[selectedCounty]).chain().map((a)->a.attributes['Zone']).compact().uniq().value().sort()
+
+    zoneOptions = ''
+    for zone in zones
+      countInZone = tripsByCounty[selectedCounty]?.map?((a)->a.get("Zone")).filter((a)->a is zone)?.length || 0
+      zoneOptions += "<option value='#{zone}'>#{zone} (#{countInZone})</option>"
+    zoneOptions = "<option disabled='disabled' selected='selected'>Select a zone</option>" + zoneOptions
+
+
+    @$el.find("#zone").html zoneOptions
+
+    tripsByCounty[selectedCounty]?.map?((a)-> a.get("Zone")).filter?
+    ((a)->a==zone).length || 0
+
+  onZoneSelectionChange: ( event ) ->
+
+    selectedZone   = @$el.find("#zone").val()
+    selectedCounty = @$el.find("#county").val()
+
+    selectedTrips = @trips.where
+      County : selectedCounty
+      Zone   : selectedZone
+
+    selectedTrips = selectedTrips.sort((a,b)->b.get('start_time')-a.get('start_time'))
+
+    feedbackHtml = "
+    <table>
+      <tr>
+        <th>School Name</th>
+        <th>Class</th>
+        <th>Stream</th>
+        <th>Date</th>
+        <th>&nbsp;</th>
+      </tr>
+    "
+    for trip in selectedTrips
+      tripId = trip.get('tripId')
+      feedbackHtml += "
+        <tr>
+          <td>#{trip.get("SchoolName")}</td>
+          <td>#{trip.get("class")}</td>
+          <td>#{trip.get("stream")}</td>
+          <td>#{moment(trip.get("start_time")).format("MMM-DD HH:mm")}</td>
+          <td>
+            <button class='command show-feedback' data-tripId='#{tripId}'>Show feedback</button>
+            <button class='command hide-feedback' data-tripId='#{tripId}' style='display:none;'>Hide feedback</button>
+          </td>
+          <td>
+            <button class='command show-lesson-plan' data-tripId='#{tripId}'>Show lesson plan</button>
+            <button class='command hide-lesson-plan' data-tripId='#{tripId}' style='display:none;'>Hide lesson plan</button>
+          </td>
+        </tr>
+        <tr>
+          <td colspan='6' class='#{tripId}'></td>
+        </tr>
+        <tr>
+          <td colspan='6' class='#{tripId}-lesson'></td>
+        </tr>
+      "
+
+    feedbackHtml += "</table>"
+
+    @$el.find("#feedback-list").html feedbackHtml
+
+

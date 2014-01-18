@@ -755,6 +755,15 @@ nav#submenu
   height: 45px;
 }
 
+#corner_logo:active
+{
+  width: 45px;
+  height: 45px;
+  margin-bottom: -2px;
+  padding-top: 2px;
+}
+
+
 // Things that start out hidden
 .assessment_menu
 {
@@ -1173,8 +1182,15 @@ div.assessment_edit_view
     //width: 100%;
   }
 
-
 }
+
+
+#display-code
+{
+  font-family: "Andale Mono", "Courier New", monospace;
+  font-size: 0.6em;
+}
+
 
 
 input[type='number']
@@ -1368,8 +1384,94 @@ table.basic_info
 
 }
 
+
+
+/*
+ * Workflow
+ */
+
+.WorkflowEditView
+{
+
+  th
+  {
+    padding-right: 1em;
+  }
+
+  #step-list li
+  {
+    margin: 1em 0;
+    padding: 0.6em;
+    box-shadow: 1px 2px 5px rgba(0,0,0,0.3);
+  }
+
+  .link
+  {
+    cursor: pointer;
+    font-size: 0.6em;
+    text-decoration: underline;
+  }
+
+}
+
+/*
+ * NotesView
+ */
+
+.NotesView
+{
+  padding: 10px;
+  box-shadow: 1px 2px 7px rgba(0,0,0,0.2);
+}
+
+/*
+ * FeedbackRunView
+ */
+.FeedbackRunView
+{
+  .three
+  {
+    background : #c8dcf0;
+    padding    : 0.1em 1em 1em;
+    margin-top : 1em;
+}
+}
+
+
+/*
+ * SyncManagerView
+ */
+
+.SyncManagerView
+{
+  th {
+    text-align: left;
+    padding-right: 1em;
+  }
+}
+
+#display-switch
+{
+  position: fixed;
+  right: 50px;
+  bottom: 100px;
+  box-shadow: 3px 3px 7px rgba(0,0,0,0.2);
+  cursor: pointer;
+  z-index: 999;
+}
+
+
+.processingCode-edit-in-place,
+.processingCode-edit-in-place textarea
+{
+  font-size: 12px;
+  white-space: pre;
+  font-family: "Andale Mono", AndaleMono, "Courier New", CourierNew, monospace;
+}
+
 #skip_logic
 {
+  white-space: pre;
   font-family: "Andale Mono", AndaleMono, "Courier New", CourierNew, monospace;
   font-size: 15px;
 }
@@ -2216,6 +2318,8 @@ body[rtl]
   }
 
 }
+
+
 
 
 /*

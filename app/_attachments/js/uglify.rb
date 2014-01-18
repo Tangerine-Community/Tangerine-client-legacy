@@ -26,6 +26,8 @@ jsFiles = [
 
   'modules/button/ButtonView.js',
 
+  'modules/syncManager/SyncManager.js',
+
   'modules/assessment/Assessment.js',
   'modules/assessment/Assessments.js',
   'modules/assessment/AssessmentsView.js',
@@ -140,7 +142,6 @@ jsFiles = [
   'modules/user/GroupsView.js',
   'modules/user/UsersMenuView.js',
 
-
   'modules/workflow/WorkflowStep.js',
   'modules/workflow/WorkflowSteps.js',
   'modules/workflow/Workflow.js',
@@ -153,6 +154,8 @@ jsFiles = [
   'modules/feedback/Critiques.js',
   'modules/feedback/Feedback.js',
   'modules/feedback/FeedbackEditView.js',
+  'modules/feedback/FeedbackRunView.js',
+  'modules/feedback/FeedbackTripsView.js',
 
   'modules/assessment/AssessmentPrintView.js',
   'modules/question/QuestionPrintView.js',
@@ -212,6 +215,7 @@ libFiles = [
   'lib/base64.js',
   'lib/jstz.js',
   'lib/ckeditor.js',
+  'lib/highlight.pack.js',
   'lib/pouchdb.js',
   'lib/coffee-script.js' # This file tends to like to be last
 ]

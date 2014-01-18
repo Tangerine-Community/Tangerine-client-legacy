@@ -16,10 +16,12 @@ class Router extends Backbone.Router
 
     # Tutor
 
-    'workflow/edit/:id' : 'workflowEdit'
-    'workflow/run/:id'  : 'workflowRun'
+    'workflow/edit/:workflowId' : 'workflowEdit'
+    'workflow/run/:workflowId'  : 'workflowRun'
 
-    'feedback/edit/:id' : 'feedbackEdit'
+
+    'feedback/edit/:workflowId' : 'feedbackEdit'
+    'feedback/:workflowId'      : 'feedback'
 
     # Class
     'class'          : 'klass'
@@ -68,11 +70,14 @@ class Router extends Backbone.Router
     'question/:id' : 'editQuestion'
     'dashboard' : 'dashboard'
     'dashboard/*options' : 'dashboard'
+
     'admin' : 'admin'
+
+    'features' : 'features'
 
     'sync/:id'      : 'sync'
 
-    
+
   admin: (options) ->
     Tangerine.user.verify
       isAdmin: ->
@@ -82,7 +87,64 @@ class Router extends Backbone.Router
             view = new AdminView
               groups : groups
             vm.show view
-    
+
+  features: (options) ->
+    Tangerine.user.verify
+      isAdmin: ->
+
+        $.couch.allDbs
+          success: (databases) =>
+
+            finish = ( workspace ) ->
+              Utils.working false
+              lists = new FeatureLists
+              lists.fetch
+                success: ->
+                  view = new FeatureListView
+                    groups           : workspace.groups
+                    versions         : workspace.versions
+                    groupsByVersions : workspace.groupsByVersions
+                    lists            : lists
+                  vm.show view
+
+            workspace = 
+              groups           : databases.filter (database) -> database.indexOf("group-") == 0
+              versions         : []
+              groupsByVersions : {}
+
+            getNext = ( workspace ) ->
+
+              groups           = workspace.groups
+              versions         = workspace.versions
+              groupsByVersions = workspace.groupsByVersions
+
+              if groups.length == 0 
+                finish( workspace )
+              else
+                group = groups.pop()
+                $.ajax "/#{group}/_design/#{Tangerine.design_doc}/js/version.js",
+                  dataType : "text"
+                  success: (result) =>
+                    version = result.match(/"(.*)"/)[1]
+
+                    versions.push version if not ~versions.indexOf(version)
+
+                    groupsByVersions[version] = [] unless groupsByVersions[version]?
+                    groupsByVersions[version].push group
+
+                    getNext( workspace )
+
+                  error: ->
+
+                    versions.push "unknown" if not ~versions.indexOf("unknown")
+                    groupsByVersions["unknown"] = [] unless groupsByVersions["unknown"]?
+                    groupsByVersions["unknown"].push group
+
+                    getNext( workspace )
+
+            Utils.working true
+            getNext( workspace )
+
   dashboard: (options) ->
     options = options?.split(/\//)
     #default view options
@@ -106,12 +168,42 @@ class Router extends Backbone.Router
         view = new WorkflowEditView workflow : workflow
         vm.show view
 
-  feedbackEdit: ( feedbackId ) ->
-    feedback = new Feedback "_id" : feedbackId
-    feedback.fetch
+  feedbackEdit: ( workflowId ) ->
+
+    showFeedbackEditor = ( feedback, workflow ) ->
+      feedback.updateCollection()
+      view = new FeedbackEditView
+        feedback: feedback
+        workflow: workflow
+      vm.show view
+
+    workflow = new Workflow "_id" : workflowId
+    workflow.fetch
       success: ->
-        view = new FeedbackEditView feedback : feedback
-        vm.show view
+        feedbackId = "#{workflowId}-feedback"
+        feedback   = new Feedback "_id" : feedbackId
+        feedback.fetch
+          error:   -> feedback.save null, success: -> showFeedbackEditor(feedback, workflow)
+          success: -> showFeedbackEditor(feedback, workflow)
+
+  feedback: ( workflowId ) ->
+
+    workflow = new Workflow "_id" : workflowId
+    workflow.fetch
+      success: ->
+        feedbackId = "#{workflowId}-feedback"
+        feedback = new Feedback "_id" : feedbackId
+        feedback.fetch
+          error: -> Utils.midAlert "No feedback defined"
+          success: ->
+            feedback.updateCollection()
+            view = new FeedbackTripsView
+              feedback : feedback
+              workflow : workflow
+            vm.show view
+
+
+
 
   workflowRun: ( workflowId ) ->
     workflow = new Workflow "_id" : workflowId
@@ -365,7 +457,7 @@ class Router extends Backbone.Router
           user : new User
         vm.show view
       isAuthenticated: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
 
   studentEdit: ( studentId ) ->
     Tangerine.user.verify
@@ -422,21 +514,31 @@ class Router extends Backbone.Router
   assessments: ->
     Tangerine.user.verify
       isAuthenticated: ->
-        collections = [
-          "Klasses"
-          "Teachers"
-          "Curricula"
-          "Assessments"
-          "Workflows"
-        ]
+        (workflows = new Workflows).fetch
+          success: ->
 
-        collections.push if "server" == Tangerine.settings.get("context") then "Users" else "TabletUsers"
+            if workflows.length > 0 && Tangerine.settings.get("context") isnt "server"
 
-        Utils.loadCollections
-          collections: collections
-          complete: (options) ->
-            options.users = options.tabletUsers || options.users
-            vm.show new AssessmentsMenuView options
+              view = new WorkflowMenuView
+                workflows: workflows
+
+              return vm.show view
+
+            collections = [
+              "Klasses"
+              "Teachers"
+              "Curricula"
+              "Assessments"
+              "Workflows"
+            ]
+
+            collections.push if "server" == Tangerine.settings.get("context") then "Users" else "TabletUsers"
+
+            Utils.loadCollections
+              collections: collections
+              complete: (options) ->
+                options.users = options.tabletUsers || options.users
+                vm.show new AssessmentsMenuView options
 
   editId: (id) ->
     id = Utils.cleanURL id
@@ -449,7 +551,7 @@ class Router extends Backbone.Router
             view = new AssessmentEditView model: model
             vm.show view
       isUser: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
 
 
   edit: (id) ->
@@ -462,7 +564,7 @@ class Router extends Backbone.Router
             view = new AssessmentEditView model: model
             vm.show view
       isUser: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
 
   restart: (name) ->
     Tangerine.router.navigate "run/#{name}", true
@@ -581,31 +683,43 @@ class Router extends Backbone.Router
     part = parseInt(part)
     Tangerine.user.verify
       isAuthenticated: ->
-          allSubtests = new Subtests
-          allSubtests.fetch
-            success: ( collection ) ->
-              subtests = new Subtests collection.where "part" : part
-              allResults = new KlassResults
-              allResults.fetch
-                success: ( results ) ->
-                  results = new KlassResults results.where "klassId" : klassId
-                  students = new Students
-                  students.fetch
-                    success: ->
+        allResults = new KlassResults
+        allResults.fetch
+          success: ( results ) ->
+            results = new KlassResults results.where "klassId" : klassId
+            students = new Students
+            students.fetch
+              success: ->
 
-                      # filter `Results` by `Klass`'s current `Students`
-                      students = new Students students.where "klassId" : klassId
-                      studentIds = students.pluck("_id")
-                      resultsFromCurrentStudents = []
-                      for result in results.models
-                        resultsFromCurrentStudents.push(result) if result.get("studentId") in studentIds
-                      filteredResults = new KlassResults resultsFromCurrentStudents
+                klass = new Klass "_id" : klassId
+                klass.fetch
+                  success: ->
+                    curriculum = new Curriculum "_id" : klass.get("curriculumId")
+                    curriculum.fetch
+                      success: ->
+                        allSubtests = new Subtests
+                        allSubtests.fetch
+                          success: ( collection ) ->
+                            subtests = new Subtests collection.where "part" : part, "curriculumId" : klass.get("curriculumId")
+                            previousSubtests = []
+                            collection.each (subtest) ->
+                              previousSubtests.push(subtest) if subtest.get("part") <= part
 
-                      view = new KlassGroupingView
-                        "students" : students
-                        "subtests" : subtests
-                        "results"  : filteredResults
-                      vm.show view
+                            # filter `Results` by `Klass`'s current `Students`
+                            students = new Students students.where "klassId" : klassId
+                            studentIds = students.pluck("_id")
+                            resultsFromCurrentStudents = []
+                            for result in results.models
+                              resultsFromCurrentStudents.push(result) if result.get("studentId") in studentIds
+                            filteredResults = new KlassResults resultsFromCurrentStudents
+
+                            view = new KlassGroupingView
+                              "students"   : students
+                              "curriculum" : curriculum
+                              "subtests"   : subtests
+                              "results"    : filteredResults
+                              "previousSubtests" : previousSubtests
+                            vm.show view
 
   masteryCheck: (studentId) ->
     Tangerine.user.verify
@@ -702,7 +816,7 @@ class Router extends Backbone.Router
                   assessment : assessment
                 vm.show view
       isUser: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
 
   editKlassSubtest: (id) ->
 
@@ -733,7 +847,7 @@ class Router extends Backbone.Router
                 else
                   onSuccess subtest, curriculum
       isUser: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
 
 
   #
@@ -760,7 +874,7 @@ class Router extends Backbone.Router
                       "assessment" : assessment
                     vm.show view
       isUser: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
 
 
   editKlassQuestion: (id) ->
@@ -791,7 +905,7 @@ class Router extends Backbone.Router
   login: ->
     Tangerine.user.verify
       isAuthenticated: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
       isUnregistered: ->
 
         showView = (users = []) ->
@@ -884,7 +998,7 @@ class Router extends Backbone.Router
           "name"     : name
           "password" : name
           success: ->
-            Tangerine.router.navigate ""
+            Tangerine.router.landing()
             window.location.reload()
           error: ->
             $.couch.signup
@@ -905,7 +1019,7 @@ class Router extends Backbone.Router
                     "name"     : name
                     "password" : name
                     success : ->
-                      Tangerine.router.navigate ""
+                      Tangerine.router.landing()
                       window.location.reload()
                     error: ->
                       Utils.sticky "Error transfering user."

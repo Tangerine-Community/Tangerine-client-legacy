@@ -2,14 +2,24 @@ class AssessmentRunView extends Backbone.View
 
   className : "AssessmentRunView"
 
+  events :
+    "click .next" : "next"
+    "click .skip" : "skip"
+
   initialize: (options) ->
+
+    @model = options.model
+
+    @inWorkflow = options.inWorkflow
+    @tripId     = options.tripId
+    @workflowId = options.workflowId
+
 
     @abortAssessment = false
     @index = 0
-    @model = options.model
     @orderMap = []
 
-    Tangerine.tempData = {}
+    Utils.dataClear()
 
     @rendered = {
       "assessment" : false
@@ -47,10 +57,16 @@ class AssessmentRunView extends Backbone.View
       for i in [0..@subtestViews.length]
         @orderMap[i] = i
 
-    @result = new Result
+    resultAttributes = 
       assessmentId   : @model.id
       assessmentName : @model.get "name"
       blank          : true
+
+    if @inWorkflow
+      resultAttributes.tripId     = @tripId
+      resultAttributes.workflowId = @workflowId
+
+    @result = new Result resultAttributes 
 
     if hasSequences then @result.set("order_map" : @orderMap)
 
@@ -58,38 +74,58 @@ class AssessmentRunView extends Backbone.View
       model          : @result
       assessment     : @model
       assessmentView : @
+
     @subtestViews.push resultView
 
   render: ->
+
     currentView = @subtestViews[@orderMap[@index]]
-    
+
     if @model.subtests.length == 0
       @$el.html "<h1>Oops...</h1><p>\"#{@model.get 'name'}\" is blank. Perhaps you meant to add some subtests.</p>"
       @trigger "rendered"
-    else
-      @$el.html "
-        <h1>#{@model.get 'name'}</h1>
-        <div id='progress'></div>
-      "
-      @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
+      @flagRender "assessment"
+      return
 
-      currentView.on "rendered",    => @flagRender "subtest"
-      currentView.on "subRendered", => @trigger "subRendered"
+    skippable = currentView.model.get("skippable") == true || currentView.model.get("skippable") == "true"
+    skipButton = "<button class='skip navigation'>Skip</button>" if skippable
+    controlls = "
+      <div id='controlls' class='clearfix'>
+        <button class='next navigation'>#{t('next')}</button>
+        #{skipButton || ''}
+      </div>
+    " unless @index is @subtestViews.length - 1 or @inWorkflow?
 
-      currentView.render()
-      @$el.append currentView.el
+    @$el.html "
+      <h1>#{@model.get 'name'}</h1>
+      <div id='progress'></div>
+      <div id='subtest'></div>
+      #{controlls || ''}
+    "
+
+    @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
+
+    currentView.on "rendered",    => @flagRender "subtest"
+    currentView.on "subRendered", => @trigger "subRendered"
+    currentView.on "hideNext",    => @hideNext()
+    currentView.on "showNext",    => @showNext()
+
+    currentView.setElement(@$el.find("#subtest"))
+    currentView.render()
 
     @flagRender "assessment"
+
+  afterRender: ->
+    @subtestViews[@orderMap[@index]]?.afterRender?()
+
+  showNext: -> @$el.find(".next_subtest").show()
+  hideNext: -> @$el.find(".next_subtest").hide()
 
   flagRender: (object) ->
     @rendered[object] = true
 
     if @rendered.assessment && @rendered.subtest
       @trigger "rendered"
-
-
-  afterRender: ->
-    @subtestViews[@orderMap[@index]]?.afterRender?()
 
   onClose: ->
     for view in @subtestViews
@@ -116,7 +152,6 @@ class AssessmentRunView extends Backbone.View
         @resetNext()
 
   next: =>
-
     if @abortAssessment
       currentView = @subtestViews[@orderMap[@index]]
       @saveResult( currentView )
@@ -128,8 +163,9 @@ class AssessmentRunView extends Backbone.View
     else
       currentView.showErrors()
 
-  saveResult: ( currentView ) =>
+  getResult: -> @result
 
+  saveResult: ( currentView ) =>
     subtestResult = currentView.getResult()
 
     @result.add
@@ -141,6 +177,7 @@ class AssessmentRunView extends Backbone.View
       sum         : currentView.getSum()
     ,
       success : =>
+        @trigger "subViewDone" if @index is @subtestViews.length - 2
         @resetNext()
 
   resetNext: =>
@@ -153,5 +190,8 @@ class AssessmentRunView extends Backbone.View
         @subtestViews.length-1
       else
         @index + 1
+
+    @hideNext() if @index is @subtestViews.length - 1
+
     @render()
     window.scrollTo 0, 0

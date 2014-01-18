@@ -441,6 +441,10 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save: function(key, val, options) {
+
+      // fetmar: call this model's beforeSave method first
+      if (this.beforeSave != null) this.beforeSave.apply(this, arguments);
+
       var attrs, method, xhr, attributes = this.attributes;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.

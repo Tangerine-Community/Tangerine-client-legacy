@@ -1,21 +1,37 @@
 class WorkflowStep extends Backbone.ChildModel
 
   getName: ->
-    if @type() is "assessment"
-      return @get("name")
+    if @getType() is "assessment" or @getType() is "curriculum"
+      return @getString("name")
     return @get("_id")
 
   getType: -> @getString("type")
 
-  getViewClass: -> @get("viewClass")
+  getView: ( argOptions = {} ) ->
+    viewOptions    = @getViewOptions()
+    defaultOptions = 
+      inWorkflow : true
 
-  getViewOptions: -> @get("viewOptions")
+    $.extend(viewOptions, defaultOptions)
+    $.extend(argOptions, viewOptions)
+    return new window["New#{@get('className')}View"](argOptions)
+
+  getCoffeeMessage: -> @getString("message")
+  
+  getContent: -> @getString("content")
+
+  getViewOptions: -> eval(@get("classOptions-cooked"))
 
   getTypeModel: -> @model if @model?
 
-  getTypesId: -> @getString("typesId")
-
+  getTypesId:  -> @getString("typesId")
   getUserType: -> @getString("userType")
+
+  getCurriculumItemType: -> @getString("curriculumItemType")
+  getCurriculumWeek:     -> @getString("curriculumWeek")
+  getCurriculumGrade:    -> @getString("curriculumGrade")
+
+  getShowLesson: -> @getString("showLesson-cooked")
 
   fetch: ( options = {} ) ->
     options.error   = $.noop unless options.error?
@@ -27,7 +43,7 @@ class WorkflowStep extends Backbone.ChildModel
         success : ->
           options.success()
     else if @get("type") is "curriculum"
-      @model = new curriculum "_id" : @get("typesId")
+      @model = new Curriculum "_id" : @get("typesId")
       @model.fetch
         error   : -> console.log "Had trouble fetching #{@get("typesId")}"; options.error()
         success : ->
