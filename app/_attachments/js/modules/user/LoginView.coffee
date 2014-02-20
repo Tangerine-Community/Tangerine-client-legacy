@@ -269,23 +269,34 @@ class LoginView extends Backbone.View
     $("#footer").show()
     $("body").css("background", @oldBackground)
 
+
+  # returns true or false on a key event supressing default behavior on special conditions
   keyHandler: (event) ->
 
+    # define special key codes
     key =
       ENTER     : 13
       TAB       : 9
       BACKSPACE : 8
 
+    # what field are we looking at
     field = $(event.target).attr('id')
 
+    # ignore all these fields
     isntIgnoredField = not (
       field is "challenge-question" or 
       field is "challenge-response" or
-      field is "response"
+      field is "response" or
+      field is "email" or
+      field is "phone"
     )
 
+    # clear messages with every new input
     $('.messages').html('')
+
     char = event.which
+
+    # only respond to keyboard events and on fields we don't ignore
     if char? and isntIgnoredField
 
       isSpecial = 
