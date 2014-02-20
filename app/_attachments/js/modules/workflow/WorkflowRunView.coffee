@@ -53,7 +53,9 @@ class WorkflowRunView extends Backbone.View
     
 
   afterRender: =>
-    @subView?.afterRender?()
+    subView?.afterRender?()
+
+    # Hack for PRIMR to hide the next button on grids
     if @subView?.prototype? and @subView.prototype is "grid"
       $("button.navigation.next").hide()
     else
@@ -154,6 +156,11 @@ class WorkflowRunView extends Backbone.View
       @lessonView.setElement @$lessonContainer
       @lessonView.lesson.fetch subject, grade, week, day, =>
         @lessonView.render()
+        # Another hack brought to you by Mike to fix buggy audio controls, probably caused by invalid html on the lesson TODO
+        console.log "Replacing audio controls with buttons"
+        $("audio").attr("controls",false)
+        $("audio").after("<button onClick='$(this).prev().prev()[0].pause();'>Pause</button>")
+        $("audio").after("<button onClick='$(this).prev()[0].play();'>Play</button>")
       ,
         => 
           @$button.remove()
@@ -179,6 +186,12 @@ class WorkflowRunView extends Backbone.View
     console.log htmlMessage
 
     @$el.find("##{@cid}_current_step").html htmlMessage
+
+    # Hack by Mike! TODO
+    if htmlMessage.match(/You have completed this Classroom Observation/)
+      _.delay( ->
+        $("button.navigation.next").hide()
+      ,500)
 
 
   renderNew: ->

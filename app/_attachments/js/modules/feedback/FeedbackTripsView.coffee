@@ -143,6 +143,11 @@ class FeedbackTripsView extends Backbone.View
 
     lessonView.lesson.fetch subject, grade, week, day, =>
       lessonView.render()
+      # Another hack brought to you by Mike to fix buggy audio controls, probably caused by invalid html on the lesson TODO
+      console.log "Replacing audio controls with buttons"
+      $("audio").attr("controls",false)
+      $("audio").after("<button onClick='$(this).prev().prev()[0].pause();'>Pause</button>")
+      $("audio").after("<button onClick='$(this).prev()[0].play();'>Play</button>")
     
     @subViews.push lessonView
 

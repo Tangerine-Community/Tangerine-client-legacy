@@ -59,13 +59,14 @@ class WorkflowMenuView extends Backbone.View
     htmlWorkflows = ""
 
     for workflow in @workflows.models
-
-      htmlWorkflows += "
-        <li id='#{workflow.id}' style='margin-bottom:25px;'>
-          <button class='navigation'><a href='#workflow/run/#{workflow.id}'>#{workflow.get('name')}</a></button><br>
-          <button class='command'><a href='#feedback/#{workflow.id}'>Feedback</a></button>
-        </li>
-        "
+      # HACK by Mike - TODO use roles to show/hide workflows
+      if workflow.get("name") isnt "PRIMR" or (workflow.get("name") is "PRIMR" and Tangerine.user.get("name").match(/primr/))
+        htmlWorkflows += "
+          <li id='#{workflow.id}' style='margin-bottom:25px;'>
+            <button class='navigation'><a href='#workflow/run/#{workflow.id}'>#{workflow.get('name')}</a></button><br>
+            <button class='command'><a href='#feedback/#{workflow.id}'>Feedback</a></button>
+          </li>
+          "
 
     @$el.html "
       <h1>Tutor menu</h1>
