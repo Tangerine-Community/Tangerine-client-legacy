@@ -187,18 +187,18 @@ class LoginView extends Backbone.View
           <input id='new-pass-2' type='password' placeholder='#{@text.password_confirm}'>
 
 
-          <input id='first' placeholder='#{@text.first_name}'>
-          <input id='last' placeholder='#{@text.last_name}'>
+          <input id='first' type='text' placeholder='#{@text.first_name}'>
+          <input id='last' type='text' placeholder='#{@text.last_name}'>
           <input id='zone-name' placeholder='#{@text.zone_name}'>
 
-          <label>
           <select id='gender'>
             <option value='male'>Male</option>
             <option value='female'>Female</option>
           </select>
+          <br/><br/>
 
-          <input id='phone' placeholder='#{@text.phone}'>
-          <input id='email' placeholder='#{@text.email}'>
+          <input id='phone' type='number' placeholder='#{@text.phone}'>
+          <input id='email' type='text' placeholder='#{@text.email}'>
 
 
           <button class='sign-up'>#{@text.sign_up}</button>
@@ -284,7 +284,7 @@ class LoginView extends Backbone.View
 
     # ignore all these fields
     isntIgnoredField = not (
-      field is "challenge-question" or 
+      field is "challenge-question" or
       field is "challenge-response" or
       field is "response" or
       field is "email" or
