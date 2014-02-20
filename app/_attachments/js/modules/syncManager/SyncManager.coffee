@@ -71,6 +71,7 @@ class SyncManagerView extends Backbone.View
             {
               success : =>
                 @sunc.push currentTrip
+                @sunc = _.uniq(@sunc)
                 @log.save "sunc": @sunc,
                   success: =>
                     @update =>
