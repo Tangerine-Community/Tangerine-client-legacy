@@ -5,5 +5,3 @@
   }
   return false;
 });
-
-//# sourceMappingURL=resultFilter.map
