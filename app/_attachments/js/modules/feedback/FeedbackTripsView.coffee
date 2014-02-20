@@ -87,6 +87,7 @@ class FeedbackTripsView extends Backbone.View
 
     "change #county" : "onCountySelectionChange"
     "change #zone"   : "onZoneSelectionChange"
+    "change #school" : "onSchoolSelectionChange"
 
     "click .show-feedback"    : "showFeedback"
     "click .show-lesson-plan" : "showLessonPlan"
@@ -133,6 +134,7 @@ class FeedbackTripsView extends Backbone.View
 
     lessonView = new LessonView
     lessonView.setElement $lessonContainer
+
 
     subject = ({"word": "2", "english_word" : "1"})[trip.get("subject")]
     grade   = trip.get("class")
@@ -212,6 +214,13 @@ class FeedbackTripsView extends Backbone.View
           <option disabled='disabled' selected='selected'></option>
         </select>
       </div>
+
+      <div id='school-selection'>
+        <label for='school'>School</label>
+        <select id='school'>
+          <option disabled='disabled' selected='selected'></option>
+        </select>
+      </div>
       <br>
       <div id='feedback-list'>
 
@@ -242,31 +251,81 @@ class FeedbackTripsView extends Backbone.View
     ((a)->a==zone).length || 0
 
   onZoneSelectionChange: ( event ) ->
+    selectedZone = $(event.target).val()
+    tripsByZone  = @trips.indexBy("Zone")
 
+    schools = _(tripsByZone[selectedZone]).chain().map((a)->a.attributes['SchoolName']).compact().uniq().value().sort()
+
+    schoolOptions = ''
+    for school in schools
+      countInSchool = tripsByZone[selectedZone]?.map?((a)->a.get("SchoolName")).filter((a)->a is school)?.length || 0
+      schoolOptions += "<option value='#{school}'>#{school} (#{countInSchool})</option>"
+    schoolOptions = "<option disabled='disabled' selected='selected'>Select a school</option>" + schoolOptions
+
+    @$el.find("#school").html schoolOptions
+
+    tripsByZone[selectedZone]?.map?((a)-> a.get("SchoolName")).filter?
+    ((a)->a==zone).length || 0
+
+
+  onSchoolSelectionChange: ( event ) ->
+
+    selectedSchool   = @$el.find("#school").val()
     selectedZone   = @$el.find("#zone").val()
     selectedCounty = @$el.find("#county").val()
 
     selectedTrips = @trips.where
       County : selectedCounty
       Zone   : selectedZone
+      SchoolName : selectedSchool
 
     selectedTrips = selectedTrips.sort((a,b)->b.get('start_time')-a.get('start_time'))
 
     feedbackHtml = "
-    <table>
+    <style>
+      .tablesorter td{
+        border: gray solid 1px;
+      }
+      table#feedback-table{
+        font-size: 90%;
+      }
+      .table#feedback-table button{
+        font-size: 50%;
+      }
+      
+    </style>
+    <table id='feedback-table' class='tablesorter'>
+      <thead>
       <tr>
         <th>School Name</th>
+        <th>Subject</th>
         <th>Class</th>
         <th>Stream</th>
-        <th>Date</th>
+        <th>Observation Start Time</th>
         <th>&nbsp;</th>
       </tr>
+      </thead>
+      <tbody>
     "
-    for trip in selectedTrips
+    for trip,index in selectedTrips
+      console.log trip
       tripId = trip.get('tripId')
       feedbackHtml += "
         <tr>
           <td>#{trip.get("SchoolName")}</td>
+          <td id='subject-#{index}'>#{
+            console.log trip.get "subject"
+            switch trip.get "subject"
+              when "english_word"
+                "English"
+              when "word"
+                "Kiswahili"
+              when "operation"
+                "Mathematics"
+              when "3"
+                "Mother Tongue"
+          }
+          </td>
           <td>#{trip.get("class")}</td>
           <td>#{trip.get("stream")}</td>
           <td>#{moment(trip.get("start_time")).format("MMM-DD HH:mm")}</td>
@@ -286,9 +345,9 @@ class FeedbackTripsView extends Backbone.View
           <td colspan='6' class='#{tripId}-lesson'></td>
         </tr>
       "
-
-    feedbackHtml += "</table>"
+    feedbackHtml += "</tbody></table>"
 
     @$el.find("#feedback-list").html feedbackHtml
+    $("table.tablesorter").tablesorter()
 
 
