@@ -30,7 +30,7 @@ class AssessmentRunView extends Backbone.View
     @subtestViews = []
     @model.subtests.sort()
     @model.subtests.each (model) =>
-      @subtestViews.push new SubtestRunView 
+      @subtestViews.push new SubtestRunView
         model  : model
         parent : @
 
@@ -155,7 +155,7 @@ class AssessmentRunView extends Backbone.View
     if @abortAssessment
       currentView = @subtestViews[@orderMap[@index]]
       @saveResult( currentView )
-      return 
+      return
 
     currentView = @subtestViews[@orderMap[@index]]
     if currentView.isValid()
