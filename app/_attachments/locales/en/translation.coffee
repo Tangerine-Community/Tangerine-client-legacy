@@ -34,8 +34,8 @@
       "password" : "Password"
       "password_confirm" : "Confirm Password"
 
-      "challenge_question" : "Challenge question"
-      "challenge_response" : "Challenge response"
+      "challenge_question" : "Secret question: e.g. Mother’s name?"
+      "challenge_response" : "Secret question answer"
 
       "first_name" : "First name"
       "last_name"  : "Last name"
