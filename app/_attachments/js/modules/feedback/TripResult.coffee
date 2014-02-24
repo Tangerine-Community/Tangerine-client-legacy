@@ -3,7 +3,7 @@ class TripResult extends Backbone.Model
   initialize: ->
 
   fetch: ->
-    @save()
+    # do nothing, just in case
 
   save: ->
     # do nothing, just in case
