@@ -209,6 +209,7 @@ class AssessmentsMenuView extends Backbone.View
 
       @workflowMenuView = new WorkflowMenuView
         workflows : @workflows
+        feedbacks : @feedbacks
       @workflowMenuView.setElement @$el.find("#workflow_menu_container")
       @workflowMenuView.render()
 

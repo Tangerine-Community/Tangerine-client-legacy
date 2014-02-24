@@ -537,8 +537,14 @@ class Router extends Backbone.Router
             Utils.loadCollections
               collections: collections
               complete: (options) ->
-                options.users = options.tabletUsers || options.users
-                vm.show new AssessmentsMenuView options
+                # load feedback models associated with workflows
+                feedbacks = options.workflows.models.map (a) -> new Feedback "_id" : "#{a.id}-feedback"
+                feedbacks = new Feedbacks feedbacks
+                feedbacks.fetch
+                  success: ->
+                    options.feedbacks = feedbacks
+                    options.users = options.tabletUsers || options.users
+                    vm.show new AssessmentsMenuView options
 
   editId: (id) ->
     id = Utils.cleanURL id

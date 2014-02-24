@@ -34,13 +34,22 @@ class WorkflowMenuView extends Backbone.View
     htmlWorkflows = ""
 
     for workflow in @workflows.models
+      
       csvUrl = "/_csv/workflow/#{Tangerine.db_name}/#{workflow.id}"
+      
+      feedback = @feedbacks.get(workflow.id+"-feedback")
+
+      if feedback? and feedback.get("children")?.length > 0
+        feedbackHtml = "<a href='#feedback/#{workflow.id}'>feedback</a>"
+      else
+        feedbackHtml = ""
+
       htmlWorkflows += "
         <li id='#{workflow.id}' style='margin-bottom:15px;'>
           #{workflow.get('name')}
           <br>
           <a href='#workflow/run/#{workflow.id}'>run</a>
-          <a href='#feedback/#{workflow.id}'>feedback</a>
+          #{feedbackHtml}
           <a href='#workflow/edit/#{workflow.id}'>edit</a>
           <a href='#{csvUrl}'>csv</a>
           <span class='workflow-delete link'>delete</span>
@@ -61,10 +70,15 @@ class WorkflowMenuView extends Backbone.View
     for workflow in @workflows.models
       # HACK by Mike - TODO use roles to show/hide workflows
       if workflow.get("name") isnt "PRIMR" or (workflow.get("name") is "PRIMR" and Tangerine.user.get("name").match(/primr/))
+        if feedback? and feedback.get("children")?.length > 0
+          feedbackHtml = "<button class='command'><a href='#feedback/#{workflow.id}'>Feedback</a></button>"
+        else
+          feedbackHtml = ""
+
         htmlWorkflows += "
           <li id='#{workflow.id}' style='margin-bottom:25px;'>
             <button class='navigation'><a href='#workflow/run/#{workflow.id}'>#{workflow.get('name')}</a></button><br>
-            <button class='command'><a href='#feedback/#{workflow.id}'>Feedback</a></button>
+            #{feedbackHtml}
           </li>
           "
 
