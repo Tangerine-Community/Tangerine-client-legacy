@@ -6,3 +6,8 @@ class Feedback extends Backbone.ParentModel
   ChildCollection : Critiques
 
 
+class Feedbacks extends Backbone.Collection
+
+  model : Feedback
+  url : "feedback"
+
