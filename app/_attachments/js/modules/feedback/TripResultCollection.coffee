@@ -4,21 +4,15 @@ class TripResultCollection extends Backbone.Collection
   url   : "result"
   model : TripResult
 
-  setWorkflowId: (workflowId = "") ->
-    @workflowId = workflowId
-
-  setUserId: (userId = "") ->
-    @userId = userId
-
   fetch: ( options = {} ) =>
 
-    if @userId? and @userId isnt ''
-      queryKey = "#{@workflowId}-#{@userId}"
-    else
-      queryKey = @workflowId
+    throw "Please provide the name of a view that supplies result _ids." unless options.resultView?
+    throw "Please provide a query key for the view." unless options.queryKey?
 
+    resultView = options.resultView
+    queryKey   = options.queryKey
 
-    Tangerine.$db.view "#{Tangerine.design_doc}/results",
+    Tangerine.$db.view "#{Tangerine.design_doc}/#{resultView}",
       key     : queryKey
       success : (response) =>
 
