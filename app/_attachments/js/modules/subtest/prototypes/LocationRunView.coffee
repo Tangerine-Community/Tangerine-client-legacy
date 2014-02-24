@@ -145,13 +145,24 @@ class LocationRunView extends Backbone.View
     lastIndex = index - 1
 
     for location in @locations
+
       unless ~doneOptions.indexOf location[index]
+
         isNotChild = selected is ''
         isValidChild = selected is location[lastIndex]
+
         if isNotChild or isValidChild
+
           doneOptions.push location[index]
-          levelOptions += "<option value='#{location[index]}'>#{location[index]}</option>"
-    "<option selected='selected' disabled='disabled'>Please select a #{@levels[index]}</option>" + levelOptions
+
+          locationName = _(location[index]).escape()
+          levelOptions += "
+            <option value='#{locationName}'>#{locationName}</option>
+          "
+
+    return "
+      <option selected='selected' disabled='disabled'>Please select a #{@levels[index]}</option>
+    " + levelOptions
 
 
   getResult: ->
