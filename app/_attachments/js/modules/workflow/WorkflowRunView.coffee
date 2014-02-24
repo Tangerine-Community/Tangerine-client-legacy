@@ -32,17 +32,20 @@ class WorkflowRunView extends Backbone.View
 
   render: ->
 
-    console.log "should skip? #{@shouldSkip()}"
     return @nextStep() if @shouldSkip()
 
     stepIndicator = "<div id='workflow-progress'></div>"
+
+    nextButton = "
+      <div class='clearfix'><button class='navigation next'>Next</button></div>
+    " if @index isnt @workflow.getChildren().length - 1
 
     @$el.html "
       #{stepIndicator}
       <div id='header-container'></div>
       <section id='#{@cid}_current_step'></section>
       <!--button class='navigation previous'>Previous</button-->
-      <div class='clearfix'><button class='navigation next'>Next</button></div>
+      #{nextButton || ''}
     "
 
     @renderStep()
@@ -110,9 +113,6 @@ class WorkflowRunView extends Backbone.View
     @currentStep = @workflow.stepModelByIndex @index
     @steps[@index].model = @currentStep
 
-    console.log "rendering step"
-    console.log @currentStep
-
     if @index == @workflow.getLength()-1
       Tangerine.activity = ""
       @$el.find(".next").hide()
@@ -156,11 +156,6 @@ class WorkflowRunView extends Backbone.View
       @lessonView.setElement @$lessonContainer
       @lessonView.lesson.fetch subject, grade, week, day, =>
         @lessonView.render()
-        # Another hack brought to you by Mike to fix buggy audio controls, probably caused by invalid html on the lesson TODO
-        console.log "Replacing audio controls with buttons"
-        $("audio").attr("controls",false)
-        $("audio").after("<button onClick='$(this).prev().prev()[0].pause();'>Pause</button>")
-        $("audio").after("<button onClick='$(this).prev()[0].play();'>Play</button>")
       ,
         => 
           @$button.remove()
@@ -172,27 +167,12 @@ class WorkflowRunView extends Backbone.View
       @$button?.remove()
 
   renderMessage: ->
-    console.log "trying to render message"
     coffeeMessage = @currentStep.getCoffeeMessage()
-    console.log "coffeemessage"
-    console.log coffeeMessage
     jsMessage = CoffeeScript.compile.apply(@, ["return \"#{coffeeMessage}\""])
-    console.log "jsMessage"
-    console.log jsMessage
 
     htmlMessage = eval(jsMessage)
 
-    console.log "htmlMessage"
-    console.log htmlMessage
-
     @$el.find("##{@cid}_current_step").html htmlMessage
-
-    # Hack by Mike! TODO
-    if htmlMessage.match(/You have completed this Classroom Observation/)
-      _.delay( ->
-        $("button.navigation.next").hide()
-      ,500)
-
 
   renderNew: ->
     view = @currentStep.getView
