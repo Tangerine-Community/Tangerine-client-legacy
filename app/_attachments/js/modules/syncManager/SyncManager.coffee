@@ -53,7 +53,7 @@ class SyncManagerView extends Backbone.View
     @toSync = @syncable.length - @sunc.length
     callback()
 
-  cancelSyncInstruments: ->
+  cancelSyncInstruments: =>
     @newAssessment.cancelSync = true
 
 
@@ -87,6 +87,7 @@ class SyncManagerView extends Backbone.View
               @$el.find('#sync-progress').replaceWith("<div id='sync-progress'></div>")
               @$el.find('#sync-status').html "Sync'd #{(Math.round(done/total*100))}%"
               @$el.find(".instruments, .cancel-instruments").toggle()
+              @trigger "complete-sync"
 
               @alreadySyncing = false
 

@@ -1,5 +1,7 @@
 class WorkflowMenuView extends Backbone.View
 
+  className : "WorkflowMenuView"
+
   events:
     "click .workflow-new"    : 'new'
     "click .workflow-delete" : "delete"
@@ -63,7 +65,28 @@ class WorkflowMenuView extends Backbone.View
     "
 
 
-  renderMobile: ->
+  renderMobile: =>
+
+    @$el.html "
+      <h1>Tutor menu</h1>
+      <ul class='workflow-menu'></ul>
+      <div id='sync-manager' class='SyncManagerView'></div>
+    "
+
+    @updateWorkFlows()
+
+    unless @syncManagerView?
+      @syncManagerView = new SyncManagerView
+      @syncManagerView.setElement(@$el.find("#sync-manager"))
+      @syncManagerView.on "complete-sync", =>
+        @workflows.fetch
+          success: =>
+            @updateWorkFlows()
+      @syncManagerView.render()
+
+    @trigger "rendered"
+
+  updateWorkFlows: ->
 
     htmlWorkflows = ""
 
@@ -81,16 +104,4 @@ class WorkflowMenuView extends Backbone.View
             #{feedbackHtml}
           </li>
           "
-
-    @$el.html "
-      <h1>Tutor menu</h1>
-      <ul class='workflow-menu'>#{htmlWorkflows}</ul>
-      <div id='sync-manager' class='SyncManagerView'></div>
-
-    "
-
-    @syncManagerView = new SyncManagerView
-    @syncManagerView.setElement(@$el.find("#sync-manager"))
-    @syncManagerView.render()
-
-    @trigger "rendered"
+    @$el.find(".workflow-menu").html htmlWorkflows
