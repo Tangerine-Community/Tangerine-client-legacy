@@ -10,7 +10,10 @@ class SyncManagerView extends Backbone.View
   className : "SyncManagerView"
 
   events:
-    'click .upload' : 'upload'
+    'click .upload'      : 'upload'
+    'click .instruments' : "syncInstruments"
+    'click .cancel-instruments' : "cancelSyncInstruments"
+
 
   initialize: () ->
     @log = new SyncManager
@@ -49,6 +52,51 @@ class SyncManagerView extends Backbone.View
     @sunc = @log.getArray("sunc")
     @toSync = @syncable.length - @sunc.length
     callback()
+
+  cancelSyncInstruments: ->
+    @newAssessment.cancelSync = true
+
+
+  syncInstruments: =>
+    return if @alreadySyncing
+    @$el.find(".instruments, .cancel-instruments").toggle()
+
+    @alreadySyncing = true
+    @$el.find('#sync-status').html "Syncing"
+
+    $.ajax 
+      url: Tangerine.settings.urlView("local", "byDKey"),
+      type: "POST"
+      contentType: "application/json"
+      dataType: "json"
+      data: "{}"
+      success: (data) =>
+        keyList = []
+        for datum in data.rows
+          keyList.push datum.key
+        keyList = _.uniq(keyList)
+
+        $.ajax
+          url: Tangerine.settings.urlView "group", "assessmentsNotArchived"
+          dataType: "jsonp"
+          success: (data) =>
+            dKeys = _.compact(doc.id.substr(-5, 5) for doc in data.rows).concat(keyList).join(" ")
+            @newAssessment = new Assessment
+            @newAssessment.on "complete", (done, total) => 
+              @newAssessment.off()
+              @$el.find('#sync-progress').replaceWith("<div id='sync-progress'></div>")
+              @$el.find('#sync-status').html "Sync'd #{(Math.round(done/total*100))}%"
+              @$el.find(".instruments, .cancel-instruments").toggle()
+
+              @alreadySyncing = false
+
+            @newAssessment.on "progress", (done, total) =>
+              if done < total
+                @$el.find('#sync-progress').progressbar value : ( done / total ) * 100
+            @newAssessment.updateFromServer dKeys
+          error: (a, b) ->
+            Utils.midAlert "Import error"
+
 
 
   upload: =>
@@ -89,15 +137,27 @@ class SyncManagerView extends Backbone.View
   render: ( statusMessage = '' ) =>
 
     @$el.html "<h1>Sync manager</h1>
-    <table>
-      <tr>
-        <th>Synced results</th><td>#{@sunc.length}</td>
-      </tr>
-      <tr>
-        <th>Left to sync</th><td>#{@toSync}</td>
-      </tr>
-    </table>
-    <button class='upload command'>Upload</button>
+    <section>
+      <table>
+        <tr>
+          <th>Synced results</th><td>#{@sunc.length}</td>
+        </tr>
+        <tr>
+          <th>Left to sync</th><td>#{@toSync}</td>
+        </tr>
+        <tr>
+          <td colspan='2'><button class='upload command'>Upload</button></td>
+        </tr>
+      </table>
+    </section>    
+
+    <section>
+      <button class='instruments command'>Sync all instruments</button>
+      <button class='cancel-instruments command' style='display:none'>Cancel instrument sync</button>
+
+      <div id='sync-status'></div>
+      <div id='sync-progress'></div>
+    </section>
     "
 
 

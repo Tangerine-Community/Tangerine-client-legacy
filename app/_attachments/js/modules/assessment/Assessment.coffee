@@ -84,9 +84,16 @@ class Assessment extends Backbone.Model
       data: keys: JSON.stringify(dKeys)
       error: (a, b) => @trigger "status", "import error", "#{a} #{b}"
       success: (data) =>
+
+        docsByDKey = {}
         docList = []
+
         for datum in data.rows
+          docsByDKey[datum.key] = [] unless docsByDKey[datum.key]?
+          docsByDKey[datum.key].push datum.id
           docList.push datum.id
+
+
 
         $.ajax 
           url: localDKey,
@@ -96,21 +103,60 @@ class Assessment extends Backbone.Model
           data: JSON.stringify(keys:dKeys)
           error: (a, b) => @trigger "status", "import error", "#{a} #{b}"
           success: (data) =>
+
             for datum in data.rows
+              docsByDKey[datum.key] = [] unless docsByDKey[datum.key]?
+              docsByDKey[datum.key].push datum.id
               docList.push datum.id
 
-            docList = _.uniq(docList)
+            totalDocs = _(docList).uniq().length
+            doneDocs = 0
 
-            $.couch.replicate( 
-              sourceDB,
-              targetDB,
-                success: (response)=> 
-                  @checkConflicts docList 
-                  @trigger "status", "import success", response
-                error: (a, b)      => @trigger "status", "import error", "#{a} #{b}"
-              ,
-                doc_ids: docList
-            )
+            getNext = =>
+              keys = Object.keys(docsByDKey).sort()
+              key  = keys.pop()
+              docs = docsByDKey[key]
+              delete docsByDKey[key]
+
+              docs      = _.uniq docs
+
+              $.couch.replicate( 
+                sourceDB,
+                targetDB,
+                  success: (response) =>
+                    @checkConflicts docs
+                    doneDocs += docs.length
+                    @trigger "progress", doneDocs, totalDocs
+
+                    if keys.length isnt 0 
+                      if @cancelSync
+                        @cancelSync = false
+                        @trigger "complete", doneDocs, totalDocs
+                      else
+                        getNext() 
+                    else
+                      @trigger "complete", doneDocs, totalDocs
+                  error: (a, b)      => 
+
+                    @trigger "status", "import error", "#{a} #{b}"
+
+                    if keys.length isnt 0 
+                      if @cancelSync
+                        @cancelSync = false
+                        @trigger "complete", doneDocs, totalDocs
+                      else
+                        getNext() 
+
+                    else
+                      @trigger "complete", doneDocs, totalDocs
+
+                ,
+                  doc_ids: docs
+              )
+
+
+            getNext()
+
 
     false
 
