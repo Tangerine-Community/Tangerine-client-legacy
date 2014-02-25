@@ -47,8 +47,7 @@ def notify( type, message )
   printf "\a"
   unless `which osascript`.empty? # on a mac?
     message = /\.coffee:(.*?)$/.match(message)[1]
-    notifier = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier" 
-    `#{notifier} -message \"#{message}\" -title \"#{type}\"` 
+    `osascript -e 'tell app \"System Events\" to display dialog \"#{type}\n\n#{message}\"'`
   end
   `notify-send "#{type} - #{message}" -i /usr/share/icons/Humanity/status/128/dialog-warning.svg &` unless `which notify-send`.empty?
 end
