@@ -79,8 +79,14 @@ jsFiles = [
   'modules/result/TabletManagerView.js',
   'modules/result/ResultSumView.js',
   'modules/result/DashboardView.js',
+  'modules/result/TripResult.js',
+  'modules/result/TripResults.js',
+
 
   'modules/admin/AdminView.js',
+
+  'modules/dashboard/Dashboard.js',
+  'modules/dashboard/VisitsByUser.js',
 
   'modules/question/Question.js',
   'modules/question/Questions.js',
