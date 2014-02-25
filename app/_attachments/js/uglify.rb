@@ -221,7 +221,6 @@ libFiles = [
   'lib/base64.js',
   'lib/jstz.js',
   'lib/ckeditor.js',
-  'lib/highlight.pack.js',
   'lib/pouchdb.js',
   'lib/coffee-script.js' # This file tends to like to be last
 ]
