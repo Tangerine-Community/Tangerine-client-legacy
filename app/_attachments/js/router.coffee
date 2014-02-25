@@ -23,6 +23,8 @@ class Router extends Backbone.Router
     'feedback/edit/:workflowId' : 'feedbackEdit'
     'feedback/:workflowId'      : 'feedback'
 
+    'edit-tutor'  : 'editTutor'
+
     # Class
     'class'          : 'klass'
     'class/edit/:id' : 'klassEdit'
@@ -68,7 +70,8 @@ class Router extends Backbone.Router
     'subtest/:id'       : 'editSubtest'
 
     'question/:id' : 'editQuestion'
-    'dashboard' : 'dashboard'
+
+    'dashboard'          : 'dashboard'
     'dashboard/*options' : 'dashboard'
 
     'admin' : 'admin'
@@ -76,6 +79,9 @@ class Router extends Backbone.Router
     'features' : 'features'
 
     'sync/:id'      : 'sync'
+
+  editTutor: ->
+    vm.show new TutorEditView
 
 
   admin: (options) ->

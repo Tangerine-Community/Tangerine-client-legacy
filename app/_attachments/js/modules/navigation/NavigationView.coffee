@@ -24,6 +24,9 @@ class NavigationView extends Backbone.View
     if @user.isAdmin() or "class" is Tangerine.settings.get("context")
       Tangerine.router.navigate "account", true
 
+    if @workflows.length isnt 0
+      Tangerine.router.navigate "edit-tutor", true
+
   logoClick: -> 
     if @user.isAdmin()
       Tangerine.activity = ""
@@ -64,6 +67,9 @@ class NavigationView extends Backbone.View
 
     @router.on 'all', @handleMenu
     @user.on   'login logout', @handleMenu
+
+    @workflows = new Workflows
+    @workflows.fetch()
 
   i18n: ->
     @text =
