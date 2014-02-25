@@ -28,10 +28,10 @@ class FeedbackEditView extends Backbone.EditView
 
   render: =>
 
-    critiqueList      = ""
+    critiqueList = ""
 
     @feedback.collection.each (critiqueModel) =>
-      console.log critiqueModel
+
       critiqueList += "
         <li>
           <table>
@@ -83,6 +83,11 @@ class FeedbackEditView extends Backbone.EditView
         }
       </style>
       <div class='menubox'>
+        <div class='menubox'>
+          <h3>Display Lesson viewer</h3>
+          #{@getEditable(@feedback, { key : 'showLessonPlan' }, 'Lesson viewer status', 'true or false', ((prop)->prop is "true") ) }
+        </div>
+
         <ul id='stepList'>#{critiqueList}</ul>
       </div>
       <div id='controls'>

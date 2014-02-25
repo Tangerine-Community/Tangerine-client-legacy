@@ -1,5 +1,7 @@
 class FeedbackTripsView extends Backbone.View
 
+  className: "FeedbackTripsView"
+
   events: ->
 
     "change #county" : "onCountySelectionChange"
@@ -12,6 +14,15 @@ class FeedbackTripsView extends Backbone.View
     "click .hide-feedback"    : "hideFeedback"
     "click .hide-lesson-plan" : "hideLessonPlan"
 
+    'click .sortable' : "sortTable"
+
+  valueToHuman :
+    "english_word" : "English"
+    "word"         : "Kiswahili"
+    "operation"    : "Mathematics"
+    "3"            : "Mother Tongue"
+
+
   initialize: (options) ->
     @[key] = value for key, value of options
 
@@ -19,7 +30,7 @@ class FeedbackTripsView extends Backbone.View
 
     @trips = new TripResultCollection
     @trips.fetch 
-      resultsView : "resultsByWorkflowId"
+      resultView : "resultsByWorkflowId"
       queryKey    : @workflow.id
       success: => 
         @isReady = true
@@ -61,11 +72,6 @@ class FeedbackTripsView extends Backbone.View
 
     lessonView.lesson.fetch subject, grade, week, day, =>
       lessonView.render()
-      # Another hack brought to you by Mike to fix buggy audio controls, probably caused by invalid html on the lesson TODO
-      console.log "Replacing audio controls with buttons"
-      $("audio").attr("controls",false)
-      $("audio").after("<button onClick='$(this).prev().prev()[0].pause();'>Pause</button>")
-      $("audio").after("<button onClick='$(this).prev()[0].play();'>Play</button>")
     
     @subViews.push lessonView
 
@@ -105,6 +111,23 @@ class FeedbackTripsView extends Backbone.View
   onClose: ->
     for view in @subViews
       view.close()
+
+  sortTable: ( event ) ->
+    newSortAttribute = $(event.target).attr("data-attr")
+    if @sortAttribute isnt newSortAttribute or @sortAttribute is null
+      @sortAttribute = newSortAttribute
+      @sortDirection = 1
+    else
+      if @sortDirection is -1
+        @sortDirection = 1
+        @sortAttribute = null
+      else if @sortDirection is 1
+        @sortDirection = -1
+
+
+    @updateFeedbackList()
+
+
 
   render: =>
 
@@ -190,87 +213,97 @@ class FeedbackTripsView extends Backbone.View
     tripsByZone[selectedZone]?.map?((a)-> a.get("SchoolName")).filter?
     ((a)->a==zone).length || 0
 
+  getSortArrow: (attributeName) ->
+    return "&#x25bc;" if @sortAttribute is attributeName and @sortDirection is 1
+    return "&#x25b2;" if @sortAttribute is attributeName and @sortDirection is -1
+    return ""
 
   onSchoolSelectionChange: ( event ) ->
 
-    selectedSchool   = @$el.find("#school").val()
-    selectedZone   = @$el.find("#zone").val()
-    selectedCounty = @$el.find("#county").val()
+    @selectedSchool = @$el.find("#school").val()
+    @selectedZone   = @$el.find("#zone").val()
+    @selectedCounty = @$el.find("#county").val()
 
-    selectedTrips = @trips.where
-      County : selectedCounty
-      Zone   : selectedZone
-      SchoolName : selectedSchool
+    @selectedTrips = @trips.where
+      County : @selectedCounty
+      Zone   : @selectedZone
+      SchoolName : @selectedSchool
 
-    selectedTrips = selectedTrips.sort((a,b)->b.get('start_time')-a.get('start_time'))
+    @updateFeedbackList()
+
+  updateFeedbackList: ->
+
+    if @sortAttribute in [ "subject", "stream" ]
+
+      # to sort strings
+      sortFunction = (a, b) => 
+        a = a.getString(@sortAttribute)
+        b = b.getString(@sortAttribute)
+        if (a < b)
+          result = -1
+        else if (a > b)
+          result = 1
+        else
+          result = 0
+        return result * @sortDirection
+
+    else
+
+      # sorting numbers
+
+      sortFunction = (a, b) => ( b.get(@sortAttribute) - a.get(@sortAttribute) ) * @sortDirection
+
+    @selectedTrips = @selectedTrips.sort sortFunction
 
     feedbackHtml = "
-    <style>
-      .tablesorter td{
-        border: gray solid 1px;
-      }
-      table#feedback-table{
-        font-size: 90%;
-      }
-      .table#feedback-table button{
-        font-size: 50%;
-      }
-      
-    </style>
-    <table id='feedback-table' class='tablesorter'>
-      <thead>
-      <tr>
-        <th>School Name</th>
-        <th>Subject</th>
-        <th>Class</th>
-        <th>Stream</th>
-        <th>Observation Start Time</th>
-        <th>&nbsp;</th>
-      </tr>
-      </thead>
-      <tbody>
+      <h2>#{@selectedTrips[0]?.get?("SchoolName") || ''}</h2>
+      <table id='feedback-table'>
+        <thead>
+          <tr>
+            <th nowrap class='sortable' data-attr='subject'>Subject #{@getSortArrow("subject")}</th>
+            <th nowrap class='sortable' data-attr='class'>Class #{@getSortArrow("class")}</th>
+            <th nowrap class='sortable' data-attr='stream'>Stream #{@getSortArrow("stream")}</th>
+            <th nowrap class='sortable' data-attr='start_time'>Observation Start Time #{@getSortArrow("start_time")}</span></th>
+            <th nowrap class='sortable' data-attr=''>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
     "
-    for trip,index in selectedTrips
-      console.log trip
+
+    for trip,index in @selectedTrips
+
       tripId = trip.get('tripId')
+
+      lessonPlanButtonsHtml = "
+        <button class='command show-lesson-plan' data-tripId='#{tripId}'>Show lesson plan</button>
+        <button class='command hide-lesson-plan' data-tripId='#{tripId}' style='display:none;'>Hide lesson plan</button>
+      " unless @feedback.get("showLessonPlan")
+
+      subject = @valueToHuman[trip.get "subject"] || ''
+
       feedbackHtml += "
         <tr>
-          <td>#{trip.get("SchoolName")}</td>
-          <td id='subject-#{index}'>#{
-            console.log trip.get "subject"
-            switch trip.get "subject"
-              when "english_word"
-                "English"
-              when "word"
-                "Kiswahili"
-              when "operation"
-                "Mathematics"
-              when "3"
-                "Mother Tongue"
-          }
-          </td>
-          <td>#{trip.get("class")}</td>
-          <td>#{trip.get("stream")}</td>
+          <td id='subject-#{index}'>#{subject}</td>
+          <td>#{trip.getString("class")}</td>
+          <td>#{trip.getString("stream")}</td>
           <td>#{moment(trip.get("start_time")).format("MMM-DD HH:mm")}</td>
           <td>
             <button class='command show-feedback' data-tripId='#{tripId}'>Show feedback</button>
             <button class='command hide-feedback' data-tripId='#{tripId}' style='display:none;'>Hide feedback</button>
           </td>
           <td>
-            <button class='command show-lesson-plan' data-tripId='#{tripId}'>Show lesson plan</button>
-            <button class='command hide-lesson-plan' data-tripId='#{tripId}' style='display:none;'>Hide lesson plan</button>
+            #{lessonPlanButtonsHtml || ''}
           </td>
         </tr>
         <tr>
-          <td colspan='6' class='#{tripId}'></td>
+          <td colspan='5' class='#{tripId}'></td>
         </tr>
         <tr>
-          <td colspan='6' class='#{tripId}-lesson'></td>
+          <td colspan='5' class='#{tripId}-lesson'></td>
         </tr>
       "
     feedbackHtml += "</tbody></table>"
 
     @$el.find("#feedback-list").html feedbackHtml
-    $("table.tablesorter").tablesorter()
 
 
