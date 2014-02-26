@@ -144,11 +144,11 @@ class User extends Backbone.Model
   ###
   save: (keyObject, valueOptions, options ) ->
     attrs = {}
-    if _.isObject keyObject
+    if _(keyObject).isObject()
       attrs = $.extend attrs, keyObject 
       options = valueOptions
     else 
-      attrs[keyObject] = value
+      attrs[keyObject] = valueOptions
     # get user DB
     $.couch.userDb (db) =>
       db.saveDoc $.extend(@attributes, attrs),
@@ -173,6 +173,25 @@ class User extends Backbone.Model
 
         error: =>
           callbacks.error?.apply(@, arguments)
+
+
+
+  ###
+
+  Preferences
+
+  ###
+
+  setPreferences: ( domain = "general", key = '', value = '' ) ->
+    preferences = @get("preferences") || {}
+    preferences[domain] = {} unless preferences[domain]?
+    preferences[domain][key] = value
+    @set("preferences", preferences)
+
+  getPreferences: ( domain = "general", key = "" ) ->
+    prefs = @get("preferences")
+    return prefs?[domain] || null if key is ""
+    return prefs?[domain]?[key] || null
 
 
 

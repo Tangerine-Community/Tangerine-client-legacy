@@ -38,6 +38,25 @@ class TabletUser extends Backbone.Model
       "name" : name
 
   ###
+
+  Preferences
+
+  ###
+
+  setPreferences: ( domain = "general", key = '', value = '' ) ->
+    preferences = @get("preferences") || {}
+    preferences[domain] = {} unless preferences[domain]?
+    preferences[domain][key] = value
+    @set("preferences", preferences)
+
+  getPreferences: ( domain = "general", key = "" ) ->
+    prefs = @get("preferences")
+    return prefs?[domain] || null if key is ""
+    return prefs?[domain]?[key] || null
+
+
+
+  ###
     Static methods
   ###
 
@@ -67,6 +86,7 @@ class TabletUser extends Backbone.Model
 
   ghostLogin: (user, pass) ->
     Tangerine.log.db "User", "ghostLogin"
+    console.log arguments
     document.location = Tangerine.settings.location.group.url.replace(/\:\/\/.*@/,'://')+"uploader/_design/uploader/uploader.html?name=#{user}&pass=#{pass}"
 
   signup: ( name, pass, attributes, callbacks={} ) =>
@@ -150,8 +170,8 @@ class TabletUser extends Backbone.Model
 
     @clear()
 
-    $.cookie("AuthSession", null) if $.cookie("AuthSession")?
-    $.cookie "user", null
+    $.removeCookie("AuthSession")
+    $.removeCookie("user")
 
     if Tangerine.settings.get("context") == "server"
       window.location = Tangerine.settings.urlIndex "trunk"
