@@ -186,7 +186,7 @@ class User extends Backbone.Model
     preferences = @get("preferences") || {}
     preferences[domain] = {} unless preferences[domain]?
     preferences[domain][key] = value
-    @set("preferences", preferences)
+    @save("preferences": preferences)
 
   getPreferences: ( domain = "general", key = "" ) ->
     prefs = @get("preferences")
