@@ -23,7 +23,7 @@ class Router extends Backbone.Router
     'feedback/edit/:workflowId' : 'feedbackEdit'
     'feedback/:workflowId'      : 'feedback'
 
-    'edit-tutor'  : 'editTutor'
+    'tutor-account' : 'tutorAccount'
 
     # Class
     'class'          : 'klass'
@@ -80,9 +80,10 @@ class Router extends Backbone.Router
 
     'sync/:id'      : 'sync'
 
-  editTutor: ->
-    vm.show new TutorEditView
-
+  tutorAccount: ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        vm.show new TutorAccountView
 
   admin: (options) ->
     Tangerine.user.verify

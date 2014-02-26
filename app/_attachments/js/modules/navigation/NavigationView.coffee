@@ -25,7 +25,7 @@ class NavigationView extends Backbone.View
       Tangerine.router.navigate "account", true
 
     if @workflows.length isnt 0
-      Tangerine.router.navigate "edit-tutor", true
+      Tangerine.router.navigate "tutor-account", true
 
   logoClick: -> 
     if @user.isAdmin()

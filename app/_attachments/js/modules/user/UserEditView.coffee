@@ -1,4 +1,4 @@
-class TutorEditView extends Backbone.EditView
+class UserEditView extends Backbone.EditView
   
   initialize: ->
     @models = new Backbone.Collection Tangerine.user
