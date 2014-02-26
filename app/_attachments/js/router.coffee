@@ -169,11 +169,14 @@ class Router extends Backbone.Router
     vm.show view
 
   workflowEdit: ( workflowId ) ->
-    workflow = new Workflow "_id" : workflowId
-    workflow.fetch
-      success: ->
-        view = new WorkflowEditView workflow : workflow
-        vm.show view
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            view = new WorkflowEditView workflow : workflow
+            vm.show view
 
   feedbackEdit: ( workflowId ) ->
 
@@ -194,32 +197,37 @@ class Router extends Backbone.Router
           success: -> showFeedbackEditor(feedback, workflow)
 
   feedback: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
 
-    workflow = new Workflow "_id" : workflowId
-    workflow.fetch
-      success: ->
-        feedbackId = "#{workflowId}-feedback"
-        feedback = new Feedback "_id" : feedbackId
-        feedback.fetch
-          error: -> Utils.midAlert "No feedback defined"
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
           success: ->
-            feedback.updateCollection()
-            view = new FeedbackTripsView
-              feedback : feedback
-              workflow : workflow
-            vm.show view
+            feedbackId = "#{workflowId}-feedback"
+            feedback = new Feedback "_id" : feedbackId
+            feedback.fetch
+              error: -> Utils.midAlert "No feedback defined"
+              success: ->
+                feedback.updateCollection()
+                view = new FeedbackTripsView
+                  feedback : feedback
+                  workflow : workflow
+                vm.show view
 
 
 
 
   workflowRun: ( workflowId ) ->
-    workflow = new Workflow "_id" : workflowId
-    workflow.fetch
-      success: ->
-        workflow.updateCollection()
-        view = new WorkflowRunView
-          workflow: workflow
-        vm.show view
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            workflow.updateCollection()
+            view = new WorkflowRunView
+              workflow: workflow
+            vm.show view
 
 
 
@@ -526,10 +534,16 @@ class Router extends Backbone.Router
 
             if workflows.length > 0 && Tangerine.settings.get("context") isnt "server"
 
-              view = new WorkflowMenuView
-                workflows: workflows
+              feedbacks = new Feedbacks feedbacks
+              feedbacks.fetch
+                success: ->
+                  view = new WorkflowMenuView
+                    workflows : workflows
+                    feedbacks : feedbacks
 
-              return vm.show view
+                  return vm.show view
+
+              return
 
             collections = [
               "Klasses"
