@@ -1415,6 +1415,20 @@ table.basic_info
 }
 
 /*
+ * WorkflowMenuView
+ */
+
+.WorkflowMenuView
+{
+  li
+  {
+    font-size: 1em;
+    font-weight: normal;
+  }
+}
+
+
+/*
  * NotesView
  */
 
@@ -1423,6 +1437,39 @@ table.basic_info
   padding: 10px;
   box-shadow: 1px 2px 7px rgba(0,0,0,0.2);
 }
+
+/*
+ * TutorAccountView
+ */
+
+ .TutorAccountView
+ {
+  .tabs li
+  {
+    cursor: pointer;
+    padding: 0.5em;
+    color: grey;
+    display: inline-block;
+    border-radius: 10px;
+    border-top: 1px solid white;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+
+  }
+
+  .selected
+  {
+    border-radius: 10px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top: 1px solid grey !important;
+    border-left: 1px solid grey !important;
+    border-right: 1px solid grey !important;
+    color: black !important;
+  }
+ }
 
 /*
  * FeedbackRunView

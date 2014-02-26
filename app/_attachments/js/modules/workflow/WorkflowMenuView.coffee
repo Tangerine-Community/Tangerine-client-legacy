@@ -8,6 +8,8 @@ class WorkflowMenuView extends Backbone.View
     "click .workflow-run"    : "run"
     "click .workflow-edit"   : "edit"
 
+
+
   new: ->
     guid = Utils.guid()
     Tangerine.router.navigate "workflow/edit/#{guid}", false
@@ -73,7 +75,7 @@ class WorkflowMenuView extends Backbone.View
       <div id='sync-manager' class='SyncManagerView'></div>
     "
 
-    @updateWorkFlows()
+    @updateWorkflows()
 
     unless @syncManagerView?
       @syncManagerView = new SyncManagerView
@@ -81,27 +83,34 @@ class WorkflowMenuView extends Backbone.View
       @syncManagerView.on "complete-sync", =>
         @workflows.fetch
           success: =>
-            @updateWorkFlows()
+            @updateWorkflows()
       @syncManagerView.render()
 
     @trigger "rendered"
 
-  updateWorkFlows: ->
+  updateWorkflows: ->
+
+    hiddenWorkflows = Tangerine.user.getPreferences("tutor-workflows", "hidden") || []
 
     htmlWorkflows = ""
 
     for workflow in @workflows.models
-      # HACK by Mike - TODO use roles to show/hide workflows
-      if workflow.get("name") isnt "PRIMR" or (workflow.get("name") is "PRIMR" and Tangerine.user.get("name").match(/primr/))
-        if feedback? and feedback.get("children")?.length > 0
-          feedbackHtml = "<button class='command'><a href='#feedback/#{workflow.id}'>Feedback</a></button>"
-        else
-          feedbackHtml = ""
+      continue if workflow.id in hiddenWorkflows
 
-        htmlWorkflows += "
-          <li id='#{workflow.id}' style='margin-bottom:25px;'>
+      feedback = @feedbacks.get(workflow.id+"-feedback")
+
+      if feedback? and feedback.get("children")?.length > 0
+        feedbackHtml = "<button class='command'><a href='#feedback/#{workflow.id}'>Feedback</a></button>"
+      else
+        feedbackHtml = ""
+
+
+      htmlWorkflows += "
+        <li id='#{workflow.id}' style='margin-bottom:25px;'>
+          <section>
             <button class='navigation'><a href='#workflow/run/#{workflow.id}'>#{workflow.get('name')}</a></button><br>
             #{feedbackHtml}
-          </li>
-          "
+          </section>
+        </li>
+        "
     @$el.find(".workflow-menu").html htmlWorkflows
