@@ -15,6 +15,7 @@ class FeedbackTripsView extends Backbone.View
     "click .hide-lesson-plan" : "hideLessonPlan"
 
     'click .sortable' : "sortTable"
+    'click .back' : "goBack"
 
   valueToHuman :
     "english_word" : "English"
@@ -22,6 +23,8 @@ class FeedbackTripsView extends Backbone.View
     "operation"    : "Mathematics"
     "3"            : "Mother Tongue"
 
+  goBack: ->
+    Tangerine.router.navigate "", true
 
   initialize: (options) ->
     @[key] = value for key, value of options
@@ -131,13 +134,16 @@ class FeedbackTripsView extends Backbone.View
 
   render: =>
 
-    if @isReady and @trips.length > 0
+    if @isReady and @trips.length == 0
       @$el.html " 
         <h1>Feedback</h1>
+        <button class='navigation back'>Back</button>
         <p>No visits yet.</p>
       "
-      @trigger "rendered"
-    return unless @trips?.length > 0
+      return @trigger "rendered"
+      
+    
+    return unless @isReady
 
     tripsByCounty = @trips.indexBy("County")
     counties = _(@trips.pluck("County")).chain().compact().uniq().value().sort()
