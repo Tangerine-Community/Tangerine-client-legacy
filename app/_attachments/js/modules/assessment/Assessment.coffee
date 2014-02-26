@@ -93,8 +93,6 @@ class Assessment extends Backbone.Model
           docsByDKey[datum.key].push datum.id
           docList.push datum.id
 
-
-
         $.ajax 
           url: localDKey,
           type: "POST"
@@ -109,8 +107,8 @@ class Assessment extends Backbone.Model
               docsByDKey[datum.key].push datum.id
               docList.push datum.id
 
-            totalDocs = _(docList).uniq().length
-            doneDocs = 0
+            @totalDocs = _(docList).uniq().length
+            @doneDocs = 0
 
             getNext = =>
               keys = Object.keys(docsByDKey).sort()
@@ -120,22 +118,22 @@ class Assessment extends Backbone.Model
 
               docs      = _.uniq docs
 
-              $.couch.replicate( 
+              @replication = $.couch.replicate( 
                 sourceDB,
                 targetDB,
                   success: (response) =>
                     @checkConflicts docs
-                    doneDocs += docs.length
-                    @trigger "progress", doneDocs, totalDocs
+                    @doneDocs += docs.length
+                    @trigger "progress", @doneDocs, @totalDocs
 
                     if keys.length isnt 0 
                       if @cancelSync
                         @cancelSync = false
-                        @trigger "complete", doneDocs, totalDocs
+                        @trigger "complete", @doneDocs, @totalDocs
                       else
                         getNext() 
                     else
-                      @trigger "complete", doneDocs, totalDocs
+                      @trigger "complete", @doneDocs, @totalDocs
                   error: (a, b)      => 
 
                     @trigger "status", "import error", "#{a} #{b}"
@@ -143,12 +141,12 @@ class Assessment extends Backbone.Model
                     if keys.length isnt 0 
                       if @cancelSync
                         @cancelSync = false
-                        @trigger "complete", doneDocs, totalDocs
+                        @trigger "complete", @doneDocs, @totalDocs
                       else
                         getNext() 
 
                     else
-                      @trigger "complete", doneDocs, totalDocs
+                      @trigger "complete", @doneDocs, @totalDocs
 
                 ,
                   doc_ids: docs
@@ -159,6 +157,24 @@ class Assessment extends Backbone.Model
 
 
     false
+
+  cancelReplication: ->
+
+    @replication.success (resp) =>
+      replicationId = resp.session_id
+      console.log "cancelling this"
+      console.log replicationId
+      $.ajax 
+        url  : "/_replicate"
+        type : "POST"
+        dataType : "json"
+        contentType: "application/json"
+        data : 
+          replication_id : replicationId
+          cancel: true
+        success: =>
+          console.log "cancelling complete"
+          @trigger "complete", @doneDocs, @totalDocs
 
   # this is pretty strange, but it basically undeletes, tries to replicate again, and then deletes the conflicting (local) version as marked by the first time around.
   checkConflicts: (docList=[], options={}) =>
