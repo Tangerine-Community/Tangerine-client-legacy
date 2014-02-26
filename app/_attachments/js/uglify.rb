@@ -27,6 +27,7 @@ jsFiles = [
   'modules/button/ButtonView.js',
 
   'modules/syncManager/SyncManager.js',
+  'modules/syncManager/InstrumentSyncView.js',
 
   'modules/assessment/Assessment.js',
   'modules/assessment/Assessments.js',
@@ -81,7 +82,6 @@ jsFiles = [
   'modules/result/DashboardView.js',
   'modules/result/TripResult.js',
   'modules/result/TripResults.js',
-
 
   'modules/admin/AdminView.js',
 
@@ -143,10 +143,13 @@ jsFiles = [
   'modules/user/TabletUser.js',
   'modules/user/TabletUsers.js',
 
+
   'modules/user/LoginView.js',
   'modules/user/AccountView.js',
   'modules/user/GroupsView.js',
   'modules/user/UsersMenuView.js',
+  'modules/user/UserEditView.js',
+  'modules/user/TutorAccountView.js',
 
   'modules/workflow/WorkflowStep.js',
   'modules/workflow/WorkflowSteps.js',
@@ -155,6 +158,8 @@ jsFiles = [
   'modules/workflow/WorkflowEditView.js',
   'modules/workflow/WorkflowRunView.js',
   'modules/workflow/WorkflowMenuView.js',
+  'modules/workflow/WorkflowSelectView.js',
+
 
   'modules/feedback/Critique.js',
   'modules/feedback/Critiques.js',
@@ -196,10 +201,10 @@ libFiles = [
   'lib/jquery.js',
   'lib/underscore.js',
   'lib/sha1.js',
+  'lib/d3.js',
   'lib/jquery.couch.js',
   'lib/jquery.cookie.js',
   'lib/jquery.tablesorter.js',
-  'lib/jquery.flot.js',
   'lib/jquery.i18next.js',
   'lib/excanvas.js',
   'lib/jquery.ui.core.js',
@@ -212,6 +217,7 @@ libFiles = [
   'lib/jquery.ui.accordion.js',
   'lib/jquery.ui.button.js',
   'lib/jquery.ui.progressbar.js',
+
   'lib/inflection.js',
   'lib/backbone.js',
   'lib/moment.js',
