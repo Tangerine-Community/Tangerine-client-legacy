@@ -87,7 +87,6 @@ class TabletUser extends Backbone.Model
 
   ghostLogin: (user, pass) ->
     Tangerine.log.db "User", "ghostLogin"
-    console.log arguments
     document.location = Tangerine.settings.location.group.url.replace(/\:\/\/.*@/,'://')+"uploader/_design/uploader/uploader.html?name=#{user}&pass=#{pass}"
 
   signup: ( name, pass, attributes, callbacks={} ) =>
