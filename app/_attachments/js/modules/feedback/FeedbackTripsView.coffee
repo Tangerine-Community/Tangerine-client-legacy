@@ -147,7 +147,7 @@ class FeedbackTripsView extends Backbone.View
 
     tripsByCounty = @trips.indexBy("County")
     counties = _(@trips.pluck("County")).chain().compact().uniq().value().sort()
-    countyOptions = ("<option value='#{county}'>#{county} (#{tripsByCounty[county]?.length || 0})</option>" for county in counties).join('')
+    countyOptions = ("<option value='#{(county).escape()}'>#{_(county).escape()} (#{tripsByCounty[county]?.length || 0})</option>" for county in counties).join('')
     countyOptions = "<option disabled='disabled' selected='selected'>Select a county</option>" + countyOptions
 
     html = "
@@ -193,7 +193,7 @@ class FeedbackTripsView extends Backbone.View
     zoneOptions = ''
     for zone in zones
       countInZone = tripsByCounty[selectedCounty]?.map?((a)->a.get("Zone")).filter((a)->a is zone)?.length || 0
-      zoneOptions += "<option value='#{zone}'>#{zone} (#{countInZone})</option>"
+      zoneOptions += "<option value='#{_(zone).escape()}'>#{zone} (#{countInZone})</option>"
     zoneOptions = "<option disabled='disabled' selected='selected'>Select a zone</option>" + zoneOptions
 
 
@@ -211,7 +211,7 @@ class FeedbackTripsView extends Backbone.View
     schoolOptions = ''
     for school in schools
       countInSchool = tripsByZone[selectedZone]?.map?((a)->a.get("SchoolName")).filter((a)->a is school)?.length || 0
-      schoolOptions += "<option value='#{school}'>#{school} (#{countInSchool})</option>"
+      schoolOptions += "<option value='#{_(school).escape()}'>#{_(school).escape()} (#{countInSchool})</option>"
     schoolOptions = "<option disabled='disabled' selected='selected'>Select a school</option>" + schoolOptions
 
     @$el.find("#school").html schoolOptions
