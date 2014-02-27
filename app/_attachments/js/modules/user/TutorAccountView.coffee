@@ -17,16 +17,24 @@ class TutorAccountView extends Backbone.View
 
 
   render: ->
+
+    if Tangerine.user.isAdmin()
+      manageTab = "<li data-id='manage-tangerine'>Manage Tangerine</li>"
+      manageSection = "<section class='tab-panel' id='manage-tangerine' style='display:none'></section>"
+
     @$el.html "
       <div>
         <ul class='tabs'>
           <li data-id='edit-user' class='selected'>Edit User</li>
           <li data-id='sync-instruments'>Sync Instruments</li>
           <li data-id='select-workflows'>Select Workflows</li>
+          #{manageTab||''}
+
         </ul>
         <section class='tab-panel' id='edit-user'></section>
         <section class='tab-panel' id='sync-instruments' style='display:none'></section>
         <section class='tab-panel' id='select-workflows' style='display:none'></section>
+        #{manageSection||''}
       </div>
     "
 
@@ -41,5 +49,10 @@ class TutorAccountView extends Backbone.View
     workflowSelectView = new WorkflowSelectView
     workflowSelectView.setElement @$el.find("#select-workflows")
     workflowSelectView.render()
+
+    if Tangerine.user.isAdmin()
+      accountView = new AccountView
+      accountView.setElement @$el.find("#manage-tangerine")
+      accountView.render()
 
     @trigger "rendered"
