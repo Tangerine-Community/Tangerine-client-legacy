@@ -153,20 +153,23 @@ class Router extends Backbone.Router
             getNext( workspace )
 
   dashboard: (options) ->
-    options = options?.split(/\//)
-    #default view options
-    reportViewOptions =
-      assessment: "All"
-      groupBy: "enumerator"
+    Tangerine.user.verify
+      isAuthenticated: ->
 
-    # Allows us to get name/value pairs from URL
-    _.each options, (option,index) ->
-      unless index % 2
-        reportViewOptions[option] = options[index+1]
+        options = options?.split(/\//)
+        #default view options
+        reportViewOptions =
+          assessment: "All"
+          groupBy: "enumerator"
 
-    view = new DashboardView()
-    view.options = reportViewOptions
-    vm.show view
+        # Allows us to get name/value pairs from URL
+        _.each options, (option,index) ->
+          unless index % 2
+            reportViewOptions[option] = options[index+1]
+
+        view = new DashboardView()
+        view.options = reportViewOptions
+        vm.show view
 
   workflowEdit: ( workflowId ) ->
     Tangerine.user.verify
@@ -179,22 +182,24 @@ class Router extends Backbone.Router
             vm.show view
 
   feedbackEdit: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
 
-    showFeedbackEditor = ( feedback, workflow ) ->
-      feedback.updateCollection()
-      view = new FeedbackEditView
-        feedback: feedback
-        workflow: workflow
-      vm.show view
+        showFeedbackEditor = ( feedback, workflow ) ->
+          feedback.updateCollection()
+          view = new FeedbackEditView
+            feedback: feedback
+            workflow: workflow
+          vm.show view
 
-    workflow = new Workflow "_id" : workflowId
-    workflow.fetch
-      success: ->
-        feedbackId = "#{workflowId}-feedback"
-        feedback   = new Feedback "_id" : feedbackId
-        feedback.fetch
-          error:   -> feedback.save null, success: -> showFeedbackEditor(feedback, workflow)
-          success: -> showFeedbackEditor(feedback, workflow)
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            feedbackId = "#{workflowId}-feedback"
+            feedback   = new Feedback "_id" : feedbackId
+            feedback.fetch
+              error:   -> feedback.save null, success: -> showFeedbackEditor(feedback, workflow)
+              success: -> showFeedbackEditor(feedback, workflow)
 
   feedback: ( workflowId ) ->
     Tangerine.user.verify
@@ -1020,7 +1025,7 @@ class Router extends Backbone.Router
     name = getVars.name
     $.couch.logout
       success: =>
-        $.cookie "AuthSession", null
+        $.removeCookie "AuthSession"
         $.couch.login
           "name"     : name
           "password" : name
