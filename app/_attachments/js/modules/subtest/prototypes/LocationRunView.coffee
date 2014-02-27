@@ -135,21 +135,29 @@ class LocationRunView extends Backbone.View
     nextLevel = levelChanged + 1
     if levelChanged isnt @levels.length
       @$el.find("#level_#{nextLevel}").removeAttr("disabled")
-      @$el.find("#level_#{nextLevel}").html @getOptions(nextLevel, newValue)
+      @$el.find("#level_#{nextLevel}").html @getOptions(nextLevel)
 
-  getOptions: (index, selected = '')->
+  getOptions: (index)->
 
     doneOptions = []
     levelOptions = ''
 
-    lastIndex = index - 1
+    parentValues = []
+    for i in [0..index]
+      break if i is index
+      parentValues.push @$el.find("#level_#{i}").val()
 
-    for location in @locations
+    for location, i in @locations
 
       unless ~doneOptions.indexOf location[index]
 
-        isNotChild = selected is ''
-        isValidChild = selected is location[lastIndex]
+        isNotChild = index is 0
+        isValidChild = true
+        for i in [0..Math.max(index-1,0)]
+
+          if parentValues[i] isnt location[i]
+            isValidChild = false
+            break
 
         if isNotChild or isValidChild
 
