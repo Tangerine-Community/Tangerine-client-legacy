@@ -24,7 +24,9 @@ class LoginView extends Backbone.View
       'blur .recent'       : 'blurRecent'
       'keyup #new-name'    : 'checkNewName'
       'click .next'        : 'next'
-      'click .verify'        : 'verify'
+      'click .verify'      : 'verify'
+
+  backButton: -> return false
 
   initialize: (options) ->
     $(window).on('orientationchange scroll resize', @recenter)
@@ -212,6 +214,7 @@ class LoginView extends Backbone.View
         </section>
         <div id='challenge'></div>
       </div>
+
     "
 
     @$el.html Tangerine.settings.contextualize
