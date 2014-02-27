@@ -147,7 +147,7 @@ class FeedbackTripsView extends Backbone.View
 
     tripsByCounty = @trips.indexBy("County")
     counties = _(@trips.pluck("County")).chain().compact().uniq().value().sort()
-    countyOptions = ("<option value='#{(county).escape()}'>#{_(county).escape()} (#{tripsByCounty[county]?.length || 0})</option>" for county in counties).join('')
+    countyOptions = ("<option value='#{_(county).escape()}'>#{_(county).escape()} (#{tripsByCounty[county]?.length || 0})</option>" for county in counties).join('')
     countyOptions = "<option disabled='disabled' selected='selected'>Select a county</option>" + countyOptions
 
     html = "
