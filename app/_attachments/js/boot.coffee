@@ -26,11 +26,17 @@ Tangerine.onBackButton = (event) ->
   if Tangerine.activity == "assessment run"
     if confirm t("NavigationView.message.incomplete_main_screen")
       Tangerine.activity = ""
-      window.history.back()
+      if vm.currentView?.backButton?
+        vm.currentView.backButton()
+      else
+        window.history.back()
     else
       return false
   else
-    window.history.back()
+    if vm.currentView?.backButton?
+      vm.currentView.backButton()
+    else
+      window.history.back()
 
 Tangerine.bootSequence = 
 
