@@ -102,9 +102,9 @@ class AccountView extends Backbone.View
     group = $(event.target).parent().attr('data-group')
     @user.leaveGroup group
 
-  initialize: ( options ) ->
+  initialize: ( options = {} ) ->
 
-    @user = options.user
+    @user    = options.user || Tangerine.user
     @teacher = options.teacher
 
     models = []
