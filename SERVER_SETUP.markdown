@@ -1,10 +1,19 @@
 Some commands used to setup tangerine/tree/robbert on Ubuntu (digital ocean server)
 
+(On Ubuntu 13.10 I had to add a swapfile to make passenger compile: https://www.digitalocean.com/community/articles/how-to-add-swap-on-ubuntu-12-04
+Commands are added below)
+
 Setup apache with passenger:
 
     sudo apt-get install ruby-dev git apache2 couchdb curl wget android-tools-adb ant help2man make gcc zlib1g-dev libssl-dev rake help2man rubygems libcurl4-openssl-dev ruby1.8-dev  apache2-prefork-dev libapr1-dev   libaprutil1-dev ruby1.9.1-dev
     sudo gem install passenger sinatra sinatra-cross_origin rest-client
-    sudo vim /etc/bash.bashrc 
+    # Swapfile stuff:
+    sudo dd if=/dev/zero of=/swapfile bs=1024 count=512k
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+    echo 0 | sudo tee /proc/sys/vm/swappiness
+    echo vm.swappiness = 0 | sudo tee -a /etc/sysctl.conf
+    
     sudo passenger-install-apache2-module
     sudo vim /etc/apache2/apache2.conf 
     sudo a2enmod proxy
