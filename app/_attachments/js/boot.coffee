@@ -289,11 +289,9 @@ Tangerine.bootSequence =
           , ->
 
             document.addEventListener "online", -> 
-              Tangerine.syncManager.online true
               Tangerine.online = true
 
             document.addEventListener "offline", ->
-              Tangerine.syncManager.online false
               Tangerine.online = false
 
             ### Note, turns on menu button
