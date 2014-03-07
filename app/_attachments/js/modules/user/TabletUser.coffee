@@ -6,7 +6,6 @@ class TabletUser extends Backbone.Model
 
   initialize: ( options ) ->
     @myRoles = []
-    @myName = null
 
   ###
     Accessors
@@ -115,14 +114,16 @@ class TabletUser extends Backbone.Model
               callbacks.success?()
 
   login: ( name, pass, callbacks = {} ) ->
-    throw "User already logged in" if $.cookie("user")?
+    user = $.cookie("user")
+    throw "User already logged in" if user?
     if _.isEmpty(@attributes) or @get("name") isnt name
       @setId name
       @fetch
         success : =>
           @attemptLogin pass, callbacks
-        error : (a, b) ->
+        error : (a, b) =>
           Utils.midAlert "User does not exist."
+          @clear()
     else
       @attemptLogin pass, callbacks
 
@@ -140,7 +141,7 @@ class TabletUser extends Backbone.Model
       return true
     else
       @trigger "pass-error", t("LoginView.message.error_password_incorrect")
-      $.cookie "user", null
+      $.removeCookie "user"
       callbacks.error?()
       return false
 
