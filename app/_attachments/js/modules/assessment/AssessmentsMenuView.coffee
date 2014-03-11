@@ -52,7 +52,7 @@ class AssessmentsMenuView extends Backbone.View
     updatedAttributes            = {}
     updatedAttributes[attribute] = value
 
-    Tangerine.settings.save updatedAttributes, 
+    Tangerine.settings.save updatedAttributes,
       success: =>
         @alreadySaving = false
         Utils.topAlert("Saved")
@@ -62,7 +62,12 @@ class AssessmentsMenuView extends Backbone.View
         Utils.topAlert("Save error")
         $target.after(@oldTarget).remove()
 
-  results: -> Tangerine.router.navigate "dashboard", true
+  results: ->
+    # Hack to route tutor to the new dashboard TODO make this better
+    if Tangerine.db_name.match("group-tutor")
+      Tangerine.router.navigate "primr_dashboard", true
+      return
+    Tangerine.router.navigate "dashboard", true
 
   universalUpload: -> Utils.universalUpload()
 
