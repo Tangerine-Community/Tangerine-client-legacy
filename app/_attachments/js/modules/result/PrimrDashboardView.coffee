@@ -6,6 +6,7 @@ class PrimrDashboardView extends Backbone.View
     "change [name=startTime]": "update"
     "change [name=endTime]": "update"
     "change #workflow": "update"
+    "change #location-filter": "update"
     "change #groupBy": "update"
     "change #shiftHours": "update"
     "click .result": "showResult"
@@ -74,6 +75,7 @@ class PrimrDashboardView extends Backbone.View
       groupBy: $("#groupBy").val()
       shiftHours: $("#shiftHours").val()
       workflow: $("#workflow").val()
+      location: $("#location-filter").val()
 
     return if moment(@options.startTime).valueOf() > moment(@options.endTime).valueOf()
 
@@ -108,17 +110,29 @@ class PrimrDashboardView extends Backbone.View
     @groupBy = _.keys(result.rows[0].value)[0] unless @groupBy?
 
     @workflows = ["All"]
+    @locations = ["All"]
     workflowTrips = {}
 
     _.each result.rows, (row) =>
+      # Get all possible workflows & locations
+      @workflows.push row.value.workflowId
+      @locations.push _(row.value).chain().map( (value, key) ->
+        return "#{key} -> #{value}" if key.match "Location"
+      ).compact().value()
+
+      # Filter out chosen filters
       unless @options.workflow is "All"
         return unless row.value.workflowId is @options.workflow
+      unless @options.location is "All"
+        [locationProperty, locationValue] = @options.location.split(" -> ")
+        return unless row.value[locationProperty] is locationValue
       _.each row.value, (value,key) =>
         propertiesToGroupBy[key] = true
 
-      @workflows.push row.value.workflowId
       workflowTrips[row.value.tripId] = [] unless workflowTrips[row.value.tripId]?
       workflowTrips[row.value.tripId].push row.value
+    @locations = _(@locations).chain().flatten().sort().uniq(true).value()
+    console.log @locations
     @workflows = _(@workflows).uniq()
 
     _.each workflowTrips, (value,tripId) =>
@@ -178,9 +192,6 @@ class PrimrDashboardView extends Backbone.View
       End Time: 
       <input name='endTime' style='width:auto' type='text' value='#{@endTime}'>
       <br/>
-      Workflow:
-      <select id='workflow'>
-      </select>
       <br/>
       Value used for grouping:
       <select id='groupBy'>
@@ -197,6 +208,16 @@ class PrimrDashboardView extends Backbone.View
               #{key}
             </option>"
         }
+      </select>
+      <br/>
+      <br/>
+      <b>Filters:</b><br/>
+      Workflow:
+      <select id='workflow'>
+      </select>
+      <br/>
+      Location:
+      <select id='location-filter'>
       </select>
       <br/>
       <br/>
@@ -294,6 +315,14 @@ class PrimrDashboardView extends Backbone.View
       #{
         _.map(@workflows, (workflow) =>
           "<option value='#{workflow}' #{if @options.workflow is workflow then "selected='true'" else ""}>#{workflow}</option>"
+        ).join("")
+      }
+    "
+
+    @$el.find("select#location-filter").html "
+      #{
+        _.map(@locations, (location) =>
+          "<option value='#{location}' #{if @options.location is location then "selected='true'" else ""}>#{location}</option>"
         ).join("")
       }
     "
