@@ -437,7 +437,6 @@ div.grid,
 table.grid {
   clear: both;
   width: 101%;
-  direction: rtl;
 }
 div.grid td,
 table.grid td {
@@ -501,6 +500,9 @@ table.grid .element_minute {
 div.grid .font_size_small,
 table.grid .font_size_small {
   font-size: 25px;
+}
+.rtl_mode {
+  direction: rtl;
 }
 .grid_prototype {
   width: 100%;

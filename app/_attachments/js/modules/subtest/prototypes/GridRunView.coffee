@@ -296,6 +296,8 @@ class GridRunView extends Backbone.View
     else
       fontSizeClass = ""
 
+    @rtl        = if @model.has("rtl")   then @model.get("rtl")   else false
+
     @totalTime = @model.get("timer") || 0
 
     @modeHandlers =
@@ -326,12 +328,14 @@ class GridRunView extends Backbone.View
 
     disabling = if @untimed then "" else "disabled"
 
+    displayRtl =  if @rtl then "rtl_mode" else ""
+
     html = if not @untimed then startTimerHTML else ""
     
     gridHTML = ""
     
     if @layoutMode == "fixed"
-      gridHTML += "<table class='grid #{disabling}'>"
+      gridHTML += "<table class='grid #{disabling} #{displayRtl}'>"
       firstRow = true
       loop
         break if done > @items.length
@@ -350,7 +354,7 @@ class GridRunView extends Backbone.View
         gridHTML += "</tr>"
       gridHTML += "</table>"
     else
-      gridHTML += "<div class='grid #{disabling}'>"
+      gridHTML += "<div class='grid #{disabling} #{displayRtl}'>"
       for item, i in @items
         gridHTML += @variableGridElement
           "label" : _.escape(@items[@itemMap[i]])

@@ -1,3 +1,6 @@
 [submodule "Android-Couchbase-Callback"]
 	path = Android-Couchbase-Callback
 	url = git@github.com:Tangerine-Community/Android-Couchbase-Callback.git
+[submodule "Android-Couchbase-Callback-Tangerine"]
+	path = Android-Couchbase-Callback
+	url = https://github.com/chrisekelley/Android-Couchbase-Callback.git
