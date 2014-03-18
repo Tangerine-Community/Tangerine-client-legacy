@@ -16,6 +16,7 @@ class SyncManagerView extends Backbone.View
 
   initialize: () ->
     @log = new SyncManager
+    @userLogKey = "sunc-#{Tangerine.user.name()}"
     @messages = []
     @sunc = []
     @toSync = 0
@@ -49,7 +50,7 @@ class SyncManagerView extends Backbone.View
       success : => callback()
 
   updateCounts: ( callback ) =>
-    @sunc = @log.getArray("sunc")
+    @sunc = @log.getArray(@userLogKey)
     @toSync = @syncable.length - @sunc.length
     callback()
 
@@ -77,7 +78,9 @@ class SyncManagerView extends Backbone.View
               success : =>
                 @sunc.push currentTrip
                 @sunc = _.uniq(@sunc)
-                @log.save "sunc": @sunc,
+                saveObject = {}
+                saveObject[@userLogKey] = @sunc
+                @log.save saveObject,
                   success: =>
                     @update =>
                       @render()
