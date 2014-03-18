@@ -6,6 +6,8 @@
 
   docId = doc.assessmentId or doc.curriculumId
 
+  return unless docId
+
   dKey = docId.substr(-5,5);
 
   emit dKey,
