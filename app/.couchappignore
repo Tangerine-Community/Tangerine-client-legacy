@@ -3,6 +3,7 @@
   ".*map$",
   ".*\\.min\\.js$",
   "docs.*",
+  ".*file.watchr$",
   ".*\\.DS_Store$",
   ".*listen.rb$",
   ".*couchapprc\\.sample$",
