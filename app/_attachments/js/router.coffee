@@ -74,6 +74,11 @@ class Router extends Backbone.Router
     'dashboard'          : 'dashboard'
     'dashboard/*options' : 'dashboard'
 
+    'primr_dashboard'          : 'primrDashboard'
+    'primr_dashboard/*options' : 'primrDashboard'
+
+    'result/:resultId' : 'result'
+
     'admin' : 'admin'
 
     'features' : 'features'
@@ -151,6 +156,80 @@ class Router extends Backbone.Router
 
             Utils.working true
             getNext( workspace )
+
+
+  primrDashboard: (options) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        #default view options
+        reportViewOptions =
+          startTime: moment().subtract('weeks',1).format("YYYY-MM-DD")
+          endTime: moment().format("YYYY-MM-DD HH:mm:ss")
+          groupBy: "Location: County"
+          workflow: "All"
+
+
+        unless options?
+          urlOptions = _(reportViewOptions).map (value,option) ->
+            "/#{option}/#{value}"
+          .join("")
+          Tangerine.router.navigate "primr_dashboard#{urlOptions}", true
+
+        options = options?.split(/\//)
+        # Allows us to get name/value pairs from URL
+        _.each options, (option,index) ->
+          unless index % 2
+            reportViewOptions[option] = options[index+1]
+
+        view = new PrimrDashboardView()
+        view.options = reportViewOptions
+        vm.show view
+
+
+  result: (resultId) ->
+    # Pretty much a hack. Should add to this so it can show appropriate results based on result tyep
+    # Location should show a map
+    # timer based results should give results per minute, etc
+
+
+    Tangerine.user.verify
+      isAuthenticated: ->
+        $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).openDoc resultId,
+          success: (result) ->
+
+            syntaxHighlight = (json) =>
+              window.json = json
+              if (typeof json != 'string')
+                 json = JSON.stringify(json, undefined, 2)
+              json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+              return json.replace /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (match) ->
+                cls = 'number'
+                if (/^"/.test(match))
+                  if (/:$/.test(match))
+                    cls = 'key'
+                  else
+                    cls = 'string'
+                else if (/true|false/.test(match))
+                  cls = 'boolean'
+                else if (/null/.test(match))
+                  cls = 'null'
+                return '<span class="' + cls + '">' + match + '</span>'
+
+            $("#content").html "
+              <style>
+                .string { color: green; }
+                .number { color: darkorange; }
+                .boolean { color: blue; }
+                .null { color: magenta; }
+                .key { color: red; }
+              </style>
+              <b>Raw Data</b><br/>
+              <pre>
+              #{syntaxHighlight (result)}
+              </pre>
+            "
+            
 
   dashboard: (options) ->
     Tangerine.user.verify
