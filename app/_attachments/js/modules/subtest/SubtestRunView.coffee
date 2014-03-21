@@ -29,10 +29,6 @@ class SubtestRunView extends Backbone.View
     skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
     backable = @model.get("backButton") == true || @model.get("backButton") == "true"
 
-    if typeof this.parent.result.get("subtestData")[this.parent.index] != 'undefined'
-      data = this.parent.result.get("subtestData")[this.parent.index].data
-      console.log "BIG Data: " + data
-
     @$el.html "
       <h2>#{@model.get 'name'}</h2>
       #{enumeratorHelp}

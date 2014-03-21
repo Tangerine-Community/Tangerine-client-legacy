@@ -15,6 +15,12 @@ class DatetimeRunView extends Backbone.View
     minutes  = dateTime.getMinutes()
     minutes  = "0" + minutes if minutes < 10
     time     = dateTime.getHours() + ":" + minutes
+    if typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
+      data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
+      year = data.year
+      month = data.month
+      day = data.day
+      time = data.time
 
     @$el.html "
       <div class='question'>

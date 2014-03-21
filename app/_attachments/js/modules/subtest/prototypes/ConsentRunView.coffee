@@ -13,6 +13,33 @@ class ConsentRunView extends Backbone.View
     @parent = @options.parent
   
   render: ->
+    if typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
+      data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
+      participant_consents = data.consent
+      if participant_consents == 'yes'
+        consentHtml = "
+          <label for='consent_yes'>#{t("yes, continue")}</label>
+          <input id='consent_yes' type='radio' name='participant_consents' value='yes' checked='checked'>
+          <label for='consent_no'>#{t("no, stop")}</label>
+          <input id='consent_no' type='radio' name='participant_consents' value='no'>
+        "
+      else
+        consentHtml = "
+          <label for='consent_yes'>#{t("yes, continue")}</label>
+          <input id='consent_yes' type='radio' name='participant_consents' value='yes'>
+          <label for='consent_no'>#{t("no, stop")}</label>
+          <input id='consent_no' type='radio' name='participant_consents' value='no' checked='checked'>
+        "
+    else
+      consentHtml = "
+          <label for='consent_yes'>#{t("yes, continue")}</label>
+          <input id='consent_yes' type='radio' name='participant_consents' value='yes'>
+          <label for='consent_no'>#{t("no, stop")}</label>
+          <input id='consent_no' type='radio' name='participant_consents' value='no'>
+        "
+
+
+
     @$el.html "
     <form>
       <div class='question'>
@@ -23,10 +50,7 @@ class ConsentRunView extends Backbone.View
           <button id='non_consent_confirm'>#{t("confirm")}</button>
         </div>
         <div id='consent_options' class='buttonset'>
-          <label for='consent_yes'>#{t("yes, continue")}</label>
-          <input id='consent_yes' type='radio' name='participant_consents' value='yes'>
-          <label for='consent_no'>#{t("no, stop")}</label>
-          <input id='consent_no' type='radio' name='participant_consents' value='no'>
+          #{consentHtml}
         </div>
       </div>
     </form>

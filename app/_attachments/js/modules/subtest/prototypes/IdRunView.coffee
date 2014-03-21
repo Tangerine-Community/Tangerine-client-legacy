@@ -16,7 +16,6 @@ class IdRunView extends Backbone.View
     if typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
       data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
       participant_id = data.participant_id
-      console.log "participant_id: " + participant_id
     @$el.html "
     <form>
       <label for='participant_id'>#{t('random identifier')}</label>
