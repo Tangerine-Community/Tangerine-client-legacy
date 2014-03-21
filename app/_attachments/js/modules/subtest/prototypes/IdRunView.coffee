@@ -12,10 +12,15 @@ class IdRunView extends Backbone.View
     @validator = new CheckDigit
 
   render: ->
+    participant_id = ""
+    if typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
+      data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
+      participant_id = data.participant_id
+      console.log "participant_id: " + participant_id
     @$el.html "
     <form>
       <label for='participant_id'>#{t('random identifier')}</label>
-      <input id='participant_id' name='participant_id'>
+      <input id='participant_id' name='participant_id' value='#{participant_id}'>
       <button id='generate' class='command'>#{t('generate')}</button>
       <div class='messages'></div>
     </form>"

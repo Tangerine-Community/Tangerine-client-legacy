@@ -130,6 +130,7 @@ class SubtestEditView extends Backbone.View
       transitionComment : @$el.find("#transition_comment").val()
       skippable         : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
       rtl               : @$el.find("#rtl_radio input:radio[name=rtl]:checked").val() == "true"
+      backButton        : @$el.find("#back_button_radio input:radio[name=back_button]:checked").val() == "true"
 
       enumeratorHelp    : @$el.find("#enumerator_textarea").val()
       studentDialog     : @$el.find("#dialog_textarea").val()
@@ -172,6 +173,7 @@ class SubtestEditView extends Backbone.View
     transition  = @model.getString("transitionComment")
     skippable   = @model.getBoolean("skippable")
     rtl   = @model.getBoolean("rtl")
+    backButton   = @model.getBoolean("backButton")
     fontFamily  = @model.getEscapedString("fontFamily")
     displayCode = @model.getString("displayCode")
     groupHandle = Tangerine.settings.getEscapedString("groupHandle")
@@ -213,6 +215,15 @@ class SubtestEditView extends Backbone.View
             <div id='rtl_radio' class='buttonset'>
               <label for='rtl_true'>Yes</label><input name='rtl' type='radio' value='true' id='rtl_true' #{'checked' if rtl}>
               <label for='rtl_false'>No</label><input name='rtl' type='radio' value='false' id='rtl_false' #{'checked' if not rtl}>
+            </div>
+          </div>
+        </div>
+        <div class='label_value'>
+          <label>Display Back button</label><br>
+          <div class='menu_box'>
+            <div id='back_button_radio' class='buttonset'>
+              <label for='back_button_true'>Yes</label><input name='back_button' type='radio' value='true' id='back_button_true' #{'checked' if backButton}>
+              <label for='back_button_false'>No</label><input name='back_button' type='radio' value='false' id='back_button_false' #{'checked' if not backButton}>
             </div>
           </div>
         </div>

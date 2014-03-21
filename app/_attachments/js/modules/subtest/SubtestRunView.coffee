@@ -4,6 +4,7 @@ class SubtestRunView extends Backbone.View
 
   events:
     'click .next'         : 'next'
+    'click .back'         : 'back'
     'click .subtest_help' : 'toggleHelp'
     'click .skip'         : 'skip'
 
@@ -24,7 +25,13 @@ class SubtestRunView extends Backbone.View
     transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
 
     skipButton = "<button class='skip navigation'>Skip</button>"
+    backButton = "<button class='back navigation'>Back</button>"
     skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+    backable = @model.get("backButton") == true || @model.get("backButton") == "true"
+
+    if typeof this.parent.result.get("subtestData")[this.parent.index] != 'undefined'
+      data = this.parent.result.get("subtestData")[this.parent.index].data
+      console.log "BIG Data: " + data
 
     @$el.html "
       <h2>#{@model.get 'name'}</h2>
@@ -34,7 +41,7 @@ class SubtestRunView extends Backbone.View
       
       <div class='controlls clearfix'>
         #{transitionComment}
-        <button class='next navigation'>#{t('next')}</button>#{if skippable then skipButton else "" }
+        #{if backable and @parent.index>0 then backButton else "" }<button class='next navigation'>#{t('next')}</button>#{if skippable then skipButton else "" }
       </div>
     "
   
@@ -134,4 +141,5 @@ class SubtestRunView extends Backbone.View
       throw "Prototype skipping not implemented"
 
   next: -> @parent.next()
+  back: -> @parent.back()
   skip: -> @parent.skip()
