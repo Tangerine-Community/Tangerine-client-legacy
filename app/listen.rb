@@ -55,7 +55,7 @@ end
 
 puts "\nGo ahead, programmer. I'm listening...\n\n"
 
-Listen.to(".") do |modified, added, removed|
+listen = Listen.to(".") do |modified, added, removed|
 
   files = modified.concat(added).concat(removed)
 
@@ -119,3 +119,6 @@ Listen.to(".") do |modified, added, removed|
   } # END of each file
 
 end
+
+listen.start
+sleep
