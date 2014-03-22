@@ -6,12 +6,13 @@ class LocationRunView extends Backbone.View
     "click .school_list li" : "autofill"
     "keyup input"  : "showOptions"
     "click .clear" : "clearInputs"
+    "change select" : "onSelectChange"
 
   initialize: (options) ->
-    
+
     @model  = @options.model
     @parent = @options.parent
-    
+
     @levels = @model.get("levels")       || []
     @locations = @model.get("locations") || []
 
@@ -27,13 +28,12 @@ class LocationRunView extends Backbone.View
       for locationData in location
         @haystack[i].push locationData.toLowerCase()
 
-    
     template = "<li data-index='{{i}}'>"
     for level, i in @levels
       template += "{{level_#{i}}}"
       template += " - " unless i == @levels.length-1
     template += "</li>"
-    
+
     @li = _.template(template)
 
   clearInputs: ->
@@ -61,7 +61,7 @@ class LocationRunView extends Backbone.View
       isThere = ~@haystack[i][field].indexOf(needle)
       results.push i if isThere
       atLeastOne = true if isThere
-    
+
     for stack, i in @haystack
       for otherField, j in stack
         if j == field
@@ -69,7 +69,7 @@ class LocationRunView extends Backbone.View
         isThere = ~@haystack[i][j].indexOf(needle)
         results.push i if isThere && !~results.indexOf(i)
         atLeastOne = true if isThere
-    
+
     if atLeastOne
       html = ""
       for result in results
@@ -91,25 +91,93 @@ class LocationRunView extends Backbone.View
 
     html = "
       <button class='clear command'>#{t('clear')}</button>
-      ";
-
-    for level, i in @levels
-      html += "
-        <div class='label_value'>
-          <label for='level_#{i}'>#{level}</label><br>
-          <input data-level='#{i}' id='level_#{i}' value=''>
-        </div>
-        <div id='autofill_#{i}' class='autofill' style='display:none'>
-          <h2>#{t('select one from autofill list')}</h2>
-          <ul class='school_list' id='school_list_#{i}'>
-          </ul>
-        </div>
     "
 
+
+    if @typed
+      for level, i in @levels
+        html += "
+          <div class='label_value'>
+            <label for='level_#{i}'>#{level}</label><br>
+            <input data-level='#{i}' id='level_#{i}' value=''>
+          </div>
+          <div id='autofill_#{i}' class='autofill' style='display:none'>
+            <h2>#{t('select one from autofill list')}</h2>
+            <ul class='school_list' id='school_list_#{i}'>
+            </ul>
+          </div>
+      "
+    else
+      for level, i in @levels
+        
+        levelOptions = @getOptions(i)
+
+        isDisabled = i isnt 0 && "disabled='disabled'"
+
+        html += "
+          <div class='label_value'>
+            <label for='level_#{i}'>#{level}</label><br>
+            <select id='level_#{i}' data-level='#{i}' #{isDisabled||''}>
+              #{levelOptions}
+            </select>
+          </div>
+        "
     @$el.html html
 
     @trigger "rendered"
     @trigger "ready"
+
+  onSelectChange: (event) ->
+    $target = $(event.target)
+    levelChanged = parseInt($target.attr("data-level"))
+    newValue = $target.val()
+    nextLevel = levelChanged + 1
+    if levelChanged isnt @levels.length
+      @$el.find("#level_#{nextLevel}").removeAttr("disabled")
+      $html = @$el.find("#level_#{nextLevel}").html @getOptions(nextLevel)
+      if (options = $html.find("option")).length is 1
+        options.parent("select").trigger "change"
+
+  getOptions: (index)->
+
+    doneOptions = []
+    levelOptions = ''
+
+    parentValues = []
+    for i in [0..index]
+      break if i is index
+      parentValues.push @$el.find("#level_#{i}").val()
+
+    for location, i in @locations
+
+      unless ~doneOptions.indexOf location[index]
+
+        isNotChild = index is 0
+        isValidChild = true
+        for i in [0..Math.max(index-1,0)]
+
+          if parentValues[i] isnt location[i]
+            isValidChild = false
+            break
+
+        if isNotChild or isValidChild
+
+          doneOptions.push location[index]
+
+          locationName = _(location[index]).escape()
+          levelOptions += "
+            <option value='#{locationName}'>#{locationName}</option>
+          "
+
+    promptOption  = "<option selected='selected' disabled='disabled'>Please select a #{@levels[index]}</option>"
+
+    if doneOptions.length is 1
+      return levelOptions
+    else
+      return "
+        #{promptOption}
+        #{levelOptions}
+      "
 
   getResult: ->
     return {
@@ -123,17 +191,22 @@ class LocationRunView extends Backbone.View
       "location" : ("skipped" for level, i in @levels)
     }
 
-
   isValid: ->
     @$el.find(".message").remove()
-    for input in @$el.find("input")
-      return false if $(input).val() == ""
+    inputs = @$el.find("input")
+    selects = @$el.find("select")
+    elements = if selects.length > 0 then selects else inputs
+    for input, i in elements
+      return false if _($(input).val()).isEmptyString()
     true
 
   showErrors: ->
-    for input in @$el.find("input")
-      if $(input).val() == ""
-        $(input).after " <span class='message'>#{$('label[for='+$(input).attr('id')+']').text()} #{t('cannot be empty')}</span>"
+    inputs = @$el.find("input")
+    selects = @$el.find("select")
+    elements = if selects.length > 0 then selects else inputs
+    for input in elements
+      if _($(input).val()).isEmptyString()
+        $(input).after " <span class='message'>#{$('label[for='+$(input).attr('id')+']').text()} must be filled.</span>"
 
   getSum: ->
     counts =
@@ -141,7 +214,7 @@ class LocationRunView extends Backbone.View
       incorrect : 0
       missing   : 0
       total     : 0
-      
+
     for input in @$el.find("input")
       $input = $(input)
       counts['correct']   += 1 if ($input.val()||"") != ""
