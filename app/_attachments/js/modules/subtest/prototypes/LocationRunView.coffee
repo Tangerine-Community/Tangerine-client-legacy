@@ -197,7 +197,7 @@ class LocationRunView extends Backbone.View
     selects = @$el.find("select")
     elements = if selects.length > 0 then selects else inputs
     for input, i in elements
-      return false if $(input).val() is ""
+      return false unless $(input).val()
     true
 
   showErrors: ->
@@ -205,7 +205,7 @@ class LocationRunView extends Backbone.View
     selects = @$el.find("select")
     elements = if selects.length > 0 then selects else inputs
     for input in elements
-      if $(input).val() is ""
+      unless $(input).val()
         $(input).after " <span class='message'>#{$('label[for='+$(input).attr('id')+']').text()} must be filled.</span>"
 
   getSum: ->
