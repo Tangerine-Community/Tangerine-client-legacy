@@ -74,11 +74,11 @@ class GridRunView extends Backbone.View
           $target.addClass "element_wrong"
         else if value == "correct"
           $target.removeClass "element_wrong"
-        
+
   endOfGridLineClick: (event) ->
     if @mode == "mark"
       $target = $(event.target)
-      
+
       # if what we clicked is already marked wrong
       if $target.hasClass("element_wrong")
         # YES, mark it right
@@ -95,9 +95,13 @@ class GridRunView extends Backbone.View
 
       @checkAutostop() if @autostop != 0
 
-  lastHandler: (event) =>
-    $target = $(event.target)
-    index = $target.attr('data-index')
+  lastHandler: (event, index) =>
+    if index?
+      $target = @$el.find(".grid_element[data-index=#{index}]")
+    else
+      $target = $(event.target)
+      index   = $target.attr('data-index')
+
     if index - 1 >= @gridOutput.lastIndexOf("incorrect")
       @$el.find(".element_last").removeClass "element_last"
       $target.addClass "element_last"
@@ -119,21 +123,21 @@ class GridRunView extends Backbone.View
 
     return if @timeRunning != true # stop only if needed
 
+    if event?.target
+      @lastHandler(null, @items.length)
+
     # do these always
     clearInterval @interval
     @stopTime = @getTime()
     @timeRunning = false
     @timerStopped = true
+
     @updateCountdown()
 
     # do these if it's not a simple stop
     if not event?.simpleStop
       Utils.flash()
-      @updateMode null, "last" if @captureLastAttempted
-      if message
-        Utils.topAlert message
-      else
-        Utils.midAlert t('Please mark last item attempted') if @captureLastAttempted
+
 
   autostopTest: ->
     Utils.flash()
@@ -165,22 +169,21 @@ class GridRunView extends Backbone.View
   updateCountdown: =>
     # sometimes the "tick" doesn't happen within a second
     @timeElapsed = Math.min(@getTime() - @startTime, @timer)
-    
-    @timeRemaining = @timer - @timeElapsed
-    
-    @$el.find(".timer").html @timeRemaining
-    
-    if @timeRemaining <= 0 && @timeRunning == true && @captureLastAttempted
-      @stopTimer(simpleStop:true)
-      Utils.background "red"
-      console.log "color has changed to this: #{Utils.background()}"
-      _.delay(
-        ->
-          alert t("time please mark last item attempted")
-          Utils.background ""
-      , 1e3)
 
-      @updateMode event, "last"
+    @timeRemaining = @timer - @timeElapsed
+
+    @$el.find(".timer").html @timeRemaining
+
+    if @timeRunning is true and @captureLastAttempted and @timeRemaining <= 0 
+        @stopTimer(simpleStop:true)
+        Utils.background "red"
+        _.delay(
+          ->
+            alert t("time please mark last item attempted")
+            Utils.background ""
+        , 1e3)
+
+        @updateMode event, "last"
 
 
     if @captureItemAtTime && !@gotIntermediate && !@minuteMessage && @timeElapsed >= @captureAfterSeconds
@@ -421,12 +424,8 @@ class GridRunView extends Backbone.View
       #{modeSelector}
       #{(dataEntry if @dataEntry) || ''}
     "
-    
-
 
     @$el.html html
-
-
 
     @trigger "rendered"
     @trigger "ready"
@@ -435,6 +434,15 @@ class GridRunView extends Backbone.View
     # Stop timer if still running. Issue #240
     @stopTimer() if @timeRunning
 
+    if parseInt(@lastAttempted) is @items.length and @timeRemaining is 0
+      if confirm("Was the last item \"#{@items[@items.length-1]}\"?\nOk to confirm. Cancel to place bracket.")
+        @updateMode
+        return true
+      else
+        @messages = if @messages?.push then @messages.concat([msg]) else [msg]
+        @updateMode null, "last"
+        return false
+
     return false if @captureLastAttempted && @lastAttempted == 0
     # might need to let it know if it's timed or untimed too ::shrug::
     return false if @timeRunning == true
@@ -442,7 +450,8 @@ class GridRunView extends Backbone.View
     true
 
   showErrors: ->
-    messages = []
+    messages = @messages || []
+    @messages = []
 
     timerHasntRun    = @timer != 0 && @timeRemaining == @timer
     noLastItem       = @captureLastAttempted && @lastAttempted == 0
