@@ -50,8 +50,7 @@ The only real behavior worth mentioning here is
       subtestId : doc.subtestId
     } ]
 
-    log "ONE KLASS RESULT"
-    log JSON.stringify(subtestData)
+    log "klass Result: #{doc._id}"
 
 
   ###

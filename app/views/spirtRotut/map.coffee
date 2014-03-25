@@ -1,6 +1,22 @@
 (doc) ->
+
   return unless doc.collection is "result"
   return unless doc.tripId
+
+  #
+  # early escapes
+  #
+
+  updated = doc.updated #"Thu Mar 06 2014 11:00:00 GMT+0300 (EAT)"
+  docTime = new Date(updated)
+  sMin = updated.substr(0,16) + "07:00:00" + updated.substr(-15)
+  sMax = updated.substr(0,16) + "14:00:00" + updated.substr(-15)
+  min = new Date(sMin)
+  max = new Date(sMax)
+
+  validTime = min < docTime < max
+  return unless validTime
+
 
   # helper
   filter = (items, ff) ->
@@ -16,9 +32,8 @@
   # by month
   #
 
-  d = new Date(doc.start_time || doc.startTime)
-  year  = d.getFullYear()
-  month = d.getMonth() + 1
+  year  = docTime.getFullYear()
+  month = docTime.getMonth() + 1
   result.month = month
 
 
@@ -26,7 +41,13 @@
   # by Zone, County, subject, class
   #
 
+  result.minTime = doc.startTime || doc.subtestData.start_time
+  result.maxTime = doc.startTime || doc.subtestData.start_time
+
   for subtest in doc.subtestData
+
+    result.minTime = Math.min(subtest.timestamp, result.minTime)
+    result.maxTime = Math.max(subtest.timestamp, result.maxTime)
 
     if subtest.prototype is "location"
 
@@ -52,6 +73,7 @@
 
   # handle a class result
   if doc.subtestData.items?
+
     totalItems   = doc.subtestData.items.length
     correctItems = filter(doc.subtestData.items, (item) -> item.itemResult is "correct").length
     totalTime    = doc.timeAllowed
