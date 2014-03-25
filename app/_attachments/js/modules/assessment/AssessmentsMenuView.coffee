@@ -89,7 +89,7 @@ class AssessmentsMenuView extends Backbone.View
     if Tangerine.settings.get("context") == "mobile"
       @tabletManager = new TabletManagerView
         docTypes : ["result"]
-        callbacks: 
+        callbacks:
           completePull: => @tabletManager.pushDocs()
 
     @[key] = value for key, value of options

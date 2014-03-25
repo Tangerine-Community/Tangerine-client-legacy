@@ -77,6 +77,9 @@ class Router extends Backbone.Router
     'primr_dashboard'          : 'primrDashboard'
     'primr_dashboard/*options' : 'primrDashboard'
 
+    'map'          : 'map'
+    'map/*options' : 'map'
+
     'result/:resultId' : 'result'
 
     'admin' : 'admin'
@@ -157,6 +160,30 @@ class Router extends Backbone.Router
             Utils.working true
             getNext( workspace )
 
+  map: (options) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        #default view options
+        reportViewOptions =
+          startTime: moment().subtract('weeks',1).format("YYYY-MM-DD")
+          endTime: moment().format("YYYY-MM-DD HH:mm:ss")
+
+        unless options?
+          urlOptions = _(reportViewOptions).map (value,option) ->
+            "/#{option}/#{value}"
+          .join("")
+          Tangerine.router.navigate "map#{urlOptions}", true
+
+        options = options?.split(/\//)
+        # Allows us to get name/value pairs from URL
+        _.each options, (option,index) ->
+          unless index % 2
+            reportViewOptions[option] = options[index+1]
+
+        view = new MapView()
+        view.options = reportViewOptions
+        vm.show view
 
   primrDashboard: (options) ->
     Tangerine.user.verify
@@ -168,6 +195,7 @@ class Router extends Backbone.Router
           endTime: moment().format("YYYY-MM-DD HH:mm:ss")
           groupBy: "Location: County"
           workflow: "All"
+          location: "All"
 
 
         unless options?
@@ -195,7 +223,8 @@ class Router extends Backbone.Router
 
     Tangerine.user.verify
       isAuthenticated: ->
-        $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).openDoc resultId,
+        $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).view "#{Tangerine.design_doc}/csvRowByResult",
+          key: resultId,
           success: (result) ->
 
             syntaxHighlight = (json) =>
@@ -226,7 +255,7 @@ class Router extends Backbone.Router
               </style>
               <b>Raw Data</b><br/>
               <pre>
-              #{syntaxHighlight (result)}
+              #{syntaxHighlight (result.rows?[0]?.value)}
               </pre>
             "
             
