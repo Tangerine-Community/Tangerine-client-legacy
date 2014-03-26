@@ -57,16 +57,30 @@ class GpsRunView extends Backbone.View
     )
 
   easify: ( position ) ->
-    return {
-      lat       : if position?.coords?.latitude? then position.coords.latitude else "..."
-      long      : if position?.coords?.longitude? then position.coords.longitude else "..."
-      alt       : if position?.coords?.altitude? then position.coords.altitude else "..."
-      acc       : if position?.coords?.accuracy? then position.coords.accuracy else "..."
-      altAcc    : if position?.coords?.altitudeAccuracy? then position.coords.altitudeAccuracy else "..."
-      heading   : if position?.coords?.heading? then position.coords.heading else "..."
-      speed     : if position?.coords?.speed? then position.coords.speed else "..."
-      timestamp : if position?.timestamp? then position.timestamp else "..."
-    }
+    if typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
+      console.log "Getting results from couch."
+      data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
+      return {
+      lat       : data.lat
+      long      : data.long
+      alt       : data.alt
+      acc       : data.acc
+      altAcc    : data.altAcc
+      heading   : data.heading
+      speed     : data.speed
+      timestamp : data.timestamp
+      }
+    else
+      return {
+          lat       : if position?.coords?.latitude? then position.coords.latitude else "..."
+          long      : if position?.coords?.longitude? then position.coords.longitude else "..."
+          alt       : if position?.coords?.altitude? then position.coords.altitude else "..."
+          acc       : if position?.coords?.accuracy? then position.coords.accuracy else "..."
+          altAcc    : if position?.coords?.altitudeAccuracy? then position.coords.altitudeAccuracy else "..."
+          heading   : if position?.coords?.heading? then position.coords.heading else "..."
+          speed     : if position?.coords?.speed? then position.coords.speed else "..."
+          timestamp : if position?.timestamp? then position.timestamp else "..."
+        }
 
   updatePosition: ( newPosition ) ->
     newPosition = @easify(newPosition)
@@ -119,6 +133,8 @@ class GpsRunView extends Backbone.View
     @$el.find(".status").html message + polling
 
   render: ->
+
+
 
     if not Modernizr.geolocation
       

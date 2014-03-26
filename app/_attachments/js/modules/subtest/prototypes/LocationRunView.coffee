@@ -94,10 +94,14 @@ class LocationRunView extends Backbone.View
       ";
 
     for level, i in @levels
+      currentLevel = ''
+      if typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
+        data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
+        currentLevel = data.location[i]
       html += "
         <div class='label_value'>
           <label for='level_#{i}'>#{level}</label><br>
-          <input data-level='#{i}' id='level_#{i}' value=''>
+          <input data-level='#{i}' id='level_#{i}' value='#{currentLevel}'>
         </div>
         <div id='autofill_#{i}' class='autofill' style='display:none'>
           <h2>#{t('select one from autofill list')}</h2>

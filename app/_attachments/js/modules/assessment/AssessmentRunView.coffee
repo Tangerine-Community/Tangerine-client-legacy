@@ -8,6 +8,7 @@ class AssessmentRunView extends Backbone.View
     @index = 0
     @model = options.model
     @orderMap = []
+    @enableCorrections = false  # toggled if user hits the back button.
 
     Tangerine.tempData = {}
 
@@ -75,6 +76,7 @@ class AssessmentRunView extends Backbone.View
 
       currentView.on "rendered",    => @flagRender "subtest"
       currentView.on "subRendered", => @trigger "subRendered"
+
 
       currentView.render()
       @$el.append currentView.el
@@ -165,6 +167,7 @@ class AssessmentRunView extends Backbone.View
     @rendered.assessment = false
     currentView = @subtestViews[@orderMap[@index]]
     currentView.close()
+#    currentView.remove();
     @index = 
       if @abortAssessment == true
         @subtestViews.length-1
@@ -183,5 +186,6 @@ class AssessmentRunView extends Backbone.View
         @subtestViews.length-1
       else
         @index - 1
+    @enableCorrections = true
     @render()
     window.scrollTo 0, 0

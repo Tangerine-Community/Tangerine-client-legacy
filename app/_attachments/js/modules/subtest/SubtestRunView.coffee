@@ -19,7 +19,8 @@ class SubtestRunView extends Backbone.View
     @prototypeRendered = false
 
   render: ->
-
+    console.log("delegateEvents in render SubtestRunView.")
+    this.delegateEvents();
     enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
     studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
     transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
@@ -136,6 +137,10 @@ class SubtestRunView extends Backbone.View
     else
       throw "Prototype skipping not implemented"
 
-  next: -> @parent.next()
-  back: -> @parent.back()
+  next: ->
+    @parent.next()
+  back: ->
+    @parent.back()
+#    @prototypeView.on "click .next",    => this.next()
+
   skip: -> @parent.skip()

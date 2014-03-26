@@ -2,6 +2,10 @@ class DatetimeRunView extends Backbone.View
 
   className: "datetime"
 
+#  events:
+#    'click .next'         : 'next'
+#    'click .back'         : 'back'
+
   initialize: (options) ->
     @model  = @options.model
     @parent = @options.parent
@@ -69,3 +73,11 @@ class DatetimeRunView extends Backbone.View
 
   showErrors: ->
     true
+
+  next: ->
+    console.log("next!!")
+    @prototypeView.on "click .next",    =>
+      console.log("clickme!")
+      this.next()
+    @parent.next()
+  back: -> @parent.back()
