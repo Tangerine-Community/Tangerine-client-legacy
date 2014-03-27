@@ -35,17 +35,19 @@ class MapView extends Backbone.View
       <br/>
     
       <div id='map'></div>
-    
     "
+
     $("#map").css("height",window.innerHeight)
+    $("#content").on("change", "input", @update)
 
     L.Icon.Default.imagePath = 'images'
     map = new L.Map('map')
-    osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-    osm = new L.TileLayer osmUrl,
+    osm = new L.TileLayer 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       minZoom: 1
       maxZoom: 12
       attribution: 'Map data © OpenStreetMap contributors'
+
+    map.addLayer(osm)
 
     map.setView(new L.LatLng(0, 35),6)
     baseLayers = ['OpenStreetMap.Mapnik', 'Stamen.Watercolor']
@@ -53,13 +55,13 @@ class MapView extends Backbone.View
     markers = L.markerClusterGroup()
 
     $.ajax
-      url: "/#{Tangerine.db_name}/_design/#{Tangerine.design_doc}/_list/geojson/locationsByTripId?startKey=#{moment(@startTime).valueOf()}&endKey=#{moment(@endTime).valueOf()}"
+      url: "/#{Tangerine.db_name}/_design/#{Tangerine.design_doc}/_list/geojson/locationsByTripId?startkey=#{moment(@startTime).valueOf()}&endkey=#{moment(@endTime).valueOf()}"
       dataType: "json"
       error: (error) -> console.error JSON.stringify(error)
       success: (result) ->
         geoJsonLayer = L.geoJson result,
           onEachFeature: (feature, layer) ->
-            layer.bindPopup(feature.properties.address)
+            layer.bindPopup(JSON.stringify feature.properties)
         
         markers.addLayer(geoJsonLayer)
         map.addLayer(markers)
