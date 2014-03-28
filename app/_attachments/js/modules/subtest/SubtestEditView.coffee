@@ -178,6 +178,19 @@ class SubtestEditView extends Backbone.View
     displayCode = @model.getString("displayCode")
     groupHandle = Tangerine.settings.getEscapedString("groupHandle")
 
+    rtlEditHtml = ""
+    if prototype == 'gps'
+      rtlEditHtml = "
+      <div class='label_value'>
+      <label>RTL (Right-to-Left orientation)</label><br>
+            <div class='menu_box'>
+              <div id='rtl_radio' class='buttonset'>
+                <label for='rtl_true'>Yes</label><input name='rtl' type='radio' value='true' id='rtl_true' #{'checked' if rtl}>
+      <label for='rtl_false'>No</label><input name='rtl' type='radio' value='false' id='rtl_false' #{'checked' if not rtl}>
+              </div>
+      </div>
+          </div>"
+
     @$el.html "
       <h1>Subtest Editor</h1>
       <table class='basic_info'>
@@ -208,16 +221,7 @@ class SubtestEditView extends Backbone.View
               <label for='skip_false'>No</label><input name='skippable' type='radio' value='false' id='skip_false' #{'checked' if not skippable}>
             </div>
           </div>
-        </div>
-        <div class='label_value'>
-          <label>RTL (Right-to-Left orientation)</label><br>
-          <div class='menu_box'>
-            <div id='rtl_radio' class='buttonset'>
-              <label for='rtl_true'>Yes</label><input name='rtl' type='radio' value='true' id='rtl_true' #{'checked' if rtl}>
-              <label for='rtl_false'>No</label><input name='rtl' type='radio' value='false' id='rtl_false' #{'checked' if not rtl}>
-            </div>
-          </div>
-        </div>
+        </div>" + rtlEditHtml + "
         <div class='label_value'>
           <label>Display Back button</label><br>
           <div class='menu_box'>
