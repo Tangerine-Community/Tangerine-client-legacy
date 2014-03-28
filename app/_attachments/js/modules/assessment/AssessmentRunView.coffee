@@ -147,20 +147,44 @@ class AssessmentRunView extends Backbone.View
   saveResult: ( currentView, goBack ) =>
 
     subtestResult = currentView.getResult()
+    subtestId = currentView.model.id
+    prototype = currentView.model.get "prototype"
+    subtestReplace = null
 
-    @result.add
-      name        : currentView.model.get "name"
-      data        : subtestResult.body
-      subtestHash : subtestResult.meta.hash
-      subtestId   : currentView.model.id
-      prototype   : currentView.model.get "prototype"
-      sum         : currentView.getSum()
-    ,
-      success : =>
-        if goBack
-          @resetBack()
-        else
-          @resetNext()
+    for result, i in @result.get('subtestData')
+      console.log i + ":" + result.subtestId
+      if subtestId == result.subtestId
+        subtestReplace = i
+        console.log 'subtestReplace: ' + subtestReplace
+
+    if subtestReplace != null
+      # Don't update the gps subtest.
+      if prototype != 'gps'
+        @result.insert
+          name        : currentView.model.get "name"
+          data        : subtestResult.body
+          subtestHash : subtestResult.meta.hash
+          subtestId   : currentView.model.id
+          prototype   : currentView.model.get "prototype"
+          sum         : currentView.getSum()
+      if goBack
+        @resetBack()
+      else
+        @resetNext()
+    else
+      @result.add
+        name        : currentView.model.get "name"
+        data        : subtestResult.body
+        subtestHash : subtestResult.meta.hash
+        subtestId   : currentView.model.id
+        prototype   : currentView.model.get "prototype"
+        sum         : currentView.getSum()
+      ,
+        success : =>
+          if goBack
+            @resetBack()
+          else
+            @resetNext()
 
   resetNext: =>
     @rendered.subtest = false

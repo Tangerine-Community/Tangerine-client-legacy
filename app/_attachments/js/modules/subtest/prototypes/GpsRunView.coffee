@@ -56,8 +56,9 @@ class GpsRunView extends Backbone.View
         enableHighAccuracy : true
     )
 
-  easify: ( position ) ->
-    if typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
+
+  easify: ( position, refresh ) ->
+    if refresh == null && typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
       console.log "Getting results from couch."
       data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
       return {
@@ -90,7 +91,7 @@ class GpsRunView extends Backbone.View
       @position = newPosition
 
   updateDisplay: (position) ->
-    position = @easify position
+    position = @easify position, true
     positions = [
       el   : @$el.find(".gps_current")
       data : position
@@ -133,8 +134,6 @@ class GpsRunView extends Backbone.View
     @$el.find(".status").html message + polling
 
   render: ->
-
-
 
     if not Modernizr.geolocation
       
