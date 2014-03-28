@@ -179,7 +179,7 @@ class SubtestEditView extends Backbone.View
     groupHandle = Tangerine.settings.getEscapedString("groupHandle")
 
     rtlEditHtml = ""
-    if prototype == 'gps'
+    if prototype == 'grid'
       rtlEditHtml = "
       <div class='label_value'>
       <label>RTL (Right-to-Left orientation)</label><br>
