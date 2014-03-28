@@ -19,7 +19,6 @@ class SubtestRunView extends Backbone.View
     @prototypeRendered = false
 
   render: ->
-    console.log("delegateEvents in render SubtestRunView.")
     this.delegateEvents();
     enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
     studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""

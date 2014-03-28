@@ -59,6 +59,7 @@
       "gps_status" : "GPS Status"
       "best_reading" : "Best reading"
       "current_reading" : "Current reading"
+      "saved_reading" : "Previously saved reading"
     "message" :
       "gps_ok" : "GPS signal ok"
       "attempt" : "Attempt #__count__"

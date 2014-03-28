@@ -28,6 +28,7 @@ class GpsRunView extends Backbone.View
       "accuracy"       : t('GpsRunView.label.accuracy')
       "meters"         : t('GpsRunView.label.meters')
 
+      "savedReading" : t('GpsRunView.label.saved_reading')
       "currentReading" : t('GpsRunView.label.current_reading')
       "bestReading"    : t('GpsRunView.label.best_reading')
       "gpsStatus"      : t('GpsRunView.label.gps_status')
@@ -56,32 +57,17 @@ class GpsRunView extends Backbone.View
         enableHighAccuracy : true
     )
 
-
-  easify: ( position, refresh ) ->
-    if refresh == null && typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
-      console.log "Getting results from couch."
-      data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
-      return {
-      lat       : data.lat
-      long      : data.long
-      alt       : data.alt
-      acc       : data.acc
-      altAcc    : data.altAcc
-      heading   : data.heading
-      speed     : data.speed
-      timestamp : data.timestamp
-      }
-    else
-      return {
-          lat       : if position?.coords?.latitude? then position.coords.latitude else "..."
-          long      : if position?.coords?.longitude? then position.coords.longitude else "..."
-          alt       : if position?.coords?.altitude? then position.coords.altitude else "..."
-          acc       : if position?.coords?.accuracy? then position.coords.accuracy else "..."
-          altAcc    : if position?.coords?.altitudeAccuracy? then position.coords.altitudeAccuracy else "..."
-          heading   : if position?.coords?.heading? then position.coords.heading else "..."
-          speed     : if position?.coords?.speed? then position.coords.speed else "..."
-          timestamp : if position?.timestamp? then position.timestamp else "..."
-        }
+  easify: ( position ) ->
+    return {
+      lat       : if position?.coords?.latitude? then position.coords.latitude else "..."
+      long      : if position?.coords?.longitude? then position.coords.longitude else "..."
+      alt       : if position?.coords?.altitude? then position.coords.altitude else "..."
+      acc       : if position?.coords?.accuracy? then position.coords.accuracy else "..."
+      altAcc    : if position?.coords?.altitudeAccuracy? then position.coords.altitudeAccuracy else "..."
+      heading   : if position?.coords?.heading? then position.coords.heading else "..."
+      speed     : if position?.coords?.speed? then position.coords.speed else "..."
+      timestamp : if position?.timestamp? then position.timestamp else "..."
+    }
 
   updatePosition: ( newPosition ) ->
     newPosition = @easify(newPosition)
@@ -91,7 +77,7 @@ class GpsRunView extends Backbone.View
       @position = newPosition
 
   updateDisplay: (position) ->
-    position = @easify position, true
+    position = @easify position
     positions = [
       el   : @$el.find(".gps_current")
       data : position
@@ -147,30 +133,65 @@ class GpsRunView extends Backbone.View
       @trigger "ready"
 
     else
-      @$el.html "
-        <section>
-          <h3>#{@text.bestReading}</h3>
-          <div class='gps_best'></div><button class='clear command'>#{@text.clear}</button>
-          <h3>#{@text.currentReading}</h3>
-          <div class='gps_current'></div>
-        </section>
-        <section>
-          <h2>#{@text.gpsStatus}</h2>
-          <div class='status'>#{@text.searching}</div>
-        </section>
+      if typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
+        data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
+        lat = data.lat
+        long =  data.long
+        acc  = data.acc
+        @$el.html "
+          <section>
+            <h3>#{@text.savedReading}</h3>
+            <div class='gps_saved'>
+              <table>
+                <tr><td>#{@text.latitude}</td> <td>#{lat}</td></tr>
+                <tr><td>#{@text.longitude}</td><td>#{long}</td></tr>
+                <tr><td>#{@text.accuracy}</td> <td>#{acc}</td></tr>
+              </table>
+            </div>
         "
+      else
+        @$el.html "
+          <section>
+            <h3>#{@text.bestReading}</h3>
+            <div class='gps_best'></div><button class='clear command'>#{@text.clear}</button>
+            <h3>#{@text.currentReading}</h3>
+            <div class='gps_current'></div>
+          </section>
+          <section>
+            <h2>#{@text.gpsStatus}</h2>
+            <div class='status'>#{@text.searching}</div>
+          </section>
+          "
       @trigger "rendered"
       @trigger "ready"
       @poll()
   
   getResult: ->
-    return @position || {}
+    if typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
+      data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
+      return {
+      lat       : data.lat
+      long      : data.long
+      alt       : data.alt
+      acc       : data.acc
+      altAcc    : data.altAcc
+      heading   : data.heading
+      speed     : data.speed
+      timestamp : data.timestamp
+      }
+    else
+      return @position || {}
 
   getSkipped: ->
     return @position || {}
 
   getSum: ->
-    return {}
+    return {
+    correct: 1
+    incorrect: 0
+    missing: 0
+    total: 1
+    }
 
   onClose: ->
     @stopPolling = true
