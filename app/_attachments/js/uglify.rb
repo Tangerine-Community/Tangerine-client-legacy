@@ -80,6 +80,8 @@ jsFiles = [
   'modules/result/TabletManagerView.js',
   'modules/result/ResultSumView.js',
   'modules/result/DashboardView.js',
+  'modules/result/PrimrDashboardView.js',
+  'modules/result/MapView.js',
   'modules/result/TripResult.js',
   'modules/result/TripResults.js',
 
@@ -218,6 +220,10 @@ libFiles = [
   'lib/jquery.ui.button.js',
   'lib/jquery.ui.progressbar.js',
 
+  'lib/leaflet.js',
+  'lib/leaflet.markercluster.js',
+  'lib/leaflet-providers.js',
+
   'lib/inflection.js',
   'lib/backbone.js',
   'lib/moment.js',
@@ -249,7 +255,7 @@ if $options[:make_app]
   app = ''
   for path in jsFiles
     puts "reading #{path}"
-    path = File.join(Dir.pwd, "min", Pathname.new(path).basename.to_s.gsub(".js",".min.js"))
+    #path = File.join(Dir.pwd, "min", Pathname.new(path).basename.to_s.gsub(".js",".min.js"))
     app += File.read path
 
   end

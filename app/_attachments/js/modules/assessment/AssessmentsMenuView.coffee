@@ -15,6 +15,7 @@ class AssessmentsMenuView extends Backbone.View
     'click .sync_tablets' : 'syncTablets'
 
     'click .results'        : 'results'
+    'click .map'        : 'map'
     'click .settings'       : 'editInPlace'
     'keyup .edit_in_place'  : 'saveInPlace'
     'change .edit_in_place'  : 'saveInPlace'
@@ -69,6 +70,9 @@ class AssessmentsMenuView extends Backbone.View
       return
     Tangerine.router.navigate "dashboard", true
 
+  map: ->
+    Tangerine.router.navigate "map", true
+
   universalUpload: -> Utils.universalUpload()
 
   apk: ->
@@ -89,7 +93,7 @@ class AssessmentsMenuView extends Backbone.View
     if Tangerine.settings.get("context") == "mobile"
       @tabletManager = new TabletManagerView
         docTypes : ["result"]
-        callbacks: 
+        callbacks:
           completePull: => @tabletManager.pushDocs()
 
     @[key] = value for key, value of options
@@ -120,6 +124,7 @@ class AssessmentsMenuView extends Backbone.View
     uploadButton  = "<button class='command universal_upload'>Universal Upload</button>"
     syncTabletsButton = "<button class='command sync_tablets'>Sync Tablets</button>"
     resultsButton = "<button class='navigation results'>Results</button>"
+    mapButton = "<button class='navigation map'>Map</button>"
     groupHandle   = "<h2 class='settings grey' data-attribtue='groupHandle'>#{Tangerine.settings.getEscapedString('groupHandle') || Tangerine.settings.get('groupName')}</h2>"
 
 
@@ -138,6 +143,7 @@ class AssessmentsMenuView extends Backbone.View
           #{groupsButton}
           #{apkButton}
           #{resultsButton} 
+          #{mapButton} 
           #{groupHandle}
           "
         ) }

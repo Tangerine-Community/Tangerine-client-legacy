@@ -9,40 +9,6 @@ class PrimrDashboardView extends Backbone.View
     "change #location-filter": "update"
     "change #groupBy": "update"
     "change #shiftHours": "update"
-    "click .result": "showResult"
-
-  showResult: (event) =>
-    resultDetails = $("#resultDetails")
-    if resultDetails.is(":visible")
-      resultDetails.hide()
-    else
-      resultId = $(event.target).text()
-      $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).openDoc resultId,
-        success: (result) =>
-          resultDetails.html "<pre>#{@syntaxHighlight(result)}</pre>"
-          resultDetails.css
-            top: $(event.target).position().top + 30
-            width: 400
-            left: 50
-          resultDetails.show()
-
-  syntaxHighlight: (json) =>
-    window.json = json
-    if (typeof json != 'string')
-       json = JSON.stringify(json, undefined, 2)
-    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    return json.replace /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (match) ->
-      cls = 'number'
-      if (/^"/.test(match))
-        if (/:$/.test(match))
-          cls = 'key'
-        else
-          cls = 'string'
-      else if (/true|false/.test(match))
-        cls = 'boolean'
-      else if (/null/.test(match))
-        cls = 'null'
-      return '<span class="' + cls + '">' + match + '</span>'
 
   loadMissingName: (resultId) ->
     $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).openDoc resultId,
