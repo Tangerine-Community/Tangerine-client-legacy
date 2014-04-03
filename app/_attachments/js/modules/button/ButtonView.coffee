@@ -8,6 +8,20 @@ class ButtonView extends Backbone.View
       else
         "click .button"      : "onClick"
 
+  getValue: -> @answer
+
+  setValue: (values = []) ->
+
+    values = [values] unless _(values).isArray()
+
+    @answer = _.union(values, @options)
+
+    selector = ("[data-value='#{value}']" for value in @answer).join(',')
+
+    @$el.find(".button").removeClass "selected"
+    @$el.find(selector).addClass "selected"
+
+
   onChange: (event) ->
 
     value = _.map($(event.target).find("option:selected"), (x) -> $(x).attr('data-answer'))
