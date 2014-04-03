@@ -1,10 +1,8 @@
 ( keys, values, rereduce ) ->
 
   result =
-    minTime        : null
-    maxTime        : null
     subtests       : 0
-    itemsPerMinute : []
+    itemsPerMinute : {}
     metBenchmark   : 0
     benchmarked    : 0
 
@@ -14,13 +12,22 @@
         result.subtests += v
       else if k is "itemsPerMinute"
         if not rereduce
-          for ipm in v
-            result.itemsPerMinute.push ipm
-            result.benchmarked += 1
+          for subject, ipms of v
+
+            for ipm in ipms
+              continue if ipm >= 120
+              result.itemsPerMinute[subject] = [] unless result.itemsPerMinute[subject]?
+              result.itemsPerMinute[subject][result.itemsPerMinute[subject].length] = ipm
+              result.benchmarked += 1
+
       else if k is "minTime"
-        result.minTime = Math.min( result.minTime, v )
+        result.minTime = v unless result.minTime?
+        result.minTime = if result.minTime < v then result.minTime else v
+
       else if k is "maxTime"
-        result.maxTime = Math.max( result.maxTime, v )
+        result.maxTime = v unless result.maxTime?
+        result.maxTime = if result.maxTime > v then result.maxTime else v
+
       else
         # this only works if none of the other values have the same key
         result[k] = v

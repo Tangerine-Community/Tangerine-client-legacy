@@ -17,15 +17,6 @@
   validTime = min < docTime < max
   return unless validTime
 
-
-  # helper
-  filter = (items, ff) ->
-    result = []
-    for item in items
-      result.push(item) if ff(item)
-    return result
-
-
   result = {}
 
   #
@@ -41,13 +32,13 @@
   # by Zone, County, subject, class
   #
 
-  result.minTime = doc.startTime || doc.subtestData.start_time
-  result.maxTime = doc.startTime || doc.subtestData.start_time
+  result.minTime = doc.startTime || doc.start_time || doc.subtestData.start_time
+  result.maxTime = doc.startTime || doc.start_time || doc.subtestData.start_time
 
   for subtest in doc.subtestData
 
-    result.minTime = Math.min(subtest.timestamp, result.minTime)
-    result.maxTime = Math.max(subtest.timestamp, result.maxTime)
+    result.minTime = if subtest.timestamp < result.minTime then subtest.timestamp else result.minTime
+    result.maxTime = if subtest.timestamp > result.maxTime then subtest.timestamp else result.maxTime
 
     if subtest.prototype is "location"
 
@@ -75,10 +66,14 @@
   if doc.subtestData.items?
 
     totalItems   = doc.subtestData.items.length
-    correctItems = filter(doc.subtestData.items, (item) -> item.itemResult is "correct").length
+    correctItems = 0
+    for item in doc.subtestData.items
+      correctItems++ if item.itemResult is "correct"
+
     totalTime    = doc.timeAllowed
     timeLeft     = doc.subtestData.time_remain
-    result.itemsPerMinute = [( totalItems - ( totalItems - correctItems ) ) / ( ( totalTime - timeLeft ) / ( totalTime ) )]
+    result.itemsPerMinute = {}
+    result.itemsPerMinute[doc.itemType] = [( totalItems - ( totalItems - correctItems ) ) / ( ( totalTime - timeLeft ) / ( totalTime ) )]
 
   #
   # by enumerator
