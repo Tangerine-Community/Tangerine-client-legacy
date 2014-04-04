@@ -36,10 +36,8 @@ class LoginView extends Backbone.View
     $("#footer").hide()
 
   checkNewName: (event) ->
-    console.log "checking new name"
     $target = $(event.target)
     name = ( $target.val().toLowerCase() || '' )
-    console.log "name: #{name}"
     if name.length > 4 and name in @users.pluck("name")
       @nameError(@text['error_name_taken'])
     else
@@ -50,7 +48,9 @@ class LoginView extends Backbone.View
     $target = $(event.target)
     type = $target.attr("type")
     return unless type is 'text' or not type?
-    $target.val($target.val().toLowerCase())
+    isServer = Tangerine.settings.get("context") is "server"
+
+    $target.val($target.val().toLowerCase()) unless isServer
 
   showRecent: ->
     @$el.find("#name").autocomplete(
@@ -142,7 +142,7 @@ class LoginView extends Backbone.View
 
           <div class='messages name_message'></div>
           <table><tr>
-            <td><input id='name' placeholder='#{nameName}'></td>
+            <td><input id='name' class='tablet-name' placeholder='#{nameName}'></td>
             <td><img src='images/icon_recent.png' class='recent clickable'></td>
           </tr></table>
 
@@ -158,7 +158,7 @@ class LoginView extends Backbone.View
         <section>
 
           <div class='messages name_message'></div>
-          <input id='new_name' type='text' placeholder='#{nameName}'>
+          <input id='new_name' class='tablet-name' type='text' placeholder='#{nameName}'>
 
           <div class='messages pass_message'></div>
           <input id='new_pass_1' type='password' placeholder='#{@text.password}'>
@@ -195,6 +195,7 @@ class LoginView extends Backbone.View
       TAB       : 9
       BACKSPACE : 8
 
+    isServer = Tangerine.settings.get("context") is "server"
     $('.messages').html('')
     char = event.which
     if char?
@@ -203,7 +204,7 @@ class LoginView extends Backbone.View
         event.keyCode is key.TAB       or 
         event.keyCode is key.BACKSPACE
       # Allow upper case here but make it so it's not later
-      return false if not /[a-zA-Z0-9]/.test(String.fromCharCode(char)) and not isSpecial
+      return false if not /[a-zA-Z0-9]/.test(String.fromCharCode(char)) and not isSpecial and not isServer
       return @action() if char is key.ENTER
     else
       return true
