@@ -22,8 +22,15 @@ class QuestionsEditListElementView extends Backbone.View
     @getSurveys()
 
   getSurveys: =>
+
+    url = 
+      if Tangerine.settings.get("context") is "server"
+        Tangerine.settings.urlView("group", "subtestsByAssessmentId")
+      else
+        Tangerine.settings.urlView("local", "subtestsByAssessmentId")
+
     $.ajax
-      "url"         : Tangerine.settings.urlView("group", "subtestsByAssessmentId")
+      "url"         : url
       "type"        : "POST"
       "dataType"    : "json"
       "contentType" : "application/json"
