@@ -50,12 +50,16 @@ class Result extends Backbone.Model
   getVariable: ( key ) ->
     for subtest in @get("subtestData")
       data = subtest.data
-      for variable, value of data
-        if variable == key
-          if _.isObject(value)
-            return _.compact(((name if state == "checked") for name, state of value))
-          else
-            return value
+      if data.labels?
+        for label, i in data.labels
+          return data.location[i] if label is key
+      else
+        for variable, value of data
+          if variable == key
+            if _.isObject(value)
+              return _.compact(((name if state == "checked") for name, state of value))
+            else
+              return value
     return null
 
   getGridScore: (id) ->
