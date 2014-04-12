@@ -167,7 +167,12 @@ class AccountView extends Backbone.View
     " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") == "class"
 
     userEdits = 
-      if "mobile" is Tangerine.settings.get("context")
+      if "server" is Tangerine.settings.get("context")
+        @getEditableRow({key:"email", name:"Email"}, @user) +
+        @getEditableRow({key:"first", name:"First name"}, @user) +
+        @getEditableRow({key:"last", name:"Last name"}, @user)
+
+      else if "mobile" is Tangerine.settings.get("context")
         @getEditableRow({key:"email", name:"Email"}, @user)
 
       else if "class" is Tangerine.settings.get("context")
@@ -185,8 +190,6 @@ class AccountView extends Backbone.View
         <button class='confirm_password command'>Change</button>
       </div>
     " if "class" is Tangerine.settings.get("context")
-
-
 
     html = "
       <button class='back navigation'>Back</button>

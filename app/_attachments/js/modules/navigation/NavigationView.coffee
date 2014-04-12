@@ -3,15 +3,13 @@ class NavigationView extends Backbone.View
   el : '#navigation'
 
   events: if Modernizr.touch then {
-    'touchstart div#logout_link'  : 'logout'
-    'touchstart button'            : 'submenuHandler'
-    'touchstart #corner_logo'      : 'logoClick'
-    'touchstart #enumerator'       : 'enumeratorClick'
+    'touchstart #logout'  : 'logout'
+    'touchstart #navigation-logo'      : 'logoClick'
+    'touchstart #username'       : 'gotoAccount'
   } else {
-    'click div#logout_link'   : 'logout'
-    'click button'            : 'submenuHandler'
-    'click #corner_logo'      : 'logoClick'
-    'click #enumerator'       : 'enumeratorClick'
+    'click #logout'   : 'logout'
+    'click #navigation-logo'      : 'logoClick'
+    'click #username'       : 'gotoAccount'
   }
 
   calcWhoAmI: =>
@@ -21,7 +19,17 @@ class NavigationView extends Backbone.View
       klass : @text.teacher
       allElse : @text.user
 
-  enumeratorClick: ->
+  refreshDropDownPosition: ->
+    userPosistion = @$el.find("#username-container").position()
+    $ul = @$el.find("#username-dropdown")
+    $ul.css
+      left : Math.min(userPosistion.left, $(window).width() - $ul.width())
+
+  userMenuIn: =>  @refreshDropDownPosition(); @$el.find("#username-dropdown").show()
+
+  userMenuOut: => @refreshDropDownPosition(); @$el.find("#username-dropdown").hide()
+
+  gotoAccount: ->
     if @user.isAdmin() or "class" is Tangerine.settings.get("context")
       Tangerine.router.navigate "account", true
 
@@ -55,6 +63,8 @@ class NavigationView extends Backbone.View
 
   initialize: (options) =>
 
+    @$el.addClass "NavigationView"
+
     @i18n()
     @render()
 
@@ -68,57 +78,84 @@ class NavigationView extends Backbone.View
 
   i18n: ->
     @text =
+
       "logout"            : t('NavigationView.button.logout')
+
+      "account_button"    : t('NavigationView.button.account')
+      "settings_button"   : t('NavigationView.button.settings')
+
       "user"              : t('NavigationView.label.user')
       "teacher"           : t('NavigationView.label.teacher')
       "enumerator"        : t('NavigationView.label.enumerator')
       "student_id"        : t('NavigationView.label.student_id')
       "version"           : t('NavigationView.label.version')
+
       "account"           : t('NavigationView.help.account')
       "logo"              : t('NavigationView.help.logo')
+
       "incomplete_logout" : t("NavigationView.message.incomplete_logout")
       "confirm_logout"    : t("NavigationView.message.logout_confirm")
       "incomplete_main"   : t("NavigationView.message.incomplete_main_screen")
 
-  submenuHandler: (event) ->
-    vm.currentView.submenuHandler? event
-
-  closeSubmenu: ->
-    @$el.find("main_nav").empty()
-
   render: ->
-    @$el.html "
-    <img id='corner_logo' src='images/corner_logo.png' title='#{@text.logo}'>
-    <div id='logout_link'>#{@text.logout}</div>
-    <div id='enumerator_box'>
-      <span id='enumerator_label' title='#{@text.account}'>#{@whoAmI}</span>
-      <div id='enumerator'>#{Tangerine.user.name() || ""}</div>
-    </div>
 
-    <div id='current_student'>
-      #{@text.student_id}
-      <div id='current_student_id'></div>
-    </div>
-    <div id='version'>
-      #{@text.version} <br>
-      <span id='version-uuid'>#{Tangerine.version}</span><br>
-    </div>
+    @$el.html "
+
+      <img id='navigation-logo' src='images/navigation-logo.png' title='#{@text.logo}'>
+
+      <ul>
+
+        <li id='version-container'>
+
+          <label>#{@text.version}</label>
+          <div>#{Tangerine.version}</div>
+
+        </li>
+
+        <li id='student-container' class='hidden'>
+
+          <label>#{@text.student_id}</label>
+          <div id='student-id'></div>
+
+        </li>
+
+        <li id='username-container'>
+
+          <label title='#{@text.account}'>#{@whoAmI}</label>
+          <div id='username'>#{Tangerine.user.name() || ""}</div>
+      
+          <ul id='username-dropdown'>
+            <li><a href='#account'>#{@text.account_button}</a></li>
+            <li><a href='#settings'>#{@text.settings_button}</a></li>
+          </ul>
+
+        </li>
+
+        <li id='logout'>#{@text.logout}</li>
+
+      </ul>
+      
     "
+
+    # set up user menu
+    if @user?.isAdmin?()
+      @$el.find("#username-container").hover @userMenuIn, @userMenuOut
 
     # Spin the logo on ajax calls
     $(document).ajaxStart -> 
-      if $("#corner_logo").attr("src") isnt "images/spin_orange.gif"
-        $("#corner_logo").attr "src", "images/spin_orange.gif"
+      if $("#navigation-logo").attr("src") isnt "images/navigation-logo-spin.gif"
+        $("#navigation-logo").attr "src", "images/navigation-logo-spin.gif"
     $(document).ajaxStop ->
-      if $("#corner_logo").attr("src") isnt "images/corner_logo.png"
-        $("#corner_logo").attr "src", "images/corner_logo.png"
+      if $("#navigation-logo").attr("src") isnt "images/navigation-logo.png"
+        $("#navigation-logo").attr "src", "images/navigation-logo.png"
 
   setStudent: ( id ) ->
     if id == ""
-      @$el.find('#current_student_id').fadeOut(250, (a) -> $(a).html(""))
-      @$el.find("#current_student").fadeOut(250)
+      @$el.find("#student-container").addClass("hidden")
+      @$el.find('#student-id').html("")
     else
-      @$el.find('#current_student_id').html(id).parent().fadeIn(250)
+      @$el.find("#student-container").removeClass("hidden")
+      @$el.find('#student-id').html(id)
 
 
   # Admins get a manage button 
@@ -126,9 +163,9 @@ class NavigationView extends Backbone.View
   handleMenu: (event) =>
     @calcWhoAmI()
 
-    $("#enumerator_label").html @whoAmI
+    $("#username_label").html @whoAmI
 
-    $('#enumerator').html @user.name()
+    $('#username').html @user.name()
 
     # @TODO This needs fixing
     if ~window.location.toString().indexOf("name=") then @$el.find("#logout_link").hide() else  @$el.find("#logout_link").show()

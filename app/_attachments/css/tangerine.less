@@ -267,9 +267,6 @@ textarea[contenteditable] {-webkit-appearance: none;}
 @orangerind:  #f6e97f;
 @flash_color: red;
 
-@menu_big:   20px;
-@menu_small: 20px;
-
 @h1: 25px;
 @h2: 20px;
 @h3: 15px;
@@ -730,29 +727,82 @@ progress
 
 #navigation
 {
-  min-height: 50px;
+  font-size: 18px;
+  position: relative;
   background: @orange-3 url("../images/noise.png");
   display: none;
-  padding: 5px 5px 5px 5px;
-  font-size: @menu_big;
   .box-shadow (0, 0, 10px, rgba(100,0,0,0.2));
-  
-}
 
-.next
-{
-  float: right;
-}
+  ul { float: right; margin: 0; cursor: pointer; }
 
-nav#submenu
-{
-  display: inline;
-}
+  li
+  {
 
-#corner_logo
-{
-  width: 45px;
-  height: 45px;
+    vertical-align: middle;
+    display: inline-block;
+    margin-left: 0.5em;
+
+    label
+    {
+      color: black;  
+      background: none !important;
+      font-weight: normal;
+      margin: 0;
+      padding: 0;
+    }
+
+    div
+    {
+      display: block;
+      clear: both;
+      color: white;
+      font-weight: normal;
+    }
+  }
+
+  #logout
+  {
+    height: 30px;
+    padding: 13px 10px 8px 10px;
+    color: white;
+    background: @orange-2;
+  }
+
+  #navigation-logo
+  {
+    padding: 3px;
+    width: 45px;
+    height: 45px;
+  }
+
+  #username-dropdown
+  {
+
+    position: fixed;
+    display: none;
+
+    li
+    {
+      border-top: 2px solid @orange-2;
+    }
+
+    a:visited,
+    a
+    {
+      display: block;
+      padding: 10px;
+      background-color: @orange-3;
+      text-decoration: none;
+      color: white;
+    }
+
+    a:hover
+    {
+      background-color: @orange-2;
+    }
+
+  }
+
 }
 
 // Things that start out hidden
@@ -761,72 +811,13 @@ nav#submenu
   display:none;
 }
 
-#logout_link
+.next
 {
   float: right;
-  margin: 0;
-  padding: 20px 10px 0 10px;
-  color: black;
-  cursor: pointer;
 }
-
-#save_all_new_subtests
-{
-  display: none;
-}
-
-#current_student,
-div#enumerator_box
-{
-
-  float: right;
-  vertical-align: middle;
-  display: inline-block;
-  color: @orange-1;
-  background-color: none;
-  font-size: 15px !important;
-  font-weight: bold;
-
-  div
-  {
-    display: block;
-    clear: both;
-    color: white;
-    background-color: @orange-2;
-    padding:2px 5px;
-    font-size: 20px !important;
-    font-weight: normal;
-  }
-}
-
-#current_student
-{
-  display:none;
-  margin-right: 6px;
-}
-
-.ajax_loading
-{
-	margin: auto;
-	display:none;
-}
-
-
 
 button{
   margin: 10px 0px;
-}
-
-#version {
-  float: right;
-  font-size: 50%;
-  padding-right: 20px;
-}
-
-#version a{
-  font-weight: bold;
-  color: black;
-  text-decoration: none;
 }
 
 #content_wrapper

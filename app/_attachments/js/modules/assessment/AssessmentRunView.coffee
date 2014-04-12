@@ -73,7 +73,7 @@ class AssessmentRunView extends Backbone.View
       "
       @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
 
-      currentView.on "rendered",    => @flagRender "subtest"
+      currentView.on "rendered",    => @flagRender "subtest"  
       currentView.on "subRendered", => @trigger "subRendered"
 
       currentView.render()
@@ -95,8 +95,7 @@ class AssessmentRunView extends Backbone.View
     for view in @subtestViews
       view.close()
     @result.clear()
-    $("#current_student_id").fadeOut(250, -> $(@).html("").show())
-    $("#current_student").fadeOut(250)
+    Tangerine.nav.setStudent ""
     
   abort: ->
     @abortAssessment = true
