@@ -32,37 +32,37 @@ class SubtestRunView extends Backbone.View
     _render = =>
 
       enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
-    studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
-    transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
+      studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
+      transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
 
       skipButton = "<button class='skip navigation'>#{@text.skip}</button>"
-    skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+      skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
 
-    @$el.html "
-      <h2>#{@model.get 'name'}</h2>
-      #{enumeratorHelp}
-      #{studentDialog}
-      <div id='prototype_wrapper'></div>
-      
-      <div class='controlls clearfix'>
-        #{transitionComment}
+      @$el.html "
+        <h2>#{@model.get 'name'}</h2>
+        #{enumeratorHelp}
+        #{studentDialog}
+        <div id='prototype_wrapper'></div>
+        
+        <div class='controlls clearfix'>
+          #{transitionComment}
           <button class='next navigation'>#{@text.next}</button>#{if skippable then skipButton else "" }
-      </div>
-    "
-  
-    # Use prototype specific views here
-    @prototypeView = new window[@protoViews[@model.get 'prototype']['run']]
-      model  : @model
-      parent : @
-    @prototypeView.on "rendered",    => @flagRender("prototype")
-    @prototypeView.on "subRendered", => @trigger "subRendered"
-    @prototypeView.on "showNext",    => @showNext()
-    @prototypeView.on "hideNext",    => @hideNext()
-    @prototypeView.on "ready",       => @prototypeRendered = true;
-    @prototypeView.setElement(@$el.find('#prototype_wrapper'))
-    @prototypeView.render()
+        </div>
+      "
+    
+      # Use prototype specific views here
+      @prototypeView = new window[@protoViews[@model.get 'prototype']['run']]
+        model  : @model
+        parent : @
+      @prototypeView.on "rendered",    => @flagRender("prototype")
+      @prototypeView.on "subRendered", => @trigger "subRendered"
+      @prototypeView.on "showNext",    => @showNext()
+      @prototypeView.on "hideNext",    => @hideNext()
+      @prototypeView.on "ready",       => @prototypeRendered = true;
+      @prototypeView.setElement(@$el.find('#prototype_wrapper'))
+      @prototypeView.render()
 
-    @flagRender "subtest"
+      @flagRender "subtest"
 
     languageCode = @model.get("language") 
     if languageCode

@@ -16,9 +16,9 @@ class LocationRunView extends Backbone.View
     @levels = @model.get("levels")       || []
     @locations = @model.get("locations") || []
 
-    if @levels.length == 1 && @levels[0] == ""
+    if @levels.length is 1 and @levels[0] is ""
       @levels = []
-    if @locations.length == 1 && @locations[0] == ""
+    if @locations.length is 1 and @locations[0] is ""
       @locations = []
 
     @haystack = []
@@ -31,7 +31,7 @@ class LocationRunView extends Backbone.View
     template = "<li data-index='{{i}}'>"
     for level, i in @levels
       template += "{{level_#{i}}}"
-      template += " - " unless i == @levels.length-1
+      template += " - " unless i is @levels.length-1
     template += "</li>"
 
     @li = _.template(template)
@@ -50,7 +50,7 @@ class LocationRunView extends Backbone.View
 
   showOptions: (event) ->
     needle = $(event.target).val().toLowerCase()
-    field = parseInt($(event.target).attr('data-level'))
+    fieldIndex = parseInt($(event.target).attr('data-level'))
     # hide if others are showing
     for otherField in [0..@haystack.length]
       @$el.find("#autofill_#{otherField}").hide()
@@ -58,27 +58,27 @@ class LocationRunView extends Backbone.View
     atLeastOne = false
     results = []
     for stack, i in @haystack
-      isThere = ~@haystack[i][field].indexOf(needle)
+      isThere = ~@haystack[i][fieldIndex].indexOf(needle)
       results.push i if isThere
       atLeastOne = true if isThere
 
     for stack, i in @haystack
       for otherField, j in stack
-        if j == field
+        if j is fieldIndex
           continue
         isThere = ~@haystack[i][j].indexOf(needle)
-        results.push i if isThere && !~results.indexOf(i)
+        results.push i if isThere and !~results.indexOf(i)
         atLeastOne = true if isThere
 
     if atLeastOne
       html = ""
       for result in results
         html += @getLocationLi result
-      @$el.find("#autofill_#{field}").fadeIn(250)
-      @$el.find("#school_list_#{field}").html html
+      @$el.find("#autofill_#{fieldIndex}").fadeIn(250)
+      @$el.find("#school_list_#{fieldIndex}").html html
 
     else
-      @$el.find("#autofill_#{field}").fadeOut(250)
+      @$el.find("#autofill_#{fieldIndex}").fadeOut(250)
 
   getLocationLi: (i) ->
     templateInfo = "i" : i

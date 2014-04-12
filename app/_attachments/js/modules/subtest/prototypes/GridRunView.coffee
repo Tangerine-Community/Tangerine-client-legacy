@@ -109,7 +109,7 @@ class GridRunView extends Backbone.View
 
   startTimer: ->
     if @timerStopped == false && @timeRunning == false
-      @interval = setInterval( @updateCountdown,1000 )
+      @interval = setInterval( @updateCountdown, 1000 ) # magic number
       @startTime = @getTime()
       @timeRunning = true
       @updateMode null, "mark"
@@ -157,7 +157,7 @@ class GridRunView extends Backbone.View
     clearTimeout(@timeout)
 
   unAutostopTest: ->
-    @interval = setInterval(@updateCountdown,1000 )
+    @interval = setInterval(@updateCountdown,1000 ) # magic number
     @updateCountdown()
     @autostopped = false
     @lastAttempted = 0
@@ -181,7 +181,7 @@ class GridRunView extends Backbone.View
           ->
             alert t("time please mark last item attempted")
             Utils.background ""
-        , 1e3)
+        , 1e3) # magic number
 
         @updateMode event, "last"
 
@@ -271,15 +271,15 @@ class GridRunView extends Backbone.View
     for item, i in @items
       @gridOutput[i] = 'correct'
     @columns  = parseInt(@model.get("columns")) || 3
-    
+
     @autostop = if @untimed then 0 else (parseInt(@model.get("autostop")) || 0)
     @autostopped = false
 
     @$el.find(".grid_element").removeClass("element_wrong").removeClass("element_last").addClass("disabled")
     @$el.find("table").addClass("disabled")
-    
+
     @$el.find(".timer").html @timer
-    
+
     @updateMode( null, @mode )
 
   i18n: ->
@@ -323,7 +323,7 @@ class GridRunView extends Backbone.View
       "mark"       : @markHandler
       "last"       : @lastHandler
       "minuteItem" : @intermediateItemHandler
-      disabled : $.noop
+      disabled     : $.noop
 
     @dataEntry = options.dataEntry
 
@@ -334,7 +334,7 @@ class GridRunView extends Backbone.View
 
     @gridElement         = _.template "<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element #{fontSizeClass}' #{@fontStyle || ""}>{{label}}</div></td>"
     @variableGridElement = _.template "<span data-label='{{label}}' data-index='{{i}}' class='grid_element #{fontSizeClass}' #{@fontStyle || ""}>{{label}}</span>"
-    
+
     if @layoutMode == "fixed"
       @endOfGridLine = _.template "<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>"
     else
@@ -348,9 +348,9 @@ class GridRunView extends Backbone.View
     disabling = if @untimed then "" else "disabled"
 
     html = if not @untimed then startTimerHTML else ""
-    
+
     gridHTML = ""
-    
+
     if @layoutMode == "fixed"
       gridHTML += "<table class='grid #{disabling}'>"
       firstRow = true
@@ -487,7 +487,7 @@ class GridRunView extends Backbone.View
     if timeStillRunning
       messages.push @text.timeStillRunning
 
-    Utils.midAlert messages.join("<br>"), 3000
+    Utils.midAlert messages.join("<br>"), 3000 # magic number
 
   getResult: ->
     completeResults = []

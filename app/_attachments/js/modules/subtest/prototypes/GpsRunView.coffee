@@ -32,12 +32,12 @@ class GpsRunView extends Backbone.View
       "bestReading"    : t('GpsRunView.label.best_reading')
       "gpsStatus"      : t('GpsRunView.label.gps_status')
 
-      "gpsOk"     : t('GpsRunView.message.gps_ok')
-      "retrying"  : t('GpsRunView.message.retrying')
-      "searching" : t('GpsRunView.message.searching')
+      "gpsOk"        : t('GpsRunView.message.gps_ok')
+      "retrying"     : t('GpsRunView.message.retrying')
+      "searching"    : t('GpsRunView.message.searching')
       "notSupported" : t('GpsRunView.message.not_supported')
 
-  poll: =>
+  poll: => # full of magic numbers
 
     navigator.geolocation.getCurrentPosition(
         (position) =>
@@ -97,9 +97,9 @@ class GpsRunView extends Backbone.View
       else "..."
 
       acc = acc +
-        if parseInt(data?.acc) < 50
+        if parseInt(data?.acc) < 50 # magic number
           "(#{@text.good})"
-        else if parseInt(data?.acc) > 100
+        else if parseInt(data?.acc) > 100 # magic number
           "(#{@text.poor})"
         else
           "(#{@text.ok})"

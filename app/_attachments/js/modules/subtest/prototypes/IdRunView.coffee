@@ -3,7 +3,7 @@ class IdRunView extends Backbone.View
   className: "id"
   
   events:
-    'click #generate' : 'generate'
+    'click #generate'        : 'generate'
     'change #participant_id' : 'setValidator'
   
   i18n: ->
@@ -37,7 +37,7 @@ class IdRunView extends Backbone.View
     return { 'participant_id' : "skipped" }
 
   setValidator: ->
-    @validator.set @$el.find('#participant_id').val()
+    @validator.set @getResult()['participant_id']
 
   isValid: ->
     @setValidator()
@@ -53,4 +53,4 @@ class IdRunView extends Backbone.View
     false
 
   updateNavigation: ->
-    Tangerine.nav.setStudent @$el.find('#participant_id').val()
+    Tangerine.nav.setStudent @getResult()['participant_id']
