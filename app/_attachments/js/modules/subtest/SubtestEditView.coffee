@@ -134,6 +134,9 @@ class SubtestEditView extends Backbone.View
       studentDialog     : @$el.find("#dialog_textarea").val()
       transitionComment : @$el.find("#transition_textarea").val()
 
+      language : @$el.find("#language").val()
+
+
       displayCode : @$el.find("#display_code").val()
 
       fontFamily : @$el.find("#font_family").val()
@@ -172,6 +175,7 @@ class SubtestEditView extends Backbone.View
     skippable   = @model.getBoolean("skippable")
     fontFamily  = @model.getEscapedString("fontFamily")
     displayCode = @model.getString("displayCode")
+    language = @model.getString("language")
     groupHandle = Tangerine.settings.getEscapedString("groupHandle")
 
     @$el.html "
@@ -196,6 +200,11 @@ class SubtestEditView extends Backbone.View
           <label for='subtest_prototype' title='This is a basic type of subtest. (e.g. Survey, Grid, Location, Id, Consent). This property is set in assessment builder when you add a subtest. It is unchangeable.'>Prototype</label><br>
           <div class='info_box'>#{prototype}</div>
         </div>
+        <div class='label_value'>
+          <label for='language'>Language code</label>
+          <input id='language' value='#{language}'>
+        </div>
+
         <div class='label_value'>
           <label>Skippable</label><br>
           <div class='menu_box'>

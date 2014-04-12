@@ -9,7 +9,17 @@ class SubtestRunView extends Backbone.View
 
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
+  i18n: ->
+    @text = 
+      "next" : t("SubtestRunView.button.next")
+      "skip" : t("SubtestRunView.button.skip")
+      "help" : t("SubtestRunView.button.help")
+
+
   initialize: (options) ->
+
+    @i18n()
+
     @protoViews  = Tangerine.config.get "prototypeViews"
     @model       = options.model
     @parent      = options.parent
@@ -19,11 +29,13 @@ class SubtestRunView extends Backbone.View
 
   render: ->
 
-    enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
+    _render = =>
+
+      enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
     studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
     transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
 
-    skipButton = "<button class='skip navigation'>Skip</button>"
+      skipButton = "<button class='skip navigation'>#{@text.skip}</button>"
     skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
 
     @$el.html "
@@ -34,7 +46,7 @@ class SubtestRunView extends Backbone.View
       
       <div class='controlls clearfix'>
         #{transitionComment}
-        <button class='next navigation'>#{t('next')}</button>#{if skippable then skipButton else "" }
+          <button class='next navigation'>#{@text.next}</button>#{if skippable then skipButton else "" }
       </div>
     "
   
@@ -51,6 +63,16 @@ class SubtestRunView extends Backbone.View
     @prototypeView.render()
 
     @flagRender "subtest"
+
+    languageCode = @model.get("language") 
+    if languageCode
+      i18n.setLng languageCode, (t) =>
+        window.oldT = window.t
+        window.t = t
+        _render()
+    else
+      i18n.setLng Tangerine.settings.get("language"), (t) =>
+        _render()
 
   flagRender: ( flag ) =>
     @renderFlags = {} if not @renderFlags

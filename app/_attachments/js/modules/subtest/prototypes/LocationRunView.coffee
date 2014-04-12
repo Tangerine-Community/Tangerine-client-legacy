@@ -206,5 +206,5 @@ class LocationRunView extends Backbone.View
     elements = if selects.length > 0 then selects else inputs
     for input in elements
       unless $(input).val()
-        $(input).after " <span class='message'>#{$('label[for='+$(input).attr('id')+']').text()} must be filled.</span>"
-
+        levelName = $('label[for='+$(input).attr('id')+']').text()
+        $(input).after " <span class='message'>#{t("LocationRunView.message.must_be_filled", levelName)}</span>"

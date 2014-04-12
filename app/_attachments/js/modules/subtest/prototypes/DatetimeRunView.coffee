@@ -2,7 +2,18 @@ class DatetimeRunView extends Backbone.View
 
   className: "datetime"
 
+  i18n: ->
+
+    @text = 
+      year : t("DatetimeRunView.label.year")
+      month : t("DatetimeRunView.label.month")
+      day : t("DatetimeRunView.label.day")
+      time : t("DatetimeRunView.label.time")
+
   initialize: (options) ->
+
+    @i18n()
+
     @model  = @options.model
     @parent = @options.parent
   
@@ -20,12 +31,15 @@ class DatetimeRunView extends Backbone.View
       <div class='question'>
         <table>
           <tr>
-            <td><label for='year'>#{t('year')}</label><input id='year' name='year' value='#{year}'></td>
-            <td><label for='month'>#{t('month')}</label><br><select id='month' name='month' value='#{month}'>#{("<option value='#{m}' #{("selected='selected'" if m is month) || ''}>#{m.titleize()} </option>" for m in months).join('')}</select></td>
-            <td><label for='day'>#{t('day')}</label><input id='day' type='day' name='day' value='#{day}'></td>
+            <td><label for='year'>#{@text.year}</label><input id='year' value='#{year}'></td>
+            <td>
+              <label for='month'>#{@text.month}</label><br>
+              <select id='month' value='#{month}'>#{("<option value='#{m}' #{("selected='selected'" if m is month) || ''}>#{m.titleize()} </option>" for m in months).join('')}</select>
+            </td>
+            <td><label for='day'>#{@text.day}</label><input id='day' type='day' value='#{day}'></td>
           </tr>
           <tr>
-            <td><label for='time'>#{t('time')}</label><br><input type='text' id='time' name='time' value='#{time}'></td>
+            <td><label for='time'>#{@text.time}</label><br><input type='text' id='time' value='#{time}'></td>
           </tr>
         </table>
       </div>

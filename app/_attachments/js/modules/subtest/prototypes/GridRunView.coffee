@@ -148,8 +148,8 @@ class GridRunView extends Backbone.View
     @timeRunning = false
     @$el.find(".grid_element").slice(@autostop-1,@autostop).addClass "element_last" #jquery is weird sometimes
     @lastAttempted = @autostop
-    @timeout = setTimeout(@removeUndo, 3000) # give them 3 seconds to undo
-    Utils.topAlert t("autostop activated discontinue test")
+    @timeout = setTimeout(@removeUndo, 3000) # give them 3 seconds to undo. magic number
+    Utils.topAlert @text.autostop
 
   removeUndo: =>
     @undoable = false
@@ -164,7 +164,7 @@ class GridRunView extends Backbone.View
     @$el.find(".grid_element").slice(@autostop-1,@autostop).removeClass "element_last"
     @timeRunning = true
     @updateMode null, "mark"
-    Utils.topAlert t("autostop removed continue")
+    Utils.topAlert t("GridRunView.message.autostop_cancel")
 
   updateCountdown: =>
     # sometimes the "tick" doesn't happen within a second
@@ -282,7 +282,25 @@ class GridRunView extends Backbone.View
     
     @updateMode( null, @mode )
 
+  i18n: ->
+    
+    @text = 
+      touchLastItem      : t("GridRunView.message.touch_last_item")
+      subtextNotComplete : t("GridRunView.message.subtest_not_complete")
+
+      inputeMode     : t("GridRunView.label.input_mode")
+      timeRemaining  : t("GridRunView.label.time_remaining")
+      wasAutostopped : t("GridRunView.label.was_autostopped")
+
+      start         : t("GridRunView.button.start")
+      stop          : t("GridRunView.button.stop")
+      restart       : t("GridRunView.button.restart")
+      lastAttempted : t("GridRunView.button.last_attempted")
+
+
   initialize: (options) ->
+
+    @i18n()
 
     @fontStyle = "style=\"font-family: #{@model.get('fontFamily')} !important;\"" if @model.get("fontFamily") != "" 
 
@@ -325,7 +343,7 @@ class GridRunView extends Backbone.View
   render: ->
     done = 0
 
-    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>#{t('start')}</button><div class='timer'>#{@timer}</div></div>"
+    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>#{@text.start}</button><div class='timer'>#{@timer}</div></div>"
 
     disabling = if @untimed then "" else "disabled"
 
@@ -360,11 +378,11 @@ class GridRunView extends Backbone.View
           "i"     : i+1
       gridHTML += "</div>"
     html += gridHTML
-    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>#{t('stop')}</button><div class='timer'>#{@timer}</div></div>"
+    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>#{@text.stop}</button><div class='timer'>#{@timer}</div></div>"
 
     resetButton = "
       <div>
-        <button class='restart command'>#{t('restart')}</button>
+        <button class='restart command'>#{@text.restart}</button>
         <br>
       </div>
     "
@@ -379,7 +397,7 @@ class GridRunView extends Backbone.View
 
       minuteItemButton =  ""
       if @captureItemAtTime
-        labelText = t('item at __seconds__ seconds', seconds : @captureAfterSeconds)
+        labelText = t('GridRunView.label.item_at_seconds', seconds: @captureAfterSeconds)
         minuteItemButton = "
           <label for='minute_item_#{@cid}'>#{labelText}</label>
           <input class='grid_mode' name='grid_mode' id='minute_item_#{@cid}' type='radio' value='minuteItem'>
@@ -388,17 +406,17 @@ class GridRunView extends Backbone.View
       captureLastButton = ""
       if @captureLastAttempted
         captureLastButton = "
-          <label for='last_attempted_#{@cid}'>#{t('last attempted')}</label>
+          <label for='last_attempted_#{@cid}'>#{@text.lastAttempted}</label>
           <input class='grid_mode' name='grid_mode' id='last_attempted_#{@cid}' type='radio' value='last'>
         "
       markButton = "
-        <label for='mark_#{@cid}'>#{t('mark')}</label>
+        <label for='mark_#{@cid}'>#{@text.start}</label>
         <input class='grid_mode' name='grid_mode' id='mark_#{@cid}' type='radio' value='mark'>
       "
 
       modeSelector = "
         <div class='grid_mode_wrapper question buttonset clearfix'>
-          <label>#{t('input mode')}</label><br>
+          <label>#{@text.inputMode}</label><br>
           #{markButton}
           #{minuteItemButton}
           #{captureLastButton}
@@ -409,11 +427,11 @@ class GridRunView extends Backbone.View
       <table class='class_table'>
 
         <tr>
-          <td>Was autostopped</td><td><input type='checkbox' class='data_autostopped'></td>
+          <td>#{@text.wasAutostopped}</td><td><input type='checkbox' class='data_autostopped'></td>
         </tr>
 
         <tr>
-          <td>Time remaining</td><td><input type='number' class='data_time_remain'></td>
+          <td>#{@text.timeRemaining}</td><td><input type='number' class='data_time_remain'></td>
         </tr>
       </table>
     "
@@ -435,7 +453,9 @@ class GridRunView extends Backbone.View
     @stopTimer() if @timeRunning
 
     if parseInt(@lastAttempted) is @items.length and @timeRemaining is 0
-      if confirm("Was the last item \"#{@items[@items.length-1]}\"?\nOk to confirm. Cancel to place bracket.")
+      
+      item = @items[@items.length-1]
+      if confirm(t("last_item_confirm", item))
         @updateMode
         return true
       else
@@ -458,14 +478,14 @@ class GridRunView extends Backbone.View
     timeStillRunning = @timeRuning == true
 
     if timerHasntRun
-      messages.push "Subtest not completed."
+      messages.push @text.subtextNotComplete
 
     if noLastItem && not timerHasntRun
-      messages.push t("please touch last item read")
+      messages.push @text.touchLastItem
       @updateMode null, "last"
 
     if timeStillRunning
-      messages.push t("time still running")
+      messages.push @text.timeStillRunning
 
     Utils.midAlert messages.join("<br>"), 3000
 

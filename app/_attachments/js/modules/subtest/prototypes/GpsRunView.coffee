@@ -35,6 +35,7 @@ class GpsRunView extends Backbone.View
       "gpsOk"     : t('GpsRunView.message.gps_ok')
       "retrying"  : t('GpsRunView.message.retrying')
       "searching" : t('GpsRunView.message.searching')
+      "notSupported" : t('GpsRunView.message.not_supported')
 
   poll: =>
 
@@ -122,9 +123,7 @@ class GpsRunView extends Backbone.View
 
     if not Modernizr.geolocation
       
-      @$el.html "
-        Your system does not support geolocations.
-      "
+      @$el.html @text.notSupported
 
       @position = @easify(null)
 

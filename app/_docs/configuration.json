@@ -32,7 +32,7 @@
       "settings" : {
          "context" : "mobile",
          "groupDDoc" : "ojai",
-         "language" : "en",
+         "language" : "en-US",
          "log" : [""],
          "groupName" : "",
          "groupHost" : "http://databases.tangerinecentral.org",

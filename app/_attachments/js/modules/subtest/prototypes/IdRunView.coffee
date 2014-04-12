@@ -6,7 +6,15 @@ class IdRunView extends Backbone.View
     'click #generate' : 'generate'
     'change #participant_id' : 'setValidator'
   
+  i18n: ->
+    @text = 
+      identifier : t("IdRunView.label.identifier")
+      generate   : t("IdRunView.button.generate")
+
   initialize: (options) ->
+
+    @i18n()
+
     @model  = @options.model
     @parent = @options.parent
     @validator = new CheckDigit
@@ -14,9 +22,9 @@ class IdRunView extends Backbone.View
   render: ->
     @$el.html "
     <form>
-      <label for='participant_id'>#{t('random identifier')}</label>
+      <label for='participant_id'>#{@text.identifier}</label>
       <input id='participant_id' name='participant_id'>
-      <button id='generate' class='command'>#{t('generate')}</button>
+      <button id='generate' class='command'>#{@text.generate}</button>
       <div class='messages'></div>
     </form>"
     @trigger "rendered"

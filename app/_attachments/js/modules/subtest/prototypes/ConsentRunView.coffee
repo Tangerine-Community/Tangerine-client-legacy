@@ -7,7 +7,19 @@ class ConsentRunView extends Backbone.View
     'click #consent_yes' : 'clearMessages'
     'click #consent_no' : 'showNonConsent'
 
+  i18n: ->
+    @text =
+      defaultConsent    : t("ConsentRunView.label.default_consent_prompt")
+      confirmNonconsent : t("ConsentRunView.label.confirm_nonconsent")
+      yes               : t("ConsentRunView.button.yes_continue")
+      no                : t("ConsentRunView.button.no_stop")
+      confirm           : t("ConsentRunView.message.confirm")
+      select            : t("ConsentRunView.message.select")
+
   initialize: (options) ->
+
+    @i18n()
+
     @confirmedNonConsent = false
     @model  = @options.model
     @parent = @options.parent
@@ -16,16 +28,16 @@ class ConsentRunView extends Backbone.View
     @$el.html "
     <form>
       <div class='question'>
-        <label>#{@model.get('prompt') || 'Does the child consent?'}</label>
+        <label>#{@model.get('prompt') || @text.defaultConsent}</label>
         <div class='messages'></div>
         <div class='non_consent_form confirmation'>
-          <div>#{t("click to confirm consent not obtained")}</div>
-          <button id='non_consent_confirm'>#{t("confirm")}</button>
+          <div>#{@text.confirmNonconsent}</div>
+          <button id='non_consent_confirm command'>#{@text.confirm}</button>
         </div>
         <div id='consent_options' class='buttonset'>
-          <label for='consent_yes'>#{t("yes, continue")}</label>
+          <label for='consent_yes'>#{@text.yes}</label>
           <input id='consent_yes' type='radio' name='participant_consents' value='yes'>
-          <label for='consent_no'>#{t("no, stop")}</label>
+          <label for='consent_no'>#{@text.no}</label>
           <input id='consent_no' type='radio' name='participant_consents' value='no'>
         </div>
       </div>
@@ -62,10 +74,10 @@ class ConsentRunView extends Backbone.View
   showErrors: ->
     answer = @$el.find("input[name=participant_consents]:checked").val()
     if answer == "no"
-      Utils.midAlert t("please confirm")
+      Utils.midAlert @text.confirm
       @showNonConsent
     else if answer == undefined
-      $(".messages").html t("please select one.")
+      $(".messages").html @text.select
 
   getResult: ->
     return "consent" : @$el.find("input[name=participant_consents]:checked").val()

@@ -74,6 +74,9 @@ class LoginView extends Backbone.View
       "login"      : t('LoginView.button.login')
       "sign_up"    : t('LoginView.button.sign_up')
 
+      "login_tab"  : t('LoginView.label.login')
+      "sign_up_tab"  : t('LoginView.label.sign_up')
+
       "user"       : t('LoginView.label.user')
       "teacher"    : t('LoginView.label.teacher')
       "enumerator" : t('LoginView.label.enumerator')
@@ -134,7 +137,7 @@ class LoginView extends Backbone.View
       <img src='images/login_logo.png' id='login_logo'>
 
       <div class='tab_container'>
-        <div class='tab mode selected first' data-mode='login'>Login</div><div class='tab mode last' data-mode='signup'>Sign up</div>
+        <div class='tab mode selected first' data-mode='login'>#{@text.login_tab}</div><div class='tab mode last' data-mode='signup'>#{@text.sign_up_tab}</div>
       </div>
 
       <div class='login'>

@@ -127,6 +127,17 @@ class SurveyRunView extends Backbone.View
     @updateQuestionVisibility()
     @updateProgressButtons()
 
+  i18n: ->
+    @text = 
+      pleaseAnswer : t("SurveyRunView.message.please_answer")
+      correctErrors : t("SurveyRunView.message.correct_errors")
+      notEnough : t("SurveyRunView.message.not_enough")
+      
+      previousQuestion : t("SurveyRunView.button.previous_question")
+      nextQuestion : t("SurveyRunView.button.next_question")
+
+
+
   initialize: (options) ->
     @model         = @options.model
     @parent        = @options.parent
@@ -136,6 +147,8 @@ class SurveyRunView extends Backbone.View
     @questionViews = []
     @answered      = []
     @renderCount   = 0
+
+    @i18n()
 
     @questions     = new Questions()
     # @questions.db.view = "questionsBySubtestId" Bring this back when prototypes make sense again
@@ -264,12 +277,12 @@ class SurveyRunView extends Backbone.View
           if not _.isEmpty(customMessage)
             message = customMessage
           else
-            message = t("please answer this question")
+            message = @text.pleaseAnswer
 
           if first == true
             @showQuestion(i) if views == @questionViews
             qv.$el.scrollTo()
-            Utils.midAlert t("please correct the errors on this page")
+            Utils.midAlert @text.correctErrors
             first = false
         qv.setMessage message
 
@@ -308,8 +321,8 @@ class SurveyRunView extends Backbone.View
         @updateQuestionVisibility()
         @$el.append "
           <div id='summary_container'></div>
-          <button class='navigation prev_question'>Previous Question</button>
-          <button class='navigation next_question'>Next Question</button>
+          <button class='navigation prev_question'>#{@text.previousQuestion}</button>
+          <button class='navigation next_question'>#{@text.nextQuestion}</button>
         "
         @updateProgressButtons()
 
@@ -317,7 +330,7 @@ class SurveyRunView extends Backbone.View
       if Tangerine.settings.get("context") != "class"
         @parent.next?()
       else
-        @$el.append "<p class='grey'>Student did not read enough words to ask comprehension questions.</p>"
+        @$el.append "<p class='grey'>#{@text.notEnough}</p>"
 
     @trigger "rendered"
 
