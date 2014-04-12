@@ -74,7 +74,7 @@ class AssessmentImportView extends Backbone.View
     @$el.find("#server_connection").html @serverStatus
 
   back: ->
-    Tangerine.router.navigate "", true
+    Tangerine.router.landing()
     false
 
   import: =>

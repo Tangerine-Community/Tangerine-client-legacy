@@ -51,7 +51,7 @@ class RegisterTeacherView extends Backbone.View
         ,
           success: =>
             Utils.midAlert "New teacher registered"
-            Tangerine.user.login @name, @pass, success: -> Tangerine.router.navigate '', true 
+            Tangerine.user.login @name, @pass, success: -> Tangerine.router.landing()
           error: (error) ->
             Utils.midAlert "Registration error<br>#{error}", 5000
 

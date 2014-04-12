@@ -175,7 +175,7 @@ class AssessmentSyncView extends Backbone.View
 
 
   goBack: ->
-    Tangerine.router.navigate "", true
+    Tangerine.router.landing()
 
   render: ->
 

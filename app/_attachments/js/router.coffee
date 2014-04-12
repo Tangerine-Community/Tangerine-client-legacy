@@ -333,7 +333,7 @@ class Router extends Backbone.Router
           user : new User
         vm.show view
       isAuthenticated: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
 
   studentEdit: ( studentId ) ->
     Tangerine.user.verify
@@ -413,7 +413,7 @@ class Router extends Backbone.Router
             view = new AssessmentEditView model: model
             vm.show view
       isUser: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
 
 
   edit: (id) ->
@@ -426,7 +426,7 @@ class Router extends Backbone.Router
             view = new AssessmentEditView model: model
             vm.show view
       isUser: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
 
   restart: (name) ->
     Tangerine.router.navigate "run/#{name}", true
@@ -666,7 +666,7 @@ class Router extends Backbone.Router
                   assessment : assessment
                 vm.show view
       isUser: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
 
   editKlassSubtest: (id) ->
 
@@ -697,7 +697,7 @@ class Router extends Backbone.Router
                 else
                   onSuccess subtest, curriculum
       isUser: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
 
 
   #
@@ -724,7 +724,7 @@ class Router extends Backbone.Router
                       "assessment" : assessment
                     vm.show view
       isUser: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
 
 
   editKlassQuestion: (id) ->
@@ -755,7 +755,7 @@ class Router extends Backbone.Router
   login: ->
     Tangerine.user.verify
       isAuthenticated: ->
-        Tangerine.router.navigate "", true
+        Tangerine.router.landing()
       isUnregistered: ->
 
         showView = (users = []) ->
@@ -848,7 +848,7 @@ class Router extends Backbone.Router
           "name"     : name
           "password" : name
           success: ->
-            Tangerine.router.navigate ""
+            Tangerine.router.landing()
             window.location.reload()
           error: ->
             $.couch.signup
@@ -869,7 +869,7 @@ class Router extends Backbone.Router
                     "name"     : name
                     "password" : name
                     success : ->
-                      Tangerine.router.navigate ""
+                      Tangerine.router.landing()
                       window.location.reload()
                     error: ->
                       Utils.sticky "Error transfering user."

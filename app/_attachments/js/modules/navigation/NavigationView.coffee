@@ -33,9 +33,9 @@ class NavigationView extends Backbone.View
       if Tangerine.activity == "assessment run"
         if confirm @text.incomplete_main
           Tangerine.activity = ""
-          @router.navigate '', true
+          @router.langing()
       else
-          @router.navigate '', true
+          @router.landing()
 
   logout: ->
     if @user.isAdmin() || Tangerine.settings.get("context") == "server"
