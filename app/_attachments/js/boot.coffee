@@ -77,11 +77,13 @@ Tangerine.onSettingsLoad = ->
 
             #$("<button id='reload'>reload me</button>").appendTo("#footer").click -> document.location.reload()
 
+
             $.i18n.init 
-              "fallbackLng" : "en"
+              "fallbackLng" : false
               "lng"         : Tangerine.settings.get "language"
               "resGetPath"  : "locales/__lng__/translation.json"
             , (t) ->
+             
               window.t = t
 
 

@@ -79,7 +79,25 @@ class AssessmentsMenuView extends Backbone.View
 
   import:     -> Tangerine.router.navigate "import", true
 
+  i18n: ->
+    @text = 
+      "new" : t("AssessmentMenuView.button.new")
+      import : t("AssessmentMenuView.button.import")
+      apk : t("AssessmentMenuView.button.apk")
+      groups : t("AssessmentMenuView.button.groups")
+      universal_upload : t("AssessmentMenuView.button.universal_upload")
+      sync_tablets : t("AssessmentMenuView.button.sync_tablets")
+      results : t("AssessmentMenuView.button.results")
+      save : t("AssessmentMenuView.button.save")
+      cancel : t("AssessmentMenuView.button.cancel")
+
+      assessment : t("AssessmentMenuView.label.assessment")
+      assessments : t("AssessmentMenuView.label.assessments")
+
+
   initialize: (options) ->
+
+    @i18n()
 
     if Tangerine.settings.get("context") == "mobile"
       @tabletManager = new TabletManagerView
@@ -108,13 +126,13 @@ class AssessmentsMenuView extends Backbone.View
     
     isAdmin = Tangerine.user.isAdmin()
     
-    newButton     = "<button class='new command'>New</button>"
-    importButton  = "<button class='import command'>Import</button>"
-    apkButton     = "<button class='apk navigation'>APK</button>"
-    groupsButton  = "<button class='navigation groups'>Groups</button>"
-    uploadButton  = "<button class='command universal_upload'>Universal Upload</button>"
-    syncTabletsButton = "<button class='command sync_tablets'>Sync Tablets</button>"
-    resultsButton = "<button class='navigation results'>Results</button>"
+    newButton     = "<button class='new command'>#{@text.new}</button>"
+    importButton  = "<button class='import command'>#{@text.import}</button>"
+    apkButton     = "<button class='apk navigation'>#{@text.apk}</button>"
+    groupsButton  = "<button class='navigation groups'>#{@text.groups}</button>"
+    uploadButton  = "<button class='command universal_upload'>#{@text.universal_upload}</button>"
+    syncTabletsButton = "<button class='command sync_tablets'>#{@text.sync_tablets}</button>"
+    resultsButton = "<button class='navigation results'>#{@text.results}</button>"
     groupHandle   = "<h2 class='settings grey' data-attribtue='groupHandle'>#{Tangerine.settings.getEscapedString('groupHandle') || Tangerine.settings.get('groupName')}</h2>"
 
 
@@ -137,7 +155,7 @@ class AssessmentsMenuView extends Backbone.View
           "
         ) }
       <section>
-        <h1>Assessments</h1>
+        <h1>#{@text.assessments}</h1>
     "
 
     if isAdmin
@@ -151,10 +169,10 @@ class AssessmentsMenuView extends Backbone.View
             <div class='menu_box'>
               <input type='text' class='new_name' placeholder='Name'>
               <select id='new_type'>
-                <option value='assessment'>Assessment</option>
-                <option value='curriculum'>Curriculum</option>
+                <option value='assessment'>#{@text.assessment}</option>
+                <option value='curriculum'>#{@text.curriculum}</option>
               </select><br>
-              <button class='new_save command'>Save</button> <button class='new_cancel command'>Cancel</button>
+              <button class='new_save command'>#{@text.save}</button> <button class='new_cancel command'>#{@text.cancel}</button>
             </div>
           </div>
           <div id='assessments_container'></div>
