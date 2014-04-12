@@ -49,15 +49,6 @@ class DatetimeRunView extends Backbone.View
       "time"  : "skipped"
     }
 
-  
-  getSum: ->
-    return {
-      correct: 1
-      incorrect: 0
-      missing: 0
-      total: 1
-    }
-
   isValid: ->
     true
 

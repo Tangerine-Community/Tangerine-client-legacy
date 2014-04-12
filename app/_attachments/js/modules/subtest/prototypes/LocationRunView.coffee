@@ -208,23 +208,3 @@ class LocationRunView extends Backbone.View
       unless $(input).val()
         $(input).after " <span class='message'>#{$('label[for='+$(input).attr('id')+']').text()} must be filled.</span>"
 
-  getSum: ->
-    counts =
-      correct   : 0
-      incorrect : 0
-      missing   : 0
-      total     : 0
-
-    for input in @$el.find("input")
-      $input = $(input)
-      counts['correct']   += 1 if ($input.val()||"") != ""
-      counts['incorrect'] += 0 if false
-      counts['missing']   += 1 if ($input.val()||"") == ""
-      counts['total']     += 1 if true
-
-    return {
-      correct   : counts['correct']
-      incorrect : counts['incorrect']
-      missing   : counts['missing']
-      total     : counts['total']
-    }

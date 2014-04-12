@@ -69,11 +69,3 @@ class ConsentRunView extends Backbone.View
 
   getResult: ->
     return "consent" : @$el.find("input[name=participant_consents]:checked").val()
-      
-  getSum: ->
-    return {
-      correct: 1
-      incorrect: 0
-      missing: 0
-      total: 1
-    }

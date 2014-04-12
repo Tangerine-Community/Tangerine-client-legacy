@@ -250,29 +250,6 @@ class SurveyRunView extends Backbone.View
           qv.answer
     return result
 
-  getSum: ->
-    counts =
-      correct   : 0
-      incorrect : 0
-      missing   : 0
-      total     : 0
-
-    for qv, i in @questionViews
-      if _.isString(qv)
-        counts.missing++
-      else
-        counts['correct']   += 1 if qv.isValid
-        counts['incorrect'] += 1 if not qv.isValid
-        counts['missing']   += 1 if not qv.isValid && ( qv.model.get "skippable" == 'true' || qv.model.get "skippable" == true )
-        counts['total']     += 1 if true
-
-    return {
-      correct   : counts['correct']
-      incorrect : counts['incorrect']
-      missing   : counts['missing']
-      total     : counts['total']
-    }
-
   showErrors: (views = @questionViews) ->
     @$el.find('.message').remove()
     first = true

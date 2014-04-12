@@ -154,9 +154,6 @@ class GpsRunView extends Backbone.View
   getSkipped: ->
     return @position || {}
 
-  getSum: ->
-    return {}
-
   onClose: ->
     @stopPolling = true
 

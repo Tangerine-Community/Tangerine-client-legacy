@@ -529,23 +529,3 @@ class GridRunView extends Backbone.View
   onClose: ->
     clearInterval(@interval)
 
-  getSum: ->
-    counts =
-      correct   : 0
-      incorrect : 0
-      missing   : @items.length - @lastAttempted
-      total     : @items.length
- 
-
-    for i in @gridOutput
-      counts['correct']   += 1 if i == "correct"
-      counts['incorrect'] += 1 if i == "incorrect"
-      
-    return {
-      correct   : counts['correct']
-      incorrect : counts['incorrect']
-      missing   : counts['missing']
-      total     : counts['total']
-      correct_per_minute : (counts['correct'] * (60 / @timeElapsed))
-    }
-

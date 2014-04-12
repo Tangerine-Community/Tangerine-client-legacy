@@ -110,7 +110,6 @@ class AssessmentRunView extends Backbone.View
       subtestId : currentView.model.id
       skipped   : true
       prototype : currentView.model.get "prototype"
-      sum       : currentView.getSum()
     ,
       success: =>
         @resetNext()
@@ -138,7 +137,6 @@ class AssessmentRunView extends Backbone.View
       subtestHash : subtestResult.meta.hash
       subtestId   : currentView.model.id
       prototype   : currentView.model.get "prototype"
-      sum         : currentView.getSum()
     ,
       success : =>
         @resetNext()

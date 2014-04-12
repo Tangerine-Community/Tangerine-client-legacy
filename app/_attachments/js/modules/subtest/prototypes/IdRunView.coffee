@@ -28,12 +28,6 @@ class IdRunView extends Backbone.View
   getSkipped: ->
     return { 'participant_id' : "skipped" }
 
-  getSum: ->
-    correct   : 1
-    incorrect : 0
-    missing   : 0
-    total     : 1
-
   setValidator: ->
     @validator.set @$el.find('#participant_id').val()
 
