@@ -1,110 +1,62 @@
-![Tangerine](https://github.com/Tangerine-Community/Tangerine/raw/develop/app/_attachments/images/tangerine_logo.png)
+![Tangerine](http://www.tangerinecentral.org/sites/default/files/tangerine-logo-150.png)
 
-A tablet/phone application for assessing students
+# Assess students with tablets or your phone
 
-Tangerine is a couchapp (http://couchapp.org/page/index) that uses 
-couchdb (http://couchdb.apache.org/) for a more streamlined process
+Tangerine is an application for assessing students on any scale, country-level, district-level or classroom-level. Tangerine is designed for [Early Grade Reading Assessments](https://www.eddataglobal.org/reading/) but flexible and powerful enough to handle any survey's requirements.
 
-#### Getting Started - Mac
-This guide is for snow leopard (Mac OS 10.6.x)
+Please visit the [wiki](https://github.com/Tangerine-Community/Tangerine/wiki) for the most up to date guides and references and [Tangerine Central](http://www.tanerinecentral.org) for news.
 
-##### 1. Install xcode, homebrew, git and ruby
-<http://moncefbelyamani.com/how-to-install-xcode-homebrew-git-rvm-ruby-on-mac/>
+Tangerine is a [CouchApp](http://couchapp.org/page/index) that uses 
+[Apache CouchDB](http://couchdb.apache.org/) 
 
-Use the command
+# Getting Started
 
-    brew doctor
-    
-to make sure everything is correct. When you have all the above installed 
-and brew reports "Raring to Brew" you should be ready to move on.
-Some known problems that can occur:
-- Problem: Problem with the pathing of redundant config files. 
-- Solution: Solved by moving them away from the root directory. 
+_The following is a list of tools required to start developing for Tangerine. Related: See the guide for setting up a [Tangerine server](https://github.com/Tangerine-Community/Tangerine/wiki/Tangerine-Server)._
 
-- Problem: Error running 'make'
-- Solution: Run all the updates for brew, git, ruby, etc.
+The overwhelming majority of our developers have prefered Mac or Linux. Windows alternatives are available but have not been thoroughly tested, and in some cases, not tested at all.
 
-##### 2. Install additional programs:
-Couchapp
+[Apache CouchDB](http://couchdb.apache.org/)
 
-    sudo brew install pip
-    sudo env ARCHFLAGS="-arch i386 -arch x86_64" pip install couchapp
+[CoffeeScript](http://coffeescript.org/)
 
-Coffeescript compiler:
+[CouchApp](https://github.com/benoitc/couchapp)
 
-    http://www.blog.bridgeutopiaweb.com/post/how-to-install-coffeescript-on-mac-os-x/
+[Ruby](https://www.ruby-lang.org/en/downloads/)
 
-Ruby
+[Listen](https://github.com/guard/listen)
 
-    rvm install 1.9.3
+[LessCSS](http://lesscss.org/)
 
-Watchr
-
-    gem install watchr
-
-Rake
-
-    gem install rake
-
-
-##### 3. Build couchdb
-
-Follow the instructions on this page to install CouchDB:
-
-<http://wiki.apache.org/couchdb/Installing_on_OSX>
-
-##### 4. Ensure that couchdb is running
-Go to the couchdb server that should now be running on your machine:
-
-http://localhost:5984/_utils
-
-##### 5. Get Tangerine
-Using github create a local clone of the tangerine repository.
+Then clone this repo.
 
     git clone https://github.com/Tangerine-Community/Tangerine.git
 
-##### 6. Deploy the tangerine source code to your local CouchDB
-Go to the Tangerine directory that you just cloned into and push:
+## Config
 
-    cd Tangerine
-    couchapp push
+The folowing files may need to be configured to match our or your development environment.
 
-(TODO: may need to deal with .couchapprc and .couchappignore)
+  .couchapprc
+  app/_docs/configuration
 
-Check that it is working by going to <http://localhost:5984/tangerine/_design/tangerine/index.html>
+## Fire it up!
 
-If not check for error message from your couchapp push command. You can also look at the couchdb log file.
+Quickly
 
-##### 7. Setup automatic pushing
-From the Tangerine directory run:
+  1. Start CouchDB
+  2. `cd app`
+  3. `couchapp push`
+  4. goto `http://localhost:5984/tangerine/_design/ojai/index.html`
 
-    watchr file.watchr
+Normally
 
-watchr will watch all files in your Tangerine directory. When they change it will compile any coffeescript that has been updated and then push the changes to the couchdb.
-
-#### Getting Started - Windows (TODO)
-
-We have not done this yet, so we need help in documenting this section. Some things to try:
-
-- Use a virtual box to run linux
-- Use a windows build of couchdb along with:
-    - cygwin for python and ruby or
-    - <https://github.com/downloads/couchapp/couchapp/couchapp-0.8.1-win.zip>
-    - not sure how to do coffeescript
-
+  1. Start CouchDB
+  2. `cd app`
+  3. `./listen.rb`
+ 
 ----
 
-Copyright (C) 2012  Michael McKay
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
