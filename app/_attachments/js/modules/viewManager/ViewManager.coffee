@@ -10,7 +10,7 @@ class ViewManager extends Backbone.View
 
     window.scrollTo 0, 0
 
-    @currentView?.close()
+    @currentView?.close?()
     @currentView = view
 
     @className = @currentView.className
@@ -18,21 +18,21 @@ class ViewManager extends Backbone.View
 
     Tangerine.log.app("show", @className)
 
-    @currentView.on "rendered", =>
+    @listenTo @currentView, "rendered", =>
       Utils.working false
       $("#content").append @currentView.el
       @currentView.$el.find(".buttonset").buttonset()
       @currentView.afterRender?()
 
-    @currentView.on "subRendered", =>
+    @listenTo @currentView, "subRendered", =>
       @currentView.$el.find(".buttonset").buttonset() # button set everything
 
     # Utils.resizeScrollPane()
 
-    @currentView.on "start_work", =>
+    @listenTo @currentView, "start_work", =>
       Utils.working true
 
-    @currentView.on "end_work", =>
+    @listenTo @currentView, "end_work", =>
       Utils.working false
 
     @currentView.render()

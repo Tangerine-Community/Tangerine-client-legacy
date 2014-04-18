@@ -34,9 +34,9 @@ class LoginView extends Backbone.View
     @i18n()
     @users = options.users
     @user = Tangerine.user
-    @user.on "login", @goOn
-    @user.on "pass-error", (error) => @passError error
-    @user.on "name-error", (error) => @nameError error
+    @listenTo @user, "login", @goOn
+    @listenTo @user, "pass-error", (error) => @passError error
+    @listenTo @user, "name-error", (error) => @nameError error
     @oldBackground = $("body").css("background")
     $("body").css("background", "white")
     $("#footer").hide()
@@ -271,6 +271,7 @@ class LoginView extends Backbone.View
   onClose: =>
     $("#footer").show()
     $("body").css("background", @oldBackground)
+    $(window).off()
 
 
   # returns true or false on a key event supressing default behavior on special conditions

@@ -81,6 +81,8 @@ class WorkflowRunView extends Backbone.View
 
     @subViewDone = false
     @subView?.remove?()
+    @subView?.unbind?()
+
     @subView = null
 
     oldIndex = @index
@@ -158,7 +160,7 @@ class WorkflowRunView extends Backbone.View
         @lessonView.render()
       ,
         => 
-          @$button.remove()
+          @$button?.remove?()
           @lessonView?.close?()
           Utils.sticky "Could not find corresponding lesson"
 

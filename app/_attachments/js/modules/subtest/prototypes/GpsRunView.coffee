@@ -13,6 +13,8 @@ class GpsRunView extends Backbone.View
 
     @position = null
     @retryCount = 0
+    @maxRetries = 200
+
 
   i18n: ->
     @text =
@@ -34,19 +36,20 @@ class GpsRunView extends Backbone.View
       "retrying"  : t('GpsRunView.message.retrying')
       "searching" : t('GpsRunView.message.searching')
 
-  poll: =>
 
+  poll: =>
+    return if @retryCount is @maxRetries
     navigator.geolocation.getCurrentPosition(
         (position) =>
           @updateDisplay position
           @updatePosition position
           @updateStatus @text.gpsOk
           @retryCount = 0
-          setTimeout(@poll(), 5 * 1000) unless @stopPolling # not recursion, no stackoverflow
+          @timeout = setTimeout(@poll, 5 * 1000) unless @stopPolling # not recursion, no stackoverflow    
       ,
         (positionError) =>
           @updateStatus positionError.message
-          setTimeout(@poll(), 5 * 1000)  unless @stopPolling  # not recursion, no stackoverflow
+          @timeout = setTimeout(@poll, 5 * 1000)  unless @stopPolling  # not recursion, no stackoverflow
           @retryCount++
       , 
         maximumAge         : 10 * 1000
@@ -154,6 +157,7 @@ class GpsRunView extends Backbone.View
     return {}
 
   onClose: ->
+    clearTimeout @timeout
     @stopPolling = true
 
   isValid: ->

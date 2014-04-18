@@ -110,6 +110,9 @@ class QuestionRunView extends Backbone.View
               if _.isEmptyString(@answer) || (_.isEmpty(@answer) && _.isObject(@answer)) then false else true
 
 
+  onClose: ->
+    @button?.close?()
+
   setOptions: (options) =>
     @button.options = options
     @button.render()
