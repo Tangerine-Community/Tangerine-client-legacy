@@ -12,6 +12,8 @@ class Router extends Backbone.Router
 
     '' : 'landing'
 
+    'reload' : 'reload'
+
     'logs' : 'logs'
 
     # Tutor
@@ -87,6 +89,10 @@ class Router extends Backbone.Router
     'features' : 'features'
 
     'sync/:id'      : 'sync'
+
+  reload: ->
+    @navigate '', false
+    window.location.reload()
 
   tutorAccount: ->
     Tangerine.user.verify
