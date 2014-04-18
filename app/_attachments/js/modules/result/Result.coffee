@@ -48,12 +48,13 @@ class Result extends Backbone.Model
     @set 'subtestData', subtestData
 
   getVariable: ( key ) ->
-    for subtest in @get("subtestData")
+
+    for subtest in @getArray("subtestData")
       data = subtest.data
       for variable, value of data
-        if variable == key
+        if variable is key
           if _.isObject(value)
-            return _.compact(((name if state == "checked") for name, state of value))
+            return _.compact(((name if state is "checked") for name, state of value))
           else
             return value
     return null

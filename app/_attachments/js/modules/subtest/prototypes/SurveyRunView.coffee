@@ -340,7 +340,7 @@ class SurveyRunView extends Backbone.View
         "
         @updateProgressButtons()
 
-    if @questions.length == notAskedCount
+    if @questions.length is notAskedCount
       if Tangerine.settings.get("context") != "class"
         @parent.next?()
       else
