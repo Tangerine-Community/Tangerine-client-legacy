@@ -8,10 +8,39 @@
 #
 
 # Extend every view with a close method, used by ViewManager
+# try/catch until single call only guaranteed 
 Backbone.View.prototype.close = ->
-  @remove()
-  @unbind()
-  @onClose?()
+
+  try
+    @remove?()
+  catch e
+    console.log @
+    console.log e.message
+
+  try
+    @unbind?()
+  catch e
+    console.log @
+    console.log e.message
+
+  try
+    @onClose?()
+  catch e
+    console.log @
+    console.log e.message
+
+  try
+    delete @$el
+  catch e
+    console.log @
+    console.log e.message
+
+  try
+    delete @el
+  catch e
+    console.log @
+    console.log e.message
+  
 
 Backbone.View.prototype.select = (selector, update=false) ->
   @selectors = {} unless @selectors?
