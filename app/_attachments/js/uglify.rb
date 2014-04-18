@@ -269,8 +269,9 @@ end
 if $options[:compile]
   for file in $options[:compile]
     oldFile = File.read file
+    localFile = file.gsub(Dir.pwd, '')
     File.open( File.join(Dir.pwd, "min", Pathname.new(file).basename.to_s.gsub(".js",".min.js")), "w" ) { |f|
-      puts "\nUglifying\t\t#{file}"
+      puts "\nUglifying:\t\t#{localFile}"
       f.write Uglifier.new.compile(oldFile)
     }
   end

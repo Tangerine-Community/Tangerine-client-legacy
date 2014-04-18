@@ -64,6 +64,8 @@ listen = Listen.to(".") do |modified, added, removed|
 
       match = match.to_s
 
+      localMatch = match.gsub(Dir.pwd,'')
+
       if match.index "translation.coffee"
         # special case for i18n translation files. We just want a basic JSON object, nothing else.
         path = match.split("/")
@@ -75,7 +77,7 @@ listen = Listen.to(".") do |modified, added, removed|
         result = "" # to pass error checking
       else
         # Otherwise, just compile
-        puts "\nCompiling:\t\t#{match}"
+        puts "\nCompiling:\t\t#{localMatch}"
         couchSpecial = /shows\/|views\/|lists\//.match(match)
         mapOption = if couchSpecial then "" else "--map" end
         result = `coffee #{mapOption} --bare --compile #{match} 2>&1`
@@ -98,7 +100,10 @@ listen = Listen.to(".") do |modified, added, removed|
 
     # handle LESS -> CSS
     /.*\.less$/.match(file) { |match|
-      puts "\nCompiling:\t\t#{match}"
+
+      localMatch = match.to_s.gsub(Dir.pwd, '')
+
+      puts "\nCompiling:\t\t#{localMatch}"
       result = `lessc #{match} --yui-compress > #{match}.css`
       if result.index "Error"
         notify("LESS error",result)
@@ -108,8 +113,11 @@ listen = Listen.to(".") do |modified, added, removed|
 
     # Handle all the resulting compiled files
     /.*\.css|.*\.js$|.*\.html$|.*\.json$/.match(file) { |match|
+
       # Don't trigger push for these files
-      unless /version\.js|app\.js|index-dev|\/min\//.match(file)
+      unless /version\.js|app\.js|index-dev|\/min\/|\/spec\//.match(file)
+
+        localMatch = match.to_s.gsub(Dir.pwd,'')
 
         libFile = /lib\//.match(file)
         if libFile
@@ -118,7 +126,7 @@ listen = Listen.to(".") do |modified, added, removed|
             puts `./uglify.rb lib`
           }
         else
-          puts "\nUpdating:\t\t#{match}"
+          puts "\nUpdating:\t\t#{localMatch}"
         end
 
         push()
