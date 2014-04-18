@@ -72,8 +72,7 @@
 
     totalTime    = doc.timeAllowed
     timeLeft     = doc.subtestData.time_remain
-    result.itemsPerMinute = {}
-    result.itemsPerMinute[doc.itemType] = [( totalItems - ( totalItems - correctItems ) ) / ( ( totalTime - timeLeft ) / ( totalTime ) )]
+    result.itemsPerMinute = [( totalItems - ( totalItems - correctItems ) ) / ( ( totalTime - timeLeft ) / ( totalTime ) )]
 
   #
   # by enumerator

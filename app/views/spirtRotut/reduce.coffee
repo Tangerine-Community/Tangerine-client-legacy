@@ -2,23 +2,24 @@
 
   result =
     subtests       : 0
-    itemsPerMinute : {}
+    didntMeet      : 0
     metBenchmark   : 0
     benchmarked    : 0
+    itemsPerMinute : []
 
   for value in values
     for k, v of value
+
       if k is "subtests"
         result.subtests += v
-      else if k is "itemsPerMinute"
-        if not rereduce
-          for subject, ipms of v
 
-            for ipm in ipms
-              continue if ipm >= 120
-              result.itemsPerMinute[subject] = [] unless result.itemsPerMinute[subject]?
-              result.itemsPerMinute[subject][result.itemsPerMinute[subject].length] = ipm
-              result.benchmarked += 1
+      else if k is "itemsPerMinute"
+
+        unless rereduce
+          for ipm in v
+            continue if ipm >= 120
+            result.itemsPerMinute.push ipm
+            result.benchmarked++
 
       else if k is "minTime"
         result.minTime = v unless result.minTime?
@@ -35,16 +36,19 @@
   #
   # benchmark
   #
-  english = result.subject is "english_word"
-  swahili = result.subject is "word"
-  class1  = result.class is "1"
-  class2  = result.class is "2"
 
-  for ipm in result.itemsPerMinute
-    result.metBenchmark++ if swahili and class1 and ipm >= 17
-    result.metBenchmark++ if swahili and class2 and ipm >= 45
-    result.metBenchmark++ if english and class1 and ipm >= 30
-    result.metBenchmark++ if english and class2 and ipm >= 65
+  if result.subject and result.class and result.itemsPerMinute
 
+    english = result.subject is "english_word"
+    swahili = result.subject is "word"
+    class1  = result.class   is "1"
+    class2  = result.class   is "2"
+
+    for ipm in result.itemsPerMinute
+
+      result.metBenchmark++ if swahili and class1 and ipm >= 17
+      result.metBenchmark++ if swahili and class2 and ipm >= 45
+      result.metBenchmark++ if english and class1 and ipm >= 30
+      result.metBenchmark++ if english and class2 and ipm >= 65
 
   return result
