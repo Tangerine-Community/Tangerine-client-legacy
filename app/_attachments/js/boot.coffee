@@ -330,18 +330,22 @@ Tangerine.load = (functions) ->
   
   doStep()
 
-Tangerine.load [
-    Tangerine.bootSequence.pouchCheck
-    Tangerine.bootSequence.mmlpCheck
-    Tangerine.bootSequence.getConfiguration
-    Tangerine.bootSequence.getSettings
-    #Tangerine.bootSequence.hitViews
-    Tangerine.bootSequence.getTemplates
-    Tangerine.bootSequence.ensureAdmin
-    Tangerine.bootSequence.transitionUsers
-    Tangerine.bootSequence.startApp
-  ]
+Tangerine.boot = (callback) ->
 
+    sequence = [
+      Tangerine.bootSequence.pouchCheck
+      Tangerine.bootSequence.mmlpCheck
+      Tangerine.bootSequence.getConfiguration
+      Tangerine.bootSequence.getSettings
+      #Tangerine.bootSequence.hitViews
+      Tangerine.bootSequence.getTemplates
+      Tangerine.bootSequence.ensureAdmin
+      Tangerine.bootSequence.transitionUsers
+      Tangerine.bootSequence.startApp
+    ]
 
+    sequence.push callback if callback?
 
+    Tangerine.load sequence
 
+Tangerine.boot() unless window.TESTING
