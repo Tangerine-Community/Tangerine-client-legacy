@@ -278,8 +278,8 @@ class WorkflowRunView extends Backbone.View
     @subView = subView
     @$el.find("#header-container").html header
     @subView.setElement @$el.find("##{@cid}_current_step")
-    @subView.on "subViewDone save", @onSubViewDone
-    @subView.on "rendered", => 
+    @listenTo @subView, "subViewDone save", @onSubViewDone
+    @listenTo @subView, "rendered", => 
       @trigger "rendered"
       #@afterRender()
     @subView.render()

@@ -100,8 +100,8 @@ class AssessmentsMenuView extends Backbone.View
       
 
 
-    @assessments.each (assessment) => assessment.on "new", @addAssessment
-    @curricula.each   (curriculum) => curriculum.on "new", @addCurriculum
+    @assessments.each (assessment) => @listenTo assessment, "new", @addAssessment
+    @curricula.each   (curriculum) => @listenTo curriculum, "new", @addCurriculum
 
     @curriculaListView = new CurriculaListView
       "curricula" : @curricula
@@ -232,11 +232,11 @@ class AssessmentsMenuView extends Backbone.View
 
   addAssessment: (newOne) =>
     @assessments.add newOne
-    newOne.on "new", @addAssessment
+    @listenTo newOne, "new", @addAssessment
 
   addCurriculum: (newOne) =>
     @curricula.add newOne
-    newOne.on "new", @addCurriculum
+    @listenTo newOne, "new", @addCurriculum
 
   # Making a new assessment
   newToggle: -> @$el.find('.new_form, .new').fadeToggle(250); false

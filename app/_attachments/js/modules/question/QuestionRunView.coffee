@@ -40,7 +40,7 @@ class QuestionRunView extends Backbone.View
       @button = new ButtonView
         options : @options
         mode    : @type
-      @button.on "change rendered", => @update()
+      @listenTo @button, "change rendered", => @update()
 
 
   previousAnswer: =>
@@ -169,7 +169,7 @@ class QuestionRunView extends Backbone.View
 
       if @type == "single" or @type == "multiple"
         @button.setElement(@$el.find(".button_container"))
-        @button.on "rendered", => @trigger "rendered"
+        @listenTo @button, "rendered", => @trigger "rendered"
         @button.render()
       else
         @trigger "rendered"

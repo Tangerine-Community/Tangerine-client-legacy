@@ -38,11 +38,11 @@ class SubtestRunView extends Backbone.View
     @prototypeView = new window[@protoViews[@model.get 'prototype']['run']]
       model  : @model
       parent : @
-    @prototypeView.on "rendered",    => @flagRender("prototype")
-    @prototypeView.on "subRendered", => @trigger "subRendered"
-    @prototypeView.on "showNext",    => @trigger "showNext"
-    @prototypeView.on "hideNext",    => @trigger "hideNext"
-    @prototypeView.on "ready",       => @prototypeRendered = true;
+    @listenTo @prototypeView, "rendered",    => @flagRender("prototype")
+    @listenTo @prototypeView, "subRendered", => @trigger "subRendered"
+    @listenTo @prototypeView, "showNext",    => @trigger "showNext"
+    @listenTo @prototypeView, "hideNext",    => @trigger "hideNext"
+    @listenTo @prototypeView, "ready",       => @prototypeRendered = true;
     @prototypeView.setElement(@$el.find('#prototype_wrapper'))
     @prototypeView.render()
 

@@ -80,7 +80,7 @@ class WorkflowMenuView extends Backbone.View
     unless @syncManagerView?
       @syncManagerView = new SyncManagerView
       @syncManagerView.setElement(@$el.find("#sync-manager"))
-      @syncManagerView.on "complete-sync", =>
+      @listenTo @syncManagerView, "complete-sync", =>
         @workflows.fetch
           success: =>
             @updateWorkflows()

@@ -53,7 +53,7 @@ class InstrumentSyncView extends Backbone.View
           success: (data) =>
             dKeys = _.compact(doc.id.substr(-5, 5) for doc in data.rows).concat(keyList).join(" ")
             @newAssessment = new Assessment
-            @newAssessment.on "complete", (done, total) => 
+            @listenTo @newAssessment, "complete", (done, total) => 
               @newAssessment.off()
               @$el.find('#sync-progress').replaceWith("<div id='sync-progress'></div>")
               @$el.find('#sync-status').html "Sync'd #{(Math.round(done/total*100))}%"
@@ -62,7 +62,7 @@ class InstrumentSyncView extends Backbone.View
 
               @alreadySyncing = false
 
-            @newAssessment.on "progress", (done, total) =>
+            @listenTo @newAssessment, "progress", (done, total) =>
               if done < total
                 @$el.find('#sync-progress').progressbar value : ( done / total ) * 100
             @newAssessment.updateFromServer dKeys

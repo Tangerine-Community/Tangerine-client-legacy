@@ -391,7 +391,7 @@ class GridRunView extends Backbone.View
       } if @captureLastAttempted
 
       @modeButton = new ButtonView buttonConfig
-      @modeButton.on "change click", => @updateMode()
+      @listenTo @modeButton, "change click", => @updateMode()
       modeSelector = "
         <div class='grid_mode_wrapper question buttonset clearfix'>
           <label>#{t('input mode')}</label><br>

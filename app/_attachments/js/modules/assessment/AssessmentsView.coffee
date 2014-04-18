@@ -23,7 +23,7 @@ class AssessmentsView extends Backbone.View
 
   initialize: (options) ->
 
-    options.assessments.on "add destroy remove update", @render
+    @listenTo options.assessments, "add destroy remove update", @render
 
     @parent      = options.parent
     @assessments = options.assessments

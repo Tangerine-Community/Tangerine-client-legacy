@@ -73,7 +73,7 @@ class KlassSubtestRunView extends Backbone.View
     @prototypeView = new window[@protoViews[@subtest.get 'prototype']['run']]
       model: @subtest
       parent: @
-    @prototypeView.on "rendered", @onPrototypeRendered
+    @listenTo @prototypeView, "rendered", @onPrototypeRendered
     @prototypeView.render()
     @$el.append @prototypeView.el
     @prototypeRendered = true

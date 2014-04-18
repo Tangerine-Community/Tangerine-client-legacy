@@ -10,6 +10,7 @@ class ResultView extends Backbone.View
     @model = options.model
     @assessment = options.assessment
     @saved = false
+
     @resultSumView = new ResultSumView
       model       : @model
       finishCheck : false
@@ -18,7 +19,6 @@ class ResultView extends Backbone.View
     Tangerine.router.navigate "restart/#{@assessment.id}", true
 
   save: =>
-    console.log "getting saved"
     @model.add
       name : "Assessment complete"
       prototype: "complete"

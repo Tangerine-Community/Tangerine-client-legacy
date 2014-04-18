@@ -112,7 +112,7 @@ class AccountView extends Backbone.View
     models.push @teacher if @teacher?
 
     @models = new Backbone.Collection(models)
-    @user.on "group-join group-leave group-refresh", @renderGroups
+    @listenTo @user, "group-join group-leave group-refresh", @renderGroups
   
   renderGroups: =>
     html = "<ul>"

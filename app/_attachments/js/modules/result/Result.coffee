@@ -22,7 +22,7 @@ class Result extends Backbone.Model
         'device'            : deviceInfo
         'instanceId'        : Tangerine.settings.getString("instanceId")
 
-      @unset "blank" # options automatically get added to the model. Lame.
+      @unset "blank" # options automatically get added to the model
 
   add: ( subtestDataElement, callbacks = {}) ->
     @setSubtestData subtestDataElement, callbacks

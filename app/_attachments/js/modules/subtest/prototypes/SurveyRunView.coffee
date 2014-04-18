@@ -319,8 +319,10 @@ class SurveyRunView extends Backbone.View
           parent        : @
           notAsked      : isNotAsked
           isObservation : @isObservation
-        oneView.on "rendered", @onQuestionRendered
-        oneView.on "answer scroll", @onQuestionAnswer
+
+        @listenTo oneView, "rendered", @onQuestionRendered
+        @listenTo oneView, "answer",   @onQuestionAnswer
+        @listenTo oneView, "scroll",   @onQuestionAnswer
 
         @questionViews[i] = oneView
         @$el.append oneView.el

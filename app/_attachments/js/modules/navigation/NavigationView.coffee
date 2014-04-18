@@ -65,8 +65,8 @@ class NavigationView extends Backbone.View
 
     @calcWhoAmI()
 
-    @router.on 'all', @handleMenu
-    @user.on   'login logout', @handleMenu
+    @listenTo @router,        'all', @handleMenu
+    @listenTo @user, 'login logout', @handleMenu
 
     @workflows = new Workflows
     @workflows.fetch()
