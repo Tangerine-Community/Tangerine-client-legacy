@@ -73,7 +73,7 @@ Backbone.Model.prototype.conform = ( standard = {} ) ->
     @set(key, value()) if @has(key) or @get(key) is ""
 
 Backbone.Model.prototype.prune = ( shape = {} ) ->
-  throw "Cannot conform to empty standard. Use @clear() instead." if _.isEmpty(standard)
+  throw "Cannot prune to empty shape. Use @clear() instead." if _.isEmpty(standard)
   for key, value of @attributes
     @unset(key) unless key in standard
 

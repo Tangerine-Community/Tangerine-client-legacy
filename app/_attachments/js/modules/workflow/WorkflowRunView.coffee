@@ -276,7 +276,7 @@ class WorkflowRunView extends Backbone.View
     @$button?.remove?()
 
   showView: (subView, header = '') ->
-    header = "<h1>#{header}</h1>"if header isnt ''
+    header = "<h1>#{header}</h1>" if header isnt ''
     @subView = subView
     @$el.find("#header-container").html header
     @subView.setElement @$el.find("##{@cid}_current_step")
