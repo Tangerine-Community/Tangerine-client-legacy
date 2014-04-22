@@ -37,8 +37,8 @@ class LocationRunView extends Backbone.View
     @li = _.template(template)
 
   clearInputs: ->
-    for level, i in @levels
-      @$el.find("#level_#{i}").val("")
+    @$el.empty()
+    @render()
 
   autofill: (event) ->
     @$el.find(".autofill").fadeOut(250)
