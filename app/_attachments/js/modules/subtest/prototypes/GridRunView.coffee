@@ -135,8 +135,8 @@ class GridRunView extends Backbone.View
     @updateCountdown()
 
     # do these if it's not a simple stop
-    if not event?.simpleStop
-      Utils.flash()
+    #if not event?.simpleStop
+      #Utils.flash()
 
 
   autostopTest: ->
@@ -178,8 +178,8 @@ class GridRunView extends Backbone.View
         @stopTimer(simpleStop:true)
         Utils.background "red"
         _.delay(
-          ->
-            alert t("time please mark last item attempted")
+          =>
+            alert @text.touchLastItem
             Utils.background ""
         , 1e3) # magic number
 
@@ -285,13 +285,15 @@ class GridRunView extends Backbone.View
   i18n: ->
     
     @text = 
+      autostop           : t("GridRunView.message.autostop")
       touchLastItem      : t("GridRunView.message.touch_last_item")
-      subtextNotComplete : t("GridRunView.message.subtest_not_complete")
+      subtestNotComplete : t("GridRunView.message.subtest_not_complete")
 
-      inputeMode     : t("GridRunView.label.input_mode")
+      inputMode     : t("GridRunView.label.input_mode")
       timeRemaining  : t("GridRunView.label.time_remaining")
       wasAutostopped : t("GridRunView.label.was_autostopped")
 
+      mark          : t("GridRunView.button.mark")
       start         : t("GridRunView.button.start")
       stop          : t("GridRunView.button.stop")
       restart       : t("GridRunView.button.restart")
@@ -410,7 +412,7 @@ class GridRunView extends Backbone.View
           <input class='grid_mode' name='grid_mode' id='last_attempted_#{@cid}' type='radio' value='last'>
         "
       markButton = "
-        <label for='mark_#{@cid}'>#{@text.start}</label>
+        <label for='mark_#{@cid}'>#{@text.mark}</label>
         <input class='grid_mode' name='grid_mode' id='mark_#{@cid}' type='radio' value='mark'>
       "
 
@@ -455,7 +457,7 @@ class GridRunView extends Backbone.View
     if parseInt(@lastAttempted) is @items.length and @timeRemaining is 0
       
       item = @items[@items.length-1]
-      if confirm(t("last_item_confirm", item))
+      if confirm(t("GridRunView.message.last_item_confirm", item:item))
         @updateMode
         return true
       else
@@ -478,7 +480,7 @@ class GridRunView extends Backbone.View
     timeStillRunning = @timeRuning == true
 
     if timerHasntRun
-      messages.push @text.subtextNotComplete
+      messages.push @text.subtestNotComplete
 
     if noLastItem && not timerHasntRun
       messages.push @text.touchLastItem
