@@ -67,7 +67,6 @@ class SubtestRunView extends Backbone.View
     languageCode = @model.get("language") 
     if languageCode
       i18n.setLng languageCode, (t) =>
-        window.oldT = window.t
         window.t = t
         _render()
     else
