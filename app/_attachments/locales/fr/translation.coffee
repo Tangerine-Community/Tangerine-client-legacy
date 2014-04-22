@@ -44,6 +44,18 @@
       "assessment" : "Évaluation"
       "assessments" : "Évaluations"
       "curriculum" : "Programme"
+  "ResultView" :
+    "label" :
+      "assessment_complete" : "Test complété"
+      "comments" : "Commentaires à rajouter (facultatif)"
+      "subtests_completed" : "Tâches complétées"
+    "message" :
+      "saved" : "Résultats Enregistrés"
+      "not_saved" : " Pas encore enregistrés"
+    "button" :
+      "save" : "Enregistrer résultats"
+      "another" : "Faire encore un test"
+
   "GridRunView" :
     "label" :
       "input_mode"      : "Mode d'entrée"
@@ -55,11 +67,14 @@
       "subtest_not_complete" : "Tâche incomplète."
       "autostop"             : "Auto-arrêt activé. Cessez la tâche."
       "autostop_cancel"      : "Auto-arrêt retiré. Continuez."
-      "last_item_confirm"    : "Le dernier item était-il #__item__?\n Confirmez avec Ok. Annulez pour mettre le crochet."
-    "button" : 
+      "last_item_confirm"    : "Le dernier item était-il __item__?\n Confirmez avec Ok. Annulez pour mettre le crochet."
+    "button" :
+      "restart"         : "Redémarrer"
+      "start"           : "Démarrer"
+      "stop"            : "Arrêter"
       "mark"            : "Marquer"
       "last_attempted"  : "Dernier item essayé"
-      "item_at_seconds" : "Item à #__seconds__ secondes"
+      "item_at_seconds" : "Item à __seconds__ secondes"
   "SubtestRunView" :
     "button" :
       "help" : "Aide"
@@ -88,15 +103,17 @@
     "button" :
       "generate" : "Générer"
   "LocationRunView" :
+    "button" :
+        "clear" : "Vider"
     "message" :
-      "must_be_filled" : "#__levelName__ doit être rempli."
+      "please_select" : "Veuillez sélectionner un(e) __levelName__"
+      "must_be_filled" : "__levelName__ doit être rempli."
   "SurveyRunView" :
-    "label" : 
-      "please_answer" : "Veuillez répondre à cette question."
     "button" :
       "next_question" : "Prochaine question"
       "previous_question" : "Question précédente"
     "message" :
+      "please_answer" : "Veuillez répondre à cette question."
       "not_enough" : "L'élève n'a pas lu suffisamment de mots pour lui poser des questions de compréhension."
       "correct_errors" : "Veuillez corriger les erreurs sur la page."
   "NavigationView" :
@@ -165,7 +182,7 @@
       "current_reading" : "Indication actuelle"
     "message" :
       "gps_ok" : "Signal GPS ok."
-      "attempt" : "Essai #__count__"
+      "attempt" : "Essai __count__"
       "retrying" : "Réessayant…"
       "searching" : "Cherchant…"
       "not_supported" : "Votre système n'est pas compatible avec la géolocalisation."

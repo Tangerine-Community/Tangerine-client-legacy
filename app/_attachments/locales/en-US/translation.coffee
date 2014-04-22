@@ -29,6 +29,18 @@
       "upload_password" : "Upload password"
       "log_events" : "Log events"
     
+  "ResultView" :
+    "label" :
+      "assessment_complete" : "Assessment complete"
+      "comments" : "Additional comments (optional)"
+      "subtests_completed" : "Subtests completed"
+    "message" :
+      "saved" : "Result saved"
+      "not_saved" : "Not saved yet"
+    "button" :
+      "save" : "Save result"
+      "another" : "Perform another assessment"
+
   "AssessmentMenuView" :
     "button" :
       "new" : "New"
@@ -55,11 +67,14 @@
       "subtest_not_complete" : "Subtest not complete."
       "autostop"             : "Autostop activated. Discontinue test."
       "autostop_cancel"      : "Autostop removed. Continue."
-      "last_item_confirm"    : "Was the last item #__item__?\nOk to confirm. Cancel to place bracket."
+      "last_item_confirm"    : "Was the last item \"__item__\"?\nOk to confirm. Cancel to place bracket."
     "button" : 
+      "restart"         : "Restart"
+      "start"           : "Start"
+      "stop"            : "Stop"
       "mark"            : "Mark"
       "last_attempted"  : "Last attempted"
-      "item_at_seconds" : "Item at #__seconds__ seconds"
+      "item_at_seconds" : "Item at __seconds__ seconds"
   "SubtestRunView" :
     "button" :
       "help" : "Help"
@@ -89,15 +104,17 @@
     "button" :
       "generate" : "Generate"
   "LocationRunView" :
+    "button" : 
+      "clear" : "Clear"
     "message" :
-      "must_be_filled" : "#__levelName__ must be filled."
+      "must_be_filled" : "__levelName__ must be filled."
+      "please_select" : "Please select a(n) __levelName__"
   "SurveyRunView" :
-    "label" : 
-      "please_answer" : "Please answer this question."
     "button" :
       "next_question" : "Next question"
       "previous_question" : "Previous question"
     "message" :
+      "please_answer" : "Please answer this question."
       "not_enough" : "Student did not read enough words to ask comprehension questions."
       "correct_errors" : "Please correct the errors on this page."
   "NavigationView" :
