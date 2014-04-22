@@ -8,7 +8,13 @@ class LocationRunView extends Backbone.View
     "click .clear" : "clearInputs"
     "change select" : "onSelectChange"
 
+  i18n: ->
+    @text = 
+      clear : t("LocationRunView.button.clear")
+
   initialize: (options) ->
+
+    @i18n()
 
     @model  = @options.model
     @parent = @options.parent
@@ -90,7 +96,7 @@ class LocationRunView extends Backbone.View
     schoolListElements = ""
 
     html = "
-      <button class='clear command'>#{t('clear')}</button>
+      <button class='clear command'>#{@text.clear}</button>
     "
 
 
@@ -169,7 +175,7 @@ class LocationRunView extends Backbone.View
             <option value='#{locationName}'>#{locationName}</option>
           "
 
-    promptOption  = "<option selected='selected' disabled='disabled'>Please select a #{@levels[index]}</option>"
+    promptOption  = "<option selected='selected' disabled='disabled' value=''>#{t("LocationRunView.message.please_select", levelName: @levels[index])} </option>"
 
     if doneOptions.length is 1
       return levelOptions
@@ -207,4 +213,4 @@ class LocationRunView extends Backbone.View
     for input in elements
       unless $(input).val()
         levelName = $('label[for='+$(input).attr('id')+']').text()
-        $(input).after " <span class='message'>#{t("LocationRunView.message.must_be_filled", levelName)}</span>"
+        $(input).after " <span class='message'>#{t("LocationRunView.message.must_be_filled", levelName : levelName)}</span>"
