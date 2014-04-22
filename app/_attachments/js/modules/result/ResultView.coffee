@@ -25,19 +25,35 @@ class ResultView extends Backbone.View
 
     if @model.save()
       Tangerine.activity = ""
-      Utils.midAlert "Result saved"
-      @$el.find('.save_status').html "saved"
+      Utils.midAlert @text.saved
+      @$el.find('.save_status').html @text.saved
       @$el.find('.save_status').removeClass('not_saved')
       @$el.find('.question').fadeOut(250)
 
       $button = @$el.find("button.save")
 
-      $button.removeClass('save').addClass('another').html "Perform another assessment"
+      $button.removeClass('save').addClass('another').html @text.another
     else
       Utils.midAlert "Save error"
       @$el.find('.save_status').html "Results may not have saved"
 
+
+  i18n: ->
+    @text = 
+      "assessmentComplete" : t("ResultView.label.assessment_complete")
+      "comments"           : t("ResultView.label.comments")
+      "subtestsCompleted"  : t("ResultView.label.subtests_completed")
+
+      "save"               : t("ResultView.button.save")
+      "another"            : t("ResultView.button.another")
+
+      "saved"              : t("ResultView.message.saved")
+      "notSaved"           : t("ResultView.message.not_saved")
+      
+
   initialize: ( options ) ->
+
+    @i18n()
 
     @model = options.model
     @assessment = options.assessment
@@ -48,19 +64,19 @@ class ResultView extends Backbone.View
 
   render: ->
     @$el.html "
-      <h2>Assessment complete</h2>
+      <h2>#{@text.assessmentComplete}</h2>
 
-      <button class='save command'>Save result</button>
-      <div class='info_box save_status not_saved'>Not saved yet</div>
+      <button class='save command'>#{@text.save}</button>
+      <div class='info_box save_status not_saved'>#{@text.notSaved}</div>
       <br>
 
       <div class='question'>
-        <div class='prompt'>Additional comments (optional)</div>
+        <div class='prompt'>#{@text.comments}</div>
         <textarea id='additional_comments' class='full_width'></textarea>
       </div>
 
       <div class='label_value'>
-        <h2>Subtests completed</h2>
+        <h2>#{@text.subtestsCompleted}</h2>
         <div id='result_sum' class='info_box'></div>
       </div>
     "
