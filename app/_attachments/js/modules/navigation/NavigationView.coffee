@@ -3,9 +3,9 @@ class NavigationView extends Backbone.View
   el : '#navigation'
 
   events: if Modernizr.touch then {
-    'touchstart #logout'  : 'logout'
-    'touchstart #navigation-logo'      : 'logoClick'
-    'touchstart #username'       : 'gotoAccount'
+    'click #logout'  : 'logout'
+    'click #navigation-logo'      : 'logoClick'
+    'click #username'       : 'gotoAccount'
   } else {
     'click #logout'   : 'logout'
     'click #navigation-logo'      : 'logoClick'

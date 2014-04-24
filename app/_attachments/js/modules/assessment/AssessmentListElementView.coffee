@@ -5,17 +5,17 @@ class AssessmentListElementView extends Backbone.View
   tagName : "li"
 
   events: if Modernizr.touch then {
-    'touchstart .assessment_menu_toggle'       : 'assessmentMenuToggle'
-    'touchstart .admin_name'                   : 'assessmentMenuToggle'
-    'touchstart .sp_assessment_delete'         : 'assessmentDeleteToggle'
-    'touchstart .sp_assessment_delete_cancel'  : 'assessmentDeleteToggle'
-    'touchstart .sp_assessment_delete_confirm' : 'assessmentDelete'
-    'touchstart .sp_copy'                      : 'copyTo'
-    'touchstart .sp_duplicate'                 : 'duplicate'
-    'touchstart .sp_update'                    : 'update'
-    'touchstart .sp_print'                     : 'togglePrint'
-    'touchstart .archive'                      : 'archive'
-    'touchstart a' : 'respondToLink'
+    'click .assessment_menu_toggle'       : 'assessmentMenuToggle'
+    'click .admin_name'                   : 'assessmentMenuToggle'
+    'click .sp_assessment_delete'         : 'assessmentDeleteToggle'
+    'click .sp_assessment_delete_cancel'  : 'assessmentDeleteToggle'
+    'click .sp_assessment_delete_confirm' : 'assessmentDelete'
+    'click .sp_copy'                      : 'copyTo'
+    'click .sp_duplicate'                 : 'duplicate'
+    'click .sp_update'                    : 'update'
+    'click .sp_print'                     : 'togglePrint'
+    'click .archive'                      : 'archive'
+    'click a' : 'respondToLink'
 
     'change #print_format'             : 'print'
   } else {
