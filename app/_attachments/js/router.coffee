@@ -350,20 +350,24 @@ class Router extends Backbone.Router
 
 
 
-  landing: ->
+  landing: (refresh = false) ->
+
+    callFunction = not refresh
 
     Tangerine.settings.contextualize
       server: ->
         if ~String(window.location.href).indexOf("tangerine/_design") # in main group?
-          Tangerine.router.navigate "groups", true
+          Tangerine.router.navigate "groups", callFunction
         else
-          Tangerine.router.navigate "assessments", true
+          Tangerine.router.navigate "assessments", callFunction
       satellite: ->
-        Tangerine.router.navigate "assessments", true
+        Tangerine.router.navigate "assessments", callFunction
       mobile: ->
-        Tangerine.router.navigate "assessments", true
+        Tangerine.router.navigate "assessments", callFunction
       klass: ->
-        Tangerine.router.navigate "class", true
+        Tangerine.router.navigate "class", callFunction
+
+    document.location.reload() if refresh
 
   groups: ->
     Tangerine.user.verify
