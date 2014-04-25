@@ -58,12 +58,6 @@ class WorkflowRunView extends Backbone.View
   afterRender: =>
     subView?.afterRender?()
 
-    # Hack for PRIMR to hide the next button on grids
-    if @subView?.prototype? and @subView.prototype is "grid"
-      $("button.navigation.next").hide()
-    else
-      $("button.navigation.next").show()
-
   onSubViewDone: =>
     @subViewDone = true
     @nextStep()
@@ -150,25 +144,29 @@ class WorkflowRunView extends Backbone.View
         @$button = $content.find("#display-switch")
         @$button.on "click", @switch
 
-      $content.append("<div id='lesson-container' class='LessonView' style='display:none;'></div>")
+      $content.append("<div id='lesson-container' style='display:none;'></div>")
+
       @$lessonContainer = $content.find("#lesson-container")
 
-      @lessonView = new LessonView
+      lessonImage = new Image 
+      $(lessonImage).on "load", 
+        (event) => 
+          if lessonImage.height is 0
+            @$lessonContainer?.remove?()
+            @$button?.remove?()
+          else
+            @$lessonContainer.append(lessonImage)
 
-      @lessonView.setElement @$lessonContainer
-      @lessonView.lesson.fetch subject, grade, week, day, =>
-        @lessonView.render()
-      ,
-        => 
-          @$button?.remove?()
-          @lessonView?.close?()
-          Utils.sticky "Could not find corresponding lesson"
+      lessonImage.src = "images/lessons/#{subject}_c#{grade}_w#{week}_d#{day}.png"
+
 
     else
-      @lessonView?.close?()
+      @lessonContainer?.remove?()
       @$button?.remove()
 
   renderMessage: ->
+    @nextButton true
+
     coffeeMessage = @currentStep.getCoffeeMessage()
     jsMessage = CoffeeScript.compile.apply(@, ["return \"#{coffeeMessage}\""])
 
@@ -177,6 +175,8 @@ class WorkflowRunView extends Backbone.View
     @$el.find("##{@cid}_current_step").html htmlMessage
 
   renderNew: ->
+    @nextButton true
+
     view = @currentStep.getView
       workflowId : @workflow.id
       tripId     : @tripId
@@ -188,6 +188,8 @@ class WorkflowRunView extends Backbone.View
 
 
   renderAssessment: ->
+    @nextButton true
+
     @currentStep.fetch
       success: =>
         assessment = @currentStep.getTypeModel()
@@ -204,6 +206,7 @@ class WorkflowRunView extends Backbone.View
 
 
   renderCurriculum: ->
+    @nextButton false
 
     curriculumId = @currentStep.getTypesId()
     subtests = new Subtests
@@ -265,14 +268,22 @@ class WorkflowRunView extends Backbone.View
   renderEnd: ->
     @$el.find("##{@cid}_current_step").html "
       <p>You have completed this Classroom Observation.</p>
-      <button class='navigation'><a href='#feedback/#{@workflow.id}'>Go to feedback</a></button>
+      <button class='nav-button'><a href='#feedback/#{@workflow.id}'>Go to feedback</a></button>
       <p>Once in feedback select the appropriate county, zone, school and date of this school visit to retrieve the feedback for this lesson observation. This information is to be used in your reflections and discussion with the teacher.</p>
-      <button class='navigation'><a href='#'>Main</a></button>
+      <button class='nav-button'><a href='#'>Main</a></button>
     "
     return
 
+  nextButton: ( appropriate ) ->
+    if appropriate
+      @$el.find("button.next").show()
+    else
+      @$el.find("button.next").hide()
+      
+
+
   onClose: ->
-    @lessonView?.close?()
+    @lessonContainer?.remove?()
     @$button?.remove?()
 
   showView: (subView, header = '') ->
