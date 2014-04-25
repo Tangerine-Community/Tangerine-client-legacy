@@ -335,8 +335,8 @@ class SurveyRunView extends Backbone.View
         @updateQuestionVisibility()
         @$el.append "
           <div id='summary_container'></div>
-          <button class='navigation prev_question'>Previous Question</button>
-          <button class='navigation next_question'>Next Question</button>
+          <button class='nav-button prev_question'>Previous Question</button>
+          <button class='nav-button next_question'>Next Question</button>
         "
         @updateProgressButtons()
 

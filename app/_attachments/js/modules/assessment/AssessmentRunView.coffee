@@ -88,10 +88,10 @@ class AssessmentRunView extends Backbone.View
       return
 
     skippable = currentView.model.get("skippable") == true || currentView.model.get("skippable") == "true"
-    skipButton = "<button class='skip navigation'>Skip</button>" if skippable
+    skipButton = "<button class='skip nav-button'>Skip</button>" if skippable
     controlls = "
       <div id='controlls' class='clearfix'>
-        <button class='next navigation'>#{t('next')}</button>
+        <button class='next nav-button'>#{t('next')}</button>
         #{skipButton || ''}
       </div>
     " unless @index is @subtestViews.length - 1 or @inWorkflow?

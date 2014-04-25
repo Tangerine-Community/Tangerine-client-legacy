@@ -32,7 +32,7 @@ class StudentEditView extends Backbone.View
     klassId = @student.get("klassId")
     html = "
     <h1>#{t('edit student')}</h1>
-    <button class='back navigation'>#{t('back')}</button><br>
+    <button class='back nav-button'>#{t('back')}</button><br>
     <div class='info_box'>
       <div class='label_value'>
         <label for='name'>Full name</label>

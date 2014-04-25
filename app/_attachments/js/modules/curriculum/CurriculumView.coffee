@@ -141,7 +141,7 @@ class CurriculumView extends Backbone.View
 
     html = "
 
-      <button class='navigation back'>#{t('back')}</button>
+      <button class='nav-button back'>#{t('back')}</button>
       <h1 class='curriculum-name'></h1>
       <small class='name-controls'></small><br>
 

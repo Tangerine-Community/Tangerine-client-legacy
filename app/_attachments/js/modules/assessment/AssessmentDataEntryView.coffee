@@ -49,7 +49,7 @@ class AssessmentDataEntryView extends Backbone.View
     "
 
     @$el.html "
-      <a href='#assessments'><button class='navigation'>Back</button></a><br>
+      <a href='#assessments'><button class='nav-button'>Back</button></a><br>
 
       <h1>#{@assessment.escape("name")}</h1>
 

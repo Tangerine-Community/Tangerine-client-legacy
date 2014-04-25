@@ -137,7 +137,7 @@ class FeedbackTripsView extends Backbone.View
     if @isReady and @trips.length == 0
       @$el.html " 
         <h1>Feedback</h1>
-        <button class='navigation back'>Back</button>
+        <button class='nav-button back'>Back</button>
         <p>No visits yet.</p>
       "
       return @trigger "rendered"

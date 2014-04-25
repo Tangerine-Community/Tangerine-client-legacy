@@ -16,7 +16,7 @@ class GroupsView extends Backbone.View
   render: ->
     groups = Tangerine.user.get("groups") || []
     html = "
-      <button class='account navigation'>Account</button>
+      <button class='account nav-button'>Account</button>
       <h1>Groups</h1>
     "
 

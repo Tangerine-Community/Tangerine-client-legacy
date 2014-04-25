@@ -257,7 +257,7 @@ class ProgressView extends Backbone.View
     #
     html += "
     <div id='table_container'></div>
-    <button class='navigation back'>#{t('back')}</button>
+    <button class='nav-button back'>#{t('back')}</button>
     "
 
     @$el.html html

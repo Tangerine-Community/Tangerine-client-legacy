@@ -137,7 +137,7 @@ class QuestionEditView extends Backbone.View
     checkOrRadio = if type == "multiple" then "checkbox" else "radio"
 
     @$el.html "
-      <button class='back navigation'>Back</button>
+      <button class='back nav-button'>Back</button>
       <h1>Question Editor</h1>
       <table class='basic_info'>
         <tr>

@@ -14,7 +14,7 @@ class SubtestPrintView extends Backbone.View
       
     enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<div class='enumerator_help_print'>#{@model.get 'enumeratorHelp'}</div>" else ""
     studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog_print'>#{@model.get 'studentDialog'}</div>" else ""
-    skipButton = "<button class='skip navigation'>Skip</button>"
+    skipButton = "<button class='skip nav-button'>Skip</button>"
     skippable = @model.getBoolean("skippable")
 
     if @format is "content"

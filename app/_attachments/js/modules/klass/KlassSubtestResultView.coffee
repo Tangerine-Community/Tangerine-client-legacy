@@ -93,7 +93,7 @@ class KlassSubtestResultView extends Backbone.View
       </tbody></table>
       #{resultHTML || ""}
       #{runButton || ""}
-      <button class='navigation back'>Back</button>
+      <button class='nav-button back'>Back</button>
     "
 
     @trigger "rendered"

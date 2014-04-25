@@ -129,7 +129,7 @@ class KlassPartlyView extends Backbone.View
       <h2>#{t('current assessment')} </h2>
       
       <button class='prev_part command'>&lt;</button> <input type='number' value='#{@currentPart}' id='current_part'> <button class='next_part command'>&gt;</button><br><br>
-      <button class='back navigation'>#{t('back')}</button> 
+      <button class='back nav-button'>#{t('back')}</button> 
       "
 
     @trigger "rendered"

@@ -174,7 +174,7 @@ class KlassEditView extends Backbone.View
     " if Tangerine.user.isAdmin()
 
     @$el.html "
-    <button class='back navigation'>#{t('back')}</button>
+    <button class='back nav-button'>#{t('back')}</button>
     <h1>#{t('class editor')}</h1>
     <h2>#{t('basic info')}</h2>
     <table class='info_box basic_info'>

@@ -119,12 +119,12 @@ class AssessmentsMenuView extends Backbone.View
     
     newButton     = "<button class='new command'>New</button>"
     importButton  = "<button class='import command'>Import</button>"
-    apkButton     = "<button class='apk navigation'>APK</button>"
-    groupsButton  = "<button class='navigation groups'>Groups</button>"
+    apkButton     = "<button class='apk nav-button'>APK</button>"
+    groupsButton  = "<button class='nav-button groups'>Groups</button>"
     uploadButton  = "<button class='command universal_upload'>Universal Upload</button>"
     syncTabletsButton = "<button class='command sync_tablets'>Sync Tablets</button>"
-    resultsButton = "<button class='navigation results'>Results</button>"
-    mapButton = "<button class='navigation map'>Map</button>"
+    resultsButton = "<button class='nav-button results'>Results</button>"
+    mapButton = "<button class='nav-button map'>Map</button>"
     groupHandle   = "<h2 class='settings grey' data-attribtue='groupHandle'>#{Tangerine.settings.getEscapedString('groupHandle') || Tangerine.settings.get('groupName')}</h2>"
 
 

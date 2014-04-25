@@ -298,7 +298,7 @@ class KlassSubtestEditView extends Backbone.View
       "
 
     @$el.html "
-      <button class='back_button navigation'>Back</button><br>
+      <button class='back_button nav-button'>Back</button><br>
       <h1>Subtest Editor</h1>
       <table class='basic_info'>
         <tr>

@@ -97,7 +97,7 @@ class TeachersView extends Backbone.View
     deleteButton = if Tangerine.settings.get("context") == "server" then "<button class='command_red delete'>Delete</button>" else ""
 
     backButton = "
-      <button class='navigation back'>#{t('back')}</button>
+      <button class='nav-button back'>#{t('back')}</button>
     " unless Tangerine.settings.get("context") is "server"
 
     html = "

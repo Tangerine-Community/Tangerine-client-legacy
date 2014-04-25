@@ -79,7 +79,7 @@ class AdminView extends Backbone.View
 
               groupTotalResults = 0
               groupTotalResults += parseInt(resultCount.value) while (resultCount = resultCounts.rows.pop())
-              $group.find(".total-results").html "<button class='results navigation'><a href='/#{group}/_design/#{Tangerine.design_doc}/index.html#dashboard'>#{groupTotalResults}</a></button>"
+              $group.find(".total-results").html "<button class='results nav-button'><a href='/#{group}/_design/#{Tangerine.design_doc}/index.html#dashboard'>#{groupTotalResults}</a></button>"
 
               ($.couch.db(group).view Tangerine.design_doc + "/completedResultsByEndTime",
                 limit: 1

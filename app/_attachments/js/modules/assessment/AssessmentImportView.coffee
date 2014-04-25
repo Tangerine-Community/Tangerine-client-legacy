@@ -209,7 +209,7 @@ class AssessmentImportView extends Backbone.View
 
     @$el.html "
 
-      <button class='back navigation'>Back</button>
+      <button class='back nav-button'>Back</button>
 
       <h1>Tangerine Central Import</h1>
 

@@ -40,7 +40,7 @@ class Dashboard extends Backbone.View
 
     @$el.html "
       <h1>#{Tangerine.settings.get("groupName")}</h1>
-      <button class='navigation back'><a href='#'>Back</a><button>
+      <button class='nav-button back'><a href='#'>Back</a><button>
       <fieldset>
         <legend>Report types</legend>
         #{reportCheckboxesHtml}

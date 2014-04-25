@@ -310,13 +310,13 @@ class KlassGroupingView extends Backbone.View
         #{detailsHTML}
         #{itemizedResults}
         #{warningsHTML || ""}
-        <button class='navigation back'>Back</button>
+        <button class='nav-button back'>Back</button>
       "
     else
       html = "
         #{menuHTML}
         #{emptyHTML}
-        <button class='navigation back'>Back</button>
+        <button class='nav-button back'>Back</button>
       "
 
     @$el.html html

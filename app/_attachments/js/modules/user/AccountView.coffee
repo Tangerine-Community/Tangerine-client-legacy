@@ -144,8 +144,8 @@ class AccountView extends Backbone.View
 
 
     if Tangerine.settings.get("context") != "server" && Tangerine.user.isAdmin()
-      settingsButton = "<a href='#settings' class='navigation'><button class='navigation'>Settings</button></a>"
-      logsButton = "<a href='#logs' class='navigation'><button class='navigation'>Logs</button></a>"
+      settingsButton = "<a href='#settings' class='nav-button'><button class='nav-button'>Settings</button></a>"
+      logsButton = "<a href='#logs' class='nav-button'><button class='nav-button'>Logs</button></a>"
 
     applicationMenu = "
       <section>
@@ -165,7 +165,7 @@ class AccountView extends Backbone.View
     " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") != "server"
 
     teachersButton = "
-      <a href='#teachers' class='navigation'><button class='navigation'>Teachers</button></a>
+      <a href='#teachers' class='nav-button'><button class='nav-button'>Teachers</button></a>
     " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") == "class"
 
     userEdits = 
@@ -191,7 +191,7 @@ class AccountView extends Backbone.View
 
 
     html = "
-      <button class='back navigation'>Back</button>
+      <button class='back nav-button'>Back</button>
       <h1>Manage</h1>
       #{settingsButton || ""}
       #{logsButton || ""}

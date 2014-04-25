@@ -108,7 +108,7 @@ class WorkflowMenuView extends Backbone.View
       htmlWorkflows += "
         <li id='#{workflow.id}' style='margin-bottom:25px;'>
           <section>
-            <button class='navigation'><a href='#workflow/run/#{workflow.id}'>#{workflow.get('name')}</a></button><br>
+            <a href='#workflow/run/#{workflow.id}' class='workflow-button-link'>#{workflow.get('name')}</a>
             #{feedbackHtml}
           </section>
         </li>

@@ -37,7 +37,7 @@ class SettingsView extends Backbone.View
     log         = _.escape( @settings.getArray("log").join(", ") )
 
     @$el.html "
-    <button class='back navigation'>Back</button>
+    <button class='back nav-button'>Back</button>
     <h1>#{t("settings")}</h1>
     <p><img src='images/icon_warn.png' title='Warning'>Please be careful with the following settings.</p>
     <div class='menu_box'>

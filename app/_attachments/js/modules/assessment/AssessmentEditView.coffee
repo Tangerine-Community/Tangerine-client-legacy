@@ -153,7 +153,7 @@ class AssessmentEditView extends Backbone.View
 
     
     @$el.html "
-      <button class='back navigation'>Back</button>
+      <button class='back nav-button'>Back</button>
         <h1>Assessment Builder</h1>
       <div id='basic'>
         <label for='assessment_name'>Name</label>

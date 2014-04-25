@@ -190,7 +190,7 @@ class AssessmentSyncView extends Backbone.View
 
     @$el.html "
 
-      <button class='back navigation'>Back</button>
+      <button class='back nav-button'>Back</button>
 
       <h1>Assessment Sync</h1>
 

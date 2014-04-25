@@ -184,7 +184,7 @@ class WorkflowEditView extends Backbone.EditView
         <button class='add command'>Add step</button>
       </div>
       <div id='feedback'>
-        <button class='feedback navigation'><a href='#feedback/edit/#{@workflow.id}'>Feedback</a></button>
+        <button class='feedback nav-button'><a href='#feedback/edit/#{@workflow.id}'>Feedback</a></button>
       </div>
     "
 

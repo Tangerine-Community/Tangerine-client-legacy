@@ -63,10 +63,17 @@ class KlassSubtestRunView extends Backbone.View
     enumeratorHelp = if (@subtest.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>help</button><div class='enumerator_help'>#{@options.subtest.get 'enumeratorHelp'}</div>" else ""
     studentDialog  = if (@subtest.get("studentDialog")  || "") != "" then "<div class='student_dialog'>#{@options.subtest.get 'studentDialog'}</div>" else ""
 
+    htmlButton = "<button class='done nav-button'>Done</button>"
+    
+    htmlButton += "<button class='cancel nav-button'>Cancel</button>" unless @inWorkflow
+
+
     @$el.html "
       <h2>#{@options.subtest.get 'name'}</h2>
       #{enumeratorHelp}
       #{studentDialog}
+      <div id='prototype_wrapper'></div>
+      #{htmlButton}
     "
 
     # Use prototype specific views here
