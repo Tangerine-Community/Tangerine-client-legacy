@@ -303,7 +303,6 @@ class GridRunView extends Backbone.View
     @dataEntry = options.dataEntry
 
     @model  = @options.model
-    @parent = @options.parent
 
     @resetVariables()
 
