@@ -129,10 +129,11 @@ class WorkflowRunView extends Backbone.View
           <h1>#{@currentStep.name()} - #{@currentStep.getType()}</h1>
         "
 
-    if @currentStep.getShowLesson() && LessonView?
+    if @currentStep.getShowLesson()
       
       subject = @getVariable("subject")
-      subject = ({"word": "2", "english_word" : "1"})[subject]
+
+      subject = ({"word": "kiswahili", "english_word" : "english", "operation" : "maths"})[subject]
       grade   = @getVariable("class")
       week    = @getVariable("week")
       day     = @getVariable("day")

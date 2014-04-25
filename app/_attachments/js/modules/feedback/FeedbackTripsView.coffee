@@ -60,23 +60,27 @@ class FeedbackTripsView extends Backbone.View
     tripId = $target.attr("data-tripId")
     trip   = @trips.get(tripId)
 
-    $lessonContainer = @$el.find(".#{tripId}-lesson")
+    @$lessonContainer = @$el.find(".#{tripId}-lesson")
 
-    @$el.find(".#{tripId}-lesson").html "<img class='loading' src='images/loading.gif'>"
+    @$lessonContainer.html "<img class='loading' src='images/loading.gif'>"
 
-    lessonView = new LessonView
-    lessonView.setElement $lessonContainer
-
-
-    subject = ({"word": "2", "english_word" : "1"})[trip.get("subject")]
+    subject = ({"word": "kiswahili", "english_word" : "english", "operation" : "maths"})[trip.get("subject")]
     grade   = trip.get("class")
     week    = trip.get("week")
     day     = trip.get("day")
 
-    lessonView.lesson.fetch subject, grade, week, day, =>
-      lessonView.render()
-    
-    @subViews.push lessonView
+    lessonImage = new Image 
+    $(lessonImage).on "load", 
+      (event) =>
+        if lessonImage.height is 0
+          @$lessonContainer .find("img").remove?()
+          @$lessonContainer.html "Sorry, no lesson plan available."
+          @$lessonContainer.append(lessonImage)
+        else
+          @$lessonContainer.find("img").remove?()
+          @$lessonContainer.append(lessonImage)
+
+    lessonImage.src = "images/lessons/#{subject}_c#{grade}_w#{week}_d#{day}.png"
 
 
   hideFeedback: (event) ->
@@ -114,6 +118,7 @@ class FeedbackTripsView extends Backbone.View
   onClose: ->
     for view in @subViews
       view.close()
+    @$lessonContainer?.remove?()
 
   sortTable: ( event ) ->
     newSortAttribute = $(event.target).attr("data-attr")
