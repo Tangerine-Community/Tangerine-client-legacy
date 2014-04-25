@@ -334,7 +334,7 @@ Tangerine.boot = (callback) ->
 
     sequence = [
       Tangerine.bootSequence.pouchCheck
-      Tangerine.bootSequence.mmlpCheck
+      #Tangerine.bootSequence.mmlpCheck
       Tangerine.bootSequence.getConfiguration
       Tangerine.bootSequence.getSettings
       #Tangerine.bootSequence.hitViews
