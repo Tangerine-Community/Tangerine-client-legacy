@@ -104,7 +104,7 @@ class LoginView extends Backbone.View
     else 
       @$el.find("#pass").focus()
 
-  goOn: -> Tangerine.router.landing()
+  goOn: -> Tangerine.router.landing(true)
 
   updateMode: (event) ->
     $target = $(event.target)
