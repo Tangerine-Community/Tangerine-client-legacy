@@ -1747,7 +1747,7 @@ img.loading
 }
 
 
-button.navigation
+button.nav-button
 {
   display:inline-block;
   font-size: 22px;
@@ -1760,6 +1760,37 @@ button.navigation
   font-weight: normal;
   &:active
   {
+    background-color: @orange-3;
+  }
+  
+  &:hover
+  {
+    background-color: @orange-1;
+  }
+
+}
+
+
+.workflow-button-link
+{
+  text-decoration: none;
+  display:block;
+  font-size: 22px;
+  color: white;
+  background-color: @orange-2;
+  border: 0 !important;
+  margin: 10px 0 5px 0;
+  padding: 7px 20px !important;
+  .border-radius(10px);
+  font-weight: normal;
+  &:visited
+  {
+    color: white;
+  }
+
+  &:active
+  {
+    color: white;
     background-color: @orange-3;
   }
   
@@ -1796,7 +1827,7 @@ body.server
 }
 
 .command,
-.navigation
+.nav-button
 {
   
   a, a:visited, a:hover
