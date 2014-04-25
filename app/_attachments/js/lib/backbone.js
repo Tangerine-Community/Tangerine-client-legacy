@@ -442,8 +442,9 @@
     // state will be `set` again.
     save: function(key, val, options) {
 
-      // fetmar: call this model's beforeSave method first
-      if (this.beforeSave != null) this.beforeSave.apply(this, arguments);
+      // fetmar: call the generic beforeSave method first
+      // _beforeSave should call the model's custom beforeSave method
+      if (this._beforeSave != null) this._beforeSave.apply(this, arguments);
 
       var attrs, method, xhr, attributes = this.attributes;
 
