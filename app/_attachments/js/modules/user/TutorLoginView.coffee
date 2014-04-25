@@ -7,9 +7,9 @@ class LoginView extends Backbone.View
       'keypress input'     : 'keyHandler'
       'change input'       : 'onInputChange'
       'change select#name' : 'onSelectChange'
-      'touchstart .mode'   : 'updateMode'
-      'touchstart button'  : 'action'
-      'touchstart .recent' : 'showRecent'
+      'click .mode'   : 'updateMode' #touchstart
+      'click button'  : 'action' #touchstart
+      'click .recent' : 'showRecent' #touchstart
       'blur .recent'       : 'blurRecent'
       'keyup #new_name'    : 'checkNewName'
     else

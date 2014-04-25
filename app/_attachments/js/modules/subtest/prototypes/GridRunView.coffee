@@ -3,8 +3,8 @@ class GridRunView extends Backbone.View
   className: "grid_prototype"
 
   events: if Modernizr.touch then {
-    'touchstart .grid_element'     : 'gridClick'
-    'touchstart .end_of_grid_line' : 'endOfGridLineClick'
+    'click .grid_element'     : 'gridClick' #touchstart
+    'click .end_of_grid_line' : 'endOfGridLineClick' #touchstart
     'click .start_time'  : 'startTimer'
     'click .stop_time'   : 'stopTimer'
     'click .restart'     : 'restartTimer'

@@ -3,10 +3,10 @@ class NavigationView extends Backbone.View
   el : '#navigation'
 
   events: if Modernizr.touch then {
-    'touchstart div#logout_link'  : 'logout'
-    'touchstart button'            : 'submenuHandler'
-    'touchstart #corner_logo'      : 'logoClick'
-    'touchstart #enumerator'       : 'enumeratorClick'
+    'click div#logout_link'  : 'logout'
+    'click button'            : 'submenuHandler'
+    'click #corner_logo'      : 'logoClick'
+    'click #enumerator'       : 'enumeratorClick'
   } else {
     'click div#logout_link'   : 'logout'
     'click button'            : 'submenuHandler'
