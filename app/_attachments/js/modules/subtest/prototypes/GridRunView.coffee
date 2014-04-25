@@ -21,8 +21,6 @@ class GridRunView extends Backbone.View
 
     @resetVariables()
 
-    @$el.find(".element_wrong").removeClass "element_wrong"
-
   gridClick: (event) =>
     @modeHandlers[@mode]?(event)
 
