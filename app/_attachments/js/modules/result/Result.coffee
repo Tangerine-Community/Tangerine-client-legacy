@@ -25,7 +25,7 @@ class Result extends Backbone.Model
       @unset "blank" # options automatically get added to the model
 
   add: ( subtestDataElement, callbacks = {}) ->
-    @setSubtestData subtestDataElement, callbacks
+    @setSubtestData subtestDataElement
     @save null, 
       success: callbacks.success || $.noop
       error:   callbacks.error   || $.noop
@@ -41,7 +41,7 @@ class Result extends Backbone.Model
     @set "subtestData", newSubtestData
 
 
-  setSubtestData: (subtestDataElement, subtestId) ->
+  setSubtestData: (subtestDataElement) ->
     subtestDataElement['timestamp'] = (new Date()).getTime()
     subtestData = @get 'subtestData'
     subtestData.push subtestDataElement
