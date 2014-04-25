@@ -54,6 +54,33 @@ class MapView extends Backbone.View
     layerControl = L.control.layers.provided(baseLayers).addTo(map)
     markers = L.markerClusterGroup()
 
+    markers.on 'click', (event) ->
+      $.ajax
+#        url: "/#{Tangerine.db_name}/_design/#{Tangerine.design_doc}/_view/tutorTrips?key=#{event.layer.feature.properties["Trip Id"]}"
+        url: "/#{Tangerine.db_name}/_design/#{Tangerine.design_doc}/_view/spirtRotut?key=\"#{event.layer.feature.properties["Trip Id"]}\""
+        dataType: "json"
+        error: (error) -> console.error JSON.stringify(error)
+        success: (result) ->
+          console.log result
+          data = result.rows[0].value
+          $(".leaflet-popup-content").html "
+          School: #{data.school}
+          User: #{data.user},
+          Subject: #{data.subject},
+          #{
+            if data.itemsPerMinute?.length > 0
+              "Items Per Minute: #{data.itemsPerMinute},"
+            else ""
+          }
+          Start Time: #{event.layer.feature.properties["Start Time"]},
+          Duration: #{moment(data.maxTime).diff(data.minTime, "minutes")} min
+          "
+          # Other items available
+          #Class: #{data.class}
+          #Zone: #{data.zone}
+          #County: #{data.county}
+
+
     $.ajax
       url: "/#{Tangerine.db_name}/_design/#{Tangerine.design_doc}/_list/geojson/locationsByTripId?startkey=#{moment(@startTime).valueOf()}&endkey=#{moment(@endTime).valueOf()}"
       dataType: "json"

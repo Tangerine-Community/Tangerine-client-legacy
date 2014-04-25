@@ -4,3 +4,5 @@
     return emit(doc.collection, doc);
   }
 });
+
+//# sourceMappingURL=map.map

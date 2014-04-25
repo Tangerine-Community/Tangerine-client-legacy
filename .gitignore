@@ -3,6 +3,7 @@
 *.swp
 *.tmp
 .DS_store
+*.map
 
 # from android-couchbase-callback
 # built application files

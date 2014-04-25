@@ -45,12 +45,15 @@
       for label, i in subtest.data.labels
         zoneIndex   = i if label is "Zone"
         countyIndex = i if label is "County"
+        schoolIndex = i if label is "SchoolName"
 
       zoneKey   = subtest.data.location[zoneIndex]
       countyKey = subtest.data.location[countyIndex]
+      schoolKey = subtest.data.location[schoolIndex]
 
       result.zone   = zoneKey   if subtest.data.location[zoneIndex]?
       result.county = countyKey if subtest.data.location[countyIndex]?
+      result.school = schoolKey if subtest.data.location[schoolIndex]?
 
     else if subtest.prototype is "survey"
 
