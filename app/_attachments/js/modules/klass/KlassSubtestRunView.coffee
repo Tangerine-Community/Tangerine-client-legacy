@@ -81,20 +81,22 @@ class KlassSubtestRunView extends Backbone.View
       model: @subtest
       parent: @
     @listenTo @prototypeView, "rendered", @onPrototypeRendered
+    @prototypeView.setElement(@$el.find('#prototype_wrapper'))
     @prototypeView.render()
-    @$el.append @prototypeView.el
-    @prototypeRendered = true
 
-    htmlButton = "<button class='done navigation'>Done</button>"
-    
-    htmlButton += "<button class='cancel navigation'>Cancel</button>" unless @inWorkflow
-
-    @$el.append htmlButton
-
-    @trigger "rendered"
+    @flagRender "subtest"
 
   onPrototypeRendered: =>
-    @trigger "rendered"
+    @prototypeRendered = true
+    @flagRender "prototype"
+
+  flagRender: ( flag ) =>
+    @renderFlags = {} if not @renderFlags
+    @renderFlags[flag] = true
+
+    if @renderFlags['subtest'] && @renderFlags['prototype']
+      @trigger "rendered"
+
 
   getGridScore: -> 
     return false if not @linkedResult.get("subtestData")? # no result found
