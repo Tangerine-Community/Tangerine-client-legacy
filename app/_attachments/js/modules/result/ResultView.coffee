@@ -7,7 +7,8 @@ class ResultView extends Backbone.View
     'click .another' : 'another'
 
   another: ->
-    Tangerine.router.navigate "restart/#{@assessment.id}", true
+    window.location.reload()
+    #Tangerine.router.navigate "restart/#{@assessment.id}", true
 
   save: ->
     @model.add
