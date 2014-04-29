@@ -10,8 +10,9 @@ class ResultSumView extends Backbone.View
 
 
   i18n: ->
-    resume    : t("ResultSumView.button.resume")
-    noResults : t("ResultSumView.message.no_results")
+    @text =
+      resume    : t("ResultSumView.button.resume")
+      noResults : t("ResultSumView.message.no_results")
 
   initialize: ( options ) ->
 
