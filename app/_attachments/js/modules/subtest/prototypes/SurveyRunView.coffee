@@ -131,7 +131,7 @@ class SurveyRunView extends Backbone.View
     @text = 
       pleaseAnswer : t("SurveyRunView.message.please_answer")
       correctErrors : t("SurveyRunView.message.correct_errors")
-      notEnough : t("SurveyRunView.message.not_enough")
+      notEnough : _(t("SurveyRunView.message.not_enough")).escape()
       
       previousQuestion : t("SurveyRunView.button.previous_question")
       nextQuestion : t("SurveyRunView.button.next_question")

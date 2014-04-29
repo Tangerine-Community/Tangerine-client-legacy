@@ -13,7 +13,7 @@ class ConsentRunView extends Backbone.View
       confirmNonconsent : t("ConsentRunView.label.confirm_nonconsent")
       yes               : t("ConsentRunView.button.yes_continue")
       no                : t("ConsentRunView.button.no_stop")
-      confirm           : t("ConsentRunView.message.confirm")
+      confirm           : t("ConsentRunView.message.confirm_nonconsent")
       select            : t("ConsentRunView.message.select")
 
   initialize: (options) ->

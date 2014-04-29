@@ -77,9 +77,9 @@ class LoginView extends Backbone.View
       "login_tab"  : t('LoginView.label.login')
       "sign_up_tab"  : t('LoginView.label.sign_up')
 
-      "user"       : t('LoginView.label.user')
-      "teacher"    : t('LoginView.label.teacher')
-      "enumerator" : t('LoginView.label.enumerator')
+      "user"       : _(t('LoginView.label.user')).escape()
+      "teacher"    : _(t('LoginView.label.teacher')).escape()
+      "enumerator" : _(t('LoginView.label.enumerator')).escape()
       "password"   : t('LoginView.label.password')
       "password_confirm" : t('LoginView.label.password_confirm')
       "error_name" : t('LoginView.message.error_name_empty')

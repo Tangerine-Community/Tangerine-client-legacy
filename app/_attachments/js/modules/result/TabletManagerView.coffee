@@ -2,7 +2,14 @@ class TabletManagerView extends Backbone.View
 
   className : "KlassesView"
 
+  @i18n: ->
+    @text =
+      detectingTablets : t("TabletManagerView.message.detecting")
+      syncComplete     : t("TabletManagerView.label.sync_complete")
+
   initialize: ( options ) ->
+
+    @i18n()
 
     @ipBlock  = 32
     @totalIps = 256
@@ -11,10 +18,6 @@ class TabletManagerView extends Backbone.View
     @callbacks = options.callbacks
 
     @docTypes = options.docTypes
-
-    @text = 
-      detectingTablets : "Please wait, detecting tablets."
-      internalError : "Internal database error"
 
   sync: =>
     return unless @tabletOffset is 0
@@ -62,7 +65,8 @@ class TabletManagerView extends Backbone.View
 
     # give the choice to keep looking if not all tablets found
     if @tabletOffset != @totalIps - @ipBlock #&& confirm("#{Math.max(@tablets.okCount-1, 0)} tablets found.\n\nContinue searching?")
-      Utils.midAlert "Searching: #{Math.round(@tabletOffset / @totalIps * 100)}% complete."
+      percentage = Math.round(@tabletOffset / @totalIps * 100)
+      Utils.midAlert t("TabletManagerView.message.searching", percentage: percentage)
       @tabletOffset += @ipBlock
       @pullDocs()
     else
@@ -73,13 +77,13 @@ class TabletManagerView extends Backbone.View
       if @tablets.okCount == 0
         @tabletOffset = 0
         Utils.working false
-        Utils.midAlert "#{@tablets.okCount} tablets found."
+        Utils.midAlert t("TabletManagerView.message.found", count : @tablets.okCount)
         Tangerine.$db.removeDoc
           "_id"  : @randomDoc.id
           "_rev" : @randomDoc.rev
         return
 
-      unless confirm("#{@tablets.okCount} tablets found.\nStart data pull?")
+      unless confirm(t("TabletManagerView.message.confirm_pull", __found__ : @tablets.okCount))
         @tabletOffset = 0
         Utils.working false
         Tangerine.$db.removeDoc
@@ -88,7 +92,7 @@ class TabletManagerView extends Backbone.View
         return
 
 
-      Utils.midAlert "Pulling from #{@tablets.okCount} tablets."
+      Utils.midAlert t("TabletManagerView.message.pull_status", tabletCount : @tablets.okCount)
       for ip in @tablets.ips
 
         do (ip) =>
@@ -133,7 +137,7 @@ class TabletManagerView extends Backbone.View
   updatePullResult: =>
     if @tablets.complete == @tablets.okCount
       Utils.working false
-      Utils.midAlert "Pull finished.<br>#{@tablets.successful} out of #{@tablets.okCount} successful.", 5000
+      Utils.midAlert t("TabletManagerView.message.pull_complete", { successful: @tablets.successful, total : @tablets.okCount})
       Tangerine.$db.removeDoc 
         "_id"  : @randomDoc.id
         "_rev" : @randomDoc.rev
@@ -159,9 +163,9 @@ class TabletManagerView extends Backbone.View
 
       if @push.complete == @push.ips.length
         Utils.working false
-        Utils.sticky "<b>Sync complete</b><br>#{@push.successful} out of #{@push.complete} successful."
+        Utils.sticky "<b>#{@text.syncComplete}</b><br>#{t("TabletManagerView.message.successful_count", {successful : @push.successful, total : @push.complete } ) }"
       else
-        Utils.midAlert "Syncing: <br>#{@push.complete+1} out of #{@push.ips.length}."
+        Utils.midAlert t("TabletManagerView.message.syncing",{ done: @push.complete+1, total : @push.ips.length})
         $.couch.replicate(
           Tangerine.settings.urlDB( "local" ),
           Tangerine.settings.urlSubnet( @push.ips[ @push.current ] ),

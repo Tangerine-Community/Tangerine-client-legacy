@@ -35,7 +35,7 @@ class GpsRunView extends Backbone.View
       "gpsOk"        : t('GpsRunView.message.gps_ok')
       "retrying"     : t('GpsRunView.message.retrying')
       "searching"    : t('GpsRunView.message.searching')
-      "notSupported" : t('GpsRunView.message.not_supported')
+      "notSupported" : _(t('GpsRunView.message.not_supported')).escape()
 
   poll: => # full of magic numbers
 

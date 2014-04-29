@@ -1,4 +1,4 @@
-  "Tangerine" :
+  "Tangerine" : 
     "message" : 
       "save_error" : "Save error"
       "saved"      : "Saved"
@@ -8,6 +8,43 @@
     "actions" :
       "button" :
         "save" : "Save"
+
+  "TabletManagerView" :
+    "message" :
+      "found" : "__count__ tablettes trouvées."
+      "detecting" : "Veuillez patienter, detection de tablettes en cours..."
+      "searching" : "Cherchant: __percentage__% Complété"
+      "confirm_pull" : "À confirmer / __found__ tablettes trouvées. Commencer tirage des données?"
+      "pull_status" : "Tirant dès __tabletCount__ tablettes."
+      "pull_complete" : "Tirage complète. Réussite chez __successful__ parmi __total__."
+      "syncing" : "Synchronisant / __done__ parmi __total__."
+      "successful_count" : "Réussite chez __successful__ parmi __total__."
+    "label" :
+      "sync_complete" : "Synchronisation complète."
+
+  "ResultsView" :
+    "label" :
+      "save_options" : "Modalités d’enregistrement disponibles"
+      "advanced" : "Avancé"
+      "pagination" : "Résultats __start__-__end__ de __total__"
+      "cloud" : "Serveur"
+      "csv" : "CSV"
+      "tablets" : "Tablettes"
+      "status" : "État actuel"
+      "started" : "Démarrée"
+      "results" : "Résultats"
+      "details" : "Détails"
+      "page" : "Page"
+      "per_page" : "par page"
+    "button" : 
+      "refresh" : "Actualiser"
+      "detect"  : "Identifier possibilités"
+
+  "ResultSumView"
+    "button" :
+      "resume" : "Reprendre"
+    "message"
+      "no_results" : "Pas encore de résultats !"
   "SettingsView" :
     "message" :
       "warning" : "Please be careful with the following settings."
@@ -36,7 +73,7 @@
       "apk" : "APK"
       "groups" : "Groupes"
       "universal_upload" : "Envoi universel"
-      "sync_tablets" : "Synchronise tablettes"
+      "sync_tablets" : "Synchroniser tablettes"
       "results" : "Résultats"
       "save" : "Enregistrer"
       "cancel" : "Annuler"
@@ -62,7 +99,7 @@
       "was_autostopped" : "Arrêtée automatiquement"
       "time_remaining"  : "Temps restant"
     "message" :
-      "touch_last_item"      : "Veuillez indiquer le dernier item lu."
+      "touch_last_item"      : "Veuillez indiquer le dernier item tenté."
       "time_still_running"   : "Le compte à rebours continue."
       "subtest_not_complete" : "Tâche incomplète."
       "autostop"             : "Auto-arrêt activé. Cessez la tâche."
@@ -94,7 +131,7 @@
       "yes_continue" : "Oui, continuer"
       "no_stop" : "Non, arrêter"
     "message" :
-      "confirm_nonconsent" : "Cliquer pour confirmer consentement pas obtenu."
+      "confirm_nonconsent" : "Cliquer pour confirmer que le consentement n’a pas été obtenu."
       "confirm" : "Veuillez confirmer."
       "select" : "Veuillez en sélectionner une."
   "IdRunView" :

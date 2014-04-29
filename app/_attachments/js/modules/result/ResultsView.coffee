@@ -156,12 +156,29 @@ class ResultsView extends Backbone.View
       @$el.find('button.tablets').removeAttr('disabled')
 
 
+  i18n: ->
+    @text =
+      saveOptions : t("ResultsView.label.save_options")
+      cloud       : t("ResultsView.label.cloud")
+      tablets     : t("ResultsView.label.tablets")
+      csv         : t("ResultsView.label.csv")
+      started     : t("ResultsView.label.started")
+      results     : t("ResultsView.label.results")
+      details     : t("ResultsView.label.details")
+      page        : t("ResultsView.label.page")
+      perPage     : t("ResultsView.label.par_page")
+      advanced    : t("ResultsView.label.advanced")
+
+      refresh     : t("ResultsView.button.refresh")
+      detect      : t("ResultsView.button.detect")
+
   initialize: ( options ) ->
+
+    @i18n()
 
     if Tangerine.settings.get("context") == "mobile"
       document.removeEventListener "backbutton", Tangerine.onBackButton, false
       document.addEventListener "backbutton", Tangerine.onBackButton, false
-
 
     @resultLimit  = 100
     @resultOffset = 0
@@ -179,18 +196,18 @@ class ResultsView extends Backbone.View
 
     @clearSubViews()
 
-    cloudButton  = "<button class='cloud command' disabled='disabled'>Cloud</button>"
-    tabletButton = "<button class='tablets command' disabled='disabled'>Tablets</button>"
-    csvButton    = "<button class='csv command'>CSV</button>"
+    cloudButton  = "<button class='cloud command' disabled='disabled'>#{@text.cloud}</button>"
+    tabletButton = "<button class='tablets command' disabled='disabled'>#{@text.tablets}</button>"
+    csvButton    = "<button class='csv command'>#{@text.csv}</button>"
 
     html = "
-      <h1>#{@assessment.getEscapedString('name')} results</h1>
-      <h2>Save options</h2>
+      <h1>#{@assessment.getEscapedString('name')} #{@text.results}</h1>
+      <h2>#{@text.saveOptions}</h2>
       <div class='menu_box'>
         #{if Tangerine.settings.get("context") == "mobile" then cloudButton  else ""}
         #{if Tangerine.settings.get("context") == "mobile" then tabletButton else ""}
         #{csvButton}
-        <div class='small_grey clickable show_advanced'>Advanced</div>
+        <div class='small_grey clickable show_advanced'>#{@text.advanced}</div>
         <div id='advanced' class='confirmation'>
           <div class='menu_box'>
             <table class='class_table'>
@@ -210,23 +227,23 @@ class ResultsView extends Backbone.View
 
     if Tangerine.settings.get("context") == "mobile"
       html += "
-        <button class='detect command'>Detect options</button>
+        <button class='detect command'>#{@text.detect}</button>
         <div class='status'>
-          <h2>Status</h2>
+          <h2>#{@text.status}</h2>
           <div class='info_box'></div>
           <div class='checking_status'></div>
 
         </div>
         "
     html += "
-      <h2 id='results_header'>Results (<span id='result_position'>loading...</span>)</h2>
+      <h2 id='results_header'>#{@text.results} (<span id='result_position'>loading...</span>)</h2>
       <div class='confirmation' id='controls'>
-        <label for='page' class='small_grey'>Page</label><input id='page' type='number' value='0'>
-        <label for='limit' class='small_grey'>Per page</label><input id='limit' type='number' value='0'>
+        <label for='page' class='small_grey'>#{@text.page}</label><input id='page' type='number' value='0'>
+        <label for='limit' class='small_grey'>#{@text.perPage}</label><input id='limit' type='number' value='0'>
       </div>
       <section id='results_container'></section>
       <br>
-      <button class='command refresh'>Refresh</button>
+      <button class='command refresh'>#{@text.refresh}</button>
     "
     
     @$el.html html
@@ -255,7 +272,7 @@ class ResultsView extends Backbone.View
 
   updateResults: (focus) =>
     if @results?.length == 0
-      @$el.find('#results_header').html "No results yet!"
+      @$el.find('#results_header').html @text.noResults
       return
 
     location =
@@ -285,7 +302,11 @@ class ResultsView extends Backbone.View
           @$el.find("#page").val(currentPage)
           @$el.find("#limit").val(@resultLimit)
 
-        @$el.find('#result_position').html "#{@resultOffset+1}-#{Math.min(@resultOffset+@resultLimit,@results.length)} of #{@results.length}"
+        start = @resultOffset + 1
+        end   = Math.min(@resultOffset+@resultLimit,@results.length)
+        total = @results.length
+
+        @$el.find('#result_position').html t("ResultsView.label.pagination", {start:start, end:end, total:total} )
 
         htmlRows = ""
         for row in rows
@@ -297,7 +318,7 @@ class ResultsView extends Backbone.View
             fromNow = moment(endTime).fromNow()
           else
             startTime = row.value.start_time
-            long    = "<b>started</b> " + moment(startTime).format('YYYY-MMM-DD HH:mm')
+            long    = "<b>#{@text.started}</b> " + moment(startTime).format('YYYY-MMM-DD HH:mm')
             fromNow = moment(startTime).fromNow()
 
           time    = "#{long} (#{fromNow})"
@@ -305,7 +326,7 @@ class ResultsView extends Backbone.View
             <div>
               #{ id } -
               #{ time }
-              <button data-result-id='#{row.id}' class='details command'>details</button>
+              <button data-result-id='#{row.id}' class='details command'>#{@text.details}</button>
               <div id='details_#{row.id}'></div>
             </div>
           "
