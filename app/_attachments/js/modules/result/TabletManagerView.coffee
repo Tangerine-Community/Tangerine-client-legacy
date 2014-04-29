@@ -2,7 +2,7 @@ class TabletManagerView extends Backbone.View
 
   className : "KlassesView"
 
-  @i18n: ->
+  i18n: ->
     @text =
       detectingTablets : t("TabletManagerView.message.detecting")
       syncComplete     : t("TabletManagerView.label.sync_complete")
