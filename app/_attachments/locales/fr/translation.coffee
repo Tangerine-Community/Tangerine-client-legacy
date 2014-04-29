@@ -40,10 +40,10 @@
       "refresh" : "Actualiser"
       "detect"  : "Identifier possibilités"
 
-  "ResultSumView"
+  "ResultSumView" :
     "button" :
       "resume" : "Reprendre"
-    "message"
+    "message" :
       "no_results" : "Pas encore de résultats !"
   "SettingsView" :
     "message" :
