@@ -264,8 +264,10 @@ class Assessment extends Backbone.Model
 
     # get all docs that belong to this assesssment except results
     Tangerine.$db.view Tangerine.design_doc + "/revByAssessmentId",
-      keys:[ @id ]
+      keys: [ @id ]
+      error: -> Utils.midAlert "Delete error."
       success: (response) =>
+
         docs = []
         for row in response.rows
           # only absolutely necessary properties are sent back, _id, _rev, _deleted
@@ -282,6 +284,7 @@ class Assessment extends Backbone.Model
           dataType: "json"
           url: Tangerine.settings.urlBulkDocs()
           data: JSON.stringify(requestData)
+          error: -> Utils.midAlert "Delete error."
           success: (responses) =>
             okCount = 0
             (okCount++ if resp.ok?) for resp in responses
@@ -290,10 +293,6 @@ class Assessment extends Backbone.Model
               @clear()
             else
               Utils.midAlert "Delete error."
-          error: ->
-            Utils.midAlert "Delete error."
-      error: ->
-        Utils.midAlert "Delete error."
 
   isActive: -> return not @isArchived()
 

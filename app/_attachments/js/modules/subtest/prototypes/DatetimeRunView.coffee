@@ -27,6 +27,15 @@ class DatetimeRunView extends Backbone.View
     minutes  = "0" + minutes if minutes < 10
     time     = dateTime.getHours() + ":" + minutes
 
+
+    previous = @parent.parent.result.getByHash(@model.get('hash'))
+
+    if previous
+      year  = previous.year
+      month = previous.month
+      day   = previous.day
+      time  = previous.time
+
     @$el.html "
       <div class='question'>
         <table>
@@ -68,3 +77,11 @@ class DatetimeRunView extends Backbone.View
 
   showErrors: ->
     true
+
+  next: ->
+    console.log("next!!")
+    @prototypeView.on "click .next",    =>
+      console.log("clickme!")
+      this.next()
+    @parent.next()
+  back: -> @parent.back()

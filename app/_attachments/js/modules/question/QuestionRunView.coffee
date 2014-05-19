@@ -40,6 +40,7 @@ class QuestionRunView extends Backbone.View
       @button = new ButtonView
         options : @options
         mode    : @type
+        parent  : this
       @button.on "change rendered", => @update()
 
 
@@ -145,6 +146,10 @@ class QuestionRunView extends Backbone.View
     @model.get("name")
 
   render: ->
+    data = null
+    if typeof this.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.index] != 'undefined'
+      data = this.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.index].data
+      @answer = data[@name]
 
     @$el.attr "id", "question-#{@name}"
 
@@ -156,11 +161,13 @@ class QuestionRunView extends Backbone.View
       if @type == "open"
         if _.isString(@answer) && not _.isEmpty(@answer)
           answerValue = @answer
+        if data != null
+          answerValue = data[@name]
         if @model.get("multiline")
           html += "<div><textarea id='#{@cid}_#{@name}' data-cid='#{@cid}' value='#{answerValue || ''}'></textarea></div>"
         else
           html += "<div><input id='#{@cid}_#{@name}' data-cid='#{@cid}' value='#{answerValue || ''}'></div>"
-      
+
       else
         html += "<div class='button_container'></div>"
 
@@ -173,7 +180,6 @@ class QuestionRunView extends Backbone.View
         @button.render()
       else
         @trigger "rendered"
-
 
     else
       @$el.hide()

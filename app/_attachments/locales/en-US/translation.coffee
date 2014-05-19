@@ -44,6 +44,7 @@
       "resume" : "Resume"
     "message" :
       "no_results" : "No results yet!"
+
   "SettingsView" :
     "message" :
       "warning" : "Please be careful with the following settings."
@@ -76,6 +77,7 @@
     "button" :
       "save" : "Save result"
       "another" : "Perform another assessment"
+
 
   "AssessmentMenuView" :
     "button" :

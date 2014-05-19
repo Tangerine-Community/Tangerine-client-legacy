@@ -32,8 +32,8 @@ class GridRunView extends Backbone.View
     $target = $(event.target)
     index = $target.attr('data-index')
 
-    return if parseInt(@lastAttempted) != 0 && parseInt(index) > parseInt(@lastAttempted)
-      
+    return if this.parent.parent.enableCorrections == false && parseInt(@lastAttempted) != 0 && parseInt(index) > parseInt(@lastAttempted)
+
     @markElement(index)
     @checkAutostop() if @autostop != 0
 
@@ -57,12 +57,14 @@ class GridRunView extends Backbone.View
         if autoCount == @autostop then @autostopTest()
       if @autostopped == true && autoCount < @autostop && @undoable == true then @unAutostopTest()
 
-  markElement: (index, value = null) ->
+        # mode is used for operations like pre-populating the grid when doing corrections.
+  markElement: (index, value = null, mode) ->
     # if last attempted has been set, and the click is above it, then cancel
-    return if parseInt(@lastAttempted) != 0 && parseInt(index) > parseInt(@lastAttempted)
+    return if this.parent.parent.enableCorrections == false && parseInt(@lastAttempted) != 0 && parseInt(index) > parseInt(@lastAttempted)
 
     $target = @$el.find(".grid_element[data-index=#{index}]")
-    @markRecord.push index
+    if mode != 'populate'
+      @markRecord.push index
 
     if not @autostopped
       if value == null # not specifying the value, just toggle
@@ -280,6 +282,21 @@ class GridRunView extends Backbone.View
 
     @$el.find(".timer").html @timer
 
+    if typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
+      data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
+      @captureLastAttempted = data.capture_last_attempted
+      @itemAtTime = data.item_at_time
+      @timeIntermediateCaptured = data.time_intermediate_captured
+      @captureItemAtTime = data.capture_item_at_time
+      @autostop = data.auto_stop
+      @lastAttempted = data.attempted
+#     items = data.items
+      @timeRemaining = data.time_remain
+      @markRecord = data.mark_record
+
+#      for item, i in @markRecord
+#        @markElement(item)
+    
     @updateMode( null, @mode )
 
   i18n: ->
@@ -319,6 +336,8 @@ class GridRunView extends Backbone.View
     else
       fontSizeClass = ""
 
+    @rtl        = if @model.has("rtl")   then @model.get("rtl")   else false
+
     @totalTime = @model.get("timer") || 0
 
     @modeHandlers =
@@ -343,18 +362,21 @@ class GridRunView extends Backbone.View
       @endOfGridLine = _.template ""
 
   render: ->
+
     done = 0
 
     startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>#{@text.start}</button><div class='timer'>#{@timer}</div></div>"
 
-    disabling = if @untimed then "" else "disabled"
+    disabling = "disabled" unless @untimed
+
+    displayRtl = "rtl_mode" if @rtl
 
     html = if not @untimed then startTimerHTML else ""
 
     gridHTML = ""
 
     if @layoutMode == "fixed"
-      gridHTML += "<table class='grid #{disabling}'>"
+      gridHTML += "<table class='grid #{disabling} #{displayRtl||''}'>"
       firstRow = true
       loop
         break if done > @items.length
@@ -373,7 +395,7 @@ class GridRunView extends Backbone.View
         gridHTML += "</tr>"
       gridHTML += "</table>"
     else
-      gridHTML += "<div class='grid #{disabling}'>"
+      gridHTML += "<div class='grid #{disabling} #{displayRtl||''}'>"
       for item, i in @items
         gridHTML += @variableGridElement
           "label" : _.escape(@items[@itemMap[i]])
@@ -449,6 +471,21 @@ class GridRunView extends Backbone.View
 
     @trigger "rendered"
     @trigger "ready"
+
+    if typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
+      data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
+      @markRecord = data.mark_record
+
+      for item, i in @markRecord
+        @markElement item, null, 'populate'
+
+      @itemAtTime = data.item_at_time
+      $target = @$el.find(".grid_element[data-index=#{@itemAtTime}]")
+      $target.addClass "element_minute"
+
+      @lastAttempted = data.attempted
+      $target = @$el.find(".grid_element[data-index=#{@lastAttempted}]")
+      $target.addClass "element_last"
 
   isValid: ->
     # Stop timer if still running. Issue #240
@@ -527,6 +564,7 @@ class GridRunView extends Backbone.View
       "time_remain"   : timeRemaining
       "mark_record"   : @markRecord
       "variable_name" : @model.get("variableName")
+    return result
 
   getSkipped: ->
     itemResults = []

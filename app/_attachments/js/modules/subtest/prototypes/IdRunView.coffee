@@ -20,10 +20,15 @@ class IdRunView extends Backbone.View
     @validator = new CheckDigit
 
   render: ->
+
+    previous = @parent.parent.result.getByHash(@model.get('hash'))
+    if previous
+      participantId = previous.participant_id
+
     @$el.html "
     <form>
       <label for='participant_id'>#{@text.identifier}</label>
-      <input id='participant_id' name='participant_id'>
+      <input id='participant_id' name='participant_id' value='#{participantId||''}'>
       <button id='generate' class='command'>#{@text.generate}</button>
       <div class='messages'></div>
     </form>"

@@ -8,12 +8,12 @@ def push
     `./uglify.rb dev`
   }
 # Do this twice so you don't have to wait for uglify when in dev mode
-  `couchapp push`
+  `couchapp push bbl`
 
   Dir.chdir( File.join Dir.pwd, "_attachments", "js" ) {
     `./uglify.rb app`
   }
-  `couchapp push`
+  `couchapp push bbl`
 end
 
 def notify(type,message)

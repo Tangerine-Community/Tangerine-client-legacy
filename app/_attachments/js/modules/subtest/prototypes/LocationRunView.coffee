@@ -95,30 +95,39 @@ class LocationRunView extends Backbone.View
   render: ->
     schoolListElements = ""
 
-    html = "
-      <button class='clear command'>#{@text.clear}</button>
-    "
+    html = "<button class='clear command'>#{@text.clear}</button>"
 
+    previous = @parent.parent.result.getByHash(@model.get('hash'))
 
     if @typed
+
       for level, i in @levels
+        previousLevel = ''
+        if previous
+          previousLevel = previous.location[i]
         html += "
           <div class='label_value'>
             <label for='level_#{i}'>#{level}</label><br>
-            <input data-level='#{i}' id='level_#{i}' value=''>
+            <input data-level='#{i}' id='level_#{i}' value='#{previousLevel||''}'>
           </div>
           <div id='autofill_#{i}' class='autofill' style='display:none'>
             <h2>#{t('select one from autofill list')}</h2>
             <ul class='school_list' id='school_list_#{i}'>
             </ul>
           </div>
-      "
-    else
-      for level, i in @levels
-        
-        levelOptions = @getOptions(i)
+        "
 
-        isDisabled = i isnt 0 && "disabled='disabled'"
+    else
+
+      for level, i in @levels
+
+        previousLevel = ''
+        if previous
+          previousLevel = previous.location[i]
+        
+        levelOptions = @getOptions(i, previousLevel)
+
+        isDisabled = (i isnt 0 and not previousLevel) and "disabled='disabled'" 
 
         html += "
           <div class='label_value'>
@@ -144,10 +153,12 @@ class LocationRunView extends Backbone.View
       if (options = $html.find("option")).length is 1
         options.parent("select").trigger "change"
 
-  getOptions: (index)->
+  getOptions: ( index, previousLevel ) ->
 
     doneOptions = []
     levelOptions = ''
+
+    previousFlag = false
 
     parentValues = []
     for i in [0..index]
@@ -162,7 +173,7 @@ class LocationRunView extends Backbone.View
         isValidChild = true
         for i in [0..Math.max(index-1,0)]
 
-          if parentValues[i] isnt location[i]
+          if parentValues[i] isnt location[i] and not previousLevel
             isValidChild = false
             break
 
@@ -171,11 +182,19 @@ class LocationRunView extends Backbone.View
           doneOptions.push location[index]
 
           locationName = _(location[index]).escape()
+          
+          if location[index] is previousLevel
+            selected = "selected='selected'"
+            previousFlag = true
+          else
+            selected = ''
           levelOptions += "
-            <option value='#{locationName}'>#{locationName}</option>
+            <option value='#{locationName}' #{selected or ''}>#{locationName}</option>
           "
 
-    promptOption  = "<option selected='selected' disabled='disabled' value=''>#{t("LocationRunView.message.please_select", levelName: @levels[index])} </option>"
+    selectPrompt = "selected='selected'" unless previousFlag
+
+    promptOption  = "<option #{selectPrompt or ''} disabled='disabled'>Please select a #{@levels[index]}</option>"
 
     if doneOptions.length is 1
       return levelOptions

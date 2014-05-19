@@ -28,6 +28,7 @@ class GpsRunView extends Backbone.View
       "accuracy"       : t('GpsRunView.label.accuracy')
       "meters"         : t('GpsRunView.label.meters')
 
+      "savedReading"   : t('GpsRunView.label.saved_reading')
       "currentReading" : t('GpsRunView.label.current_reading')
       "bestReading"    : t('GpsRunView.label.best_reading')
       "gpsStatus"      : t('GpsRunView.label.gps_status')
@@ -131,23 +132,43 @@ class GpsRunView extends Backbone.View
       @trigger "ready"
 
     else
-      @$el.html "
-        <section>
-          <h3>#{@text.bestReading}</h3>
-          <div class='gps_best'></div><button class='clear command'>#{@text.clear}</button>
-          <h3>#{@text.currentReading}</h3>
-          <div class='gps_current'></div>
-        </section>
-        <section>
-          <h2>#{@text.gpsStatus}</h2>
-          <div class='status'>#{@text.searching}</div>
-        </section>
+      previous = @parent.parent.result.getByHash(@model.get('hash'))
+
+      if previous
+        lat  = previous.lat
+        long = previous.long
+        acc  = previous.acc
+        @$el.html "
+          <section>
+            <h3>#{@text.savedReading}</h3>
+            <div class='gps_saved'>
+              <table>
+                <tr><td>#{@text.latitude}</td> <td>#{lat}</td></tr>
+                <tr><td>#{@text.longitude}</td><td>#{long}</td></tr>
+                <tr><td>#{@text.accuracy}</td> <td>#{acc}</td></tr>
+              </table>
+            </div>
         "
+      else
+        @$el.html "
+          <section>
+            <h3>#{@text.bestReading}</h3>
+            <div class='gps_best'></div><button class='clear command'>#{@text.clear}</button>
+            <h3>#{@text.currentReading}</h3>
+            <div class='gps_current'></div>
+          </section>
+          <section>
+            <h2>#{@text.gpsStatus}</h2>
+            <div class='status'>#{@text.searching}</div>
+          </section>
+          "
       @trigger "rendered"
       @trigger "ready"
       @poll()
   
   getResult: ->
+    previous = @parent.parent.result.getByHash(@model.get('hash'))
+    return previous if previous
     return @position || {}
 
   getSkipped: ->

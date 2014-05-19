@@ -132,7 +132,7 @@ class AssessmentListElementView extends Backbone.View
 
   # deep non-gerneric delete
   assessmentDelete: =>
-    # remove from collection
+    # removes from collection
     @model.destroy()
 
   spriteListLink: ( tagName, names... ) ->
