@@ -8,6 +8,7 @@ class AssessmentRunView extends Backbone.View
     @index = 0
     @model = options.model
     @orderMap = []
+    @enableCorrections = false  # toggled if user hits the back button.
 
     Tangerine.tempData = {}
 
@@ -76,6 +77,9 @@ class AssessmentRunView extends Backbone.View
       currentView.on "rendered",    => @flagRender "subtest"  
       currentView.on "subRendered", => @trigger "subRendered"
 
+      currentView.on "next",    => @step 1
+      currentView.on "back",    => @step -1
+
       currentView.render()
       @$el.append currentView.el
 
@@ -99,7 +103,7 @@ class AssessmentRunView extends Backbone.View
     
   abort: ->
     @abortAssessment = true
-    @next()
+    @step 1
 
   skip: =>
     currentView = @subtestViews[@orderMap[@index]]
@@ -111,9 +115,9 @@ class AssessmentRunView extends Backbone.View
       prototype : currentView.model.get "prototype"
     ,
       success: =>
-        @resetNext()
+        @reset 1
 
-  next: =>
+  step: (increment) =>
 
     if @abortAssessment
       currentView = @subtestViews[@orderMap[@index]]
@@ -122,25 +126,11 @@ class AssessmentRunView extends Backbone.View
 
     currentView = @subtestViews[@orderMap[@index]]
     if currentView.isValid()
-      @saveResult( currentView )
+      @saveResult( currentView, increment )
     else
       currentView.showErrors()
 
-  saveResult: ( currentView ) =>
-
-    subtestResult = currentView.getResult()
-
-    @result.add
-      name        : currentView.model.get "name"
-      data        : subtestResult.body
-      subtestHash : subtestResult.meta.hash
-      subtestId   : currentView.model.id
-      prototype   : currentView.model.get "prototype"
-    ,
-      success : =>
-        @resetNext()
-
-  resetNext: =>
+  reset: (increment) =>
     @rendered.subtest = false
     @rendered.assessment = false
     currentView = @subtestViews[@orderMap[@index]]
@@ -149,6 +139,42 @@ class AssessmentRunView extends Backbone.View
       if @abortAssessment == true
         @subtestViews.length-1
       else
-        @index + 1
+        @index + increment
     @render()
     window.scrollTo 0, 0
+
+
+  saveResult: ( currentView, increment ) =>
+
+    subtestResult = currentView.getResult()
+    subtestId = currentView.model.id
+    prototype = currentView.model.get "prototype"
+    subtestReplace = null
+
+    for result, i in @result.get('subtestData')
+      if subtestId == result.subtestId
+        subtestReplace = i
+
+    if subtestReplace != null
+      # Don't update the gps subtest.
+      if prototype != 'gps'
+        @result.insert
+          name        : currentView.model.get "name"
+          data        : subtestResult.body
+          subtestHash : subtestResult.meta.hash
+          subtestId   : currentView.model.id
+          prototype   : currentView.model.get "prototype"
+          sum         : currentView.getSum()
+      @reset increment
+
+    else
+      @result.add
+        name        : currentView.model.get "name"
+        data        : subtestResult.body
+        subtestHash : subtestResult.meta.hash
+        subtestId   : currentView.model.id
+        prototype   : currentView.model.get "prototype"
+        sum         : currentView.getSum()
+      ,
+        success : =>
+          @reset increment

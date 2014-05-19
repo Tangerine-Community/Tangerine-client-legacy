@@ -1,3 +1,34 @@
+  "Tangerine" :
+    "message" : 
+      "save_error" : "Save error"
+      "saved"      : "Saved"
+    "navigation" :
+      "button" : 
+        "back" : "Back"
+    "actions" :
+      "button" :
+        "save" : "Save"
+  "SettingsView" :
+    "message" :
+      "warning" : "Please be careful with the following settings."
+    "help" :
+      "context" : "Sets the general behavior and appearance of Tangerine. Do not change this setting."
+      "language" : "Contact a Tangerine admin for more information on what languages are currently available."
+      "group_handle" : "A human readable name. Only for display purposes. Any change here will not affect the address of the group or any internal functionality."
+      "group_name" : "The group connected to this instance of Tangerine, and any APKs made from this instance."
+      "group_host" : "The URL of the server."
+      "upload_password" : "The password for uploading to your group."
+      "log_events" : "app, ui, db, err"
+    "label" :
+      "settings" : "Settings"
+      "context" : "Context"
+      "language" : "Language"
+      "group_handle" : "Group handle"
+      "group_name" : "Group name"
+      "group_host" : "Group host"
+      "upload_password" : "Upload password"
+      "log_events" : "Log events"
+    
   "AssessmentMenuView" :
     "button" :
       "new" : "New"

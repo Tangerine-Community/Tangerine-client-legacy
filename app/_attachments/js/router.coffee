@@ -509,10 +509,8 @@ class Router extends Backbone.Router
           "_id" : assessmentId
         assessment.fetch
           success :  ->
-            console.log "success"
             afterFetch(assessment, assessmentId)
           error :  ->
-            console.log "eerror"
             afterFetch(assessment, assessmentId)
 
   csv: (id) ->

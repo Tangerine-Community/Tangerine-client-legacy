@@ -25,6 +25,15 @@ class ConsentRunView extends Backbone.View
     @parent = @options.parent
   
   render: ->
+
+    previous = @parent.parent.result.getByHash(@model.get('hash'))
+
+    if previous
+      if previous.consent is "yes"
+        yesChecked = "checked='checked'" 
+      else
+        noChecked = "checked='checked'"
+
     @$el.html "
     <form>
       <div class='question'>
@@ -35,10 +44,12 @@ class ConsentRunView extends Backbone.View
           <button id='non_consent_confirm command'>#{@text.confirm}</button>
         </div>
         <div id='consent_options' class='buttonset'>
+
           <label for='consent_yes'>#{@text.yes}</label>
-          <input id='consent_yes' type='radio' name='participant_consents' value='yes'>
+          <input id='consent_yes' type='radio' name='participant_consents' value='yes' #{yesChecked or ''}>
           <label for='consent_no'>#{@text.no}</label>
-          <input id='consent_no' type='radio' name='participant_consents' value='no'>
+          <input id='consent_no' type='radio' name='participant_consents' value='no' #{noChecked or ''}>
+
         </div>
       </div>
     </form>

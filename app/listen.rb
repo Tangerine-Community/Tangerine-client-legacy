@@ -78,8 +78,8 @@ listen = Listen.to(".") do |modified, added, removed|
         # Otherwise, just compile
         puts "\nCompiling:\t\t#{match}"
         couchSpecial = /shows\/|views\/|lists\//.match(match)
-        mapOption = if couchSpecial then "" else "--map" end
-        result = `coffee #{mapOption} --bare --compile #{match} 2>&1`
+  
+        result = `coffee --bare --compile #{match} 2>&1`
         if not couchSpecial
           jsFile = match.gsub(".coffee", ".js")
           Dir.chdir($jsDir) {

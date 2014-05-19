@@ -3,7 +3,8 @@ class SubtestRunView extends Backbone.View
   className : "SubtestRunView"
 
   events:
-    'click .next'         : 'next'
+    'click .subtest-next' : 'next'
+    'click .subtest-back' : 'back'
     'click .subtest_help' : 'toggleHelp'
     'click .skip'         : 'skip'
 
@@ -12,6 +13,7 @@ class SubtestRunView extends Backbone.View
   i18n: ->
     @text = 
       "next" : t("SubtestRunView.button.next")
+      "back" : t("SubtestRunView.button.back")
       "skip" : t("SubtestRunView.button.skip")
       "help" : t("SubtestRunView.button.help")
 
@@ -30,13 +32,19 @@ class SubtestRunView extends Backbone.View
   render: ->
 
     _render = =>
+  
+      @delegateEvents()
 
       enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
       studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
       transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
 
-      skipButton = "<button class='skip navigation'>#{@text.skip}</button>"
       skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+      backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
+
+      skipButton = "<button class='skip navigation'>#{@text.skip}</button>" if skippable
+      backButton = "<button class='subtest-back navigation'>#{@text.back}</button>" if backable
+
 
       @$el.html "
         <h2>#{@model.get 'name'}</h2>
@@ -46,7 +54,9 @@ class SubtestRunView extends Backbone.View
         
         <div class='controlls clearfix'>
           #{transitionComment}
-          <button class='next navigation'>#{@text.next}</button>#{if skippable then skipButton else "" }
+          #{backButton or ''}
+          <button class='subtest-next navigation'>#{@text.next}</button>
+          #{skipButton or ''}
         </div>
       "
     
@@ -155,5 +165,6 @@ class SubtestRunView extends Backbone.View
     else
       throw "Prototype skipping not implemented"
 
-  next: -> @parent.next()
+  next: -> @trigger "next"
+  back: -> @trigger "back"
   skip: -> @parent.skip()

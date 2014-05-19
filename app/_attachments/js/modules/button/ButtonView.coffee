@@ -1,6 +1,7 @@
 class ButtonView extends Backbone.View
 
   className : "ButtonView"
+  parent: null
 
   events : 
       if Modernizr.touch
@@ -53,6 +54,7 @@ class ButtonView extends Backbone.View
     @trigger "change", @el
 
   initialize : ( options ) ->
+    @parent  = options.parent
     @mode    = options.mode
     @options = options.options
     @answer = "" if @mode == "single" or @mode == "open"
@@ -60,8 +62,17 @@ class ButtonView extends Backbone.View
       @answer = {}
       for option in @options
         @answer[option.value] = "unchecked"
+#    data = null
+#    if typeof this.parent.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.parent.index] != 'undefined'
+#      data = this.parent.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.parent.index].data
+#      @answer = data[@parent.name]
 
   render : ->
+
+    data = null
+    if typeof this.parent.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.parent.index] != 'undefined'
+      data = this.parent.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.parent.index].data
+      @answer = data[@parent.name]
 
     htmlOptions = ""
 
@@ -78,13 +89,31 @@ class ButtonView extends Backbone.View
       value = option.value
       label = option.label
 
-      selectedClass = 
-        if @mode == "multiple" && @answer[value] == "checked"
-          "selected"
-        else if @mode == "single" && @answer == value
-          "selected"
-        else
-          ""
+      if data != null
+        if @mode == "multiple"
+          answerValue = data[@parent.name][value]
+          selectedClass =
+            if answerValue == "checked"
+              "selected"
+            else
+              ""
+          # Special case for displaying results for "single" mode, since the actual value is not saved.
+        else if @mode == "single"
+          answerValue = data[@parent.name]
+          selectedClass =
+            if answerValue == value
+              "selected"
+            else
+              ""
+      else
+        selectedClass =
+          if @mode == "multiple" && @answer[value] == "checked"
+            "selected"
+          else if @mode == "single" && @answer == value
+            "selected"
+          else
+            ""
+
 
       htmlOptions += "<div class='button #{styleClass} #{selectedClass}' data-value='#{value}'>#{label}</div>"
 
