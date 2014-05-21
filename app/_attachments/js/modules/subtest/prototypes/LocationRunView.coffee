@@ -18,6 +18,8 @@ class LocationRunView extends Backbone.View
 
     @model  = @options.model
     @parent = @options.parent
+    @dataEntry = @options.dataEntry
+
 
     @levels = @model.get("levels")       || []
     @locations = @model.get("locations") || []
@@ -97,7 +99,8 @@ class LocationRunView extends Backbone.View
 
     html = "<button class='clear command'>#{@text.clear}</button>"
 
-    previous = @parent.parent.result.getByHash(@model.get('hash'))
+    unless @dataEntry
+      previous = @parent.parent.result.getByHash(@model.get('hash'))
 
     if @typed
 

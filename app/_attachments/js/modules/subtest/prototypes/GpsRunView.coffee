@@ -12,6 +12,8 @@ class GpsRunView extends Backbone.View
     @i18n()
     @model   = @options.model
     @parent  = @options.parent
+    @dataEntry = @options.dataEntry
+
 
     @position = null
     @retryCount = 0
@@ -132,7 +134,8 @@ class GpsRunView extends Backbone.View
       @trigger "ready"
 
     else
-      previous = @parent.parent.result.getByHash(@model.get('hash'))
+      unless @dataEntry
+        previous = @parent.parent.result.getByHash(@model.get('hash'))
 
       if previous
         lat  = previous.lat

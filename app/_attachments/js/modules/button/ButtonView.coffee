@@ -57,6 +57,7 @@ class ButtonView extends Backbone.View
     @parent  = options.parent
     @mode    = options.mode
     @options = options.options
+    @dataEntry = options.dataEntry
     @answer = "" if @mode == "single" or @mode == "open"
     if @mode == "multiple"
       @answer = {}
@@ -70,9 +71,11 @@ class ButtonView extends Backbone.View
   render : ->
 
     data = null
-    if typeof this.parent.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.parent.index] != 'undefined'
-      data = this.parent.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.parent.index].data
-      @answer = data[@parent.name]
+
+    unless @dataEntry
+      if typeof this.parent.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.parent.index] != 'undefined'
+        data = this.parent.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.parent.index].data
+        @answer = data[@parent.name]
 
     htmlOptions = ""
 

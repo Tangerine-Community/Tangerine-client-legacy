@@ -17,13 +17,16 @@ class IdRunView extends Backbone.View
 
     @model  = @options.model
     @parent = @options.parent
+    @dataEntry = @options.dataEntry
+
     @validator = new CheckDigit
 
   render: ->
 
-    previous = @parent.parent.result.getByHash(@model.get('hash'))
-    if previous
-      participantId = previous.participant_id
+    unless @dataEntry
+      previous = @parent.parent.result.getByHash(@model.get('hash'))
+      if previous
+        participantId = previous.participant_id
 
     @$el.html "
     <form>

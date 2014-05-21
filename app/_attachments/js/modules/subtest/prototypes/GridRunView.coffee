@@ -32,7 +32,11 @@ class GridRunView extends Backbone.View
     $target = $(event.target)
     index = $target.attr('data-index')
 
-    return if this.parent.parent.enableCorrections == false && parseInt(@lastAttempted) != 0 && parseInt(index) > parseInt(@lastAttempted)
+    indexIsntBelowLastAttempted = parseInt(index) > parseInt(@lastAttempted)
+    lastAttemptedIsntZero       = parseInt(@lastAttempted) != 0
+    correctionsDisabled         = @dataEntry is false and @parent?.parent?.enableCorrections is false
+    
+    return if correctionsDisabled && lastAttemptedIsntZero && indexIsntBelowLastAttempted
 
     @markElement(index)
     @checkAutostop() if @autostop != 0
@@ -60,7 +64,12 @@ class GridRunView extends Backbone.View
         # mode is used for operations like pre-populating the grid when doing corrections.
   markElement: (index, value = null, mode) ->
     # if last attempted has been set, and the click is above it, then cancel
-    return if this.parent.parent.enableCorrections == false && parseInt(@lastAttempted) != 0 && parseInt(index) > parseInt(@lastAttempted)
+    
+    correctionsDisabled         = @dataEntry is false and @parent?.parent?.enableCorrections? and @parent?.parent?.enableCorrections is false
+    lastAttemptedIsntZero       = parseInt(@lastAttempted) != 0
+    indexIsntBelowLastAttempted = parseInt(index) > parseInt(@lastAttempted)
+
+    return if correctionsDisabled and lastAttemptedIsntZero and indexIsntBelowLastAttempted
 
     $target = @$el.find(".grid_element[data-index=#{index}]")
     if mode != 'populate'
@@ -282,18 +291,22 @@ class GridRunView extends Backbone.View
 
     @$el.find(".timer").html @timer
 
-    if typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
-      data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
-      @captureLastAttempted = data.capture_last_attempted
-      @itemAtTime = data.item_at_time
-      @timeIntermediateCaptured = data.time_intermediate_captured
-      @captureItemAtTime = data.capture_item_at_time
-      @autostop = data.auto_stop
-      @lastAttempted = data.attempted
-#     items = data.items
-      @timeRemaining = data.time_remain
-      @markRecord = data.mark_record
+    unless @dataEntry
 
+      previous = @parent.parent.result.getByHash(@model.get('hash'))
+      if previous
+
+        #     items = data.items
+        
+        @captureLastAttempted     = previous.capture_last_attempted
+        @itemAtTime               = previous.item_at_time
+        @timeIntermediateCaptured = previous.time_intermediate_captured
+        @captureItemAtTime        = previous.capture_item_at_time
+        @autostop                 = previous.auto_stop
+        @lastAttempted            = previous.attempted
+        @timeRemaining            = previous.time_remain
+        @markRecord               = previous.mark_record
+      
 #      for item, i in @markRecord
 #        @markElement(item)
     
@@ -336,7 +349,8 @@ class GridRunView extends Backbone.View
     else
       fontSizeClass = ""
 
-    @rtl        = if @model.has("rtl")   then @model.get("rtl")   else false
+    @rtl = @model.getBoolean "rtl"
+    @$el.addClass "rtl-grid" if @rtl 
 
     @totalTime = @model.get("timer") || 0
 
@@ -472,20 +486,22 @@ class GridRunView extends Backbone.View
     @trigger "rendered"
     @trigger "ready"
 
-    if typeof this.parent.parent.result.get("subtestData")[this.parent.parent.index] != 'undefined'
-      data = this.parent.parent.result.get("subtestData")[this.parent.parent.index].data
-      @markRecord = data.mark_record
+    unless @dataEntry
 
-      for item, i in @markRecord
-        @markElement item, null, 'populate'
+      previous = @parent.parent.result.getByHash(@model.get('hash'))
+      if previous
+        @markRecord = previous.mark_record
 
-      @itemAtTime = data.item_at_time
-      $target = @$el.find(".grid_element[data-index=#{@itemAtTime}]")
-      $target.addClass "element_minute"
+        for item, i in @markRecord
+          @markElement item, null, 'populate'
 
-      @lastAttempted = data.attempted
-      $target = @$el.find(".grid_element[data-index=#{@lastAttempted}]")
-      $target.addClass "element_last"
+        @itemAtTime = previous.item_at_time
+        $target = @$el.find(".grid_element[data-index=#{@itemAtTime}]")
+        $target.addClass "element_minute"
+
+        @lastAttempted = previous.attempted
+        $target = @$el.find(".grid_element[data-index=#{@lastAttempted}]")
+        $target.addClass "element_last"
 
   isValid: ->
     # Stop timer if still running. Issue #240

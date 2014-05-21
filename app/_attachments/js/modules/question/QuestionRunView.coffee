@@ -12,8 +12,9 @@ class QuestionRunView extends Backbone.View
 
   initialize: (options) ->
     @on "show", => @onShow()
-    @model = options.model
-    @parent = options.parent
+    @model     = options.model
+    @parent    = options.parent
+    @dataEntry = options.dataEntry
     @fontStyle = "style=\"font-family: #{@parent.model.get('fontFamily')} !important;\"" if @parent.model.get("fontFamily") != "" 
 
     @answer   = {}
@@ -40,7 +41,9 @@ class QuestionRunView extends Backbone.View
       @button = new ButtonView
         options : @options
         mode    : @type
-        parent  : this
+        parent  : @
+        dataEntry : @dataEntry
+
       @button.on "change rendered", => @update()
 
 
@@ -147,9 +150,11 @@ class QuestionRunView extends Backbone.View
 
   render: ->
     data = null
-    if typeof this.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.index] != 'undefined'
-      data = this.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.index].data
-      @answer = data[@name]
+    unless @dataEntry
+
+      if typeof this.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.index] != 'undefined'
+        data = this.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.index].data
+        @answer = data[@name]
 
     @$el.attr "id", "question-#{@name}"
 

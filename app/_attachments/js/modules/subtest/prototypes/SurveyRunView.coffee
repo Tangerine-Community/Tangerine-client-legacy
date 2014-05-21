@@ -141,6 +141,7 @@ class SurveyRunView extends Backbone.View
   initialize: (options) ->
     @model         = @options.model
     @parent        = @options.parent
+    @dataEntry     = @options.dataEntry
     @isObservation = @options.isObservation
     @focusMode     = @model.getBoolean("focusMode")
     @questionIndex = 0 if @focusMode
@@ -305,6 +306,7 @@ class SurveyRunView extends Backbone.View
         oneView = new QuestionRunView 
           model         : question
           parent        : @
+          dataEntry     : @dataEntry
           notAsked      : isNotAsked
           isObservation : @isObservation
         oneView.on "rendered", @onQuestionRendered

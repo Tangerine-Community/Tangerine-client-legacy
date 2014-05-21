@@ -145,7 +145,6 @@ class AssessmentDataEntryView extends Backbone.View
       subtestHash : subtest.get "hash"
       subtestId   : subtest.id
       prototype   : subtest.get "prototype"
-      sum         : view.getSum()
     }
 
   gridInit: (subtest) ->
@@ -157,6 +156,7 @@ class AssessmentDataEntryView extends Backbone.View
   surveyInit: (subtest) ->
     view = new SurveyRunView 
       model: subtest
+      dataEntry : true
       parent:
         gridWasAutostopped: -> return false
     @addRenderView view, subtest
@@ -164,21 +164,26 @@ class AssessmentDataEntryView extends Backbone.View
   locationInit: (subtest) ->
     view = new LocationRunView 
       model: subtest
+      dataEntry : true
+
     @addRenderView view, subtest
 
   datetimeInit: (subtest) ->
     view = new DatetimeRunView 
       model: subtest
+      dataEntry : true
     @addRenderView view, subtest
 
   idInit: (subtest) ->
     view = new IdRunView 
       model: subtest
+      dataEntry : true
     @addRenderView view, subtest
 
   consentInit: (subtest) ->
     view = new ConsentRunView 
       model: subtest
+      dataEntry : true
     @addRenderView view, subtest
 
   addRenderView: (view, subtest) ->

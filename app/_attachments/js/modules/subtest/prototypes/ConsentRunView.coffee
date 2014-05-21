@@ -23,16 +23,20 @@ class ConsentRunView extends Backbone.View
     @confirmedNonConsent = false
     @model  = @options.model
     @parent = @options.parent
+    @dataEntry = @options.dataEntry
+
   
   render: ->
 
-    previous = @parent.parent.result.getByHash(@model.get('hash'))
+    unless @dataEntry
 
-    if previous
-      if previous.consent is "yes"
-        yesChecked = "checked='checked'" 
-      else
-        noChecked = "checked='checked'"
+      previous = @parent.parent.result.getByHash(@model.get('hash'))
+
+      if previous
+        if previous.consent is "yes"
+          yesChecked = "checked='checked'" 
+        else
+          noChecked = "checked='checked'"
 
     @$el.html "
     <form>

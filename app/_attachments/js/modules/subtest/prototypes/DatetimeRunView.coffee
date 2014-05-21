@@ -16,6 +16,7 @@ class DatetimeRunView extends Backbone.View
 
     @model  = @options.model
     @parent = @options.parent
+    @dataEntry = @options.dataEntry
   
   render: ->
     dateTime = new Date()
@@ -27,14 +28,16 @@ class DatetimeRunView extends Backbone.View
     minutes  = "0" + minutes if minutes < 10
     time     = dateTime.getHours() + ":" + minutes
 
+    unless @dataEntry
 
-    previous = @parent.parent.result.getByHash(@model.get('hash'))
 
-    if previous
-      year  = previous.year
-      month = previous.month
-      day   = previous.day
-      time  = previous.time
+      previous = @parent.parent.result.getByHash(@model.get('hash'))
+
+      if previous
+        year  = previous.year
+        month = previous.month
+        day   = previous.day
+        time  = previous.time
 
     @$el.html "
       <div class='question'>
