@@ -94,6 +94,7 @@
       "assessment" : "Assessment"
       "assessments" : "Assessments"
       "curriculum" : "Curriculum"
+
   "GridRunView" :
     "label" :
       "input_mode"      : "Input Mode"
@@ -113,11 +114,14 @@
       "mark"            : "Mark"
       "last_attempted"  : "Last attempted"
       "item_at_seconds" : "Item at __seconds__ seconds"
+
   "SubtestRunView" :
     "button" :
       "help" : "Help"
       "skip" : "Skip"
       "next" : "Next"
+      "back" : "Back"
+
   "DatetimeRunView" :
     "label" :
       "year" : "Year"

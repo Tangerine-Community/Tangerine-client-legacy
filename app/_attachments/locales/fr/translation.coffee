@@ -117,6 +117,8 @@
       "help" : "Aide"
       "skip" : "Passer"
       "next" : "Prochaine"
+      "back" : "Retour"
+
   "DatetimeRunView" :
     "label" :
       "year" : "Année"

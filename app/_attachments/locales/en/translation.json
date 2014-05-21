@@ -142,7 +142,8 @@
     "button": {
       "help": "Help",
       "skip": "Skip",
-      "next": "Next"
+      "next": "Next",
+      "back": "Back"
     }
   },
   "DatetimeRunView": {

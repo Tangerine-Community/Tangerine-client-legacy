@@ -8,6 +8,7 @@
     "actions" :
       "button" :
         "save" : "Save"
+
   "TabletManagerView" :
     "message" :
       "found" : "__count__ tablets found."
@@ -116,6 +117,8 @@
       "help" : "Help"
       "skip" : "Skip"
       "next" : "Next"
+      "back" : "Back"
+
   "DatetimeRunView" :
     "label" :
       "year" : "Year"
