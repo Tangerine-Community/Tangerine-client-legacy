@@ -56,23 +56,30 @@ def run_assessment(assessment_name)
   # Executes javascript on the page
   # I could've done this with capybara functions but it was really slow
   # find a span element that contains the text [assessment_name] and click on it
-  page.execute_script("$('span:contains(#{assessment_name})').click()")
+  page.find('.admin_name', :text => assessment_name).click
 
   # find an image element with the class run that is visible and click on it
-  page.execute_script("$('img.run:visible').click()")
+  page.find("a", :text => "Run", :visible => true).click
 end
 
 def click_with_javascript(css_selector)
- page.execute_script("$('#{css_selector}').click()")
+  page.execute_script("$('#{css_selector}').click()")
 end
 
 
 def home_location
 #Completes the Home Location instrument
-has_content? ("Home Location")
-fill_in('Region', :with => 'Practice')
-  fill_in('District', :with => 'District')
-	fill_in('Village', :with => 'Village')
+  has_content? "Home Location"
+  page.select 'Practice Region', :from => 'Region' 
+  expect{'District'}.to
+  page.select 'Practice District', :from => 'District'
+  page.select 'Practice Village', :from => 'Village'
+
+  
+  
+  fill_in('District', :with => 'Practice District')
+  wait_until { page.find("Practice Village") }
+	fill_in('Village', :with => 'Practice Village')
 end
 
 def child_information
@@ -179,7 +186,7 @@ visit_group "blah"
 
 
 has_content? "Assessments"
-run_assessment "EGRA_demo" 
+run_assessment "EGRA demo" 
 has_content? "Date and Time"
 click_button "Next"
 
@@ -206,7 +213,7 @@ page.execute_script("$('#corner_logo').click()")
 
 #doing various grid question tests
 has_content? "Assessments"
-run_assessment "EGRA_demo" 
+run_assessment "EGRA demo" 
 has_content? "Date and Time"
 click_button "Next"
 home_location
@@ -269,7 +276,7 @@ page.execute_script("$('#corner_logo').click()")
 #checking correct functionality of input mode after test has run (having some difficulty with functionality on wizard)
 #Validate the asterisk "mark entire row"
 #has_content? "Assessments"
-#run_assessment "EGRA_demo" 
+#run_assessment "EGRA demo" 
 #has_content? "Date and Time"
 #click_button "Next"
 #home_location
@@ -463,7 +470,7 @@ has_content? "Assessment complete"
 
 page.execute_script("$('#corner_logo').click()")
 has_content? "Assessments"
-run_assessment "EGRA_demo" 
+run_assessment "EGRA demo" 
 has_content? "Date and Time"
 click_button "Next"
 home_location
