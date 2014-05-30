@@ -1,1 +1,3 @@
-(doc) -> emit(doc.collection, doc) if doc.collection
+(doc) ->
+  if doc.collection?
+    emit doc.collection, doc
