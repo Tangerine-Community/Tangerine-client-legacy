@@ -294,6 +294,8 @@ class PrimrDashboardView extends Backbone.View
     "
 
     _.each @workflows, (workflow) =>
+      return unless workflow? # Not sure why we need this, but have undefined workflows which break the dashboard
+      
       $.couch.db(Tangerine.db_name).openDoc workflow,
         success: (result) =>
           @$el.find("option[value=#{result._id}]").html result.name
