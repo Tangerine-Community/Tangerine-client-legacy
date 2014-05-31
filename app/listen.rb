@@ -30,7 +30,7 @@ end
 def push
 
   # Save current version number
-  version = `git tag | head -n 1`.gsub(/\n/,'')
+  version = `git tag | tail -n 1`.gsub(/\n/,'')
   build   = `git log --pretty=format:'%h' -n 1`
   
   File.open( File.join($jsDir, "version.js"), "w") {|f| f.write("window.Tangerine.buildVersion = \"#{build}\"\; window.Tangerine.version = \"#{version}\"\;") }
