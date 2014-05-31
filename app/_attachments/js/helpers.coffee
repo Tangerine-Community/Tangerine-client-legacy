@@ -363,7 +363,7 @@ class Utils
   @passwordPrompt: (callback) ->
     html = "
       <div id='pass_form' title='User verification'>
-        <label for='password'>Please re-enter your password</label>
+        <label for='pass_val'>Please re-enter your password</label>
         <input id='pass_val' type='password' name='password' id='password' value=''>
         <button class='command' data-verify='true'>Verify</button>
         <button class='command'>Cancel</button>
