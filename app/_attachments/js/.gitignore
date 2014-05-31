@@ -2,4 +2,5 @@ app.js
 boot.js
 router.js
 helpers.js
+version.js
 *.map

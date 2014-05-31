@@ -1,2 +1,1 @@
-window.Tangerine.buildVersion = "106783b"; window.Tangerine.version = "1.5.1
-";
+window.Tangerine.buildVersion = "e4dbfad"; window.Tangerine.version = "2.5.1";
