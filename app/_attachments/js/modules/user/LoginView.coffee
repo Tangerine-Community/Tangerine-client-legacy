@@ -32,7 +32,7 @@ class LoginView extends Backbone.View
     nameName = Tangerine.settings.contextualize
       server: @text.user
       satellite: @text.user
-      mobile: @text.enumerator
+      mobile: @text.user
       klass : @text.teacher
 
 
