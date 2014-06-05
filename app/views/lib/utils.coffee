@@ -30,8 +30,20 @@ utils =
       return [key, value]
     "object not found" # coffeescript return weirdness
 
+  # Makes an object that descrbes a csv value
+  cell : ( subtest, key, value ) ->
+    if typeof subtest is "string"
+      machineName = "#{subtest}-#{key}"
+    else
+      machineName = "#{subtest.subtestId}-#{key}"
+    return {
+      key : key
+      value : value
+      machineName : machineName
+    }
 
 if typeof(exports) == "object"
+  exports.cell        = utils.cell
   exports.clone       = utils.clone
   exports.exportValue = utils.exportValue
   exports.pair        = utils.pair

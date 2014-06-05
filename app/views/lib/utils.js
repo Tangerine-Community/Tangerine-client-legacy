@@ -37,10 +37,24 @@ utils = {
       return [key, value];
     }
     return "object not found";
+  },
+  cell: function(subtest, key, value) {
+    var machineName;
+    if (typeof subtest === "string") {
+      machineName = "" + subtest + "-" + key;
+    } else {
+      machineName = "" + subtest.subtestId + "-" + key;
+    }
+    return {
+      key: key,
+      value: value,
+      machineName: machineName
+    };
   }
 };
 
 if (typeof exports === "object") {
+  exports.cell = utils.cell;
   exports.clone = utils.clone;
   exports.exportValue = utils.exportValue;
   exports.pair = utils.pair;
