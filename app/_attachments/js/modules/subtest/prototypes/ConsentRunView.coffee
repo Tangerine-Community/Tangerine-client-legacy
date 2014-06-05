@@ -4,16 +4,20 @@ class ConsentRunView extends Backbone.View
 
   events:
     'click #non_consent_confirm' : 'noConsent'
-    'click #consent_yes' : 'clearMessages'
-    'click #consent_no' : 'showNonConsent'
+
+  onConsentChange: =>
+    if @consentButton.answer is "yes"
+      @clearMessages()
+    else
+      @showNonConsent()
 
   i18n: ->
     @text =
       defaultConsent    : t("ConsentRunView.label.default_consent_prompt")
       confirmNonconsent : t("ConsentRunView.label.confirm_nonconsent")
+      confirm           : t("ConsentRunView.button.confirm")
       yes               : t("ConsentRunView.button.yes_continue")
       no                : t("ConsentRunView.button.no_stop")
-      confirm           : t("ConsentRunView.message.confirm_nonconsent")
       select            : t("ConsentRunView.message.select")
 
   initialize: (options) ->
@@ -28,43 +32,42 @@ class ConsentRunView extends Backbone.View
   
   render: ->
 
-    unless @dataEntry
-
-      previous = @parent.parent.result.getByHash(@model.get('hash'))
-
-      if previous
-        if previous.consent is "yes"
-          yesChecked = "checked='checked'" 
-        else
-          noChecked = "checked='checked'"
-
     @$el.html "
-    <form>
       <div class='question'>
         <label>#{@model.get('prompt') || @text.defaultConsent}</label>
         <div class='messages'></div>
         <div class='non_consent_form confirmation'>
           <div>#{@text.confirmNonconsent}</div>
-          <button id='non_consent_confirm command'>#{@text.confirm}</button>
+          <button id='non_consent_confirm' class='command'>#{@text.confirm}</button>
         </div>
-        <div id='consent_options' class='buttonset'>
-
-          <label for='consent_yes'>#{@text.yes}</label>
-          <input id='consent_yes' type='radio' name='participant_consents' value='yes' #{yesChecked or ''}>
-          <label for='consent_no'>#{@text.no}</label>
-          <input id='consent_no' type='radio' name='participant_consents' value='no' #{noChecked or ''}>
-
-        </div>
+        <div class='consent-button'></div>
       </div>
-    </form>
     "
+
+    unless @dataEntry
+
+      previous = @parent.parent.result.getByHash(@model.get('hash'))
+      answer = previous.consent if previous
+
+    @consentButton = new ButtonView
+      options : [
+        { label : @text.yes, value : "yes" }
+        { label : @text.no,  value : "no" }
+      ]
+      mode      : "single"
+      dataEntry : false
+      answer    : answer or ""
+    
+    @consentButton.setElement @$el.find(".consent-button")
+    @consentButton.on "change", @onConsentChange
+    @consentButton.render()
 
     @trigger "rendered"
     @trigger "ready"
   
   isValid: ->
-    if @confirmedNonConsent == false
-      if @$el.find("input[name=participant_consents]:checked").val() == "yes"
+    if @confirmedNonConsent is false
+      if @consentButton.answer is "yes"
         true
       else
         false
@@ -87,12 +90,15 @@ class ConsentRunView extends Backbone.View
     return "consent" : "skipped"
   
   showErrors: ->
-    answer = @$el.find("input[name=participant_consents]:checked").val()
+    answer = @consentButton.answer 
     if answer == "no"
       Utils.midAlert @text.confirm
-      @showNonConsent
+      @showNonConsent()
     else if answer == undefined
       $(".messages").html @text.select
 
   getResult: ->
-    return "consent" : @$el.find("input[name=participant_consents]:checked").val()
+    return "consent" : @consentButton.answer
+
+  onClose: ->
+    @consentButton?.close?()

@@ -291,6 +291,9 @@ class SurveyRunView extends Backbone.View
     return unless @ready
     @$el.empty()
 
+    unless @dataEntry
+      previous = @parent.parent.result.getByHash(@model.get('hash'))
+
     notAskedCount = 0
     @questions.sort()
     if @questions.models?
@@ -303,12 +306,17 @@ class SurveyRunView extends Backbone.View
 
         if isNotAsked then notAskedCount++
 
+        name   = question.escape("name").replace /[^A-Za-z0-9_]/g, "-"
+        answer = previous[name] if previous
+        
         oneView = new QuestionRunView 
           model         : question
           parent        : @
           dataEntry     : @dataEntry
           notAsked      : isNotAsked
           isObservation : @isObservation
+          answer        : answer
+
         oneView.on "rendered", @onQuestionRendered
         oneView.on "answer scroll", @onQuestionAnswer
 

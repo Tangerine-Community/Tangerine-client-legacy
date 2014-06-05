@@ -1,27 +1,27 @@
 class ButtonView extends Backbone.View
 
   className : "ButtonView"
-  parent: null
 
   events : 
-      if Modernizr.touch
-        "click .button" : "onClick"
-      else
-        "click .button"      : "onClick"
+    if Modernizr.touch
+      "click .button" : "onClick"
+    else
+      "click .button" : "onClick"
 
   onChange: (event) ->
 
     value = _.map($(event.target).find("option:selected"), (x) -> $(x).attr('data-answer'))
     @trigger "change", @el
 
-  onClick : (event) ->
+  onClick: (event) ->
+    event.preventDefault()
 
     $target = $(event.target)
 
     value         = $target.attr('data-value')
     checkedBefore = $target.hasClass("selected")
 
-    if @mode == "hybrid"
+    if @mode is "hybrid"
 
       @$el.find(".button").removeClass "selected"
 
@@ -31,14 +31,14 @@ class ButtonView extends Backbone.View
       else
         @answer = value
 
-    else if @mode == "single"
+    else if @mode is "single"
 
       @$el.find(".button").removeClass "selected"
 
       $target.addClass "selected"
       @answer = value
 
-    else if @mode == "multiple"
+    else if @mode is "multiple"
 
       if checkedBefore
         $target.removeClass "selected"
@@ -53,38 +53,32 @@ class ButtonView extends Backbone.View
 
     @trigger "change", @el
 
-  initialize : ( options ) ->
-    @parent  = options.parent
-    @mode    = options.mode
-    @options = options.options
+  initialize: ( options ) ->
+    @mode      = options.mode
+    @options   = options.options
     @dataEntry = options.dataEntry
-    @answer = "" if @mode == "single" or @mode == "open"
-    if @mode == "multiple"
-      @answer = {}
-      for option in @options
-        @answer[option.value] = "unchecked"
-#    data = null
-#    if typeof this.parent.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.parent.index] != 'undefined'
-#      data = this.parent.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.parent.index].data
-#      @answer = data[@parent.name]
+
+    if options.answer?
+      @answer = options.answer
+    else
+      @answer = "" if @mode is "single" or @mode is "open"
+      if @mode is "multiple"
+        @answer = {}
+        for option in @options
+          @answer[option.value] = "unchecked"
 
   render : ->
 
     data = null
-
-    unless @dataEntry
-      if typeof this.parent.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.parent.index] != 'undefined'
-        data = this.parent.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.parent.index].data
-        @answer = data[@parent.name]
 
     htmlOptions = ""
 
     for option, i in @options
 
       styleClass = 
-        if i == 0
+        if i is 0
           "left"
-        else if i == @options.length-1
+        else if i is @options.length-1
           "right"
         else
           ""
@@ -93,32 +87,32 @@ class ButtonView extends Backbone.View
       label = option.label
 
       if data != null
-        if @mode == "multiple"
+        if @mode is "multiple"
           answerValue = data[@parent.name][value]
           selectedClass =
-            if answerValue == "checked"
+            if answerValue is "checked"
               "selected"
             else
               ""
           # Special case for displaying results for "single" mode, since the actual value is not saved.
-        else if @mode == "single"
+        else if @mode is "single"
           answerValue = data[@parent.name]
           selectedClass =
-            if answerValue == value
+            if answerValue is value
               "selected"
             else
               ""
       else
         selectedClass =
-          if @mode == "multiple" && @answer[value] == "checked"
+          if @mode is "multiple" and @answer[value] is "checked"
             "selected"
-          else if @mode == "single" && @answer == value
+          else if @mode is "single" and @answer is value
             "selected"
           else
             ""
 
 
-      htmlOptions += "<div class='button #{styleClass} #{selectedClass}' data-value='#{value}'>#{label}</div>"
+      htmlOptions += "<button class='button #{styleClass} #{selectedClass}' data-value='#{value}'>#{label}</button>"
 
     @$el.html("
       #{htmlOptions}
