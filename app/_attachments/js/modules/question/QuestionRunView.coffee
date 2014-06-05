@@ -1,6 +1,6 @@
 class QuestionRunView extends Backbone.View
 
-  className: "question buttonset"
+  className: "question"
 
   events:
     'change input'           : 'update'
@@ -17,7 +17,11 @@ class QuestionRunView extends Backbone.View
     @dataEntry = options.dataEntry
     @fontStyle = "style=\"font-family: #{@parent.model.get('fontFamily')} !important;\"" if @parent.model.get("fontFamily") != "" 
 
-    @answer   = {}
+    unless @dataEntry
+      @answer = options.answer
+    else
+      @answer   = {}
+
     @name     = @model.escape("name").replace /[^A-Za-z0-9_]/g, "-"
     @type     = @model.get "type"
     @options  = @model.get "options"
@@ -41,8 +45,8 @@ class QuestionRunView extends Backbone.View
       @button = new ButtonView
         options : @options
         mode    : @type
-        parent  : @
         dataEntry : @dataEntry
+        answer : @answer 
 
       @button.on "change rendered", => @update()
 
@@ -149,13 +153,6 @@ class QuestionRunView extends Backbone.View
     @model.get("name")
 
   render: ->
-    data = null
-    unless @dataEntry
-
-      if typeof this.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.index] != 'undefined'
-        data = this.parent.parent.parent.result.get("subtestData")[this.parent.parent.parent.index].data
-        @answer = data[@name]
-
     @$el.attr "id", "question-#{@name}"
 
     if not @notAsked
@@ -166,8 +163,6 @@ class QuestionRunView extends Backbone.View
       if @type == "open"
         if _.isString(@answer) && not _.isEmpty(@answer)
           answerValue = @answer
-        if data != null
-          answerValue = data[@name]
         if @model.get("multiline")
           html += "<div><textarea id='#{@cid}_#{@name}' data-cid='#{@cid}' value='#{answerValue || ''}'></textarea></div>"
         else
