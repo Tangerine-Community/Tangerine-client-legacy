@@ -3,13 +3,18 @@
 #   * The Settings object contains many convenience functions that use configuration's data.
 #   * Templates should contain objects and collections of objects ready to be used by a Factory.
 # Also intialized here are: Backbone.js, and jQuery.i18n
+# Anything that fails bad here should probably be failing in front of the user.
 
 # Utils.disableConsoleLog()
 # Utils.disableConsoleAssert()
 
-Tangerine =
-  "db_name"    : window.location.pathname.split("/")[1]
-  "design_doc" : _.last(String(window.location).split("_design/")).split("/")[0]
+
+#
+# Basic configuration
+#
+
+Tangerine.db_name    = window.location.pathname.split("/")[1]
+Tangerine.design_doc = _.last(String(window.location).split("_design/")).split("/")[0]
 
 # Local tangerine database handle
 Tangerine.$db = $.couch.db(Tangerine.db_name)
@@ -32,184 +37,86 @@ Tangerine.onBackButton = (event) ->
   else
     window.history.back()
 
+Tangerine.bootSequence = 
 
-# Grab our system config doc
-Tangerine.config = new Backbone.Model "_id" : "configuration"
+  # Put this version's information in the footer
+  versionTag: ( callback ) ->
+    $("#footer").append("<div id='version'>#{Tangerine.version}-#{Tangerine.buildVersion}</div>")
+    callback()
 
-Tangerine.config.fetch
-  error   : ->
-    console.log "could not fetch configuration"
+  # Grab our system config doc. These generally don't change very often unless
+  # major system changes are required. New servers, etc.
+  fetchConfiguration: ( callback ) ->
 
-  success : ->
-    # get our Tangerine settings
+    Tangerine.config = new Backbone.Model "_id" : "configuration"
+
+    Tangerine.config.fetch
+      error   : -> alert "Could not fetch configuration"
+      success : callback
+
+
+
+  # get our local Tangerine settings
+  # these do tend to change depending on the particular install of the 
+  fetchSettings : ( callback ) ->
     Tangerine.settings = new Settings "_id" : "settings"
     Tangerine.settings.fetch
-      success: ->
+      success: callback
 
-        # guarentee instanceId
-        Tangerine.settings.set "instanceId", Utils.humanGUID() unless Tangerine.settings.has("instanceId")
-
-        Tangerine.onSettingsLoad()
       error: ->
-        Tangerine.settings.set Tangerine.config.get("defaults")['settings']
+        defaultSettings = Tangerine.config.get("defaults")?.settings
+        alert "Missing default settings in configuration" unless defaultSettings?
 
-        # generate a random ID for this individual instance
-        Tangerine.settings.set "instanceId", Utils.humanGUID()
-
+        Tangerine.settings.set defaultSettings # @todo, figure out why save, only calls beforesave
         Tangerine.settings.save null,
-          error: ->
-            console.log "couldn't save new settings"
-          success: ->
-            Tangerine.onSettingsLoad()
-
-Tangerine.onSettingsLoad = ->
-
-  # Template files for ease of use in grids
-  Tangerine.templates = new Template "_id" : "templates"
-  Tangerine.templates.fetch
-    success: ->
-      Tangerine.ensureAdmin ->
-        Tangerine.transitionUsers ->
-          $ ->
-            # Start the application
-
-            window.vm = new ViewManager()
-
-            #$("<button id='reload'>reload me</button>").appendTo("#footer").click -> document.location.reload()
+          error: -> alert "Could not save default settings"
+          success: callback
 
 
-            $.i18n.init 
-              "fallbackLng" : false
-              "lng"         : Tangerine.settings.get "language"
-              "resGetPath"  : "locales/__lng__/translation.json"
-            , (t) ->
-             
-              window.t = t
+  # for upgrades
+  guaranteeInstanceId: ( callback ) ->
+
+    Tangerine.settings.save 
+      "instanceId" : Utils.humanGUID()
+    ,
+      error: -> alert "Could not save new Instance Id"
+      success: callback
 
 
-              if Tangerine.settings.get("context") != "server"
-                document.addEventListener "deviceready"
-                , ->
-                  document.addEventListener "online", -> Tangerine.online = true
-                  document.addEventListener "offline", -> Tangerine.online = false
-
-                  ### Note, turns on menu button
-                  document.addEventListener "menubutton", (event) ->
-                    console.log "menu button"
-                  , false
-                  ###
-
-                  # prevents default
-                  document.addEventListener "backbutton", Tangerine.onBackButton, false
-                , false
+  # load templates
+  fetchTemplates: ( callback ) ->
+    (Tangerine.templates = new Template "_id" : "templates").fetch
+      error: -> alert "Could not load templates."
+      success: callback
 
 
-              # Singletons
-              Tangerine.router = new Router()
-              Tangerine.user   = if Tangerine.settings.get("context") is "server"
-                  new User()
-                else
-                  new TabletUser()
-              Tangerine.nav    = new NavigationView
-                user   : Tangerine.user
-                router : Tangerine.router
-              Tangerine.log    = new Log()
-
-              Tangerine.user.sessionRefresh 
-                success: -> 
-                  $("body").addClass(Tangerine.settings.get("context"))
-
-                  Backbone.history.start()
-
-# make sure all users in the _users database have a local user model for future use
-Tangerine.transitionUsers = (callback) ->
-
-  return callback() if Tangerine.settings.get("context") is "server" or Tangerine.settings.has("usersTransitioned")
-
-  $.couch.login
-    name     : "admin"
-    password : "password"
-    success: ->
-      $.couch.userDb (uDB) => 
-        uDB.allDocs
-          success: (resp) ->
-            docIds = _.pluck(resp.rows, "id").filter (a) -> ~a.indexOf("org.couchdb")
-            nextDoc = () ->
-              id = docIds.pop()
-              return finish() unless id?
-              uDB.openDoc id,
-                success: (doc) ->
-                  teacher = null
-                  # console.log doc
-                  name = doc._id.split(":")[1]
-
-                  hashes = 
-                    if doc.password_sha?
-                      pass : doc.password_sha
-                      salt : doc.salt
-                    else
-                      TabletUser.generateHash("password")
-
-                  teacherId = doc.teacherId
-                  unless teacherId?
-                    teacherId = Utils.humanGUID()
-                    teacher = new Teacher "_id" : teacherId, "name" : name
-                    
-                  if name is "admin"
-                    roles = ["_admin"]
-                    hashes = TabletUser.generateHash("password")
-                  else
-                    roles = doc.roles || []
-                    
-
-                  newDoc = 
-                    "_id"   : TabletUser.calcId(name)
-                    "name"  : name
-                    "roles" : roles
-                    "pass"  : hashes.pass
-                    "salt"  : hashes.salt
-                    "teacherId"  : teacherId
-                    "collection" : "user"
-                  #return
-                  Tangerine.$db.saveDoc newDoc,
-                    success: (doc) ->
-                      if teacher?
-                        teacher.save null,
-                          success: ->
-                            nextDoc()
-                      else
-                        nextDoc()
-
-                    error: (doc) ->
-                      nextDoc()
-
-            finish = ->
-              Tangerine.settings.save "usersTransitioned" : true,
-                success: ->
-                  $.couch.logout
-                    success: ->
-                      callback()
-
-            nextDoc() # kick it off
-
-
-# if admin user doesn't exist in _users database, create it
-Tangerine.ensureAdmin = (callback) ->
-  if Tangerine.settings.get("context") != "server" && not Tangerine.settings.has("adminEnsured")
+  # On mobiles, if the admin user doesn't exist, create it.
+  # Some tasks require an admin user. Sometimes it secretly does. TabletUser does not use the 
+  # CouchDB user authentication, but the server does. So don't do this on the server.
+  ensureAdmin: ( callback ) ->
+    return callback() if "server" is Tangerine.settings.get("context")
+    return callback() if Tangerine.settings.has("adminEnsured")
+    
+    # try to use the admin user
     $.couch.login
       name     : "admin"
       password : "password"
-      success: ->
+      success: -> # This will succeed whether logged in or not
+        
+        # get the user database and see if we have access to the _user doc
         $.couch.userDb (uDB) =>
           uDB.openDoc "org.couchdb.user:admin",
-            success: ->
+            success: -> # We have access to the user doc
               $.couch.logout
-                success:->
-                  Tangerine.settings.save "adminEnsured" : true
-                  callback()
-                error: ->
-                  console.log "error logging out admin user"
-            error: ->
+                error: -> alert "Error logging out admin user. Loc1"
+                success: ->
+                  Tangerine.settings.save
+                    "adminEnsured" : true # set flag so we don't go through this every time
+                  ,
+                    error : -> alert "Error saving adminEnsured settings."
+                    success : callback
+                
+            error: -> # we do not have access, or there is no doc
               $.ajax
                 url      : "/_users/org.couchdb.user:admin"
                 type     : "PUT"
@@ -220,13 +127,187 @@ Tangerine.ensureAdmin = (callback) ->
                   roles    : []
                   type     : "user"
                   _id      : "org.couchdb.user:admin"
+                error: -> alert "Error ensuring admin _user doc"
                 success: ( data ) =>
-                  Tangerine.settings.save "adminEnsured" : true
-                  $.couch.logout
-                    success: -> callback()
-                    error: ->
-                      console.log "Error logging out admin user"
-                error: =>
-                  console.log "Error ensuring admin _user doc"
-  else
+                  Tangerine.settings.save
+                    "adminEnsured" : true # set flag so we don't go through this every time
+                  ,
+                    $.couch.logout
+                      error   : -> alert "Error logging out admin user. Loc2"
+                      success : callback
+
+                
+      
+# make sure all users in the _users database have a local user model for future use
+# Can be removed if no upgrades are being done. This is for legacy _user support.
+  transitionUsers : (callback) ->
+
+    return callback() if "server" is Tangerine.settings.get("context")
+    return callback() if Tangerine.settings.has("usersTransitioned")
+
+    # log in as admin to work with _users database
+    $.couch.login
+      name     : "admin"
+      password : "password"
+      success: ->
+        $.couch.userDb (uDB) =>
+          # fetch all _user docs
+          uDB.allDocs
+            success : (response) ->
+              docIds = _.pluck(response.rows, "id").filter (a) -> ~a.indexOf("org.couchdb") # exclude non user type docs
+
+              # this function will transition the users to TabletUsers one at a time
+              nextDoc = ->
+                id = docIds.pop()
+                return finish() unless id?
+                uDB.openDoc id,
+                  success : (doc) ->
+                    teacher   = null
+                    name      = doc._id.split(":")[1]
+                    teacherId = doc.teacherId
+                    
+                    # let them use the same password. 
+                    # this will break > CouchDB 1.2.0
+                    hashes = 
+                      if doc.password_sha?
+                        pass : doc.password_sha
+                        salt : doc.salt
+                      else
+                        TabletUser.generateHash("password")
+
+                    # Create a teacher doc for the new user
+                    # @todo All this should be refactored into the TabletUser model
+                    unless teacherId?
+                      teacherId = Utils.humanGUID()
+                      teacher = new Teacher 
+                        "_id"  : teacherId
+                        "name" : name
+                      
+                    if name is "admin"
+                      roles = ["_admin"]
+                      hashes = TabletUser.generateHash("password")
+                    else
+                      roles = doc.roles || []
+                      
+                    newDoc = 
+                      "_id"   : TabletUser.calcId(name)
+                      "name"  : name
+                      "roles" : roles
+                      "pass"  : hashes.pass
+                      "salt"  : hashes.salt
+                      "teacherId"  : teacherId
+                      "collection" : "user"
+
+                    #return
+                    Tangerine.$db.saveDoc newDoc,
+                      error   : nextDoc # show must go on
+                      success : ->
+                        return nextDoc() unless teacher?
+
+                        teacher.save null,
+                          success: nextDoc
+                          error: nextDoc
+
+              finish = ->
+                Tangerine.settings.save "usersTransitioned" : true,
+                  success: ->
+                    $.couch.logout
+                      success: ->
+                        callback()
+
+              nextDoc() # kick it off
+
+
+  documentReady: ( callback ) -> $ ->
+
+    # add context class to get css to respond to different contexts
+    $("body").addClass Tangerine.settings.get "context"
+
+    #$("<button id='reload'>reload me</button>").appendTo("#footer").click -> document.location.reload()
+
     callback()
+
+  loadI18n: ( callback ) ->
+
+    $.i18n.init 
+      "fallbackLng" : false
+      "lng"         : Tangerine.settings.get "language"
+      "resGetPath"  : "locales/__lng__/translation.json"
+    , (t) ->
+     window.t = t
+     callback()
+
+  handleCordovaEvents: ( callback ) ->
+
+    return callback() if "server" is Tangerine.settings.get("context")
+
+    document.addEventListener "deviceready"
+    , ->
+      document.addEventListener "online",  -> Tangerine.online = true
+      document.addEventListener "offline", -> Tangerine.online = false
+
+      ### 
+      # Responding to this event turns on the menu button
+      document.addEventListener "menubutton", (event) ->
+        console.log "menu button"
+      , false
+      ###
+
+      # prevents default
+      document.addEventListener "backbutton", Tangerine.onBackButton, false
+
+    , false
+
+    # add the event listeners, but don't depend on them calling back
+    callback()
+
+  loadSingletons: ( callback ) ->
+    # Singletons
+    window.vm = new ViewManager()
+    Tangerine.router = new Router()
+    Tangerine.user   = if "server" is Tangerine.settings.get("context")
+        new User()
+      else
+        new TabletUser()
+    Tangerine.nav    = new NavigationView
+      user   : Tangerine.user
+      router : Tangerine.router
+    Tangerine.log    = new Log()
+    callback()
+
+  reloadUserSession: ( callback ) ->
+
+    Tangerine.user.sessionRefresh 
+      success: callback
+
+  startBackbone: ( callback ) ->
+    Backbone.history.start()
+    callback() # for testing
+
+
+# callback is used for testing
+Tangerine.boot = (callback) ->
+
+  sequence = [
+    Tangerine.bootSequence.versionTag
+    Tangerine.bootSequence.fetchConfiguration
+    Tangerine.bootSequence.fetchSettings
+    Tangerine.bootSequence.guaranteeInstanceId
+    Tangerine.bootSequence.fetchTemplates
+    Tangerine.bootSequence.ensureAdmin
+    Tangerine.bootSequence.transitionUsers
+    Tangerine.bootSequence.documentReady
+    Tangerine.bootSequence.loadI18n
+    Tangerine.bootSequence.handleCordovaEvents
+    Tangerine.bootSequence.loadSingletons
+    Tangerine.bootSequence.reloadUserSession
+    Tangerine.bootSequence.startBackbone
+  ]
+
+  sequence.push callback if callback? 
+
+  Utils.execute sequence
+
+Tangerine.boot() unless window.TESTING
+
+

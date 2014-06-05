@@ -240,6 +240,13 @@ _.indexBy = ( propertyName, objectArray ) ->
 
 class Utils
 
+  @execute: ( functions ) ->
+
+    step = ->
+      nextFunction = functions.shift()
+      nextFunction?(step)
+    step()
+
   @loadCollections : ( loadOptions ) ->
 
     throw "You're gonna want a callback in there, buddy." unless loadOptions.complete?
