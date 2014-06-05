@@ -434,6 +434,9 @@ table.grid
   
   .grid_element
   {
+    width: 95%;
+    border: none;
+    outline: none;
     font-family: Gentium, Tahoma, Monaco, sans-serif;
     cursor: pointer;
     text-align:center;
@@ -444,15 +447,11 @@ table.grid
     .border-radius(10px);
     font-size: 40px;
   }
-  
-  span.grid_element
-  {
-    width: auto;
-    display: inline-block;
-  }
 
   .end_of_grid_line
   {
+    border: none;
+    outline: none;
     margin: 5px;
     padding: 5px 5px;
     cursor: pointer;
@@ -1023,6 +1022,13 @@ ul.assessment_list
     padding-bottom: 10px;
     border-bottom: 1px solid @grey;
     font-size: @h2;
+
+    button
+    {
+      border: none;
+      background: transparent;
+      outline: none;
+    }
 
     li
     {
@@ -2247,12 +2253,14 @@ body[rtl]
 
 .ButtonView
 {
-  .button {
+  button {
     min-width: 1.2em;
     background: @grey-1;
     color: @grey-2;
     display: inline-block;
+    border: none;
     border-radius: 0;
+
     margin: 0 !important;
     padding: 7px 10px 5px;
     cursor: pointer;
@@ -2261,7 +2269,7 @@ body[rtl]
     font-size: 1.1em;
   }
 
-  .button:hover
+  button:hover
   {
     color: @grey-3;
   }
