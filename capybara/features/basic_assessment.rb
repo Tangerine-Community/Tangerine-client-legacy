@@ -98,28 +98,24 @@ describe "basic assessment", :type => :feature do
     csvRow = JSON.parse(RestClient.get( "http://#{$settings[:server][:user]}:#{$settings[:server][:pass]}@databases.tangerinecentral.org/group-testsweet/_design/ojai/_view/csvRows?key=%22#{resultId}%22" ).to_s)['rows'][0]['value']
     value = Hash[csvRow.map { |cell| [cell['key'], cell['value'].to_s ] } ]
     
-    expect(value['consent']).to     eq('yes')
+    expect(value['consent']).to eq('yes')
 
-    expect(value[])
-    "q1"=>"2"
-    "q2_a"=>"0"
-    "q2_b"=>1
-    "q2_c"=>"0"
+    expect(value['q1']).to   eq('2')
+    expect(value['q2_a']).to eq('0')
+    expect(value['q2_b']).to eq('1')
+    expect(value['q2_c']).to eq('0')
 
-    expect(value['Planet']).to      eq('Mars')
-    expect(value['Mountain']).to    eq('Olympus Mons')
+    expect(value['Planet']).to   eq('Mars')
+    expect(value['Mountain']).to eq('Olympus Mons')
     
-    expect(value['binary1']).to     eq('0')
-    expect(value['binary5']).to     eq('0')
+    expect(value['binary1']).to eq('0')
+    expect(value['binary5']).to eq('0')
     
     expect(value['year']).to        eq('1999')
     expect(value['month']).to       eq('12')
     expect(value['date']).to        eq('31')
     expect(value['assess_time']).to eq['00:00']
     
-
-
-
     expect(value['additional_comments']).to eq("additional comments test")
 
   end
