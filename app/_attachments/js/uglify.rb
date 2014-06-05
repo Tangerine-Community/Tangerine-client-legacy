@@ -22,6 +22,9 @@ ARGV.each { |arg|
 # I don't think we have any code that needs to be run in order, but don't do 
 # make this change until we can do regression tests
 jsFiles = [ 
+
+  'version.js',
+  
   'helpers.js',
 
   'modules/button/ButtonView.js',
@@ -163,7 +166,6 @@ jsFiles = [
 
   'boot.js',
 
-  'version.js'
 ]
 
 libFiles = [

@@ -104,13 +104,6 @@ class NavigationView extends Backbone.View
 
       <ul>
 
-        <li id='version-container'>
-
-          <label>#{@text.version}</label>
-          <div>#{Tangerine.version}</div>
-
-        </li>
-
         <li id='student-container' class='hidden'>
 
           <label>#{@text.student_id}</label>

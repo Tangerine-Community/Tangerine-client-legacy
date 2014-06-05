@@ -673,6 +673,7 @@ progress
 
 #watermark
 {
+  float: right;
   text-align: center;
   padding: 10px 0 10px 7px;
   margin: 0 15px 0 0;
@@ -687,12 +688,20 @@ progress
 
 #footer
 {
-  text-align: right;
   background: @orange-3 url("../images/noise.png");
   width: 100%;
   height: 77px;
   .box-sh (0, 15px, 30px, 5px, rgba(0,0,0,0.3));
   margin: 0;
+
+  #version
+  {
+    color: white;
+    float: right;
+    font-size: 1em;
+    margin-right: 1em;
+    margin-top: 3.5em;
+  }
 }
 
 .info_box
@@ -1027,7 +1036,11 @@ ul.assessment_list
     {
       border: none;
       background: transparent;
-      outline: none;
+    }
+
+    button:focus
+    {
+      outline: black dotted 1px;
     }
 
     li

@@ -29,9 +29,11 @@ end
 
 def push
 
-  # Save current version number
-  version = `git log --pretty=format:'%h' -n 1`
-  File.open( File.join($jsDir, "version.js"), "w") {|f| f.write("window.Tangerine.version = \"#{version}\"\;") }
+  # Save current version info
+  version = `git describe --tags`.gsub(/\n/,'')
+  build   = `git rev-parse --short HEAD`.gsub(/\n/,'')
+  
+  File.open( File.join($jsDir, "version.js"), "w") {|f| f.write("window.Tangerine = { buildVersion : \"#{build}\"\, version : \"#{version}\"\};") }
 
   Dir.chdir( $jsDir ) {
     `./uglify.rb dev`
