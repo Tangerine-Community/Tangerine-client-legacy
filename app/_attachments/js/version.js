@@ -1,1 +1,1 @@
-window.Tangerine.buildVersion = "9cfc516"; window.Tangerine.version = "2.5.2";
+window.Tangerine.buildVersion = "faef1f0"; window.Tangerine.version = "NationalPressClub";
