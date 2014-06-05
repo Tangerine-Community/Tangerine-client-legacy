@@ -167,8 +167,8 @@ class AssessmentListElementView extends Backbone.View
     archiveClass     = if isArchived then " archived_assessment" else ""
 
     toggleButton     = "<div class='assessment_menu_toggle sp_right'><div></div></div>"
-    name             = "<span class='name clickable'>#{@model.get('name')}</span>"
-    adminName        = "<span class='admin_name clickable #{archiveClass}'>#{@model.get('name')}</span>"
+    name             = "<button class='name clickable'>#{@model.get('name')}</button>"
+    adminName        = "<button class='admin_name clickable #{archiveClass}'>#{@model.get('name')}</button>"
     adminResultCount = "<label class='result_count small_grey no_help' title='Result count. Click to update.'>Results <b>#{@resultCount}</b></label>"
     resultCount      = "<span class='result_count no_help'>Results <b>#{@resultCount}</b></span>"
     selected         = " selected='selected'"

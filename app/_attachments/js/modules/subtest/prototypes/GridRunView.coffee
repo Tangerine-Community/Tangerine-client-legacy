@@ -26,6 +26,7 @@ class GridRunView extends Backbone.View
     @$el.find(".element_wrong").removeClass "element_wrong"
 
   gridClick: (event) =>
+    event.preventDefault()
     @modeHandlers[@mode]?(event)
 
   markHandler: (event) =>
@@ -87,6 +88,7 @@ class GridRunView extends Backbone.View
           $target.removeClass "element_wrong"
 
   endOfGridLineClick: (event) ->
+    event.preventDefault()
     if @mode == "mark"
       $target = $(event.target)
 
@@ -367,11 +369,11 @@ class GridRunView extends Backbone.View
 
     @resetVariables()
 
-    @gridElement         = _.template "<td><div data-label='{{label}}' data-index='{{i}}' class='grid_element #{fontSizeClass}' #{@fontStyle || ""}>{{label}}</div></td>"
-    @variableGridElement = _.template "<span data-label='{{label}}' data-index='{{i}}' class='grid_element #{fontSizeClass}' #{@fontStyle || ""}>{{label}}</span>"
+    @gridElement         = _.template "<td><button data-label='{{label}}' data-index='{{i}}' class='grid_element #{fontSizeClass}' #{@fontStyle || ""}>{{label}}</button></td>"
+    @variableGridElement = _.template "<button data-label='{{label}}' data-index='{{i}}' class='grid_element #{fontSizeClass}' #{@fontStyle || ""}>{{label}}</button>"
 
     if @layoutMode == "fixed"
-      @endOfGridLine = _.template "<td><div data-index='{{i}}' class='end_of_grid_line'>*</div></td>"
+      @endOfGridLine = _.template "<td><button data-index='{{i}}' class='end_of_grid_line'>*</button></td>"
     else
       @endOfGridLine = _.template ""
 

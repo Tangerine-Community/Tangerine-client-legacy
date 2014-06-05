@@ -15,7 +15,7 @@ class ResultView extends Backbone.View
       name : "Assessment complete"
       prototype: "complete"
       data :
-        "comment" : @$el.find('#additional_comments').val() || ""
+        "comment" : @$el.find('#additional-comments').val() || ""
         "end_time" : (new Date()).getTime()
       subtestId : "result"
       sum :
@@ -72,8 +72,8 @@ class ResultView extends Backbone.View
       <br>
 
       <div class='question'>
-        <div class='prompt'>#{@text.comments}</div>
-        <textarea id='additional_comments' class='full_width'></textarea>
+        <label class='prompt' for='additional-comments'>#{@text.comments}</label>
+        <textarea id='additional-comments' class='full_width'></textarea>
       </div>
 
       <div class='label_value'>
