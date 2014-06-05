@@ -112,7 +112,7 @@ class User extends Backbone.Model
   logout: ->
     $.couch.logout
       success: =>
-        $.cookie "AuthSession", null
+        $.removeCookie "AuthSession"
         @name  = null
         @roles = []
         @clear()
