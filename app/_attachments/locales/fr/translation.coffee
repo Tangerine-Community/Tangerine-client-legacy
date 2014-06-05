@@ -128,12 +128,12 @@
   "ConsentRunView" :
     "label" :
       "default_consent_prompt" : "Consentement obtenu?"
+      "confirm_nonconsent" : "Cliquer pour confirmer que le consentement n’a pas été obtenu."
     "button" :
       "confirm" : "Confirmer"
       "yes_continue" : "Oui, continuer"
       "no_stop" : "Non, arrêter"
     "message" :
-      "confirm_nonconsent" : "Cliquer pour confirmer que le consentement n’a pas été obtenu."
       "confirm" : "Veuillez confirmer."
       "select" : "Veuillez en sélectionner une."
   "IdRunView" :

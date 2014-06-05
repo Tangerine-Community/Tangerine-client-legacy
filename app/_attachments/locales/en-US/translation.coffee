@@ -128,15 +128,16 @@
       "month" : "Month"
       "day" : "Day"
       "time" : "Time"
+      
   "ConsentRunView" :
     "label" :
       "default_consent_prompt" : "Does the child consent?"
+      "confirm_nonconsent" : "Click to confirm consent not obtained."
     "button" :
       "confirm" : "Confirm"
       "yes_continue" : "Yes, continue"
       "no_stop" : "No, stop"
     "message" :
-      "confirm_nonconsent" : "Click to confirm consent not obtained."
       "confirm" : "Please confirm."
       "select" : "Please select one."
 
