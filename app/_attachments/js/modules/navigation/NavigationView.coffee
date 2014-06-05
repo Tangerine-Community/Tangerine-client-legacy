@@ -101,7 +101,7 @@ class NavigationView extends Backbone.View
     </div>
     <div id='version'>
       #{@text.version} <br>
-      <span id='version-uuid'>#{Tangerine.version}</span><br>
+      <span id='version-uuid'>#{Tangerine.version}-#{Tangerine.buildVersion}</span><br>
     </div>
     "
 
