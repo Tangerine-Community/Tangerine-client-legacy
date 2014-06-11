@@ -109,7 +109,7 @@ class Router extends Backbone.Router
       klass: ->
         Tangerine.router.navigate "class", callFunction
 
-    document.location.reload() if refresh and not Tangerine.settings.context('server') # no need to refresh on server
+    document.location.reload() if refresh and 'server' isnt Tangerine.settings.get('context') # no need to refresh on server
 
 
   groups: ->
