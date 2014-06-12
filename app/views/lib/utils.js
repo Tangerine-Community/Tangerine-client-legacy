@@ -60,5 +60,3 @@ if (typeof exports === "object") {
   exports.cell = utils.cell;
   exports.unpair = utils.unpair;
 }
-
-//# sourceMappingURL=utils.map
