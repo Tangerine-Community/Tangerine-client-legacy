@@ -5,10 +5,10 @@
 
   result =
     resultId         : doc._id
-    enumerator       : doc.enumerator
+    enumerator       : doc.enumerator or doc.editedBy
     assessmentName   : doc.assessmentName
     assessmentId     : doc.assessmentId
-    startTime        : (doc.start_time or doc.startTime)
+    startTime        : doc.start_time or doc.startTime
     tangerineVersion : doc.tangerine_version
     numberOfSubtests : doc.subtestData.length
     workflowId       : doc.workflowId
