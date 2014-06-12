@@ -29,7 +29,7 @@
 
 
   #
-  # by Zone, County, subject, class
+  # by Zone, County, subject, class, gps
   #
 
   result.minTime = doc.startTime || doc.start_time || doc.subtestData.start_time
@@ -59,7 +59,19 @@
 
       result.subject = subtest.data.subject if subtest.data.subject?
       result.class   = subtest.data.class   if subtest.data.class?
+      result.week    = subtest.data.week    if subtest.data.week?
+      result.day     = subtest.data.day     if subtest.data.day?
 
+
+
+    else if subtest.prototype is "gps" and subtest.data.long? and subtest.data.lat?
+
+      result.gpsData = 
+        type : 'Feature'
+        properties : []
+        geometry :
+          type : 'Point'
+          coordinates : [ subtest.data.long, subtest.data.lat ]
 
   #
   # items per minute
@@ -89,5 +101,17 @@
   #
 
   result.subtests = doc.subtestData.length || 1
+
+
+  #
+  # WorkflowId
+  #
+  result.workflowId = doc.workflowId
+
+  #
+  # _id
+  #
+
+  result.ids = [doc._id]
 
   emit doc.tripId, result

@@ -6,12 +6,17 @@
     metBenchmark   : 0
     benchmarked    : 0
     itemsPerMinute : []
+    ids            : []
 
   for value in values
     for k, v of value
 
       if k is "subtests"
         result.subtests += v
+
+      else if k is "ids"
+        unless rereduce
+          result.ids.push v
 
       else if k is "itemsPerMinute"
 
@@ -52,3 +57,7 @@
       result.metBenchmark++ if english and class2 and ipm >= 65
 
   return result
+
+
+
+
