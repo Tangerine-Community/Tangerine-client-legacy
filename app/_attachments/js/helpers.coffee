@@ -81,17 +81,21 @@ Backbone.Model.prototype.prune = ( shape = {} ) ->
 Backbone.Model.prototype.toHash = ->
   significantAttributes = {}
   for key, value of @attributes
-    significantAttributes[key] = value if !~['_rev', '_id','hash','updated','editedBy'].indexOf(key)
+    significantAttributes[key] = value if !~['_rev', '_id','hash','updated','editedBy','fromInstanceId'].indexOf(key)
   return b64_sha1(JSON.stringify(significantAttributes))
 
 # by default all models will save a timestamp and hash of significant attributes
 Backbone.Model.prototype._beforeSave = (key, val, options) ->
   @beforeSave?(key, val, options)
+  @stamp()
+
+Backbone.Model.prototype.stamp = ->
   @set 
     "editedBy" : Tangerine?.user?.name() || "unknown"
     "updated" : (new Date()).toString()
     "hash" : @toHash()
     "fromInstanceId" : Tangerine.settings.getString("instanceId")
+
 
 #
 # This series of functions returns properties with default values if no property is found
@@ -1011,6 +1015,8 @@ $.ajaxSetup
 #  \___/|____/  |_| \_|\__,_|\__|_| \_/ \___|
 #                                            
 #
+
+
 
 
 String.prototype.safetyDance = -> this.replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g,"")

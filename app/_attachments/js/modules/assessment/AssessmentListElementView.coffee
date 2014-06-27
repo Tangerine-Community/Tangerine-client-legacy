@@ -53,9 +53,7 @@ class AssessmentListElementView extends Backbone.View
     Tangerine.router.navigate(route, true)
 
   duplicate: ->
-    newName = "Copy of " + @model.get("name")
-    @model.duplicate { name : newName }, null, null, (assessment) => 
-      @model.trigger "new", assessment
+    @model.duplicate()
 
   copyTo: (group) ->
     @model.replicate group, =>

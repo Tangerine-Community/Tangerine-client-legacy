@@ -237,10 +237,6 @@ class Assessment extends Backbone.Model
                             @lastDKey = ""
 
 
-
-
-
-
   updateFromTrunk: ( dKey = @calcDKey() ) =>
 
     # split to handle multiple dkeys
@@ -269,58 +265,91 @@ class Assessment extends Backbone.Model
 
     false
 
-  duplicate: (assessmentAttributes, subtestAttributes, questionAttributes, callback) ->
+  duplicate: ->
 
-    originalId = @id
+    questions = new Questions
+    subtests  = new Subtests
 
-    newModel = @clone()
-    newModel.set assessmentAttributes
+    modelsToSave = []
+
+    oldModel = @
+
+    # general pattern: clone attributes, modify them, stamp them, put attributes in array
+
+    $.extend(true, clonedAttributes = {}, @attributes)
+
     newId = Utils.guid()
 
-    newModel.save
-      "_id"          : newId
-      "assessmentId" : newId
-    ,
-      success: =>
-        questions = new Questions
-        questions.fetch
-          key: originalId
-          success: ( questions ) =>
-            subtests = new Subtests
-            subtests.fetch
-              key: originalId
-              success: ( subtests ) =>
-                filteredSubtests = subtests.models
-                subtestIdMap = {}
-                newSubtests = []
-                # link new subtests to new assessment
-                for model, i in filteredSubtests
-                  newSubtest = model.clone()
-                  newSubtest.set "assessmentId", newModel.id
-                  newSubtestId = Utils.guid()
-                  subtestIdMap[newSubtest.id] = newSubtestId
-                  newSubtest.set "_id", newSubtestId
-                  newSubtests.push newSubtest
+    clonedAttributes._id          = newId
+    clonedAttributes.name         = "Copy of #{clonedAttributes.name}"
+    clonedAttributes.assessmentId = newId
+    
+    newModel = new Assessment(clonedAttributes)
+
+    modelsToSave.push (newModel).stamp().attributes
 
 
-                # update the links to other subtests
-                for model, i in newSubtests
-                  gridId = model.get( "gridLinkId" )
-                  if ( gridId || "" ) != ""
-                    model.set "gridLinkId", subtestIdMap[gridId]
-                  model.save()
+    getQuestions = ->
+      questions.fetch
+        key: oldModel.id
+        success: -> getSubtests()
 
-                newQuestions = []
-                # link questions to new subtest
-                for question in questions.models
-                  newQuestion = question.clone()
-                  oldId = newQuestion.get "subtestId"
-                  newQuestion.set "assessmentId", newModel.id
-                  newQuestion.set "_id", Utils.guid() 
-                  newQuestion.set "subtestId", subtestIdMap[oldId]
-                  newQuestions.push newQuestion
-                  newQuestion.save()
-                callback newModel
+    getSubtests = ->
+      subtests.fetch
+        key: oldModel.id
+        success: -> processDocs()
+
+    processDocs = ->
+
+      subtestIdMap = {}
+
+      # link new subtests to new assessment
+      for subtest in subtests.models
+        
+        oldSubtestId = subtest.id
+        newSubtestId = Utils.guid()
+
+        subtestIdMap[oldSubtestId] = newSubtestId
+
+        $.extend(true, newAttributes = {}, subtest.attributes)
+        
+        newAttributes._id          = newSubtestId
+        newAttributes.assessmentId = newId
+
+        modelsToSave.push (new Subtest(newAttributes)).stamp().attributes
+
+      # update the links to other subtests
+      for subtest in modelsToSave
+        if subtest.gridLinkId? and subtest.gridLinkId != ""
+          subtest.gridLinkId = subtestIdMap[subtest.gridLinkId]
+
+      # link questions to new subtests
+      for question in questions.models
+
+        $.extend(true, newAttributes = {}, question.attributes)
+
+        oldSubtestId = newAttributes.subtestId
+
+        newAttributes._id          = Utils.guid() 
+        newAttributes.subtestId    = subtestIdMap[oldSubtestId]
+        newAttributes.assessmentId = newId
+
+        modelsToSave.push (new Question(newAttributes)).stamp().attributes
+
+      requestData = "docs" : modelsToSave
+
+      $.ajax
+        type : "POST"
+        contentType : "application/json; charset=UTF-8"
+        dataType : "json"
+        url : Tangerine.settings.urlBulkDocs()
+        data : JSON.stringify(requestData)
+        success : (responses) => oldModel.trigger "new", newModel
+        error : -> Utils.midAlert "Duplication error"
+
+    # kick it off
+    getQuestions()
+
 
   destroy: =>
 
