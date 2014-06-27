@@ -1,14 +1,15 @@
 ( doc ) ->
 
   return unless doc.collection is "result"
-  return unless (doc.start_time or doc.startTime)?
+  startTime = doc.start_time or doc.startTime
+  return unless startTime?
 
   result =
     resultId         : doc._id
     enumerator       : doc.enumerator or doc.editedBy
     assessmentName   : doc.assessmentName
     assessmentId     : doc.assessmentId
-    startTime        : doc.start_time or doc.startTime
+    startTime        : startTime
     tangerineVersion : doc.tangerine_version
     numberOfSubtests : doc.subtestData.length
     workflowId       : doc.workflowId
@@ -27,4 +28,4 @@
       for label, i in subtest.data.labels
        result["Location: #{label}"] = subtest.data.location[i]
 
-  emit (doc.start_time or doc.startTime) , result
+  emit startTime , result

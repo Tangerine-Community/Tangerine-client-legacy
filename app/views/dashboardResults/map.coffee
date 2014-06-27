@@ -10,6 +10,7 @@
     tangerineVersion : doc.tangerine_version
     numberOfSubtests : doc.subtestData.length
     subtests         : []
+    tripId           : doc.tripId
 
   for subtest in doc.subtestData
 
