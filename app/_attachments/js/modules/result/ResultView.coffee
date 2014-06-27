@@ -16,7 +16,8 @@ class ResultView extends Backbone.View
       finishCheck : false
 
   another: ->
-    Tangerine.router.navigate "restart/#{@assessment.id}", true
+    window.location.reload()
+    #Tangerine.router.navigate "restart/#{@assessment.id}", false
 
   save: =>
     @model.add
