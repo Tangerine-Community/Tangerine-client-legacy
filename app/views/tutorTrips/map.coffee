@@ -36,8 +36,9 @@
         zoneIndex   = i if label is "Zone"
         countyIndex = i if label is "County"
 
-      zoneKey   = "zone-"   + subtest.data.location[zoneIndex]
-      countyKey = "#{zoneKey}-county-" + subtest.data.location[countyIndex]
+      countyKey = "county-" + subtest.data.location[countyIndex]
+      zoneKey   = "#{countyKey}-zone-"   + subtest.data.location[zoneIndex]
+      
 
       emit zoneKey,   doc.tripId if subtest.data.location[zoneIndex]?
       emit countyKey, doc.tripId if subtest.data.location[countyIndex]?
