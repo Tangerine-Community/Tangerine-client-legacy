@@ -203,7 +203,6 @@ libFiles = [
   'lib/jquery.js',
   'lib/underscore.js',
   'lib/sha1.js',
-  'lib/d3.js',
   'lib/jquery.couch.js',
   'lib/jquery.cookie.js',
   'lib/jquery.tablesorter.js',
@@ -219,10 +218,6 @@ libFiles = [
   'lib/jquery.ui.accordion.js',
   'lib/jquery.ui.button.js',
   'lib/jquery.ui.progressbar.js',
-
-  'lib/leaflet.js',
-  'lib/leaflet.markercluster.js',
-  'lib/leaflet-providers.js',
 
   'lib/inflection.js',
   'lib/backbone.js',
