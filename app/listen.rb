@@ -46,10 +46,13 @@ end
 def notify( type, message )
   printf "\a"
   unless `which osascript`.empty? # on a mac?
-    message = /\.coffee:(.*?)$/.match(message)[1]
-    `osascript -e 'tell app \"System Events\" to display dialog \"#{type}\n\n#{message}\"'`
+
+    message = /\.coffee,(.*?)\n/.match(message)[1]
+    `osascript -e 'tell app "System Events" to display dialog "#{type}\n\n#{message}"'`
   end
-  `notify-send "#{type} - #{message}" -i /usr/share/icons/Humanity/status/128/dialog-warning.svg &` unless `which notify-send`.empty?
+  unless `which notify-send`.empty? # on linux with notify-send
+    `notify-send "#{type} - #{message}" -i /usr/share/icons/Humanity/status/128/dialog-warning.svg &`
+  end
 end
 
 puts "\nGo ahead, programmer. I'm listening...\n\n"
@@ -79,8 +82,7 @@ listen = Listen.to(".") do |modified, added, removed|
         # Otherwise, just compile
         puts "\nCompiling:\t\t#{localMatch}"
         couchSpecial = /shows\/|views\/|lists\//.match(match)
-        mapOption = if couchSpecial then "" else "--map" end
-        result = `coffee #{mapOption} --bare --compile #{match} 2>&1`
+        result = `coffee --bare --compile #{match} 2>&1`
         if not couchSpecial
           jsFile = match.gsub(".coffee", ".js")
           Dir.chdir($jsDir) {
@@ -121,7 +123,7 @@ listen = Listen.to(".") do |modified, added, removed|
 
         libFile = /lib\//.match(file)
         if libFile
-          puts "\nUpdating:\t\tlib.js with match"
+          puts "\nUpdating:\t\tlib.js with #{localMatch}"
           Dir.chdir($jsDir) {
             puts `./uglify.rb lib`
           }
