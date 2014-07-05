@@ -125,9 +125,6 @@ class SubtestEditView extends Backbone.View
 
     @model.set
       name              : @$el.find("#subtest_name").val()
-      enumeratorHelp    : @$el.find("#enumerator_help").val()
-      studentDialog     : @$el.find("#student_dialog").val()
-      transitionComment : @$el.find("#transition_comment").val()
       skippable         : @$el.find("#skip_radio input:radio[name=skippable]:checked").val() == "true"
 
       enumeratorHelp    : @$el.find("#enumerator_textarea").val()

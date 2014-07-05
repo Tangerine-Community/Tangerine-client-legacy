@@ -10,7 +10,96 @@ class SyncManagerView extends Backbone.View
   className : "SyncManagerView"
 
   events:
-    'click .upload'      : 'upload'
+    'click .upload'   : 'upload'
+    'click .sync-old' : 'syncOldSetup'
+
+  RESULT_CHUNK_SIZE : 50
+
+  syncOldSetup: ->
+
+    @updateSyncOldProgress message: "Starting"
+    $.ajax
+      url: Tangerine.settings.urlSession "group"
+      dataType: "jsonp"
+      success: (response) =>
+        unless response.userCtx.name is "uploader-"+Tangerine.settings.get("groupName")
+          alert "Logging in to server. Please sync again."
+          Tangerine.user.ghostLogin "uploader-"+Tangerine.settings.get("groupName"), Tangerine.settings.get("upPass")
+          return
+        @updateSyncOldProgress message: "Fetching result ids"
+
+        $.ajax
+          url: Tangerine.settings.urlView("group", "tripsAndUsers")
+          dataType: "jsonp"
+          data:
+            keys:
+              JSON.stringify([Tangerine.user.get("name")].concat(Tangerine.user.getArray("previousUsers")))
+          error: =>
+            alert "Error syncing"
+            @updateSyncOldProgress message: "Error fetching result ids"
+          success: (data) =>
+
+            resultIds = data.rows.map (el) -> el.id
+
+            @updateSyncOldProgress message: "Building replication job"
+            @resultChunks = []
+
+            tripCount = 0
+            tempResults = []
+
+            for index in [0..resultIds.length] by @RESULT_CHUNK_SIZE
+              @resultChunks.push resultIds.slice( index, index + @RESULT_CHUNK_SIZE )
+
+            @resultChunkCount = @resultChunks.length
+
+            console.log @resultChunks
+
+            @syncOldReplicate()
+
+  syncOldReplicate: ->
+
+    syncError = false
+
+    doOne = =>
+
+      percentageDone = ((@resultChunkCount - @resultChunks.length) / @resultChunkCount) * 100
+
+      @updateSyncOldProgress percentage: percentageDone
+
+      if @resultChunks.length is 0
+
+        Utils.sticky "There was an error during syncing, please try again." if syncError
+
+      else
+
+        docIds = @resultChunks.pop()
+
+        $.couch.replicate Tangerine.settings.urlDB("group"), Tangerine.db_name,
+          {
+            success : ->
+              doOne()
+            error: ->
+              syncError = true
+              doOne()
+          },
+            doc_ids : docIds
+
+    doOne()
+
+  updateSyncOldProgress: ( options ) ->
+
+    if options.message?
+      @$el.find('#sync-old-progress').html "
+        <tr>
+          <th>Status</th><td>#{options.message}</td>
+        </tr>
+      "
+    else if options.percentage?
+      @$el.find('#sync-old-progress').html "
+        <tr>
+          <th>Complete<th><td>#{parseInt(options.percentage)}%</td>
+        </tr>
+      "
 
 
 
@@ -23,8 +112,10 @@ class SyncManagerView extends Backbone.View
     @update => @render()
 
 
+
   update: ( callback ) ->
     todoList = [
+      @syncUsers
       @updateSyncable
       @updateSunc
       @updateCounts
@@ -36,6 +127,23 @@ class SyncManagerView extends Backbone.View
       doNow => doIt()
 
     doIt()
+
+  syncUsers: ( callback ) ->
+    tabletUsers = new TabletUsers
+    tabletUsers.fetch
+      error: -> callback()
+      success: ->
+        docIds = tabletUsers.pluck "_id"
+        $.couch.replicate Tangerine.db_name, Tangerine.settings.urlDB("group"),
+          {
+            success : ->
+              callback()
+            error: ->
+              callback()
+          },
+            doc_ids : docIds
+
+
 
   updateSyncable: (callback) =>
     Tangerine.$db.view "#{Tangerine.design_doc}/tripsAndUsers",
@@ -110,7 +218,12 @@ class SyncManagerView extends Backbone.View
           <td colspan='2'><button class='upload command'>Upload</button></td>
         </tr>
       </table>
-    </section>    
+    </section>
+    <section>
+      <h2>Server results</h2>
+      <table id='sync-old-progress'></table>
+      <button class='sync-old command'>Sync</button>
+    </section>
     "
 
 

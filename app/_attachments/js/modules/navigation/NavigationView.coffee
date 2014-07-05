@@ -27,11 +27,48 @@ class NavigationView extends Backbone.View
     if @workflows.length isnt 0
       Tangerine.router.navigate "tutor-account", true
 
+  # if we're running a workflow and
+  # the index isn't the last or the first
+  # then confirm we want to save the trip id to our list of resumable workflows
+  confirmWorkflowExit: ->
+
+    view = vm.currentView
+
+    return false unless view instanceof WorkflowRunView
+
+    # only ask if the workflow isn't finished
+    return false if view.index is view.workflow.getLength()
+
+    # only ask if the first step is done
+    return false if view.index is 0
+
+    return unless confirm("This workflow is incomplete. Do you wish to resume later?\n\nYou may have to renter previously entered data.")
+
+    incomplete = Tangerine.user.getPreferences("tutor-workflows", "incomplete") || {}
+    
+    workflowId = view.workflow.id
+
+    incomplete[workflowId] = [] unless incomplete[workflowId]?
+    incomplete[workflowId].push view.tripId
+    view.steps[view.index].result.save()
+
+    Tangerine.user.setPreferences "tutor-workflows", "incomplete", incomplete
+
+    return true
+
+  # Let the admin user do what they want
+  # Ask non-admins if they're sure they want to abandon the assessment
+  # if it's a workflow, ask if they'd like to resume later
   logoClick: -> 
     if @user.isAdmin()
       Tangerine.activity = ""
+      @confirmWorkflowExit()
       @router.reload()
+
     else
+      if @confirmWorkflowExit()
+        Tangerine.activity = ""
+        return @router.reload()
       if Tangerine.activity == "assessment run"
         if confirm @text.incomplete_main
           Tangerine.activity = ""

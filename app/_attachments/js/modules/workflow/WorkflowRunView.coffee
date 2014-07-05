@@ -10,9 +10,9 @@ class WorkflowRunView extends Backbone.View
 
   initialize: (options) ->
     @[key] = value for key, value of options
-    @tripId = Utils.guid()
-    @index = 0
-    @steps = []
+    @tripId = Utils.guid() unless @tripId?
+    @index = 0 unless @index?
+    @steps = [] unless @steps?
     @currentStep = @workflow.stepModelByIndex @index
 
   shouldSkip: ->
@@ -133,7 +133,7 @@ class WorkflowRunView extends Backbone.View
       
       subject = @getVariable("subject")
 
-      subject = ({"word": "kiswahili", "english_word" : "english", "operation" : "maths"})[subject]
+      subject = ({"bukusu": "bukusu","kamba": "kamba","word": "kiswahili", "english_word" : "english", "operation" : "maths"})[subject]
       grade   = @getVariable("class")
       week    = @getVariable("week")
       day     = @getVariable("day")
@@ -158,8 +158,10 @@ class WorkflowRunView extends Backbone.View
           else
             @$lessonContainer.append(lessonImage)
 
-      lessonImage.src = "images/lessons/#{subject}_c#{grade}_w#{week}_d#{day}.png"
-
+      unless subject is "bukusu" or subject is "kamba"
+        lessonImage.src = "images/lessons/#{subject}_c#{grade}_w#{week}_d#{day}.png"
+      else
+        lessonImage.src = "images/lessons/#{subject}_w#{week}_d#{day}.png"
 
     else
       @lessonContainer?.remove?()

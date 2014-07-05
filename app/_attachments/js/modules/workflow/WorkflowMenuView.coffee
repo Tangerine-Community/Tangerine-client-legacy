@@ -7,8 +7,21 @@ class WorkflowMenuView extends Backbone.View
     "click .workflow-delete" : "delete"
     "click .workflow-run"    : "run"
     "click .workflow-edit"   : "edit"
+    'click .remove-resume'   : 'removeResume'
 
+  removeResume: (event) ->
 
+    $target = $(event.target)
+    workflowId = $target.attr("data-workflowId")
+    tripId     = $target.attr("data-tripId")
+    return unless confirm "Are you sure you want to remove the option to resume this workflow?"
+
+    incomplete = Tangerine.user.getPreferences "tutor-workflows", "incomplete"
+
+    incomplete[workflowId] = _(incomplete[workflowId]).without tripId
+
+    Tangerine.user.setPreferences "tutor-workflows", "incomplete", incomplete, =>
+      @updateWorkflows()
 
   new: ->
     guid = Utils.guid()
@@ -104,13 +117,32 @@ class WorkflowMenuView extends Backbone.View
       else
         feedbackHtml = ""
 
-
       htmlWorkflows += "
         <li id='#{workflow.id}' style='margin-bottom:25px;'>
           <section>
             <a href='#workflow/run/#{workflow.id}' class='workflow-button-link'>#{workflow.get('name')}</a>
             #{feedbackHtml}
+            <div id='resume-workflow-#{workflow.id}'></div>
           </section>
         </li>
         "
     @$el.find(".workflow-menu").html htmlWorkflows
+
+    @renderResumeInfo()
+
+  renderResumeInfo: ->
+      incompleteWorkflows = Tangerine.user.getPreferences('tutor-workflows', 'incomplete') || {}
+
+      for workflowId, tripIds of incompleteWorkflows
+        if tripIds.length isnt 0
+          for tripId in tripIds
+            Tangerine.$db.view "#{Tangerine.design_doc}/tripsAndUsers",
+              key: tripId
+              include_docs : true
+              success: (data) =>
+                first = data.rows[0].doc
+                timeAgo = moment(first.updated).fromNow()
+                @$el.find("#resume-workflow-#{first.workflowId}").append "
+                  <a href='#workflow/resume/#{first.workflowId}/#{first.tripId}'><button class='command'>Resume</button></a> #{timeAgo} <button class='command remove-resume' data-workflowId='#{first.workflowId}' data-tripId='#{first.tripId}'>X</button><br>
+                "
+

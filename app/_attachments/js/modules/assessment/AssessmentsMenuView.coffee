@@ -143,7 +143,6 @@ class AssessmentsMenuView extends Backbone.View
           #{groupsButton}
           #{apkButton}
           #{resultsButton} 
-          #{mapButton} 
           #{groupHandle}
           "
         ) }

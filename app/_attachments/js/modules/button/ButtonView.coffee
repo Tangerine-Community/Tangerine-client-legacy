@@ -4,9 +4,13 @@ class ButtonView extends Backbone.View
 
   events : 
       if Modernizr.touch
-        "click .button" : "onClick"
-      else
-        "click .button"      : "onClick"
+        {
+          "click .button" : "onClick"
+        }
+      else 
+        {
+          "click .button"      : "onClick"
+        }
 
   getValue: -> @answer
 

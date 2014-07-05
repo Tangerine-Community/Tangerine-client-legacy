@@ -42,11 +42,11 @@ class TabletUser extends Backbone.Model
 
   ###
 
-  setPreferences: ( domain = "general", key = '', value = '' ) ->
+  setPreferences: ( domain = "general", key = '', value = '', callback = $.noop) ->
     preferences = @get("preferences") || {}
     preferences[domain] = {} unless preferences[domain]?
     preferences[domain][key] = value
-    @save("preferences":preferences)
+    @save("preferences":preferences, success:callback, error:callback)
 
 
   getPreferences: ( domain = "general", key = "" ) ->

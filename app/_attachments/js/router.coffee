@@ -20,7 +20,7 @@ class Router extends Backbone.Router
 
     'workflow/edit/:workflowId' : 'workflowEdit'
     'workflow/run/:workflowId'  : 'workflowRun'
-
+    'workflow/resume/:workflowId/:tripId'  : 'workflowResume'
 
     'feedback/edit/:workflowId' : 'feedbackEdit'
     'feedback/:workflowId'      : 'feedback'
@@ -85,6 +85,7 @@ class Router extends Backbone.Router
     'result/:resultId' : 'result'
 
     'admin' : 'admin'
+    'reportUser/:id' : 'editReportUser'
 
     'features' : 'features'
 
@@ -99,15 +100,19 @@ class Router extends Backbone.Router
       isAuthenticated: ->
         vm.show new TutorAccountView
 
-  admin: (options) ->
+  admin: ->
     Tangerine.user.verify
       isAdmin: ->
-        $.couch.allDbs
-          success: (databases) =>
-            groups = databases.filter (database) -> database.indexOf("group-") == 0
-            view = new AdminView
-              groups : groups
-            vm.show view
+        vm.show new AdminView
+
+  editReportUser: ( reportUserId ) ->
+    throw URIError unless reportUserId?
+    Tangerine.user.verify
+      isAdmin: ->
+        user = new ReportUser "_id" : reportUserId
+        user.fetch
+          success: ->
+            vm.show new ReportUserEditView user : user
 
   features: (options) ->
     Tangerine.user.verify
@@ -347,6 +352,42 @@ class Router extends Backbone.Router
             view = new WorkflowRunView
               workflow: workflow
             vm.show view
+
+  workflowResume: ( workflowId, tripId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            Tangerine.$db.view Tangerine.design_doc+"/tripsAndUsers",
+              key: tripId
+              include_docs: true
+              success: (data) ->
+                index = Math.max(data.rows.length - 1, 0)
+
+                # add old results
+                steps = []
+                for j in [0..index]
+                  steps.push {result : new Result data.rows[j].doc}
+
+                workflow = new Workflow "_id" : workflowId
+                workflow.fetch
+                  success: ->
+
+                    incomplete = Tangerine.user.getPreferences("tutor-workflows", "incomplete")
+
+                    incomplete[workflowId] = _(incomplete[workflowId]).without tripId
+
+                    Tangerine.user.getPreferences("tutor-workflows", "incomplete", incomplete)
+
+                    workflow.updateCollection()
+                    view = new WorkflowRunView
+                      workflow: workflow
+                      tripId  : tripId
+                      index   : index
+                      steps   : steps
+                    vm.show view
 
 
 

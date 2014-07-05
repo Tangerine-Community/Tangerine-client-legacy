@@ -3,7 +3,7 @@ class LoginView extends Backbone.View
   className: 'LoginView'
 
   events: 
-    if Modernizr.touch
+    if Modernizr.touch then {
       'keypress input'     : 'keyHandler'
       'change input'       : 'onInputChange'
       'change select#name' : 'onSelectChange'
@@ -12,7 +12,7 @@ class LoginView extends Backbone.View
       'click .recent' : 'showRecent' #touchstart
       'blur .recent'       : 'blurRecent'
       'keyup #new_name'    : 'checkNewName'
-    else
+    } else {
       'keypress input'     : 'keyHandler'
       'change input'       : 'onInputChange'
       'change select#name' : 'onSelectChange'
@@ -21,6 +21,7 @@ class LoginView extends Backbone.View
       'click .recent'      : 'showRecent'
       'blur .recent'       : 'blurRecent'
       'keyup #new_name'    : 'checkNewName'
+    }
 
   initialize: (options) ->
     $(window).on('orientationchange scroll resize', @recenter)

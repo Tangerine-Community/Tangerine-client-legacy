@@ -2,8 +2,7 @@ class LoginView extends Backbone.View
 
   className: 'LoginView'
 
-  events: 
-    if Modernizr.touch
+  events: if Modernizr.touch then {
       'keypress input'     : 'keyHandler'
       'change input'       : 'onInputChange'
       'change select#name' : 'onSelectChange'
@@ -14,7 +13,9 @@ class LoginView extends Backbone.View
       'keyup #new-name'    : 'checkNewName'
       'click .next'   : 'next' #touchstart
       'click .verify' : 'verify' #touchstart
-    else
+    } 
+  else
+    {
       'keypress input'     : 'keyHandler'
       'change input'       : 'onInputChange'
       'change select#name' : 'onSelectChange'
@@ -25,10 +26,12 @@ class LoginView extends Backbone.View
       'keyup #new-name'    : 'checkNewName'
       'click .next'        : 'next'
       'click .verify'      : 'verify'
+    }
 
   backButton: -> return false
 
   initialize: (options) ->
+    @usersJuly4 = [" reuben rutto kamoet", "aballa", "abraham musyoka", "abraham.", "admin", "agatha kimani", "agnes", "agnes nyakundi", "alego", "allan", "allan nyondah", "amos  nguti", "amos nguti", "arap kerich", "atis", "austine", "austine ligare", "beatrice  aballa", "beatrice aballa", "ben", "ben kakalukha", "ben kakhalukha", "benson karanga ", "bkaranga", "boniface", "boniface ngunguu", "bpiper", "caleb", "caleb ouma", "caleb ouma.", "caleb owiti ouma.", "carmen", "christine barasa", "clavers", "cotewa", "cotewaprimr", "cs", "dalmas alego", "david", "david kerich", "davidmut", "davidmutuma", "demo", "denis", "dennis", "dicksonprimr", "dismas", "dismas  sikuku", "dismas sikuku", "dismassikuku", "dmwikya", "donvan amenya", "dorcas", "dorcas oduor", "doreen", "doreen olubendi", "ej", "eliud atieno", "elizabeth atieno", "elizabethatieno", "emily", "euphrasiashumila", "evelynprimr", "faith", "felistas  staka", "felistas staka", "felistasstaka", "felistus", "fet", "fnjagi", "francis", "francis nalimae", "francis onyango", "francismuli", "fred surai", "george", "george irungu", "gregory kitonyi", "hannah faith mkoji", "irungu", "isaac cherotich", "jane", "jane  moses", "jane moses", "jane primr", "janet", "janet vijebi", "janette vijedi", "jepkorir", "jepkorir rotich", "jeremiah mue", "john", "john kisongochi", "johnson  omurwa", "johnson omurwa", "jonathan", "jonathan kisaka", "joseph", "joseph sikuku", "josephat  tabuka", "josephat tabuka", "josh", "julie ogonya", "kerich", "kerichdavid", "kevin otieno", "kgichana", "kibukho", "kitaka", "kitakawilson", "kkibukho", "linda", "linda akach", "liz", "loponi", "lucy", "lucy kiviu", "lucy kiviu ", "lucykiviu", "lulu", "lutgard loponi", "martha", "marthacatherine", "martin  kimeu", "martin kimeu", "mary", "marysimiyu", "michael ilekyo", "michael ilekyo pool", "michael ndambuki", "mildren", "mildrenlangoprimr", "muinde", "mulandi  john", "mulandi john", "mvm", "nahashon sitati", "nahshon sitati", "naibei", "naomi wanyonyi", "nawanga", "nenunge", "ngamau", "ngamau margaret", "nicky", "nivky", "njagiprimr", "nyambura", "obure", "obure lawrence", "okaka alego", "okullo", "omurwa", "patrick", "patrick wagachebo", "peter clavers", "peter clavers ", "philip ongele", "phyllis", "primr", "primr anne njogu", "primr benard makeni", "primr david mutuma", "primr dickson", "primr dickson otiangala", "primr jane", "primr jane ", "primr jesse", "primr jesse mabongah", "primr joseph gatonye", "primr kinoti", "primr koko", "primr mabongah jesse", "primr makeni bernard", "primr okaka alego", "primr okullo", "primr robert", "primr rowland", "primr samuel", "primr sarah koko", "primranne", "primranne njogu", "primrarbogast", "primrben", "primrcotewa", "primrdan", "primrdankwayumba", "primrdavidmutuma", "primrdemo", "primrdennis", "primrdennismwikya", "primrdes", "primrdoreenolubendi", "primrfrancis", "primrisaac", "primrjane", "primrjgatonye", "primrken", "primrkinoti", "primrlinda", "primrlucy", "primrlucywambari", "primrmakeni", "primrmercy", "primrmildren", "primrmildrenlango", "primrpeterclavers", "primrphyllis", "primrsally", "primrsamuel", "primrtabitha", "primrtabithanduku", "primrthomas", "primrthomasmachua", "pwandeto", "raphael muinde", "reuben rutto", "reuben rutto kamoet", "robert", "roseline  wangawi", "roseline wangawi", "roseline wangawi ", "rutto", "samsonkodande", "samuel", "samuel m. naibei.", "samuel naibei", "samuel ogwang", "scott_kipp", "sd", "shumila", "simon kundi", "sitati", "sitati nahshon", "situma", "situma meru", "skoko", "staka", "stephen", "stephen m wambua", "stephen nzioki", "stephen wambua", "surai", "tabuka", "tabuka.", "tangerine", "timothy", "timothy loki", "timothy m loki", "timothy situma", "tmachua", "violet akinyi", "wagachebo", "wanjiru", "wanjiru  o", "wanjiru mukuha", "wanjiruo", "washington", "washington ondoro", "wilson kitaka", "wkappus", "wycliffe", "wycliffe nenunge", "zuri"]
     $(window).on('orientationchange scroll resize', @recenter)
     @mode = "login"
     @i18n()
@@ -49,7 +52,6 @@ class LoginView extends Backbone.View
     else
       @clearErrors()
 
-
   onInputChange: (event) ->
     $target = $(event.target)
     type = $target.attr("type")
@@ -67,6 +69,7 @@ class LoginView extends Backbone.View
     @initAutocomplete()
 
   initAutocomplete: ->
+
     @$el.find("#name").autocomplete
       source: @users.pluck("name")
 
@@ -201,7 +204,12 @@ class LoginView extends Backbone.View
 
           <input id='phone' type='number' placeholder='#{@text.phone}'>
           <input id='email' type='text' placeholder='#{@text.email}'>
-
+          <br>
+          <label for='same-users'>Please merge previous user names with this one</label>
+          <select multiple='true' id='same-users'>
+            #{("<option value='#{user.get('id')}'>#{user.get('name')}</option>" for user in @users.models || []).join('')}
+            #{("<option value='#{user}'>#{user}</option>" for user in @usersJuly4).join('')}
+          </select>
 
           <button class='sign-up'>#{@text.sign_up}</button>
         </section>
@@ -342,6 +350,8 @@ class LoginView extends Backbone.View
     if ( email  = ( $email  = @$el.find("#email")     ).val() ).length is 0
       errors.push " - Email cannot be empty"
 
+    previousUsers = ($previousUsers = @$el.find("#same-users")).val()
+
     question = ($pass1 = @$el.find("#challenge-question")).val()
     response = ($pass1 = @$el.find("#challenge-response")).val()
 
@@ -355,13 +365,15 @@ class LoginView extends Backbone.View
       "gender" : gender
       "phone"  : phone
       "email"  : email
+      "previousUsers" : previousUsers
 
     @passError(@text.pass_mismatch) if pass1 isnt pass2
 
     try
       @user.signup name, pass1, attributes
+
     catch e
-      console.log e
+      console.error e
       @nameError(e)
 
   login: ->
