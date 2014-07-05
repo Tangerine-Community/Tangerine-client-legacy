@@ -1625,6 +1625,32 @@ table.basic_info
   .box-sh( 5px, 5px, 30px, rgba(0,0,0,0.2));
 }
 
+/*
+ * ReportUserEditView
+ */
+.ReportUserEditView
+{
+  table
+  {
+    tr
+    {
+      th
+      {
+        text-align: left;
+      }
+    }
+  }
+}
+
+/*
+ * Report User View
+ */
+
+.report-user-not-current
+{
+  background-color: rgba(200, 200, 0, 0.3)
+}
+
 
 /*
  * CSV View
@@ -2081,28 +2107,12 @@ label.no_help
 .AdminView
 {
 
-  tr.odd  { background-color: #fefbf3; }
-  tr.even { background-color: #fdf1cd; }
-
-
-  table td
+  input[type='checkbox']
   {
-    font-size   : 0.6em;
-    font-weight : normal;
+    display:block;
+    width: auto;
+    vertical-align: middle;
   }
-
-  table th
-  {
-    font-size : 0.7em;
-  }
-
-  button
-  {
-    font-size : 1em;
-    padding: 0.5em !important;
-    margin: 0 2px;
-  }
-
 
 }
 
