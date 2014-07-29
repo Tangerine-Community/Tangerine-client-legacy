@@ -219,6 +219,7 @@ if $options[:make_app]
   app = ''
   for path in jsFiles
     puts "reading #{path}"
+    path = path.gsub(/ /, "\ ")
     path = File.join(Dir.pwd, "min", Pathname.new(path).basename.to_s.gsub(".js",".min.js"))
     app += File.read path 
 
