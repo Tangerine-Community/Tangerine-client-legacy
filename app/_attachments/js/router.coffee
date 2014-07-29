@@ -96,6 +96,8 @@ class Router extends Backbone.Router
 
     callFunction = not refresh
 
+    callFunction = true if 'server' is Tangerine.settings.get("context")
+
     Tangerine.settings.contextualize
       server: ->
         if ~String(window.location.href).indexOf("tangerine/_design") # in main group?
