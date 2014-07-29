@@ -349,9 +349,6 @@
     // state will be `set` again.
     save: function(key, value, options) {
 
-      // fetmar: call this model's beforeSave method first
-      if (this.beforeSave != null) this.beforeSave.apply(this, arguments);
-
       var attrs, current;
 
       // Handle both `("key", value)` and `({key: value})` -style calls.
@@ -375,6 +372,10 @@
       if (attrs && !this.set(attrs, options.wait ? silentOptions : options)) {
         return false;
       }
+
+      // fetmar: call this model's beforeSave method first
+      if (this.beforeSave != null) this.beforeSave.apply(this, arguments);
+
 
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
