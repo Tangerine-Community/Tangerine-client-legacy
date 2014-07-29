@@ -88,13 +88,13 @@ listen = Listen.to(".") do |modified, added, removed|
       else
         # Otherwise, just compile
         puts "\nCompiling:\t\t#{match}"
-        couchSpecial = /shows\/|views\/|lists\//.match(match)
-  
-        result = `coffee --bare --compile #{match} 2>&1`
+        couchSpecial = /shows\/|views\/|lists\/|specs\//.match(match)
+        
+        result = `coffee --bare --compile "#{match}" 2>&1`
         if not couchSpecial
           jsFile = match.gsub(".coffee", ".js")
           Dir.chdir($jsDir) {
-            puts `./uglify.rb #{jsFile}`
+            puts `./uglify.rb "#{jsFile}"`
           }
         end
 
@@ -121,7 +121,7 @@ listen = Listen.to(".") do |modified, added, removed|
     # Handle all the resulting compiled files
     /.*\.css|.*\.js$|.*\.html$|.*\.json$/.match(file) { |match|
       # Don't trigger push for these files
-      unless /version\.js|app\.js|index-dev|\/min\//.match(file)
+      unless /version\.js|app\.js|index-dev|\/min\/|\/specs\//.match(file)
         puts "\nUpdating:\t\t#{match}"
         push()
       end
