@@ -6,5 +6,7 @@
   ".*\\.DS_Store$",
   ".*listen.rb$",
   ".*couchapprc\\.sample$",
-  ".*\\.gitignore$"
+  ".*\\.gitignore$",
+  ".*\\Gemfile$",
+  ".*\\Gemfile.lockfile$"
 ]
