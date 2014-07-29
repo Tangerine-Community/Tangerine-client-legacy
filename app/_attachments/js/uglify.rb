@@ -235,6 +235,8 @@ end
 
 if $options[:compile]
   for file in $options[:compile]
+    file = file.gsub(/ /, "\ ")
+
     oldFile = File.read file
     File.open( File.join(Dir.pwd, "min", Pathname.new(file).basename.to_s.gsub(".js",".min.js")), "w" ) { |f|
       puts "\nUglifying\t\t#{file}"
@@ -247,6 +249,7 @@ if $options[:make_lib]
   lib = ''
   for path in libFiles
     puts "reading #{path}"
+    path = path.gsub(/ /, "\ ")
     lib += File.read(path)
   end
 
