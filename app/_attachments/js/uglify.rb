@@ -1,4 +1,4 @@
-#! /usr/bin/ruby
+#!/usr/bin/env ruby
 
 require 'uglifier'
 require 'pathname'
@@ -151,6 +151,8 @@ jsFiles = [
   'modules/subtest/prototypes/SurveyPrintView.js',
   'modules/subtest/prototypes/ObservationPrintView.js',
   'modules/subtest/SubtestPrintView.js',
+
+  'modules/config/Config.js',
 
   'modules/log/Log.js',
 
