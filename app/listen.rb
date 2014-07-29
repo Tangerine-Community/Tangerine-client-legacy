@@ -61,6 +61,15 @@ listen = Listen.to(".") do |modified, added, removed|
 
   files = modified.concat(added).concat(removed)
 
+  removed.each { |file|
+    /.*\.coffee$/.match(file) { |match|
+      match = match.to_s
+      puts `rm #{match.gsub(/\.coffee$/,'.js')}`
+      minJsFile = match.split("/").last.(/\.coffee$/,'.min.js')
+      puts `rm _attachments/js/min/#{minJsFile}`
+    }
+  }
+
   files.each { |file|
     # Handle coffeescript files
     /.*\.coffee$/.match(file) { |match|
