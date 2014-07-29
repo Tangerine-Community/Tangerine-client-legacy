@@ -9,35 +9,29 @@
 # Utils.disableConsoleAssert()
 
 
-#
-# Basic configuration
-#
-
-Tangerine.db_name    = window.location.pathname.split("/")[1]
-Tangerine.design_doc = _.last(String(window.location).split("_design/")).split("/")[0]
-
-# Local tangerine database handle
-Tangerine.$db = $.couch.db(Tangerine.db_name)
-
-# Backbone configuration
-Backbone.couch_connector.config.db_name   = Tangerine.db_name
-Backbone.couch_connector.config.ddoc_name = Tangerine.design_doc
-Backbone.couch_connector.config.global_changes = false
-
-# set underscore's template engine to accept handlebar-style variables
-_.templateSettings = interpolate : /\{\{(.+?)\}\}/g
-
-Tangerine.onBackButton = (event) ->
-  if Tangerine.activity == "assessment run"
-    if confirm t("NavigationView.message.incomplete_main_screen")
-      Tangerine.activity = ""
-      window.history.back()
-    else
-      return false
-  else
-    window.history.back()
-
 Tangerine.bootSequence = 
+
+  # Basic configuration
+
+  basicConfig : (callback) ->
+
+    Tangerine = window.Tangerine
+
+    Tangerine.db_name    = window.location.pathname.split("/")[1]
+    Tangerine.design_doc = _.last(String(window.location).split("_design/")).split("/")[0]
+
+    # Local tangerine database handle
+    Tangerine.$db = $.couch.db(Tangerine.db_name)
+
+    # Backbone configuration
+    Backbone.couch_connector.config.db_name   = Tangerine.db_name
+    Backbone.couch_connector.config.ddoc_name = Tangerine.design_doc
+    Backbone.couch_connector.config.global_changes = false
+
+    # set underscore's template engine to accept handlebar-style variables
+    _.templateSettings = interpolate : /\{\{(.+?)\}\}/g
+
+    callback()
 
   # Put this version's information in the footer
   versionTag: ( callback ) ->
@@ -48,8 +42,7 @@ Tangerine.bootSequence =
   # major system changes are required. New servers, etc.
   fetchConfiguration: ( callback ) ->
 
-    Tangerine.config = new Backbone.Model "_id" : "configuration"
-
+    Tangerine.config = new Config "_id" : "configuration"
     Tangerine.config.fetch
       error   : -> alert "Could not fetch configuration"
       success : callback
@@ -289,6 +282,7 @@ Tangerine.bootSequence =
 Tangerine.boot = (callback) ->
 
   sequence = [
+    Tangerine.bootSequence.basicConfig
     Tangerine.bootSequence.versionTag
     Tangerine.bootSequence.fetchConfiguration
     Tangerine.bootSequence.fetchSettings

@@ -36,6 +36,19 @@ ResultOfGrid = (name) ->
   return vm.currentView.result.getItemResultCountByVariableName(name, "correct")
 
 
+#
+# Tangerine backbutton handler
+#
+Tangerine = if Tangerine? then Tangerine else {}
+Tangerine.onBackButton = (event) ->
+  if Tangerine.activity == "assessment run"
+    if confirm t("NavigationView.message.incomplete_main_screen")
+      Tangerine.activity = ""
+      window.history.back()
+    else
+      return false
+  else
+    window.history.back()
 
 
 
