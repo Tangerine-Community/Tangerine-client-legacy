@@ -36,6 +36,8 @@
       "details" : "Details"
       "page" : "Page"
       "per_page" : "per page"
+    "message" :
+      "no_results" : "No results yet!"
     "button" : 
       "refresh" : "Refresh"
       "detect"  : "Detect options"

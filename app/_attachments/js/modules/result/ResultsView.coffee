@@ -7,7 +7,6 @@ class ResultsView extends Backbone.View
     'click .tablets'  : 'tablets'
     'click .detect'   : 'detectOptions'
     'click .details'  : 'showResultSumView'
-    'click .csv'      : 'csv'
     'click .refresh'  : 'refresh'
     'click .show_advanced' : 'toggleAdvanced'
 
@@ -19,24 +18,6 @@ class ResultsView extends Backbone.View
 
   refresh: ->
     Utils.restartTangerine("Please wait...")
-
-  csv: ->
-
-    if Tangerine.settings.get("context") == "mobile"
-      document.removeEventListener "backbutton", Tangerine.onBackButton, false
-      download = "&download=false"
-
-    if not _.isEmptyString(vExcludes = @$el.find("#excludes").val())
-      aExcludes = vExcludes.split(/\s+/) #grab list of variables
-      uExcludes = "&excludes=#{JSON.stringify(aExcludes)}"
-
-    if not _.isEmptyString(vIncludes = @$el.find("#includes").val())
-      aIncludes = vIncludes.split(/\s+/) #grab list of variables
-      uIncludes = "&includes=#{JSON.stringify(aIncludes)}"
-
-    filename = @assessment.getEscapedString("name")# + "-" + moment().format("YYYY-MMM-DD HH:mm")
-    document.location = "/_csv/assessment/" + Tangerine.db_name + "/#{@assessment.id}"
-  
 
   showResultSumView: (event) ->
     targetId = $(event.target).attr("data-result-id")
@@ -170,6 +151,8 @@ class ResultsView extends Backbone.View
       perPage     : t("ResultsView.label.par_page")
       advanced    : t("ResultsView.label.advanced")
 
+      noResults   : t("ResultsView.message.no_results")
+
       refresh     : t("ResultsView.button.refresh")
       detect      : t("ResultsView.button.detect")
 
@@ -197,18 +180,26 @@ class ResultsView extends Backbone.View
 
     @clearSubViews()
 
-    cloudButton  = "<button class='cloud command' disabled='disabled'>#{@text.cloud}</button>"
-    tabletButton = "<button class='tablets command' disabled='disabled'>#{@text.tablets}</button>"
-    csvButton    = "<button class='csv command'>#{@text.csv}</button>"
+    cloudButton  = "
+      <button class='cloud command' disabled='disabled'>#{@text.cloud}</button>
+    " if Tangerine.settings.get("context") is "mobile"
+
+    tabletButton = "
+      <button class='tablets command' disabled='disabled'>#{@text.tablets}</button>
+    " if Tangerine.settings.get("context") is "mobile"
+
+    csvButton    = "
+      <a href='/_csv/assessment/#{Tangerine.db_name}/#{@assessment.id}'><button class='csv command'>#{@text.csv}</button></a>
+    " if Tangerine.settings.get('context') is "server"
 
     html = "
       <h1>#{@assessment.getEscapedString('name')} #{@text.results}</h1>
       <h2>#{@text.saveOptions}</h2>
       <div class='menu_box'>
-        #{if Tangerine.settings.get("context") == "mobile" then cloudButton  else ""}
-        #{if Tangerine.settings.get("context") == "mobile" then tabletButton else ""}
-        #{csvButton}
-        <div class='small_grey clickable show_advanced'>#{@text.advanced}</div>
+        #{cloudButton || ''}
+        #{tabletButton || ''}
+        #{csvButton || ''}
+        <!--div class='small_grey clickable show_advanced'>#{@text.advanced}</div-->
         <div id='advanced' class='confirmation'>
           <div class='menu_box'>
             <table class='class_table'>
