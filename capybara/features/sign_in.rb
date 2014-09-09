@@ -18,4 +18,13 @@ describe "signing in", :type => :feature do
     expect(page).to have_content $settings[:server][:user]
   end
 
+  it "should log out user and return to login screen" do
+    server_login()
+    find("#logout").click
+    expect(page).to have_content "User name"
+    expect(page).to have_content "Password"
+    expect(page).to have_content "Login"
+  end
+
+
 end

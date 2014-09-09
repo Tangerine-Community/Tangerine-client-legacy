@@ -1,4 +1,4 @@
-describe "basic assessment", :type => :feature do
+describe "assessment screen", :type => :feature do
 
   before do
     server_login()
@@ -15,11 +15,6 @@ describe "basic assessment", :type => :feature do
     it "should have a results button" do expect(page).to have_content "Results" end
     it "should have an assessments section" do expect(page).to have_content "Assessments" end
     it "should have a users section" do expect(page).to have_content "Users" end
-
-    it "should have basic assessment" do
-      expect(page).to have_content "Basic Assessment"
-      click "Basic Assessment"
-    end
 
   end
 
