@@ -330,7 +330,7 @@ class Assessment extends Backbone.Model
           dataType: "json"
           url: Tangerine.settings.urlBulkDocs()
           data: JSON.stringify(requestData)
-          error: -> Utils.midAlert "Delete error."
+          error: -> Utils.midAlert "Delete error: 02"; Tangerine.log.db("assessment-delete-error-02",JSON.stringify(arguments))
           success: (responses) =>
             okCount = 0
             (okCount++ if resp.ok?) for resp in responses
@@ -338,7 +338,7 @@ class Assessment extends Backbone.Model
               @collection.remove @id
               @clear()
             else
-              Utils.midAlert "Delete error."
+              Utils.midAlert "Delete error: 03"; Tangerine.log.db("assessment-delete-error-03",JSON.stringify(arguments))
 
   isActive: -> return not @isArchived()
 

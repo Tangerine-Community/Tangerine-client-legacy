@@ -8,7 +8,6 @@ class Log extends Backbone.Model
 
   # larger application functions
   app: ( code = "", details = "" ) ->
-    return if Tangerine.settings.get("context") == "server"
     return if !~Tangerine.settings.get("log").indexOf("app")
     @add
       "type"      : "app"
@@ -18,7 +17,6 @@ class Log extends Backbone.Model
 
   # communications with databases
   db: ( code = "", details = "" ) ->
-    return if Tangerine.settings.get("context") == "server"
     return if !~Tangerine.settings.get("log").indexOf("db")
     @add
       "type"      : "db"
@@ -28,7 +26,6 @@ class Log extends Backbone.Model
 
   # specific UI interactions
   ui: ( code = "", details = "" ) ->
-    return if Tangerine.settings.get("context") == "server"
     return if !~Tangerine.settings.get("log").indexOf("ui")
     @add
       "type"      : "ui"
@@ -38,7 +35,6 @@ class Log extends Backbone.Model
 
   # errors, handled or otherwise
   err: ( code = "", details = "" ) ->
-    return if Tangerine.settings.get("context") == "server"
     return !~Tangerine.settings.get("log").indexOf("err")
     @add
       "type"      : "err"
