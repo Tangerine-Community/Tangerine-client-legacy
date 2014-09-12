@@ -172,6 +172,7 @@ jsFiles = [
 
 libFiles = [
   'lib/phonegap.js',
+  'lib/modernizr.js',
   'lib/jquery.js',
   'lib/underscore.js',
   'lib/sha1.js',
