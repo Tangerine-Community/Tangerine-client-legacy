@@ -54,9 +54,10 @@ class ButtonView extends Backbone.View
     @trigger "change", @el
 
   initialize: ( options ) ->
-    @mode      = options.mode
-    @options   = options.options
-    @dataEntry = options.dataEntry
+    @mode       = options.mode
+    @options    = options.options
+    @dataEntry  = options.dataEntry
+    @fontFamily = options.fontFamily
 
     if options.answer?
       @answer = options.answer
@@ -68,6 +69,8 @@ class ButtonView extends Backbone.View
           @answer[option.value] = "unchecked"
 
   render : ->
+
+    fontStyle = "style=\"font-family: #{@fontFamily} !important;\"" if @fontFamily isnt "" 
 
     data = null
 
@@ -112,7 +115,7 @@ class ButtonView extends Backbone.View
             ""
 
 
-      htmlOptions += "<button class='button #{styleClass} #{selectedClass}' data-value='#{value}'>#{label}</button>"
+      htmlOptions += "<button class='button #{styleClass} #{selectedClass}' #{fontStyle||''} data-value='#{value}'>#{label}</button>"
 
     @$el.html("
       #{htmlOptions}

@@ -15,6 +15,7 @@ class QuestionRunView extends Backbone.View
     @model     = options.model
     @parent    = options.parent
     @dataEntry = options.dataEntry
+    @fontFamily = @parent.model.get('fontFamily')
     @fontStyle = "style=\"font-family: #{@parent.model.get('fontFamily')} !important;\"" if @parent.model.get("fontFamily") != "" 
 
     unless @dataEntry
@@ -46,7 +47,8 @@ class QuestionRunView extends Backbone.View
         options : @options
         mode    : @type
         dataEntry : @dataEntry
-        answer : @answer 
+        answer : @answer
+        fontFamily: @fontFamily
 
       @button.on "change rendered", => @update()
 
