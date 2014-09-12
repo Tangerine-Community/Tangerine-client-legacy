@@ -256,6 +256,31 @@ _.indexBy = ( propertyName, objectArray ) ->
 
 class Utils
 
+  @resave: () ->
+    updateModels = (models, callback) ->
+      if models.length is 0
+        return callback()
+      models.pop().save null,
+        success: (model) ->
+          console.log model.url
+          updateModels(models, callback)
+
+
+    updateCollections = (collections, callback) ->
+      if collections.length is 0
+        return callback()
+
+      collection = new (collections.pop())
+      collection.fetch
+        success: -> 
+          updateModels collection, -> 
+            updateCollections( collections, callback )
+
+    updateCollections [ Assessments, Subtests, Questions ], ->
+      console.log "All done"
+
+
+
   @execute: ( functions ) ->
 
     step = ->
