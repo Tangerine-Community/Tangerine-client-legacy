@@ -693,14 +693,16 @@ progress
   height: 77px;
   .box-sh (0, 15px, 30px, 5px, rgba(0,0,0,0.3));
   margin: 0;
+  position: relative;
 
   #version
   {
     color: white;
     float: right;
     font-size: 1em;
-    margin-right: 1em;
-    margin-top: 3.5em;
+    bottom: 0.1em;
+    right: 125px;
+    position: absolute;
   }
 }
 
@@ -1032,19 +1034,22 @@ ul.assessment_list
     border-bottom: 1px solid @grey;
     font-size: @h2;
 
-    button
+    button.name,
+    button.admin_name
     {
       border: none;
       background: transparent;
     }
 
-    button:focus
+    button.name:focus,
+    button.admin_name:focus
     {
       outline: black dotted 1px;
     }
 
     li
     {
+      vertical-align: middle;
       display: inline-block;
     }
 
@@ -1072,7 +1077,7 @@ ul.assessment_list
   
   .assessment_menu
   {
-    margin-left: 46px;
+    margin-left: 55px;
 
   }
 }
@@ -1096,13 +1101,19 @@ ul.assessment_list
   background: url('sprites.png') no-repeat;
   border: 0;
   cursor: pointer !important;
-  margin-right: 6px;
+  margin: 0 6px 0 0;
   a 
   {
     display: block;
     height: 36px;
   }
+  button 
+  {
+    display: block;
+    height: 36px;
+  }
 }
+
 
 
 
@@ -1699,7 +1710,7 @@ body.server
 .command_red
 {
   .command;
-  background-color: #c33;
+  background-color: #c33 !important;
   color: #fff;
 }
 

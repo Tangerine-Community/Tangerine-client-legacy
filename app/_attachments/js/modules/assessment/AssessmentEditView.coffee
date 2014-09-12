@@ -89,10 +89,11 @@ class AssessmentEditView extends Backbone.View
     return true
 
   toggleNewSubtestForm: (event) ->
-    @$el.find(".new_subtest_form, .new_subtest_button").fadeToggle(250, => 
-      @$el.find("#new_subtest_name").val("")
-      @$el.find("#subtest_type_select").val("none")
-    )
+    @$el.find(".new_subtest_form, .new_subtest_button").toggle()
+
+    @$el.find("#new_subtest_name").val("")
+    @$el.find("#subtest_type_select").val("none")
+
     false
 
   saveNewSubtest: (event) =>

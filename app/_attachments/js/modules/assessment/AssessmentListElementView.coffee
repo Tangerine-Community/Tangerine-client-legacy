@@ -95,14 +95,14 @@ class AssessmentListElementView extends Backbone.View
         @model.updateFromServer()
 
   togglePrint: ->
-    @$el.find(".print_format_wrapper").fadeToggle(150)
+    @$el.find(".print_format_wrapper").toggle()
 
   print: ->
     format = @$el.find("#print_format option:selected").attr("data-format")
 
     if format == "cancel"
-      @$el.find(".print_format_wrapper").fadeToggle 150, =>
-        @$el.find("#print_format").val("reset")
+      @$el.find(".print_format_wrapper").toggle()
+      @$el.find("#print_format").val("reset")
       return
 
     Tangerine.router.navigate "print/#{@model.id}/#{format}", true
@@ -125,10 +125,10 @@ class AssessmentListElementView extends Backbone.View
 
   assessmentMenuToggle: ->
     @$el.find('.assessment_menu_toggle').toggleClass('sp_down').toggleClass('sp_right')
-    @$el.find('.assessment_menu').fadeToggle(250)
+    @$el.find('.assessment_menu').toggle()
 
   assessmentDeleteToggle: ->
-    @$el.find(".sp_assessment_delete_confirm").fadeToggle(250); false
+    @$el.find(".sp_assessment_delete_confirm").toggle(); false
 
   # deep non-gerneric delete
   assessmentDelete: =>
@@ -144,7 +144,7 @@ class AssessmentListElementView extends Backbone.View
   spriteEvents: ( tagName, names...) ->
     result = ""
     for name in names
-      result += "<#{tagName}><div class='sp_#{name.underscore()}' title='#{name.underscore().titleize()}'>#{name.underscore().titleize()}</div></#{tagName}>"
+      result += "<#{tagName}><button class='sp_#{name.underscore()}' title='#{name.underscore().titleize()}'>#{name.underscore().titleize()}</button></#{tagName}> "
     return result
 
   ul: (options)->

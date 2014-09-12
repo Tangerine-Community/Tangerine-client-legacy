@@ -241,7 +241,7 @@ class AssessmentsMenuView extends Backbone.View
     newOne.on "new", @addCurriculum
 
   # Making a new assessment
-  newToggle: -> @$el.find('.new_form, .new').fadeToggle(250); false
+  newToggle: -> @$el.find('.new_form, .new').toggle(); false
 
   newSave: (event) =>
 
@@ -279,10 +279,12 @@ class AssessmentsMenuView extends Backbone.View
     newObject.save null,
       success : => 
         callback(newObject)
-        @$el.find('.new_form, .new').fadeToggle(250, => @$el.find('.new_name').val(""))
+        @$el.find('.new_form, .new').toggle()
+        @$el.find('.new_name').val ""
         Utils.midAlert "#{name} saved"
       error: =>
-        @$el.find('.new_form, .new').fadeToggle(250, => @$el.find('.new_name').val(""))
+        @$el.find('.new_form, .new').toggle()
+        @$el.find('.new_name').val ""
         Utils.midAlert "Please try again. Error saving."
 
     return false
