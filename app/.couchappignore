@@ -1,12 +1,14 @@
 [
-  ".*coffee$",
-  ".*map$",
-  ".*\\.min\\.js$",
-  "docs.*",
-  ".*\\.DS_Store$",
-  ".*listen.rb$",
-  ".*couchapprc\\.sample$",
-  ".*\\.gitignore$",
-  ".*\\Gemfile$",
-  ".*\\Gemfile.lockfile$"
+  ".*coffee$"
+, ".*map$"
+, ".*\\.min\\.js$"
+, "docs.*"
+, "tests.*"
+, ".*\\.DS_Store$"
+, ".*listen.rb$"
+, ".*couchapprc\\.sample$"
+, ".*\\.gitignore$"
+, ".*\\Gemfile$"
+, ".*\\Gemfile\\.lockfile$"
+, ".*\\testem\\.json$"
 ]
