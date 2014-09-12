@@ -21,7 +21,7 @@ class SurveyEditView extends Backbone.View
       success: =>
         Utils.working false
         @questionsEditView.questions = new Questions(@model.questions.where {subtestId : @model.id  })
-        @questionsEditView.questions.maintainOrder()
+        @questionsEditView.questions.ensureOrder()
 
         @questionsEditView.on "question-edit", (questionId) => @trigger "question-edit", questionId
         @questionsEditView.questions.on "change", @renderQuestions

@@ -29,7 +29,7 @@ class KlassSubtestEditView extends Backbone.View
         model  : @model
         parent : @
 
-      @questions.maintainOrder()
+      @questions.ensureOrder()
 
       @questionsEditView = new QuestionsEditView
         questions : @questions

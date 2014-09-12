@@ -17,7 +17,7 @@ class Subtests extends Backbone.Collection
     super options
 
   # call this after you load the collection you're going to be working with
-  maintainOrder: ->
+  ensureOrder: ->
     test = (model.get("order") for model in @models).join("")
     ordered = (i for model,i in @models).join("")
     if test != ordered

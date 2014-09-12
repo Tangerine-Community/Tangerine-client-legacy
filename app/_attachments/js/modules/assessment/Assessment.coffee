@@ -2,6 +2,8 @@ class Assessment extends Backbone.Model
 
   url: 'assessment'
 
+  VERIFY_TIMEOUT : 20 * 1000
+
   initialize: ( options={} ) ->
     # this collection doesn't get saved
     # changes update the subtest view, it keeps order
@@ -10,16 +12,18 @@ class Assessment extends Backbone.Model
 
   calcDKey: => @id.substr(-5, 5)
 
-  verifyConnection: ( callbacks ) =>
-    @timer = setTimeout callbacks.error, 20 * 1000
+  # refactor to events
+  verifyConnection: ( callbacks = {} ) =>
+    console.log "called"
+    @timer = setTimeout(callbacks.error, @VERIFY_TIMEOUT) if callbacks.error?
     $.ajax 
       url: Tangerine.settings.urlView("group", "byDKey")
       dataType: "jsonp"
       data: keys: ["testtest"]
-      timeout: 5000
+      timeout: @VERIFY_TIMEOUT
       success: =>
         clearTimeout @timer
-        callbacks.success()
+        callbacks.success?()
 
   getResultCount: =>
     $.ajax Tangerine.settings.urlView("local", "resultCount")
@@ -45,16 +49,19 @@ class Assessment extends Backbone.Model
           key: @id
           success: (collection) =>
             @subtests = collection
-            @subtests.maintainOrder()
+            @subtests.ensureOrder()
             oldSuccess? @
     Assessment.__super__.fetch.call @, options
+
+  splitDKeys: ( dKey = "" ) ->
+    # split to handle multiple dkeys
+    dKey.toLowerCase().replace(/[g-z]/g,'').replace(/[^a-f0-9]/g," ").split(/\s+/)
 
   updateFromServer: ( dKey = @calcDKey(), group ) =>
 
     @lastDKey = dKey
-    
-    # split to handle multiple dkeys
-    dKeys = dKey.replace(/[^a-f0-9]/g," ").split(/\s+/)
+
+    dKeys = @splitDKeys(dKey)
 
     @trigger "status", "import lookup"
 
@@ -207,65 +214,104 @@ class Assessment extends Backbone.Model
 
     false
 
-  duplicate: (assessmentAttributes, subtestAttributes, questionAttributes, callback) ->
 
-    originalId = @id
+  # Fetches all assessment related documents, puts them together in a document
+  # array for uploading to bulkdocs.
+  duplicate: ->
 
-    newModel = @clone()
-    newModel.set assessmentAttributes
+    questions = new Questions
+    subtests  = new Subtests
+
+    modelsToSave = []
+
+    oldModel = @
+
+    # general pattern: clone attributes, modify them, stamp them, put attributes in array
+
+    $.extend(true, clonedAttributes = {}, @attributes)
+
     newId = Utils.guid()
 
-    newModel.save
-      "_id"          : newId
-      "assessmentId" : newId
-    ,
-      success: =>
-        questions = new Questions
-        questions.fetch
-          key: originalId
-          success: ( questions ) =>
-            subtests = new Subtests
-            subtests.fetch
-              key: originalId
-              success: ( subtests ) =>
-                filteredSubtests = subtests.models
-                subtestIdMap = {}
-                newSubtests = []
-                # link new subtests to new assessment
-                for model, i in filteredSubtests
-                  newSubtest = model.clone()
-                  newSubtest.set "assessmentId", newModel.id
-                  newSubtestId = Utils.guid()
-                  subtestIdMap[newSubtest.id] = newSubtestId
-                  newSubtest.set "_id", newSubtestId
-                  newSubtests.push newSubtest
+    clonedAttributes._id          = newId
+    clonedAttributes.name         = "Copy of #{clonedAttributes.name}"
+    clonedAttributes.assessmentId = newId
+    
+    newModel = new Assessment(clonedAttributes)
+
+    modelsToSave.push (newModel).stamp().attributes
 
 
-                # update the links to other subtests
-                for model, i in newSubtests
-                  gridId = model.get( "gridLinkId" )
-                  if ( gridId || "" ) != ""
-                    model.set "gridLinkId", subtestIdMap[gridId]
-                  model.save()
+    getQuestions = ->
+      questions.fetch
+        key: oldModel.id
+        success: -> getSubtests()
 
-                newQuestions = []
-                # link questions to new subtest
-                for question in questions.models
-                  newQuestion = question.clone()
-                  oldId = newQuestion.get "subtestId"
-                  newQuestion.set "assessmentId", newModel.id
-                  newQuestion.set "_id", Utils.guid() 
-                  newQuestion.set "subtestId", subtestIdMap[oldId]
-                  newQuestions.push newQuestion
-                  newQuestion.save()
-                callback newModel
+    getSubtests = ->
+      subtests.fetch
+        key: oldModel.id
+        success: -> processDocs()
+
+    processDocs = ->
+
+      subtestIdMap = {}
+
+      # link new subtests to new assessment
+      for subtest in subtests.models
+        
+        oldSubtestId = subtest.id
+        newSubtestId = Utils.guid()
+
+        subtestIdMap[oldSubtestId] = newSubtestId
+
+        $.extend(true, newAttributes = {}, subtest.attributes)
+        
+        newAttributes._id          = newSubtestId
+        newAttributes.assessmentId = newId
+
+        modelsToSave.push (new Subtest(newAttributes)).stamp().attributes
+
+      # update the links to other subtests
+      for subtest in modelsToSave
+        if subtest.gridLinkId? and subtest.gridLinkId != ""
+          subtest.gridLinkId = subtestIdMap[subtest.gridLinkId]
+
+      # link questions to new subtests
+      for question in questions.models
+
+        $.extend(true, newAttributes = {}, question.attributes)
+
+        oldSubtestId = newAttributes.subtestId
+
+        newAttributes._id          = Utils.guid() 
+        newAttributes.subtestId    = subtestIdMap[oldSubtestId]
+        newAttributes.assessmentId = newId
+
+        modelsToSave.push (new Question(newAttributes)).stamp().attributes
+
+      requestData = "docs" : modelsToSave
+
+      $.ajax
+        type : "POST"
+        contentType : "application/json; charset=UTF-8"
+        dataType : "json"
+        url : Tangerine.settings.urlBulkDocs()
+        data : JSON.stringify(requestData)
+        success : (responses) => oldModel.trigger "new", newModel
+        error : -> Utils.midAlert "Duplication error"
+
+    # kick it off
+    getQuestions()
+
+
 
   destroy: =>
 
     # get all docs that belong to this assesssment except results
-    Tangerine.$db.view Tangerine.design_doc + "/revByAssessmentId",
-      keys: [ @id ]
-      error: -> Utils.midAlert "Delete error."
+    $.ajax
+      contentType: "application/json; charset=UTF-8"
+      dataType: "json"
+      url: "/#{Tangerine.db_name}/_design/#{Tangerine.design_doc}/_view/revByAssessmentId?key=\"#{@id}\""
+      error: (xhr, status, err) -> Utils.midAlert "Delete error: 01"; Tangerine.log.db("assessment-delete-error-01","Error: #{err}, Status: #{status}, xhr:#{xhr.responseText||'none'}. headers: #{xhr.getAllResponseHeaders()}")
       success: (response) =>
 
         docs = []
