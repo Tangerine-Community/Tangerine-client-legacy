@@ -8,7 +8,6 @@
 # Utils.disableConsoleLog()
 # Utils.disableConsoleAssert()
 
-
 Tangerine.bootSequence = 
 
   # Basic configuration
@@ -303,6 +302,9 @@ Tangerine.boot = (callback) ->
 
   Utils.execute sequence
 
-Tangerine.boot() unless window.TESTING
+console.log window.PRODUCTION
+Tangerine.boot() if window.PRODUCTION
+
+
 
 
