@@ -374,7 +374,7 @@
       }
 
       // fetmar: call this model's beforeSave method first
-      if (this.beforeSave != null) this.beforeSave.apply(this, arguments);
+      if (this._beforeSave != null) this._beforeSave.apply(this, arguments);
 
 
       // After a successful server-side save, the client is (optionally)

@@ -68,13 +68,14 @@ Tangerine.bootSequence =
 
   # for upgrades
   guaranteeInstanceId: ( callback ) ->
-
-    Tangerine.settings.save 
-      "instanceId" : Utils.humanGUID()
-    ,
-      error: -> alert "Could not save new Instance Id"
-      success: callback
-
+    unless Tangerine.settings.has("instanceId")
+      Tangerine.settings.save 
+        "instanceId" : Utils.humanGUID()
+      ,
+        error: -> alert "Could not save new Instance Id"
+        success: callback
+    else
+      callback()
 
   # load templates
   fetchTemplates: ( callback ) ->
