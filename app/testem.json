@@ -1,0 +1,196 @@
+{
+  "framework": "mocha+chai",
+  "src_files": [
+
+    "_attachments/js/lib/modernizr.js",
+
+    "_attachments/js/lib/phonegap.js",
+    "_attachments/js/lib/jquery.js",
+    "_attachments/js/lib/underscore.js",
+    "_attachments/js/lib/sha1.js",
+    "_attachments/js/lib/jquery.couch.js",
+    "_attachments/js/lib/jquery.cookie.js",
+    "_attachments/js/lib/jquery.tablesorter.js",
+    "_attachments/js/lib/jquery.flot.js",
+    "_attachments/js/lib/jquery.i18next.js",
+    "_attachments/js/lib/excanvas.js",
+    "_attachments/js/lib/jquery.ui.core.js",
+    "_attachments/js/lib/jquery.ui.widget.js",
+    "_attachments/js/lib/jquery.ui.position.js",
+    "_attachments/js/lib/jquery.ui.menu.js",
+    "_attachments/js/lib/jquery.ui.autocomplete.js",
+    "_attachments/js/lib/jquery.ui.mouse.js",
+    "_attachments/js/lib/jquery.ui.sortable.js",
+    "_attachments/js/lib/jquery.ui.accordion.js",
+    "_attachments/js/lib/jquery.ui.button.js",
+    "_attachments/js/lib/jquery.ui.progressbar.js",
+    "_attachments/js/lib/inflection.js",
+    "_attachments/js/lib/backbone.js",
+    "_attachments/js/lib/moment.js",
+    "_attachments/js/lib/backbone-couchdb.js",
+    "_attachments/js/lib/transcriptionCheckdigit.js",
+    "_attachments/js/lib/table2CSV.js",
+    "_attachments/js/lib/base64.js",
+    "_attachments/js/lib/jstz.js",
+    "_attachments/js/lib/ckeditor.js",
+    "_attachments/js/lib/coffee-script.js",
+
+
+    "_attachments/js/version.js",
+    
+    "_attachments/js/helpers.js",
+
+    "_attachments/js/modules/button/ButtonView.js",
+
+    "_attachments/js/modules/assessment/Assessment.js",
+    "_attachments/js/modules/assessment/Assessments.js",
+    "_attachments/js/modules/assessment/AssessmentsView.js",
+    "_attachments/js/modules/assessment/AssessmentListElementView.js",
+    "_attachments/js/modules/assessment/AssessmentsMenuView.js",
+    "_attachments/js/modules/assessment/AssessmentEditView.js",
+    "_attachments/js/modules/assessment/AssessmentRunView.js",
+    "_attachments/js/modules/assessment/AssessmentImportView.js",
+    "_attachments/js/modules/assessment/AssessmentSyncView.js",
+    "_attachments/js/modules/assessment/AssessmentDataEntryView.js",
+
+
+    "_attachments/js/modules/subtest/Subtest.js",
+    "_attachments/js/modules/subtest/Subtests.js",
+    "_attachments/js/modules/subtest/SubtestListEditView.js",
+    "_attachments/js/modules/subtest/SubtestListElementView.js",
+    "_attachments/js/modules/subtest/SubtestEditView.js",
+    "_attachments/js/modules/subtest/SubtestRunView.js",
+
+    "_attachments/js/modules/subtest/prototypes/ConsentRunView.js",
+    "_attachments/js/modules/subtest/prototypes/ConsentEditView.js",
+
+    "_attachments/js/modules/subtest/prototypes/DatetimeRunView.js",
+    "_attachments/js/modules/subtest/prototypes/DatetimeEditView.js",
+
+    "_attachments/js/modules/subtest/prototypes/LocationRunView.js",
+    "_attachments/js/modules/subtest/prototypes/LocationEditView.js",
+
+    "_attachments/js/modules/subtest/prototypes/SurveyRunView.js",
+    "_attachments/js/modules/subtest/prototypes/SurveyEditView.js",
+
+    "_attachments/js/modules/subtest/prototypes/IdRunView.js",
+    "_attachments/js/modules/subtest/prototypes/IdEditView.js",
+
+    "_attachments/js/modules/subtest/prototypes/GridRunView.js",
+    "_attachments/js/modules/subtest/prototypes/GridEditView.js",
+
+    "_attachments/js/modules/subtest/prototypes/ObservationRunView.js",
+    "_attachments/js/modules/subtest/prototypes/ObservationEditView.js",
+
+    "_attachments/js/modules/subtest/prototypes/GpsRunView.js",
+    "_attachments/js/modules/subtest/prototypes/GpsEditView.js",
+    "_attachments/js/modules/subtest/prototypes/GpsPrintView.js",
+
+    "_attachments/js/modules/result/Result.js",
+    "_attachments/js/modules/result/Results.js",
+    "_attachments/js/modules/result/ResultView.js",
+    "_attachments/js/modules/result/ResultsView.js",
+    "_attachments/js/modules/result/TabletManagerView.js",
+    "_attachments/js/modules/result/ResultSumView.js",
+    "_attachments/js/modules/result/DashboardView.js",
+
+    "_attachments/js/modules/admin/AdminView.js",
+
+    "_attachments/js/modules/question/Question.js",
+    "_attachments/js/modules/question/Questions.js",
+    "_attachments/js/modules/question/QuestionRunView.js",
+    "_attachments/js/modules/question/QuestionEditView.js",
+    "_attachments/js/modules/question/QuestionsEditView.js",
+    "_attachments/js/modules/question/QuestionsEditListElementView.js",
+
+    "_attachments/js/modules/klass/Klass.js",
+    "_attachments/js/modules/klass/KlassView.js",
+    "_attachments/js/modules/klass/KlassEditView.js",
+    "_attachments/js/modules/klass/Klasses.js",
+    "_attachments/js/modules/klass/KlassesView.js",
+    "_attachments/js/modules/klass/KlassListElementView.js",
+    "_attachments/js/modules/klass/KlassSubtestRunView.js",
+    "_attachments/js/modules/klass/KlassSubtestResultView.js",
+    "_attachments/js/modules/klass/KlassMenuView.js",
+    "_attachments/js/modules/klass/KlassPartlyView.js",
+    "_attachments/js/modules/klass/KlassResult.js",
+    "_attachments/js/modules/klass/KlassResults.js",
+
+    "_attachments/js/modules/subtest/KlassSubtestEditView.js",
+
+    "_attachments/js/modules/report/KlassGroupingView.js",
+    "_attachments/js/modules/report/KlassGroupingMenuView.js",
+    "_attachments/js/modules/report/MasteryCheckView.js",
+    "_attachments/js/modules/report/MasteryCheckMenuView.js",
+    "_attachments/js/modules/report/ProgressView.js",
+    "_attachments/js/modules/report/ProgressMenuView.js",
+    "_attachments/js/modules/report/CsvMenuView.js",
+
+    "_attachments/js/modules/curriculum/Curriculum.js",
+    "_attachments/js/modules/curriculum/CurriculumView.js",
+    "_attachments/js/modules/curriculum/Curricula.js",
+    "_attachments/js/modules/curriculum/CurriculaView.js",
+    "_attachments/js/modules/curriculum/CurriculaListView.js",
+    "_attachments/js/modules/curriculum/CurriculumListElementView.js",
+    "_attachments/js/modules/curriculum/CurriculaView.js",
+
+    "_attachments/js/modules/teacher/Teacher.js",
+    "_attachments/js/modules/teacher/Teachers.js",
+    "_attachments/js/modules/teacher/TeachersView.js",
+    "_attachments/js/modules/teacher/RegisterTeacherView.js",
+
+    "_attachments/js/modules/student/Student.js",
+    "_attachments/js/modules/student/Students.js",
+    "_attachments/js/modules/student/StudentListElementView.js",
+    "_attachments/js/modules/student/StudentEditView.js",
+
+    "_attachments/js/modules/user/User.js",
+    "_attachments/js/modules/user/Users.js",
+    "_attachments/js/modules/user/TabletUser.js",
+    "_attachments/js/modules/user/TabletUsers.js",
+
+    "_attachments/js/modules/user/LoginView.js",
+    "_attachments/js/modules/user/AccountView.js",
+    "_attachments/js/modules/user/GroupsView.js",
+    "_attachments/js/modules/user/UsersMenuView.js",
+
+    "_attachments/js/modules/assessment/AssessmentPrintView.js",
+    "_attachments/js/modules/question/QuestionPrintView.js",
+    "_attachments/js/modules/subtest/prototypes/GridPrintView.js",
+    "_attachments/js/modules/subtest/prototypes/ConsentPrintView.js",
+    "_attachments/js/modules/subtest/prototypes/DatetimePrintView.js",
+    "_attachments/js/modules/subtest/prototypes/IdPrintView.js",
+    "_attachments/js/modules/subtest/prototypes/LocationPrintView.js",
+    "_attachments/js/modules/subtest/prototypes/SurveyPrintView.js",
+    "_attachments/js/modules/subtest/prototypes/ObservationPrintView.js",
+    "_attachments/js/modules/subtest/SubtestPrintView.js",
+
+    "_attachments/js/modules/config/Config.js",
+
+    "_attachments/js/modules/log/Log.js",
+
+    "_attachments/js/modules/template/Template.js",
+    "_attachments/js/modules/settings/Settings.js",
+    "_attachments/js/modules/settings/SettingsView.js",
+
+    "_attachments/js/modules/viewManager/ViewManager.js",
+
+    "_attachments/js/modules/navigation/NavigationView.js",
+
+    "_attachments/js/router.js",
+
+    "_attachments/js/boot.js",
+
+
+    "tests/lib/chai.js",
+    "tests/lib/sinon.js",
+    "tests/lib/sinon/spy.js",
+    "tests/lib/sinon/call.js",
+    "tests/lib/sinon/behavior.js",
+    "tests/lib/sinon/stub.js",
+    "tests/lib/sinon-chai.js",
+
+    "tests/*.js"
+
+  ]
+}
