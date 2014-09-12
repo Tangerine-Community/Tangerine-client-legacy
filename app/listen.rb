@@ -48,11 +48,13 @@ end
 def notify( type, message )
   printf "\a"
   unless `which osascript`.empty? # on a mac?
-    message = /\.coffee:(.*?)$/.match(message)[1]
-    notifier = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier" 
-    `#{notifier} -message \"#{message}\" -title \"#{type}\"` 
+    file = message.split(/[\/\:]/)[-5]
+    message = /\.coffee\:(.*?)\n/.match(message)[1]
+    `osascript -e 'tell app "System Events" to display dialog "#{type}\n#{file}\n\n#{message}"'`
   end
-  `notify-send "#{type} - #{message}" -i /usr/share/icons/Humanity/status/128/dialog-warning.svg &` unless `which notify-send`.empty?
+  unless `which notify-send`.empty? # on linux with notify-send
+    `notify-send "#{type} - #{message}" -i /usr/share/icons/Humanity/status/128/dialog-warning.svg &`
+  end
 end
 
 puts "\nGo ahead, programmer. I'm listening...\n\n"
@@ -82,28 +84,38 @@ listen = Listen.to(".") do |modified, added, removed|
         puts "\nCompiling translation file for language: #{path[-2]}"
         newFile = path[0..path.length-2].join("/")+"/translation.json"
         result = `coffee --compile --bare --print #{match}`
+
         bareJson = result.gsub(/[\;\(\)]|\/\/.*$\n/, '')
         File.open(newFile, "w") {|f| f.write(bareJson)}
-        result = "" # to pass error checking
+        hasError = false # to pass error checking
       else
         # Otherwise, just compile
         puts "\nCompiling:\t\t#{match}"
-        couchSpecial = /shows\/|views\/|lists\/|specs\//.match(match)
+        special = /shows\/|views\/|lists\/|\/tests\/|testem/.match(match)
         
+        # maps don't work in testem yet
+        mapOption = "--map" if /tests/.match(match)
+
         result = `coffee --bare --compile "#{match}" 2>&1`
-        if not couchSpecial
+
+        hasError = result.index "error"
+
+        if not hasError and not special
           jsFile = match.gsub(".coffee", ".js")
+          puts jsFile
           Dir.chdir($jsDir) {
             puts `./uglify.rb "#{jsFile}"`
           }
         end
-
       end
 
       if result.index "error" 
         # Show errors
         notify("CoffeeScript Error", result.gsub(/.*error.*\/(.*\.coffee)/,"\\1"))
-        puts "\nCoffeescript error\n******************\n#{result}".red()
+        puts "\nCoffeescript error\n#{result}".red()
+      else
+        puts "Done".green()
+
       end
 
     } # END of coffeescripts
@@ -114,14 +126,16 @@ listen = Listen.to(".") do |modified, added, removed|
       result = `lessc #{match} --yui-compress > #{match}.css`
       if result.index "Error"
         notify("LESS error",result)
-        puts "\nLESS error\n******************\n#{result}".red()
+        puts "\nLESS error\n#{result}".red()
+      else
+        puts "Done".green()
       end
     } # END of LESS
 
     # Handle all the resulting compiled files
     /.*\.css|.*\.js$|.*\.html$|.*\.json$/.match(file) { |match|
       # Don't trigger push for these files
-      unless /version\.js|app\.js|index-dev|\/min\/|\/specs\//.match(file)
+      unless /version\.js|app\.js|index-dev|\/min\/|\/tests\/|testem/.match(file)
         puts "\nUpdating:\t\t#{match}"
         push()
       end
