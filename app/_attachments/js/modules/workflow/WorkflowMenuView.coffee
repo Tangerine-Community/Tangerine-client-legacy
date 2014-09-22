@@ -86,6 +86,7 @@ class WorkflowMenuView extends Backbone.View
       <h1>Tutor menu</h1>
       <ul class='workflow-menu'></ul>
       <div id='sync-manager' class='SyncManagerView'></div>
+      <div id='bandwidth-test'></div>
     "
 
     @updateWorkflows()
@@ -99,6 +100,11 @@ class WorkflowMenuView extends Backbone.View
             @updateWorkflows()
       @syncManagerView.render()
 
+    unless @bandwidthCheckView?
+      @bandwidthCheckView = new BandwidthCheckView
+      @bandwidthCheckView.setElement(@$el.find("#bandwidth-test"))
+      @bandwidthCheckView.render()
+    
     @trigger "rendered"
 
   updateWorkflows: ->
