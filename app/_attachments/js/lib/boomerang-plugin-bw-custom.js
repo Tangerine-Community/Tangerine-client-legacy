@@ -22,9 +22,9 @@ BOOMR.plugins = BOOMR.plugins || {};
 // See https://spreadsheets.google.com/ccc?key=0AplxPyCzmQi6dDRBN2JEd190N1hhV1N5cHQtUVdBMUE&hl=en_GB
 // for a spreadsheet with the details
 images=[
-	{ name: "boomerang-bw-0.png", size: 11483, timeout: 1400 },
-	{ name: "boomerang-bw-1.png", size: 40658, timeout: 1200 },
-	{ name: "boomerang-bw-2.png", size: 164897, timeout: 1300 }
+	{ name: "image-0.png", size: 11483, timeout: 1400 },
+	{ name: "image-1.png", size: 40658, timeout: 1200 },
+	{ name: "image-2.png", size: 164897, timeout: 1300 }
 ];
 
 images.end = images.length;
@@ -33,7 +33,7 @@ images.start = 0;
 // abuse arrays to do the latency test simply because it avoids a bunch of
 // branches in the rest of the code.
 // I'm sorry Douglas
-images.l = { name: "boomerang-bw-l.gif", size: 35, timeout: 1000 };
+images.l = { name: "image-l.gif", size: 35, timeout: 1000 };
 
 // private object
 impl = {
@@ -562,10 +562,10 @@ BOOMR.plugins.BW = {
 
 /* Init the BOOMR object from the library so that we can maintain modular control in the app. */
 BOOMR.init({
-	beacon_url: 'http://s3.amazonaws.com/rti-ie-vms-demo/boomerang-bw-l.gif',
+	beacon_url: 'http://databases.tangerinecentral.org/boomerang/image-l.gif',
 	autorun: false,
 	BW: {
-		base_url: 'http://s3.amazonaws.com/rti-ie-vms-demo/',
+		base_url: 'http://databases.tangerinecentral.org/boomerang/',
 		cookie: 'netstats',
 		cookie_exp: 300,
 		timeout: 60000

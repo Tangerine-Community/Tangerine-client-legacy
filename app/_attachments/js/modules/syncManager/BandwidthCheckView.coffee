@@ -19,7 +19,7 @@ class BandwidthCheckView extends Backbone.View
         upper: 1000
         lower: 1
     settings: # !Important - These must also be set in lib/boomerang-plugin-bw-custom.js @ the bottom
-      base_url: 'https://s3.amazonaws.com/rti-ie-vms-demo/'
+      base_url: 'http://databases.tangerinecentral.org/boomerang/'
       cookie: 'netstats'
       timeout: 6000
 
@@ -48,7 +48,7 @@ class BandwidthCheckView extends Backbone.View
 
     @$el.find(".bandwidth-cancel-btn, .bandwidth-begin-btn").toggle()
     @$el.find(".status-bar").removeClass('stripes blue').addClass(result.toString())
-    @$el.find(".status-bar span").html 'Complete: '+result+' Connection' 
+    @$el.find(".status-bar span").html 'Complete: '+result+' Connection'
 
     results = """
     Your bandwidth to this server is #{parseInt(data.bw*8/1024)}kbps (&#x00b1; #{parseInt(data.bw_err*100/data.bw)}%)<br>
