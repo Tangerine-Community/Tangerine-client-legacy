@@ -86,6 +86,7 @@ class TabletUser extends Backbone.Model
                 pass : pass
               vm.show view
             else
+              $.cookie "user", @id
               @trigger "login"
               callbacks.success?()
 
