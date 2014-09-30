@@ -159,8 +159,11 @@ class AssessmentListElementView extends Backbone.View
     isArchived = @model.getBoolean('archived')
 
     # do not display archived assessments for enumerators
-    return if not @isAdmin and isArchived and Tangerine.settings.get("context") == "mobile"
-    
+    if not @isAdmin and isArchived and Tangerine.settings.get("context") == "mobile"
+      @$el.addClass "hidden"
+      return
+
+
     # commands
 
     # indicators and variables
