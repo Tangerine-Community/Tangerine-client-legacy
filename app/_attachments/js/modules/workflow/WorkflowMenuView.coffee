@@ -254,7 +254,7 @@ class SchoolListView extends Backbone.View
 
     d = new Date()
     year  = d.getFullYear()
-    month = 6#d.getMonth()
+    month = d.getMonth()
 
     trips = new TripResultCollection
     trips.fetch 
@@ -375,7 +375,7 @@ class ValidObservationView extends Backbone.View
   fetchTripIds: (callback = $.noop) ->
     d = new Date()
     year  = d.getFullYear()
-    month = 6
+    month = d.getMonth()
 
     Utils.execute [
       (callback = $.noop) ->
