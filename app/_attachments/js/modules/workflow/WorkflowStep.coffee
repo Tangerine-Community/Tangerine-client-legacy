@@ -1,9 +1,11 @@
 class WorkflowStep extends Backbone.ChildModel
 
   getName: ->
-    if @getType() is "assessment" or @getType() is "curriculum"
-      return @getString("name")
-    return @get("_id")
+    switch @getType()
+      when "assessment", "curriculum", "message"
+        return @getString("name")
+      else
+        return @get("_id")
 
   getType: -> @getString("type")
 
