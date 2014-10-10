@@ -8,9 +8,10 @@ class AccountView extends Backbone.View
     'click .join'        : 'joinToggle'
     'click .join_group'  : 'join'
     'click .back'        : 'goBack'
-    'click .update' : 'update'
-    'click .restart' : 'restart'
-    'click .send_debug' : 'sendDebug'
+    'click .update'      : 'update'
+    'click .hibernate'   : 'hibernate'
+    'click .restart'     : 'restart'
+    'click .send_debug'  : 'sendDebug'
 
     "click .edit_in_place"  : "editInPlace"
     "focusout .editing" : "editing"
@@ -72,11 +73,12 @@ class AccountView extends Backbone.View
             saveReport response, null, docId
 
 
-  update: ->
+  hibernate: ->
     Utils.readyForUpdate()
     return
+
+  update: ->
     doResolve = @$el.find("#attempt_resolve").is(":checked")
-    
     Utils.updateTangerine(doResolve)
 
   restart: ->
@@ -152,6 +154,7 @@ class AccountView extends Backbone.View
         <h2>Application</h2>
         <table class='menu_box'>
           <tr>
+            <td><button class='command hibernate'>Hibernate</button></td>
             <td><button class='command update'>Update</button></td>
             <td><input type='checkbox' id='attempt_resolve'></td>
             <td><label for='attempt_resolve'>Legacy method</label></td>

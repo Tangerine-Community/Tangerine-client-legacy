@@ -74,6 +74,7 @@ class InstrumentSyncView extends Backbone.View
     @$el.html "
       <button class='activate command'>Activate sync</button>
       <button class='instruments command' style='display: none;'>Sync all</button>
+      <br><label for='sync-app'>Update application</label><input type='checkbox' id='sync-app'>
       <button class='cancel-instruments command' style='display:none;'>Cancel sync</button>
 
       <div id='sync-status'></div>
