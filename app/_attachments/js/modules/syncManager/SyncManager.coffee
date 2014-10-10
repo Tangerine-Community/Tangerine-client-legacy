@@ -207,7 +207,7 @@ class SyncManagerView extends Backbone.View
     @$el.html "<h1>Sync manager</h1>
     <section>
       <h2>Results</h2>
-      <table>
+      <table class='class_table'>
         <tr>
           <th>Synced results</th><td>#{@sunc.length}</td>
         </tr>

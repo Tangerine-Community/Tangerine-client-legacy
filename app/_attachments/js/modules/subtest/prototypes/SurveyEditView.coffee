@@ -187,8 +187,7 @@ class SurveyEditView extends Backbone.View
     subtests.fetch
       key: @model.get "assessmentId"
       success: (collection) =>
-        collection = collection.where
-          prototype    : 'grid' # only grids can provide scores
+        collection = collection.where prototype : 'grid' # only grids can provide scores
 
         linkSelect = "
           <div class='label_value'>
@@ -196,10 +195,13 @@ class SurveyEditView extends Backbone.View
             <div class='menu_box'>
               <select id='link_select'>
               <option value=''>None</option>"
-        for subtest in collection
-          @itemNumberByLinkId = {} if not @itemNumberByLinkId?
+
+        @itemNumberByLinkId = {} unless @itemNumberByLinkId?
+
+        collection.forEach (subtest) =>
           @itemNumberByLinkId[subtest.id] = subtest.get("items").length
-          linkSelect += "<option value='#{subtest.id}' #{if (gridLinkId == subtest.id) then 'selected' else ''}>#{subtest.get 'name'}</option>"
+          selected = "selected='selected'" if subtest.id is gridLinkId
+          linkSelect += "<option value='#{subtest.id}' #{selected||''}>#{subtest.escape 'name'}</option>"
         linkSelect += "</select></div></div>"
         @$el.find('#grid_link').html linkSelect
 
