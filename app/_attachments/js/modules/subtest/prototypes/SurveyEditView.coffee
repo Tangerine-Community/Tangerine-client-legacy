@@ -23,12 +23,12 @@ class SurveyEditView extends Backbone.View
         @questionsEditView.questions = new Questions(@model.questions.where {subtestId : @model.id  })
         @questionsEditView.questions.maintainOrder()
 
-        @questionsEditView.on "question-edit", (questionId) => @trigger "question-edit", questionId
-        @questionsEditView.questions.on "change", @renderQuestions
+        @listenTo @questionsEditView, "question-edit", (questionId) => @trigger "question-edit", questionId
+        @listenTo @questionsEditView.questions, "change", @renderQuestions
         @renderQuestions()
       erorr: (a, b) =>
         Utils.working false
-        Utils.midAlert "Error<br>Could not load questions<br>#{a}, #{b}", 5000
+        alert "Error\nCould not load questions\n#{a}\n#{b}"
 
   toggleAddQuestion: =>
     @$el.find("#add_question_form, .add_question").fadeToggle 250, =>

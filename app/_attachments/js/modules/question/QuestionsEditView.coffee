@@ -7,13 +7,11 @@ class QuestionsEditView extends Backbone.View
     @views = []
     @questions = options.questions
 
-
   onClose: ->
     @closeViews()
 
   closeViews: ->
-    for view in @views
-      view.close()
+    view.close() for view in @views
 
   render: =>
 
@@ -22,14 +20,14 @@ class QuestionsEditView extends Backbone.View
       view = new QuestionsEditListElementView
         "question" : question
       @views.push view
-      view.on "deleted", @render
-      view.on "duplicate", =>
+      @listenTo view, "deleted", @render
+      @listenTo view, "duplicate", =>
         @questions.fetch 
-          key: question.get("assessmentId")
+          key: question.get "assessmentId"
           success: =>
             @questions = new Questions(@questions.where {subtestId : question.get("subtestId") })
             @render true
-      view.on "question-edit", (questionId) => @trigger "question-edit", questionId
+      @listenTo view, "question-edit", (questionId) => @trigger "question-edit", questionId
       view.render()
       @$el.append view.el
 
@@ -38,8 +36,8 @@ class QuestionsEditView extends Backbone.View
       forceHelperSize: true
       forcePlaceholderSize: true
       handle : '.sortable_handle'
-      start: (event, ui) -> ui.item.addClass "drag_shadow"
-      stop:  (event, ui) -> ui.item.removeClass "drag_shadow"
+      start : (event, ui) -> ui.item.addClass "drag_shadow"
+      stop  : (event, ui) -> ui.item.removeClass "drag_shadow"
 
       update : (event, ui) =>
         idList = ($(li).attr("data-id") for li in @$el.find("li.question_list_element"))

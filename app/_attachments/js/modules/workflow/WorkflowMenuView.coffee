@@ -16,7 +16,7 @@ class WorkflowMenuView extends Backbone.View
     tripId     = $target.attr("data-tripId")
     return unless confirm "Are you sure you want to remove the option to resume this workflow?"
 
-    incomplete = Tangerine.user.getPreferences "tutor-workflows", "incomplete"
+    incomplete = Tangerine.user.getPreferences("tutor-workflows", "incomplete") || {}
 
     incomplete[workflowId] = _(incomplete[workflowId]).without tripId
 
