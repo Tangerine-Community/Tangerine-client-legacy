@@ -27,7 +27,7 @@ class CurriculumView extends Backbone.View
     @curriculum = options.curriculum
     @subtests   = options.subtests
     @questions  = options.questions
-    @questionsBySubtestId = @questions.indexBy "subtestId"
+    @questionsByParentId = @questions.indexBy "subtestId"
 
     # primaries
     @totalAssessments  = Math.max.apply Math, @subtests.pluck("part")
@@ -237,8 +237,8 @@ class CurriculumView extends Backbone.View
           items = subtest.get("items").join " "
           html += "<tr><td colspan='#{@subtestProperties['grid'].length}'>#{items}</td></tr>"
         
-        if subtest.get("prototype") == "survey" && @questionsBySubtestId[subtest.id]?
-          prompts = (question.get("prompt") for question in @questionsBySubtestId[subtest.id]).join(", ")
+        if subtest.get("prototype") == "survey" && @questionsByParentId[subtest.id]?
+          prompts = (question.get("prompt") for question in @questionsByParentId[subtest.id]).join(", ")
           html += "<tr><td colspan='#{@subtestProperties['survey'].length}'>#{prompts}</td></tr>"
 
 
