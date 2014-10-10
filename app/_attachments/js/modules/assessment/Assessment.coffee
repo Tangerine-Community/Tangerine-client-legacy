@@ -6,7 +6,6 @@ class Assessment extends Backbone.Model
     # this collection doesn't get saved
     # changes update the subtest view, it keeps order
     @subtests = new Subtests
-    # @getResultCount()
 
   calcDKey: => @id.substr(-5, 5)
 
@@ -20,20 +19,6 @@ class Assessment extends Backbone.Model
       success: =>
         clearTimeout @timer
         callbacks.success()
-
-  getResultCount: =>
-    $.ajax Tangerine.settings.urlView("local", "resultCount")
-      type: "POST"
-      dataType: "json"
-      data: JSON.stringify(
-        group       : true
-        group_level : 1
-        key         : @id
-      )
-      success: (data) =>
-        @resultCount = if data.rows.length != 0 then data.rows[0].value else 0
-        @trigger "resultCount"
-
 
   # Hijacked success() for later
   # fetchs all subtests for the assessment
