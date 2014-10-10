@@ -79,15 +79,10 @@ class Router extends Backbone.Router
     'primr_dashboard'          : 'primrDashboard'
     'primr_dashboard/*options' : 'primrDashboard'
 
-    'map'          : 'map'
-    'map/*options' : 'map'
-
     'result/:resultId' : 'result'
 
     'admin' : 'admin'
     'reportUser/:id' : 'editReportUser'
-
-    'features' : 'features'
 
     'sync/:id'      : 'sync'
 
@@ -113,88 +108,6 @@ class Router extends Backbone.Router
         user.fetch
           success: ->
             vm.show new ReportUserEditView user : user
-
-  features: (options) ->
-    Tangerine.user.verify
-      isAdmin: ->
-
-        $.couch.allDbs
-          success: (databases) =>
-
-            finish = ( workspace ) ->
-              Utils.working false
-              lists = new FeatureLists
-              lists.fetch
-                success: ->
-                  view = new FeatureListView
-                    groups           : workspace.groups
-                    versions         : workspace.versions
-                    groupsByVersions : workspace.groupsByVersions
-                    lists            : lists
-                  vm.show view
-
-            workspace = 
-              groups           : databases.filter (database) -> database.indexOf("group-") == 0
-              versions         : []
-              groupsByVersions : {}
-
-            getNext = ( workspace ) ->
-
-              groups           = workspace.groups
-              versions         = workspace.versions
-              groupsByVersions = workspace.groupsByVersions
-
-              if groups.length == 0 
-                finish( workspace )
-              else
-                group = groups.pop()
-                $.ajax "/#{group}/_design/#{Tangerine.design_doc}/js/version.js",
-                  dataType : "text"
-                  success: (result) =>
-                    version = result.match(/"(.*)"/)[1]
-
-                    versions.push version if not ~versions.indexOf(version)
-
-                    groupsByVersions[version] = [] unless groupsByVersions[version]?
-                    groupsByVersions[version].push group
-
-                    getNext( workspace )
-
-                  error: ->
-
-                    versions.push "unknown" if not ~versions.indexOf("unknown")
-                    groupsByVersions["unknown"] = [] unless groupsByVersions["unknown"]?
-                    groupsByVersions["unknown"].push group
-
-                    getNext( workspace )
-
-            Utils.working true
-            getNext( workspace )
-
-  map: (options) ->
-    Tangerine.user.verify
-      isAuthenticated: ->
-
-        #default view options
-        reportViewOptions =
-          startTime: moment().subtract('weeks',1).format("YYYY-MM-DD")
-          endTime: moment().format("YYYY-MM-DD HH:mm:ss")
-
-        unless options?
-          urlOptions = _(reportViewOptions).map (value,option) ->
-            "/#{option}/#{value}"
-          .join("")
-          Tangerine.router.navigate "map#{urlOptions}", true
-
-        options = options?.split(/\//)
-        # Allows us to get name/value pairs from URL
-        _.each options, (option,index) ->
-          unless index % 2
-            reportViewOptions[option] = options[index+1]
-
-        view = new MapView()
-        view.options = reportViewOptions
-        vm.show view
 
   primrDashboard: (options) ->
     Tangerine.user.verify
@@ -234,7 +147,7 @@ class Router extends Backbone.Router
 
     Tangerine.user.verify
       isAuthenticated: ->
-        $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).view "#{Tangerine.design_doc}/csvRowByResult",
+        Tangerine.$db.view "#{Tangerine.design_doc}/csvRows",
           key: resultId,
           success: (result) ->
 
@@ -264,7 +177,7 @@ class Router extends Backbone.Router
                 .null { color: magenta; }
                 .key { color: red; }
               </style>
-              <b>Raw Data</b><br/>
+              <b>Raw Data</b><br>
               <pre>
               #{syntaxHighlight (result.rows?[0]?.value)}
               </pre>
@@ -668,8 +581,8 @@ class Router extends Backbone.Router
             questions.fetch
               key: assessmentId
               success: ->
-                questionsBySubtestId = questions.indexBy("subtestId")
-                for subtestId, questions of questionsBySubtestId
+                questionsByParentId = questions.indexBy("subtestId")
+                for subtestId, questions of questionsByParentId
                   assessment.subtests.get(subtestId).questions = new Questions questions
                 vm.show new AssessmentDataEntryView assessment: assessment
 
