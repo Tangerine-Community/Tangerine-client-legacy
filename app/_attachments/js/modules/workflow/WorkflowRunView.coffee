@@ -131,9 +131,10 @@ class WorkflowRunView extends Backbone.View
 
     if @currentStep.getShowLesson()
       
-      subject = @getVariable("subject")
+      subject      = @getVariable("subject")
+      motherTongue = @getVariable("subject_mother_tongue")
 
-      subject = ({"bukusu": "bukusu","kamba": "kamba","word": "kiswahili", "english_word" : "english", "operation" : "maths"})[subject]
+      subject = ({"word": "kiswahili", "english_word" : "english", "operation" : "maths","3":"3"})[subject]
       grade   = @getVariable("class")
       week    = @getVariable("week")
       day     = @getVariable("day")
@@ -158,10 +159,10 @@ class WorkflowRunView extends Backbone.View
           else
             @$lessonContainer.append(lessonImage)
 
-      unless subject is "bukusu" or subject is "kamba"
-        lessonImage.src = "images/lessons/#{subject}_c#{grade}_w#{week}_d#{day}.png"
+      if subject is "3"
+        lessonImage.src = "/#{Tangerine.db_name}/_design/assets/lessons/#{motherTongue}_w#{week}_d#{day}.png"
       else
-        lessonImage.src = "images/lessons/#{subject}_w#{week}_d#{day}.png"
+        lessonImage.src = "/#{Tangerine.db_name}/_design/assets/lessons/#{subject}_c#{grade}_w#{week}_d#{day}.png"
 
     else
       @lessonContainer?.remove?()
