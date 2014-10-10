@@ -33,12 +33,9 @@ class AssessmentListElementView extends Backbone.View
     'change #print_format'             : 'print'
   }
 
-  blankResultCount: "-"
-
   initialize: (options) ->
 
     # events
-    # options.model.on "resultCount", @updateResultCount
 
     #arguments
     @model    = options.model
@@ -105,10 +102,6 @@ class AssessmentListElementView extends Backbone.View
     Tangerine.router.navigate "print/#{@model.id}/#{format}", true
 
 
-  updateResultCount: =>
-    #@resultCount = Math.commas @model.resultCount
-    #@$el.find(".result_count").html "Results <b>#{@resultCount}</b>" 
-
   archive: ->
     result = @$el.find(".archive :selected").val() == "true"
     if result == true
@@ -166,8 +159,6 @@ class AssessmentListElementView extends Backbone.View
     toggleButton     = "<div class='assessment_menu_toggle sp_right'><div></div></div>"
     name             = "<span class='name clickable'>#{@model.get('name')}</span>"
     adminName        = "<span class='admin_name clickable #{archiveClass}'>#{@model.get('name')}</span>"
-    adminResultCount = "<label class='result_count small_grey no_help' title='Result count. Click to update.'>Results <b>#{@resultCount}</b></label>"
-    resultCount      = "<span class='result_count no_help'>Results <b>#{@resultCount}</b></span>"
     selected         = " selected='selected'"
 
     deleteConfirm   = "<span class='sp_assessment_delete_confirm confirmation'><div class='menu_box'>Confirm <button class='sp_assessment_delete_yes command_red'>Delete</button> <button class='sp_assessment_delete_cancel command'>Cancel</button></div></span>"
