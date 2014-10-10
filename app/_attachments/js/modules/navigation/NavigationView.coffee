@@ -37,10 +37,16 @@ class NavigationView extends Backbone.View
     return false unless view instanceof WorkflowRunView
 
     # only ask if the workflow isn't finished
-    return false if view.index is view.workflow.getLength()
+    return false if view.index is view.workflow.getLength() - 1
 
     # only ask if the first step is done
     return false if view.index is 0
+
+    # only ask if it's not best practice, TSC forms, or full primr
+    bestPractices = "00b0a09a-2a9f-baca-2acb-c6264d4247cb"
+    tscForms      = "b89a88dc-f23c-0e9a-28ae-b62fe9b580ee"
+    fullPrimr     = "c835fc38-de99-d064-59d3-e772ccefcf7d"
+    return false if ~[bestPractices, tscForms, fullPrimr].indexOf(view.workflow.id)
 
     return unless confirm("This workflow is incomplete. Do you wish to resume later?\n\nYou may have to renter previously entered data.")
 
