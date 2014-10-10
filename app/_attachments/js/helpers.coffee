@@ -769,6 +769,13 @@ class Utils
   @topSticky: (html, buttonText = "Close", callback) ->
     Utils.sticky(html, buttonText, callback, "top")
 
+  @execute: ( functions, scope ) ->
+
+    step = ->
+      nextFunction = functions.shift()
+      if typeof nextFunction is "function"
+        nextFunction.apply(scope||step, [step])
+    step()
 
 
   @modal: (html) ->
