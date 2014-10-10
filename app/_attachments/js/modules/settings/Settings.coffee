@@ -97,7 +97,7 @@ class Settings extends Backbone.Model
     "/" + Tangerine.db_name + "/_bulk_docs"
 
   urlSession : (location) ->
-    @location[location].url + "/_session"
+    @location[location].url + "_session"
 
   urlGroupBulkDocs : ->
     @location.group.db + "_bulk_docs"
