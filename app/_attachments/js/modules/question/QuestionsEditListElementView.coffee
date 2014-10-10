@@ -9,34 +9,36 @@ class QuestionsEditListElementView extends Backbone.View
     'click .show_copy'   : 'showCopy'
     'change .copy_select' : 'copy'
 
-    'click .delete'        : 'toggleDelete'
-    'click .delete_cancel' : 'toggleDelete'
-    'click .delete_delete' : 'delete'
+    'click .delete' : 'delete'
 
 
   showCopy: (event) ->
     $copy = @$el.find(".copy_container")
     $copy.html "
-      Copy to <select class='copy_select'><option disabled='disabled' selected='selected'>Loading...</option></select>
+      <label id='copy-to-#{@cid}'>Copy to</label> <select class='copy_select' id='copy-to-#{@cid}'><option disabled='disabled' selected='selected'>Loading...</option></select>
     "
     @getSurveys()
 
   getSurveys: =>
+    if Tangerine.settings.get("context") is "server"
+      url = Tangerine.settings.urlView("group", "subtestsByAssessmentId")
+    else
+      url = Tangerine.settings.urlView("local", "subtestsByAssessmentId")
     $.ajax
-      "url"         : Tangerine.settings.urlView("group", "subtestsByAssessmentId")
+      "url"         : url
       "type"        : "POST"
       "dataType"    : "json"
       "contentType" : "application/json"
       "data"        : JSON.stringify
-        keys : [@question.get("assessmentId")]
-      "success" : (data) =>
-        subtests = _.compact((row.value if row.value.prototype == "survey") for row in data.rows)
+        keys : [ @question.get("assessmentId") ]
+      "success" : ( data ) =>
+        subtests = _.compact( data.rows.map (row) -> ( {"id":row.value._id,"name":row.value.name} if row.value.prototype is "survey" ) )
         @populateSurveySelect subtests
 
   populateSurveySelect : (subtests) ->
-    subtests.push    _id : 'cancel', name : @text.cancel_button
-    subtests.unshift _id : '',       name : @text.select
-    htmlOptions = ("<option data-subtestId='#{subtest._id}' #{subtest.attrs || ""}>#{subtest.name}</option>" for subtest in subtests).join("")
+    subtests.push    id : 'cancel', name : @text.cancel_button
+    subtests.unshift id : '',       name : @text.select
+    htmlOptions = ("<option data-subtestId='#{subtest.id}'>#{subtest.name}</option>" for subtest in subtests).join("")
     @$el.find(".copy_select").html htmlOptions
 
   copy: (event) =>
@@ -64,15 +66,12 @@ class QuestionsEditListElementView extends Backbone.View
     @trigger "question-edit", @question.id
     return false
 
-  toggleDelete: ->
-    @$el.find(".delete_confirm").fadeToggle(250)
-
   delete: (event) ->
-    @question.collection.remove(@question.id)
-    @question.destroy()
-    @trigger "deleted"
-    return false
-
+    if confirm(@text.delete_confirm)
+      @question.collection.remove(@question.id)
+      @question.destroy()
+      @trigger "deleted"
+  
   initialize: ( options ) ->
     @text = 
       "edit"          : t("QuestionsEditListElementView.help.edit")
@@ -101,9 +100,6 @@ class QuestionsEditListElementView extends Backbone.View
             <img src='images/icon_copy_to.png' class='link_icon show_copy' title='#{@text.copy}'>
             <span class='copy_container'></span>
             <img src='images/icon_delete.png' class='link_icon delete' title='#{@text.delete}'><br>
-            <div class='confirmation delete_confirm'>
-              <div class='menu_box'>#{@text.delete_confirm}<br><button class='delete_delete command_red'>Delete</button><button class='delete_cancel command'>#{@text.cancel_button}</button>
-            </div>
           </td>
         </tr>
       </table>
