@@ -28,6 +28,7 @@ jsFiles = [
 
   'modules/syncManager/SyncManager.js',
   'modules/syncManager/InstrumentSyncView.js',
+  'modules/syncManager/BandwidthCheckView.js',
 
   'modules/assessment/Assessment.js',
   'modules/assessment/Assessments.js',
@@ -228,6 +229,8 @@ libFiles = [
   'lib/jstz.js',
   'lib/ckeditor.js',
   'lib/pouchdb.js',
+  'lib/boomerang.js',
+  'lib/boomerang-plugin-bw-custom.js',
   'lib/coffee-script.js' # This file tends to like to be last
 ]
 

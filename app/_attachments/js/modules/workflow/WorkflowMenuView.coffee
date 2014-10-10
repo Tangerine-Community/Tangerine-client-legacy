@@ -88,6 +88,7 @@ class WorkflowMenuView extends Backbone.View
       <div id='sync-manager' class='SyncManagerView'></div>
       <div id='school-list' class='SchoolListView'>pre</div>
       <div id='valid-observations' class='ValidObservationView'>pre</div>
+      <div id='bandwidth-test'></div>
     "
 
     @updateWorkflows()
@@ -111,6 +112,11 @@ class WorkflowMenuView extends Backbone.View
             @updateWorkflows()
       @syncManagerView.render()
 
+    unless @bandwidthCheckView?
+      @bandwidthCheckView = new BandwidthCheckView
+      @bandwidthCheckView.setElement(@$el.find("#bandwidth-test"))
+      @bandwidthCheckView.render()
+    
     @trigger "rendered"
 
   updateWorkflows: ->
