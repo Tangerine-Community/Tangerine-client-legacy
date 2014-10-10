@@ -77,6 +77,7 @@ class GpsRunView extends Backbone.View
       @position = newPosition
 
   updateDisplay: (position) ->
+    return unless @$el?
     position = @easify position
     positions = [
       el   : @$el.find(".gps_current")
