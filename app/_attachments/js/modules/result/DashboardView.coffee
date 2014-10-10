@@ -14,7 +14,7 @@ class DashboardView extends Backbone.View
       resultDetails.hide()
     else
       resultId = $(event.target).text()
-      $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).openDoc resultId,
+      Tangerine.$db.openDoc resultId,
         success: (result) =>
           resultDetails.html "<pre>#{@syntaxHighlight(result)}</pre>"
           resultDetails.css
@@ -194,7 +194,7 @@ class DashboardView extends Backbone.View
       @$el.find("#advancedOptions").append dateCheckbox
     )
 
-    $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/dashboardResults",
+    Tangerine.$db.view "#{Tangerine.design_doc}/dashboardResults",
       group: true
       success: (result) =>
         $("select#assessment").html "<option>All</option>" +
@@ -203,7 +203,8 @@ class DashboardView extends Backbone.View
         ).join("")
         _.each result.rows, (row) =>
           return unless row.key?
-          $.couch.db(Tangerine.db_name).openDoc row.key,
+          return if row.substr(0,5) is "time-"
+          Tangerine.$db.openDoc row.key,
             success: (result) =>
               $("option[value=#{row.key}]").html result.name
             error: (result) =>

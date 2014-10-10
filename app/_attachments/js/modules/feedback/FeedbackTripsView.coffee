@@ -33,8 +33,8 @@ class FeedbackTripsView extends Backbone.View
 
     @trips = new TripResultCollection
     @trips.fetch 
-      resultView : "resultsByWorkflowId"
-      queryKey    : @workflow.id
+      resultView : "tutorTrips"
+      queryKey   : "workflow-#{@workflow.id}"
       success: => 
         @isReady = true
         @render()

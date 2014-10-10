@@ -1,8 +1,9 @@
 (doc) ->
 
-  archived = doc.archived is true or doc.archived is "true"
+  return if doc.archived is true or doc.archived is "true"
 
-  return if archived
-
-  if doc.collection in ["curriculum", "assessment", "workflow", "feedback"]
+  if doc.collection is "curriculum" or
+  	doc.collection is "assessment" or
+  	doc.collection is "workflow" or
+  	doc.collection is "feedback"
     emit doc._id, null

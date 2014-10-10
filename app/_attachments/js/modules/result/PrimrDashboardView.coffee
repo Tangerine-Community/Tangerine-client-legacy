@@ -11,10 +11,10 @@ class PrimrDashboardView extends Backbone.View
     "change #shiftHours": "update"
 
   loadMissingName: (resultId) ->
-    $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).openDoc resultId,
+    Tangerine.$db.openDoc resultId,
       error: (error) => console.err "Could not open result: #{JSON.stringify error}"
       success: (result) =>
-        $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).openDoc result.subtestId,
+        Tangerine.$db.openDoc result.subtestId,
           error: (error) => console.err "Could not open result: #{JSON.stringify error}"
           success: (result) =>
             $("span.missing-name[data-resultId=#{resultId}]").html result.name
@@ -23,7 +23,7 @@ class PrimrDashboardView extends Backbone.View
   loadLocationData: (tripId) ->
     locationElement = $("td[data-tripId=#{tripId}]")
     locationElement.html "loading..."
-    $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).openDoc locationElement.attr("data-resultId"),
+    Tangerine.$db.openDoc locationElement.attr("data-resultId"),
       error: (error) => console.err "Could not open GPS result: #{JSON.stringify error}"
       success: (result) =>
         lat = result.subtestData?[0].data?.lat
@@ -61,24 +61,30 @@ class PrimrDashboardView extends Backbone.View
     @shiftHours = options.shiftHours || 0
     @workflow = options.workflow || "All"
 
-    $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/dashboardResultsByStartTime",
-      startkey: moment(@startTime).valueOf()
-      endkey: moment(@endTime).valueOf()
+    Tangerine.$db.view "#{Tangerine.design_doc}/dashboardResults",
+      startkey: "time-" + moment(@startTime).valueOf()
+      endkey:   "time-" + moment(@endTime).valueOf()
       reduce: false
-      success: @renderResults
+      success: (result) =>
+        if result.rows.length is 0
+          @$el.html "<section><p>No results found for specified time.</p></section>"
+          @trigger "rendered"
+        else
+          @renderResults(result)
 
-  renderResults: (result) =>
+  renderResults: (result) ->
+
     tableRows = {}
     dates = {}
     propertiesToGroupBy = {}
 
     # Find the first possible grouping variable and use it if not defined
-    @groupBy = _.keys(result.rows[0].value)[0] unless @groupBy?
+    groupCandidates = Object.keys(result.rows[0].value).filter((el)-> el isnt "resultId" and el isnt "numberOfSubtests")
+    @groupBy = groupCandidates[0] unless @groupBy?
 
     @workflows = ["All"]
     @locations = ["All"]
     workflowTrips = {}
-
     _.each result.rows, (row) =>
       # Get all possible workflows & locations
       @workflows.push row.value.workflowId
@@ -98,9 +104,7 @@ class PrimrDashboardView extends Backbone.View
       workflowTrips[row.value.tripId] = [] unless workflowTrips[row.value.tripId]?
       workflowTrips[row.value.tripId].push row.value
     @locations = _(@locations).chain().flatten().sort().uniq(true).value()
-    console.log @locations
     @workflows = _(@workflows).uniq()
-
     _.each workflowTrips, (value,tripId) =>
       leftColumn = value[0][@groupBy]
 
@@ -267,15 +271,16 @@ class PrimrDashboardView extends Backbone.View
       </style>
     "
 
-    @$el.find("table#results").tablesorter
-      widgets: ['zebra']
-      sortList: [[0,0]]
-      textExtraction: (node) ->
-        sortValue = $(node).find(".sort-value").text()
-        if sortValue != ""
-          sortValue
-        else
-          $(node).text()
+    unless result.rows.length is 0
+      @$el.find("table#results").tablesorter
+        widgets: ['zebra']
+        sortList: [[0,0]]
+        textExtraction: (node) ->
+          sortValue = $(node).find(".sort-value").text()
+          if sortValue != ""
+            sortValue
+          else
+            $(node).text()
 
     @$el.find("select#workflow").html "
       #{
@@ -295,8 +300,8 @@ class PrimrDashboardView extends Backbone.View
 
     _.each @workflows, (workflow) =>
       return unless workflow? # Not sure why we need this, but have undefined workflows which break the dashboard
-      
-      $.couch.db(Tangerine.db_name).openDoc workflow,
+      return if workflow.toString().toLowerCase() is "all"
+      Tangerine.$db.openDoc workflow,
         success: (result) =>
           @$el.find("option[value=#{result._id}]").html result.name
           @$el.find("td.workflowId:contains(#{result._id})").html result.name

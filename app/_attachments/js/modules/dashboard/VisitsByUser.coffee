@@ -5,7 +5,7 @@ class VisitsByUser extends Backbone.View
   initialize: ->
     @results = new TripResultCollection
     @results.fetch
-      resultView : "resultsByUserId"
+      resultView : "tripsAndUsers"
       queryKey    : Tangerine.user.name()
 
       success: =>

@@ -23,34 +23,6 @@
   month = docTime.getMonth() + 1
   emit "year#{year}month#{month}", doc.tripId
 
-
-  #
-  # by Zone, County
-  #
-
-  for subtest in doc.subtestData
-    
-    if subtest.prototype is "location"
-
-      for label, i in subtest.data.labels
-        zoneIndex   = i if label is "Zone"
-        countyIndex = i if label is "County"
-
-      countyKey = "county-" + subtest.data.location[countyIndex]
-      zoneKey   = "#{countyKey}-zone-"   + subtest.data.location[zoneIndex]
-      
-
-      emit zoneKey,   doc.tripId if subtest.data.location[zoneIndex]?
-      emit countyKey, doc.tripId if subtest.data.location[countyIndex]?
-
-
-  #
-  # by enumerator
-  #
-
-  emit "user-" + doc.enumerator || doc.editedBy, doc.tripId
-
-
   #
   # by workflow
   #

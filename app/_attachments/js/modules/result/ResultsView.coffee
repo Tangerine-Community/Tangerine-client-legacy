@@ -264,7 +264,7 @@ class ResultsView extends Backbone.View
         "local"
 
     $.ajax 
-      url: Tangerine.settings.urlView(location, "resultSummaryByAssessmentId")+"?descending=true&limit=#{@resultLimit}&skip=#{@resultOffset}"
+      url: Tangerine.settings.urlView(location, "dashboardResults")+"?descending=true&limit=#{@resultLimit}&skip=#{@resultOffset}"
       type: "POST"
       dataType: "json"
       contentType: "application/json"
@@ -289,13 +289,13 @@ class ResultsView extends Backbone.View
         htmlRows = ""
         for row in rows
           
-          id      = row.value?.participant_id || "No ID"
-          endTime = row.value.end_time
+          id      = row.value?.participantId || "No ID"
+          endTime = row.value.endTime
           if endTime?
             long    = moment(endTime).format('YYYY-MMM-DD HH:mm')
             fromNow = moment(endTime).fromNow()
           else
-            startTime = row.value.start_time
+            startTime = row.value.startTime
             long    = "<b>started</b> " + moment(startTime).format('YYYY-MMM-DD HH:mm')
             fromNow = moment(startTime).fromNow()
 

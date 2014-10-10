@@ -11,9 +11,11 @@ class TripResultCollection extends Backbone.Collection
 
     resultView = options.resultView
     queryKey   = options.queryKey
+    reduce     = options['reduce'] || false
 
     Tangerine.$db.view "#{Tangerine.design_doc}/#{resultView}",
       key     : queryKey
+      reduce  : reduce
       success : (response) =>
 
         resultIds = response.rows.filter( (row) ->
