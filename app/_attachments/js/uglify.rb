@@ -81,7 +81,6 @@ jsFiles = [
   'modules/result/ResultSumView.js',
   'modules/result/DashboardView.js',
   'modules/result/PrimrDashboardView.js',
-  'modules/result/MapView.js',
   'modules/result/TripResult.js',
   'modules/result/TripResults.js',
 
