@@ -49,6 +49,7 @@ class WorkflowRunView extends Backbone.View
     "
 
     @renderStep()
+    @checkIncompletes()
 
     @$el.find('#workflow-progress').progressbar value : ( (@index+1) / (@workflow.getLength()+1) * 100 )
 
@@ -86,6 +87,22 @@ class WorkflowRunView extends Backbone.View
     @index = Math.min @index + 1, @workflow.getLength()
 
     @render() if oldIndex isnt @index
+
+    @checkIncompletes()
+
+
+  checkIncompletes: ->
+    return if @checkingIncompletes is true
+
+    # if the workflow is complete, then remove it, if possible, from resumables
+    if @workflow.stepModelByIndex(@index).getName() is "Complete"
+      @checkingIncompletes = true
+      incomplete = Tangerine.user.getPreferences("tutor-workflows", "incomplete") || {}
+      incomplete[@workflow.id] = _(incomplete[@workflow.id]).without @tripId
+      Tangerine.user.setPreferences "tutor-workflows",
+        "incomplete", 
+        incomplete, => 
+          @checkingIncompletes = false
 
 
   previousStep: ->
