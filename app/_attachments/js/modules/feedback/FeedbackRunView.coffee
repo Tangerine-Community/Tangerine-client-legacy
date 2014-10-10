@@ -31,6 +31,23 @@ class FeedbackRunView extends Backbone.View
       namespace = new Namespace
         critique : critique
         trip     : @trip
+        getDurationMinutes : =>
+          maxTime = 0
+          minTime = 0
+          first = true
+          for key, value of @trip.attributes
+            if ~key.indexOf("timestamp") || ~key.indexOf("time_stamp")
+              intValue = parseInt(value)
+              if not Number.isNaN(intValue)
+                if first
+                  maxTime = intValue
+                  minTime = intValue
+                  first = false
+                else
+                  maxTime = Math.max(intValue, maxTime)
+                  minTime = Math.min(intValue, minTime)
+          return parseInt(( maxTime - minTime ) / 1000 / 60)
+
 
       try 
         shouldDisplay = CoffeeScript.eval.apply(namespace, [critique.getString("when")])
