@@ -348,6 +348,7 @@ class SurveyRunView extends Backbone.View
     @renderCount++
     if @renderCount == @questions.length
       @trigger "ready"
+      @updateSkipLogic()
     @trigger "subRendered"
 
   onClose:->

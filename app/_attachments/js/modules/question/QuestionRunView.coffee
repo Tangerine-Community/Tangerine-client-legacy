@@ -46,15 +46,14 @@ class QuestionRunView extends Backbone.View
       @button = new ButtonView
         options : @options
         mode    : @type
-        dataEntry : @dataEntry
-        answer : @answer
-        fontFamily: @fontFamily
+        dataEntry  : @dataEntry
+        answer     : @answer
+        fontFamily : @fontFamily
 
       @button.on "change rendered", => @update()
 
-
   previousAnswer: =>
-    @parent.questionViews[@parent.questionIndex-1].answer if @parent.questionIndex >= 0
+    @parent.questionViews[@parent.questionIndex - 1].answer if @parent.questionIndex >= 0
 
   onShow: =>
 
@@ -68,7 +67,6 @@ class QuestionRunView extends Backbone.View
       name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
       message = error.message
       alert "Display code error\n\n#{name}\n\n#{message}"
-
 
   update: (event) =>
     @updateResult()
@@ -87,7 +85,6 @@ class QuestionRunView extends Backbone.View
         @answer = @$el.find("##{@cid}_#{@name}").val()
       else
         @answer = @button.answer
-
 
   updateValidity: ->
 
