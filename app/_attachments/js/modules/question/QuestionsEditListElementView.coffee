@@ -38,11 +38,14 @@ class QuestionsEditListElementView extends Backbone.View
         keys : [@question.get("assessmentId")]
       "success" : (data) =>
         subtests = _.compact((row.value if row.value.prototype == "survey") for row in data.rows)
+        console.log subtests
         @populateSurveySelect subtests
 
   populateSurveySelect : (subtests) ->
+    
     subtests.push    _id : 'cancel', name : @text.cancel_button
     subtests.unshift _id : '',       name : @text.select
+
     htmlOptions = ("<option data-subtestId='#{subtest._id}' #{subtest.attrs || ""}>#{subtest.name}</option>" for subtest in subtests).join("")
     @$el.find(".copy_select").html htmlOptions
 
@@ -99,15 +102,15 @@ class QuestionsEditListElementView extends Backbone.View
       <table>
         <tr>
           <td>
-            <img src='images/icon_drag.png' class='sortable_handle'>
+            <img src='images/icon_drag.png' width='36' height='36' class='sortable_handle'>
           </td>
           <td>
             <span>#{@question.get 'prompt'}</span> <span>[<small>#{@question.get 'name'}, #{@question.get 'type'}</small>]</span>
             
-            <img src='images/icon_edit.png' class='link_icon edit' title='#{@text.edit}'>
-            <img src='images/icon_copy_to.png' class='link_icon show_copy' title='#{@text.copy}'>
+            <img src='images/icon_edit.png' width='36' height='36' class='link_icon edit' title='#{@text.edit}'>
+            <img src='images/icon_copy_to.png' width='36' height='36' class='link_icon show_copy' title='#{@text.copy}'>
             <span class='copy_container'></span>
-            <img src='images/icon_delete.png' class='link_icon delete' title='#{@text.delete}'><br>
+            <img src='images/icon_delete.png' width='36' height='36' class='link_icon delete' title='#{@text.delete}'><br>
             <div class='confirmation delete_confirm'>
               <div class='menu_box'>#{@text.delete_confirm}<br><button class='delete_delete command_red'>Delete</button><button class='delete_cancel command'>#{@text.cancel_button}</button>
             </div>
