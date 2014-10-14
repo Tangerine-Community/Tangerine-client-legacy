@@ -24,11 +24,7 @@ class QuestionsEditView extends Backbone.View
       @views.push view
       view.on "deleted", @render
       view.on "duplicate", =>
-        @questions.fetch 
-          key: question.get("assessmentId")
-          success: =>
-            @questions = new Questions(@questions.where {subtestId : question.get("subtestId") })
-            @render true
+        @refetchAndRender()
       view.on "question-edit", (questionId) => @trigger "question-edit", questionId
       view.render()
       @$el.append view.el
@@ -43,7 +39,27 @@ class QuestionsEditView extends Backbone.View
 
       update : (event, ui) =>
         idList = ($(li).attr("data-id") for li in @$el.find("li.question_list_element"))
-        for id, i in idList
-          @questions.get(id).save( { "order" : i }, { silent : true } )
-        @questions.sort()
-        @render()
+        index = 0
+        newDocs = []
+        for id, index in idList
+          newDoc = @questions.get(id).attributes
+          newDoc['order'] = index
+          newDocs.push newDoc
+        requestData = "docs" : newDocs
+        $.ajax
+          type : "POST"
+          contentType : "application/json; charset=UTF-8"
+          dataType : "json"
+          url : Tangerine.settings.urlBulkDocs()
+          data : JSON.stringify(requestData)
+          success : (responses) => @refetchAndRender()
+          error : -> Utils.midAlert "Duplication error"
+
+  refetchAndRender: ->
+    anyQuestion = @questions.models[0]
+    @questions.fetch 
+      key: anyQuestion.get("assessmentId")
+      success: =>
+        @questions = new Questions(@questions.where {subtestId : anyQuestion.get("subtestId") })
+        @render true
+
