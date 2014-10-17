@@ -76,7 +76,15 @@
       "attempt" : "Attempt #__count__"
       "retrying" : "Retrying..."
       "searching" : "Searching..."
-
+  "CameraRunView" :
+    "title" : "Capture Photo"
+    "button" :
+      "capture" : "Capture Photo"
+      "browse" : "Browse Photos"
+    "error" :
+      "capture" : "An error occurred while importing the photo. Please try again."
+      "noCamera" : "System Error: No Camera Available to Capture Photo."
+      "invalid" : "You must capture a photograph before you can continue."
   "abort all observations" : "Abort ALL observations"
   "add" : "add"
   "add student" : "add student"
