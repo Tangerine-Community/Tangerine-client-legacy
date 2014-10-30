@@ -2602,6 +2602,43 @@ body[rtl]
 
 
 /*
+ * CameraRunView
+ */
+.CameraRunView {
+  .camera-capture-btn {
+    display:inline-block;
+  }
+
+  .camera-browse-btn {
+    display:none;
+  }
+
+  .grid {
+    padding: 0 !important;
+  }
+  
+  .content {
+
+    .imageContainer {
+      display:inline-block;
+      margin: 5px;
+      background-color: rgb(66, 66, 66);
+      -webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.3);
+      -moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.3);
+      box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.3);
+
+      image {
+        padding: 2px;
+      }
+    }
+
+    .error {
+      color: red;
+    }
+  }
+}
+
+/*
  * Table sorter
  */
 

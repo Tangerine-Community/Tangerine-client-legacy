@@ -70,6 +70,10 @@ jsFiles = [
   'modules/subtest/prototypes/ObservationRunView.js',
   'modules/subtest/prototypes/ObservationEditView.js',
 
+  'modules/subtest/prototypes/CameraRunView.js',
+  'modules/subtest/prototypes/CameraEditView.js',
+  'modules/subtest/prototypes/CameraPrintView.js',
+
   'modules/subtest/prototypes/GpsRunView.js',
   'modules/subtest/prototypes/GpsEditView.js',
   'modules/subtest/prototypes/GpsPrintView.js',

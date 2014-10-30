@@ -86,6 +86,10 @@
          "run" : "GpsRunView",
          "edit" : "GpsEditView"
       },
+      "camera" : {
+         "run" : "CameraRunView",
+         "edit" : "CameraEditView"
+      },
       "id" : {
          "run" : "IdRunView",
          "edit" : "IdEditView"
