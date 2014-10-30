@@ -13,8 +13,12 @@ class LocationRunView extends Backbone.View
     @model  = @options.model
     @parent = @options.parent
     
+    @limit  = @options.limit
+
     @levels = @model.get("levels")       || []
     @locations = @model.get("locations") || []
+
+    @levels = @levels.slice(0, @limit) if @limit?
 
     if @levels.length == 1 && @levels[0] == ""
       @levels = []
@@ -109,7 +113,6 @@ class LocationRunView extends Backbone.View
       "
     else
       for level, i in @levels
-        
         levelOptions = @getOptions(i)
 
         isDisabled = i isnt 0 && "disabled='disabled'"

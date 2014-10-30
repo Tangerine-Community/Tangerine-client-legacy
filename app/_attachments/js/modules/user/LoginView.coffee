@@ -45,6 +45,34 @@ class LoginView extends Backbone.View
     $("body").css("background", "white")
     $("#footer").hide()
 
+    @fetchLocations => @renderSchoolList("data")
+
+  fetchLocations: ( callback = $.noop ) ->
+    subtestIndex = 0
+    limit = 1
+
+    checkSubtest = =>
+
+      Tangerine.$db.view("#{Tangerine.design_doc}/byCollection",
+        key   : "subtest"
+        skip  : subtestIndex
+        limit : limit
+        success: (response) =>
+          return alert "Failed to find locations" if response.rows.length is 0
+          
+          locationSubtest = response.rows[0].value
+
+          if locationSubtest.prototype? && locationSubtest.prototype is "location"
+            @locationSubtest = new Subtest locationSubtest
+            @locationView = new LocationRunView model:@locationSubtest, limit:2
+            callback?()
+          else
+            subtestIndex++
+            checkSubtest()
+      )
+    checkSubtest()
+
+
   checkNewName: (event) ->
     $target = $(event.target)
     name = ( $target.val().toLowerCase() || '' )
@@ -195,12 +223,15 @@ class LoginView extends Backbone.View
 
           <input id='first' type='text' placeholder='#{@text.first_name}'>
           <input id='last' type='text' placeholder='#{@text.last_name}'>
-          <input id='zone-name' placeholder='#{@text.zone_name}'>
 
+          <div id='schoolSelector'></div>
+
+          <label>Gender<br>
           <select id='gender'>
             <option value='male'>Male</option>
             <option value='female'>Female</option>
           </select>
+          </label>
           <br/><br/>
 
           <input id='phone' type='number' placeholder='#{@text.phone}'>
@@ -236,6 +267,19 @@ class LoginView extends Backbone.View
     @passMsg = @$el.find(".pass-message")
 
     @trigger "rendered" 
+    @renderSchoolList "dom"
+
+  renderSchoolList: (flag) ->
+    requiredFlags = ["dom", "data"]
+    @renderSchoolListFlags = [] unless @renderSchoolListFlags?
+    @renderSchoolListFlags.push flag
+    ready = _(requiredFlags).intersection(@renderSchoolListFlags).length == requiredFlags.length
+    return unless ready
+    console.log "should be rendering"
+
+    @locationView.setElement @$el.find("#schoolSelector")
+    @locationView.render()
+    @locationView.$el.find(".clear").remove()
 
   next: ->
     $challenge = @$el.find("#challenge")
@@ -339,9 +383,6 @@ class LoginView extends Backbone.View
     if ( last   = ( $last   = @$el.find("#last")      ).val() ).length is 0
       errors.push " - Last name cannot be empty"
 
-    if ( zone   = ( $zone   = @$el.find("#zone-name") ).val() ).length is 0
-      errors.push " - Zone name cannot be empty"
-
     if ( gender = ( $gender = @$el.find("#gender")    ).val() ).length is 0
       errors.push " - Gener cannot be empty"
 
@@ -350,6 +391,11 @@ class LoginView extends Backbone.View
 
     if ( email  = ( $email  = @$el.find("#email")     ).val() ).length is 0
       errors.push " - Email cannot be empty"
+
+    location = {}
+    rawLocation = @locationView.getResult()
+    for label, i in rawLocation.labels
+      location[label] = rawLocation.location[i]
 
     previousUsers = ($previousUsers = @$el.find("#same-users")).val()
 
@@ -362,7 +408,7 @@ class LoginView extends Backbone.View
 
       "first"  : first
       "last"   : last
-      "zone"   : zone
+      "location" : location
       "gender" : gender
       "phone"  : phone
       "email"  : email
@@ -396,12 +442,13 @@ class LoginView extends Backbone.View
 
   passError: (error) -> 
     @errors++
-    @passMsg.html error
+    @passMsg.html(error).scrollTo()
     @$el.find("#pass").focus()
 
   nameError: (error) -> 
     @errors++
-    @nameMsg.html error
+    @nameMsg.html(error).scrollTo()
+
     @$el.find("#name").focus()
 
   clearErrors: ->

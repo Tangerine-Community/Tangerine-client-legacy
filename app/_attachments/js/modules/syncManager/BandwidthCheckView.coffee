@@ -41,8 +41,16 @@ class BandwidthCheckView extends Backbone.View
 
 
   displayResults: (data) ->
-    console.log('displaying results')
-    console.log(data)
+
+    if Number.isNaN(data.bw)
+      @$el.find(".bandwidth-cancel-btn, .bandwidth-begin-btn").toggle()
+      @$el.find(".status-bar").removeClass('stripes blue').addClass("Poor")
+      @$el.find(".status-bar span").html 'Bandwidth test failed.'
+      
+      return @$el.find(".BandwidthCheckView .results").html "
+        <p>Please check your internet connection.</p>
+      "
+
 
     result = @calculateStatus(data)
 
@@ -50,12 +58,10 @@ class BandwidthCheckView extends Backbone.View
     @$el.find(".status-bar").removeClass('stripes blue').addClass(result.toString())
     @$el.find(".status-bar span").html 'Complete: '+result+' Connection'
 
-    results = """
-    Your bandwidth to this server is #{parseInt(data.bw*8/1024)}kbps (&#x00b1; #{parseInt(data.bw_err*100/data.bw)}%)<br>
-    Your latency to this server is #{parseInt(data.lat)} &#x00b1; #{data.lat_err}ms<br>
-    """
-    @$el.find(".BandwidthCheckView .results").html results
-    ""
+    @$el.find(".BandwidthCheckView .results").html "
+      Your bandwidth to this server is #{parseInt(data.bw*8/1024)}kbps (&#x00b1; #{parseInt(data.bw_err*100/data.bw)}%)<br>
+      Your latency to this server is #{parseInt(data.lat)} &#x00b1; #{data.lat_err}ms<br>
+    "
 
   calculateStatus: (data) ->
     switch @config.method
@@ -104,8 +110,8 @@ class BandwidthCheckView extends Backbone.View
 
   render: =>
     @$el.html "
-      <h1>Network Connection Test</h1>
       <section class='BandwidthCheckView'>
+        <h2>Network Connection Test</h2>
         <div class='grid grid-pad'>
           <div class='col-3-12'>
             <div class='content'>

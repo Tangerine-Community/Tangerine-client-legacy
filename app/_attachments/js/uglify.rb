@@ -161,7 +161,9 @@ jsFiles = [
   'modules/workflow/WorkflowRunView.js',
   'modules/workflow/WorkflowMenuView.js',
   'modules/workflow/WorkflowSelectView.js',
-
+  
+  'modules/workflow/SchoolListView.js',
+  'modules/workflow/ValidObservationView.js',
 
   'modules/feedback/Critique.js',
   'modules/feedback/Critiques.js',
