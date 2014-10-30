@@ -1,4 +1,3 @@
-
 class TripResultCollection extends Backbone.Collection
 
   url   : "result"
