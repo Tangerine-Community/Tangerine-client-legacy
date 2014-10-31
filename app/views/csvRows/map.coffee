@@ -23,6 +23,7 @@ The only real behavior worth mentioning here is
   pairsDatetime    = prototypes.pairsDatetime
   pairsObservation = prototypes.pairsObservation
   pairsGps         = prototypes.pairsGps
+  pairsCamera      = prototypes.pairsCamera
   pairsLocation    = prototypes.pairsLocation
 
   subtestData = doc.subtestData
@@ -143,6 +144,9 @@ The only real behavior worth mentioning here is
 
     else if prototype == "gps"
       result = result.concat pairsGps subtest
+
+    else if prototype == "camera"
+      result = result.concat pairsCamera subtest, doc._id
 
     result.push cell subtest, "timestamp_#{linearIndex}", subtest.timestamp
 

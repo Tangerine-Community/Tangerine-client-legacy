@@ -21,8 +21,9 @@ class CameraRunView extends Backbone.View
     @parent = options.parent
     @i18n()
 
-    @imgSource = null
-
+    @imgSource = ""
+    @imgMimeType = ""
+    @imgBaseUrl = Tangerine.settings.attributes.groupHost+"/"+Tangerine.settings.groupDB+"/_design/tangerine/_show/image/"
 
   i18n: ->
     @text =
@@ -37,7 +38,8 @@ class CameraRunView extends Backbone.View
   capture: ->
     navigator.camera.getPicture(
       (data) =>
-        @imgSource = "data:#{@config.image.mimeType};base64,"+ data
+        @imgMimeType = "#{@config.image.mimeType}"
+        @imgSource = data
         @$el.find(".imageContainer").show()
         @$el.find(".photoCapture").attr("src", "data:#{@config.image.mimeType};base64,"+ data)
         ""
@@ -49,7 +51,6 @@ class CameraRunView extends Backbone.View
         destinationType:  Camera.DestinationType.DATA_URL
         sourceType:       Camera.PictureSourceType.CAMERA
         allowEdit:        @config.allowEdit
-        #quaity:           @config.image.quality
         targetWidth:      @config.image.targetWidth
         targetHeight:     @config.image.targetHeight
     )
@@ -58,9 +59,10 @@ class CameraRunView extends Backbone.View
   browse: ->
     navigator.camera.getPicture(
       (data) =>
-        @imgSource = "data:"+ @config.image.mimeType +";base64,"+ data
+        @imgMimeType = "#{@config.image.mimeType}"
+        @imgSource = data
         @$el.find(".photoContainer").show()
-        @$el.find(".photoCapture").attr("src", @imgSource)
+        @$el.find(".photoCapture").attr("src", "data:"+ @config.image.mimeType +";base64,"+ data)
       ,
       (error) =>
         @handleError()
@@ -68,7 +70,6 @@ class CameraRunView extends Backbone.View
         destinationType:  Camera.DestinationType.DATA_URL
         sourceType:       Camera.PictureSourceType.PHOTOLIBRARY
         allowEdit:        @config.allowEdit
-        quality:          @config.image.quality
         targetWidth:      @config.image.targetWidth
         targetHeight:     @config.image.targetHeight
     )
@@ -124,7 +125,7 @@ class CameraRunView extends Backbone.View
     @trigger "ready"
 
   getResult: ->
-    return { "photo": "#{@imgSource}" } || {}
+    return { "imageBaseUrl": "#{@imgBaseUrl}", "imageBase64": "#{@imgSource}" , "mimeType": "#{@imgMimeType}"}
 
   getSkipped: ->
     return {}
@@ -138,7 +139,7 @@ class CameraRunView extends Backbone.View
   isValid: -> #if no cam always return true, otherwise check if image is present
     return true if navigator.camera is undefined
 
-    if @imgSource is null then false else true
+    if @imgSource is "" then false else true
 
 
   showErrors: ->
