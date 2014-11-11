@@ -251,7 +251,9 @@ class SyncManagerView extends Backbone.View
 
     @update =>
 
-      tempTrips = _(@syncable).clone()
+      tempTrips = _(@syncable).clone()# all trips, for debugging
+      # tempTrips = _(_(@syncable).clone()).difference(@sunc) # only unlogged unsunc trips
+
 
       doTrip = =>
 
@@ -263,6 +265,63 @@ class SyncManagerView extends Backbone.View
           success : ( response ) =>
             docIds = _(response.rows).pluck("id")
 
+            allDocs = Tangerine.settings.location.group.db+"/_all_docs"
+            $.ajax
+              url: allDocs+"?keys="+JSON.stringify(docIds)
+              dataType: "jsonp"
+              error: () ->
+
+              success: (response) =>
+                rows = response.rows
+                leftToUpload = []
+                for row in rows
+                  leftToUpload.push(row.key) unless row.id?
+
+                # if it's already fully uploaded
+                # make sure it's in the log
+
+                if leftToUpload.length is 0
+                  console.log "old"
+                  @sunc.push currentTrip
+                  @sunc = _.uniq(@sunc)
+                  @log.setTrips @sunc
+                  @log.save null,
+                    success: =>
+                      @update =>
+                        @render()
+                        doTrip()
+                else
+                  console.log "new"
+                  $.ajax
+                    type: "post"
+                    url: "/"+Tangerine.db_name+"/_all_docs?include_docs=true"
+                    dataType: "json"
+                    data: JSON.stringify(
+                      keys: docIds
+                    )
+                    error:->
+
+                    success: (response) ->
+
+                      docs = {"docs":response.rows.map((el)->el.doc)}
+                      bulkDocs = "/_cors_bulk_docs/"+Tangerine.settings.groupDB
+                      $.ajax
+                        type : "post"
+                        url : bulkDocs
+                        data : docs
+                        success: =>
+                          @sunc.push currentTrip
+                          @sunc = _.uniq(@sunc)
+                          @log.setTrips @sunc
+                          @log.save null,
+                            success: =>
+                              @update =>
+                                @render()
+                                doTrip()
+
+                
+
+            ###
             $.couch.replicate Tangerine.db_name, Tangerine.settings.urlDB("group"),
             {
               success : =>
@@ -278,6 +337,7 @@ class SyncManagerView extends Backbone.View
                 Utils.sticky "Upload error. Please try again."
             },
               doc_ids : docIds
+            ###
 
       doTrip()
 
