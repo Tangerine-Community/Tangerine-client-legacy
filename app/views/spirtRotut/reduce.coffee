@@ -11,7 +11,10 @@
   for value in values
     for k, v of value
 
-      if k is "subtests"
+      if k is "validTime"
+        return { validTime : false }
+
+      else if k is "subtests"
         result.subtests += v
 
       else if k is "ids"

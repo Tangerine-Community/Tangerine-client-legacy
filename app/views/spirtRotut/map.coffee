@@ -3,8 +3,10 @@
   return unless doc.collection is "result"
   return unless doc.tripId
 
+  result = {}
+
   #
-  # early escapes
+  # validation
   #
 
   updated = doc.updated #"Thu Mar 06 2014 11:00:00 GMT+0300 (EAT)"
@@ -15,9 +17,8 @@
   max = new Date(sMax)
 
   validTime = min < docTime < max
-  return unless validTime
 
-  result = {}
+  result.validTime = validTime
 
   #
   # by month
@@ -100,7 +101,7 @@
   # number of subtests
   #
 
-  result.subtests = doc.subtestData.length || 1
+  result.subtests = doc.subtestData.length || 1 # could be a class result
 
 
   #
