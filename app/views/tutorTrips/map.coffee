@@ -4,18 +4,6 @@
   return unless doc.tripId
 
   #
-  # early escapes
-  #
-
-  updated = doc.updated
-  docTime = new Date(updated) # "Thu Mar 06 2014 11:00:00 GMT+0300 (EAT)"
-  min = new Date(updated.substr(0,16) + "07:00:00" + updated.substr(-15))
-  max = new Date(updated.substr(0,16) + "14:00:00" + updated.substr(-15))
-
-  validTime = min < docTime < max
-  return unless validTime
-
-  #
   # by month
   #
 
