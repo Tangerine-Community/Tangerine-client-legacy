@@ -89,7 +89,7 @@ jsFiles = [
   'modules/result/TripResult.js',
   'modules/result/TripResults.js',
 
-  'modules/admin/AdminView.js',
+  'modules/email/EmailManagerView.js',
 
   'modules/dashboard/Dashboard.js',
   'modules/dashboard/VisitsByUser.js',
@@ -224,6 +224,8 @@ libFiles = [
   'lib/jquery.ui.accordion.js',
   'lib/jquery.ui.button.js',
   'lib/jquery.ui.progressbar.js',
+  'lib/jquery.dataTables.js',
+
 
   'lib/inflection.js',
   'lib/backbone.js',
