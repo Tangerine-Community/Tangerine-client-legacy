@@ -38,8 +38,8 @@ class SchoolListView extends Backbone.View
 
     @selected        = true
     @currentZone     = 
-      name   : Tangerine.user.get('location').Zone
-      county : Tangerine.user.get('location').County
+      name   : (Tangerine.user.get('location')||{}).Zone
+      county : (Tangerine.user.get('location')||{}).County
     @locationSubtest = {}
 
     Utils.execute [
