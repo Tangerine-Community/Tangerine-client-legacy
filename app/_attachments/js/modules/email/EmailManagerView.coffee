@@ -1,13 +1,13 @@
-class AdminView extends Backbone.View
+class EmailManagerView extends Backbone.View
 
-  className : "AdminView"
+  className : "EmailManagerView"
 
   events:
     "click .update " : "update" 
     'change .select-all' : 'selectAll'
-    'click .add'    : 'add'
-    'click .delete' : 'delete'
-    'click .send' : 'send'
+    'click .add'      : 'add'
+    'click .delete'   : 'delete'
+    'click .send'     : 'send'
     'click .send-one' : 'sendOne'
 
   SEND_TIMEOUT: 10 * 60 * 1e3 # ten minutes
@@ -134,20 +134,19 @@ class AdminView extends Backbone.View
   render: =>
 
     @$el.html "
-      <h1>Admin</h1>
-
+      <h1>Email manager</h1>
       <select id='year'>
         #{("<option value='#{year}' #{if year is @thisYear then 'selected' else ''}>#{year}</option>" for year in [@thisYear-1..@thisYear+1]).join('')}
       </select>
       <select id='month'>
         #{("<option value='#{index}' #{if index is @thisMonth then 'selected="true"' else ''}>#{@MONTHS[index]}</option>"  for index in [1..12]).join('')}
       </select>
+      <button class='command send'>Send to selected</button>
+
       <br>
       <button class='command add'>Add</button> <button class='command delete'>Delete</button>
 
-      <button class='command send'>Send</button>
-
-      <table id='report-users' class='class_table'><tr><td>loading...</td></tr></table>
+      <section><table id='report-users' class='class_table'><tr><td>loading...</td></tr></table></section>
     "
 
     @renderUsers()
@@ -157,14 +156,17 @@ class AdminView extends Backbone.View
   renderUsers: ->
 
     html = "
-      <tr>
-        <th><input type='checkbox' class='select-all'></th>
-        <th>County</th>
-        <th>Office</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Status</th>
-      </tr>
+      <thead>
+        <tr>
+          <th><input type='checkbox' class='select-all'></th>
+          <th>County</th>
+          <th>Office</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
     "
 
     for user in @users.models
@@ -187,9 +189,10 @@ class AdminView extends Backbone.View
         </tr>
       "
 
-    html += '</table>'
+    html += '</tbody>'
 
-    @$el.find('#report-users').html html
+    @$el.find('#report-users').html(html).DataTable()
+
 
 
 class ReportUser extends Backbone.Model
@@ -202,9 +205,30 @@ class ReportUsers extends Backbone.Collection
   model: ReportUser
   url : "report-user"
 
-class ReportUserEditView extends Backbone.EditView
+class ReportUserEditView extends Backbone.View
 
   className: "ReportUserEditView"
+
+  events:
+    "change input" : "save" 
+
+  save: ->
+    Utils.working true
+    #@$el.find("input").attr("disabled", "disabled")
+    @user.save
+      title  : @$el.find("#user-title").val()  || ''
+      last   : @$el.find("#user-last").val()   || ''
+      first  : @$el.find("#user-first").val()  || ''
+      email  : @$el.find("#user-email").val()  || ''
+      county : @$el.find("#user-county").val() || ''
+    ,
+      success: =>
+        Utils.working false
+        Utils.topAlert("User saved")
+      error: =>
+        Utils.working false
+        alert "Save error. Please try again."
+    return true
 
   validateOptions: (options) ->
     throw new ReferenceError "#{@className} requires ReportUser" unless options.user
@@ -215,35 +239,34 @@ class ReportUserEditView extends Backbone.EditView
     @validateOptions options
 
     @user = options.user
-    @models = new Backbone.Collection @user
 
   render: ->
 
     @$el.html "
-      <button class='nav-button'><a href='javascript:history.back()'>Back<a/></button>
+      <button class='nav-button'><a href='#email'>Back<a/></button>
 
       <h1>Edit user</h1>
 
       <table class='class_table'>
         <tr>
           <th>Office</th>
-          <td>#{@getEditable(@user, { key : 'title', escape : true },'Title', 'Undefined title')}</td>
+          <td><input id='user-title' value='#{@user.getEscapedString('title')}'></td>
         </tr>
         <tr>
-          <th>Last name</th>
-          <td>#{@getEditable(@user, { key : 'last', escape : true },'Last name', 'Undefined last name')}</td>
+          <th>Last</th>
+          <td><input id='user-last' value='#{@user.getEscapedString('last')}'></td>
         </tr>
         <tr>
-          <th>First name</th>
-          <td>#{@getEditable(@user, { key : 'first', escape : true },'First name', 'Undefined first name')}</td>
+          <th>First</th>
+          <td><input id='user-first' value='#{@user.getEscapedString('first')}'></td>
         </tr>
         <tr>
           <th>Email</th>
-          <td>#{@getEditable(@user, { key : 'email', escape : true },'Email', 'example: user@provider.com')}</td>
+          <td><input id='user-email' value='#{@user.getEscapedString('email')}'></td>
         </tr>
         <tr>
           <th>County</th>
-          <td>#{@getEditable(@user, { key : 'county', escape : true },'County', 'Undefined county')}</td>
+          <td><input id='user-county' value='#{@user.getEscapedString('county')}'></td>
         </tr>
       </table>
     "

@@ -81,7 +81,7 @@ class Router extends Backbone.Router
 
     'result/:resultId' : 'result'
 
-    'admin' : 'admin'
+    'email' : 'email'
     'reportUser/:id' : 'editReportUser'
 
     'sync/:id'      : 'sync'
@@ -95,10 +95,10 @@ class Router extends Backbone.Router
       isAuthenticated: ->
         vm.show new TutorAccountView
 
-  admin: ->
+  email: ->
     Tangerine.user.verify
       isAdmin: ->
-        vm.show new AdminView
+        vm.show new EmailManagerView
 
   editReportUser: ( reportUserId ) ->
     throw URIError unless reportUserId?
