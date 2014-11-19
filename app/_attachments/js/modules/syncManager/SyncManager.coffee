@@ -251,9 +251,9 @@ class SyncManagerView extends Backbone.View
 
     @update =>
 
-      tempTrips = _(@syncable).clone()# all trips, for debugging
+      tempTrips = _(@syncable).clone().reverse()# all trips, for debugging
       # tempTrips = _(_(@syncable).clone()).difference(@sunc) # only unlogged unsunc trips
-
+      tempTrips = tempTrips.slice(130,tempTrips.length)
 
       doTrip = =>
 
@@ -265,7 +265,7 @@ class SyncManagerView extends Backbone.View
           success : ( response ) =>
             docIds = _(response.rows).pluck("id")
 
-            allDocs = Tangerine.settings.location.group.db+"/_all_docs"
+            allDocs = Tangerine.settings.location.group.db+"_all_docs"
             $.ajax
               url: allDocs+"?keys="+JSON.stringify(docIds)
               dataType: "jsonp"
@@ -281,7 +281,7 @@ class SyncManagerView extends Backbone.View
                 # make sure it's in the log
 
                 if leftToUpload.length is 0
-                  console.log "old"
+
                   @sunc.push currentTrip
                   @sunc = _.uniq(@sunc)
                   @log.setTrips @sunc
@@ -291,7 +291,7 @@ class SyncManagerView extends Backbone.View
                         @render()
                         doTrip()
                 else
-                  console.log "new"
+
                   $.ajax
                     type: "post"
                     url: "/"+Tangerine.db_name+"/_all_docs?include_docs=true"
@@ -301,14 +301,15 @@ class SyncManagerView extends Backbone.View
                     )
                     error:->
 
-                    success: (response) ->
+                    success: (response) =>
 
                       docs = {"docs":response.rows.map((el)->el.doc)}
-                      bulkDocs = "/_cors_bulk_docs/"+Tangerine.settings.groupDB
+                      compressedData = LZString.compressToBase64(JSON.stringify(docs))
+                      bulkDocs = Tangerine.settings.location.group.url+"/_cors_bulk_docs/"+Tangerine.settings.groupDB
                       $.ajax
                         type : "post"
                         url : bulkDocs
-                        data : docs
+                        data : compressedData
                         success: =>
                           @sunc.push currentTrip
                           @sunc = _.uniq(@sunc)

@@ -226,7 +226,7 @@ libFiles = [
   'lib/jquery.ui.progressbar.js',
   'lib/jquery.dataTables.js',
 
-
+  'lib/lz-string.js',
   'lib/inflection.js',
   'lib/backbone.js',
   'lib/moment.js',
