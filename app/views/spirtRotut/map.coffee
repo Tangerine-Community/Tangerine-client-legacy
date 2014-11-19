@@ -28,7 +28,6 @@
   month = docTime.getMonth() + 1
   result.month = month
 
-
   #
   # by Zone, County, subject, class, gps
   #
@@ -63,8 +62,6 @@
       result.week    = subtest.data.week    if subtest.data.week?
       result.day     = subtest.data.day     if subtest.data.day?
 
-
-
     else if subtest.prototype is "gps" and subtest.data.long? and subtest.data.lat?
 
       result.gpsData = 
@@ -95,7 +92,6 @@
   #
 
   result.user = doc.enumerator || doc.editedBy
-
 
   #
   # number of subtests

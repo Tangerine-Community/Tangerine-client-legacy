@@ -12,7 +12,10 @@
     for k, v of value
 
       if k is "validTime"
-        return { validTime : false }
+        if v is true
+          result.validTime = true
+        else
+          return { validTime : false }
 
       else if k is "subtests"
         result.subtests += v
@@ -30,12 +33,16 @@
             result.benchmarked++
 
       else if k is "minTime"
-        result.minTime = v unless result.minTime?
-        result.minTime = if result.minTime < v then result.minTime else v
+        if result.minTime
+          result.minTime = if result.minTime < v then result.minTime else v
+        else
+          result.minTime = v
 
       else if k is "maxTime"
-        result.maxTime = v unless result.maxTime?
-        result.maxTime = if result.maxTime > v then result.maxTime else v
+        if result.maxTime
+          result.maxTime = if result.maxTime > v then result.maxTime else v
+        else
+          result.maxTime = v
 
       else
         # this only works if none of the other values have the same key

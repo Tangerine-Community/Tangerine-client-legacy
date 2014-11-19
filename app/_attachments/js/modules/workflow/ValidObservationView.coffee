@@ -15,7 +15,7 @@ class ValidObservationView extends Backbone.View
   fetchTripIds: (callback = $.noop) ->
     d = new Date()
     year  = d.getFullYear()
-    month = d.getMonth()
+    month = d.getMonth()+1
 
     Utils.execute [
       (callback = $.noop) ->
@@ -67,11 +67,11 @@ class ValidObservationView extends Backbone.View
           group   : true
           keys    : @tripIds.final.thisMonth
           success : (response) =>
+
             validTrips = response.rows.filter (row) ->
               minutes = (parseInt(row.value.maxTime) - parseInt(row['value']['minTime'])) / 1000 / 60
               result = minutes >= 20
               return result
-
             @validCount.thisMonth = validTrips.length
             callback?()
 
@@ -80,6 +80,7 @@ class ValidObservationView extends Backbone.View
           group   : true
           keys    : @tripIds.final.lastMonth
           success : (response) =>
+            
             validTrips = response.rows.filter (row) ->
               minutes = (parseInt(row.value.maxTime) - parseInt(row['value']['minTime'])) / 1000 / 60
               result = minutes >= 20
@@ -130,12 +131,22 @@ class ValidObservationView extends Backbone.View
       @$el.html "<section><h2>Valid Observations</h2><p>Loading...</p></section>"
       return
 
+    if @validCount.thisMonth isnt 0
+      thisMonth = Math.commas(300+(Math.min(1,@validCount.thisMonth/@targetVisits)*6000))
+    else
+      thisMonth = 0
+
+    if @validCount.lastMonth
+      previousMonth = Math.commas(300+(Math.min(1, @validCount.lastMonth/@targetVisits)*6000))
+    else
+      previousMonth = 0
+
     @$el.html "
       <section>
         <h2>Valid Observations</h2>
         <table class='class_table'><tr><th></th><th>Observations</th><th>Reimbursement</th></tr>
-          <tr><th>This month</th><td>#{@validCount.thisMonth} </td><td>#{Math.commas(300+(Math.min(1,@validCount.thisMonth/@targetVisits)*6000))} KES</td></tr>
-          <tr><th>Previous month</th><td>#{@validCount.lastMonth} </td><td>#{Math.commas(300+(Math.min(1, @validCount.lastMonth/@targetVisits)*6000))} KES</td></tr>
+          <tr><th>This month</th><td>#{@validCount.thisMonth} </td><td>#{thisMonth} KES</td></tr>
+          <tr><th>Previous month</th><td>#{@validCount.lastMonth} </td><td>#{previousMonth} KES</td></tr>
         </table>
       </section>
     "
