@@ -43,7 +43,12 @@
       "gender"     : "Gender"
       "phone"      : "Phone"
       "email"      : "Email"
-
+  "TutorMenuView" :
+    "title" : "Tutor Menu"
+    "tabs" : 
+      "workflows" : "Workflows"
+      "sync" : "Sync"
+      "schools" : "Schools"
 
   "QuestionsEditListElementView" :
     "help" :

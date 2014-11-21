@@ -110,7 +110,7 @@ class BandwidthCheckView extends Backbone.View
 
   render: =>
     @$el.html "
-      <section class='BandwidthCheckView'>
+      <div class='BandwidthCheckView'>
         <h2>Network Connection Test</h2>
         <div class='grid grid-pad'>
           <div class='col-3-12'>
@@ -130,7 +130,7 @@ class BandwidthCheckView extends Backbone.View
       	<div class='results'>
       		<span class='results'></span>
       	</div>
-      </section>
+      </div>
     "
 
     @trigger "rendered"
