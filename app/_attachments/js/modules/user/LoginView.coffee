@@ -209,20 +209,20 @@ class LoginView extends Backbone.View
         <section>
 
           <div class='messages name-message'></div>
-          <input id='new-name' type='text' placeholder='#{nameName}'>
+          <input autocomplete='off' id='new-name' type='text' placeholder='#{nameName}'>
 
-          <input id='challenge-question' type='text' placeholder='#{@text.challenge_question}' title='#{@text.challenge_explaination}'>
+          <input autocomplete='off' id='challenge-question' type='text' placeholder='#{@text.challenge_question}' title='#{@text.challenge_explaination}'>
 
-          <input id='challenge-response' type='text' placeholder='#{@text.challenge_response}' title='#{@text.challenge_explaination}'>
+          <input autocomplete='off' id='challenge-response' type='text' placeholder='#{@text.challenge_response}' title='#{@text.challenge_explaination}'>
 
           <div class='messages pass-message'></div>
-          <input id='new-pass-1' type='password' placeholder='#{@text.password}'>
+          <input autocomplete='off' id='new-pass-1' type='password' placeholder='#{@text.password}'>
 
-          <input id='new-pass-2' type='password' placeholder='#{@text.password_confirm}'>
+          <input autocomplete='off' id='new-pass-2' type='password' placeholder='#{@text.password_confirm}'>
 
 
-          <input id='first' type='text' placeholder='#{@text.first_name}'>
-          <input id='last' type='text' placeholder='#{@text.last_name}'>
+          <input autocomplete='off' id='first' type='text' placeholder='#{@text.first_name}'>
+          <input autocomplete='off' id='last' type='text' placeholder='#{@text.last_name}'>
 
           <div id='schoolSelector'></div>
 
@@ -234,8 +234,8 @@ class LoginView extends Backbone.View
           </label>
           <br/><br/>
 
-          <input id='phone' type='number' placeholder='#{@text.phone}'>
-          <input id='email' type='text' placeholder='#{@text.email}'>
+          <input autocomplete='off' id='phone' type='number' placeholder='#{@text.phone}'>
+          <input autocomplete='off' id='email' type='text' placeholder='#{@text.email}'>
           <br>
           <label for='same-users'>Please merge previous user names with this one</label>
           <select multiple='true' id='same-users'>
