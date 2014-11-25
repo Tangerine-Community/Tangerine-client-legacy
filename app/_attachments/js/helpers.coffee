@@ -585,8 +585,6 @@ class Utils
 
   @updateTangerine: (doResolve = true, options = {}) ->
 
-    return unless Tangerine.user.isAdmin()
-
     Utils.documentCounter = 0
 
     dDoc = Tangerine.settings.contextualize
