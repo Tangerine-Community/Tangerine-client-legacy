@@ -329,7 +329,7 @@ class SyncManagerView extends Backbone.View
 
                         docs = {"docs":response.rows.map((el)->el.doc)}
                         compressedData = LZString.compressToBase64(JSON.stringify(docs))
-                        bulkDocs = Tangerine.settings.location.group.url+"/_cors_bulk_docs/"+Tangerine.settings.groupDB
+                        bulkDocs = Tangerine.settings.location.group.url+"_cors_bulk_docs/"+Tangerine.settings.groupDB
                         $.ajax
                           type : "post"
                           url : bulkDocs

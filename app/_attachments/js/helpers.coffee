@@ -583,7 +583,7 @@ class Utils
       Utils.documentCounter = null
 
 
-  @updateTangerine: (doResolve = true, options = {}) ->
+  @updateTangerine  : (doResolve = true, options = {}) ->
 
     Utils.documentCounter = 0
 
