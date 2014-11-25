@@ -31,13 +31,12 @@ class SchoolListView extends Backbone.View
     @$el.find(".school-list").toggle()
 
   initialize: ->
-
     @geography       = {}
     @visited         = {}
     @schools         = { left : [] , done : []}
 
     @selected        = true
-    @currentZone     = 
+    @currentZone     =
       name   : (Tangerine.user.get('location')||{}).Zone
       county : (Tangerine.user.get('location')||{}).County
     @locationSubtest = {}
@@ -64,7 +63,18 @@ class SchoolListView extends Backbone.View
           @locationSubtest = response.rows[0].value
 
           if @locationSubtest.prototype? && @locationSubtest.prototype is "location"
-            @makeTree(@locationSubtest.locations, @geography)
+            
+            levels = @locationSubtest.levels
+            locationCols = @locationSubtest.locationCols
+
+            levelColMap = []
+            for level, i in levels
+              levelColMap[i] = _.indexOf locationCols, level
+
+            #map the location data to keep only the 'level' columns
+            filteredLocations = _.map(@locationSubtest.locations, (arr) -> (arr[level]) for level in levelColMap )
+
+            @makeTree(filteredLocations, @geography)
             callback?()
           else
             subtestIndex++
@@ -92,7 +102,7 @@ class SchoolListView extends Backbone.View
     month = d.getMonth()
 
     trips = new TripResultCollection
-    trips.fetch 
+    trips.fetch
       resultView : "tutorTrips"
       queryKey   : "year#{year}month#{month}"
       success: =>

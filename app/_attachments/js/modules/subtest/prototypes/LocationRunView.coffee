@@ -15,18 +15,28 @@ class LocationRunView extends Backbone.View
     
     @limit  = @options.limit
 
-    @levels = @model.get("levels")       || []
-    @locations = @model.get("locations") || []
+    @levels       = @model.get("levels")         || []
+    @locationCols = @model.get("locationCols")  || []
+    @locations    = @model.get("locations")      || []
+
+    @selectedLocation = []
 
     @levels = @levels.slice(0, @limit) if @limit?
 
     if @levels.length == 1 && @levels[0] == ""
       @levels = []
+    if @locationCols.length == 1 && @locationCols[0] == ""
+      @locationCols = []
     if @locations.length == 1 && @locations[0] == ""
       @locations = []
 
-    @haystack = []
+    @levelColMap = []
+    for level, i in @levels
+      @levelColMap[i] = _.indexOf @locationCols, level
+    @levelColMap = @levelColMap.slice(0, @limit) if @limit?
 
+    #Push all locations oto the Haystack
+    @haystack = []
     for location, i in @locations
       @haystack[i] = []
       for locationData in location
@@ -41,8 +51,14 @@ class LocationRunView extends Backbone.View
     @li = _.template(template)
 
   clearInputs: ->
-    for level, i in @levels
+    @resetSelects(0)
+    ""
+
+  resetSelects: (index) ->
+    for i in [index..@levels.length-1]
+      @$el.find("#level_#{i}").html = "<option selected='selected' value='' disabled='disabled'>Please select a #{@levels[i]}</option>"
       @$el.find("#level_#{i}").val("")
+      if i isnt 0 then @$el.find("#level_#{i}").attr("disabled", true)
 
   autofill: (event) ->
     @$el.find(".autofill").fadeOut(250)
@@ -95,8 +111,7 @@ class LocationRunView extends Backbone.View
 
     html = "
       <button class='clear command'>#{t('clear')}</button>
-      ";
-
+      "
 
     if @typed
       for level, i in @levels
@@ -125,7 +140,6 @@ class LocationRunView extends Backbone.View
             </select>
           </div>
         "
-
     @$el.html html
 
     @trigger "rendered"
@@ -136,13 +150,34 @@ class LocationRunView extends Backbone.View
     levelChanged = parseInt($target.attr("data-level"))
     newValue = $target.val()
     nextLevel = levelChanged + 1
-    if levelChanged isnt @levels.length
+    if levelChanged isnt @levels.length-1
+      @resetSelects(nextLevel+1)
       @$el.find("#level_#{nextLevel}").removeAttr("disabled")
       @$el.find("#level_#{nextLevel}").html @getOptions(nextLevel)
+      @selectedLocation = []
+    else
+      levelVals = []
+      for level, i in @levels
+        levelVals.push @$el.find("#level_#{i}").val()
+
+      matchCount = 0
+      expectedCount = levelVals.length
+      levelColMap = @levelColMap
+      @selectedLocation = _.find(@locations, (arr) ->
+        matchCount = 0
+        for level, i in levelVals
+          if arr[levelColMap[i]] is levelVals[i] then matchCount += 1
+        return matchCount == expectedCount
+      )
+    ""
+
 
   getOptions: (index)->
 
+    targetIndex = @levelColMap[index]
+
     doneOptions = []
+    currentOptions = []
     levelOptions = ''
 
     parentValues = []
@@ -152,40 +187,49 @@ class LocationRunView extends Backbone.View
 
     for location, i in @locations
 
-      unless ~doneOptions.indexOf location[index]
+      unless ~doneOptions.indexOf location[targetIndex]
 
         isNotChild = index is 0
         isValidChild = true
         for i in [0..Math.max(index-1,0)]
 
-          if parentValues[i] isnt location[i]
+          if parentValues[i] isnt location[@levelColMap[i]]
             isValidChild = false
             break
 
         if isNotChild or isValidChild
 
-          doneOptions.push location[index]
+          doneOptions.push location[targetIndex]
+          currentOptions.push _(location[targetIndex]).escape()
+    
 
-          locationName = _(location[index]).escape()
-          levelOptions += "
-            <option value='#{locationName}'>#{locationName}</option>
-          "
+    for locationName in _.sortBy(currentOptions, (el) -> return el)
+      levelOptions += "
+        <option value='#{locationName}'>#{locationName}</option>
+      "
 
     return "
-      <option selected='selected' disabled='disabled'>Please select a #{@levels[index]}</option>
+      <option selected='selected' value='' disabled='disabled'>Please select a #{@levels[index]}</option>
     " + levelOptions
 
 
-  getResult: ->
-    return {
-      "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
-      "location" : ($.trim(@$el.find("#level_#{i}").val()) for level, i in @levels)
-    }
+
+  getResult: (filtered = false)->
+    if filtered
+      return {
+        "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
+        "location" : (@$el.find("#level_#{i}").val() for level, i in @levels)
+      }
+    else
+      return {
+        "labels"   : (column.replace(/[\s-]/g,"_") for column in @locationCols)
+        "location" : (@selectedLocation)
+      }
 
   getSkipped: ->
     return {
-      "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
-      "location" : ("skipped" for level, i in @levels)
+      "labels"   : (column.replace(/[\s-]/g,"_") for column in @locationCols)
+      "location" : ("skipped" for locationCols in @locationCols)
     }
 
 
@@ -196,6 +240,8 @@ class LocationRunView extends Backbone.View
     elements = if selects.length > 0 then selects else inputs
     for input, i in elements
       return false if _($(input).val()).isEmptyString()
+
+    return false if @selectedLocation == []
     true
 
   showErrors: ->

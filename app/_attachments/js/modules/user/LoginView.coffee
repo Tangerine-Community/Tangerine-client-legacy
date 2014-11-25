@@ -275,7 +275,6 @@ class LoginView extends Backbone.View
     @renderSchoolListFlags.push flag
     ready = _(requiredFlags).intersection(@renderSchoolListFlags).length == requiredFlags.length
     return unless ready
-    console.log "should be rendering"
 
     @locationView.setElement @$el.find("#schoolSelector")
     @locationView.render()
@@ -393,7 +392,7 @@ class LoginView extends Backbone.View
       errors.push " - Email cannot be empty"
 
     location = {}
-    rawLocation = @locationView.getResult()
+    rawLocation = @locationView.getResult(true)
     for label, i in rawLocation.labels
       location[label] = rawLocation.location[i]
 
@@ -402,7 +401,7 @@ class LoginView extends Backbone.View
     question = ($pass1 = @$el.find("#challenge-question")).val()
     response = ($pass1 = @$el.find("#challenge-response")).val()
 
-    attributes = 
+    attributes =
       "question" : question
       "response" : response
 
@@ -433,19 +432,19 @@ class LoginView extends Backbone.View
     @passError(@text.error_pass) if pass == ""
 
     if @errors == 0
-      try 
+      try
         @user.login name, pass
       catch e
         @nameError e
 
     return false
 
-  passError: (error) -> 
+  passError: (error) ->
     @errors++
     @passMsg.html(error).scrollTo()
     @$el.find("#pass").focus()
 
-  nameError: (error) -> 
+  nameError: (error) ->
     @errors++
     @nameMsg.html(error).scrollTo()
 
