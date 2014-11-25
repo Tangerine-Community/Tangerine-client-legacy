@@ -142,12 +142,11 @@ class ValidObservationView extends Backbone.View
       previousMonth = 0
 
     @$el.html "
-      <section>
-        <h2>Valid Observations</h2>
-        <table class='class_table'><tr><th></th><th>Observations</th><th>Reimbursement</th></tr>
-          <tr><th>This month</th><td>#{@validCount.thisMonth} </td><td>#{thisMonth} KES</td></tr>
-          <tr><th>Previous month</th><td>#{@validCount.lastMonth} </td><td>#{previousMonth} KES</td></tr>
-        </table>
-      </section>
+      <h2>Valid Observations</h2>
+      <table class='class_table'><tr><th></th><th>Observations</th><th>Reimbursement</th></tr>
+        <tr><th>This month</th><td>#{@validCount.thisMonth} </td><td>#{thisMonth} KES</td></tr>
+        <tr><th>Previous month</th><td>#{@validCount.lastMonth} </td><td>#{previousMonth} KES</td></tr>
+      </table>
+      
     "
 

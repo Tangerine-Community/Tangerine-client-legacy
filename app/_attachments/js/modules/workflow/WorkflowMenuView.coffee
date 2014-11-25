@@ -83,39 +83,10 @@ class WorkflowMenuView extends Backbone.View
   renderMobile: =>
 
     @$el.html "
-      <h1>Tutor menu</h1>
       <ul class='workflow-menu'></ul>
-      <div id='sync-manager' class='SyncManagerView'></div>
-      <div id='school-list' class='SchoolListView'>pre</div>
-      <div id='valid-observations' class='ValidObservationView'>pre</div>
-      <div id='bandwidth-test'></div>
     "
 
     @updateWorkflows()
-
-    unless @schoolListView?
-      @schoolListView = new SchoolListView
-      @schoolListView.setElement(@$el.find("#school-list"))
-      @schoolListView.render("loading")
-
-    unless @validObservationView?
-      @validObservationView = new ValidObservationView
-      @validObservationView.setElement(@$el.find("#valid-observations"))
-      @validObservationView.render("loading")
-
-    unless @syncManagerView?
-      @syncManagerView = new SyncManagerView
-      @syncManagerView.setElement(@$el.find("#sync-manager"))
-      @listenTo @syncManagerView, "complete-sync", =>
-        @workflows.fetch
-          success: =>
-            @updateWorkflows()
-      @syncManagerView.render()
-
-    unless @bandwidthCheckView?
-      @bandwidthCheckView = new BandwidthCheckView
-      @bandwidthCheckView.setElement(@$el.find("#bandwidth-test"))
-      @bandwidthCheckView.render()
     
     @trigger "rendered"
 
@@ -136,12 +107,10 @@ class WorkflowMenuView extends Backbone.View
         feedbackHtml = ""
 
       htmlWorkflows += "
-        <li id='#{workflow.id}' style='margin-bottom:25px;'>
-          <section>
+        <li id='#{workflow.id}' style='margin-bottom:12px; padding-bottom: 12px; border-bottom: 1px solid #eee;'>
             <a href='#workflow/run/#{workflow.id}' class='workflow-button-link'>#{workflow.get('name')}</a>
             #{feedbackHtml}
             <div id='resume-workflow-#{workflow.id}'></div>
-          </section>
         </li>
         "
     @$el.find(".workflow-menu").html htmlWorkflows

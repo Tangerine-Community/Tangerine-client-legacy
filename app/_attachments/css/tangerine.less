@@ -847,6 +847,11 @@ button{
 #content{
   width: 80%;
   padding: 10px 5px 20px;
+
+  &.fullWidth {
+    width: 100%;
+    padding: 10px 15px 20px;
+  }
 }
 
 .clickable
@@ -1442,6 +1447,53 @@ table.basic_info
 {
   padding: 10px;
   box-shadow: 1px 2px 7px rgba(0,0,0,0.2);
+}
+
+/*
+ * TutorMenuView
+ */
+
+.TutorMenuView {
+  padding: 0 15px;
+
+  .tab {
+    padding: 10px 10px 4px 10px;
+    display: inline-block;
+    /*margin: 0 2px;*/
+    background: #fefefe;
+    color: #aaa;
+    top: 5px;
+    border: 1px solid #eee;
+    cursor: pointer;
+
+    &.first {
+      border-top-left-radius: 10px;
+      margin-left: 10px;
+    }
+
+    &.last {
+      border-top-right-radius: 10px;
+    }
+
+    &.selected {
+      padding-bottom: 5px;
+      border-bottom: none !important;
+      color: #f49b00;
+      background: #fff;
+    }
+  }
+
+  .tab_container {
+    vertical-align: middle;
+    margin-top: 15px;
+    margin-bottom: -1px;
+    z-index: 10;
+  }
+
+  section {
+    border: 1px solid #eee;
+    text-align:left !important;
+  }
 }
 
 /*

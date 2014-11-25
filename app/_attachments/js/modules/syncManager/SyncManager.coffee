@@ -346,26 +346,23 @@ class SyncManagerView extends Backbone.View
 
   render: ( statusMessage = '' ) =>
 
-    @$el.html "<h1>Sync manager</h1>
-    <section>
-      <h2>Results</h2>
-      <table class='class_table'>
-        <tr>
-          <th>Synced results</th><td>#{@sunc.length}</td>
-        </tr>
-        <tr>
-          <th>Left to sync</th><td>#{@toSync}</td>
-        </tr>
-        <tr>
-          <td colspan='2'><button class='upload command'>Upload</button></td>
-        </tr>
-      </table>
-    </section>
-    <section>
-      <h2>Server results</h2>
-      <table id='sync-old-progress'></table>
-      <button class='sync-old command'>Sync</button>
-    </section>
+    @$el.html "
+    <h2>Sync Status</h2>
+    <table class='class_table'>
+      <tr>
+        <th>Synced results</th><td>#{@sunc.length}</td>
+      </tr>
+      <tr>
+        <th>Left to sync</th><td>#{@toSync}</td>
+      </tr>
+      <tr>
+        <th colspan='2'><button class='upload command'>Upload</button></th>
+      </tr>
+    </table>
+    <div style='margin-bottom:12px; padding-bottom: 12px; border-bottom: 1px solid #eee;'></div>
+    <h2>Server results</h2>
+    <table id='sync-old-progress'></table>
+    <button class='sync-old command'>Sync</button>
     "
 
 

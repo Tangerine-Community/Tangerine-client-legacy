@@ -6,7 +6,7 @@
 # all the time in between a loading bar should appear. 
 class ViewManager extends Backbone.View
 
-  show: (view) =>
+  show: (view, setFullWidth = false) =>
 
     window.scrollTo 0, 0
 
@@ -18,6 +18,12 @@ class ViewManager extends Backbone.View
     Tangerine.log.app("show", @className)
 
     @currentView.on "rendered", =>
+
+      if setFullWidth
+        $('#content').addClass('fullWidth')
+      else
+        $('#content').removeClass('fullWidth')
+        
       $("#content").append @currentView.el
       @currentView.$el.find(".buttonset").buttonset()
       @currentView.afterRender?()

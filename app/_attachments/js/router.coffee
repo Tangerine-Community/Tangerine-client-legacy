@@ -27,6 +27,9 @@ class Router extends Backbone.Router
 
     'tutor-account' : 'tutorAccount'
 
+    'tutor-menu'      : 'tutorMenu'
+    'tutor-menu/:tab' : 'tutorMenu'
+
     # Class
     'class'          : 'klass'
     'class/edit/:id' : 'klassEdit'
@@ -94,6 +97,11 @@ class Router extends Backbone.Router
     Tangerine.user.verify
       isAuthenticated: ->
         vm.show new TutorAccountView
+
+  tutorMenu: ( tab = 'workflows' ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        vm.show((new TutorMenuView selectedTab : tab) , true)
 
   email: ->
     Tangerine.user.verify
@@ -317,7 +325,7 @@ class Router extends Backbone.Router
       satellite: ->
         Tangerine.router.navigate "assessments", callFunction
       mobile: ->
-        Tangerine.router.navigate "assessments", callFunction
+        Tangerine.router.navigate "tutor-menu", callFunction
       klass: ->
         Tangerine.router.navigate "class", callFunction
 

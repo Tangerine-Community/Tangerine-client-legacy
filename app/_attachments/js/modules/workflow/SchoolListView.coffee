@@ -171,23 +171,23 @@ class SchoolListView extends Backbone.View
         
     
     @$el.html "
-      <section>
-        <h2>School list</h2>
-        <table class='class_table'>
-          <tr><th>County</th><td>#{countySelect}</td></tr>
-          <tr><th>Zone</th><td>#{zoneSelect}</td></tr>
-          <tr><th>Schools remaining</th><td><button class='schools-left command'>#{@schools.left.length}</button></td></tr>
-        </table>
-        
-        <table class='class_table school-list start-hidden'>
-          <tr><td><b>Remaining</b></td></tr>
-          #{("<tr><td>#{school}</td></tr>" for school in @schools.left).join('')}
-        </table>
+      
+      <h2>School List</h2>
+      <table class='class_table'>
+        <tr><th>County</th><td>#{countySelect}</td></tr>
+        <tr><th>Zone</th><td>#{zoneSelect}</td></tr>
+        <tr><th>Schools remaining</th><td><button class='schools-left command'>#{@schools.left.length}</button></td></tr>
+      </table>
+      
+      <table class='class_table school-list start-hidden'>
+        <tr><td><b>Remaining</b></td></tr>
+        #{("<tr><td>#{school}</td></tr>" for school in @schools.left).join('')}
+      </table>
 
-        <table class='class_table school-list start-hidden'>
-          <tr><td><b>Done</b></td></tr>
-          #{("<tr><td>#{school}</td></tr>" for school in @schools.done).join('')}
-        </table>
-      </section>
+      <table class='class_table school-list start-hidden'>
+        <tr><td><b>Done</b></td></tr>
+        #{("<tr><td>#{school}</td></tr>" for school in @schools.done).join('')}
+      </table>
+      
     "
 

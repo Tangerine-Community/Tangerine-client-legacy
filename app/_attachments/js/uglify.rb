@@ -156,6 +156,7 @@ jsFiles = [
   'modules/user/UsersMenuView.js',
   'modules/user/UserEditView.js',
   'modules/user/TutorAccountView.js',
+  'modules/user/TutorMenuView.js',
 
   'modules/workflow/WorkflowStep.js',
   'modules/workflow/WorkflowSteps.js',
