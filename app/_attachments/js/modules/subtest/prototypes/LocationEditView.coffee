@@ -2,7 +2,7 @@ class LocationEditView extends Backbone.View
 
   className: "LocationEditView"
 
-  events: 
+  events:
     'keyup #data'               : 'updateData'
     'keyup #levels'             : 'updateLevels'
     'click #data_format input'   : 'updateData'
@@ -11,7 +11,7 @@ class LocationEditView extends Backbone.View
 
   updateData: (event) ->
     if event?.type == "click"
-      if $(event.target).val() == "Tabs" 
+      if $(event.target).val() == "Tabs"
         @dataCommaToTab()
         hasTabs   = true
         hasCommas = false
@@ -32,7 +32,7 @@ class LocationEditView extends Backbone.View
 
   updateLevels: (event) ->
     if event?.type == "click"
-      if $(event.target).val() == "Tabs" 
+      if $(event.target).val() == "Tabs"
         @levelsCommaToTab()
         hasTabs   = true
         hasCommas = false
@@ -55,8 +55,14 @@ class LocationEditView extends Backbone.View
       @$el.find("#levels_format :radio[value='Commas']").attr("checked", "checked").button("refresh")
 
 
-  dataTabToComma: -> @$el.find("#data").val(String(@$el.find("#data").val()).replace(/\t/g,", "))
-  dataCommaToTab: -> @$el.find("#data").val(@$el.find("#data").val().replace(/, */g, "\t"))
+  dataTabToComma: ->
+    @$el.find("#data").val(String(@$el.find("#data").val()).replace(/\t/g,", "))
+    @$el.find("#locationCols").val(String(@$el.find("#locationCols").val()).replace(/\t/g,", "))
+
+  dataCommaToTab: ->
+    @$el.find("#data").val(@$el.find("#data").val().replace(/, */g, "\t"))
+    @$el.find("#locationCols").val(@$el.find("#locationCols").val().replace(/, */g, "\t"))
+
   levelsTabToComma: -> @$el.find("#levels").val(String(@$el.find("#levels").val()).replace(/\t/g,", "))
   levelsCommaToTab: -> @$el.find("#levels").val(@$el.find("#levels").val().replace(/, */g, "\t"))
 
@@ -72,6 +78,10 @@ class LocationEditView extends Backbone.View
     for level, i in levels
       levels[i] = $.trim(level).replace(/[^a-zA-Z0-9']/g,"")
 
+    locationCols = @$el.find("#locationCols").val().split(/, */g)
+    for col, i in locationCols
+      col[i] = $.trim(col).replace(/[^a-zA-Z0-9']/g,"")
+
     # removes /\s/
     locationsValue = $.trim(@$el.find("#data").val())
 
@@ -82,12 +92,19 @@ class LocationEditView extends Backbone.View
 
     @model.set
       "levels"    : levels
+      "locationCols" : locationCols
       "locations" : locations
 
   isValid: ->
     levels = @model.get("levels")
+    locationCols = @model.get("locationCols")
+
+    for level in levels
+      if _.indexOf(locationCols, level) == -1
+        @errors.push "level_column_match" unless "level_column_match" in @errors
+
     for location in @model.get("locations")
-      if location.length != levels.length
+      if location.length != locationCols.length
         @errors.push "column_match" unless "column_match" in @errors
     return @errors.length == 0
 
@@ -101,18 +118,21 @@ class LocationEditView extends Backbone.View
   initialize: ( options ) ->
     @errors = []
     @model = options.model
-    @errorMessages = 
-      "column_match" : "Some columns in the location data do not match the number of columns in the geographic levels."
+    @errorMessages =
+      "column_match"       : "Some columns in the location data do not match the number of columns in the geographic levels."
+      "level_column_match" : "One or more Geographic Levels cannot be matched to valid Location Columns."
 
   render: ->
     levels    = @model.get("levels")    || []
+    locationCols = @model.get("locationCols") || []
     locations = @model.get("locations") || []
 
     levels = _.escape(levels.join(", "))
+    locationCols = _.escape(locationCols.join(", "))
 
     locations = locations.join("\n")
     if _.isArray(locations)
-      for location, i in locations 
+      for location, i in locations
         locations[i] = _.escape(location.join(", "))
 
     @$el.html  "
@@ -132,7 +152,9 @@ class LocationEditView extends Backbone.View
       </div>
       <div class='label_value'>
         <div class='menu_box'>
-          <label for='data' title='Comma sperated values, with multiple rows separated by line. This information will be used to autofill the location data.'>Location data</label>
+          <label for='cols' title='Comma sperated values, with multiple rows separated by line. This information will be used to autofill the location data.'>Location Columns</label>
+          <input id='locationCols' value='#{locationCols}'><br><br>
+          <label for='data' title='Comma sperated values, with multiple rows separated by line. This information will be used to autofill the location data.'>Location Data</label>
           <textarea id='data'>#{locations}</textarea><br>
           <label title='Tangerine uses comma separated values. If you copy and paste from another program like Excel, the values will be tab separated. These buttons allow you to switch back and forth, however, Tangerine will always save the comma version.'>Format</label><br>        <div id='data_format' class='buttonset'>
             <label for='data_tabs'>Tabs</label>
