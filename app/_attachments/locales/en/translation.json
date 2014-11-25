@@ -50,6 +50,14 @@
       "email": "Email"
     }
   },
+  "TutorMenuView": {
+    "title": "Tutor Menu",
+    "tabs": {
+      "workflows": "Workflows",
+      "sync": "Sync",
+      "schools": "Schools"
+    }
+  },
   "QuestionsEditListElementView": {
     "help": {
       "copy_to": "Copy to",
@@ -87,6 +95,18 @@
       "attempt": "Attempt #__count__",
       "retrying": "Retrying...",
       "searching": "Searching..."
+    }
+  },
+  "CameraRunView": {
+    "title": "Capture Photo",
+    "button": {
+      "capture": "Capture Photo",
+      "browse": "Browse Photos"
+    },
+    "error": {
+      "capture": "An error occurred while importing the photo. Please try again.",
+      "noCamera": "System Error: No Camera Available to Capture Photo.",
+      "invalid": "You must capture a photograph before you can continue."
     }
   },
   "abort all observations": "Abort ALL observations",

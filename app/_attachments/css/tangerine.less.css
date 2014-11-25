@@ -792,6 +792,10 @@ button {
   width: 80%;
   padding: 10px 5px 20px;
 }
+#content.fullWidth {
+  width: 100%;
+  padding: 10px 15px 20px;
+}
 .clickable {
   cursor: pointer !important;
 }
@@ -1494,6 +1498,45 @@ table.basic_info td {
 .NotesView {
   padding: 10px;
   box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.2);
+}
+/*
+ * TutorMenuView
+ */
+.TutorMenuView {
+  padding: 0 15px;
+}
+.TutorMenuView .tab {
+  padding: 10px 10px 4px 10px;
+  display: inline-block;
+  /*margin: 0 2px;*/
+  background: #fefefe;
+  color: #aaa;
+  top: 5px;
+  border: 1px solid #eee;
+  cursor: pointer;
+}
+.TutorMenuView .tab.first {
+  border-top-left-radius: 10px;
+  margin-left: 10px;
+}
+.TutorMenuView .tab.last {
+  border-top-right-radius: 10px;
+}
+.TutorMenuView .tab.selected {
+  padding-bottom: 5px;
+  border-bottom: none !important;
+  color: #f49b00;
+  background: #fff;
+}
+.TutorMenuView .tab_container {
+  vertical-align: middle;
+  margin-top: 15px;
+  margin-bottom: -1px;
+  z-index: 10;
+}
+.TutorMenuView section {
+  border: 1px solid #eee;
+  text-align: left !important;
 }
 /*
  * TutorAccountView
