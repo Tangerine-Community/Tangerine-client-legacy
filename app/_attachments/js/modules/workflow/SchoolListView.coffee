@@ -5,27 +5,6 @@ class SchoolListView extends Backbone.View
 
   events: 
     "click .schools-left"   : "toggleSchoolList"
-    "change .county-select" : "updateCounty"
-    "change .zone-select"   : "updateZone"
-
-  updateZone: ->
-    @selected = true
-    @currentZone.name   = @$el.find(".zone-select").val()
-    @currentZone.county = @$el.find(".county-select").val()
-    @updateTrips()
-
-  updateCounty: ->
-    @selected = true
-    @currentZone.county = @$el.find(".county-select").val()
-    @currentZone.name = Object.keys(@geography[@currentZone.county])[0]
-    @updateTrips()
-
-  updateTrips: ->
-    Utils.execute [
-      @fetchTrips
-      @render
-    ], @
-
 
   toggleSchoolList: ->
     @$el.find(".school-list").toggle()
@@ -36,9 +15,14 @@ class SchoolListView extends Backbone.View
     @schools         = { left : [] , done : []}
 
     @selected        = true
-    @currentZone     =
-      name   : (Tangerine.user.get('location')||{}).Zone
-      county : (Tangerine.user.get('location')||{}).County
+
+    if Tangerine.user.has("location")
+      @currentLocation = 
+        zone   : Tangerine.user.get('location').Zone.toLowerCase()
+        county : Tangerine.user.get('location').County.toLowerCase()
+    else
+      @invalid = true
+
     @locationSubtest = {}
 
     Utils.execute [
@@ -48,6 +32,9 @@ class SchoolListView extends Backbone.View
     ], @
 
   fetchLocations: ( callback = $.noop ) ->
+
+    return if @invalid
+
     subtestIndex = 0
     limit = 1
 
@@ -58,11 +45,13 @@ class SchoolListView extends Backbone.View
         skip  : subtestIndex
         limit : limit
         success: (response) =>
+
           return alert "Failed to find locations" if response.rows.length is 0
           
           @locationSubtest = response.rows[0].value
 
           if @locationSubtest.prototype? && @locationSubtest.prototype is "location"
+
             
             levels = @locationSubtest.levels
             locationCols = @locationSubtest.locationCols
@@ -72,7 +61,7 @@ class SchoolListView extends Backbone.View
               levelColMap[i] = _.indexOf locationCols, level
 
             #map the location data to keep only the 'level' columns
-            filteredLocations = _.map(@locationSubtest.locations, (arr) -> (arr[level]) for level in levelColMap )
+            filteredLocations = @locationSubtest.locations.map (arr) -> arr[level].toLowerCase() for level in levelColMap
 
             @makeTree(filteredLocations, @geography)
             callback?()
@@ -97,9 +86,11 @@ class SchoolListView extends Backbone.View
 
   fetchTrips: (callback = $.noop) ->
 
+    return if @invalid
+
     d = new Date()
     year  = d.getFullYear()
-    month = d.getMonth()
+    month = d.getMonth() + 1
 
     trips = new TripResultCollection
     trips.fetch
@@ -110,82 +101,45 @@ class SchoolListView extends Backbone.View
         rows = []
         zones = {}
         for trip in trips.models
-          
-          # count which zones are most common
-          zoneName        = trip.get("Zone")
-          zones[zoneName] = {
-            count  : 0
-            county : trip.get("County")
-          } unless zones[zoneName]?
-          zones[zoneName].count++
 
           # skip unless they belong
           continue unless trip.get("enumerator") in [Tangerine.user.get("name")].concat(Tangerine.user.getArray("previousUsers"))
           row = []
           for level in @locationSubtest.levels
-            row.push trip.get(level)
+            row.push trip.get(level).toLowerCase()
           rows.push row
 
         @visited = {}
         @makeTree rows, @visited
 
-        if rows.length is 0
-
-          unless @selected
-            @currentZone.county = Object.keys(@geography)[0]
-            @currentZone.name   = Object.keys(@geography[@currentZone.county])[0]
-
-          @schools.done = []
-          @schools.all  = Object.keys(@geography[@currentZone.county][@currentZone.name]).sort()
-          @schools.left = @schools.all
-
+        if @visited[@currentLocation.county]? and @visited[@currentLocation.county][@currentLocation.zone]?
+          @schools.done = Object.keys(@visited[@currentLocation.county][@currentLocation.zone]).sort()
         else
-
-          unless @selected
-            @currentZone.count = 0
-            for zoneName, zoneProperties of zones
-              count  = zoneProperties.count
-              county = zoneProperties.county
-              if count > @currentZone.count
-                @currentZone.county = county
-                @currentZone.name   = zoneName
-                @currentZone.count  = count
-
-          if @visited[@currentZone.county]? and @visited[@currentZone.county][@currentZone.name]?
-            @schools.done = Object.keys(@visited[@currentZone.county][@currentZone.name]).sort()
-          else
-            @schools.done = []
-          @schools.all  = Object.keys(@geography[@currentZone.county][@currentZone.name]).sort()
-          @schools.left = _(@schools.all).difference(@schools.done)
+          @schools.done = []
+        @schools.all  = Object.keys(@geography[@currentLocation.county][@currentLocation.zone]).sort()
+        @schools.left = _(@schools.all).difference(@schools.done)
 
         callback?()
 
   render: (status) ->
 
+    if @invalid
+      @invalid = true
+      return @$el.html "
+        <p>School list information unavailable. No zone or county information found for user.</p>
+        <p>Create a new user to see school list.</p>
+      "
+
     if status is "loading"
       @$el.html "<section><h2>School List</h2><p>Loading...</p></section>"
       return
-
-    countySelect = "<select class='county-select'>"
-    for county in Object.keys(@geography)
-      selected = if county is @currentZone.county then "selected='selected'" else ''
-      countySelect += "<option value='#{_.escape(county)}' #{selected}>#{county}</option>"
-    countySelect += "</select>"
-
-
-    zoneSelect = "<select class='zone-select'>"
-    for zone in Object.keys(@geography[@currentZone.county])
-      selected = if zone is @currentZone.name then "selected='selected'" else ''
-      zoneSelect += "<option value='#{_.escape(zone)}' #{selected}>#{zone}</option>"
-    zoneSelect += "</select>"
-        
     
     @$el.html "
       
       <h2>School List</h2>
       <table class='class_table'>
-        <tr><th>County</th><td>#{countySelect}</td></tr>
-        <tr><th>Zone</th><td>#{zoneSelect}</td></tr>
+        <tr><th>County</th><td>#{@currentLocation.county}</td></tr>
+        <tr><th>Zone</th><td>#{@currentLocation.zone}</td></tr>
         <tr><th>Schools remaining</th><td><button class='schools-left command'>#{@schools.left.length}</button></td></tr>
       </table>
       
