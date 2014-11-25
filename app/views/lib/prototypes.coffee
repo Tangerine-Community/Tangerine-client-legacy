@@ -87,10 +87,10 @@ pairsGps = (subtest) ->
   row.push cell( subtest, "timestamp",        subtest.data.timestamp )
   return row
 
-pairsCamera = (subtest, resultId) ->
+pairsCamera = (subtest, cameraSuffix, resultId) ->
   row = []
-  row.push cell( subtest, "photo_captured",   exportValue(if subtest.data.imageBase64 != "" then "Yes" else "No"))
-  row.push(cell( subtest, "photo_url",        exportValue(if subtest.data.imageBase64 != "" then ""+subtest.data.imageBaseUrl+resultId else "")))
+  row.push cell( subtest, "photo_captured#{cameraSuffix}",   exportValue(if subtest.data.imageBase64 != "" then "Yes" else "No"))
+  row.push(cell( subtest, "photo_url#{cameraSuffix}",        exportValue(if subtest.data.imageBase64 != "" then ""+subtest.data.imageBaseUrl+resultId else "")))
   return row
 
 if typeof(exports) == "object"

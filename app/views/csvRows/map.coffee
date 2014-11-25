@@ -86,6 +86,7 @@ The only real behavior worth mentioning here is
   # Subtest loop
   #
   datetimeCount = 0
+  cameraCount = 0
   linearOrder = [0..subtestData.length-1]
   orderMap = if doc["order_map"]? then doc["order_map"] else if doc["orderMap"] then doc["orderMap"] else linearOrder
 
@@ -146,11 +147,13 @@ The only real behavior worth mentioning here is
       result = result.concat pairsGps subtest
 
     else if prototype == "camera"
-      result = result.concat pairsCamera subtest, doc._id
+      cameraSuffix = if cameraCount > 0 then "_#{cameraCount}" else ""
+      result = result.concat pairsCamera subtest, cameraSuffix, doc._id
+      cameraCount++
 
     result.push cell subtest, "timestamp_#{linearIndex}", subtest.timestamp
 
-  keyId = 
+  keyId =
     if isWorkflowResult
       doc._id
     else if isClassResult
