@@ -6,7 +6,7 @@ class SyncManager extends Backbone.Model
     @set "_id" : "SyncManagerLog"
 
   setUserKey: ( userKey ) ->
-    @userKey = userKey
+    @userKey = userKey + "-1.6.1" # version where uploading changed, necessitating new log
 
   getTrips: -> return @getArray(@userKey)
   setTrips: ( trips ) -> @set(@userKey, trips)
@@ -33,6 +33,24 @@ class SyncManagerView extends Backbone.View
 
   MAX_RETRIES : 2
 
+
+  ensureServerAuth: (callbacks = {}) ->
+    sessionUrl = Tangerine.settings.urlSession "group"
+    sessionUrl = "http://" + sessionUrl.replace(/http(.*)\@/, '')
+
+    $.ajax
+      url: sessionUrl
+      dataType: "jsonp"
+      error: -> callbacks.error?()
+      success: (response) ->
+
+        unless response.userCtx.name isnt null
+          alert "Logging in to server. Please sync again."
+          Tangerine.user.ghostLogin "uploader-"+Tangerine.settings.get("groupName"), Tangerine.settings.get("upPass")
+          return
+
+        callbacks.success?()
+
   # download previous trips from server
   # server calls
   #   1. check to see if logged in at server
@@ -41,72 +59,61 @@ class SyncManagerView extends Backbone.View
 
     @updateSyncOldProgress message: "Starting"
 
-    sessionUrl = Tangerine.settings.urlSession "group"
-    sessionUrl = "http://" + sessionUrl.replace(/http(.*)\@/, '')
+    @ensureServerAuth =>
 
-    $.ajax
-      url: sessionUrl
-      dataType: "jsonp"
-      success: (response) =>
+      @updateSyncOldProgress message: "Fetching result ids"
 
-        unless response.userCtx.name isnt null
-          alert "Logging in to server. Please sync again."
-          Tangerine.user.ghostLogin "uploader-"+Tangerine.settings.get("groupName"), Tangerine.settings.get("upPass")
-          return
+      # get tripIds and resultIds from associated users
+      $.ajax
+        url: Tangerine.settings.urlView("group", "tripsAndUsers")
+        dataType: "jsonp"
+        data:
+          keys:
+            JSON.stringify([Tangerine.user.get("name")].concat(Tangerine.user.getArray("previousUsers")))
 
-        @updateSyncOldProgress message: "Fetching result ids"
+        error: =>
 
-        # get tripIds and resultIds from associated users
-        $.ajax
-          url: Tangerine.settings.urlView("group", "tripsAndUsers")
-          dataType: "jsonp"
-          data:
-            keys:
-              JSON.stringify([Tangerine.user.get("name")].concat(Tangerine.user.getArray("previousUsers")))
+          alert "Error syncing"
+          @updateSyncOldProgress message: "Error fetching trip ids"
 
-          error: =>
+        success: (data) =>
 
-            alert "Error syncing"
-            @updateSyncOldProgress message: "Error fetching trip ids"
+          @resultsByTripId = {}
 
-          success: (data) =>
+          for result in data.rows
+            tripId = result.value
+            resultId = result.id
+            @resultsByTripId[tripId] = [] unless @resultsByTripId[tripId]
+            @resultsByTripId[tripId].push resultId
 
-            @resultsByTripId = {}
+          @updateSyncOldProgress message: "Building replication job"
 
-            for result in data.rows
-              tripId = result.value
-              resultId = result.id
-              @resultsByTripId[tripId] = [] unless @resultsByTripId[tripId]
-              @resultsByTripId[tripId].push resultId
+          @resultChunks = []
+          @tripChunks   = []
 
-            @updateSyncOldProgress message: "Building replication job"
+          index = 0
 
-            @resultChunks = []
-            @tripChunks   = []
+          for tripId, resultIds of @resultsByTripId
 
-            index = 0
+            resultChunk = [] unless resultChunk?
+            resultChunk = resultChunk.concat resultIds
 
-            for tripId, resultIds of @resultsByTripId
+            tripChunk = [] unless tripChunk?
+            tripChunk.push tripId
 
-              resultChunk = [] unless resultChunk?
-              resultChunk = resultChunk.concat resultIds
+            if index is @TRIPS_PER_CHUNK
+              @resultChunks.push resultChunk
+              @tripChunks.push   tripChunk
+              resultChunk = []
+              tripChunk   = []
 
-              tripChunk = [] unless tripChunk?
-              tripChunk.push tripId
+              index = 0
+            else
+              index += 1
 
-              if index is @TRIPS_PER_CHUNK
-                @resultChunks.push resultChunk
-                @tripChunks.push   tripChunk
-                resultChunk = []
-                tripChunk   = []
+          @resultChunkCount = @resultChunks.length
 
-                index = 0
-              else
-                index += 1
-
-            @resultChunkCount = @resultChunks.length
-
-            @syncOldReplicate()
+          @syncOldReplicate()
 
 
   syncOldReplicate: ->
@@ -137,6 +144,7 @@ class SyncManagerView extends Backbone.View
         # if it works, reset retries and continue
         # if it doesn't work, push data back to queue and try again
         # if we've tried a bunch of times already, give up and go to next chunk
+
         $.couch.replicate Tangerine.settings.urlDB("group"), Tangerine.db_name,
           {
             success : =>
@@ -173,6 +181,7 @@ class SyncManagerView extends Backbone.View
       "
 
   initialize: () ->
+    @syncUsers()
     @log = new SyncManager
     @log.setUserKey "sunc-#{Tangerine.user.name()}"
     @userLogKey = 
@@ -190,7 +199,6 @@ class SyncManagerView extends Backbone.View
 
   update: ( callback ) ->
     todoList = [
-      @syncUsers
       @updateSyncable
       @updateSunc
       @updateCounts
@@ -207,15 +215,15 @@ class SyncManagerView extends Backbone.View
   syncUsers: ( callback ) ->
     tabletUsers = new TabletUsers
     tabletUsers.fetch
-      error: -> callback()
+      error: -> callback?()
       success: ->
         docIds = tabletUsers.pluck "_id"
         $.couch.replicate Tangerine.db_name, Tangerine.settings.urlDB("group"),
           {
             success : ->
-              callback()
+              callback?()
             error: ->
-              callback()
+              callback?()
           },
             doc_ids : docIds
 
@@ -249,100 +257,102 @@ class SyncManagerView extends Backbone.View
 
   upload: =>
 
-    @update =>
+    if @uploadingNow
+      return alert "Already uploading."
 
-      tempTrips = _(@syncable).clone().reverse()# all trips, for debugging
-      # tempTrips = _(_(@syncable).clone()).difference(@sunc) # only unlogged unsunc trips
-      tempTrips = tempTrips.slice(130,tempTrips.length)
+    @uploadingNow = true
+    @uploadStatus "Upload initializing"
 
-      doTrip = =>
+    @ensureServerAuth
+      error: => @uploadingNow = false
+      success: =>
+        @uploadStatus "Upload starting"
 
-        currentTrip = tempTrips.shift()
-        return unless currentTrip?
+        allTrips = _(@syncable).clone().reverse()# all trips, for debugging
+        tempTrips = _(_(@syncable).clone()).difference(@sunc) # only unlogged unsunc trips
 
-        Tangerine.$db.view "#{Tangerine.design_doc}/tripsAndUsers",
-          key     : currentTrip
-          success : ( response ) =>
-            docIds = _(response.rows).pluck("id")
+        doTrip = =>
 
-            allDocs = Tangerine.settings.location.group.db+"_all_docs"
-            $.ajax
-              url: allDocs+"?keys="+JSON.stringify(docIds)
-              dataType: "jsonp"
-              error: () ->
+          @uploadStatus ("Uploading #{100-parseInt((tempTrips.length / allTrips.length) * 100)}% complete")
+          currentTrip = tempTrips.shift()
+          
+          unless currentTrip?
+            @uploadingNow = false
+            Utils.sticky "Done uploading."
+            return 
 
-              success: (response) =>
-                rows = response.rows
-                leftToUpload = []
-                for row in rows
-                  leftToUpload.push(row.key) unless row.id?
+          Tangerine.$db.view "#{Tangerine.design_doc}/tripsAndUsers",
+            key     : currentTrip
+            error: =>
+              @uploadingNow = false
+            success : ( response ) =>
+              docIds = _(response.rows).pluck("id")
+              allDocs = Tangerine.settings.location.group.db+"_all_docs"
+              $.ajax
+                url: allDocs+"?keys="+JSON.stringify(docIds)
+                dataType: "jsonp"
+                error: (err) =>
+                  @uploadingNow = false
+                  alert "Error communicating with server.\n" + err
+                success: (response) =>
 
-                # if it's already fully uploaded
-                # make sure it's in the log
+                  rows = response.rows
+                  leftToUpload = []
+                  for row in rows
+                    leftToUpload.push(row.key) unless row.id?
 
-                if leftToUpload.length is 0
+                  # if it's already fully uploaded
+                  # make sure it's in the log
 
-                  @sunc.push currentTrip
-                  @sunc = _.uniq(@sunc)
-                  @log.setTrips @sunc
-                  @log.save null,
-                    success: =>
-                      @update =>
-                        @render()
-                        doTrip()
-                else
+                  if leftToUpload.length is 0
+                    @sunc.push currentTrip
+                    @sunc = _.uniq(@sunc)
+                    @log.setTrips @sunc
+                    @log.save null,
+                      success: =>
+                        @update =>
+                          @render()
+                          doTrip()
+                  else
+                    $.ajax
+                      type: "post"
+                      url: "/"+Tangerine.db_name+"/_all_docs?include_docs=true"
+                      dataType: "json"
+                      data: JSON.stringify(
+                        keys: docIds
+                      )
+                      error: =>
+                        @uploadingNow = false
+                        alert "Local error. Please try again."
 
-                  $.ajax
-                    type: "post"
-                    url: "/"+Tangerine.db_name+"/_all_docs?include_docs=true"
-                    dataType: "json"
-                    data: JSON.stringify(
-                      keys: docIds
-                    )
-                    error:->
+                      success: (response) =>
 
-                    success: (response) =>
+                        docs = {"docs":response.rows.map((el)->el.doc)}
+                        compressedData = LZString.compressToBase64(JSON.stringify(docs))
+                        bulkDocs = Tangerine.settings.location.group.url+"/_cors_bulk_docs/"+Tangerine.settings.groupDB
+                        $.ajax
+                          type : "post"
+                          url : bulkDocs
+                          data : compressedData
+                          error: =>
+                            @uploadingNow = false
+                            alert "Server bulk docs error\n"
+                          success: =>
+                            @sunc.push currentTrip
+                            @sunc = _.uniq(@sunc)
+                            @log.setTrips @sunc
+                            @log.save null,
+                              error: => @uploadingNow = false
+                              success: =>
+                                @update =>
+                                  @render()
+                                  doTrip()
 
-                      docs = {"docs":response.rows.map((el)->el.doc)}
-                      compressedData = LZString.compressToBase64(JSON.stringify(docs))
-                      bulkDocs = Tangerine.settings.location.group.url+"/_cors_bulk_docs/"+Tangerine.settings.groupDB
-                      $.ajax
-                        type : "post"
-                        url : bulkDocs
-                        data : compressedData
-                        success: =>
-                          @sunc.push currentTrip
-                          @sunc = _.uniq(@sunc)
-                          @log.setTrips @sunc
-                          @log.save null,
-                            success: =>
-                              @update =>
-                                @render()
-                                doTrip()
-
-                
-
-            ###
-            $.couch.replicate Tangerine.db_name, Tangerine.settings.urlDB("group"),
-            {
-              success : =>
-                @sunc.push currentTrip
-                @sunc = _.uniq(@sunc)
-                @log.setTrips @sunc
-                @log.save null,
-                  success: =>
-                    @update =>
-                      @render()
-                      doTrip()
-              error: ->
-                Utils.sticky "Upload error. Please try again."
-            },
-              doc_ids : docIds
-            ###
-
-      doTrip()
+        doTrip()
 
 
+  uploadStatus: (status) ->
+    @$el.find(".upload-status").html status
 
   render: ( statusMessage = '' ) =>
 
@@ -373,100 +383,3 @@ class SyncManagerView extends Backbone.View
     @$el.html "<small>#{@messages.join("<br>")}</small>"
     @trigger "rendered"
 
-###
-class SyncManager extends Backbone.Model
-
-  url : "log"
-
-  initialize: ( options = {} ) =>
-
-    @set "_id" : "SyncManagerLog"
-
-    @db   = options.db
-    @ddoc = options.ddoc
-  
-    @bulkDocs = Tangerine.settings.urlGroupBulkDocs()
-
-    @interval = setInterval @tick, 10e3
-
-  onClose: => clearInterval @interval
-
-  tick: =>
-    return unless @go and Tangerine.user.name() isnt null
-
-
-  update: (callback) =>
-    @trigger "status", "Updating"
-    @fetchSunc =>
-      @fetchSyncable =>
-        callback?()
-
-  fetchSunc: (callback) =>
-    @fetch 
-      error:   => @save null, success: => callback?()
-      success: => callback?()
-
-  fetchSyncable: (callback) =>
-    @trigger "status", "Finding syncable documents"
-    @db.view "#{@ddoc}/tripsAndUsers",
-      key     : Tangerine.user.name()
-      success : ( response ) =>
-        @trigger "status", "found #{response.rows.length}"
-        docIds = _(response.rows).pluck("id")
-
-    return
-
-    @db.view "#{@ddoc}/byCollection",
-      keys    : ["result"]
-      success : ( response ) =>
-        @syncable = {}
-        for row in response.rows
-          @syncable[row.value._id] = row._rev
-        callback?()
-
-  online: ( go ) ->
-    @go   = go
-    @noGo = not go
-
-  syncTrip: ( options = {} ) =>
-    console.log "triggering update que visit data"
-    @trigger "status", "Queueing visit data"
-
-    tripId = options.tripId
-    @db.view "#{@ddoc}/tripsAndUsers",
-      keys    : Tangerine.user.name()
-      success : ( response ) ->
-
-        @trigger "status", "found #{response.rows.length}"
-
-        docIds = _(response.rows).pluck("id")
-
-        #@.couch.replicate Tangerine.db_name, Tangerine.settings.urlDB("group"), {},
-        #  doc_ids : docIds
-        #  success : ->
-
-
-
-  withTrips: ( callback ) =>
-    @db.view "#{@ddoc}/tripsAndUsers",
-      keys    : Tangerine.user.name()
-      success : ( response ) ->
-        trips = []
-        for row in response.rows
-          trips.push row.value unless row.value in results
-
-        @trips = trips
-
-        callback()
-
-  trySync: ->
-
-    $.ajax 
-      type : "post"
-      url  : @bulkDocs
-      data : JSON.stringify(_(@syncable).keys())
-      success: ( response ) ->
-
-        if go
-          toSync = @log
-###
