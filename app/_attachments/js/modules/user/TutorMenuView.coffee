@@ -52,7 +52,6 @@ class TutorMenuView extends Backbone.View
       <section id='panel-schools' class='tab-panel' style='display:none;'>
         <div id='school-list'></div>
         <div style='margin-bottom:12px; padding-bottom: 12px; border-bottom: 1px solid #eee;'></div>
-        <div id='valid-observations'></div>
       </section>
     "
     unless @WorkflowMenuView?
@@ -91,11 +90,6 @@ class TutorMenuView extends Backbone.View
       @schoolListView.setElement(@$el.find("#panel-schools > #school-list"))
       @schoolListView.render("loading")
 
-    unless @validObservationView?
-      @validObservationView = new ValidObservationView
-      @validObservationView.setElement(@$el.find("#panel-schools > #valid-observations"))
-      @validObservationView.render("loading")
-    
     #init the tabs by showing the selected tabs
     @displayTab(@selectedTab)
 
