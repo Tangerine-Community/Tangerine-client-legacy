@@ -131,21 +131,11 @@ class ValidObservationView extends Backbone.View
       @$el.html "<section><h2>Valid Observations</h2><p>Loading...</p></section>"
       return
 
-    if @validCount.thisMonth isnt 0
-      thisMonth = Math.commas(300+(Math.min(1,@validCount.thisMonth/@targetVisits)*6000))
-    else
-      thisMonth = 0
-
-    if @validCount.lastMonth
-      previousMonth = Math.commas(300+(Math.min(1, @validCount.lastMonth/@targetVisits)*6000))
-    else
-      previousMonth = 0
-
     @$el.html "
       <h2>Valid Observations</h2>
-      <table class='class_table'><tr><th></th><th>Observations</th><th>Reimbursement</th></tr>
-        <tr><th>This month</th><td>#{@validCount.thisMonth} </td><td>#{thisMonth} KES</td></tr>
-        <tr><th>Previous month</th><td>#{@validCount.lastMonth} </td><td>#{previousMonth} KES</td></tr>
+      <table class='class_table'><tr><th></th><th>Observations</th></tr>
+        <tr><th>This month</th><td>#{@validCount.thisMonth} </td></tr>
+        <tr><th>Previous month</th><td>#{@validCount.lastMonth} </td></tr>
       </table>
       
     "
