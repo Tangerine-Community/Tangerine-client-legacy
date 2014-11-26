@@ -133,7 +133,7 @@ class SchoolListView extends Backbone.View
       "
 
     if status is "loading"
-      @$el.html "<section><h2>School List</h2><p>Loading...</p></section>"
+      @$el.html "<h2>School List</h2><p>Loading...</p>"
       return
     
     @$el.html "
