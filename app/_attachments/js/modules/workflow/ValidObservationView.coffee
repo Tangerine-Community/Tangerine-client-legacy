@@ -128,7 +128,7 @@ class ValidObservationView extends Backbone.View
 
   render: (status) ->
     if status is "loading"
-      @$el.html "<section><h2>Valid Observations</h2><p>Loading...</p></section>"
+      @$el.html "<h2>Valid Observations</h2><p>Loading...</p>"
       return
 
     @$el.html "
