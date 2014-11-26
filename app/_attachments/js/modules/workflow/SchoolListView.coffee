@@ -64,6 +64,9 @@ class SchoolListView extends Backbone.View
             filteredLocations = @locationSubtest.locations.map (arr) -> arr[level].toLowerCase() for level in levelColMap
 
             @makeTree(filteredLocations, @geography)
+
+            unless @geography[@currentLocation.county]? and @geography[@currentLocation.county][@currentLocation.zone]?
+              @invalid = true
             callback?()
           else
             subtestIndex++
@@ -86,7 +89,7 @@ class SchoolListView extends Backbone.View
 
   fetchTrips: (callback = $.noop) ->
 
-    return if @invalid
+    return callback() if @invalid
 
     d = new Date()
     year  = d.getFullYear()
@@ -124,10 +127,9 @@ class SchoolListView extends Backbone.View
   render: (status) ->
 
     if @invalid
-      @invalid = true
       return @$el.html "
-        <p>School list information unavailable. No zone or county information found for user.</p>
-        <p>Create a new user to see school list.</p>
+        <p>School list information unavailable.</p>
+        <p>Your user has no location or an invalid location set. You can create a new user, or click your user name to change your location.</p>
       "
 
     if status is "loading"
