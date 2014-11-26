@@ -316,6 +316,8 @@ Tangerine.bootSequence =
         Tangerine.log    = new Log()
 
         Tangerine.user.sessionRefresh 
+          error: ->
+            Tangerine.user.logout()
           success: -> 
             $("#footer").show()
             $("body").addClass(Tangerine.settings.get("context"))
