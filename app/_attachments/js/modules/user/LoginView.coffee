@@ -224,7 +224,7 @@ class LoginView extends Backbone.View
           <input autocomplete='off' id='first' type='text' placeholder='#{@text.first_name}'>
           <input autocomplete='off' id='last' type='text' placeholder='#{@text.last_name}'>
 
-          <div id='schoolSelector'></div>
+          <div id='schoolSelector'>Loading county and zone list...</div>
 
           <label>Gender<br>
           <select id='gender'>
@@ -393,8 +393,12 @@ class LoginView extends Backbone.View
 
     location = {}
     rawLocation = @locationView.getResult(true)
+
     for label, i in rawLocation.labels
+
+      errors.push " - #{label} must be selected" unless rawLocation.location[i]?
       location[label] = rawLocation.location[i]
+
 
     previousUsers = ($previousUsers = @$el.find("#same-users")).val()
 
@@ -415,12 +419,17 @@ class LoginView extends Backbone.View
 
     @passError(@text.pass_mismatch) if pass1 isnt pass2
 
-    try
-      @user.signup name, pass1, attributes
+    if errors.length isnt 0
 
-    catch e
-      console.error e
-      @nameError(e)
+      Utils.sticky "Please correct the following errors<br><br>#{errors.join('<br>')}"
+
+    else
+      try
+        @user.signup name, pass1, attributes
+
+      catch e
+        console.error e
+        @nameError(e)
 
   login: ->
     name = ($name = @$el.find("#name")).val()
