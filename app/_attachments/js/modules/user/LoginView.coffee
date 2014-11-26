@@ -388,8 +388,17 @@ class LoginView extends Backbone.View
     if ( phone  = ( $phone  = @$el.find("#phone")     ).val() ).length is 0
       errors.push " - Phone cannot be empty"
 
-    if ( email  = ( $email  = @$el.find("#email")     ).val() ).length is 0
-      errors.push " - Email cannot be empty"
+    if ( phone  = ( $phone  = @$el.find("#phone")     ).val() ).length is 0
+      errors.push " - Phone cannot be empty"
+
+    if ( question = ($question = @$el.find("#challenge-question")).val() ).length is 0
+      errors.push " - Challenge question cannot be empty"
+
+    if ( response = ($response = @$el.find("#challenge-response")).val() ).length is 0
+      errors.push " - Challenge response cannot be empty"
+
+    #if ( email  = ( $email  = @$el.find("#email")     ).val() ).length is 0
+    #  errors.push " - Email cannot be empty"
 
     location = {}
     rawLocation = @locationView.getResult(true)
@@ -402,8 +411,6 @@ class LoginView extends Backbone.View
 
     previousUsers = ($previousUsers = @$el.find("#same-users")).val()
 
-    question = ($pass1 = @$el.find("#challenge-question")).val()
-    response = ($pass1 = @$el.find("#challenge-response")).val()
 
     attributes =
       "question" : question
@@ -417,7 +424,7 @@ class LoginView extends Backbone.View
       "email"  : email
       "previousUsers" : previousUsers
 
-    @passError(@text.pass_mismatch) if pass1 isnt pass2
+    return @passError(@text.pass_mismatch) if pass1 isnt pass2
 
     if errors.length isnt 0
 
