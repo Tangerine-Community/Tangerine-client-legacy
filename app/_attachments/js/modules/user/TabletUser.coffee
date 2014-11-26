@@ -150,8 +150,9 @@ class TabletUser extends Backbone.Model
     if user?
       @set "_id": user
       @fetch
-       success: ->
-        callbacks.success()
+        error: -> callbacks.error?()
+        success: ->
+          callbacks.success()
     else
       callbacks.success()
 
