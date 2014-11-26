@@ -318,6 +318,7 @@ class SyncManagerView extends Backbone.View
                       type: "post"
                       url: "/"+Tangerine.db_name+"/_all_docs?include_docs=true"
                       dataType: "json"
+                      contentType: "application/json"
                       data: JSON.stringify(
                         keys: docIds
                       )
@@ -377,9 +378,4 @@ class SyncManagerView extends Backbone.View
 
 
     return
-
-    @messages.unshift statusMessage
-    @messages.pop() if @messages.length > 3
-    @$el.html "<small>#{@messages.join("<br>")}</small>"
-    @trigger "rendered"
 
