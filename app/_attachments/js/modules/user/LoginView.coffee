@@ -57,6 +57,7 @@ class LoginView extends Backbone.View
         key   : "subtest"
         skip  : subtestIndex
         limit : limit
+        error : $.noop
         success: (response) =>
           return alert "Failed to find locations" if response.rows.length is 0
           

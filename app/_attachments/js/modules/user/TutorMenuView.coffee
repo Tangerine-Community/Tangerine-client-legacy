@@ -76,6 +76,7 @@ class TutorMenuView extends Backbone.View
       @syncManagerView.setElement(@$el.find("#panel-sync > #sync-manager"))
       @listenTo @syncManagerView, "complete-sync", =>
         @workflows.fetch
+          error: $.noop
           success: =>
             console.log(@workflows)
             @WorkflowMenuView.updateWorkflows()

@@ -16,6 +16,7 @@ class Assessment extends Backbone.Model
       dataType: "jsonp"
       data: keys: ["testtest"]
       timeout: 5000
+      error: $.noop
       success: =>
         clearTimeout @timer
         callbacks.success()
@@ -24,6 +25,7 @@ class Assessment extends Backbone.Model
   # fetchs all subtests for the assessment
   fetch: (options) =>
     oldSuccess = options.success
+    options.error = $.noop unless options.error?
     options.success = (model) =>
         allSubtests = new Subtests
         allSubtests.fetch
