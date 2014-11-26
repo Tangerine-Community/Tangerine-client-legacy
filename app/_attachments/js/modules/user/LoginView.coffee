@@ -388,8 +388,6 @@ class LoginView extends Backbone.View
     if ( phone  = ( $phone  = @$el.find("#phone")     ).val() ).length is 0
       errors.push " - Phone cannot be empty"
 
-    if ( phone  = ( $phone  = @$el.find("#phone")     ).val() ).length is 0
-      errors.push " - Phone cannot be empty"
 
     if ( question = ($question = @$el.find("#challenge-question")).val() ).length is 0
       errors.push " - Challenge question cannot be empty"
@@ -397,7 +395,8 @@ class LoginView extends Backbone.View
     if ( response = ($response = @$el.find("#challenge-response")).val() ).length is 0
       errors.push " - Challenge response cannot be empty"
 
-    #if ( email  = ( $email  = @$el.find("#email")     ).val() ).length is 0
+    email  = ( $email  = @$el.find("#email")     ).val()
+      # do nothing
     #  errors.push " - Email cannot be empty"
 
     location = {}
