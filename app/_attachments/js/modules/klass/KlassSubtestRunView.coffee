@@ -86,6 +86,9 @@ class KlassSubtestRunView extends Backbone.View
 
     @flagRender "subtest"
 
+  afterRender: =>
+    @prototypeView?.afterRender?()
+
   onPrototypeRendered: =>
     @prototypeRendered = true
     @flagRender "prototype"

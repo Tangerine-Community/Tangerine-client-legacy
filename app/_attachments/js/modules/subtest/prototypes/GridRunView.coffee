@@ -273,7 +273,45 @@ class GridRunView extends Backbone.View
     
     @updateMode( null, @mode ) if @modeButton?
 
+  initScaleGrid: ->
+    if !$(".grid_wrapper > table").width()
+      setTimeout @initScaleGrid, 50
+      return false
+
+    $(".grid_wrapper").css(
+      "max-width": $(".grid_wrapper").width() + "px"
+      "max-height": $(".grid_wrapper").height() + "px"
+    )
+
+  scaleGrid: ->
+    if !$(".grid_wrapper > table").width()
+      setTimeout @scaleGrid, 50
+      return false
+
+    if $(".grid_wrapper > table")
+      gridWidth = $(".grid_wrapper > table").width()
+      viewportWidth = $(window).width() - (2 * $(".grid_wrapper > table").offset().left)
+      scale = viewportWidth / gridWidth
+
+      targetScale = if scale >= 1 then 1 else scale
+      $(".grid_wrapper > table").css(
+        "-webkit-transform": "scale(#{targetScale})"
+        "-ms-transform": "scale(#{targetScale})"
+        "-transform": "scale(#{targetScale})"
+        "-webkit-transform-origin": "top left"
+        "-ms-transform-origin": "top left"
+        "-transform-origin": "top left"
+      )
+
+      wrapperHeight = $(".grid_wrapper > table").height() * targetScale
+      $(".grid_wrapper").css(
+        "height": if scale > 1 then $(".grid_wrapper").css("max-height") else wrapperHeight+10+"px"
+        "width" : if scale > 1 then $(".grid_wrapper").css("max-width") else viewportWidth+"px"
+      )
+
+
   initialize: (options) ->
+    $(window).on('orientationchange resize', @scaleGrid)
 
     @fontStyle = "style=\"font-family: #{@model.get('fontFamily')} !important;\"" if @model.get("fontFamily") != "" 
 
@@ -284,6 +322,8 @@ class GridRunView extends Backbone.View
 
     @layoutMode = if @model.has("layoutMode") then @model.get("layoutMode") else "fixed"
     @fontSize   = if @model.has("fontSize")   then @model.get("fontSize")   else "normal"
+
+
 
     if @fontSize == "small"
       fontSizeClass = "font_size_small"
@@ -324,7 +364,7 @@ class GridRunView extends Backbone.View
     gridHTML = ""
     
     if @layoutMode == "fixed"
-      gridHTML += "<table class='grid #{disabling}'>"
+      gridHTML += "<div class='grid_wrapper'><table class='quest_grid #{disabling}'>"
       firstRow = true
       loop
         break if done > @items.length
@@ -341,7 +381,8 @@ class GridRunView extends Backbone.View
           gridHTML += @endOfGridLine({i:done}) if done < ( @items.length + 1 ) && @endOfLine
 
         gridHTML += "</tr>"
-      gridHTML += "</table>"
+      gridHTML += "</table></div>"
+
     else
       gridHTML += "<div class='grid #{disabling}'>"
       for item, i in @items
@@ -423,6 +464,14 @@ class GridRunView extends Backbone.View
 
     @trigger "rendered"
     @trigger "ready"
+
+    @scaleGrid()
+
+
+  afterRender: ->
+    @initScaleGrid()
+    @scaleGrid()
+    
 
   isValid: ->
     # Stop timer if still running. Issue #240

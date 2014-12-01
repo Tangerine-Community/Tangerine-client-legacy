@@ -63,6 +63,7 @@ class SubtestRunView extends Backbone.View
     if @renderFlags['subtest'] && @renderFlags['prototype']
       @trigger "rendered"
 
+
   afterRender: =>
     @prototypeView?.afterRender?()
     @onShow()
