@@ -430,22 +430,25 @@ table.disabled .grid_element,
 div.disabled .grid_element {
   color: #cccccc !important;
 }
-body.class table.grid .grid_element {
+body.class table.quest_grid .grid_element {
   font-family: Andika !important;
 }
+div.grid_wrapper {
+  float: left;
+}
 div.grid,
-table.grid {
+table.quest_grid {
   clear: both;
   width: 101%;
 }
 div.grid td,
-table.grid td {
+table.quest_grid td {
   padding: 0;
   margin: 0;
   border: 0;
 }
 div.grid .grid_element,
-table.grid .grid_element {
+table.quest_grid .grid_element {
   font-family: Gentium, Tahoma, Monaco, sans-serif;
   cursor: pointer;
   text-align: center;
@@ -459,12 +462,12 @@ table.grid .grid_element {
   font-size: 40px;
 }
 div.grid span.grid_element,
-table.grid span.grid_element {
+table.quest_grid span.grid_element {
   width: auto;
   display: inline-block;
 }
 div.grid .end_of_grid_line,
-table.grid .end_of_grid_line {
+table.quest_grid .end_of_grid_line {
   margin: 5px;
   padding: 5px 5px;
   cursor: pointer;
@@ -479,26 +482,26 @@ table.grid .end_of_grid_line {
   -webkit-border-radius: 10px;
 }
 div.grid .element_wrong,
-table.grid .element_wrong {
+table.quest_grid .element_wrong {
   background: #6daed9;
   text-decoration: line-through;
 }
 div.grid .element_last,
-table.grid .element_last {
+table.quest_grid .element_last {
   margin: 0;
   border-top: 5px solid red;
   border-right: 5px solid red;
   border-bottom: 5px solid red;
 }
 div.grid .element_minute,
-table.grid .element_minute {
+table.quest_grid .element_minute {
   margin: 0;
   border-top: 5px solid blue;
   border-left: 5px solid blue;
   border-bottom: 5px solid blue;
 }
 div.grid .font_size_small,
-table.grid .font_size_small {
+table.quest_grid .font_size_small {
   font-size: 25px;
 }
 .grid_prototype {
@@ -532,6 +535,7 @@ div.timer {
   color: black;
 }
 .timer_wrapper {
+  clear: both;
   margin: 15px 0 20px;
 }
 /*
