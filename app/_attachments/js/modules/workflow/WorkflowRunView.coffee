@@ -32,7 +32,9 @@ class WorkflowRunView extends Backbone.View
     return false
 
   render: ->
-    return @nextStep() if @shouldSkip()
+    if @shouldSkip()
+      @subViewRendered = true
+      return @nextStep()
 
     stepIndicator = "<div id='workflow-progress'></div>"
 

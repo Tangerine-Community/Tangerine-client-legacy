@@ -290,7 +290,7 @@ class GridRunView extends Backbone.View
 
     if $(".grid_wrapper > table")
       gridWidth = $(".grid_wrapper > table").width()
-      viewportWidth = $(window).width() - (2 * $(".grid_wrapper > table").offset().left)
+      viewportWidth = $(window).width() - (6 * $(".grid_wrapper > table").offset().left)
       scale = viewportWidth / gridWidth
 
       targetScale = if scale >= 1 then 1 else scale
