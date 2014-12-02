@@ -1,6 +1,7 @@
 class ValidObservationView extends Backbone.View
 
   initialize: ->
+
     @validCount = {
       thisMonth : 0
       lastMonth : 0
@@ -72,6 +73,8 @@ class ValidObservationView extends Backbone.View
               minutes = (parseInt(row.value.maxTime) - parseInt(row['value']['minTime'])) / 1000 / 60
               result = minutes >= 20
               return result
+            @validTrips = validTrips
+            @trigger "valid-update"
             @validCount.thisMonth = validTrips.length
             callback?()
 
@@ -87,42 +90,6 @@ class ValidObservationView extends Backbone.View
               return result
             @validCount.lastMonth = validTrips.length
             callback?()
-      , ( callback = $.noop ) ->
-        subtestIndex = 0
-        limit = 1
-
-        checkSubtest = =>
-
-          Tangerine.$db.view("#{Tangerine.design_doc}/byCollection",
-            key   : "subtest"
-            skip  : subtestIndex
-            limit : limit
-            success: (response) =>
-
-              return alert "Failed to find locations" if response.rows.length is 0
-              
-              @locationSubtest = response.rows[0].value
-
-              if @locationSubtest.prototype? && @locationSubtest.prototype is "location"
-
-                @targetVisits = 0
-
-                myCounty = Tangerine.user.get("location").County
-                myZone   = Tangerine.user.get("location").Zone
-
-                for location in @locationSubtest.locations
-                  county = location[0]
-                  zone   = location[1]
-                  @targetVisits++ if county is myCounty and zone is myZone
-
-                callback?()
-
-              else
-
-                subtestIndex++
-                checkSubtest()
-          )
-        checkSubtest()
       , @render
       ], @
 
