@@ -122,9 +122,11 @@ class SchoolListView extends Backbone.View
 
           isThisTutor = trip.get("enumerator") in [Tangerine.user.get("name")].concat(Tangerine.user.getArray("previousUsers"))
           isRightWorkflow = trip.get("workflowId") in [@WORKFLOW_NO_BOOKS, @WORKFLOW_WITH_BOOKS]
+          isValid = trip.get("tripId") in @validObservationView.validTrips
           continue unless isThisTutor
           continue unless isRightWorkflow
           continue if trip.get('tripId') in incompleteTrips
+          continue unless isValid
 
           row = []
           for level in @locationSubtest.levels
