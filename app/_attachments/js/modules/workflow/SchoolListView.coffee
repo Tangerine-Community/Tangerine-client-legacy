@@ -1,7 +1,10 @@
 # bit of a crap shoot this one
 # it will find _a_ school list
-# determines the zone as the one most visited
 class SchoolListView extends Backbone.View
+
+
+  WORKFLOW_NO_BOOKS   : "00b0a09a-2a9f-baca-2acb-c6264d4247cb"
+  WORKFLOW_WITH_BOOKS : "c835fc38-de99-d064-59d3-e772ccefcf7d"
 
   events: 
     "click .schools-left"   : "toggleSchoolList"
@@ -9,12 +12,12 @@ class SchoolListView extends Backbone.View
   toggleSchoolList: ->
     @$el.find(".school-list").toggle()
 
-  initialize: ->
+  initialize: (options) ->
     @geography       = {}
     @visited         = {}
     @schools         = { left : [] , done : []}
+    @validObservationView = options.validObservationView
 
-    @selected        = true
 
     if Tangerine.user.has("location")
       @currentLocation = 
@@ -25,11 +28,14 @@ class SchoolListView extends Backbone.View
 
     @locationSubtest = {}
 
-    Utils.execute [
-      @fetchLocations
-      @fetchTrips
-      @render
-    ], @
+    @listenTo @validObservationView, "valid-update", ->
+      Utils.execute [
+        @fetchLocations
+        @fetchTrips
+        @render
+      ], @
+    , @
+
 
   fetchLocations: ( callback = $.noop ) ->
 
@@ -104,10 +110,22 @@ class SchoolListView extends Backbone.View
 
         rows = []
         zones = {}
+
+        incomplete = Tangerine.user.getPreferences("tutor-workflows", "incomplete") || {}
+        incompleteTrips = []
+        for workflowId, tripIds of incomplete
+          incompleteTrips = incompleteTrips.concat(tripIds)
+
         for trip in trips.models
 
           # skip unless they belong
-          continue unless trip.get("enumerator") in [Tangerine.user.get("name")].concat(Tangerine.user.getArray("previousUsers"))
+
+          isThisTutor = trip.get("enumerator") in [Tangerine.user.get("name")].concat(Tangerine.user.getArray("previousUsers"))
+          isRightWorkflow = trip.get("workflowId") in [@WORKFLOW_NO_BOOKS, @WORKFLOW_WITH_BOOKS]
+          continue unless isThisTutor
+          continue unless isRightWorkflow
+          continue if trip.get('tripId') in incompleteTrips
+
           row = []
           for level in @locationSubtest.levels
             row.push trip.get(level).toLowerCase()
@@ -134,8 +152,7 @@ class SchoolListView extends Backbone.View
       "
 
     if status is "loading"
-      @$el.html "<h2>School List</h2><p>Loading...</p>"
-      return
+      return @$el.html "<h2>School List</h2><p>Loading...</p>"
     
     @$el.html "
       
