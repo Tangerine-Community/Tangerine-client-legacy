@@ -87,15 +87,17 @@ class TutorMenuView extends Backbone.View
       @bandwidthCheckView.setElement(@$el.find("#panel-sync > #bandwidth-test"))
       @bandwidthCheckView.render()
 
-    unless @schoolListView?
-      @schoolListView = new SchoolListView
-      @schoolListView.setElement(@$el.find("#panel-schools > #school-list"))
-      @schoolListView.render("loading")
-
     unless @validObservationView?
       @validObservationView = new ValidObservationView
       @validObservationView.setElement(@$el.find("#panel-schools > #valid-observations"))
       @validObservationView.render("loading")
+
+    unless @schoolListView?
+      @schoolListView = new SchoolListView
+        validObservationView : @validObservationView
+      @schoolListView.setElement(@$el.find("#panel-schools > #school-list"))
+      @schoolListView.render("loading")
+
     
     #init the tabs by showing the selected tabs
     @displayTab(@selectedTab)
