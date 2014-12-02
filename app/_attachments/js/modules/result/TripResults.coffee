@@ -30,37 +30,47 @@ class TripResultCollection extends Backbone.Collection
           row.value != "assessment" && row.value != "klass"
         ).map (result) -> {tripId:result.value,docId:result.id}).indexBy("docId")
 
-        Tangerine.$db.view "#{Tangerine.design_doc}/csvRows",
-          keys : resultIds
-          success : (csvRows) =>
-            trips = _(csvRows.rows.map (result) -> {cells:result.value,docId:result.id, tripId:tripIdByResultId[result.id][0].tripId}).indexBy("tripId")
-            tripModels = []
+        Tangerine.$db.view "#{Tangerine.design_doc}/spirtRotut",
+          keys : Object.keys(resultsByTripId)
+          group : true
+          success: (response) =>
+            workflowIdByTripId = {}
+            for row in response.rows
+              workflowIdByTripId[row.key] = row.value.workflowId
+            
 
-            for tripId, tripResults of trips
-              allCells = []
-              attributes = {}
+            Tangerine.$db.view "#{Tangerine.design_doc}/csvRows",
+              keys : resultIds
+              success : (csvRows) =>
+                trips = _(csvRows.rows.map (result) -> {cells:result.value,docId:result.id, tripId:tripIdByResultId[result.id][0].tripId}).indexBy("tripId")
+                tripModels = []
 
-              for result in tripResults
+                for tripId, tripResults of trips
+                  allCells = []
+                  attributes = {}
 
-                allCells = allCells.concat result.cells
-                for cell in result.cells
-                  tryCount = 1
-                  tryKey   = cell.key
-                  tryValue = cell.value
-                  suffix   = ''
+                  for result in tripResults
 
-                  while true
-                    if attributes[tryKey]?
-                      tryKey = cell.key + "_#{tryCount}"
-                      tryCount++
+                    allCells = allCells.concat result.cells
+                    for cell in result.cells
+                      tryCount = 1
+                      tryKey   = cell.key
+                      tryValue = cell.value
+                      suffix   = ''
 
-                    else
-                      attributes[tryKey] = tryValue
-                      break
+                      while true
+                        if attributes[tryKey]?
+                          tryKey = cell.key + "_#{tryCount}"
+                          tryCount++
 
-              attributes.tripId  = tripId
-              attributes._id  = tripId
-              attributes.rawData = allCells
-              @add new TripResult attributes
+                        else
+                          attributes[tryKey] = tryValue
+                          break
 
-            options.success()
+                  attributes.tripId  = tripId
+                  attributes._id  = tripId
+                  attributes.rawData = allCells
+                  attributes.workflowId = workflowIdByTripId[tripId]
+                  @add new TripResult attributes
+
+                options.success()
