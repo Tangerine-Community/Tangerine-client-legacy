@@ -767,9 +767,12 @@ class Utils
   @topSticky: (html, buttonText = "Close", callback) ->
     Utils.sticky(html, buttonText, callback, "top")
 
-  @execute: ( functions, scope ) ->
+  @execute: ( functions, scope, progress ) ->
+
+    totalFunctions = functions.length
 
     step = ->
+      progress?.apply?(scope||step, [totalFunctions, functions.length])
       nextFunction = functions.shift()
       if typeof nextFunction is "function"
         nextFunction.apply(scope||step, [step])
