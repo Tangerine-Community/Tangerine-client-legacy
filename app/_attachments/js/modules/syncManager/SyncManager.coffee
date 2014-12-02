@@ -186,16 +186,14 @@ class SyncManagerView extends Backbone.View
     @log.setUserKey "sunc-#{Tangerine.user.name()}"
     @userLogKey = 
     @messages = []
-    @sunc = []
+    @sunc = null
     @toAdd = []
-    @toSync = 0
+    @toSync = null
     @update => @render()
     incompleteWorkflows = Tangerine.user.getPreferences('tutor-workflows', 'incomplete') || {}
     @incompleteTrips = []
     for workflowIds, tripIds of incompleteWorkflows
       @incompleteTrips = @incompleteTrips.concat(tripIds)
-
-
 
   update: ( callback ) ->
     todoList = [
@@ -232,6 +230,7 @@ class SyncManagerView extends Backbone.View
   updateSyncable: ( callback ) =>
     Tangerine.$db.view "#{Tangerine.design_doc}/tripsAndUsers",
       keys    : [Tangerine.user.name()].concat(Tangerine.user.getArray('previousUsers'))
+      error   : $.noop
       success : ( response ) =>
 
         @syncable = _( _( response.rows ).pluck( "value" ) ).uniq()
@@ -309,6 +308,7 @@ class SyncManagerView extends Backbone.View
                     @sunc = _.uniq(@sunc)
                     @log.setTrips @sunc
                     @log.save null,
+                      error: => @uploadingNow = false
                       success: =>
                         @update =>
                           @render()
@@ -337,7 +337,7 @@ class SyncManagerView extends Backbone.View
                           data : compressedData
                           error: =>
                             @uploadingNow = false
-                            alert "Server bulk docs error\n"
+                            alert "Server bulk docs error"
                           success: =>
                             @sunc.push currentTrip
                             @sunc = _.uniq(@sunc)
@@ -357,25 +357,33 @@ class SyncManagerView extends Backbone.View
 
   render: ( statusMessage = '' ) =>
 
+    suncCount = if _(@sunc).isArray()
+      @sunc.length
+    else
+      "Loading..."
+
+    toSyncCount = if _(@toSync).isNumber()
+      @toSync
+    else
+      "Loading..."
+
+
     @$el.html "
-    <h2>Sync Status</h2>
-    <table class='class_table'>
-      <tr>
-        <th>Synced results</th><td>#{@sunc.length}</td>
-      </tr>
-      <tr>
-        <th>Left to sync</th><td>#{@toSync}</td>
-      </tr>
-      <tr>
-        <th colspan='2'><button class='upload command'>Upload</button></th>
-      </tr>
-    </table>
-    <div style='margin-bottom:12px; padding-bottom: 12px; border-bottom: 1px solid #eee;'></div>
-    <h2>Server results</h2>
-    <table id='sync-old-progress'></table>
-    <button class='sync-old command'>Sync</button>
+      <h2>Sync Status</h2>
+      <table class='class_table'>
+        <tr>
+          <th>Synced results</th><td>#{suncCount}</td>
+        </tr>
+        <tr>
+          <th>Left to sync</th><td>#{toSyncCount}</td>
+        </tr>
+        <tr>
+          <th colspan='2'><button class='upload command'>Upload</button></th>
+        </tr>
+      </table>
+      <div style='margin-bottom:12px; padding-bottom: 12px; border-bottom: 1px solid #eee;'></div>
+      <h2>Server results</h2>
+      <table id='sync-old-progress'></table>
+      <button class='sync-old command'>Sync</button>
     "
-
-
-    return
 
