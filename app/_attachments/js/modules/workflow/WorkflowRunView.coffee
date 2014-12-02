@@ -1,6 +1,6 @@
 class WorkflowRunView extends Backbone.View
   
-  events: 
+  events:
     "click .previous" : "previousStep"
     "click .next"     : "nextStep"
 
@@ -14,6 +14,7 @@ class WorkflowRunView extends Backbone.View
     @index = 0 unless @index?
     @steps = [] unless @steps?
     @currentStep = @workflow.stepModelByIndex @index
+    @subViewRendered = false
 
   shouldSkip: ->
     currentStep = @workflow.stepModelByIndex @index
@@ -31,7 +32,6 @@ class WorkflowRunView extends Backbone.View
     return false
 
   render: ->
-
     return @nextStep() if @shouldSkip()
 
     stepIndicator = "<div id='workflow-progress'></div>"
@@ -64,16 +64,18 @@ class WorkflowRunView extends Backbone.View
     @nextStep()
 
   nextStep: =>
-
     itExists        = @subView?
+    itIsRendered    = @subViewRendered
     itIsntDone      = not @subViewDone
     itsAnAssessment = @currentStep.getType() is "assessment"
     itsACurriculum  = @currentStep.getType() is "curriculum"
     itsANewObject   = @currentStep.getType() is "new"
 
+    return false if !itIsRendered
     return @subView.next() if itExists and itIsntDone and itsAnAssessment
     return @subView.save() if itExists and itIsntDone and itsANewObject
 
+    @subViewRendered = false
     @subViewDone = false
     @subView?.remove?()
     @subView?.unbind?()
@@ -100,8 +102,8 @@ class WorkflowRunView extends Backbone.View
       incomplete = Tangerine.user.getPreferences("tutor-workflows", "incomplete") || {}
       incomplete[@workflow.id] = _(incomplete[@workflow.id]).without @tripId
       Tangerine.user.setPreferences "tutor-workflows",
-        "incomplete", 
-        incomplete, => 
+        "incomplete",
+        incomplete, =>
           @checkingIncompletes = false
 
 
@@ -132,7 +134,7 @@ class WorkflowRunView extends Backbone.View
 
     return if @index == @workflow.getLength()
 
-    switch @currentStep.getType() 
+    switch @currentStep.getType()
       when "new"        then @renderNew()
       when "assessment" then @renderAssessment()
       when "curriculum" then @renderCurriculum()
@@ -167,9 +169,9 @@ class WorkflowRunView extends Backbone.View
 
       @$lessonContainer = $content.find("#lesson-container")
 
-      lessonImage = new Image 
-      $(lessonImage).on "load", 
-        (event) => 
+      lessonImage = new Image
+      $(lessonImage).on "load",
+        (event) =>
           if lessonImage.height is 0
             @$lessonContainer?.remove?()
             @$button?.remove?()
@@ -194,6 +196,7 @@ class WorkflowRunView extends Backbone.View
     htmlMessage = eval(jsMessage)
 
     @$el.find("##{@cid}_current_step").html htmlMessage
+    @subViewRendered = true
 
   renderNew: ->
     @nextButton true
@@ -246,10 +249,10 @@ class WorkflowRunView extends Backbone.View
         term2End   = moment "#{thisYear} Aug 30"
 
         term3Start = moment "#{thisYear} Sep 1"
-        term3End   = moment "#{thisYear} Nov 30"
+        term3End   = moment "#{thisYear} Dec 31"
 
         now = moment()
-        term = 
+        term =
           if      term1Start <= now <= term1End
             1
           else if term2Start <= now <= term2End
@@ -262,7 +265,7 @@ class WorkflowRunView extends Backbone.View
           part     : term
           grade    : grade
 
-        subtest = _(subtests.where( 
+        subtest = _(subtests.where(
           itemType : itemType
           part     : term
           grade    : grade
@@ -313,7 +316,8 @@ class WorkflowRunView extends Backbone.View
     @$el.find("#header-container").html header
     @subView.setElement @$el.find("##{@cid}_current_step")
     @listenTo @subView, "subViewDone save", @onSubViewDone
-    @listenTo @subView, "rendered", => 
+    @listenTo @subView, "rendered", =>
+      @subViewRendered = true
       @trigger "rendered"
       #@afterRender()
     @subView.render()
