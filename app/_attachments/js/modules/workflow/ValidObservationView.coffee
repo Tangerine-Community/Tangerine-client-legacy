@@ -73,7 +73,8 @@ class ValidObservationView extends Backbone.View
               minutes = (parseInt(row.value.maxTime) - parseInt(row['value']['minTime'])) / 1000 / 60
               result = minutes >= 20
               return result
-            @validTrips = validTrips
+
+            @validTrips = validTrips.map (el) -> el.key
             @trigger "valid-update"
             @validCount.thisMonth = validTrips.length
             callback?()
