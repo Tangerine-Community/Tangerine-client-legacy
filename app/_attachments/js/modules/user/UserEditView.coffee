@@ -6,7 +6,7 @@ class UserEditView extends Backbone.EditView
 
   render: ->
     @$el.html "
-      <h1>Edit user</h1>
+      <h1>Edit User</h1>
 
       <p id='message'></p>
 

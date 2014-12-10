@@ -3,39 +3,52 @@ class TutorAccountView extends Backbone.View
   className: "TutorAccountView"
 
   events: 
-    "click .tabs li" : "switchTabs"
+    "click .tab"  : 'handleTabClick'
 
-  switchTabs: (event) ->
+
+  initialize: (options) ->
+    @[key] = value for key, value of options
+
+
+  handleTabClick: ( event ) =>
+    @$el.find('.tab').removeClass('selected')
+    @$el.find('.tab-panel').hide()
+    
+    #determine which tab was clicked and begin navigation
     $target = $(event.target)
-    @$el.find(".tabs li").removeClass("selected")
-    $target.addClass("selected")
     id = $target.attr('data-id')
-    @$el.find(".tab-panel").hide()
-    @$el.find("##{id}").show()
+    Tangerine.router.navigate "tutor-account/"+id , false
+    @displayTab(id)
 
-  initialize: ->
+
+  displayTab: ( selectedTab = 'edit-user') ->
+    @$el.find('#tab-'+selectedTab).addClass('selected')
+    @$el.find('#panel-'+selectedTab).show()
 
 
   render: ->
 
     if Tangerine.user.isAdmin()
-      manageTab = "<li data-id='manage-tangerine'>Manage Tangerine</li>"
-      manageSection = "<section class='tab-panel' id='manage-tangerine' style='display:none'></section>"
+      manageTab = "<div id='tab-manage-tangerine' class='tab mode first' data-id='manage-tangerine'>Tangerine</div>"
+      manageSection = "<section id='panel-manage-tangerine' class='tab-panel' style='display:none;'><div id='manage-tangerine'></div></section>"
 
     @$el.html "
-      <div>
-        <ul class='tabs'>
-          <li data-id='edit-user' class='selected'>Edit User</li>
-          <li data-id='sync-instruments'>Sync Instruments</li>
-          <li data-id='select-workflows'>Select Workflows</li>
-          #{manageTab||''}
-
-        </ul>
-        <section class='tab-panel' id='edit-user'></section>
-        <section class='tab-panel' id='sync-instruments' style='display:none'></section>
-        <section class='tab-panel' id='select-workflows' style='display:none'></section>
-        #{manageSection||''}
+      <div class='tab_container'>
+        <div id='tab-edit-user' class='tab mode first' data-id='edit-user'>User</div>
+        <div id='tab-sync-instruments' class='tab mode' data-id='sync-instruments'>Instruments</div>
+        <div id='tab-select-workflows' class='tab mode last' data-id='select-workflows'>Workflows</div>
+        #{manageTab||''}
       </div>
+      <section id='panel-edit-user' class='tab-panel' style='display:none;'>
+        <div id='edit-user'></div>
+      </section>
+      <section id='panel-sync-instruments' class='tab-panel' style='display:none;'>
+        <div id='sync-instruments'></div>
+      </section>
+      <section id='panel-select-workflows' class='tab-panel' style='display:none;'>
+        <div id='select-workflows'></div>
+      </section>
+      #{manageSection||''}
     "
 
     editUserView = new UserEditView
@@ -54,5 +67,8 @@ class TutorAccountView extends Backbone.View
       accountView = new AccountView
       accountView.setElement @$el.find("#manage-tangerine")
       accountView.render()
+
+    #init the tabs by showing the selected tabs
+    @displayTab(@selectedTab)
 
     @trigger "rendered"
