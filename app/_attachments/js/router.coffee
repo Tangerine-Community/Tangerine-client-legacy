@@ -318,7 +318,7 @@ class Router extends Backbone.Router
 
     Tangerine.settings.contextualize
       server: ->
-        if ~String(window.location.href).indexOf("tangerine/_design") # in main group?
+        if ~String(window.location.href).indexOf("t/_design") # in main group?
           Tangerine.router.navigate "groups", callFunction
         else
           Tangerine.router.navigate "assessments", callFunction
@@ -1040,7 +1040,7 @@ class Router extends Backbone.Router
 
   account: ->
     # change the location to the trunk, unless we're already in the trunk
-    if Tangerine.settings.get("context") == "server" and Tangerine.db_name != "tangerine"
+    if Tangerine.settings.get("context") == "server" and Tangerine.db_name != "t"
       window.location = Tangerine.settings.urlIndex("trunk", "account")
     else
       Tangerine.user.verify
