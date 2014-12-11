@@ -7,8 +7,13 @@
 # Utils.disableConsoleLog()
 # Utils.disableConsoleAssert()
 
+
+db_name = window.location.pathname.split("/")[1]
+if db_name is "db"
+  db_name = window.location.pathname.split("/")[2]
+
 Tangerine =
-  "db_name"    : window.location.pathname.split("/")[1]
+  "db_name"    : db_name
   "design_doc" : _.last(String(window.location).split("_design/")).split("/")[0]
 
 # Local tangerine database handle
