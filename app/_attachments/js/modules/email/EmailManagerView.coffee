@@ -54,7 +54,7 @@ class EmailManagerView extends Backbone.View
 
         url = [
           urlHost = Tangerine.settings.location.group.url.slice(0,-1)
-          urlHandler = "_csv"
+          urlHandler = "brockman"
           urlRoute = "email"
           urlEmail = @users.get(userId).get('email')
           urlDatabase = Tangerine.db_name

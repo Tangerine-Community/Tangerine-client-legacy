@@ -34,7 +34,7 @@ class ResultsView extends Backbone.View
       aIncludes = vIncludes.split(/\s+/) #grab list of variables
       uIncludes = "&includes=#{JSON.stringify(aIncludes)}"
 
-    document.location = "/_csv/assessment/#{Tangerine.db_name}/#{@assessment.id}?#{download||''}"
+    document.location = "/brockman/assessment/#{Tangerine.db_name}/#{@assessment.id}?#{download||''}"
 
   showResultSumView: (event) ->
     targetId = $(event.target).attr("data-result-id")
