@@ -9,7 +9,7 @@
    "update" : {
       "target" : "http://localadmin:localpassword@localhost:5984/tangerine",
       "dbName" : "update",
-      "host"   : "128.199.35.168/db",
+      "host"   : "54.93.163.80/db",
       "login"  : ""
    },
 
@@ -19,24 +19,24 @@
 
    "trunk" : {
       "dbName" : "t",
-      "host" : "databases.tangerinecentral.org"
+      "host" : "54.93.163.80/db"
    },
 
    "groupDBPrefix" : "group-",
    "port" : 5984,
 
-   "tree"    : "http://128.199.35.168/tree/",
-   "robbert" : "http://128.199.35.168/robbert/",
+   "tree"    : "http://54.93.163.80/tree/",
+   "robbert" : "http://54.93.163.80/robbert/",
 
    "defaults" : {
       "settings" : {
-         "context" : "mobile",
-         "groupDDoc" : "ojai",
+         "context" : "server",
+         "groupDDoc" : "t",
          "language" : "en",
          "log" : [""],
          "groupName" : "empty",
-         "groupHost" : "http://128.199.35.168/db",
-         "upPass" : "icomciulovklwkar"
+         "groupHost" : "http://54.93.163.80/db",
+         "upPass" : ""
       }
    },
    "reports" : [

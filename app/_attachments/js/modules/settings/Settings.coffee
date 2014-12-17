@@ -55,7 +55,6 @@ class Settings extends Backbone.Model
 
     subnetBase = @config.get("subnet").base
 
-
     if Tangerine.settings.get("context") != "server"
       splitGroup = groupHost.split("://")
       groupHost = "#{splitGroup[0]}://#{@upUser}:#{@upPass}@#{splitGroup[1]}"
@@ -71,8 +70,8 @@ class Settings extends Backbone.Model
         url : "#{groupHost}/"
         db  : "#{groupHost}/#{prefix}#{groupName}/"
       update :
-        url : "http://#{update.host}/"
-        db  : "http://#{update.host}/#{update.dbName}/"
+        url : "http://#{update.host}/db"
+        db  : "http://#{update.host}/db/#{update.dbName}/"
         target : update.target
       subnet : 
         url : ("http://#{subnetBase}#{@ipRange[x]}:#{port}/"                      for x in [0..255])
@@ -94,7 +93,7 @@ class Settings extends Backbone.Model
       index : "_design/#{groupDDoc}/index.html"
 
   urlBulkDocs : ->
-    "/" + Tangerine.db_name + "/_bulk_docs"
+    "/db/" + Tangerine.db_name + "/_bulk_docs"
 
   urlSession : (location) ->
     @location[location].url + "_session"
@@ -110,11 +109,11 @@ class Settings extends Backbone.Model
     hash   = if hash? then "##{hash}" else ""
 
     if groupName == "trunk"
-      groupName = "tangerine"
+      groupName = "t"
     else 
       groupName = @config.get("groupDBPrefix") + groupName
 
-    return "#{groupHost}#{port}/#{groupName}/#{@couch.index}#{hash}"
+    return "#{groupHost}#{port}/db/#{groupName}/#{@couch.index}#{hash}"
 
   urlHost  : ( location ) -> "#{@location[location].url}"
   

@@ -59,7 +59,7 @@ class LoginView extends Backbone.View
         limit : limit
         error : $.noop
         success: (response) =>
-          return alert "Failed to find locations" if response.rows.length is 0
+          return alert "Failed to find locations" if response.rows.length is 0 and Tangerine.settings.get("context") isnt "server"
           
           locationSubtest = response.rows[0].value
 

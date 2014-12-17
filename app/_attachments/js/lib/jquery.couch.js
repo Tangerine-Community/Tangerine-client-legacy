@@ -40,7 +40,7 @@
   var uuidCache = [];
 
   $.extend($.couch, {
-    urlPrefix: '/db',
+    urlPrefix: window.location.pathname.split("/")[1] == "db" ? '/db' : '',
 
     // You can obtain a list of active tasks by using the `/_active_tasks` URL.
     // The result is a JSON array of the currently running tasks, with each task
