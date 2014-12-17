@@ -22,7 +22,7 @@ class WorkflowSelectView extends Backbone.View
 
     hiddenWorkflows = Tangerine.user.getPreferences("tutor-workflows", "hidden") || []
 
-    htmlWorkflows = ""
+    htmlWorkflows = "<h1>Select Workflows</h1>"
 
     for workflow in @workflows.models
       checkedHtml = unless workflow.id in hiddenWorkflows

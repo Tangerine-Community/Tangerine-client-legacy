@@ -26,6 +26,7 @@ class Router extends Backbone.Router
     'feedback/:workflowId'      : 'feedback'
 
     'tutor-account' : 'tutorAccount'
+    'tutor-account/:tab' : 'tutorAccount'
 
     'tutor-menu'      : 'tutorMenu'
     'tutor-menu/:tab' : 'tutorMenu'
@@ -93,11 +94,10 @@ class Router extends Backbone.Router
     @navigate '', false
     window.location.reload()
 
-  tutorAccount: ->
+  tutorAccount: ( tab = 'edit-user' ) ->
     Tangerine.user.verify
       isAuthenticated: ->
-        vm.show new TutorAccountView
-
+        vm.show((new TutorAccountView selectedTab : tab) , true)
   tutorMenu: ( tab = 'workflows' ) ->
     Tangerine.user.verify
       isAuthenticated: ->

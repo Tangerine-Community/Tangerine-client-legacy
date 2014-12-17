@@ -250,6 +250,7 @@ class LoginView extends Backbone.View
 
       <div class='reset' style='display:none;'>
         <section class='clearfix'>
+          <div class='messages name-message'></div>
           <input id='reset-name' placeholder='#{nameName}'>
           <button class='command next'>Next</button>
         </section>

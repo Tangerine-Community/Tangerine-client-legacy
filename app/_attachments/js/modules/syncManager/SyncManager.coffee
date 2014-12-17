@@ -38,6 +38,7 @@ class SyncManagerView extends Backbone.View
     sessionUrl = Tangerine.settings.urlSession "group"
     sessionUrl = "http://" + sessionUrl.replace(/http(.*)\@/, '')
 
+
     $.ajax
       url: sessionUrl
       dataType: "jsonp"
@@ -48,7 +49,7 @@ class SyncManagerView extends Backbone.View
           alert "Logging in to server. Please sync again."
           Tangerine.user.ghostLogin "uploader-"+Tangerine.settings.get("groupName"), Tangerine.settings.get("upPass")
           return
-
+          
         callbacks.success?()
 
   # download previous trips from server
@@ -59,61 +60,62 @@ class SyncManagerView extends Backbone.View
 
     @updateSyncOldProgress message: "Starting"
 
-    @ensureServerAuth =>
+    @ensureServerAuth
+      error: => console.log 'ensureServerAuth failed'
+      success: =>
+        @updateSyncOldProgress message: "Fetching result ids"
 
-      @updateSyncOldProgress message: "Fetching result ids"
+        # get tripIds and resultIds from associated users
+        $.ajax
+          url: Tangerine.settings.urlView("group", "tripsAndUsers")
+          dataType: "jsonp"
+          data:
+            keys:
+              JSON.stringify([Tangerine.user.get("name")].concat(Tangerine.user.getArray("previousUsers")))
 
-      # get tripIds and resultIds from associated users
-      $.ajax
-        url: Tangerine.settings.urlView("group", "tripsAndUsers")
-        dataType: "jsonp"
-        data:
-          keys:
-            JSON.stringify([Tangerine.user.get("name")].concat(Tangerine.user.getArray("previousUsers")))
+          error: =>
 
-        error: =>
+            alert "Error syncing"
+            @updateSyncOldProgress message: "Error fetching trip ids"
 
-          alert "Error syncing"
-          @updateSyncOldProgress message: "Error fetching trip ids"
+          success: (data) =>
 
-        success: (data) =>
+            @resultsByTripId = {}
 
-          @resultsByTripId = {}
+            for result in data.rows
+              tripId = result.value
+              resultId = result.id
+              @resultsByTripId[tripId] = [] unless @resultsByTripId[tripId]
+              @resultsByTripId[tripId].push resultId
 
-          for result in data.rows
-            tripId = result.value
-            resultId = result.id
-            @resultsByTripId[tripId] = [] unless @resultsByTripId[tripId]
-            @resultsByTripId[tripId].push resultId
+            @updateSyncOldProgress message: "Building replication job"
 
-          @updateSyncOldProgress message: "Building replication job"
+            @resultChunks = []
+            @tripChunks   = []
 
-          @resultChunks = []
-          @tripChunks   = []
+            index = 0
 
-          index = 0
+            for tripId, resultIds of @resultsByTripId
 
-          for tripId, resultIds of @resultsByTripId
+              resultChunk = [] unless resultChunk?
+              resultChunk = resultChunk.concat resultIds
 
-            resultChunk = [] unless resultChunk?
-            resultChunk = resultChunk.concat resultIds
+              tripChunk = [] unless tripChunk?
+              tripChunk.push tripId
 
-            tripChunk = [] unless tripChunk?
-            tripChunk.push tripId
+              if index is @TRIPS_PER_CHUNK
+                @resultChunks.push resultChunk
+                @tripChunks.push   tripChunk
+                resultChunk = []
+                tripChunk   = []
 
-            if index is @TRIPS_PER_CHUNK
-              @resultChunks.push resultChunk
-              @tripChunks.push   tripChunk
-              resultChunk = []
-              tripChunk   = []
+                index = 0
+              else
+                index += 1
 
-              index = 0
-            else
-              index += 1
+            @resultChunkCount = @resultChunks.length
 
-          @resultChunkCount = @resultChunks.length
-
-          @syncOldReplicate()
+            @syncOldReplicate()
 
 
   syncOldReplicate: ->
