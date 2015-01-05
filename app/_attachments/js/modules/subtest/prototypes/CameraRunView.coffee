@@ -139,7 +139,7 @@ class CameraRunView extends Backbone.View
   isValid: -> #if no cam always return true, otherwise check if image is present
     return true if navigator.camera is undefined
 
-    if @imgSource is "" then false else true
+    if @imgSource is "" && !@model.attributes.skippable then false else true
 
 
   showErrors: ->
