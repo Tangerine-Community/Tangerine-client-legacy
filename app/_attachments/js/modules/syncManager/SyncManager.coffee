@@ -38,19 +38,19 @@ class SyncManagerView extends Backbone.View
     sessionUrl = Tangerine.settings.urlSession "group"
     sessionUrl = "http://" + sessionUrl.replace(/http(.*)\@/, '')
 
-
     $.ajax
       url: sessionUrl
-      dataType: "jsonp"
-      error: -> callbacks.error?()
+      type: "GET"
+      dataType: "json"
+      xhrFields: 
+        withCredentials: true
+      error: $.noop
       success: (response) ->
 
-        unless response.userCtx.name isnt null
-          alert "Logging in to server. Please sync again."
-          Tangerine.user.ghostLogin "uploader-"+Tangerine.settings.get("groupName"), Tangerine.settings.get("upPass")
-          return
-          
-        callbacks.success?()
+        if response.userCtx.name is null
+          callbacks.error?() 
+        else
+          callbacks.success?()
 
   # download previous trips from server
   # server calls
@@ -265,7 +265,11 @@ class SyncManagerView extends Backbone.View
     @uploadStatus "Upload initializing"
 
     @ensureServerAuth
-      error: => @uploadingNow = false
+      error: => 
+        @uploadingNow = false
+        alert "Logging in to server. Please sync again."
+        Tangerine.user.ghostLogin "uploader-"+Tangerine.settings.get("groupName"), Tangerine.settings.get("upPass")
+
       success: =>
         @uploadStatus "Upload starting"
 
@@ -332,10 +336,13 @@ class SyncManagerView extends Backbone.View
 
                         docs = {"docs":response.rows.map((el)->el.doc)}
                         compressedData = LZString.compressToBase64(JSON.stringify(docs))
-                        bulkDocs = Tangerine.settings.location.group.url+"_cors_bulk_docs/"+Tangerine.settings.groupDB
+                        a = document.createElement("a")
+                        a.href = Tangerine.settings.get("groupHost")
+                        bulkDocsUrl = "#{a.protocol}//#{a.host}/_corsBulkDocs/#{Tangerine.settings.groupDB}"
+                        
                         $.ajax
                           type : "post"
-                          url : bulkDocs
+                          url : bulkDocsUrl
                           data : compressedData
                           error: =>
                             @uploadingNow = false

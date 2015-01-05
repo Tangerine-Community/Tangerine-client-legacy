@@ -113,7 +113,7 @@ class Settings extends Backbone.Model
     else 
       groupName = @config.get("groupDBPrefix") + groupName
 
-    return "#{groupHost}#{port}/db/#{groupName}/#{@couch.index}#{hash}"
+    return "#{groupHost}#{port}/#{groupName}/#{@couch.index}#{hash}"
 
   urlHost  : ( location ) -> "#{@location[location].url}"
   

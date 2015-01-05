@@ -86,8 +86,18 @@ class TabletUser extends Backbone.Model
 
   ghostLogin: (user, pass) ->
     Tangerine.log.db "User", "ghostLogin"
-    location = encodeURIComponent(window.location.toString())
-    document.location = Tangerine.settings.location.group.url.replace(/\:\/\/.*@/,'://')+"ghost/#{user}/#{pass}/#{location}"
+    $.ajax
+      url: "#{Tangerine.settings.get("groupHost")}/_session"
+      dataType : "json"
+      xhrFields: 
+        withCredentials: true
+      data: 
+        name: user
+        password: pass
+      type: "POST"
+      error: -> console.log("That didn't work")
+      success: (data) ->
+        alert "Server login successful.\n\nPlease try again."
 
 
   signup: ( name, pass, attributes, callbacks={} ) =>
