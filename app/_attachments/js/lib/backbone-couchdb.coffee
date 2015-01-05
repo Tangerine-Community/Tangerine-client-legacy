@@ -57,6 +57,7 @@ Backbone.couch_connector = con =
     
     # creates a database instance from the 
     make_db : ->
+
       db = $.couch.db con.config.db_name
       if con.config.base_url?
         db.uri = "#{con.config.base_url}/#{con.config.db_name}/";
@@ -64,6 +65,7 @@ Backbone.couch_connector = con =
       
   # calls either the read method for collecions or models
   read : (model, opts) ->
+
     if model.models 
       con.read_collection model, opts 
     else
@@ -135,6 +137,8 @@ Backbone.couch_connector = con =
     if _list 
       @helpers.make_db().list "#{_ddoc}/#{_list}", "#{_view}", _opts   
     else
+      # fetmar: for byCollection that emits null
+      _opts.include_docs = true
       @helpers.make_db().view "#{_ddoc}/#{_view}", _opts    
 
   # initializes the single global changes handler

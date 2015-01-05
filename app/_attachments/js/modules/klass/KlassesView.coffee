@@ -44,16 +44,10 @@ class KlassesView extends Backbone.View
     Tangerine.user.ghostLogin Tangerine.settings.upUser, Tangerine.settings.upPass
 
   uploadData: ->
-    $.ajax
-      "url"         : "/" + Tangerine.db_name + "/_design/tangerine/_view/byCollection?include_docs=false"
-      "type"        : "POST"
-      "dataType"    : "json"
-      "contentType" : "application/json;charset=utf-8",
-      "data"        : JSON.stringify(
-          include_docs: false
-          keys : ['result', 'klass', 'student', 'teacher', 'logs', 'user']
-        )
-      "success" : (data) =>
+    Tangerine.$db.view "#{Tangerine.design_doc}/byCollection"
+      include_docs: false
+      keys : ['result', 'klass', 'student', 'teacher', 'logs', 'user']
+      success : (data) =>
         docList = _.pluck(data.rows,"id")
         $.couch.replicate(
           Tangerine.settings.urlDB("local"),

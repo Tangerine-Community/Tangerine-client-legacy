@@ -145,6 +145,7 @@ Backbone.couch_connector = con = {
     if (_list) {
       return this.helpers.make_db().list("" + _ddoc + "/" + _list, "" + _view, _opts);
     } else {
+      _opts.include_docs = true;
       return this.helpers.make_db().view("" + _ddoc + "/" + _view, _opts);
     }
   },

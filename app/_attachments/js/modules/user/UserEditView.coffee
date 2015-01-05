@@ -90,6 +90,7 @@ class UserEditView extends Backbone.EditView
     checkSubtest = =>
 
       Tangerine.$db.view("#{Tangerine.design_doc}/byCollection",
+        include_docs : true
         key   : "subtest"
         skip  : subtestIndex
         limit : limit

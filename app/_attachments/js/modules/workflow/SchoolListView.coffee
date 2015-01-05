@@ -50,6 +50,7 @@ class SchoolListView extends Backbone.View
         key   : "subtest"
         skip  : subtestIndex
         limit : limit
+        include_docs : true
         error : $.noop
         success: (response) =>
 

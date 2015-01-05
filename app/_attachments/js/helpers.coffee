@@ -545,14 +545,9 @@ class Utils
     getNext {}
 
   @universalUpload: ->
-    $.ajax 
-      url: Tangerine.settings.urlView("local", "byCollection")
-      type: "POST"
-      dataType: "json"
-      contentType: "application/json"
-      data: JSON.stringify(
-        keys : ["result"]
-      )
+    Tangerine.$db.view "#{Tangerine.design_doc}/byCollection",
+      include_docs: true
+      keys : ["result"]
       success: (data) ->
         docList = _.pluck(data.rows,"id")
         

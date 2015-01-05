@@ -107,10 +107,10 @@ class TabletManagerView extends Backbone.View
             return if parseInt(xhr.status) == 200
             # if not, then we found another tablet
             viewReq = $.ajax
-              "url"         : Tangerine.settings.urlSubnet(ip) + "/_design/tangerine/_view/byCollection"
-              "dataType"    : "jsonp"
-              "contentType" : "application/json;charset=utf-8",
-              "data"        : 
+              url         : Tangerine.settings.urlSubnet(ip) + "/_design/tangerine/_view/byCollection"
+              dataType    : "jsonp"
+              contentType : "application/json;charset=utf-8",
+              data        : 
                 include_docs : false
                 keys : JSON.stringify(@docTypes)
 
@@ -144,6 +144,7 @@ class TabletManagerView extends Backbone.View
       Utils.working true
       Tangerine.$db.view Tangerine.design_doc+"/byCollection", 
         keys : @docTypes
+        include_docs : true
         success : (response) =>
           docIds = _.pluck(response.rows,"id")
         
