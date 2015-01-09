@@ -98,7 +98,7 @@ class UserEditView extends Backbone.EditView
         success: (response) =>
           return alert "Failed to find locations" if response.rows.length is 0
           
-          locationSubtest = response.rows[0].value
+          locationSubtest = response.rows[0].doc
 
           if locationSubtest.prototype? && locationSubtest.prototype is "location"
             @locationSubtest = new Subtest locationSubtest

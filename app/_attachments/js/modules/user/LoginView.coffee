@@ -66,7 +66,7 @@ class LoginView extends Backbone.View
             else
               return 
           
-          locationSubtest = response.rows[0].value
+          locationSubtest = response.rows[0].doc
 
           if locationSubtest.prototype? && locationSubtest.prototype is "location"
             @locationSubtest = new Subtest locationSubtest

@@ -52,7 +52,7 @@ class AccountView extends Backbone.View
           doc =
             _id        : docId
             _rev       : oldRev
-            docs       : _.pluck(response.rows,"value")
+            docs       : _.pluck(response.rows,"doc")
             collection : "debug_report"
 
           delete doc._rev unless doc._rev?
