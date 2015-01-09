@@ -157,8 +157,8 @@ class WorkflowRunView extends Backbone.View
 
       subject = ({"word": "kiswahili", "english_word" : "english", "operation" : "maths","3":"3"})[subject]
       grade   = @getVariable("class")
-      week    = @getVariable("week")
-      day     = @getVariable("day")
+      week    = @getVariable("lesson_week")
+      day     = @getVariable("lesson_day")
 
       $content = $("#content")
 

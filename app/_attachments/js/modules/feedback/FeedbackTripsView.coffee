@@ -104,8 +104,8 @@ class FeedbackTripsView extends Backbone.View
 
     motherTongue = trip.get("subject_mother_tongue")
     grade   = trip.get("class")
-    week    = trip.get("week")
-    day     = trip.get("day")
+    week    = trip.get("lesson_week")
+    day     = trip.get("lesson_day")
 
     lessonImage = new Image 
     $(lessonImage).on "load", 
