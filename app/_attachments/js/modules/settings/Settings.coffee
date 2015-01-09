@@ -123,9 +123,8 @@ class Settings extends Backbone.Model
     else
       result = "#{@location[location].db}".slice(0, -1)
 
-    splitDB = result.split("://")
-
     if pass?
+      splitDB = result.split("://")
       result = "#{splitDB[0]}://#{Tangerine.user.name()}:#{pass}@#{splitDB[1]}"
 
     return result
