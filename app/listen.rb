@@ -106,7 +106,7 @@ listen = Listen.to(".") do |modified, added, removed|
       localMatch = match.to_s.gsub(Dir.pwd, '')
 
       puts "\nCompiling:\t\t#{localMatch}"
-      result = `lessc #{match} --yui-compress > #{match}.css`
+      result = `lessc #{match} -x > #{match}.css`
       if result.index "Error"
         notify("LESS error",result)
         puts "\nLESS error\n******************\n#{result}".red()
