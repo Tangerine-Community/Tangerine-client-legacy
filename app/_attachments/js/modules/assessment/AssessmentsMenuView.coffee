@@ -119,7 +119,17 @@ class AssessmentsMenuView extends Backbone.View
     
     newButton     = "<button class='new command'>New</button>"
     importButton  = "<button class='import command'>Import</button>"
-    apkButton     = "<button class='apk nav-button'>APK</button>"
+    apkButton     = "<button class='apk nav-button' disabled='disabled'>APK</button>"
+
+    d = new Date()
+    month = d.getMonth()+1
+    year  = d.getFullYear()
+    group = Tangerine.settings.get("groupName")
+
+    moestReportButton   = "<a href='/_csv/report/group-#{group}/00b0a09a-2a9f-baca-2acb-c6264d4247cb,c835fc38-de99-d064-59d3-e772ccefcf7d/#{year}/#{month}/nairobi.html'><button class='nav-button'>MoEST reports</button></a>"
+    financeReportButton = "<button class='nav-button'>Tusome Finance reports</button>"
+    emailReportButton   = "<a href='#email'><button class='nav-button'>Email reports</button></a>"
+
     groupsButton  = "<button class='nav-button groups'>Groups</button>"
     uploadButton  = "<button class='command universal_upload'>Universal Upload</button>"
     syncTabletsButton = "<button class='command sync_tablets'>Sync Tablets</button>"
@@ -142,7 +152,10 @@ class AssessmentsMenuView extends Backbone.View
         server : "
           #{groupsButton}
           #{apkButton}
-          #{resultsButton} 
+          #{resultsButton}<br>
+          #{moestReportButton}
+          #{financeReportButton}
+          #{emailReportButton}
           #{groupHandle}
           "
         ) }
