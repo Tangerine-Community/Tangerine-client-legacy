@@ -426,6 +426,8 @@ class WorkflowResultView extends Backbone.View
 
           for question in assessment.questions.models
 
+            continue if question.get("subtestId") isnt subtest.id
+
             tableHtml = ""
 
             type = question.get('type')
