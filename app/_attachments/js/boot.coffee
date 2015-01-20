@@ -7,19 +7,26 @@
 # Utils.disableConsoleLog()
 # Utils.disableConsoleAssert()
 
+Tangerine = {}
+
 
 db_name = window.location.pathname.split("/")[1]
+Tangerine.isServer = db_name is "db"
 if db_name is "db"
   db_name = window.location.pathname.split("/")[2]
 
 Tangerine =
-  "db_name"    : db_name
-  "design_doc" : _.last(String(window.location).split("_design/")).split("/")[0]
+  db_name    : db_name
+  design_doc : _.last(String(window.location).split("_design/")).split("/")[0]
 
 # Local tangerine database handle
 Tangerine.$db = $.couch.db(Tangerine.db_name)
 
+urlParser = document.createElement("a")
+urlParser.href = window.location
+
 # Backbone configuration
+Backbone.couch_connector.config.base_url  = "#{urlParser.protocol}//#{urlParser.host}/db" if Tangerine.isServer
 Backbone.couch_connector.config.db_name   = Tangerine.db_name
 Backbone.couch_connector.config.ddoc_name = Tangerine.design_doc
 Backbone.couch_connector.config.global_changes = false
