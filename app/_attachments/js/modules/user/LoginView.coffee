@@ -217,7 +217,7 @@ class LoginView extends Backbone.View
           <div class='messages name-message'></div>
           <input autocomplete='off' id='new-name' type='text' placeholder='#{nameName}'>
 
-          <input autocomplete='off' id='challenge-question' type='text' placeholder='#{@text.challenge_question}' title='#{@text.challenge_explaination}'>
+          <input autocomplete='off' id='challenge-question' type='hidden' value='#{@text.challenge_question}' placeholder='#{@text.challenge_question}' title='#{@text.challenge_explaination}'>
 
           <input autocomplete='off' id='challenge-response' type='text' placeholder='#{@text.challenge_response}' title='#{@text.challenge_explaination}'>
 
