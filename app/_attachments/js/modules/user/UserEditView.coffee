@@ -12,6 +12,10 @@ class UserEditView extends Backbone.EditView
 
       <table>
         <tr>
+          <th>TSC/Emp Number</th>
+          <td>#{@getEditable(Tangerine.user, { key : 'tscNumber', escape : true },'TSC or Employment Number', 'untitled step')}</td>
+        </tr>
+        <tr>
           <th>First Name</th>
           <td>#{@getEditable(Tangerine.user, { key : 'first', escape : true },'My first name', 'untitled step')}</td>
         </tr>
