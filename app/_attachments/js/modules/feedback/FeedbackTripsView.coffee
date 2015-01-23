@@ -432,12 +432,25 @@ class WorkflowResultView extends Backbone.View
 
             type = question.get('type')
 
-            if type is "multiple" or type is "single"
+            if type is "single"
               for option in question.get("options")
                 unless @trip.get(question.get('name'))
                   answer = "<span color='grey'>no data</span>"
                 else
                   answer = if @trip.get(question.get('name')) is option.value then "<span style='color:green'>checked</span>" else "<span style='color:red'>unchecked</span>"
+                tableHtml += "
+                  <tr>
+                    <th>#{option.label}</th>
+                    <td>#{answer}</td>
+                  </tr>
+                "
+            else if type is "multiple"
+              for option in question.get("options")
+                value = @trip.get("#{question.get('name')}_#{option.value}")
+                unless value
+                  answer = "<span color='grey'>no data</span>"
+                else
+                  answer = if @trip.get("#{question.get('name')}_#{option.value}") is 1 then "<span style='color:green'>checked</span>" else "<span style='color:red'>unchecked</span>"
                 tableHtml += "
                   <tr>
                     <th>#{option.label}</th>
