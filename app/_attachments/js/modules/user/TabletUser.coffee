@@ -11,6 +11,7 @@ class TabletUser extends Backbone.Model
     Accessors
   ###
   name:        -> @get("name") || null
+  tscNumber:   -> @get("tscNumber") || null
   roles:       -> @getArray("roles")
   isAdmin:     -> "_admin" in @roles()
   recentUsers: -> Tangerine.settings.getArray("recentUsers")

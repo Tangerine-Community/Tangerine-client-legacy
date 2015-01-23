@@ -18,6 +18,7 @@ class Result extends Backbone.Model
         'subtestData'       : []
         'start_time'        : (new Date()).getTime()
         'enumerator'        : Tangerine.user.name()
+        'tscNumber'         : Tangerine.user.tscNumber()
         'tangerine_version' : Tangerine.version
         'device'            : deviceInfo
         'instanceId'        : Tangerine.settings.getString("instanceId")
