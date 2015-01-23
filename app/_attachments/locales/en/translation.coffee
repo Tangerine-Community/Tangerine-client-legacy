@@ -34,6 +34,7 @@
       "password" : "Password"
       "password_confirm" : "Confirm Password"
 
+      "tsc_number"         : "TSC or Employment Number"
       "challenge_question" : "Secret question: e.g. Year of birth?"
       "challenge_response" : "Year of birth"
 

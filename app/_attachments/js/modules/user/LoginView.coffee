@@ -124,6 +124,7 @@ class LoginView extends Backbone.View
       "error_pass" : t('LoginView.message.error_password_empty')
       "error_name_taken" : t('LoginView.message.error_name_taken')
 
+      "tsc_number"             : t('LoginView.label.tsc_number')
       "challenge_question"     : t('LoginView.label.challenge_question')
       "challenge_response"     : t('LoginView.label.challenge_response')
       "challenge_explaination" : t('LoginView.message.challenge_explaination')
@@ -215,9 +216,11 @@ class LoginView extends Backbone.View
         <section>
 
           <div class='messages name-message'></div>
+          <input autocomplete='off' id='tsc-number' type='text' placeholder='#{@text.tsc_number}'>
+
           <input autocomplete='off' id='new-name' type='text' placeholder='#{nameName}'>
 
-          <input autocomplete='off' id='challenge-question' type='text' placeholder='#{@text.challenge_question}' title='#{@text.challenge_explaination}'>
+          <input autocomplete='off' id='challenge-question' type='hidden' value='#{@text.challenge_question}' placeholder='#{@text.challenge_question}' title='#{@text.challenge_explaination}'>
 
           <input autocomplete='off' id='challenge-response' type='text' placeholder='#{@text.challenge_response}' title='#{@text.challenge_explaination}'>
 
@@ -378,11 +381,16 @@ class LoginView extends Backbone.View
     return false
 
   signup: ->
+
     name  = ($name  = @$el.find("#new-name")).val().toLowerCase()
     pass1 = ($pass1 = @$el.find("#new-pass-1")).val()
     pass2 = ($pass2 = @$el.find("#new-pass-2")).val()
 
     errors = []
+
+    if ( tscNumber  = ( $tscNumber  = @$el.find("#tsc-number")     ).val() ).length is 0
+      errors.push " - TSC or Employment number cannot be empty"
+
     if ( first  = ( $first  = @$el.find("#first")     ).val() ).length is 0
       errors.push " - First name cannot be empty"
 
@@ -419,8 +427,9 @@ class LoginView extends Backbone.View
 
 
     attributes =
-      "question" : question
-      "response" : response
+      "tscNumber" : tscNumber
+      "question"  : question
+      "response"  : response
 
       "first"  : first
       "last"   : last

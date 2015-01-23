@@ -8,11 +8,13 @@ class User extends Backbone.Model
     @myRoles  = []
     @dbAdmins = []
     @myName = null
+    @myTscNumber = null
 
   ###
     Accessors
   ###
   name:  -> @myName  || null
+  tscNumber: -> @myTscNumber || null
   roles: -> @myRoles || null
   recentUsers: -> ($.cookie("recentUsers")||'').split(",")
 
