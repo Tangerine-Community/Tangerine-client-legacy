@@ -7,6 +7,7 @@ class WorkflowMenuView extends Backbone.View
     "click .workflow-delete" : "delete"
     "click .workflow-run"    : "run"
     "click .workflow-edit"   : "edit"
+    "click .workflow-csv"    : "csvPromptMonth"
     'click .remove-resume'   : 'removeResume'
 
   removeResume: (event) ->
@@ -39,6 +40,62 @@ class WorkflowMenuView extends Backbone.View
         success: =>
           @render()
 
+  MONTHS: [null, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  csvPromptMonth: (event) ->
+    $target = $(event.target)
+
+    workflowTitle = $target.parent().find(".workflow-title").html
+    reportUrl = $target.attr('href')
+
+    d = new Date
+    thisMonth = d.getMonth() + 1
+    thisYear  = d.getFullYear()
+
+    modalContent = "
+      <div id='csvReportForm'>
+      <h1>CSV Reporting</h1>
+      <input id='csvUrl' name='csvUrl' type='hidden' value='#{reportUrl}'>
+      <p>Select the month that you would like to generate:</p>
+      <label for='csvYear'>Year:</label>
+      <select id='csvYear' name='csvYear'>
+        #{("<option  value='#{year}' #{if year is thisYear then 'selected' else ''}>#{year}</option>" for year in [thisYear-1..thisYear+1]).join('')}
+      </select>
+      <br/>
+      <label for='csvMonth'>Month:</label>
+      <select id='csvMonth' name='csvName'>
+        #{("<option  value='#{index}' #{if index is thisMonth then 'selected="true"' else ''}>#{@MONTHS[index]}</option>"  for index in [1..12]).join('')}
+      </select>
+      <br/>
+      <button class='command' data-action='cancel'>Cancel</button>
+      <button class='command' data-action='generate'>Generate Report</button>
+      </div>
+    "
+    
+    Utils.modal modalContent
+
+    $button = $("#csvReportForm button")
+
+    $button.on "click", (event) ->
+      $button.off "click"
+
+      if $(event.target).attr("data-action") == "generate"
+
+        $csvUrl = $("#csvReportForm #csvUrl").val()
+        $csvYear = $("#csvReportForm #csvYear option:selected").val()
+        $csvMonth = $("#csvReportForm #csvMonth").val()
+
+        url = [
+          $csvUrl
+          $csvYear
+          $csvMonth
+        ].join('/')
+        
+        document.location = url
+
+      Utils.modal false
+
+    false
+
   initialize: (options) ->
     @[key] = value for key, value of options
 
@@ -63,12 +120,12 @@ class WorkflowMenuView extends Backbone.View
 
       htmlWorkflows += "
         <li id='#{workflow.id}' style='margin-bottom:15px;'>
-          #{workflow.get('name')}
+          <span class='workflow-title'>#{workflow.get('name')}</span>
           <br>
           <a href='#workflow/run/#{workflow.id}'>run</a>
           #{feedbackHtml}
           <a href='#workflow/edit/#{workflow.id}'>edit</a>
-          <a href='#{csvUrl}'>csv</a>
+          <a class='workflow-csv' href='#{csvUrl}'>csv</a>
           <span class='workflow-delete link'>delete</span>
         </li>
         "
