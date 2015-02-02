@@ -31,14 +31,16 @@ class TutorAccountView extends Backbone.View
     if Tangerine.user.isAdmin()
       manageTab = "<div id='tab-manage-tangerine' class='tab mode first' data-id='manage-tangerine'>Tangerine</div>"
       manageSection = "<section id='panel-manage-tangerine' class='tab-panel' style='display:none;'><div id='manage-tangerine'></div></section>"
+      manageTabCSS = " "
 
     @$el.html "
       <div class='tab_container'>
-        <div id='tab-edit-user' class='tab mode first' data-id='edit-user'>User</div>
+        #{manageTab||''}
+        <div id='tab-edit-user' class='tab mode #{manageTabCSS||'first'}' data-id='edit-user'>User</div>
         <div id='tab-sync-instruments' class='tab mode' data-id='sync-instruments'>Instruments</div>
         <div id='tab-select-workflows' class='tab mode last' data-id='select-workflows'>Workflows</div>
-        #{manageTab||''}
       </div>
+      #{manageSection||''}
       <section id='panel-edit-user' class='tab-panel' style='display:none;'>
         <div id='edit-user'></div>
       </section>
@@ -48,7 +50,6 @@ class TutorAccountView extends Backbone.View
       <section id='panel-select-workflows' class='tab-panel' style='display:none;'>
         <div id='select-workflows'></div>
       </section>
-      #{manageSection||''}
     "
 
     editUserView = new UserEditView
