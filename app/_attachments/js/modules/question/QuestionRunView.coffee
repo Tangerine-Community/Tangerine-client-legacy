@@ -21,7 +21,7 @@ class QuestionRunView extends Backbone.View
     unless @dataEntry
       @answer = options.answer
     else
-      @answer   = {}
+      @answer = {}
 
     @name     = @model.escape("name").replace /[^A-Za-z0-9_]/g, "-"
     @type     = @model.get "type"
@@ -100,6 +100,8 @@ class QuestionRunView extends Backbone.View
     else
       # NO, some kind of validation must occur now
       customValidationCode = @model.get("customValidationCode")
+
+      @answer = "" unless @answer
 
       if not _.isEmptyString(customValidationCode)
         try

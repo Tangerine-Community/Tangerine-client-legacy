@@ -271,6 +271,7 @@ Tangerine.bootSequence =
   reloadUserSession: ( callback ) ->
 
     Tangerine.user.sessionRefresh 
+      error: -> Tangerine.user.logout()
       success: callback
 
   startBackbone: ( callback ) ->

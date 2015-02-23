@@ -28,7 +28,7 @@
       "advanced" : "Advanced"
       "pagination" : "Results __start__-__end__ of __total__"
       "cloud" : "Cloud"
-      "csv" : "CSV"
+      "csv" : "CSV" 
       "tablets" : "Tablets"
       "status" : "Status"
       "started" : "Started"

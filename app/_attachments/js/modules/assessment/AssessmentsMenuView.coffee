@@ -81,18 +81,18 @@ class AssessmentsMenuView extends Backbone.View
 
   i18n: ->
     @text = 
-      "new" : t("AssessmentMenuView.button.new")
-      import : t("AssessmentMenuView.button.import")
-      apk : t("AssessmentMenuView.button.apk")
-      groups : t("AssessmentMenuView.button.groups")
+      "new"            : t("AssessmentMenuView.button.new")
+      import           : t("AssessmentMenuView.button.import")
+      apk              : t("AssessmentMenuView.button.apk")
+      groups           : t("AssessmentMenuView.button.groups")
       universal_upload : t("AssessmentMenuView.button.universal_upload")
-      sync_tablets : t("AssessmentMenuView.button.sync_tablets")
-      results : t("AssessmentMenuView.button.results")
-      save : t("AssessmentMenuView.button.save")
-      cancel : t("AssessmentMenuView.button.cancel")
-
-      assessment : t("AssessmentMenuView.label.assessment")
+      sync_tablets     : t("AssessmentMenuView.button.sync_tablets")
+      results          : t("AssessmentMenuView.button.results")
+      save             : t("AssessmentMenuView.button.save")
+      cancel           : t("AssessmentMenuView.button.cancel")
+      assessment  : t("AssessmentMenuView.label.assessment")
       assessments : t("AssessmentMenuView.label.assessments")
+      curriculum  : t("AssessmentMenuView.label.curriculum")
 
 
   initialize: (options) ->
