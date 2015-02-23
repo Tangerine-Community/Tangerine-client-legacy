@@ -84,7 +84,6 @@ listen = Listen.to(".") do |modified, added, removed|
         puts "\nCompiling translation file for language: #{path[-2]}"
         newFile = path[0..path.length-2].join("/")+"/translation.json"
         result = `coffee --compile --bare --print #{match}`
-
         bareJson = result.gsub(/[\;\(\)]|\/\/.*$\n/, '')
         File.open(newFile, "w") {|f| f.write(bareJson)}
         hasError = false # to pass error checking
@@ -109,7 +108,7 @@ listen = Listen.to(".") do |modified, added, removed|
         end
       end
 
-      if result.index "error" 
+      if hasError
         # Show errors
         notify("CoffeeScript Error", result.gsub(/.*error.*\/(.*\.coffee)/,"\\1"))
         puts "\nCoffeescript error\n#{result}".red()
