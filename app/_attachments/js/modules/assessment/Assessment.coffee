@@ -181,19 +181,14 @@ class Assessment extends Backbone.Model
                             @updateFromServer @lastDKey
                             @lastDKey = ""
 
-
-
-
-
-
-  updateFromTrunk: ( dKey = @calcDKey() ) =>
+  updateFromIrisCouch: ( dKey = @calcDKey() ) =>
 
     # split to handle multiple dkeys
     dKeys = dKey.replace(/[^a-f0-9]/g," ").split(/\s+/)
 
     @trigger "status", "import lookup"
     $.ajax 
-      url: Tangerine.settings.urlView("trunk", "byDKey")
+      url: "http://tangerine.iriscouch.com/tangerine/_design/ojai/_view/byDKey"
       dataType: "json"
       contentType: "application/json"
       type: "GET"
@@ -204,7 +199,7 @@ class Assessment extends Backbone.Model
         for datum in data.rows
           docList.push datum.id
         $.couch.replicate( 
-          Tangerine.settings.trunkDB, 
+          "tangerine", 
           Tangerine.settings.groupDB,
             success:      => @trigger "status", "import success"
             error: (a, b) => @trigger "status", "import error", "#{a} #{b}"

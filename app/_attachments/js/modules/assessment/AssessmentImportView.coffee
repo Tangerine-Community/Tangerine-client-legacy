@@ -89,8 +89,8 @@ class AssessmentImportView extends Backbone.View
     @newAssessment.on "status", @updateActivity
     @updateActivity()
 
-    if selectedGroup == "LEGACY"
-      @newAssessment.updateFromTrunk dKey
+    if selectedGroup == "IrisCouch"
+      @newAssessment.updateFromIrisCouch dKey
     else
       @newAssessment.updateFromServer dKey, selectedGroup
 
@@ -173,7 +173,7 @@ class AssessmentImportView extends Backbone.View
       <button class='command group_import'>Group import</button>
     " if Tangerine.settings.get("context") != "server"
 
-    legacyOption = "<option data-group='LEGACY'>Legacy Tangerine</option>" if String(window.location.href).indexOf("databases")
+    legacyOption = "<option data-group='IrisCouch'>tangerine.iriscouch.com</option>" if String(window.location.href).indexOf("databases")
 
     groupSelector = "
       <select id='group'>
