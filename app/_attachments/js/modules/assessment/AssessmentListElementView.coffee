@@ -247,6 +247,17 @@ class AssessmentListElementView extends Backbone.View
           other : deleteConfirm
 
     
+    else if "server" is Tangerine.settings.get("context")
+      @$el.html "
+        <div class='non_admin'>
+          #{@spriteListLink("span",'run')}#{name} #{@spriteListLink("span",'results')} #{@spriteListLink("span",'print')}
+        </div>
+        <div class='sub_menus'>
+          #{printSelector}
+        </div>
+
+      "
+
     else
       @$el.html "
         <div class='non_admin'>
