@@ -143,7 +143,6 @@ The only real behavior worth mentioning here is
     if isClassResult
       doc.klassId
     else
-      doc.assessmentId
+      doc._id
 
   emit keyId, result
-  emit doc._id, result
