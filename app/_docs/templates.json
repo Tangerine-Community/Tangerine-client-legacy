@@ -193,6 +193,19 @@
         {"label":"December","value":"12"}
       ]
       
+    },
+    {
+      "name" : "5-point Likert",
+      "variableName" : "likert",
+      "options" : [
+        {"label":"Strongly agree","value":"5"},
+        {"label":"Agree","value":"4"},
+        {"label":"Neither agree nor disagree","value":"3"},
+        {"label":"Disagree","value":"2"},
+        {"label":"Strongly disagree","value":"1"},
+        {"label":"N/A","value":"99"}
+      ]
+      
     }
   ]
 }
