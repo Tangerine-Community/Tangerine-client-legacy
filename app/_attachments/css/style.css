@@ -12,6 +12,19 @@
     src: url('./rabiat.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'Padauk';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./padauk.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Zwekabin';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./zwekabin.ttf') format('truetype');
+}
 
 @font-face {
     font-family: 'Gentium';
