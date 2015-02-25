@@ -111,11 +111,11 @@ class AssessmentImportView extends Backbone.View
     if message?
       read = written = failed = 0
 
-      read    = message.docs_read    if message.docs_read?
-      written = message.docs_written if message.docs_written?
-      failed  = message.doc_write_failures if message.doc_write_failures?
+      read    = message.docs_read
+      written = message.docs_written
+      failed  = message.doc_write_failures
 
-      writtenPlural = if written != 1 then "s" else ""
+      writtenPlural = "s" if written != 1
 
       failures = "
         <b>#{failed}</b> failures<br>
@@ -131,11 +131,11 @@ class AssessmentImportView extends Backbone.View
     else if status == "import success"
       clearInterval @activeTaskInterval
       headline = "Import successful"
-      headline = "Nothing imported" if read == 0 || not read?
+      headline = "Nothing imported" if read == 0
       @activity = "#{headline}<br>
-        <b>#{written}</b> document#{writtenPlural} written<br>
-        #{failures || ""}
-        #{changes || ""}
+        <b>#{written}</b> document#{writtenPlural || ''} written<br>
+        #{failures || ''}
+        #{changes || ''}
       "
       @updateProgress null, =>
         Utils.askToLogout() unless Tangerine.settings.get("context") == "server"

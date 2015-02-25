@@ -199,10 +199,10 @@ class Assessment extends Backbone.Model
         for datum in data.rows
           docList.push datum.id
         $.couch.replicate( 
-          "tangerine", 
+          "http://tangerine.iriscouch.com/tangerine", 
           Tangerine.settings.groupDB,
-            success:      => @trigger "status", "import success"
-            error: (a, b) => @trigger "status", "import error", "#{a} #{b}"
+            success:(response) => @trigger "status", "import success", response
+            error: (a, b)      => @trigger "status", "import error", "#{a} #{b}"
           ,
             doc_ids: docList
         )
