@@ -24,10 +24,11 @@ class SurveyPrintView extends Backbone.View
         <table class='print-metadata'>
           <thead>
             #{
-              _("name, prompt, type, hint,options".split(/, */)).map( (attribute) =>
-                "<th>#{attribute}</th>"
+              ["name", "prompt", "type", "hint", "linkedGridScore"].map( (attribute) =>
+                "<th>#{attribute.underscore().humanize()}</th>"
               ).join("")
             }
+            <th>Options</th>
           </thead>
           <tbody class='survey-questions'>
           </tbody>

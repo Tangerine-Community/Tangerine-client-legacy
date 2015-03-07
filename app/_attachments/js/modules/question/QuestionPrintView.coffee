@@ -76,7 +76,7 @@ class QuestionPrintView extends Backbone.View
         @$el.html "
           <tr>
             #{
-              _("name, prompt, type, hint".split(/, */)).map( (attribute) =>
+              ["name", "prompt", "type", "hint", "linkedGridScore"].map( (attribute) =>
                 "
                   <td>#{@model.get attribute}</td>
                 "
