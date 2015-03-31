@@ -76,11 +76,14 @@ class AssessmentsMenuView extends Backbone.View
   universalUpload: -> Utils.universalUpload()
 
   apk: ->
+
+    includeLessonPlans = confirm "Include lesson plans in APK?"
+
     TangerineTree.make
+      includeLessonPlans : includeLessonPlans
       success: (data) ->
-        a = document.createElement("a")
-        a.href = Tangerine.settings.config.get("tree")
-        Utils.sticky("<h1>APK link</h1><p>#{a.host}/apk/#{data.token}</p>")
+        baseUrl = Tangerine.settings.config.get("tree")
+        Utils.sticky("<h1>APK link</h1><p>#{baseUrl}#{data.token}</p>")
       error: (xhr, response) ->
         Utils.sticky response.error
 
@@ -119,7 +122,7 @@ class AssessmentsMenuView extends Backbone.View
     
     newButton     = "<button class='new command'>New</button>"
     importButton  = "<button class='import command'>Import</button>"
-    apkButton     = "<button class='apk nav-button' disabled='disabled'>APK</button>"
+    apkButton     = "<button class='apk nav-button'>APK</button>"
 
     d = new Date()
     month = d.getMonth()+1
