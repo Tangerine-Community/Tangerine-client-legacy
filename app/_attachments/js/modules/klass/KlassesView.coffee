@@ -44,7 +44,7 @@ class KlassesView extends Backbone.View
     Tangerine.user.ghostLogin Tangerine.settings.upUser, Tangerine.settings.upPass
 
   uploadData: ->
-    Tangerine.$db.view "#{Tangerine.design_doc}/byCollection"
+    Tangerine.$db.view "#{Tangerine.design_doc}/byCollection",
       include_docs: false
       keys : ['result', 'klass', 'student', 'teacher', 'logs', 'user']
       success : (data) =>
