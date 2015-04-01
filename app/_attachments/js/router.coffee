@@ -292,6 +292,17 @@ class Router extends Backbone.Router
                 for j in [0..index]
                   steps.push {result : new Result data.rows[j].doc}
 
+                assessmentResumeIndex = data.rows[index]?.doc?.subtestData?.length || 0
+
+                ###
+                  if data.rows[index]?.doc?.order_map?
+                  # save the order map of previous randomization
+                  orderMap = result.get("order_map").slice() # clone array
+                  # restore the previous ordermap
+                  view.orderMap = orderMap
+
+                ###
+
                 workflow = new Workflow "_id" : workflowId
                 workflow.fetch
                   success: ->
@@ -304,6 +315,7 @@ class Router extends Backbone.Router
 
                     workflow.updateCollection()
                     view = new WorkflowRunView
+                      assessmentResumeIndex : assessmentResumeIndex
                       workflow: workflow
                       tripId  : tripId
                       index   : index
