@@ -53,7 +53,6 @@ class NavigationView extends Backbone.View
 
     incomplete[workflowId] = [] unless incomplete[workflowId]?
     incomplete[workflowId].push view.tripId
-    view.steps[view.index].result.save()
 
     Tangerine.user.setPreferences "tutor-workflows", "incomplete", incomplete
 
