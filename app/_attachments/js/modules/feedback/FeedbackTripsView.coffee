@@ -34,7 +34,7 @@ class FeedbackTripsView extends Backbone.View
     $target.siblings().toggle()
 
     tripId = $target.attr("data-trip-id")
-    $output = @$el.find(".#{tripId}-result")
+    $output = @$el.find(".#{tripId}-result").append("<div></div>").find("div")
     $output.html "<img class='loading' src='images/loading.gif'>"
 
     
@@ -42,7 +42,6 @@ class FeedbackTripsView extends Backbone.View
       workflow : @workflow
       trip : @trips.get(tripId)
     view.setElement($output)
-
 
     @subViews.push view
     @["WorkflowResultView-#{tripId}"] = view
@@ -53,8 +52,8 @@ class FeedbackTripsView extends Backbone.View
     $target.toggle()
     $target.siblings().toggle()
 
-    tripId = $target.attr("trip-id")
-    @$el.find(".show-survey-data, .hide-survey-data").toggle()
+    tripId = $target.attr("data-trip-id")
+
     @subViews = _(@subViews).without @["WorkflowResultView-#{tripId}"]
     @["WorkflowResultView-#{tripId}"].close()
 
