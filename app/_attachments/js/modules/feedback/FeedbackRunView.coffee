@@ -109,7 +109,7 @@ class FeedbackRunView extends Backbone.View
               'tripId' : @trip.id
             ,
               success: ->
-               noteView.render()
+                noteView.render()
 
     @trigger "rendered"
 
