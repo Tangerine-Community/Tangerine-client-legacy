@@ -246,11 +246,11 @@ class LoginView extends Backbone.View
           <input autocomplete='off' id='phone' type='number' placeholder='#{@text.phone}'>
           <input autocomplete='off' id='email' type='text' placeholder='#{@text.email}'>
           <br>
-          <label for='same-users'>Please merge previous user names with this one</label>
+          <!--label for='same-users'>Please merge previous user names with this one</label>
           <select multiple='true' id='same-users'>
             #{("<option value='#{user.get('id')}'>#{user.get('name')}</option>" for user in @users.models || []).join('')}
             #{("<option value='#{user}'>#{user}</option>" for user in @usersAug25).join('')}
-          </select>
+          </select-->
 
           <button class='sign-up'>#{@text.sign_up}</button>
         </section>
