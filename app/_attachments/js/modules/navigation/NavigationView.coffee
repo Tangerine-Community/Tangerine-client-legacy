@@ -39,9 +39,6 @@ class NavigationView extends Backbone.View
     # only ask if the workflow isn't finished
     return false if view.index is view.workflow.getLength() - 1
 
-    # only ask if the first step is done
-    return false if view.index is 0
-
     # only ask if it's not best practice, TSC forms, or full primr
     bestPractices = "00b0a09a-2a9f-baca-2acb-c6264d4247cb"
     tscForms      = "b89a88dc-f23c-0e9a-28ae-b62fe9b580ee"
