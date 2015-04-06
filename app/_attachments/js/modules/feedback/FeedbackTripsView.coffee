@@ -34,9 +34,7 @@ class FeedbackTripsView extends Backbone.View
     $target.siblings().toggle()
 
     tripId = $target.attr("data-trip-id")
-    $output = @$el.find(".#{tripId}-result").append("<div></div>").find("div")
-    $output.html "<img class='loading' src='images/loading.gif'>"
-
+    $output = @$el.find(".#{tripId}-result").append("<div><img class='loading' src='images/loading.gif'></div>").find("div")
     
     view = new WorkflowResultView
       workflow : @workflow
@@ -173,9 +171,7 @@ class FeedbackTripsView extends Backbone.View
       else if @sortDirection is 1
         @sortDirection = -1
 
-
     @updateFeedbackList()
-
 
 
   render: =>
