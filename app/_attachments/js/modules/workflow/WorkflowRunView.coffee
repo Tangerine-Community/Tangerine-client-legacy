@@ -249,14 +249,14 @@ class WorkflowRunView extends Backbone.View
         grade    = @getNumber @currentStep.getCurriculumGrade()
 
         thisYear = (new Date()).getFullYear()
-        term1Start = moment "#{thisYear} Jan 1"
-        term1End   = moment "#{thisYear} May 4"
+        term1Start = moment "#{thisYear} May 1"
+        term1End   = moment "#{thisYear} Aug 31"
 
-        term2Start = moment "#{thisYear} May 5"
-        term2End   = moment "#{thisYear} Aug 30"
+        term2Start = moment "#{thisYear} Sep 1"
+        term2End   = moment "#{thisYear} Nov 30"
 
-        term3Start = moment "#{thisYear} Sep 1"
-        term3End   = moment "#{thisYear} Dec 31"
+        term3Start = moment "#{thisYear} Jan 1"
+        term3End   = moment "#{thisYear} Apr 30"
 
         now = moment()
         term =
