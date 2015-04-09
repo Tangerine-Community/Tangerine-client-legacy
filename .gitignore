@@ -13,6 +13,9 @@
 # files for the dex VM
 *.dex
 
+cordova/www
+node_modules
+
 # Java class files
 *.class
 

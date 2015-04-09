@@ -1,0 +1,23 @@
+{
+  "name": "tangerine",
+  "version": "3.1.0",
+  "description": "data collection system.",
+  "main": "index.js",
+  "scripts": {
+    "build" : "cd cordova && ../node_modules/cordova/bin/cordova build android; cd -",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tangerine-Community/Tangerine.git"
+  },
+  "author": "RTI International <ict-admin@rti.org>",
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/Tangerine-Community/Tangerine/issues"
+  },
+  "homepage": "https://github.com/Tangerine-Community/Tangerine",
+  "devDependencies": {
+    "cordova": "^4.3.0"
+  }
+}

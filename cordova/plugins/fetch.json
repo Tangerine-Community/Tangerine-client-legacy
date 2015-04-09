@@ -1,0 +1,9 @@
+{
+    "com.couchbase.lite.phonegap": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/couchbaselabs/Couchbase-Lite-PhoneGap-Plugin.git",
+            "subdir": "."
+        }
+    }
+}
