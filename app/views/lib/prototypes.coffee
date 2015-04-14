@@ -51,7 +51,7 @@ pairsGrid = ( subtest, isClass ) ->
     if isClass == true
       letterLabel = "#{i+1}_#{item.itemLabel}"
     else
-      letterLabel = "#{variableName}#{i+1}"
+      letterLabel = "#{variableName}_#{i+1}"
 
     row.push cell( subtest, letterLabel, exportValue( item.itemResult ) )
 
