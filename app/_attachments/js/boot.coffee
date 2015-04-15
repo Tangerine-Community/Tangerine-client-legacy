@@ -87,6 +87,7 @@ Tangerine.bootSequence =
   # Some tasks require an admin user. Sometimes it secretly does. TabletUser does not use the 
   # CouchDB user authentication, but the server does. So don't do this on the server.
   ensureAdmin: ( callback ) ->
+    return callback()
     return callback() if "server" is Tangerine.settings.get("context")
     return callback() if Tangerine.settings.has("adminEnsured")
     
@@ -134,6 +135,7 @@ Tangerine.bootSequence =
 # make sure all users in the _users database have a local user model for future use
 # Can be removed if no upgrades are being done. This is for legacy _user support.
   transitionUsers : (callback) ->
+    return callback()
 
     return callback() if "server" is Tangerine.settings.get("context")
     return callback() if Tangerine.settings.has("usersTransitioned")
