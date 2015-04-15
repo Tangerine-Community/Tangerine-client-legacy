@@ -16,13 +16,14 @@ Tangerine.bootSequence =
 
     Tangerine = window.Tangerine
 
-    Tangerine.db_name    = window.location.pathname.split("/")[1]
-    Tangerine.design_doc = _.last(String(window.location).split("_design/")).split("/")[0]
+    Tangerine.db_name    = "tangerine"#window.location.pathname.split("/")[1]
+    Tangerine.design_doc = "ojai"#_.last(String(window.location).split("_design/")).split("/")[0]
 
     # Local tangerine database handle
     Tangerine.$db = $.couch.db(Tangerine.db_name)
 
     # Backbone configuration
+    Backbone.couch_connector.config.base_url  = "http://localhost:5984"
     Backbone.couch_connector.config.db_name   = Tangerine.db_name
     Backbone.couch_connector.config.ddoc_name = Tangerine.design_doc
     Backbone.couch_connector.config.global_changes = false
