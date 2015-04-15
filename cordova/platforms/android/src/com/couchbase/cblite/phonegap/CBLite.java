@@ -47,7 +47,7 @@ public class CBLite extends CordovaPlugin {
 	private void initCBLite() {
 		try {
 
-		    allowedCredentials = new Credentials();
+		    allowedCredentials = null; // new Credentials(); // debug
 
 			URLStreamHandlerFactory.registerSelfIgnoreError();
 
@@ -98,6 +98,7 @@ public class CBLite extends CordovaPlugin {
 	}
 
 	protected Manager startCBLite(Context context) {
+		System.out.println(" Files location: " + context.getFilesDir());
 		Manager manager;
 		try {
 		        Manager.enableLogging(Log.TAG, Log.VERBOSE);
