@@ -27,6 +27,7 @@
 
    "tree"    : "http://ntp.tangerinecentral.org/tree/",
    "robbert" : "http://ntp.tangerinecentral.org/robbert/",
+   "vouch"   : "http://ntp.tangerinecentral.org/vouch/",
 
    "defaults" : {
       "settings" : {
