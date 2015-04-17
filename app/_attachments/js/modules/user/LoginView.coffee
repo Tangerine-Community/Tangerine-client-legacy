@@ -188,6 +188,16 @@ class LoginView extends Backbone.View
       <button class='login'>#{@text.login}</button>
     "
 
+    if Tangerine.settings.get("verifiableAttribute")
+      id = Tangerine.settings.get("verifiableAttribute").underscore().dasherize()
+      name = Tangerine.settings.get("verifiableAttributeName")
+      verifiableHtml = "
+        <label for='#{id}'>#{name}</label>
+        <input autocomplete='off' id='#{id}' placeholder='#{name}'>
+      "
+
+
+
     tabletHtml = "
       <img src='images/login_logo.png' id='login_logo'>
 
@@ -213,7 +223,10 @@ class LoginView extends Backbone.View
       </div>
 
       <div class='signup' style='display:none;'>
+
         <section>
+
+          #{verifiableHtml||''}
 
           <div class='messages name-message'></div>
           <input autocomplete='off' id='tsc-number' type='text' placeholder='#{@text.tsc_number}'>
@@ -381,7 +394,21 @@ class LoginView extends Backbone.View
     return false
 
   signup: ->
+    if @hasVerifiableAttribute
+      v = new Vouch
+      v.vet
+        data:
+          group: Tangerine.settings.get("groupName")
+          key: @$el.find("##{@verifiableAttributeId()}").val().toLowerCase().replace(/[^a-z0-9']/,'')
+        success: =>
+          @_signup()
+        error: =>
+          Utils.sticky "#{@verifiableAttributeName()} not verified."
+    else
+      return @_signup()
 
+
+  _signup: ->
     name  = ($name  = @$el.find("#new-name")).val().toLowerCase()
     pass1 = ($pass1 = @$el.find("#new-pass-1")).val()
     pass2 = ($pass2 = @$el.find("#new-pass-2")).val()
@@ -439,6 +466,10 @@ class LoginView extends Backbone.View
       "email"  : email
       "previousUsers" : previousUsers
 
+    if @hasVerifiableAttribute()
+      attributes[@verifiableAttribute()] = @$el.find("##{@verifiableAttributeId()}").val()
+
+
     return @passError(@text.pass_mismatch) if pass1 isnt pass2
 
     if errors.length isnt 0
@@ -485,3 +516,31 @@ class LoginView extends Backbone.View
     @nameMsg.html ""
     @passMsg.html ""
     @errors = 0
+
+  verifiableAttributeName: ->
+    Tangerine.settings.getString("verifiableAttributeName")
+
+  verifiableAttributeId: ->
+    Tangerine.settings.getString("verifiableAttribute").underscore().dasherize()
+
+  verifiableAttribute: ->
+    Tangerine.settings.getString("verifiableAttribute")
+
+  hasVerifiableAttribute: ->
+    Tangerine.settings.getString("verifiableAttribute") != ""
+
+class Vouch
+
+  constructor: ->
+    @url = Tangerine.settings.config.get("vouch")
+
+  vet: (options) ->
+    $.post( @url, $.param(options.data))
+    .complete (res) ->
+      if res.status == 200
+        return options.success()
+      else if res.status == 401
+        return options.error()
+      else
+        Utils.sticky "Verification error. Cannot verify with server."
+        console.error arguments
