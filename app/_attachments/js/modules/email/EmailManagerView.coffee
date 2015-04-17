@@ -45,16 +45,18 @@ class EmailManagerView extends Backbone.View
 
     doOne = =>
       if @sendQueue.length is 0
-        @action = 'idle'
+        @updateAction('idle')
         @renderUsers()
       else
         userId = @sendQueue.pop()
 
         user = @users.get(userId)
 
+        (a = document.createElement("a")).href = Tangerine.settings.location.group.url
+
         url = [
-          urlHost = Tangerine.settings.location.group.url.slice(0,-1)
-          urlHandler = "brockman"
+          urlHost = "#{a.protocol}//#{a.host}"
+          urlHandler = "_csv"
           urlRoute = "email"
           urlEmail = @users.get(userId).get('email')
           urlDatabase = Tangerine.db_name
@@ -70,7 +72,7 @@ class EmailManagerView extends Backbone.View
           contentType: "application/json"
           url : url
           timeout: @SEND_TIMEOUT # magic number, ten minutes
-          error: -> alert "There was a problem sending. Please try again."
+          error: => @updateAction('idle'); alert "There was a problem sending. Please try again."
           success: =>
             monthsSent = user.getArray("monthsSent")
             monthStamp = "#{urlYear}-#{@MONTHS[urlMonth]}"
