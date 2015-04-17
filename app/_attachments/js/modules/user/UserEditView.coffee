@@ -13,27 +13,66 @@ class UserEditView extends Backbone.EditView
       <table>
         <tr>
           <th>TSC/Emp Number</th>
-          <td>#{@getEditable(Tangerine.user, { key : 'tscNumber', escape : true },'TSC or Employment Number', 'untitled step')}</td>
+          <td>#{@getEditable
+            model: Tangerine.user
+            attribute:
+              key : 'tscNumber'
+              escape : true
+            name: 'TSC or Employment Number'
+            placeholder: 'untitled step'
+          }</td>
         </tr>
         <tr>
           <th>First Name</th>
-          <td>#{@getEditable(Tangerine.user, { key : 'first', escape : true },'My first name', 'untitled step')}</td>
+          <td>#{@getEditable
+            model: Tangerine.user
+            attribute: 
+              key : 'first'
+              escape : true
+            name: 'My first name'
+            placeholder: 'untitled step'
+            }</td>
         </tr>
         <tr>
           <th>Last name</th>
-          <td>#{@getEditable(Tangerine.user, { key : 'last', escape : true },'Last name', 'My last name')}</td>
+          <td>#{@getEditable
+            model: Tangerine.user
+            attribute: 
+              key : 'last'
+              escape : true
+            name: 'Last name'
+            placeholder: 'My last name'
+          }</td>
         </tr>
         <tr>
           <th>Email</th>
-          <td>#{@getEditable(Tangerine.user, { key : 'email', escape : true },'Email', 'me@provider.com')}</td>
+          <td>#{@getEditable
+            model: Tangerine.user
+            attribute: 
+              key : 'email'
+              escape : true
+            name: 'Email'
+            placeholder: 'me@provider.com'}</td>
         </tr>
         <tr>
           <th>Phone</th>
-          <td>#{@getEditable(Tangerine.user, { key : 'phone', escape : true },'Phone number', '000')}</td>
+          <td>#{@getEditable
+            model: Tangerine.user
+            attribute: 
+              key : 'phone'
+              escape : true
+            name: 'Phone number'
+            placeholder:  '000'}</td>
         </tr>
         <tr>
           <th>Gender</th>
-          <td>#{@getEditable(Tangerine.user, { key : 'gender', escape : true },'Gender', 'male or female')}</td>
+          <td>#{@getEditable
+            model: Tangerine.user
+            attribute: 
+              key : 'gender'
+              escape : true
+            name: 'Gender'
+            placeholder: 'male or female'}</td>
         </tr>
       </table>
       <div id='schoolSelector'><p>Loading county and zone list...</p></div>

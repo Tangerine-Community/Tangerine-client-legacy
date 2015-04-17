@@ -11,7 +11,12 @@ class NotesView extends Backbone.EditView
     @models = new Backbone.Collection [@model]
 
   render: ->
-    @$el.html @getEditable(@model, { key : 'notes' },'Notes', 'Tap here to edit')
+    @$el.html @getEditable
+      model: @model
+      attribute: 
+        key : 'notes'
+      name: 'Notes'
+      placeholder: 'Tap here to edit'
 
 
 class FeedbackRunView extends Backbone.View

@@ -38,32 +38,80 @@ class FeedbackEditView extends Backbone.EditView
 
             <tr>
               <th>Name</th>
-              <td>#{@getEditable(critiqueModel, { key : 'name', escape : true },'Step name', 'untitled critique')}</td>
+
+              <td>#{@getEditable
+                model: critiqueModel
+                attribute: 
+                  key : 'name'
+                  escape : true
+                name: 'Step name'
+                placeholder : 'untitled critique'
+                }
+              </td>
             </tr>
 
             <tr>
               <th>Order</th>
-              <td>#{@getEditable(critiqueModel, { key : 'order', isNumber : true },'Order', 'unordered')}</td>
+              <td>#{@getEditable
+                  model: critiqueModel
+                  attribute: 
+                    key : 'order'
+                    isNumber : true
+                  name : 'Order'
+                  placeholder: 'unordered'
+                }
+              </td>
             </tr>
 
             <tr>
               <th>Show notes field</th>
-              <td>#{@getEditable(critiqueModel, { key : 'showNotes' }, 'Show notes field', 'true or false')}</td>
+              <td>#{@getEditable
+                model: critiqueModel
+                attribute: 
+                  key : 'showNotes'
+                name: 'Show notes field'
+                placeholder: 'true or false'
+                }
+              </td>
             </tr>
 
             <tr>
               <th>Template</th>
-              <td>#{@getEditable(critiqueModel, { key : 'template', escape : true },'Template', 'none')}</td>
+              <td>#{@getEditable
+                model: critiqueModel
+                attribute :
+                  key : 'template'
+                  escape : true
+                name: 'Template'
+                placeholder: 'none'
+                }
+              </td>
             </tr>
 
             <tr>
               <th>Feedback Code</th>
-              <td>#{@getEditable(critiqueModel, { key : 'processingCode', escape: true, coffee: true }, 'Feedback code', 'Feedback code')}</td>
+              <td>#{@getEditable
+                model: critiqueModel
+                attribute: 
+                  key : 'processingCode'
+                  escape: true
+                  coffee: true
+                name: 'Feedback code'
+                placeholder: 'Feedback code'
+                }
+              </td>
             </tr>
 
             <tr>
               <th>Show feedback when</th>
-              <td>#{@getEditable(critiqueModel, { key : 'when' }, 'Show when code', 'Show when code')}</td>
+              <td>#{@getEditable
+                model: critiqueModel
+                attribute: 
+                  key : 'when'
+                name: 'Show when code'
+                placeholder: 'Show when code'
+                }
+              </td>
             </tr>
 
             <tr>
@@ -85,13 +133,20 @@ class FeedbackEditView extends Backbone.EditView
       <div class='menubox'>
         <div class='menubox'>
           <h3>Display Lesson viewer</h3>
-          #{@getEditable(@feedback, { key : 'showLessonPlan' }, 'Lesson viewer status', 'true or false', ((prop)->prop is "true") ) }
+          #{@getEditable
+            model: @feedback
+            attribute: 
+              key : 'showLessonPlan'
+            name: 'Lesson viewer status'
+            placeholder: 'true or false'
+            prepare: (value) -> value is "true"
+          }
         </div>
 
         <ul id='stepList'>#{critiqueList}</ul>
       </div>
       <div id='controls'>
-        <button class='critique-add command'>Add</button>
+        <button class='critique-add command'>Add critique</button>
       </div>
     "
 

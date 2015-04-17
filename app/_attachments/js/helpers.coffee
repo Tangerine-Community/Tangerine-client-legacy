@@ -141,30 +141,36 @@ class Backbone.EditView extends Backbone.View
     "keyup    .editing"    : "editing"
     "keydown  .editing"    : "editing"
 
-  getEditable: (model, prop, name="Value", defaultValue = "none", prep) =>
+  getEditable: (options) =>
 
-    @preps                     = {} unless @preps?
-    @preps[model.id]           = {} unless @preps[model.id]?
-    @preps[model.id][prop.key] = prep
+    model        = options.model
+    attribute    = options.attribute
+    name         = options.name        || "Value"
+    placeholder  = options.placeholder || "none"
+    prepare      = options.prepare
+
+    @preparations                     = {} unless @preparations?
+    @preparations[model.id]           = {} unless @preparations[model.id]?
+    @preparations[model.id][attribute.key] = prepare
 
     @htmlGenCatelog = {} unless @htmlGenCatelog?
     @htmlGenCatelog[model.id] = {} unless @htmlGenCatelog[model.id]?
-    @htmlGenCatelog[model.id][prop.key] = htmlFunction = do (model, prop, name, defaultValue) -> 
+    @htmlGenCatelog[model.id][attribute.key] = htmlFunction = do (model, attribute, name, placeholder) -> 
       -> 
 
-        key    = prop.key
-        escape = prop.escape
-        type   = prop.type || ''
+        key    = attribute.key
+        escape = attribute.escape
+        type   = attribute.type || ''
 
         # cook the value
-        value = if model.has(key) then model.get(key) else defaultValue
-        value = defaultValue if _(value).isEmptyString()
+        value = if model.has(key) then model.get(key) else placeholder
+        value = placeholder if _(value).isEmptyString()
 
         value = _(value).escape() if escape
-        untitled = " data-untitled='true' " if value is defaultValue
+        untitled = " data-untitled='true' " if value is placeholder
 
         # what is it
-        editOrNot   = if prop.editable && Tangerine.settings.get("context") == "server" then "class='edit_in_place'" else ""
+        editOrNot   = if attribute.editable && Tangerine.settings.get("context") == "server" then "class='edit_in_place'" else ""
 
         numberOrNot = if _.isNumber(value) then "data-is-number='true'" else "data-is-number='false'" 
 
@@ -258,9 +264,9 @@ class Backbone.EditView extends Backbone.View
     if String(newValue) != String(oldValue)
       attributes = {}
       attributes[key] = newValue
-      if @preps?[modelId]?[key]?
+      if @preparations?[modelId]?[key]?
         try
-          attributes[key+"-cooked"] = @preps[modelId][key](newValue)
+          attributes[key+"-cooked"] = @preparations[modelId][key](newValue)
         catch e
           Utils.sticky("Problem cooking value<br>#{e.message}")
           return

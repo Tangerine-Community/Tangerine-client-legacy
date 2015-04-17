@@ -96,17 +96,71 @@ class WorkflowEditView extends Backbone.EditView
 
             <tr>
               <th>Name</th>
-              <td>#{@getEditable(stepModel, { key : 'name', escape : true },'Step name', 'untitled step')}</td>
+              <td>#{@getEditable
+                  model: stepModel
+                  attribute: 
+                    key : 'name'
+                    escape : true
+                  name: 'Step name'
+                  placeholder: 'untitled step'
+                }
+              </td>
             </tr>
 
             <tr>
               <th>Order</th>
-              <td>#{@getEditable(stepModel, { key : 'order', isNumber : true },'Order', 'Order')}</td>
+              <td>#{@getEditable
+                  model: stepModel
+                  attribute: 
+                    key : 'order'
+                    isNumber : true
+                  name: 'Order'
+                  placeholder: 'Order'
+                }
+              </td>
             </tr>
 
             <tr>
+              <th>Enable feedback</th>
+              <td>#{@getEditable
+                  model: stepModel
+                  attribute:
+                    key : 'enableFeedback'
+                    escape: true
+                  name: 'Enable feedback'
+                  placeholder: 'true or false'
+                  prepare: (value) -> value is "true"
+                }
+              </td>
+            </tr>
+
+            <tr>
+              <th>Resumable</th>
+              <td>#{@getEditable
+                  model: stepModel
+                  attribute:
+                    key : 'resumable'
+                    escape: true
+                  name: 'Resumable'
+                  placeholder: 'true or false'
+                  prepare: (value)->CoffeeScript.compile "return #{value}"
+                }
+              </td>
+            </tr>
+
+
+            <tr>
               <th>Skip logic</th>
-              <td>#{@getEditable(stepModel, { key : 'skipLogic', escape: true }, 'Skip logic', 'Skip logic', ((prop)->CoffeeScript.compile("return #{prop}")) )}</td>
+              <td>#{@getEditable
+                  model: stepModel
+                  attribute:
+                    key : 'skipLogic'
+                    escape: true
+                  name: 'Skip logic'
+                  placeholder: 'Skip logic'
+                  prepare: (value) -> CoffeeScript.compile "return #{value}"
+                }
+              </td>
             </tr>
 
             <tr>
@@ -119,16 +173,39 @@ class WorkflowEditView extends Backbone.EditView
 
             <tr class='message-only not-new not-login not-assessment not-curriculum' style='#{displayMessage||''}'>
               <th>Message</th>
-              <td>#{@getEditable(stepModel, { key : 'message', escape: true }, 'Message', 'Message')}</td>
+              <td>#{@getEditable
+                  model: stepModel
+                  attribute:
+                    key : 'message'
+                    escape: true
+                  name: 'Message'
+                  placeholder: 'Message'
+                }
+              </td>
             </tr>
 
             <tr class='new-only not-login not-assessment not-new not-curriculum' style='#{displayNew||''}'>
               <th>Object Type</th>
-              <td>#{@getEditable(stepModel, { key : 'className' }, 'Class name', 'Class name')}</td>
+              <td>#{@getEditable
+                  model: stepModel
+                  attribute: 
+                    key : 'className'
+                  name: 'Class name'
+                  placeholder: 'Class name'
+                }
+              </td>
             </tr>
             <tr class='new-only not-login not-assessment not-new not-curriculum' style='#{displayNew||''}'>
               <th>Object options</th>
-              <td>#{@getEditable(stepModel, { key : 'classOptions' }, 'Class Options', 'Class options', ((prop)->CoffeeScript.compile("return #{prop}")) )}</td>
+              <td>#{@getEditable
+                  model: stepModel
+                  attribute: 
+                    key : 'classOptions'
+                  name: 'Class Options'
+                  placeholder: 'Class options'
+                  prepare: ( prop ) -> CoffeeScript.compile "return #{prop}"
+                }
+              </td>
             </tr>
 
             <tr class='login-only not-assessment not-new not-curriculum' style='#{displayLogin||''}'>
@@ -141,21 +218,35 @@ class WorkflowEditView extends Backbone.EditView
 
             <tr class='curriculum-only not-assessment not-new not-login' style='#{displayCurriculum||''}'>
               <th>Item type variable</th>
-              <td>#{@getEditable(stepModel, { key : 'curriculumItemType' }, 'Item type variable', 'Item type')}</td>
+              <td>#{@getEditable
+                  model: stepModel
+                  attribute: 
+                    key : 'curriculumItemType'
+                  name: 'Item type variable'
+                  placeholder: 'Item type'
+                }
+              </td>
             </tr>
             <tr class='curriculum-only not-assessment not-new not-login' style='#{displayCurriculum||''}'>
               <th>Week variable</th>
-              <td>#{@getEditable(stepModel, { key : 'curriculumWeek' }, 'Week variable', 'Week variable')}</td>
+              <td>#{@getEditable
+                  model: stepModel
+                  attribute: 
+                    key : 'curriculumWeek'
+                  name: 'Week variable'
+                  placeholder: 'Week variable'
+                }
+              </td>
             </tr>
             <tr class='curriculum-only not-assessment not-new not-login' style='#{displayCurriculum||''}'>
               <th>Grade variable</th>
-              <td>#{@getEditable(stepModel, { key : 'curriculumGrade' }, 'Grade variable', 'Grade variable')}</td>
-            </tr>
-
-            <tr>
-              <th>Show lesson viewer</th>
-              <td>
-                #{@getEditable(stepModel, { key : 'showLesson' }, 'Lesson viewer status', 'true or false', ((prop)->prop is "true") ) }
+              <td>#{@getEditable
+                  model: stepModel
+                  attribute:
+                    key : 'curriculumGrade'
+                  name: 'Grade variable'
+                  placeholder: 'Grade variable'
+                }
               </td>
             </tr>
 
@@ -175,7 +266,15 @@ class WorkflowEditView extends Backbone.EditView
 
 
     html = "
-      <h1>#{@getEditable(@workflow, {key:'name',escape:true}, "Workflow name", "Untitled workflow")}</h1>
+      <h1>#{@getEditable
+        model: @workflow
+        attribute : 
+          key : 'name'
+          escape : true
+        name : "Workflow name"
+        placeholder: "Untitled workflow"
+        }
+      </h1>
       <div class='menubox'>
         <h2>Steps</h2>
         <ul id='step-list'>#{stepList}</ul>
