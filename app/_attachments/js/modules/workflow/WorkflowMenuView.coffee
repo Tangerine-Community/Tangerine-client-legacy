@@ -113,7 +113,7 @@ class WorkflowMenuView extends Backbone.View
       
       feedback = @feedbacks.get(workflow.id+"-feedback")
 
-      if feedback? and feedback.get("children")?.length > 0
+      if workflow.getBoolean("enableFeedback") and feedback? and feedback.get("children")?.length > 0
         feedbackHtml = "<a href='#feedback/#{workflow.id}'>feedback</a>"
       else
         feedbackHtml = ""
