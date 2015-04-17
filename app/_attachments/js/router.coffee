@@ -98,10 +98,11 @@ class Router extends Backbone.Router
     Tangerine.user.verify
       isAuthenticated: ->
         vm.show((new TutorAccountView selectedTab : tab) , true)
-  tutorMenu: ( tab = 'workflows' ) ->
+
+  tutorMenu: ( tab ) ->
     Tangerine.user.verify
       isAuthenticated: ->
-        vm.show((new TutorMenuView selectedTab : tab) , true)
+        vm.show((new TutorMenuView) , true)
 
   email: ->
     Tangerine.user.verify
