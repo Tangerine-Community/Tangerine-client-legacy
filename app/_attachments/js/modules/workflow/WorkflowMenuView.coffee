@@ -98,9 +98,18 @@ class WorkflowMenuView extends Backbone.View
 
   initialize: (options) ->
     @[key] = value for key, value of options
-
+    @workflows = new Workflows
+    @workflows.fetch
+      success: =>
+        @feedbacks = new Feedbacks 
+        @feedbacks.fetch
+          success: =>
+            @ready = true
+            @render()
 
   render: ->
+
+    return unless @ready is true
 
     if Tangerine.settings.get("context") isnt "server"
       return @renderMobile()
