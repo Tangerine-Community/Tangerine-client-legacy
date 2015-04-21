@@ -35,8 +35,13 @@ class CurriculumView extends Backbone.View
     @subtestProperties = 
       "grid" : [
         {
+          "key"      : "itemType"
+          "label"    : "Item type"
+          "editable" : true
+        },
+        {
           "key"      : "part"
-          "label"    : "Assessment"
+          "label"    : "Term"
           "editable" : true
         },
         {
@@ -53,11 +58,6 @@ class CurriculumView extends Backbone.View
         {
           "key"      : "timer"
           "label"    : "Time<br>allowed"
-          "editable" : true
-        },
-        {
-          "key"      : "reportType"
-          "label"    : "Report"
           "editable" : true
         },
         {
@@ -121,10 +121,7 @@ class CurriculumView extends Backbone.View
 
   render: ->
 
-    subtestTable = ""
-    grades = _(@subtests.pluck("grade")).uniq()
-    for grade in grades
-      subtestTable += @getSubtestTable(grade)
+    subtestTable = @getSubtestTable()
 
     deleteButton = if Tangerine.settings.get("context") == "server" then "<button class='command_red delete'>Delete</button>" else ""
 
@@ -202,15 +199,26 @@ class CurriculumView extends Backbone.View
       <tbody>
     "
 
-    if grade?
-      subtests = new Backbone.Collection @subtests.where grade : grade
-    else
-      subtests = @subtests
+    #if grade?
+    #  subtests = new Backbone.Collection @subtests.where grade : grade
+    #else
+    #  subtests = @subtests
 
-    @subtestsByPart = subtests.indexArrayBy "part"
-    for part, subtests of @subtestsByPart
+    @subtestByItemType = new Backbone.Collection(@subtests.models.sort( (a,b) -> 
+      a = "#{a.get("itemType")}#{a.get("part")}#{a.get("grade")}"
+      b = "#{b.get("itemType")}#{b.get("part")}#{b.get("grade")}"
+      if ( a < b )
+        return -1
+      if ( a > b )
+        return 1
+      return 0
+    )).indexArrayBy("itemType")
+
+    for part, subtests of @subtestByItemType
       html += "<tr><td>&nbsp;</td></tr>"
       for subtest in subtests
+        items = null
+        prompts = null
         headerHtml = bodyHtml = ""
 
         for prop in @subtestProperties[subtest.get("prototype")]
