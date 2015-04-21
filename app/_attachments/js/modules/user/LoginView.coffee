@@ -31,8 +31,6 @@ class LoginView extends Backbone.View
   backButton: -> return false
 
   initialize: (options) ->
-    @usersAug25 = "aballa,abraham musyoka,abraham.,admin,agatha kimani,agnes,agnes nyakundi,alego,allan,allan nyondah,amos  nguti,amos nguti,arap kerich,atis,austine,austine ligare,beatrice  aballa,beatrice aballa,ben,ben kakalukha,ben kakhalukha,benson karanga,benson karanga ,bkaranga,boniface,boniface ngunguu,bpiper,caleb,caleb ouma,caleb ouma.,caleb owiti ouma.,carmen,christine barasa,cotewa,cotewaprimr,cs,dalmas alego,david,david kerich,davidmutuma,demo,dennis,dicksonprimr,dismas,dismas  sikuku,dismas sikuku,dismassikuku,dmwikya,donvan amenya,dorcas,dorcas oduor,doreen,doreen olubendi,ej,eliud atieno,elizabeth atieno,elizabethatieno,emily,emilysimiyu,eunice wanjiru,euphrasiashumila,evelynprimr,faith,felistas  staka,felistas staka,felistasstaka,fnjagi,francis,francis nalimae,francis onyango,francismuli,fred surai,george,george irungu,gregory kitonyi,hannah faith mkoji,hannah mkoji,irungu,isaac cherotich,jane,jane  moses,jane moses,jane primr,janet,janet vijebi,janette vijedi,jepkorir,jepkorir rotich,jepkorirrotich,jeremiah mue,john,john kisongochi,johnson omurwa,jonathan,jonathan kisaka,joseph,joseph sikuku,josephat  tabuka,josephat tabuka,julie ogonya,kerich,kerichdavid,kevin otieno,kevinotieno,kitaka,kkibukho,lawrence obure,linda,linda akach,liz,loponi,lucy,lucy kiviu,lucy kiviu ,lucykiviu,lulu,lutgard loponi,makeni,martha,marthacatherine,martin  kimeu,martin kimeu,mary,marysimiyu,michael ilekyo,michael ilekyo pool,michael ndambuki,mildren,mildrenlangoprimr,muinde,mulandi  john,mulandi john,mvm,nahashon sitati,nahshon sitati,naibei,naomi wanyonyi,nawanga,nenunge,ngamau,ngamau margaret,nicky,njagiprimr,nyambura,obure,obure lawrence,okaka alego,okullo,omurwa,patrick,patrick wagachebo,peter clavers,peter clavers ,philip ongele,phyllis,primr,primr anne njogu,primr benard makeni,primr david mutuma,primr dickson,primr dickson otiangala,primr jane,primr jane ,primr jesse,primr jesse mabongah,primr joseph gatonye,primr kinoti,primr koko,primr mabongah jesse,primr makeni,primr makeni bernard,primr okaka alego,primr okullo,primr robert,primr rowland,primr samuel,primr sarah koko,primranne,primranne njogu,primrarbogast,primrdan,primrdankwayumba,primrdavidmutuma,primrdennis,primrdennismwikya,primrdes,primrdoreenolubendi,primrfrancis,primrisaac,primrjane,primrjgatonye,primrken,primrkinoti,primrlinda,primrlucy,primrmakeni,primrmercy,primrmildren,primrmildrenlango,primrpeterclavers,primrphyllis,primrsally,primrsamuel,primrtabitha,primrtabithanduku,primrthomas,primrthomasmachua,pwandeto,raphael muinde,reuben rutto,reuben rutto kamoet,robert,roseline  wangawi,roseline wangawi,roseline wangawi ,rutto,samprimr,samsonkodande,samuel,samuel m. naibei.,samuel naibei,scott_kipp,shumila,simon kundi,sitati,sitati nahshon,situma,situma meru,skoko,stephen,stephen m wambua,stephen mukithia wambua,stephen nzioki,stephen wambua,surai,tabuka,tabuka.,tangerine,timothy,timothy loki,timothy m loki,timothy situma,undefined,violet akinyi,violetakinyi,wagachebo,wanjiru,wanjiru mukuha,wanjiruo,washington,washington ondoro,wilson kitaka,wycliffe,wycliffe nenunge".split(",")
-    # http://databases.tangerinecentral.org/group-tutor_feb_25/_design/ojai/_view/tutorTrips?start_key=%22user-a%22&end_key=%22user-zz%22
     $(window).on('orientationchange scroll resize', @recenter)
     @mode = "login"
     @i18n()
@@ -259,11 +257,6 @@ class LoginView extends Backbone.View
           <input autocomplete='off' id='phone' type='number' placeholder='#{@text.phone}'>
           <input autocomplete='off' id='email' type='text' placeholder='#{@text.email}'>
           <br>
-          <!--label for='same-users'>Please merge previous user names with this one</label>
-          <select multiple='true' id='same-users'>
-            #{("<option value='#{user.get('id')}'>#{user.get('name')}</option>" for user in @users.models || []).join('')}
-            #{("<option value='#{user}'>#{user}</option>" for user in @usersAug25).join('')}
-          </select-->
 
           <button class='sign-up'>#{@text.sign_up}</button>
         </section>
