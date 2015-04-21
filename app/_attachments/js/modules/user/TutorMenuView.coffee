@@ -27,7 +27,7 @@ class TutorMenuView extends Backbone.View
         },
         {
           name : "Schools"
-          views : ["BandwidthCheckView", "ValidObservationView"]
+          views : ["ValidObservationView"]
         }
       ]
 
