@@ -141,6 +141,8 @@ class SettingsView extends Backbone.View
       groupHost   : @$el.find("#group_host").val()
       upPass      : @$el.find("#up_pass").val()
       log         : @$el.find("#log").val().split(/[\s,]+/)
+      verifiableAttribute     : @$el.find("#verifiable-attribute").val()
+      verifiableAttributeName : @$el.find("#verifiable-attribute-name ").val()
     ,
       success: =>
         Utils.midAlert "Settings saved"
@@ -154,7 +156,8 @@ class SettingsView extends Backbone.View
     groupHandle             = @settings.getEscapedString "groupHandle"
     groupHost               = @settings.getEscapedString "groupHost"
     upPass                  = @settings.getEscapedString "upPass"
-    verifiableAtribute      = @settings.getEscapedString "verifiableAtribute"
+    verifiableAttribute     = @settings.getEscapedString "verifiableAttribute"
+    verifiableAttributeName = @settings.getEscapedString "verifiableAttributeName"
 
     log = _.escape( @settings.getArray("log").join(", ") )
 
@@ -197,11 +200,11 @@ class SettingsView extends Backbone.View
     <section>
       <div class='label_value'>
         <label for='verifiable-attribute' title='This field, if it's not empty, will call verify the attribute at signup with the server.'>Verifiable attribute</label><br>
-        <input id='verifiable-attribute' value='#{verifiableAtribute}'>
+        <input id='verifiable-attribute' value='#{verifiableAttribute}'>
       </div>
       <div class='label_value'>
         <label for='verifiable-attribute-name' title='Label.'>Verifiable attribute's human readable name</label><br>
-        <input id='verifiable-attribute-name' value='#{verifiableAtributeName}'>
+        <input id='verifiable-attribute-name' value='#{verifiableAttributeName}'>
       </div>
     </section>
 
