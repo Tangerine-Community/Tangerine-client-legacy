@@ -121,20 +121,6 @@ class WorkflowEditView extends Backbone.EditView
             </tr>
 
             <tr>
-              <th>Enable feedback</th>
-              <td>#{@getEditable
-                  model: stepModel
-                  attribute:
-                    key : 'enableFeedback'
-                    escape: true
-                  name: 'Enable feedback'
-                  placeholder: 'true or false'
-                  prepare: (value) -> value is "true"
-                }
-              </td>
-            </tr>
-
-            <tr>
               <th>Resumable</th>
               <td>#{@getEditable
                   model: stepModel
@@ -282,9 +268,33 @@ class WorkflowEditView extends Backbone.EditView
       <div id='controls'>
         <button class='add command'>Add step</button>
       </div>
-      <div id='feedback'>
-        <button class='feedback nav-button'><a href='#feedback/edit/#{@workflow.id}'>Feedback</a></button>
-      </div>
+
+      <section>
+        <h2>Feedback</h2>
+
+        <table>
+          <tr>
+            <th>Enabled</th>
+            <td>#{@getEditable
+                model: @workflow
+                attribute:
+                  key : 'enableFeedback'
+                  escape: true
+                name: 'Enable feedback'
+                placeholder: 'true or false'
+                prepare: (value) -> value.toLowerCase() is "true"
+              }
+            </td>
+          </tr>
+        </table>
+
+
+        <div id='feedback'>
+          <button class='feedback nav-button'><a href='#feedback/edit/#{@workflow.id}'>Edit</a></button>
+        </div>
+
+      </section>
+
     "
 
     @$el.html html
