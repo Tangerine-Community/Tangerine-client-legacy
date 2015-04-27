@@ -90,7 +90,9 @@ pairsGps = (subtest) ->
 pairsCamera = (subtest, cameraSuffix, resultId) ->
   row = []
   row.push cell( subtest, "photo_captured#{cameraSuffix}",   exportValue(if subtest.data.imageBase64 != "" then "Yes" else "No"))
-  row.push(cell( subtest, "photo_url#{cameraSuffix}",        exportValue(if subtest.data.imageBase64 != "" then ""+subtest.data.imageBaseUrl+resultId else "")))
+  row.push(cell( subtest, "photo_url#{cameraSuffix}",        exportValue(if subtest.data.imageBase64 != "" then "" + (subtest.data.imageBaseUrl.replace /_design\/tangerine/, "_design\/t") + resultId else "")))
+  #The following line was commected out to handle a hack situation in NET Tutor for Kenya with the design doc title
+  #row.push(cell( subtest, "photo_url#{cameraSuffix}",        exportValue(if subtest.data.imageBase64 != "" then ""+subtest.data.imageBaseUrl+resultId else "")))
   return row
 
 if typeof(exports) == "object"
