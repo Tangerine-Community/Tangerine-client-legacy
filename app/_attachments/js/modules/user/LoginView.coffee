@@ -186,9 +186,9 @@ class LoginView extends Backbone.View
       <button class='login'>#{@text.login}</button>
     "
 
-    if Tangerine.settings.get("verifiableAttribute")
-      id = Tangerine.settings.get("verifiableAttribute").underscore().dasherize()
-      name = Tangerine.settings.get("verifiableAttributeName")
+    if @hasVerifiableAttribute()
+      id = @verifiableAttributeId()
+      name = @verifiableAttributeName()
       verifiableHtml = "
         <label for='#{id}'>#{name}</label>
         <input autocomplete='off' id='#{id}' placeholder='#{name}'>
@@ -392,7 +392,7 @@ class LoginView extends Backbone.View
       v.vet
         data:
           group: Tangerine.settings.get("groupName")
-          key: @$el.find("##{@verifiableAttributeId()}").val().toLowerCase().replace(/[^a-z0-9']/,'')
+          key: @verifiableAttributeValue().toLowerCase().replace(/[^a-z0-9']/,'')
         success: =>
           @_signup()
         error: =>
@@ -460,7 +460,7 @@ class LoginView extends Backbone.View
       "previousUsers" : previousUsers
 
     if @hasVerifiableAttribute()
-      attributes[@verifiableAttribute()] = @$el.find("##{@verifiableAttributeId()}").val()
+      attributes[@verifiableAttribute()] = @verifiableAttributeValue()
 
 
     return @passError(@text.pass_mismatch) if pass1 isnt pass2
@@ -509,6 +509,9 @@ class LoginView extends Backbone.View
     @nameMsg.html ""
     @passMsg.html ""
     @errors = 0
+
+  verifiableAttributeValue: ->
+    @$el.find("##{@verifiableAttributeId()}").val()
 
   verifiableAttributeName: ->
     Tangerine.settings.getString("verifiableAttributeName")
