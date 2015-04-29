@@ -70,8 +70,8 @@ class Settings extends Backbone.Model
         url : "#{groupHost}/"
         db  : "#{groupHost}/#{prefix}#{groupName}/"
       update :
-        url : "http://#{update.host}/db"
-        db  : "http://#{update.host}/db/#{update.dbName}/"
+        url : "http://#{update.host}/"
+        db  : "http://#{update.host}/#{update.dbName}/"
         target : update.target
       subnet : 
         url : ("http://#{subnetBase}#{@ipRange[x]}:#{port}/"                      for x in [0..255])
