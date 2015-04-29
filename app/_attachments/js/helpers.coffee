@@ -593,10 +593,7 @@ class Utils
 
     Utils.documentCounter = 0
 
-    dDoc = Tangerine.settings.contextualize
-      server: "ojai"
-      satellite: "ojai"
-      allElse: "tangerine"
+    dDoc = "t"
 
     targetDB = Tangerine.settings.contextualize
       server : Tangerine.db_name
