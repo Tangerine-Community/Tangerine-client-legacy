@@ -387,7 +387,7 @@ class LoginView extends Backbone.View
     return false
 
   signup: ->
-    if @hasVerifiableAttribute
+    if @hasVerifiableAttribute()
       v = new Vouch
       v.vet
         data:
