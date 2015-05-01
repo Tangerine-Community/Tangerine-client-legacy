@@ -12,6 +12,8 @@ class Router extends Backbone.Router
 
     '' : 'landing'
 
+    'footer' : 'footer'
+
     'reload' : 'reload'
 
     'logs' : 'logs'
@@ -89,6 +91,9 @@ class Router extends Backbone.Router
     'reportUser/:id' : 'editReportUser'
 
     'sync/:id'      : 'sync'
+
+  footer: ->
+    vm.show new FooterView
 
   reload: ->
     @navigate '', false
@@ -1148,3 +1153,26 @@ class Router extends Backbone.Router
                       window.location.reload()
                     error: ->
                       Utils.sticky "Error transfering user."
+
+class FooterView extends Backbone.View
+
+  className: "footer-view"
+
+  render: ->
+    @$el.html "
+
+      <style>
+
+      .footer-view p {
+        font-size: 1.1em;
+        font-weight: 100;
+      }
+
+      </style>
+
+      <p>This application was developed by the Tusome Early Literacy Programme. Tusome is implemented by the Ministry of Education, Science & Technology with support of USAID and DFID.</p>
+      <p>If you have any questions or comments, please contact Lucy Wambari <a href='tel://254723742848'>+254723742848</a>.</p>
+    "
+
+    @trigger "rendered"
+
