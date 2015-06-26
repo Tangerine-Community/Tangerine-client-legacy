@@ -140,6 +140,7 @@ class SettingsView extends Backbone.View
       groupName   : @$el.find("#group_name").val()
       groupHost   : @$el.find("#group_host").val()
       upPass      : @$el.find("#up_pass").val()
+      dashboard   : @$el.find("#dashboard").val()
       log         : @$el.find("#log").val().split(/[\s,]+/)
       verifiableAttribute     : @$el.find("#verifiable-attribute").val()
       verifiableAttributeName : @$el.find("#verifiable-attribute-name ").val()
@@ -156,15 +157,18 @@ class SettingsView extends Backbone.View
     groupHandle             = @settings.getEscapedString "groupHandle"
     groupHost               = @settings.getEscapedString "groupHost"
     upPass                  = @settings.getEscapedString "upPass"
+    dashboard               = @settings.getEscapedString "dashboard"    upPass                  = @settings.getEscapedString "upPass"
+
+
     verifiableAttribute     = @settings.getEscapedString "verifiableAttribute"
+
     verifiableAttributeName = @settings.getEscapedString "verifiableAttributeName"
 
     log = _.escape( @settings.getArray("log").join(", ") )
 
-
     @$el.html "
     <button class='back nav-button'>Back</button>
-    <h1>#{t("settings")}</h1>
+    <h1>#{t("settings")}</h1> 
     <p><img src='images/icon_warn.png' title='Warning'>Please be careful with the following settings.</p>
     <section>
       <div class='label_value'>
@@ -195,6 +199,11 @@ class SettingsView extends Backbone.View
         <label for='log' title='app, ui, db, err'>Log events</label><br>
         <input id='log' value='#{log}'>
       </div>
+      <div class='label_value'>
+        <label for='dashboard'>Dashboard</label><br>
+        <input id='dashboard' type='text' value='#{dashboard}'>
+      </div>
+
     </section><br>
 
     <section>

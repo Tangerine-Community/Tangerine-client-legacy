@@ -14,7 +14,6 @@ class AssessmentsMenuView extends Backbone.View
 
     'click .sync_tablets' : 'syncTablets'
 
-    'click .results'        : 'results'
     'click .map'        : 'map'
     'click .settings'       : 'editInPlace'
     'keyup .edit_in_place'  : 'saveInPlace'
@@ -62,13 +61,6 @@ class AssessmentsMenuView extends Backbone.View
         @alreadySaving = false
         Utils.topAlert("Save error")
         $target.after(@oldTarget).remove()
-
-  results: ->
-    # Hack to route tutor to the new dashboard TODO make this better
-    if Tangerine.db_name.match("group-tutor")
-      Tangerine.router.navigate "primr_dashboard", true
-      return
-    Tangerine.router.navigate "dashboard", true
 
   map: ->
     Tangerine.router.navigate "map", true
@@ -136,9 +128,16 @@ class AssessmentsMenuView extends Backbone.View
     groupsButton  = "<button class='nav-button groups'>Groups</button>"
     uploadButton  = "<button class='command universal_upload'>Universal Upload</button>"
     syncTabletsButton = "<button class='command sync_tablets'>Sync Tablets</button>"
-    resultsButton = "<button class='nav-button results'>Results</button>"
     mapButton = "<button class='nav-button map'>Map</button>"
     groupHandle   = "<h2 class='settings grey' data-attribtue='groupHandle'>#{Tangerine.settings.getEscapedString('groupHandle') || Tangerine.settings.get('groupName')}</h2>"
+
+
+    resultsButton = 
+      if dashLink = Tangerine.settings.getString("dashboard") isnt ""
+        "<a href='##{dashLink}'><button class='nav-button results'>Results</button></a>"
+      else
+        "<a href='#dashboard'><button class='nav-button results'>Results</button></a>"
+
 
 
     containers = []
