@@ -157,7 +157,7 @@ class SettingsView extends Backbone.View
     groupHandle             = @settings.getEscapedString "groupHandle"
     groupHost               = @settings.getEscapedString "groupHost"
     upPass                  = @settings.getEscapedString "upPass"
-    dashboard               = @settings.getEscapedString "dashboard"    upPass                  = @settings.getEscapedString "upPass"
+    dashboard               = @settings.getEscapedString "dashboard"
 
 
     verifiableAttribute     = @settings.getEscapedString "verifiableAttribute"

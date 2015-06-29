@@ -133,7 +133,7 @@ class AssessmentsMenuView extends Backbone.View
 
 
     resultsButton = 
-      if dashLink = Tangerine.settings.getString("dashboard") isnt ""
+      if (dashLink = Tangerine.settings.getString("dashboard")) isnt ""
         "<a href='##{dashLink}'><button class='nav-button results'>Results</button></a>"
       else
         "<a href='#dashboard'><button class='nav-button results'>Results</button></a>"
