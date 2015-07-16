@@ -149,8 +149,11 @@ class AssessmentsMenuView extends Backbone.View
       containers.push "<section id='workflow_menu_container' class='WorkflowMenuView'></section>"
 
 
-    html = "
-      #{Tangerine.settings.contextualize(
+    html = ""
+
+    if isAdmin
+      html += "
+        #{Tangerine.settings.contextualize(
         server : "
           #{groupsButton}
           #{apkButton}
@@ -163,10 +166,6 @@ class AssessmentsMenuView extends Backbone.View
         ) }
       <section>
         <h1>Assessments</h1>
-    "
-
-    if isAdmin
-      html += "
           #{if Tangerine.settings.get("context") == "server" then newButton else "" }
           #{importButton}
 
@@ -193,6 +192,13 @@ class AssessmentsMenuView extends Backbone.View
       "
     else
       html += "
+      #{Tangerine.settings.contextualize(
+        server : "
+          #{resultsButton}
+          "
+        ) }
+      <section>
+        <h1>Assessments</h1>
         <div id='assessments_container'></div>
       </section>
         <br>
