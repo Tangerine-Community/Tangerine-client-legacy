@@ -182,7 +182,7 @@ class EmailManagerView extends Backbone.View
       html += "
         <tr>
           <td><input type='checkbox' class='report-user' data-id='#{user.id}'></td>
-          <td>#{user.get('county')}</td>
+          <td>#{try capitalize atob(user.get('county')) catch e then capitalize user.get('county')}</td>
           <td>#{user.get('title')}</td>
           <td>#{user.get('last')}, #{user.get('first')}</td>
           <td>#{user.get('email')}</td>
@@ -195,8 +195,7 @@ class EmailManagerView extends Backbone.View
 
     @$el.find('#report-users').html(html).DataTable()
 
-
-
+  
 class ReportUser extends Backbone.Model
 
   className : "ReportUser"
@@ -213,6 +212,7 @@ class ReportUserEditView extends Backbone.View
 
   events:
     "change input" : "save" 
+    "change select" : "save" 
 
   save: ->
     Utils.working true
@@ -222,7 +222,7 @@ class ReportUserEditView extends Backbone.View
       last   : @$el.find("#user-last").val()   || ''
       first  : @$el.find("#user-first").val()  || ''
       email  : @$el.find("#user-email").val()  || ''
-      county : @$el.find("#user-county").val() || ''
+      county : @$el.find("#user-county option").filter(':selected').val() || ''
     ,
       success: =>
         Utils.working false
@@ -268,7 +268,12 @@ class ReportUserEditView extends Backbone.View
         </tr>
         <tr>
           <th>County</th>
-          <td><input id='user-county' value='#{@user.getEscapedString('county')}'></td>
+          <td>
+            <select id='user-county'>
+              <option value='#{btoa('all')}'>All</option>
+              #{("<option value='#{btoa(county.toLowerCase())}' #{if county.toLowerCase() is atob(@user.getEscapedString('county')).toLowerCase() then 'selected' else ''}>#{capitalize county.toLowerCase()}</option>" for county in _.keys(Tangerine.schoolList.attributes.counties)).join('')}
+            </select>
+          </td>
         </tr>
       </table>
     "

@@ -8,6 +8,8 @@ class WorkflowSelectView extends Backbone.View
     
     @ready = false
     @buttons = []
+
+    @isAdmin = Tangerine.user.isAdmin()
     
     @workflows = new Workflows
     @workflows.fetch
@@ -32,7 +34,7 @@ class WorkflowSelectView extends Backbone.View
 
       htmlWorkflows += "
         <li id='#{workflow.id}' style='margin-bottom:25px;'>
-          <label for='#{workflow.id}-checkbox' data-id='#{workflow.id}'><input type='checkbox' #{checkedHtml} class='selectable' data-id='#{workflow.id}' id='#{workflow.id}-checkbox'>#{workflow.get('name')}</label>
+          <label for='#{workflow.id}-checkbox' data-id='#{workflow.id}'><input type='checkbox' #{checkedHtml} class='selectable' data-id='#{workflow.id}' id='#{workflow.id}-checkbox' #{if !@isAdmin then "disabled='disabled'" }>#{workflow.get('name')}</label>
         </li>
       "
 
