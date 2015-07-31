@@ -121,8 +121,8 @@ class AssessmentsMenuView extends Backbone.View
     year  = d.getFullYear()
     group = Tangerine.settings.get("groupName")
 
-    moestReportButton   = "<a href='/_csv/report/group-#{group}/00b0a09a-2a9f-baca-2acb-c6264d4247cb,c835fc38-de99-d064-59d3-e772ccefcf7d/#{year}/#{month}/nairobi.html'><button class='nav-button'>MoEST reports</button></a>"
-    financeReportButton = "<a href='/_csv/reimbursement/group-#{group}/00b0a09a-2a9f-baca-2acb-c6264d4247cb,c835fc38-de99-d064-59d3-e772ccefcf7d/#{year}/#{month}/baringo/akoret.html'><button class='nav-button'>Tusome Finance reports</button></a>"
+    moestReportButton   = "<a href='/_csv/report/group-#{group}/00b0a09a-2a9f-baca-2acb-c6264d4247cb,c835fc38-de99-d064-59d3-e772ccefcf7d/#{year}/#{month}/#{btoa('baringo')}.html'><button class='nav-button'>MoEST reports</button></a>"
+    financeReportButton = "<a href='/_csv/reimbursement/group-#{group}/00b0a09a-2a9f-baca-2acb-c6264d4247cb,c835fc38-de99-d064-59d3-e772ccefcf7d/#{year}/#{month}/#{btoa('baringo')}/#{btoa('akoret')}.html'><button class='nav-button'>Tusome Finance reports</button></a>"
     emailReportButton   = "<a href='#email'><button class='nav-button'>Email reports</button></a>"
 
     groupsButton  = "<button class='nav-button groups'>Groups</button>"
@@ -149,8 +149,11 @@ class AssessmentsMenuView extends Backbone.View
       containers.push "<section id='workflow_menu_container' class='WorkflowMenuView'></section>"
 
 
-    html = "
-      #{Tangerine.settings.contextualize(
+    html = ""
+
+    if isAdmin
+      html += "
+        #{Tangerine.settings.contextualize(
         server : "
           #{groupsButton}
           #{apkButton}
@@ -163,10 +166,6 @@ class AssessmentsMenuView extends Backbone.View
         ) }
       <section>
         <h1>Assessments</h1>
-    "
-
-    if isAdmin
-      html += "
           #{if Tangerine.settings.get("context") == "server" then newButton else "" }
           #{importButton}
 
@@ -193,6 +192,13 @@ class AssessmentsMenuView extends Backbone.View
       "
     else
       html += "
+      #{Tangerine.settings.contextualize(
+        server : "
+          #{resultsButton}
+          "
+        ) }
+      <section>
+        <h1>Assessments</h1>
         <div id='assessments_container'></div>
       </section>
         <br>

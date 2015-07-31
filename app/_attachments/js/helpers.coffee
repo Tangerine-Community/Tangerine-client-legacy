@@ -357,7 +357,11 @@ class Backbone.ParentModel extends Backbone.Model
 
     @save null, options
 
-
+capitalize = (word) -> 
+  if word? and typeof(word) is 'string'
+    word.charAt(0).toUpperCase() + word.slice 1
+  else
+    word
 
 #    _  ___                        
 #   (_)/ _ \ _   _  ___ _ __ _   _ 
@@ -431,7 +435,6 @@ class Backbone.ParentModel extends Backbone.Model
           return returns
 
       return this.css()
-
 
 
 )(jQuery)

@@ -122,6 +122,16 @@ Tangerine.bootSequence =
           success: ->
             callback()
 
+  getSchoolList : ( callback ) ->
+    # Grab our system config doc
+    Tangerine.schoolList = new Backbone.Model "_id" : "school-list"
+
+    Tangerine.schoolList.fetch
+      error   : ->
+        console.log "could not fetch school-list..."
+
+      success : callback
+
 
   hitViews: (callback) ->
 
@@ -353,6 +363,7 @@ Tangerine.boot = (callback) ->
       Tangerine.bootSequence.getSettings
       #Tangerine.bootSequence.hitViews
       Tangerine.bootSequence.getTemplates
+      Tangerine.bootSequence.getSchoolList
       Tangerine.bootSequence.ensureAdmin
       Tangerine.bootSequence.transitionUsers
       Tangerine.bootSequence.startApp
