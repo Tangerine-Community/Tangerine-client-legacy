@@ -481,6 +481,31 @@ class CsvRows
 
 class Utils
 
+  @gpsPing: ( options = {} ) =>
+    Utils.log this, "GPS Ping Started" 
+    navigator.geolocation.getCurrentPosition(
+        (position) =>
+          Utils.log this, "GPS Ping: Received #{Utils.gpsEasify position}" 
+      ,
+        (positionError) =>
+          Utils.log this, "GPS Ping: Error: #{positionError.message}" 
+      , 
+        maximumAge         : 300 * 1000
+        timeout            : 60 * 1000
+        enableHighAccuracy : true 
+    )
+
+  @gpsEasify: ( position ) =>
+    return {
+      lat       : if position?.coords?.latitude?         then position.coords.latitude else "..."
+      long      : if position?.coords?.longitude?        then position.coords.longitude else "..."
+      alt       : if position?.coords?.altitude?         then position.coords.altitude else "..."
+      acc       : if position?.coords?.accuracy?         then position.coords.accuracy else "..."
+      altAcc    : if position?.coords?.altitudeAccuracy? then position.coords.altitudeAccuracy else "..."
+      heading   : if position?.coords?.heading?          then position.coords.heading else "..."
+      speed     : if position?.coords?.speed?            then position.coords.speed else "..."
+      timestamp : if position?.timestamp?                then position.timestamp else "..."
+    }
 
   @withPrevious: ( options = {} ) =>
 
@@ -603,7 +628,7 @@ class Utils
       satellite : Tangerine.db_name
       allElse: Tangerine.settings.location.update.target
 
-    docIds = ["_design/#{dDoc}", "configuration"]
+    docIds = ["_design/#{dDoc}", "configuration", "school-list"]
 
     targetDB = options.targetDB if options.targetDB?
     docIds   = options.docIds   if options.docIds?

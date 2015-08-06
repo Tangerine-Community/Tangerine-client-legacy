@@ -30,6 +30,7 @@ class TutorMenuView extends Backbone.View
           views : ["ValidObservationView"]
         }
       ]
+    Utils.gpsPing()
 
 
   handleTabClick: ( event ) =>

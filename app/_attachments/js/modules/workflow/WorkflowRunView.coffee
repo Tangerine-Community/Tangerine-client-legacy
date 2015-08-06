@@ -297,6 +297,7 @@ class WorkflowRunView extends Backbone.View
         @showView view, @currentStep.getName()
 
   renderEnd: ->
+    Utils.gpsPing
     @$el.find("##{@cid}_current_step").html "
       <p>You have completed this Classroom Observation.</p>
       <button class='nav-button'><a href='#feedback/#{@workflow.id}'>Go to feedback</a></button>

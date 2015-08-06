@@ -52,8 +52,8 @@ class GpsRunView extends Backbone.View
           @timeout = setTimeout(@poll, 5 * 1000)  unless @stopPolling  # not recursion, no stackoverflow
           @retryCount++
       , 
-        maximumAge         : 10 * 1000
-        timeout            : 30 * 1000
+        maximumAge         : 120 * 1000
+        timeout            : 60 * 1000
         enableHighAccuracy : true
     )
 

@@ -129,6 +129,7 @@ Tangerine.bootSequence =
     Tangerine.schoolList.fetch
       error   : ->
         console.log "could not fetch school-list..."
+        callback
 
       success : callback
 
@@ -346,6 +347,10 @@ Tangerine.bootSequence =
 
             Backbone.history.start()
 
+  initGPS : (callback) ->
+    $ ->
+      Utils.gpsPing
+
 Tangerine.load = (functions) ->
 
   doStep = ->
@@ -367,6 +372,7 @@ Tangerine.boot = (callback) ->
       Tangerine.bootSequence.ensureAdmin
       Tangerine.bootSequence.transitionUsers
       Tangerine.bootSequence.startApp
+      Tangerine.bootSequence.initGPS
     ]
 
     sequence.push callback if callback?

@@ -12,7 +12,7 @@
   updated = doc.updated #"Thu Mar 06 2014 11:00:00 GMT+0300 (EAT)"
   docTime = new Date(updated)
   sMin = updated.substr(0,16) + "07:00:00" + updated.substr(-15)
-  sMax = updated.substr(0,16) + "14:00:00" + updated.substr(-15)
+  sMax = updated.substr(0,16) + "15:10:00" + updated.substr(-15)
   min = new Date(sMin)
   max = new Date(sMax)
 
@@ -59,8 +59,8 @@
 
       result.subject = subtest.data.subject if subtest.data.subject?
       result.class   = subtest.data.class   if subtest.data.class?
-      result.week    = subtest.data.week    if subtest.data.week?
-      result.day     = subtest.data.day     if subtest.data.day?
+      result.week    = subtest.data.lesson_week    if subtest.data.lesson_week?
+      result.day     = subtest.data.lesson_day     if subtest.data.lesson_day?
 
     else if subtest.prototype is "gps" and subtest.data.long? and subtest.data.lat?
 
