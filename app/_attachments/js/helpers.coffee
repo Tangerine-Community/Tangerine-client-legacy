@@ -373,11 +373,13 @@ capitalize = (word) ->
 
 ( ($) -> 
 
-  $.fn.scrollTo = (speed = 250, callback) ->
+  $.fn.scrollTo = (speed = 250, callback=$.noop) ->
     try
-      $('html, body').animate {
+      $('html body').animate {
         scrollTop: $(@).offset().top + 'px'
-        }, speed, null, callback
+        }, 
+          complete: callback
+          duration: speed
     catch e
       console.log "error", e
       console.log "Scroll error with 'this'", @

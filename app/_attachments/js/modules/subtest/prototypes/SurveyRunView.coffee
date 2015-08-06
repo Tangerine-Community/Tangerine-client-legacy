@@ -292,8 +292,9 @@ class SurveyRunView extends Backbone.View
 
           if first == true
             @showQuestion(i) if views == @questionViews
-            qv.$el.scrollTo()
-            Utils.midAlert t("please correct the errors on this page")
+            qv.$el.scrollTo null, ->
+              Utils.sticky t("please correct the errors on this page")
+
             first = false
         qv.setMessage message
 
