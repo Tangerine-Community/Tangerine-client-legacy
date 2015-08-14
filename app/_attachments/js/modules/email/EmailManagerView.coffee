@@ -222,7 +222,7 @@ class ReportUserEditView extends Backbone.View
       last   : @$el.find("#user-last").val()   || ''
       first  : @$el.find("#user-first").val()  || ''
       email  : @$el.find("#user-email").val()  || ''
-      county : @$el.find("#user-county option").filter(':selected').val() || ''
+      county : @countyView.value().county || ''
     ,
       success: =>
         Utils.working false
@@ -269,13 +269,24 @@ class ReportUserEditView extends Backbone.View
         <tr>
           <th>County</th>
           <td>
-            <select id='user-county'>
-              <option value='#{btoa('all')}'>All</option>
-              #{("<option value='#{btoa(county.toLowerCase())}' #{if county.toLowerCase() is atob(@user.getEscapedString('county')).toLowerCase() then 'selected' else ''}>#{capitalize county.toLowerCase()}</option>" for county in _.keys(Tangerine.schoolList.attributes.counties)).join('')}
-            </select>
+            <div id='county-container'></div>
           </td>
         </tr>
       </table>
     "
 
+    @countyView.remove() if @countyView?
+    @countyView = new LocView
+      showTitles: false
+      levels: ["county"]
+      selected: [@user.get("county")]
+      addedOptions: [[{id:"All",name:"All"}]]
+    @countyView.setElement @$el.find("#county-container")
+
     @trigger "rendered"
+
+  onClose: ->
+    @countyView.remove()
+
+
+

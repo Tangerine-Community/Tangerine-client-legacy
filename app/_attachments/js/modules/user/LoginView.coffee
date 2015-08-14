@@ -43,40 +43,6 @@ class LoginView extends Backbone.View
     $("body").css("background", "white")
     $("#footer").hide()
 
-    @fetchLocations => @renderSchoolList("data")
-
-  fetchLocations: ( callback = $.noop ) ->
-    subtestIndex = 0
-    limit = 1
-
-    checkSubtest = =>
-
-      Tangerine.$db.view("#{Tangerine.design_doc}/byCollection",
-        key   : "subtest"
-        skip  : subtestIndex
-        limit : limit
-        include_docs : true
-        error : $.noop
-        success: (response) =>
-          if response.rows.length is 0 
-            if Tangerine.settings.get("context") isnt "server"
-              return alert "Failed to find locations"
-            else
-              return 
-          
-          locationSubtest = response.rows[0].doc
-
-          if locationSubtest.prototype? && locationSubtest.prototype is "location"
-            @locationSubtest = new Subtest locationSubtest
-            @locationView = new LocationRunView model:@locationSubtest, limit:2
-            callback?()
-          else
-            subtestIndex++
-            checkSubtest()
-      )
-    checkSubtest()
-
-
   checkNewName: (event) ->
     $target = $(event.target)
     name = ( $target.val().toLowerCase() || '' )
@@ -244,7 +210,7 @@ class LoginView extends Backbone.View
           <input autocomplete='off' id='first' type='text' placeholder='#{@text.first_name}'>
           <input autocomplete='off' id='last' type='text' placeholder='#{@text.last_name}'>
 
-          <div id='schoolSelector'>Loading county and zone list...</div>
+          <div id='zoneSelector'></div>
 
           <label>Gender<br>
           <select id='gender'>
@@ -277,24 +243,19 @@ class LoginView extends Backbone.View
       server: serverHtml
       notServer: tabletHtml
 
+    @locView.remove() if @locView?
+    @locView = new LocView
+      levels: ["county", "zone"]
+    @locView.setElement @$el.find("#zoneSelector")
+
+
     @initAutocomplete() if Tangerine.settings.get("context") isnt "server"
 
     @nameMsg = @$el.find(".name-message")
     @passMsg = @$el.find(".pass-message")
 
     @trigger "rendered" 
-    @renderSchoolList "dom"
 
-  renderSchoolList: (flag) ->
-    requiredFlags = ["dom", "data"]
-    @renderSchoolListFlags = [] unless @renderSchoolListFlags?
-    @renderSchoolListFlags.push flag
-    ready = _(requiredFlags).intersection(@renderSchoolListFlags).length == requiredFlags.length
-    return unless ready
-
-    @locationView.setElement @$el.find("#schoolSelector")
-    @locationView.render()
-    @locationView.$el.find(".clear").remove()
 
   next: ->
     $challenge = @$el.find("#challenge")
@@ -434,14 +395,10 @@ class LoginView extends Backbone.View
       # do nothing
     #  errors.push " - Email cannot be empty"
 
-    location = {}
-    rawLocation = @locationView.getResult(true)
+    location = @locView.value()
 
-    for label, i in rawLocation.labels
-
-      errors.push " - #{label} must be selected" unless rawLocation.location[i]?
-      location[label] = rawLocation.location[i]
-
+    errors.push " - county must be selected" unless location.county?
+    errors.push " - zone must be selected"   unless location.zone?
 
     previousUsers = ($previousUsers = @$el.find("#same-users")).val()
 

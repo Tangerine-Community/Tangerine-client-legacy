@@ -1,7 +1,6 @@
 class UserEditView extends Backbone.EditView
   
   initialize: ->
-    @fetchLocations => @renderSchoolList("data")
     @models = new Backbone.Collection Tangerine.user
 
   render: ->
@@ -75,21 +74,25 @@ class UserEditView extends Backbone.EditView
             placeholder: 'male or female'}</td>
         </tr>
       </table>
-      <div id='schoolSelector'><p>Loading county and zone list...</p></div>
+      <div id='zoneSelector'></div>
 
     "
-    @renderSchoolList "dom"
 
+    @locView.remove() if @locView?
+
+    loc = Tangerine.user.get("location")
+    @locView = new LocView
+      levels: ["county", "zone"]
+      selected: [loc.county, loc.zone]
+    @locView.setElement @$el.find("#zoneSelector")
+    @listenTo @locView, "change", @onSelectChange
     @trigger "rendered"
 
   onSelectChange: =>
-    location = {}
-    rawLocation = @locationView.getResult(true)
-    for label, i in rawLocation.labels
-      location[label] = rawLocation.location[i]
+    location = @locView.value()
 
-    if location.County? and location.Zone?
-      Tangerine.user.save(location:{County:location.County,Zone:location.Zone},{
+    if location.county? and location.zone?
+      Tangerine.user.save(location:location,{
         error:   -> Utils.topAlert "User not saved"
         success: -> Utils.topAlert "User location saved"
       })
@@ -126,34 +129,6 @@ class UserEditView extends Backbone.EditView
     else
       @$el.find("#message").html "<img src='images/icon_warn.png' title='Warning'> Warning: No location saved for user."
 
-  fetchLocations: ( callback = $.noop ) ->
-    subtestIndex = 0
-    limit = 1
-
-    checkSubtest = =>
-
-      Tangerine.$db.view("#{Tangerine.design_doc}/byCollection",
-        include_docs : true
-        key   : "subtest"
-        skip  : subtestIndex
-        limit : limit
-        error: $.noop
-        success: (response) =>
-          return alert "Failed to find locations" if response.rows.length is 0
-          
-          locationSubtest = response.rows[0].doc
-
-          if locationSubtest.prototype? && locationSubtest.prototype is "location"
-            @locationSubtest = new Subtest locationSubtest
-            @locationView = new LocationRunView model:@locationSubtest, limit:2
-            @listenTo @locationView, 'rendered', @selectRendered
-            @listenTo @locationView, 'select-change', @onSelectChange
-            callback?()
-          else
-            subtestIndex++
-            checkSubtest()
-      )
-    checkSubtest()
 
   renderSchoolList: (flag) ->
     requiredFlags = ["dom", "data"]
