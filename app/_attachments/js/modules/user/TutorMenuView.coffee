@@ -27,7 +27,7 @@ class TutorMenuView extends Backbone.View
         },
         {
           name : "Schools"
-          views : ["ValidObservationView"]
+          views : ["SchoolListView", "ValidObservationView"]
         }
       ]
     Utils.gpsPing()
