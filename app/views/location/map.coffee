@@ -20,7 +20,7 @@
 
       thisSubcountyZones.forEach (zone) ->
         schools = Object.keys doc.counties[county].subCounties[subCounty].zones[zone].schools
-        emit ("county-#{county}-zone-#{zone}"), schools.map (el) ->
+        emit "county-#{county}-zone-#{zone}", schools.map (el) ->
           id : el
           name : doc.counties[county].subCounties[subCounty].zones[zone].schools[el].name
 
