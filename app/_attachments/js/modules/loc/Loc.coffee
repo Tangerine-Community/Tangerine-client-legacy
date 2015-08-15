@@ -14,14 +14,18 @@ class Loc
     else
       key = Loc.getKey criteria
 
-    $.couch.db("t").view "#{Tangerine.design_doc}/location",
+    @_query(key, callback, context)
+
+  @_query: (key, callback, context) ->
+    $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/location",
       key : key
       error: -> console.error arguments
       success: (res) ->
-        unless res.rows.length is 0
+        if res.rows.length is 0
           callback.apply context, [null]
         else
           callback.apply context, [res.rows[0].value]
+
 
   @getKey: (criteria) ->
     criteriaArray = []
