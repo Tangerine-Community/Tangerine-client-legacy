@@ -80,10 +80,17 @@ class UserEditView extends Backbone.EditView
 
     @locView.remove() if @locView?
 
-    loc = Tangerine.user.get("location")
+    if Tangerine.user.has("location")
+      loc = Tangerine.user.get("location")
+      selected = [loc.county, loc.zone]
+
+    if not Tangerine.user.has("location") or not ( Tangerine.user.get("location").county and Tangerine.user.get("location").zone)
+      @$el.find("#message").html "<img src='images/icon_warn.png' title='Warning'> Warning: Location needs to be set for user."
+
+
     @locView = new LocView
       levels: ["county", "zone"]
-      selected: [loc.county, loc.zone]
+      selected: selected || []
     @locView.setElement @$el.find("#zoneSelector")
     @listenTo @locView, "change", @onSelectChange
     @trigger "rendered"
@@ -98,36 +105,7 @@ class UserEditView extends Backbone.EditView
       })
 
 
-  # place previous data in select
-  selectRendered: =>
-    location = Tangerine.user.get("location")
-    if location?
 
-      countyIndex = @locationView.levels.indexOf("County")
-      zoneIndex   = @locationView.levels.indexOf("Zone")
-
-      county = location.County
-      zone   = location.Zone
-
-      if @locationView.$el.find("#level_#{countyIndex} option[value='#{county}']").length is 0
-
-        @$el.find("#message").html "<img src='images/icon_warn.png' title='Warning'> Warning: Location needs to be set again."
-
-      else
-
-        @locationView.$el.find("#level_#{countyIndex}").val county
-        @locationView.$el.find("#level_#{countyIndex}").trigger "change"
-
-        if @locationView.$el.find("#level_#{zoneIndex} option[value='#{zone}']").length is 0
-
-          @$el.find("#message").html "<img src='images/icon_warn.png' title='Warning'> Warning: Location needs to be set again."
-
-        else
-
-          @locationView.$el.find("#level_#{zoneIndex}").val zone
-
-    else
-      @$el.find("#message").html "<img src='images/icon_warn.png' title='Warning'> Warning: No location saved for user."
 
 
   renderSchoolList: (flag) ->
