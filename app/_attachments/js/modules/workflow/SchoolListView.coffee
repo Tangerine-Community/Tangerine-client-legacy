@@ -95,7 +95,7 @@ class SchoolListView extends Backbone.View
           continue if trip.get('tripId') in incompleteTrips
           continue unless isValid
 
-          schoolIds.push trip.get("schoolId")
+          schoolIds.push trip.get("school")
 
         @visited = {}
 
@@ -105,6 +105,7 @@ class SchoolListView extends Backbone.View
             return finish()
 
           schoolId = schoolIds.pop()
+
           Loc.query
             parents: schoolId
           , (value) =>
