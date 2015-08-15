@@ -9,9 +9,7 @@ class ValidObservationView extends Backbone.View
 
     @tripIds = {}
 
-    Utils.execute [
-      @fetchTripIds 
-    ], @
+    @fetchTripIds()
 
   fetchTripIds: (callback = $.noop) ->
     d = new Date()
@@ -84,7 +82,7 @@ class ValidObservationView extends Backbone.View
           group   : true
           keys    : @tripIds.final.lastMonth
           success : (response) =>
-            
+
             validTrips = response.rows.filter (row) ->
               minutes = (parseInt(row.value.maxTime) - parseInt(row['value']['minTime'])) / 1000 / 60
               result = minutes >= 20
@@ -105,6 +103,5 @@ class ValidObservationView extends Backbone.View
         <tr><th>This month</th><td>#{@validCount.thisMonth} </td></tr>
         <tr><th>Previous month</th><td>#{@validCount.lastMonth} </td></tr>
       </table>
-      
     "
 
