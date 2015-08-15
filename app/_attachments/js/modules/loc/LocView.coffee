@@ -19,6 +19,13 @@ class LocView extends Backbone.View
     @selected = options.selected || []
     @render()
 
+  isComplete: ->
+    value = @value()
+    for level in @levels
+      return false unless value[level]
+    return true
+
+
   value: ->
     result = {}
     for level, i in @levels
