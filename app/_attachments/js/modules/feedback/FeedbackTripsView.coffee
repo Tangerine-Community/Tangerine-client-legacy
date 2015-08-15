@@ -35,7 +35,7 @@ class FeedbackTripsView extends Backbone.View
 
     tripId = $target.attr("data-trip-id")
     $output = @$el.find(".#{tripId}-result").append("<div><img class='loading' src='images/loading.gif'></div>").find("div")
-    
+
     view = new WorkflowResultView
       workflow : @workflow
       trip : @trips.get(tripId)
@@ -68,8 +68,12 @@ class FeedbackTripsView extends Backbone.View
       resultView : "tutorTrips"
       queryKey   : "workflow-#{@workflow.id}"
       success: => 
-        @isReady = true
-        @render()
+        # get county names
+        Loc.query null, (res) =>
+          @countyNames = res.reduce ( (obj, cur) -> obj[cur.id]=cur.name; return obj ), {}
+
+          @isReady = true
+          @render()
 
   hideLessonPlan: (event) ->
 
@@ -187,9 +191,9 @@ class FeedbackTripsView extends Backbone.View
     
     return unless @isReady
 
-    tripsByCounty = @trips.indexBy("County")
-    counties = _(@trips.pluck("County")).chain().compact().uniq().value().sort()
-    countyOptions = ("<option value='#{_(county).escape()}'>#{_(county).escape()} (#{tripsByCounty[county]?.length || 0})</option>" for county in counties).join('')
+    tripsByCounty = @trips.indexBy("county")
+    counties = _(@trips.pluck("county")).chain().compact().uniq().value().sort()
+    countyOptions = ("<option value='#{_(county).escape()}'>#{_(@countyNames[county]).escape()} (#{tripsByCounty[county]?.length || 0})</option>" for county in counties).join('')
     countyOptions = "<option disabled='disabled' selected='selected'>Select a county</option>" + countyOptions
 
     html = "
@@ -227,39 +231,53 @@ class FeedbackTripsView extends Backbone.View
 
   onCountySelectionChange: (event) ->
 
-    selectedCounty = $(event.target).val()
-    tripsByCounty  = @trips.indexBy("County")
+    @selectedCounty = $(event.target).val()
+    tripsByCounty  = @trips.indexBy("county")
 
-    zones = _(tripsByCounty[selectedCounty]).chain().map((a)->a.attributes['Zone']).compact().uniq().value().sort()
+    # get zone names in county
+    Loc.query county: @selectedCounty
+    , (res) =>
+      @zoneNames = res.reduce ( (obj, cur) -> obj[cur.id]=cur.name; return obj ), {}
 
-    zoneOptions = ''
-    for zone in zones
-      countInZone = tripsByCounty[selectedCounty]?.map?((a)->a.get("Zone")).filter((a)->a is zone)?.length || 0
-      zoneOptions += "<option value='#{_(zone).escape()}'>#{zone} (#{countInZone})</option>"
-    zoneOptions = "<option disabled='disabled' selected='selected'>Select a zone</option>" + zoneOptions
+      zones = _(tripsByCounty[@selectedCounty]).chain().map((a)->a.attributes['zone']).compact().uniq().value().sort()
+
+      zoneOptions = ''
+      for zone in zones
+        countInZone = tripsByCounty[@selectedCounty]?.map?((a)->a.get("zone")).filter((a)->a is zone)?.length || 0
+        zoneOptions += "<option value='#{_(zone).escape()}'>#{@zoneNames[zone]} (#{countInZone})</option>"
+      zoneOptions = "<option disabled='disabled' selected='selected'>Select a zone</option>" + zoneOptions
 
 
-    @$el.find("#zone").html zoneOptions
+      @$el.find("#zone").html zoneOptions
 
-    tripsByCounty[selectedCounty]?.map?((a)-> a.get("Zone")).filter?
-    ((a)->a==zone).length || 0
+      tripsByCounty[@selectedCounty]?.map?((a)-> a.get("zone")).filter?
+      ((a)->a==zone).length || 0
 
   onZoneSelectionChange: ( event ) ->
-    selectedZone = $(event.target).val()
-    tripsByZone  = @trips.indexBy("Zone")
+    @selectedZone = $(event.target).val()
+    tripsByZone  = @trips.indexBy("zone")
 
-    schools = _(tripsByZone[selectedZone]).chain().map((a)->a.attributes['SchoolName']).compact().uniq().value().sort()
+    schools = _(tripsByZone[@selectedZone]).chain().map((a)->a.attributes['school']).compact().uniq().value().sort()
 
-    schoolOptions = ''
-    for school in schools
-      countInSchool = tripsByZone[selectedZone]?.map?((a)->a.get("SchoolName")).filter((a)->a is school)?.length || 0
-      schoolOptions += "<option value='#{_(school).escape()}'>#{_(school).escape()} (#{countInSchool})</option>"
-    schoolOptions = "<option disabled='disabled' selected='selected'>Select a school</option>" + schoolOptions
+    # get school names
+    console.log "county #{@selectedCounty}"
+    console.log "zone: #{@selectedZone}"
+    Loc.query
+      county : @selectedCounty
+      zone   : @selectedZone
+    , (res) =>
+      @schoolNames = res.reduce ( (obj, cur) -> obj[cur.id]=cur.name; return obj ), {}
 
-    @$el.find("#school").html schoolOptions
+      schoolOptions = ''
+      for school in schools
+        countInSchool = tripsByZone[@selectedZone]?.map?((a)->a.get("school")).filter((a)->a is school)?.length || 0
+        schoolOptions += "<option value='#{_(school).escape()}'>#{_(@schoolNames[school]).escape()} (#{countInSchool})</option>"
+      schoolOptions = "<option disabled='disabled' selected='selected'>Select a school</option>" + schoolOptions
 
-    tripsByZone[selectedZone]?.map?((a)-> a.get("SchoolName")).filter?
-    ((a)->a==zone).length || 0
+      @$el.find("#school").html schoolOptions
+
+      tripsByZone[@selectedZone]?.map?((a)-> a.get("school")).filter?
+      ((a)->a==zone).length || 0
 
   getSortArrow: (attributeName) ->
     return "&#x25bc;" if @sortAttribute is attributeName and @sortDirection is 1
@@ -273,9 +291,9 @@ class FeedbackTripsView extends Backbone.View
     @selectedCounty = @$el.find("#county").val()
 
     @selectedTrips = @trips.where
-      County : @selectedCounty
-      Zone   : @selectedZone
-      SchoolName : @selectedSchool
+      county : @selectedCounty
+      zone   : @selectedZone
+      school : @selectedSchool
 
     @updateFeedbackList()
 
@@ -304,7 +322,7 @@ class FeedbackTripsView extends Backbone.View
     @selectedTrips = @selectedTrips.sort sortFunction
 
     feedbackHtml = "
-      <h2>#{@selectedTrips[0]?.get?("SchoolName") || ''}</h2>
+      <h2>#{@schoolNames[@selectedTrips[0]?.get?("school")] || ''}</h2>
       <table id='feedback-table'>
         <thead>
           <tr>
