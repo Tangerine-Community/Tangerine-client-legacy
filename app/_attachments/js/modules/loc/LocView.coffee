@@ -43,6 +43,14 @@ class LocView extends Backbone.View
       if @addedOptions
         res = @addedOptions[index].concat res
 
+      res = res.sort (a,b) ->
+        if a.name.toLowerCase() < b.name.toLowerCase()
+          return -1
+        else if a.name.toLowerCase() > b.name.toLowerCase()
+          return 1
+        else
+          return 0
+
       htmlOptions = res.map (el) ->
         if @selected[index]? and el.id is @selected[index]
           selected = "selected='selected'"
