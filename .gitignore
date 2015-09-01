@@ -4,5 +4,8 @@
 .DS_store
 
 # Cordova
-platforms/*
-plugins/*
+platforms/
+plugins/
+
+# npm
+node_modules/
