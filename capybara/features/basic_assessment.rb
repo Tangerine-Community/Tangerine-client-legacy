@@ -1,6 +1,5 @@
 require 'rest-client'
 
-
 describe "basic assessment", :type => :feature do
 
   before do
@@ -12,7 +11,7 @@ describe "basic assessment", :type => :feature do
 
     visit "http://databases.tangerinecentral.org/group-testsweet/_design/ojai/index.html#assessments"
 
-    click_on 'Basic Assessment'
+    click_button 'Basic Assessment'
     
     click_on 'Run'
 
