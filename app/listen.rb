@@ -1,8 +1,8 @@
-#! /usr/bin/ruby
+#!/usr/bin/env ruby
 
 require 'listen'
 
-$jsDir = File.join Dir.pwd, "_attachments", "js"
+$jsDir = File.join Dir.pwd, "src", "js"
 
 class String
   # colorization
@@ -42,7 +42,7 @@ def push
     `./uglify.rb app`
     puts "\nCompiled\t\tapp.js\n\n"
   }
-  `couchapp push`
+  #`couchapp push`
 end
 
 def notify( type, message )
@@ -68,7 +68,7 @@ listen = Listen.to(".") do |modified, added, removed|
       match = match.to_s
       puts `rm #{match.gsub(/\.coffee$/,'.js')}`
       minJsFile = match.split("/").last.(/\.coffee$/,'.min.js')
-      puts `rm _attachments/js/min/#{minJsFile}`
+      puts `rm src/js/min/#{minJsFile}`
     }
   }
 
@@ -90,10 +90,7 @@ listen = Listen.to(".") do |modified, added, removed|
       else
         # Otherwise, just compile
         puts "\nCompiling:\t\t#{match}"
-        special = /shows\/|views\/|lists\/|\/tests\/|testem/.match(match)
-        
-        # maps don't work in testem yet
-        mapOption = "--map" if /tests/.match(match)
+        special = /shows\/|views\/|lists\/|\/tests\//.match(match)
 
         result = `coffee --bare --compile "#{match}" 2>&1`
 
