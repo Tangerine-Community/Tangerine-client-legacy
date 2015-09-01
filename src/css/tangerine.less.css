@@ -2217,7 +2217,7 @@ body[rtl] {
   font-weight: normal;
   background-color: white;
   text-align: left;
-  border: 1px solid black;
+  border: 1px solid #000000;
 }
 .KlassSubtestResultView {
   margin: 1em 0;
@@ -2724,7 +2724,7 @@ button.ui-button-icons-only {
   display: block;
   line-height: 1;
   font-size: 22px;
-  border: 2px solid white;
+  border: 2px solid #ffffff;
 }
 .ui-button-text-only .ui-button-text {
   padding: 8px;
