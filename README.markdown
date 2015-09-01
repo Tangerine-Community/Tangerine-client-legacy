@@ -30,6 +30,25 @@ The overwhelming majority of our developers have prefered Mac or Linux. Windows 
 Then clone this repo.
 
     git clone https://github.com/Tangerine-Community/Tangerine.git
+    
+## Init
+
+To compile all of the coffeescript files and minimise the js: 
+
+    cd src/js  
+    ./init.sh
+  
+## Start the app
+
+You may use the npm start target to start the app. You should first have [http-server](https://www.npmjs.com/package/http-server) installed:
+
+    npm install http-server -g
+  
+Then you may rock:
+
+    npm start
+  
+# Old Couch-related docs follow.
 
 ## Config
 
