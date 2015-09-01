@@ -33,13 +33,20 @@ Then clone this repo.
     
 ## Init
 
-To compile all of the coffeescript files and minimise the js; cd to src/js and 
+To compile all of the coffeescript files and minimise the js: 
 
-  ./init.sh
+    cd src/js  
+    ./init.sh
   
 ## Start the app
 
-  npm start
+You may use the npm start target to start the app. You should first have [http-server](https://www.npmjs.com/package/http-server) installed:
+
+    npm install http-server -g
+  
+Then you may rock:
+
+    npm start
   
 # Old Couch-related docs follow.
 
