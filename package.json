@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Tangerine-Community/Tangerine.git"
+    "url": "https://github.com/Tangerine-Community/Tangerine-client.git"
   },
   "author": "RTI International <ict-admin@rti.org>",
-  "license": "GPLv3",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/Tangerine-Community/Tangerine/issues"
   },
-  "homepage": "https://github.com/Tangerine-Community/Tangerine",
+  "homepage": "https://github.com/Tangerine-Community/Tangerine-client",
   "devDependencies": {
     "cordova": "^4.3.0",
     "shelljs": "^0.4.0"
