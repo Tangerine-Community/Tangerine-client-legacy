@@ -67,7 +67,7 @@ Tangerine.bootSequence =
             Will give one key for all documents associated with an assessment or curriculum.
           ###
           byDKey:
-            map: (doc) ->
+            map: ((doc) ->
               return if doc.collection is "result"
 
               if doc.curriculumId
@@ -78,6 +78,7 @@ Tangerine.bootSequence =
                 id = doc.assessmentId
 
               emit id.substr(-5,5), null
+            ).toString()
 
           byCollection:
             map : ( (doc) ->
