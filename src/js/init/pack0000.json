@@ -1176,7 +1176,7 @@
         "language": "en",
         "upPass": "hkxzEOX127",
         "groupName": "sweetgroup",
-        "groupHost": "http://databases.tangerinecentral.org",
+        "groupHost": "http://dev.tangerinecentral.org",
         "log": ["app"],
         "updated": "Fri Feb 20 2015 13:17:10 GMT-0500 (EST)",
         "hash": "V2T1cM1BBNU82TqzPu3ZRit9Lgs=",
