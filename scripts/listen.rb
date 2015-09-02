@@ -2,7 +2,15 @@
 
 require 'listen'
 
-$jsDir = File.join Dir.pwd, "src", "js"
+thisDir = File.expand_path File.dirname(__FILE__)
+srcDir = File.join thisDir.split("/")[0..-2], "src"
+$jsDir = File.join srcDir, "js"
+$uglify = File.join thisDir, "uglify.rb"
+coffee = File.join thisDir.split("/")[0..-2], "node_modules", ".bin", "coffee"
+
+
+
+
 
 class String
   # colorization
@@ -32,21 +40,21 @@ def push
   # Save current version info
   version = `git describe --tags`.gsub(/\n/,'')
   build   = `git rev-parse --short HEAD`.gsub(/\n/,'')
-  
-  File.open( File.join($jsDir, "version.js"), "w") {|f| f.write("window.Tangerine = { buildVersion : \"#{build}\"\, version : \"#{version}\"\};") }
 
-  Dir.chdir( $jsDir ) {
-    `./uglify.rb dev`
-    puts "\nGenerated:\t\tindex-dev.html"
-    `./uglify.rb version.js`
-    `./uglify.rb app`
-    puts "\nCompiled\t\tapp.js\n\n"
-  }
-  #`couchapp push`
+  versionFile = File.join($jsDir, "version.js")
+
+  File.open( versionFile, "w") {|f| f.write("window.Tangerine = { buildVersion : \"#{build}\"\, version : \"#{version}\"\};") }
+
+  `#{$uglify} dev`
+  puts "\nGenerated:\t\tindex-dev.html"
+  `#{$uglify} #{versionFile}`
+  `#{$uglify} app`
+  puts "\nCompiled\t\tapp.js\n\n"
+
 end
 
 def notify( type, message )
-  printf "\a"
+  printf "\a" # bell
   unless `which osascript`.empty? # on a mac?
     file = message.split(/[\/\:]/)[-5]
     message = /\.coffee\:(.*?)\n/.match(message)[1]
@@ -59,7 +67,7 @@ end
 
 puts "\nGo ahead, programmer. I'm listening...\n\n"
 
-listen = Listen.to(".") do |modified, added, removed|
+listen = Listen.to(srcDir) do |modified, added, removed|
 
   files = modified.concat(added).concat(removed)
 
@@ -68,7 +76,7 @@ listen = Listen.to(".") do |modified, added, removed|
       match = match.to_s
       puts `rm #{match.gsub(/\.coffee$/,'.js')}`
       minJsFile = match.split("/").last.(/\.coffee$/,'.min.js')
-      puts `rm src/js/min/#{minJsFile}`
+      puts `rm ../src/js/min/#{minJsFile}`
     }
   }
 
@@ -83,7 +91,7 @@ listen = Listen.to(".") do |modified, added, removed|
         path = match.split("/")
         puts "\nCompiling translation file for language: #{path[-2]}"
         newFile = path[0..path.length-2].join("/")+"/translation.json"
-        result = `coffee --compile --bare --print #{match}`
+        result = `#{coffee} --compile --bare --print #{match}`
         bareJson = result.gsub(/[\;\(\)]|\/\/.*$\n/, '')
         File.open(newFile, "w") {|f| f.write(bareJson)}
         hasError = false # to pass error checking
@@ -92,16 +100,13 @@ listen = Listen.to(".") do |modified, added, removed|
         puts "\nCompiling:\t\t#{match}"
         special = /shows\/|views\/|lists\/|\/tests\//.match(match)
 
-        result = `coffee --bare --compile "#{match}" 2>&1`
+        result = `#{coffee} --bare --compile "#{match}" 2>&1`
 
         hasError = result.index "error"
 
         if not hasError and not special
           jsFile = match.gsub(".coffee", ".js")
-          puts jsFile
-          Dir.chdir($jsDir) {
-            puts `./uglify.rb "#{jsFile}"`
-          }
+          puts `#{$uglify} "#{jsFile}"`
         end
       end
 

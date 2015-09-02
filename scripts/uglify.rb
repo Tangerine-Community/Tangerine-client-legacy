@@ -17,26 +17,27 @@ ARGV.each { |arg|
   end
 }
 
+thisDir = File.expand_path File.dirname(__FILE__)
+srcDir = File.join thisDir.split("/")[0..-2], "src"
+jsDir = File.join srcDir, "js"
 
-# TODO test to see if we can use a glob for modules/* to make this automatic
-# I don't think we have any code that needs to be run in order, but don't do 
-# make this change until we can do regression tests
+
 jsFiles = [ 
 
-  'version.js',
+  "version.js",
   
-  'helpers.js',
+  "helpers.js",
 
-  'modules/button/ButtonView.js',
+  "modules/button/ButtonView.js",
 
-  'modules/assessment/Assessment.js',
-  'modules/assessment/Assessments.js',
-  'modules/assessment/AssessmentsView.js',
-  'modules/assessment/AssessmentListElementView.js',
-  'modules/assessment/AssessmentsMenuView.js',
-  'modules/assessment/AssessmentRunView.js',
-  'modules/assessment/AssessmentSyncView.js',
-  'modules/assessment/AssessmentDataEntryView.js',
+  "modules/assessment/Assessment.js",
+  "modules/assessment/Assessments.js",
+  "modules/assessment/AssessmentsView.js",
+  "modules/assessment/AssessmentListElementView.js",
+  "modules/assessment/AssessmentsMenuView.js",
+  "modules/assessment/AssessmentRunView.js",
+  "modules/assessment/AssessmentSyncView.js",
+  "modules/assessment/AssessmentDataEntryView.js",
 
 
   'modules/subtest/Subtest.js',
@@ -186,7 +187,7 @@ def replace(file_path, contents)
 end
 
 if $options[:make_index_dev]
-  replace("../index-dev.html", (libFiles + jsFiles).map{|file|
+  replace("#{srcDir}/index-dev.html", (libFiles + jsFiles).map{|file|
     "<script src='js/#{file}'></script>"
   }.join("\n"))
 end
@@ -196,12 +197,12 @@ if $options[:make_app]
   for path in jsFiles
     puts "reading #{path}"
     path = path.gsub(/ /, "\ ")
-    path = File.join(Dir.pwd, "min", Pathname.new(path).basename.to_s.gsub(".js",".min.js"))
-    app += File.read path 
+    path = File.join(jsDir, "min", Pathname.new(path).basename.to_s.gsub(".js",".min.js"))
+    app += File.read path
 
   end
 
-  File.open( "app.js", 'w' ) { |f| 
+  File.open( File.join(jsDir, "app.js"), 'w' ) { |f|
     puts "writing app.js"
     f.write( app )
   }
@@ -210,9 +211,8 @@ end
 if $options[:compile]
   for file in $options[:compile]
     file = file.gsub(/ /, "\ ")
-
     oldFile = File.read file
-    File.open( File.join(Dir.pwd, "min", Pathname.new(file).basename.to_s.gsub(".js",".min.js")), "w" ) { |f|
+    File.open( File.join(jsDir, "min", Pathname.new(file).basename.to_s.gsub(".js",".min.js")), "w" ) { |f|
       puts "\nUglifying\t\t#{file}"
       f.write Uglifier.new.compile(oldFile)
     }
@@ -223,11 +223,11 @@ if $options[:make_lib]
   lib = ''
   for path in libFiles
     puts "reading #{path}"
-    path = path.gsub(/ /, "\ ")
+    path = File.join(jsDir, path.gsub(/ /, "\ "))
     lib += File.read(path)
   end
 
-  File.open( "lib.js", 'w' ) { |f| 
+  File.open( File.join(jsDir, "lib.js"), 'w' ) { |f| 
     puts "writing lib.js"
     f.write lib 
   }
