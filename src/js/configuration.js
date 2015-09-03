@@ -13,7 +13,7 @@ Tangerine.defaults = {
     "language": "en-US",
     "log": [""],
     "groupName": "",
-    "groupHost": "http://databases.tangerinecentral.org",
+    "groupHost": "http://dev.tangerinecentral.org/db",
     "upPass": "pass"
   }
 };
