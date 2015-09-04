@@ -8,7 +8,8 @@
     "build:apk": "cordova build android",
     "test": "mocha echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf platforms plugins node_modules",
-    "listen": "./scripts/listen.rb"
+    "listen": "./scripts/listen.rb",
+    "start": "http-server -p 9000 src --silent & ./scripts/listen.rb"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "coffee-script": "^1.9.3",
     "cordova": "^5.2.0",
+    "http-server": "^0.8.0",
     "shelljs": "^0.4.0"
   }
 }

@@ -194,27 +194,46 @@ class Utils
       nextFunction?(step)
     step()
 
-
   @universalUpload: ->
     results = new Results
     results.fetch
       success: ->
         docList = results.pluck("_id")
-        $.ajax
-          url: Tangerine.settings.urlDB("group")
-          error: ->
-            alert "Securing connection. Please try again."
-            Tangerine.user.ghostLogin Tangerine.settings.upUser, Tangerine.settings.upPass
-          success: ->
+        groupHost = Tangerine.settings.get("groupHost") + "/_session"
+        options =
+          success: ()->
             PouchDB.replicate(
               "tangerine",
               Tangerine.settings.urlDB("group"),
               doc_ids: docList
-            ).on("complete", (info) ->
-              Utils.sticky "Results synced to cloud successfully."
-            ).on("error", (err) ->
-              Utils.sticky "Upload error<br>#{code} #{message}"
-            )
+              ).on("complete", (info) ->
+                Utils.sticky "Results synced to cloud successfully."
+              ).on("error", (err) ->
+                Utils.sticky "Upload error<br>#{code} #{message}"
+              )
+        Utils.checkSession(groupHost, options)
+
+  @checkSession: (url, options) ->
+    options = options || {};
+    $.ajax
+      type: "GET",
+      url:  url,
+      async: true,
+      data: "",
+      beforeSend: (xhr)->
+        xhr.setRequestHeader('Accept', 'application/json')
+      ,
+      complete: (req) ->
+        resp = $.parseJSON(req.responseText);
+        if (req.status == 200)
+          console.log("Logged in.")
+          if options.success
+            options.success(resp)
+        else if (options.error)
+          console.log("Error:" + req.status + " resp.error: " + resp.error)
+          options.error(req.status, resp.error, resp.reason);
+        else
+          alert("An error occurred getting session info: " + resp.reason)
 
   @restartTangerine: (message, callback) ->
     Utils.midAlert "#{message || 'Restarting Tangerine'}"
