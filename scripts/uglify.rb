@@ -22,10 +22,10 @@ srcDir = File.join thisDir.split("/")[0..-2], "src"
 jsDir = File.join srcDir, "js"
 
 
-jsFiles = [ 
+jsFiles = [
 
   "version.js",
-  
+
   "helpers.js",
 
   "modules/button/ButtonView.js",
@@ -43,6 +43,7 @@ jsFiles = [
   'modules/subtest/Subtest.js',
   'modules/subtest/Subtests.js',
   'modules/subtest/SubtestRunView.js',
+  'modules/subtest/SubtestRunItemView.js',
 
   'modules/subtest/prototypes/ConsentRunView.js',
 
@@ -123,6 +124,12 @@ jsFiles = [
   'modules/user/GroupsView.js',
   'modules/user/UsersMenuView.js',
 
+
+  "modules/assessment/ClientDashboardView.js",
+  "modules/assessment/HomeRecordItemView.js",
+  "modules/assessment/AssessmentCompositeView.js",
+  "modules/layouts/DashboardLayout.js",
+
   'modules/config/Config.js',
 
   'modules/log/Log.js',
@@ -165,7 +172,13 @@ libFiles = [
   'lib/jquery.ui.button.js',
   'lib/jquery.ui.progressbar.js',
   'lib/inflection.js',
-  'lib/backbone.js',
+  #'lib/backbone.js',
+  'lib-coco/backbone.js',
+  'lib-coco/backbone.wreqr.js',
+  'lib-coco/backbone.babysitter.js',
+  'lib-coco/backbone.marionette.js',
+  'lib-coco/handlebars.js',
+  'lib-coco/precompiled.handlebars.js',
   'lib/moment.js',
   #'lib/backbone-couchdb.js',
   'lib/pouchdb.js',
@@ -227,8 +240,8 @@ if $options[:make_lib]
     lib += File.read(path)
   end
 
-  File.open( File.join(jsDir, "lib.js"), 'w' ) { |f| 
+  File.open( File.join(jsDir, "lib.js"), 'w' ) { |f|
     puts "writing lib.js"
-    f.write lib 
+    f.write lib
   }
 end

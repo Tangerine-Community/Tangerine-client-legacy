@@ -213,6 +213,9 @@ Tangerine.bootSequence =
       router : Tangerine.router
     Tangerine.log    = new Log()
     Tangerine.session = new Session()
+    Tangerine.addRegions siteNav: "#siteNav"
+    Tangerine.addRegions mainRegion: "#content"
+    Tangerine.addRegions dashboardRegion: "#dashboard"
     callback()
 
   reloadUserSession: ( callback ) ->

@@ -43,7 +43,7 @@ def push
 
   versionFile = File.join($jsDir, "version.js")
 
-  File.open( versionFile, "w") {|f| f.write("window.Tangerine = { buildVersion : \"#{build}\"\, version : \"#{version}\"\};") }
+  File.open( versionFile, "w") {|f| f.write("window.TangerineVersion = { buildVersion : \"#{build}\"\, version : \"#{version}\"\};") }
 
   `#{$uglify} dev`
   puts "\nGenerated:\t\tindex-dev.html"

@@ -48,7 +48,12 @@
 <script src='js/lib/jquery.ui.button.js'></script>
 <script src='js/lib/jquery.ui.progressbar.js'></script>
 <script src='js/lib/inflection.js'></script>
-<script src='js/lib/backbone.js'></script>
+<script src='js/lib-coco/backbone.js'></script>
+<script src='js/lib-coco/backbone.wreqr.js'></script>
+<script src='js/lib-coco/backbone.babysitter.js'></script>
+<script src='js/lib-coco/backbone.marionette.js'></script>
+<script src='js/lib-coco/handlebars.js'></script>
+<script src='js/lib-coco/precompiled.handlebars.js'></script>
 <script src='js/lib/moment.js'></script>
 <script src='js/lib/pouchdb.js'></script>
 <script src='js/lib/backbone-pouchdb.js'></script>
@@ -72,6 +77,7 @@
 <script src='js/modules/subtest/Subtest.js'></script>
 <script src='js/modules/subtest/Subtests.js'></script>
 <script src='js/modules/subtest/SubtestRunView.js'></script>
+<script src='js/modules/subtest/SubtestRunItemView.js'></script>
 <script src='js/modules/subtest/prototypes/ConsentRunView.js'></script>
 <script src='js/modules/subtest/prototypes/DatetimeRunView.js'></script>
 <script src='js/modules/subtest/prototypes/LocationRunView.js'></script>
@@ -133,6 +139,10 @@
 <script src='js/modules/user/AccountView.js'></script>
 <script src='js/modules/user/GroupsView.js'></script>
 <script src='js/modules/user/UsersMenuView.js'></script>
+<script src='js/modules/assessment/ClientDashboardView.js'></script>
+<script src='js/modules/assessment/HomeRecordItemView.js'></script>
+<script src='js/modules/assessment/AssessmentCompositeView.js'></script>
+<script src='js/modules/layouts/DashboardLayout.js'></script>
 <script src='js/modules/config/Config.js'></script>
 <script src='js/modules/log/Log.js'></script>
 <script src='js/modules/settings/Settings.js'></script>
@@ -151,7 +161,7 @@
     tr.odd {
         background-color: #fefbf3
     }
-    
+
     tr.even {
         background-color: #fdf1cd
     }

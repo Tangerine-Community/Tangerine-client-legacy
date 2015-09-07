@@ -39,7 +39,8 @@ ResultOfGrid = (name) ->
 #
 # Tangerine backbutton handler
 #
-Tangerine = if Tangerine? then Tangerine else {}
+Tangerine = if Tangerine? then Tangerine else new Marionette.Application()
+$.extend(Tangerine,TangerineVersion)
 Tangerine.onBackButton = (event) ->
   if Tangerine.activity == "assessment run"
     if confirm t("NavigationView.message.incomplete_main_screen")

@@ -46,16 +46,17 @@ class Router extends Backbone.Router
     'assessments'        : 'assessments'
 
     'run/:id'       : 'run'
+    'runMar/:id'       : 'runMar'
     'print/:id/:format'       : 'print'
     'dataEntry/:id' : 'dataEntry'
 
     'resume/:assessmentId/:resultId'    : 'resume'
-    
+
     'restart/:id'   : 'restart'
     'edit/:id'      : 'edit'
     'results/:id'   : 'results'
     'import'        : 'import'
-    
+
     'subtest/:id'       : 'editSubtest'
 
     'question/:id' : 'editQuestion'
@@ -65,7 +66,7 @@ class Router extends Backbone.Router
 
     'sync/:id'      : 'sync'
 
-    
+
   admin: (options) ->
     Tangerine.user.verify
       isAdmin: ->
@@ -75,7 +76,7 @@ class Router extends Backbone.Router
             view = new AdminView
               groups : groups
             vm.show view
-    
+
   dashboard: (options) ->
     options = options?.split(/\//)
     #default view options
@@ -396,6 +397,24 @@ class Router extends Backbone.Router
           success : ->
             vm.show new AssessmentRunView model: assessment
 
+  runMar: (id) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        assessment = new Assessment "_id" : id
+        assessment.deepFetch
+          success : ->
+            viewOptions =
+#              collection : assessment.subtests.sort()
+#              collection : assessment.subtests
+              model: assessment
+            dashboardLayout = new DashboardLayout();
+            Tangerine.mainRegion.show dashboardLayout
+            dashboardView = new ClientDashboardView {model: Tangerine.user}
+            dashboardLayout.dashboardRegion.show dashboardView
+            dashboardLayout.contentRegion.show(new AssessmentCompositeView viewOptions)
+          error: (model, err, cb) ->
+            console.log JSON.stringify err
+
   resume: (assessmentId, resultId) ->
     Tangerine.user.verify
       isAuthenticated: ->
@@ -407,7 +426,7 @@ class Router extends Backbone.Router
               "_id" : resultId
             result.fetch
               success: (result) ->
-                view = new AssessmentRunView 
+                view = new AssessmentRunView
                   model: assessment
 
                 if result.has("order_map")
@@ -423,7 +442,7 @@ class Router extends Backbone.Router
                 # replace the view's result with our old one
                 view.result = result
 
-                # Hijack the normal Result and ResultView, use one from the db 
+                # Hijack the normal Result and ResultView, use one from the db
                 view.subtestViews.pop()
                 view.subtestViews.push new ResultView
                   model          : result
@@ -469,7 +488,7 @@ class Router extends Backbone.Router
           success :  ->
             filename = assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
             document.location = "/" + Tangerine.dbName + "/_design/" + Tangerine.designDoc + "/_list/csv/csvRowByResult?key=\"#{id}\"&filename=#{filename}"
-        
+
       isUser: ->
         errView = new ErrorView
           message : "You're not an admin user"
@@ -552,7 +571,7 @@ class Router extends Backbone.Router
               allSubtests = new Subtests
               allSubtests.fetch
                 success: ( allSubtests ) ->
-                  subtests = new Subtests allSubtests.where 
+                  subtests = new Subtests allSubtests.where
                     "curriculumId" : klass.get("curriculumId")
                     "reportType"   : "progress"
                   allResults = new KlassResults
@@ -713,7 +732,7 @@ class Router extends Backbone.Router
     Tangerine.user.verify
       isAuthenticated: ->
         showView = (teacher) ->
-          view = new AccountView 
+          view = new AccountView
             user : Tangerine.user
             teacher: teacher
           vm.show view
@@ -756,7 +775,7 @@ class Router extends Backbone.Router
       isAuthenticated: ->
         users = new TabletUsers
         users.fetch
-          success: -> 
+          success: ->
             teachers = new Teachers
             teachers.fetch
               success: =>
@@ -786,7 +805,7 @@ class Router extends Backbone.Router
             , name,
             success: ->
               user = new User
-              user.save 
+              user.save
                 "name"  : name
                 "id"    : "tangerine.user:"+name
                 "roles" : []

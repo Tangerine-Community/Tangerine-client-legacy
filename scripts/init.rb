@@ -31,7 +31,7 @@ File.delete "#{jsDir}/app.js" if File.exists? "#{jsDir}/app.js"
 # Save current version info
 version = `git describe --tags`.gsub(/\n/,'')
 build   = `git rev-parse --short HEAD`.gsub(/\n/,'')
-File.open( File.join(jsDir, "version.js"), "w") {|f| f.write("window.Tangerine = { buildVersion : \"#{build}\"\, version : \"#{version}\"\};") }
+File.open( File.join(jsDir, "version.js"), "w") {|f| f.write("window.TangerineVersion = { buildVersion : \"#{build}\"\, version : \"#{version}\"\};") }
 
 
 # uglify/minify all js to min directory
