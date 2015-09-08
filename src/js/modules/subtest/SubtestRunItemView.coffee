@@ -1,6 +1,6 @@
 class SubtestRunItemView extends Backbone.Marionette.ItemView
 
-  tagName: 'tr'
+  tagName: 'p'
   template: JST["src/templates/SubtestRunItemView.handlebars"]
 
   className : "SubtestRunView"
@@ -25,10 +25,54 @@ class SubtestRunItemView extends Backbone.Marionette.ItemView
     @i18n()
 
     @model       = options.model
-    @parent      = options.parent
+    @parent      = @model.parent
     @fontStyle = "style=\"font-family: #{@model.get('fontFamily')} !important;\"" if @model.get("fontFamily") != ""
 
     @prototypeRendered = false
+
+
+  onRender: ->
+
+    _render = =>
+
+      @delegateEvents()
+
+      ui = {}
+      ui.enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
+      ui.studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
+      ui.transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
+
+      skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+      backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
+
+      ui.skipButton = "<button class='skip navigation'>#{@text.skip}</button>" if skippable
+      ui.backButton = "<button class='subtest-back navigation'>#{@text.back}</button>" if backable
+      ui.text = @text
+      @model.set('ui', ui)
+
+      # Prototype specific views follow this capitalization convention: GpsRunView
+      console.log @model
+      @prototypeView = new window["#{@model.get('prototype').titleize()}RunView"]
+        model  : @model
+        parent : @
+      @prototypeView.on "rendered",    => @flagRender("prototype")
+      @prototypeView.on "subRendered", => @trigger "subRendered"
+      @prototypeView.on "showNext",    => @showNext()
+      @prototypeView.on "hideNext",    => @hideNext()
+      @prototypeView.on "ready",       => @prototypeRendered = true
+      @prototypeView.setElement(@$el.find('#prototype_wrapper'))
+      @prototypeView.render()
+
+      @flagRender "subtest"
+
+    languageCode = @model.get("language")
+    if languageCode
+      i18n.setLng languageCode, (t) =>
+        window.t = t
+        _render()
+    else
+      i18n.setLng Tangerine.settings.get("language"), (t) =>
+        _render()
 
 #  render: ->
 #

@@ -1,7 +1,8 @@
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   childView: SubtestRunItemView,
-  childViewContainer: '#records',
+  childViewContainer: '#survey',
   template: JST["src/templates/HomeView.handlebars"]
+#  el:'content'
 
   initialize: (options) ->
 
@@ -20,8 +21,10 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     Tangerine.activity = "assessment run"
     @subtestViews = []
+#    @model.parent = @
     @model.subtests.sort()
     @model.subtests.each (model) =>
+      model.parent = @
       @subtestViews.push new SubtestRunView
         model  : model
         parent : @
@@ -64,8 +67,14 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       assessmentView : @
     @subtestViews.push resultView
 
-  events:
-    "change #formDropdown": "chooseForm"
+  onRender:->
+    currentView = @subtestViews[@orderMap[@index]]
+    @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
+    currentView.on "rendered",    => @flagRender "subtest"
+    currentView.on "subRendered", => @trigger "subRendered"
+
+    currentView.on "next",    => @step 1
+    currentView.on "back",    => @step -1
 
   skip: =>
     currentView = @subtestViews[@orderMap[@index]]
@@ -92,34 +101,4 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     else
       currentView.showErrors()
 
-  chooseForm: ->
-    form = $('#formDropdown').val();
-    if form == 'TrichiasisSurgery'
-      this.trichiasisSurgery()
-    else if form == 'PostOperativeFollowup'
-      this.postOperativeFollowup()
-    else if form == 'PostOperativeEpilation'
-      this.postOperativeEpilation()
-    else if form == 'PostOperativeFollowup_1day'
-      this.postOperativeFollowup_1day()
-    else if form == 'PostOperativeFollowup_7_14_days'
-      this.postOperativeFollowup_7_14_days()
-    else if form == 'PostOperativeFollowup_3_6_months'
-      this.postOperativeFollowup_3_6_months()
-    return
-
-  trichiasisSurgery: ->
-    console.log "trichiasisSurgery"
-#    Coconut.router.navigate "#new/result/Trichiasis%20Surgery",true
-    return
-#
-#  postOperativeFollowup: ->
-#    console.log "postOperativeFollowup"
-#    Coconut.router.navigate "#new/result/Post-Operative%20Followup",true
-#    return
-#
-  postOperativeEpilation: ->
-    console.log "postOperativeEpilation"
-#    Coconut.router.navigate "#new/result/PostOperativeEpilation",true
-    return
 
