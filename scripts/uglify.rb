@@ -40,10 +40,19 @@ jsFiles = [
   "modules/assessment/AssessmentDataEntryView.js",
 
 
+
   'modules/subtest/Subtest.js',
   'modules/subtest/Subtests.js',
   'modules/subtest/SubtestRunView.js',
   'modules/subtest/SubtestRunItemView.js',
+
+  'modules/question/Question.js',
+  'modules/question/Questions.js',
+  'modules/question/QuestionRunView.js',
+  'modules/question/QuestionRunItemView.js',
+
+
+  'modules/subtest/prototypes/SurveyRunItemView.js',
 
   'modules/subtest/prototypes/ConsentRunView.js',
 
@@ -70,10 +79,6 @@ jsFiles = [
   'modules/result/DashboardView.js',
 
   'modules/admin/AdminView.js',
-
-  'modules/question/Question.js',
-  'modules/question/Questions.js',
-  'modules/question/QuestionRunView.js',
 
   'modules/klass/Klass.js',
   'modules/klass/KlassView.js',
@@ -125,9 +130,10 @@ jsFiles = [
   'modules/user/UsersMenuView.js',
 
 
-  "modules/assessment/ClientDashboardView.js",
+  "modules/assessment/AssessmentDashboardView.js",
   "modules/assessment/HomeRecordItemView.js",
   "modules/assessment/AssessmentCompositeView.js",
+  'modules/assessment/AssessmentControlsView.js',
   "modules/layouts/DashboardLayout.js",
 
   'modules/config/Config.js',

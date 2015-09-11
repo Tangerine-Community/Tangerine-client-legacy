@@ -403,15 +403,18 @@ class Router extends Backbone.Router
         assessment = new Assessment "_id" : id
         assessment.deepFetch
           success : ->
+            Tangerine.assessment = assessment
             viewOptions =
 #              collection : assessment.subtests.sort()
 #              collection : assessment.subtests
-              model: assessment
+              model: Tangerine.assessment
             dashboardLayout = new DashboardLayout();
             Tangerine.mainRegion.show dashboardLayout
-            dashboardView = new ClientDashboardView {model: Tangerine.user}
-            dashboardLayout.dashboardRegion.show dashboardView
+#            headerView = new AssessmentDashboardView {model: Tangerine.assessment}
+#            footerView = new AssessmentDashboardView {model: Tangerine.assessment, template: JST["src/templates/AssessmentDashboardFooter.handlebars"]}
+#            dashboardLayout.headerRegion.show headerView
             dashboardLayout.contentRegion.show(new AssessmentCompositeView viewOptions)
+#            dashboardLayout.footerRegion.show footerView
           error: (model, err, cb) ->
             console.log JSON.stringify err
 

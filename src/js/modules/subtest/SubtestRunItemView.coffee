@@ -1,4 +1,4 @@
-class SubtestRunItemView extends Backbone.Marionette.ItemView
+ SubtestRunItemView = Backbone.Marionette.ItemView.extend
 
   tagName: 'p'
   template: JST["src/templates/SubtestRunItemView.handlebars"]
@@ -30,25 +30,24 @@ class SubtestRunItemView extends Backbone.Marionette.ItemView
 
     @prototypeRendered = false
 
+    @delegateEvents()
+
+    ui = {}
+    ui.enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
+    ui.studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
+    ui.transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
+
+    skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+    backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
+
+    ui.skipButton = "<button class='skip navigation'>#{@text.skip}</button>" if skippable
+    ui.backButton = "<button class='subtest-back navigation'>#{@text.back}</button>" if backable
+    ui.text = @text
+    @model.set('ui', ui)
 
   onRender: ->
 
     _render = =>
-
-      @delegateEvents()
-
-      ui = {}
-      ui.enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
-      ui.studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
-      ui.transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
-
-      skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
-      backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
-
-      ui.skipButton = "<button class='skip navigation'>#{@text.skip}</button>" if skippable
-      ui.backButton = "<button class='subtest-back navigation'>#{@text.back}</button>" if backable
-      ui.text = @text
-      @model.set('ui', ui)
 
       # Prototype specific views follow this capitalization convention: GpsRunView
       console.log @model
@@ -73,61 +72,6 @@ class SubtestRunItemView extends Backbone.Marionette.ItemView
     else
       i18n.setLng Tangerine.settings.get("language"), (t) =>
         _render()
-
-#  render: ->
-#
-#    _render = =>
-#
-#      @delegateEvents()
-#
-#      enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
-#      studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
-#      transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
-#
-#      skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
-#      backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
-#
-#      skipButton = "<button class='skip navigation'>#{@text.skip}</button>" if skippable
-#      backButton = "<button class='subtest-back navigation'>#{@text.back}</button>" if backable
-#
-#
-#      @$el.html "
-#        <h2>#{@model.get 'name'}</h2>
-#        #{enumeratorHelp}
-#        #{studentDialog}
-#        <div id='prototype_wrapper'></div>
-#
-#        <div class='controlls clearfix'>
-#          #{transitionComment}
-#          #{backButton or ''}
-#          <button class='subtest-next navigation'>#{@text.next}</button>
-#          #{skipButton or ''}
-#        </div>
-#      "
-#
-#      # Prototype specific views follow this capitalization convention: GpsRunView
-#      console.log @model
-#      @prototypeView = new window["#{@model.get('prototype').titleize()}RunView"]
-#        model  : @model
-#        parent : @
-#      @prototypeView.on "rendered",    => @flagRender("prototype")
-#      @prototypeView.on "subRendered", => @trigger "subRendered"
-#      @prototypeView.on "showNext",    => @showNext()
-#      @prototypeView.on "hideNext",    => @hideNext()
-#      @prototypeView.on "ready",       => @prototypeRendered = true
-#      @prototypeView.setElement(@$el.find('#prototype_wrapper'))
-#      @prototypeView.render()
-#
-#      @flagRender "subtest"
-#
-#    languageCode = @model.get("language")
-#    if languageCode
-#      i18n.setLng languageCode, (t) =>
-#        window.t = t
-#        _render()
-#    else
-#      i18n.setLng Tangerine.settings.get("language"), (t) =>
-#        _render()
 
   flagRender: ( flag ) =>
     @renderFlags = {} if not @renderFlags

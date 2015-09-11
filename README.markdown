@@ -67,6 +67,10 @@ View package.json for other useful npm targets:
  - npm listen turns on the changes listener and compiles coffeescript files.
  - npm build:apk will generate a debug APK.
 
+# Tangerine API
+
+Tangerine.progress is an object that contains status of the application: index, currentView, etc.
+
 ----
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
