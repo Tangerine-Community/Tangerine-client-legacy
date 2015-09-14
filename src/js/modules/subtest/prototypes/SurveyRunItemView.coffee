@@ -23,8 +23,8 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
     @questionViews = []
     @answered      = []
     @renderCount   = 0
-    @childViewOptions =
-        parent: this
+#    @childViewOptions =
+#        parent: this
 
     @i18n()
 
@@ -44,7 +44,7 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
 #          @collection = @questions
 #        @ready = true
 #        @render()
-
+    Tangerine.progress.currentSubview = @
 
   nextQuestion: ->
 
@@ -117,7 +117,7 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
     else
       $next.show()
 
-  updateExecuteReady: (ready) =>
+  updateExecuteReady: (ready) ->
 
     @executeReady = ready
 
@@ -252,10 +252,11 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
     , @
     return result
 
-  getResult: =>
+  getResult: ->
     result = {}
     @questionViews.forEach (qv, i) ->
-      result[@questions.models[i].get("name")] =
+#      result[@questions.models[i].get("name")] =
+      result[qv.name] =
         if qv.notAsked # because of grid score
           qv.notAskedResult
         else if not _.isEmpty(qv.answer) # use answer
@@ -269,7 +270,12 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
         else
           qv.answer
     , @
-    return result
+    hash = @model.get("hash") if @model.has("hash")
+    subtestResult =
+      'body' : result
+      'meta' :
+        'hash' : hash
+#    return result
 
   showErrors: (views = @questionViews) ->
     @$el.find('.message').remove()
@@ -294,6 +300,49 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
             first = false
         qv.setMessage message
     , @
+
+
+  getSum: ->
+#    if @prototypeView.getSum?
+#      return @prototypeView.getSum()
+#    else
+# maybe a better fallback
+    console.log("This view does not return a sum, correct?")
+    return {correct:0,incorrect:0,missing:0,total:0}
+
+  buildChildView: (child, ChildViewClass, childViewOptions) ->
+    options = _.extend({model: child}, childViewOptions);
+    view = new ChildViewClass(options)
+
+#    @listenTo view, "rendered",      @onQuestionRendered
+#    @listenTo view, "answer scroll", @onQuestionAnswer
+
+    @questionViews[childViewOptions.index] = view
+
+    return view
+  ,
+
+  childViewOptions: (model, index)->
+    unless @dataEntry
+      previous = @model.parent.result.getByHash(@model.get('hash'))
+    notAskedCount = 0
+    required = model.getNumber "linkedGridScore"
+
+    isNotAsked = ( ( required != 0 && @model.parent.getGridScore() < required ) || @model.parent.gridWasAutostopped() ) && @model.parent.getGridScore() != false
+
+    if isNotAsked then notAskedCount++
+
+    name   = model.escape("name").replace /[^A-Za-z0-9_]/g, "-"
+    answer = previous[name] if previous
+    options =
+      model         : model
+      parent        : @
+      dataEntry     : @dataEntry
+      notAsked      : isNotAsked
+      isObservation : @isObservation
+      answer        : answer
+      index  : index
+    return options
 
   onRenderNOT: ->
     return unless @ready
@@ -368,3 +417,17 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
     for qv in @questionViews
       qv.close?()
     @questionViews = []
+
+  reset: (increment) ->
+    @rendered.subtest = false
+    @rendered.assessment = false
+    #    currentView = @subtestViews[@orderMap[@index]]
+    #    currentView.close()
+    Tangerine.progress.currentSubview.close();
+    @index =
+      if @abortAssessment == true
+        @subtestViews.length-1
+      else
+        @index + increment
+    @render()
+    window.scrollTo 0, 0

@@ -3,26 +3,24 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   getChildView: (model) ->
 
     collection = model.collection
-    currentModel = @model.subtests.models[@index]
+#    currentModel = @model.subtests.models[@index]
+    currentModel = @subtestViews[@index].model
     currentModel.questions     = new Questions()
-    #    @collection = @questions
-
     # @questions.db.view = "questionsBySubtestId" Bring this back when prototypes make sense again
     currentModel.questions.fetch
       viewOptions:
         key: "question-#{currentModel.id}"
       success: (collection) =>
         currentModel.questions.sort()
-#        if currentModel.questions.models?
-#          currentModel.questions.models.forEach (question, i) ->
-#            question.parent = @
-        prototypeName = currentModel.get('prototype').titleize() + "RunItemView"
-    currentSubview =  SubtestRunItemView
-    if  (prototypeName = 'SurveyRunItemView')
-      currentSubview = SurveyRunItemView
+    if currentModel.get("collection") == 'result'
+      currentSubview =  ResultItemView
     else
-      currentSubview =  SubtestRunItemView
-    Tangerine.progress.currentSubview = currentSubview
+      prototypeName = currentModel.get('prototype').titleize() + "RunItemView"
+      if  (prototypeName = 'SurveyRunItemView')
+        currentSubview = SurveyRunItemView
+      else
+        currentSubview =  SubtestRunItemView
+#    Tangerine.progress.currentSubview = currentSubview
     @ready = true
     return currentSubview
   ,
@@ -160,25 +158,41 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     ui.text = @text
     @model.set('ui', ui)
 
-#  onRender:->
-##      currentView = @subtestViews[@orderMap[@index]]
-##      console.log("currentView: " + currentView)
-#    Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
-#    Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
-#
-#    Tangerine.progress.currentSubview.on "next",    =>
-#      console.log("currentView next")
-#      @step 1
-#    Tangerine.progress.currentSubview.on "back",    => @step -1
+  onRender:->
+#      currentView = @subtestViews[@orderMap[@index]]
+#      console.log("currentView: " + currentView)
+    @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
 
-  next: ->
-    console.log("next")
-    @trigger "next"
-  back: -> @trigger "back"
-  toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
+    Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
+    Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
+
+    Tangerine.progress.currentSubview.on "next",    =>
+      console.log("currentView next")
+      @step 1
+    Tangerine.progress.currentSubview.on "back",    => @step -1
+    @flagRender "assessment"
+
+  flagRender: (object) ->
+    @rendered[object] = true
+
+    if @rendered.assessment && @rendered.subtest
+      @trigger "rendered"
+
+  afterRender: ->
+    @subtestViews[@orderMap[@index]]?.afterRender?()
+
+  onClose: ->
+    for view in @subtestViews
+      view.close()
+    @result.clear()
+    Tangerine.nav.setStudent ""
+
+  abort: ->
+    @abortAssessment = true
+    @step 1
 
   skip: =>
-    currentView = @subtestViews[@orderMap[@index]]
+    currentView = Tangerine.progress.currentSubview
     @result.add
       name      : currentView.model.get "name"
       data      : currentView.getSkipped()
@@ -189,20 +203,29 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       success: =>
         @reset 1
 
-  step: (increment) =>
+  step: (increment) ->
 
     if @abortAssessment
-      currentView = @subtestViews[@orderMap[@index]]
+#      currentView = @subtestViews[@orderMap[@index]]
+      currentView = Tangerine.progress.currentSubview
       @saveResult( currentView )
       return
 
-    currentView = @subtestViews[@orderMap[@index]]
-    if currentView.isValid()
-      @saveResult( currentView, increment )
-    else
-      currentView.showErrors()
+#    currentView = @subtestViews[@orderMap[@index]]
+    currentView = Tangerine.progress.currentSubview
+#    if currentView.isValid()
+    @saveResult( currentView, increment )
+#    else
+#      currentView.showErrors()
 
 #      from SubtestRunView
+
+  next: ->
+    console.log("next")
+    #    @trigger "next"
+    @step 1
+  back: -> @trigger "back"
+  toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
   gridWasAutostopped: ->
     link = @model.get("gridLinkId") || ""
@@ -210,4 +233,59 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     grid = @parent.model.subtests.get @model.get("gridLinkId")
     gridWasAutostopped = @parent.result.gridWasAutostopped grid.id
 
+  reset: (increment) ->
+    @rendered.subtest = false
+    @rendered.assessment = false
+#    currentView = @subtestViews[@orderMap[@index]]
+#    currentView.close()
+    Tangerine.progress.currentSubview.close();
+    @index =
+      if @abortAssessment == true
+        @subtestViews.length-1
+      else
+        @index + increment
+    @render()
+    window.scrollTo 0, 0
+
+  saveResult: ( currentView, increment ) ->
+
+    subtestResult = currentView.getResult()
+    subtestId = currentView.model.id
+    prototype = currentView.model.get "prototype"
+    subtestReplace = null
+
+    for result, i in @result.get('subtestData')
+      if subtestId == result.subtestId
+        subtestReplace = i
+
+    if subtestReplace != null
+# Don't update the gps subtest.
+      if prototype != 'gps'
+        @result.insert
+          name        : currentView.model.get "name"
+          data        : subtestResult.body
+          subtestHash : subtestResult.meta.hash
+          subtestId   : currentView.model.id
+          prototype   : currentView.model.get "prototype"
+          sum         : currentView.getSum()
+      @reset increment
+
+    else
+      @result.add
+        name        : currentView.model.get "name"
+        data        : subtestResult.body
+        subtestHash : subtestResult.meta.hash
+        subtestId   : currentView.model.id
+        prototype   : currentView.model.get "prototype"
+        sum         : currentView.getSum()
+      ,
+        success : =>
+          @reset increment
+
+  getSum: ->
+    if Tangerine.progress.currentSubview.getSum?
+      return Tangerine.progress.currentSubview.getSum()
+    else
+# maybe a better fallback
+      return {correct:0,incorrect:0,missing:0,total:0}
 
