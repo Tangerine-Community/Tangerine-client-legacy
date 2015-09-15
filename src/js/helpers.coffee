@@ -575,3 +575,9 @@ $ ->
 
   # $(window).resize Utils.resizeScrollPane
   # Utils.resizeScrollPane()
+
+# Handlebars partials
+Handlebars.registerHelper('gridLabel', (items,itemMap,index) ->
+#  _.escape(items[itemMap[done]])
+  _.escape(items[itemMap[index]])
+)

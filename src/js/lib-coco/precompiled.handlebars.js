@@ -70,6 +70,47 @@ this["JST"]["src/templates/DashboardLayout.handlebars"] = Handlebars.template({"
     return "<div id=\"header-region\"></div>\n<div id=\"content-region\"></div>\n<div id=\"footer-region\"></div>\n\n";
 },"useData":true});
 
+this["JST"]["src/templates/Grid.handlebars"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+    var stack1, helper, alias1=this.escapeExpression;
+
+  return "<div class='timer_wrapper'>\n    <button class='start_time time'>"
+    + alias1(this.lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.start : stack1), depth0))
+    + "</button>\n    <div class='timer'>"
+    + alias1(((helper = (helper = helpers.timer || (depth0 != null ? depth0.timer : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"timer","hash":{},"data":data}) : helper)))
+    + "</div>\n</div>\n";
+},"3":function(depth0,helpers,partials,data,blockParams,depths) {
+    var stack1, helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;
+
+  return "<table class='grid "
+    + alias3(((helper = (helper = helpers.disabling || (depth0 != null ? depth0.disabling : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"disabling","hash":{},"data":data}) : helper)))
+    + " "
+    + alias3(((helper = (helper = helpers.displayRtl || (depth0 != null ? depth0.displayRtl : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"displayRtl","hash":{},"data":data}) : helper)))
+    + "'>\n<tr>\n"
+    + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.items : depth0),{"name":"each","hash":{},"fn":this.program(4, data, 0, blockParams, depths),"inverse":this.noop,"data":data})) != null ? stack1 : "");
+},"4":function(depth0,helpers,partials,data,blockParams,depths) {
+    var helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;
+
+  return "            <td>\n                <button data-label='"
+    + alias3(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"label","hash":{},"data":data}) : helper)))
+    + "' data-index='"
+    + alias3(((helper = (helper = helpers.index || (data && data.index)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"index","hash":{},"data":data}) : helper)))
+    + "' class='grid_element "
+    + alias3(((helper = (helper = helpers.fontSizeClass || (depth0 != null ? depth0.fontSizeClass : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"fontSizeClass","hash":{},"data":data}) : helper)))
+    + "' "
+    + alias3(((helper = (helper = helpers.fontStyle || (depth0 != null ? depth0.fontStyle : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"fontStyle","hash":{},"data":data}) : helper)))
+    + ">"
+    + alias3((helpers.gridLabel || (depth0 && depth0.gridLabel) || alias1).call(depth0,(depths[1] != null ? depths[1].items : depths[1]),(depths[1] != null ? depths[1].itemMap : depths[1]),(data && data.index),{"name":"gridLabel","hash":{},"data":data}))
+    + "</button>\n            </td>\n";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data,blockParams,depths) {
+    var stack1, helper;
+
+  return "<h3>"
+    + this.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</h3>\n"
+    + ((stack1 = helpers.unless.call(depth0,(depth0 != null ? depth0.untimed : depth0),{"name":"unless","hash":{},"fn":this.program(1, data, 0, blockParams, depths),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.layoutMode_fixed : depth0),{"name":"if","hash":{},"fn":this.program(3, data, 0, blockParams, depths),"inverse":this.noop,"data":data})) != null ? stack1 : "");
+},"useData":true,"useDepths":true});
+
 this["JST"]["src/templates/HomeView.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     return "<div id=\"survey\">\n</div>\n";
 },"useData":true});

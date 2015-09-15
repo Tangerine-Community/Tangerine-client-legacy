@@ -405,16 +405,10 @@ class Router extends Backbone.Router
           success : ->
             Tangerine.assessment = assessment
             viewOptions =
-#              collection : assessment.subtests.sort()
-#              collection : assessment.subtests
               model: Tangerine.assessment
             dashboardLayout = new DashboardLayout();
             Tangerine.mainRegion.show dashboardLayout
-#            headerView = new AssessmentDashboardView {model: Tangerine.assessment}
-#            footerView = new AssessmentDashboardView {model: Tangerine.assessment, template: JST["src/templates/AssessmentDashboardFooter.handlebars"]}
-#            dashboardLayout.headerRegion.show headerView
             dashboardLayout.contentRegion.show(new AssessmentCompositeView viewOptions)
-#            dashboardLayout.footerRegion.show footerView
           error: (model, err, cb) ->
             console.log JSON.stringify err
 

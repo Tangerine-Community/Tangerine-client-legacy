@@ -65,6 +65,7 @@ jsFiles = [
   'modules/subtest/prototypes/IdRunView.js',
 
   'modules/subtest/prototypes/GridRunView.js',
+  'modules/subtest/prototypes/GridRunItemView.js',
 
   'modules/subtest/prototypes/ObservationRunView.js',
 

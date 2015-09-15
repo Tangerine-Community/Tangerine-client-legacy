@@ -4,6 +4,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     collection = model.collection
 #    currentModel = @model.subtests.models[@index]
+    console.log("@index: " + @index)
     currentModel = @subtestViews[@index].model
     currentModel.questions     = new Questions()
     # @questions.db.view = "questionsBySubtestId" Bring this back when prototypes make sense again
@@ -16,10 +17,14 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       currentSubview =  ResultItemView
     else
       prototypeName = currentModel.get('prototype').titleize() + "RunItemView"
-      if  (prototypeName = 'SurveyRunItemView')
+      if  (prototypeName == 'SurveyRunItemView')
         currentSubview = SurveyRunItemView
+      else if  (prototypeName == 'GridRunItemView')
+        currentSubview = GridRunItemView
       else
         currentSubview =  SubtestRunItemView
+        currentSubview =  null
+        console.log("currentSubview is not defined.")
 #    Tangerine.progress.currentSubview = currentSubview
     @ready = true
     return currentSubview
@@ -43,6 +48,10 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     next: ->
       console.log("childEvents next")
       @step 1
+
+  collectionEvents:->
+    "add": ->
+      console.log("model added")
 
   childViewContainer: '#subtest_wrapper',
   template: JST["src/templates/AssessmentView.handlebars"]
@@ -107,7 +116,14 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         model  : model
         parent : @
 
-    @collection = @model.subtests
+#    @collection = @model.subtests
+#    newObject = jQuery.extend({}, @model.subtests);
+    col = {}
+    col.models = []
+    model = @model.subtests.models[@index]
+    col.models.push model
+    @collection = col
+
 
     hasSequences = @model.has("sequences") && not _.isEmpty(_.compact(_.flatten(@model.get("sequences"))))
 

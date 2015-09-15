@@ -2,6 +2,9 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
   template: JST["src/templates/Survey.handlebars"],
   childView: QuestionRunItemView,
   tagName: "p",
+  collectionEvents: {
+    "add": "modelAdded"
+  }
 #  childViewOptions:
 #    parent: this
 #  ,
@@ -10,7 +13,6 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
   events:
     'click .next_question' : 'nextQuestion'
     'click .prev_question' : 'prevQuestion'
-
 
   initialize: (options) ->
 
@@ -28,23 +30,15 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
 
     @i18n()
 
-#    @questions     = new Questions()
     @collection = @model.questions
 
-#
-#    # @questions.db.view = "questionsBySubtestId" Bring this back when prototypes make sense again
-#    @questions.fetch
-#      viewOptions:
-#        key: "question-#{@model.id}"
-#      success: (collection) =>
-#        @questions.sort()
-#        if @questions.models?
-#          @questions.models.forEach (question, i) ->
-#            question.parent = @
-#          @collection = @questions
-#        @ready = true
-#        @render()
     Tangerine.progress.currentSubview = @
+
+#  filter: (child, index, collection) ->
+#    return child.get('value') % 2 == 0
+
+  modelAdded:->
+    console.log("model added")
 
   nextQuestion: ->
 
