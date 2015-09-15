@@ -1,7 +1,7 @@
-GridRunItemView = Backbone.Marionette.CompositeView.extend
+class GridRunItemView extends Backbone.Marionette.CompositeView
+  className: "gridItem"
   template: JST["src/templates/Grid.handlebars"],
   childView: QuestionRunItemView,
-  className: "grid_prototype"
 
   events: if Modernizr.touch then {
     'click .grid_element'     : 'gridClick' #click
@@ -41,11 +41,11 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
 
     @$el.find(".element_wrong").removeClass "element_wrong"
 
-  gridClick: (event) ->
+  gridClick: (event) =>
     event.preventDefault()
     @modeHandlers[@mode]?(event)
 
-  markHandler: (event) ->
+  markHandler: (event) =>
     $target = $(event.target)
     index = $target.attr('data-index')
 
@@ -371,7 +371,6 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
       "last"       : @lastHandler
       "minuteItem" : @intermediateItemHandler
       disabled     : $.noop
-      "markElement"     : @markElement
 
     @dataEntry = options.dataEntry
 
