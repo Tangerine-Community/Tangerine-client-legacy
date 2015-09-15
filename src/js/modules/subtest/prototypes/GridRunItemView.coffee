@@ -41,11 +41,11 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
 
     @$el.find(".element_wrong").removeClass "element_wrong"
 
-  gridClick: (event) =>
+  gridClick: (event) ->
     event.preventDefault()
     @modeHandlers[@mode]?(event)
 
-  markHandler: (event) =>
+  markHandler: (event) ->
     $target = $(event.target)
     index = $target.attr('data-index')
 
@@ -59,14 +59,13 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
     @checkAutostop() if @autostop != 0
 
 
-  intermediateItemHandler: (event) =>
+  intermediateItemHandler: (event) ->
     @timeIntermediateCaptured = @getTime() - @startTime
     $target = $(event.target)
     index = $target.attr('data-index')
     @itemAtTime = index
     $target.addClass "element_minute"
     @updateMode "mark"
-
 
   checkAutostop: ->
     if @timeRunning
@@ -124,7 +123,7 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
 
       @checkAutostop() if @autostop != 0
 
-  lastHandler: (event, index) =>
+  lastHandler: (event, index) ->
     if index?
       $target = @$el.find(".grid_element[data-index=#{index}]")
     else
@@ -138,7 +137,10 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
 
   startTimer: ->
     if @timerStopped == false && @timeRunning == false
-      @interval = setInterval( @updateCountdown, 1000 ) # magic number
+      @interval = setInterval(
+        =>
+          @updateCountdown()
+        , 1000 ) # magic number
       @startTime = @getTime()
       @timeRunning = true
       @updateMode "mark"
@@ -180,7 +182,7 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
     @timeout = setTimeout(@removeUndo, 3000) # give them 3 seconds to undo. magic number
     Utils.topAlert @text.autostop
 
-  removeUndo: =>
+  removeUndo: ->
     @undoable = false
     @updateMode "disabled"
     clearTimeout(@timeout)
@@ -195,7 +197,7 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
     @updateMode "mark"
     Utils.topAlert t("GridRunView.message.autostop_cancel")
 
-  updateCountdown: =>
+  updateCountdown: ->
     # sometimes the "tick" doesn't happen within a second
     @timeElapsed = Math.min(@getTime() - @startTime, @timer)
 
@@ -207,7 +209,7 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
         @stopTimer(simpleStop:true)
         Utils.background "red"
         _.delay(
-          =>
+          ->
             alert @text.touchLastItem
             Utils.background ""
         , 1e3) # magic number
@@ -222,7 +224,7 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
       @mode = "minuteItem"
 
 
-  updateMode: ( mode = null ) =>
+  updateMode: ( mode = null ) ->
     # dont' change the mode if the time has never been started
     if (mode==null && @timeElapsed == 0 && not @dataEntry) || mode == "disabled"
       @modeButton.setValue null
@@ -369,6 +371,7 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
       "last"       : @lastHandler
       "minuteItem" : @intermediateItemHandler
       disabled     : $.noop
+      "markElement"     : @markElement
 
     @dataEntry = options.dataEntry
 
@@ -385,29 +388,29 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
     else
       @endOfGridLine = _.template ""
 
-    ui =
-      text: @text
-    @model.set('ui', ui)
-    @model.set('untimed', @untimed)
-    @model.set('disabling', 'disabled') unless @untimed
-    @model.set('displayRtl', 'rtl_mode') if @rtl
-    @model.set('layoutMode_fixed', 'fixed') if @layoutMode == "fixed"
-    @model.set('itemMap', @itemMap)
-    @model.set('fontStyle', @fontStyle)
-    @model.set('fontSizeClass', fontSizeClass)
+#    ui =
+#      text: @text
+#    @model.set('ui', ui)
+#    @model.set('untimed', @untimed)
+#    @model.set('disabling', 'disabled') unless @untimed
+#    @model.set('displayRtl', 'rtl_mode') if @rtl
+#    @model.set('layoutMode_fixed', 'fixed') if @layoutMode == "fixed"
+#    @model.set('itemMap', @itemMap)
+#    @model.set('fontStyle', @fontStyle)
+#    @model.set('fontSizeClass', fontSizeClass)
+#    @model.set('columns', @columns)
 
-  onRender: ->
+  onBeforeRender: ->
 
     done = 0
 
-#    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>#{@text.start}</button><div class='timer'>#{@timer}</div></div>"
+    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>#{@text.start}</button><div class='timer'>#{@timer}</div></div>"
 
     disabling = "disabled" unless @untimed
 
     displayRtl = "rtl_mode" if @rtl
 
-#    html = if not @untimed then startTimerHTML else ""
-    html = ""
+    html = if not @untimed then startTimerHTML else ""
 
     gridHTML = ""
 
@@ -476,7 +479,7 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
       } if @captureLastAttempted
 
       @modeButton = new ButtonView buttonConfig
-      @listenTo @modeButton, "change click", => @updateMode()
+      @listenTo @modeButton, "change click", -> @updateMode()
       modeSelector = "
         <div class='grid_mode_wrapper question clearfix'>
           <label>#{@text.inputMode}</label><br>
@@ -503,6 +506,7 @@ GridRunItemView = Backbone.Marionette.CompositeView.extend
       #{modeSelector}
       #{(dataEntry if @dataEntry) || ''}
     "
+    @model.set('grid', html)
 
 #    @$el.html html
 

@@ -581,3 +581,19 @@ Handlebars.registerHelper('gridLabel', (items,itemMap,index) ->
 #  _.escape(items[itemMap[done]])
   _.escape(items[itemMap[index]])
 )
+Handlebars.registerHelper('startRow', (index) ->
+  console.log("index: " + index)
+  if index == 0
+    "<tr>"
+)
+Handlebars.registerHelper('endRow', (index) ->
+  console.log("index: " + index)
+  if index == 0
+    "</tr>"
+)
+
+Handlebars.registerHelper('startCell', (index) ->
+  console.log("index: " + index)
+  if index == 0
+    "<td></td>"
+)
