@@ -609,7 +609,13 @@ class GridRunItemView extends Backbone.Marionette.CompositeView
       "time_remain"   : timeRemaining
       "mark_record"   : @markRecord
       "variable_name" : @model.get("variableName")
-    return result
+    hash = @model.get("hash") if @model.has("hash")
+    subtestResult =
+      'body' : result
+      'meta' :
+        'hash' : hash
+#    return result
+    return subtestResult
 
   getSkipped: ->
     itemResults = []
@@ -633,4 +639,12 @@ class GridRunItemView extends Backbone.Marionette.CompositeView
 
   onClose: ->
     clearInterval(@interval)
+
+  getSum: ->
+#    if @prototypeView.getSum?
+#      return @prototypeView.getSum()
+#    else
+# maybe a better fallback
+    console.log("This view does not return a sum, correct?")
+    return {correct:0,incorrect:0,missing:0,total:0}
 
