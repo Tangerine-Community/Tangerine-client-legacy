@@ -2,9 +2,9 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
   template: JST["src/templates/Survey.handlebars"],
   childView: QuestionRunItemView,
   tagName: "p",
-  collectionEvents: {
-    "add": "modelAdded"
-  }
+#  collectionEvents: {
+#    "add": "modelAdded"
+#  }
 #  childViewOptions:
 #    parent: this
 #  ,
@@ -14,10 +14,14 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
     'click .next_question' : 'nextQuestion'
     'click .prev_question' : 'prevQuestion'
 
+  viewRender: ()->
+    console.log("viewRender")
+    @render
+
   initialize: (options) ->
 
     @model         = options.model
-    @parent        = options.parent
+#    @parent        = options.parent
     @dataEntry     = options.dataEntry
     @isObservation = options.isObservation
     @focusMode     = @model.getBoolean("focusMode")
@@ -29,16 +33,27 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
 #        parent: this
 
     @i18n()
-
+    this.listenTo(@model.collection,'change', this.viewRender)
+#      this.listenTo(model.collection, 'reset', this.render);
+    if @model.questions.length == 0
+      console.log("No questions.")
     @collection = @model.questions
+    @model.questions.fetch
+      viewOptions:
+        key: "question-#{@model.id}"
+      success: (collection) =>
+#        @model.questions.sort()
+        collection.sort()
+        @model.collection.models = collection.models
+        @render()
 
     Tangerine.progress.currentSubview = @
 
 #  filter: (child, index, collection) ->
 #    return child.get('value') % 2 == 0
 
-  modelAdded:->
-    console.log("model added")
+#  modelAdded:->
+#    console.log("model added")
 
   nextQuestion: ->
 

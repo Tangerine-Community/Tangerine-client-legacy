@@ -1,34 +1,46 @@
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 #  childView: SubtestRunItemView,
   getChildView: (model) ->
-
-    collection = model.collection
+#    collection = model.collection
 #    currentModel = @model.subtests.models[@index]
     console.log("@index: " + @index)
-    currentModel = @subtestViews[@index].model
-    currentModel.questions     = new Questions()
+#    model = @subtestViews[@index].model
+    model.parent = @
+    if !model.questions
+      model.questions     = new Questions()
     # @questions.db.view = "questionsBySubtestId" Bring this back when prototypes make sense again
-    currentModel.questions.fetch
-      viewOptions:
-        key: "question-#{currentModel.id}"
-      success: (collection) =>
-        currentModel.questions.sort()
-    if currentModel.get("collection") == 'result'
+#    this.listenTo(model,'change', console.log("@currentModel changed."));
+
+    if model.get("collection") == 'result'
       currentSubview =  ResultItemView
     else
-      prototypeName = currentModel.get('prototype').titleize() + "RunItemView"
+      prototypeName = model.get('prototype').titleize() + "RunItemView"
       if  (prototypeName == 'SurveyRunItemView')
         currentSubview = SurveyRunItemView
       else if  (prototypeName == 'GridRunItemView')
         currentSubview = GridRunItemView
       else
-        currentSubview =  SubtestRunItemView
         currentSubview =  null
         console.log("currentSubview is not defined.")
-#    Tangerine.progress.currentSubview = currentSubview
+    model.questions.fetch
+      viewOptions:
+        key: "question-#{model.id}"
+      success: (collection) =>
+        model.questions.sort()
+        model.collection = model.questions
+        @collection.models = collection.models
+#        currentSubview.collection = model.questions
+    #    Tangerine.progress.currentSubview = currentSubview
     @ready = true
+#    currentSubview.model = model
+#        defer.resolve(@currentModel.questions.sort())
     return currentSubview
-  ,
+
+  childViewOptions: (model, index)->
+    console.log("childViewOptions model")
+#    model = @subtestViews[@index].model
+#    model =  @currentModel
+
   attachHtml: (collectionView, childView, index) ->
 #    collectionView.$("#subtest_wrapper").append(childView.el);
     if (collectionView.isBuffering)
@@ -37,17 +49,17 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       if (!collectionView._insertBefore(childView, index))
         collectionView._insertAfter(childView);
 
-#  childViewOptions: (model, index)->
-#      foo: "bar",
-#      childIndex: index
+
 
 #  childViewEventPrefix: "childView:happen"
   childEvents: ->
-    render: ->
-      console.log("childEvents render")
+#    render: ->
+#      console.log("childEvents render")
+#      @render()
     next: ->
       console.log("childEvents next")
       @step 1
+
 
   collectionEvents:->
     "add": ->
@@ -106,7 +118,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     Tangerine.activity = "assessment run"
     @subtestViews = []
-#    @model.parent = @
+    @model.parent = @
     @model.subtests.sort()
 #    @model.subtests.models.sort()
     @model.subtests.each (model) =>
@@ -260,6 +272,9 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         @subtestViews.length-1
       else
         @index + increment
+    model = @subtestViews[@index].model
+#    this will trigger rendering
+    @collection.models = [model]
     @render()
     window.scrollTo 0, 0
 
