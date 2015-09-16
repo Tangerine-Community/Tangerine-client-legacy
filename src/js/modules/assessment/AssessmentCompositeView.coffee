@@ -1,16 +1,10 @@
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
-#  childView: SubtestRunItemView,
   getChildView: (model) ->
-#    collection = model.collection
-#    currentModel = @model.subtests.models[@index]
+
     console.log("@index: " + @index)
-#    model = @subtestViews[@index].model
     model.parent = @
     if !model.questions
       model.questions     = new Questions()
-    # @questions.db.view = "questionsBySubtestId" Bring this back when prototypes make sense again
-#    this.listenTo(model,'change', console.log("@currentModel changed."));
-
     if model.get("collection") == 'result'
       currentSubview =  ResultItemView
     else
@@ -29,37 +23,12 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         model.questions.sort()
         model.collection = model.questions
         @collection.models = collection.models
-#        currentSubview.collection = model.questions
-    #    Tangerine.progress.currentSubview = currentSubview
     @ready = true
-#    currentSubview.model = model
-#        defer.resolve(@currentModel.questions.sort())
     return currentSubview
 
-  childViewOptions: (model, index)->
-    console.log("childViewOptions model")
-#    model = @subtestViews[@index].model
-#    model =  @currentModel
-
-  attachHtml: (collectionView, childView, index) ->
-#    collectionView.$("#subtest_wrapper").append(childView.el);
-    if (collectionView.isBuffering)
-      collectionView._bufferedChildren.splice(index, 0, childView);
-    else
-      if (!collectionView._insertBefore(childView, index))
-        collectionView._insertAfter(childView);
-
-
-
-#  childViewEventPrefix: "childView:happen"
-  childEvents: ->
-#    render: ->
-#      console.log("childEvents render")
-#      @render()
     next: ->
       console.log("childEvents next")
       @step 1
-
 
   collectionEvents:->
     "add": ->
@@ -74,19 +43,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     'click .subtest_help' : 'toggleHelp'
     'click .skip'         : 'skip'
 
-#  el:'content'
-
-#  this.on "childView:happen:next", ->
-#    console.log("currentView next")
-#    @step 1
-
-#    Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
-#    Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
-#
-#    Tangerine.progress.currentSubview.on "next",    =>
-#      console.log("currentView next")
-#      @step 1
-#    Tangerine.progress.currentSubview.on "back",    => @step -1
   i18n: ->
     @text =
       "next" : t("SubtestRunView.button.next")
@@ -103,7 +59,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @index = Tangerine.progress.index
 
     @abortAssessment = false
-#    @index = Tangerine.progress.index
     @model = options.model
 
     @orderMap = []
@@ -120,22 +75,17 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @subtestViews = []
     @model.parent = @
     @model.subtests.sort()
-#    @model.subtests.models.sort()
     @model.subtests.each (model) =>
-#    @model.subtests.models.each (model) =>
       model.parent = @
       @subtestViews.push new SubtestRunView
         model  : model
         parent : @
 
-#    @collection = @model.subtests
-#    newObject = jQuery.extend({}, @model.subtests);
     col = {}
     col.models = []
     model = @model.subtests.models[@index]
     col.models.push model
     @collection = col
-
 
     hasSequences = @model.has("sequences") && not _.isEmpty(_.compact(_.flatten(@model.get("sequences"))))
 
@@ -174,7 +124,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @subtestViews.push resultView
 
     ui = {}
-    ui.enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
+#    ui.enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
     ui.studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
     ui.transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
 
@@ -187,8 +137,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @model.set('ui', ui)
 
   onRender:->
-#      currentView = @subtestViews[@orderMap[@index]]
-#      console.log("currentView: " + currentView)
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
 
     Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
@@ -234,12 +182,10 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   step: (increment) ->
 
     if @abortAssessment
-#      currentView = @subtestViews[@orderMap[@index]]
       currentView = Tangerine.progress.currentSubview
       @saveResult( currentView )
       return
 
-#    currentView = @subtestViews[@orderMap[@index]]
     currentView = Tangerine.progress.currentSubview
 #    if currentView.isValid()
     @saveResult( currentView, increment )
@@ -264,8 +210,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   reset: (increment) ->
     @rendered.subtest = false
     @rendered.assessment = false
-#    currentView = @subtestViews[@orderMap[@index]]
-#    currentView.close()
     Tangerine.progress.currentSubview.close();
     @index =
       if @abortAssessment == true
@@ -273,7 +217,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       else
         @index + increment
     model = @subtestViews[@index].model
-#    this will trigger rendering
     @collection.models = [model]
     @render()
     window.scrollTo 0, 0
@@ -319,4 +262,3 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     else
 # maybe a better fallback
       return {correct:0,incorrect:0,missing:0,total:0}
-
