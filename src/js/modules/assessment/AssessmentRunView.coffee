@@ -142,7 +142,6 @@ class AssessmentRunView extends Backbone.View
     @render()
     window.scrollTo 0, 0
 
-
   saveResult: ( currentView, increment ) =>
 
     subtestResult = currentView.getResult()

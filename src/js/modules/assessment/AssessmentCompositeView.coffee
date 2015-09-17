@@ -1,7 +1,6 @@
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   getChildView: (model) ->
-
-    console.log("@index: " + @index)
+#    console.log("@index: " + @index)
     model.parent = @
     if !model.questions
       model.questions     = new Questions()
@@ -81,11 +80,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         model  : model
         parent : @
 
-    col = {}
-    col.models = []
-    model = @model.subtests.models[@index]
-    col.models.push model
-    @collection = col
 
     hasSequences = @model.has("sequences") && not _.isEmpty(_.compact(_.flatten(@model.get("sequences"))))
 
@@ -122,6 +116,14 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       assessment     : @model
       assessmentView : @
     @subtestViews.push resultView
+
+    col = {}
+    col.models = []
+    #    model = @model.subtests.models[@index]
+    model = @subtestViews[@orderMap[@index]].model
+#    @collection.models = [model]
+    col.models.push model
+    @collection = col
 
     ui = {}
 #    ui.enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
@@ -195,7 +197,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 #      from SubtestRunView
 
   next: ->
-    console.log("next")
+#    console.log("next")
     #    @trigger "next"
     @step 1
   back: -> @trigger "back"
@@ -216,7 +218,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         @subtestViews.length-1
       else
         @index + increment
-    model = @subtestViews[@index].model
+    model = @subtestViews[@orderMap[@index]].model
     @collection.models = [model]
     @render()
     window.scrollTo 0, 0

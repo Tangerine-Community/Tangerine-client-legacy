@@ -33,19 +33,19 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
 #        parent: this
 
     @i18n()
-    this.listenTo(@model.collection,'change', this.viewRender)
+#    this.listenTo(@model.collection,'change', this.viewRender)
 #      this.listenTo(model.collection, 'reset', this.render);
-    if @model.questions.length == 0
-      console.log("No questions.")
+#    if @model.questions.length == 0
+#      console.log("No questions.")
     @collection = @model.questions
-    @model.questions.fetch
-      viewOptions:
-        key: "question-#{@model.id}"
-      success: (collection) =>
-#        @model.questions.sort()
-        collection.sort()
-        @model.collection.models = collection.models
-        @render()
+#    @model.questions.fetch
+#      viewOptions:
+#        key: "question-#{@model.id}"
+#      success: (collection) =>
+##        @model.questions.sort()
+#        collection.sort()
+#        @model.collection.models = collection.models
+#        @render()
 
     Tangerine.progress.currentSubview = @
 
