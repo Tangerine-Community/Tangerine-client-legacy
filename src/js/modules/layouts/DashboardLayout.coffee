@@ -4,4 +4,3 @@ DashboardLayout = Backbone.Marionette.LayoutView.extend
         headerRegion: "#header-region",
         contentRegion: "#content-region"
         footerRegion: "#footer-region"
-
