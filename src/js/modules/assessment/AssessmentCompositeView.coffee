@@ -14,7 +14,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         currentSubview = GridRunItemView
       else
         currentSubview =  null
-        console.log("currentSubview is not defined.")
+        console.log(prototypeName + "  Subview is not defined.")
     model.questions.fetch
       viewOptions:
         key: "question-#{model.id}"
