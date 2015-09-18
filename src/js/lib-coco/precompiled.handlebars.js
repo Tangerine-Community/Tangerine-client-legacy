@@ -62,6 +62,13 @@ this["JST"]["src/templates/AssessmentView.handlebars"] = Handlebars.template({"c
     + "\n</div>\n";
 },"useData":true});
 
+this["JST"]["src/templates/Button.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var stack1, helper;
+
+  return ((stack1 = ((helper = (helper = helpers.button || (depth0 != null ? depth0.button : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"button","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "\n";
+},"useData":true});
+
 this["JST"]["src/templates/DashboardLayout.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     return "<div id=\"header-region\"></div>\n<div id=\"content-region\"></div>\n<div id=\"footer-region\"></div>\n\n";
 },"useData":true});

@@ -28,7 +28,9 @@ jsFiles = [
 
   "helpers.js",
 
+  "modules/button/Button.js",
   "modules/button/ButtonView.js",
+  "modules/button/ButtonItemView.js",
 
   "modules/assessment/Assessment.js",
   "modules/assessment/Assessments.js",

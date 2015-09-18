@@ -1,7 +1,7 @@
-class GridRunItemView extends Backbone.Marionette.CompositeView
+class GridRunItemView extends Backbone.Marionette.ItemView
   className: "gridItem"
   template: JST["src/templates/Grid.handlebars"],
-  childView: QuestionRunItemView,
+#  childView: QuestionRunItemView,
 
   events: if Modernizr.touch then {
     'click .grid_element'     : 'gridClick' #click
@@ -16,23 +16,6 @@ class GridRunItemView extends Backbone.Marionette.CompositeView
     'click .stop_time'        : 'stopTimer'
     'click .restart'          : 'restartTimer'
   }
-
-#  initialize: (options) ->
-#    @model         = options.model
-#    @parent        = options.parent
-#    @dataEntry     = options.dataEntry
-#    @isObservation = options.isObservation
-#    @focusMode     = @model.getBoolean("focusMode")
-#    @questionIndex = 0 if @focusMode
-#    @questionViews = []
-#    @answered      = []
-#    @renderCount   = 0
-#
-#    @i18n()
-#
-#    @collection = @model.questions
-#
-#    Tangerine.progress.currentSubview = @
 
   restartTimer: ->
     @stopTimer(simpleStop:true) if @timeRunning
@@ -59,7 +42,7 @@ class GridRunItemView extends Backbone.Marionette.CompositeView
     @checkAutostop() if @autostop != 0
 
 
-  intermediateItemHandler: (event) ->
+  intermediateItemHandler: (event) =>
     @timeIntermediateCaptured = @getTime() - @startTime
     $target = $(event.target)
     index = $target.attr('data-index')
@@ -123,7 +106,7 @@ class GridRunItemView extends Backbone.Marionette.CompositeView
 
       @checkAutostop() if @autostop != 0
 
-  lastHandler: (event, index) ->
+  lastHandler: (event, index) =>
     if index?
       $target = @$el.find(".grid_element[data-index=#{index}]")
     else
@@ -182,7 +165,7 @@ class GridRunItemView extends Backbone.Marionette.CompositeView
     @timeout = setTimeout(@removeUndo, 3000) # give them 3 seconds to undo. magic number
     Utils.topAlert @text.autostop
 
-  removeUndo: ->
+  removeUndo: =>
     @undoable = false
     @updateMode "disabled"
     clearTimeout(@timeout)
@@ -197,7 +180,7 @@ class GridRunItemView extends Backbone.Marionette.CompositeView
     @updateMode "mark"
     Utils.topAlert t("GridRunView.message.autostop_cancel")
 
-  updateCountdown: ->
+  updateCountdown: =>
     # sometimes the "tick" doesn't happen within a second
     @timeElapsed = Math.min(@getTime() - @startTime, @timer)
 
@@ -209,7 +192,7 @@ class GridRunItemView extends Backbone.Marionette.CompositeView
         @stopTimer(simpleStop:true)
         Utils.background "red"
         _.delay(
-          ->
+          =>
             alert @text.touchLastItem
             Utils.background ""
         , 1e3) # magic number
@@ -224,7 +207,7 @@ class GridRunItemView extends Backbone.Marionette.CompositeView
       @mode = "minuteItem"
 
 
-  updateMode: ( mode = null ) ->
+  updateMode: ( mode = null ) =>
     # dont' change the mode if the time has never been started
     if (mode==null && @timeElapsed == 0 && not @dataEntry) || mode == "disabled"
       @modeButton.setValue null
@@ -387,17 +370,8 @@ class GridRunItemView extends Backbone.Marionette.CompositeView
     else
       @endOfGridLine = _.template ""
 
-#    ui =
-#      text: @text
-#    @model.set('ui', ui)
-#    @model.set('untimed', @untimed)
-#    @model.set('disabling', 'disabled') unless @untimed
-#    @model.set('displayRtl', 'rtl_mode') if @rtl
-#    @model.set('layoutMode_fixed', 'fixed') if @layoutMode == "fixed"
-#    @model.set('itemMap', @itemMap)
-#    @model.set('fontStyle', @fontStyle)
-#    @model.set('fontSizeClass', fontSizeClass)
-#    @model.set('columns', @columns)
+  ui:
+    modeButton: ".mode-button"
 
   onBeforeRender: ->
 
@@ -458,9 +432,12 @@ class GridRunItemView extends Backbone.Marionette.CompositeView
 
       @modeButton?.close()
 
+      model = new Button({foo: "bar"})
+
       buttonConfig =
         options : []
         mode    : "single"
+        model   : model
 
       buttonConfig.options.push {
         label : @text.mark
@@ -477,7 +454,7 @@ class GridRunItemView extends Backbone.Marionette.CompositeView
         value : "last"
       } if @captureLastAttempted
 
-      @modeButton = new ButtonView buttonConfig
+      @modeButton = new ButtonItemView buttonConfig
       @listenTo @modeButton, "change click", -> @updateMode()
       modeSelector = "
         <div class='grid_mode_wrapper question clearfix'>
@@ -509,6 +486,12 @@ class GridRunItemView extends Backbone.Marionette.CompositeView
 
 #    @$el.html html
 
+#    @modeButton.setElement @$el.find ".mode-button"
+#    @modeButton.render()
+
+
+
+  onRender: ->
     @modeButton.setElement @$el.find ".mode-button"
     @modeButton.render()
 
