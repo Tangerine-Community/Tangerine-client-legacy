@@ -171,7 +171,7 @@ this["JST"]["src/templates/HomeView.handlebars"] = Handlebars.template({"compile
 this["JST"]["src/templates/QuestionView.handlebars"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
     var stack1, helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;
 
-  return "\n<div class='error_message'></div>\n<div class='prompt' "
+  return "<div class='error_message'></div>\n<div class='prompt' "
     + alias3(((helper = (helper = helpers.fontStyle || (depth0 != null ? depth0.fontStyle : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"fontStyle","hash":{},"data":data}) : helper)))
     + ">"
     + alias3(((helper = (helper = helpers.prompt || (depth0 != null ? depth0.prompt : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"prompt","hash":{},"data":data}) : helper)))
@@ -181,9 +181,7 @@ this["JST"]["src/templates/QuestionView.handlebars"] = Handlebars.template({"1":
     + alias3(((helper = (helper = helpers.hint || (depth0 != null ? depth0.hint : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"hint","hash":{},"data":data}) : helper)))
     + "</div>\n"
     + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.isOpen : depth0),{"name":"if","hash":{},"fn":this.program(2, data, 0),"inverse":this.program(7, data, 0),"data":data})) != null ? stack1 : "")
-    + "\n"
-    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.isObservation : depth0),{"name":"if","hash":{},"fn":this.program(9, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
-    + "\n";
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.isObservation : depth0),{"name":"if","hash":{},"fn":this.program(9, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "");
 },"2":function(depth0,helpers,partials,data) {
     var stack1;
 
@@ -220,13 +218,19 @@ this["JST"]["src/templates/QuestionView.handlebars"] = Handlebars.template({"1":
   return "    <img src='images/icon_scroll.png' class='icon autoscroll_icon' data-cid='"
     + this.escapeExpression(((helper = (helper = helpers.cid || (depth0 != null ? depth0.cid : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"cid","hash":{},"data":data}) : helper)))
     + "'>\n";
+},"11":function(depth0,helpers,partials,data) {
+    var stack1, alias1=this.lambda, alias2=this.escapeExpression;
+
+  return "<div id='summary_container'></div>\n<button class='navigation prev_question'>"
+    + alias2(alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.previousQuestion : stack1), depth0))
+    + "</button>\n<button class='navigation next_question'>"
+    + alias2(alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.nextQuestion : stack1), depth0))
+    + "</button>\n";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var stack1;
 
-  return this.escapeExpression(helpers.log.call(depth0,"Look at me!",depth0,{"name":"log","hash":{},"data":data}))
-    + "\n\n"
-    + ((stack1 = helpers.unless.call(depth0,(depth0 != null ? depth0.notAsked : depth0),{"name":"unless","hash":{},"fn":this.program(1, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
-    + "\n\n";
+  return ((stack1 = helpers.unless.call(depth0,(depth0 != null ? depth0.notAsked : depth0),{"name":"unless","hash":{},"fn":this.program(1, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.focusMode : depth0),{"name":"if","hash":{},"fn":this.program(11, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "");
 },"useData":true});
 
 this["JST"]["src/templates/SubtestRunItemView.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
@@ -253,7 +257,7 @@ this["JST"]["src/templates/Survey.handlebars"] = Handlebars.template({"1":functi
     var stack1, helper, alias1=this.escapeExpression, alias2=helpers.helperMissing, alias3="function";
 
   return "    <button class='subtest_help command'>"
-    + alias1(this.lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.help : stack1), depth0))
+    + alias1(this.lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.help : stack1), depth0))
     + "</button>\n    <div class='enumerator_help'>"
     + alias1(((helper = (helper = helpers.fontStyle || (depth0 != null ? depth0.fontStyle : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(depth0,{"name":"fontStyle","hash":{},"data":data}) : helper)))
     + ">"

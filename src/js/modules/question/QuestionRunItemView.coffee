@@ -43,7 +43,9 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
       @updateResult()
 
     if @type == "single" or @type == "multiple"
-      @button = new ButtonView
+      model = new Button({foo: "bar"})
+      @button = new ButtonItemView
+        model   : model
         options : @options
         mode    : @type
         dataEntry  : @dataEntry
@@ -163,16 +165,21 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
           @model.set('answerValue', @answer)
         if @model.get("multiline")
           @model.set('isMultiline', true)
-      if @type == "single" or @type == "multiple"
-        @button.setElement(@$el.find(".button_container"))
-        @button.on "rendered", => @trigger "rendered"
-        @button.render()
+#      if @type == "single" or @type == "multiple"
+#        @button.setElement(@$el.find(".button_container"))
+#        @button.on "rendered", => @trigger "rendered"
+#        @button.render()
       else
         @trigger "rendered"
     else
       @$el.hide()
       @trigger "rendered"
 
+  onRender: ->
+    if @type == "single" or @type == "multiple"
+      @button.setElement @$el.find ".button_container"
+      @button.on "rendered", => @trigger "rendered"
+      @button.render()
 
   renderNOT: ->
     @$el.attr "id", "question-#{@name}"

@@ -1,7 +1,4 @@
-{{log "Look at me!" this}}
-
 {{#unless notAsked}}
-
 <div class='error_message'></div>
 <div class='prompt' {{fontStyle}}>{{prompt}}</div>
 <div class='hint' {{fontStyle}}>{{hint}}</div>
@@ -14,11 +11,12 @@
 {{else}}
     <div class='button_container'></div>
 {{/if}}
-
 {{#if isObservation}}
     <img src='images/icon_scroll.png' class='icon autoscroll_icon' data-cid='{{cid}}'>
 {{/if}}
-
 {{/unless}}
-
-
+{{#if focusMode}}
+<div id='summary_container'></div>
+<button class='navigation prev_question'>{{labels.text.previousQuestion}}</button>
+<button class='navigation next_question'>{{labels.text.nextQuestion}}</button>
+{{/if}}

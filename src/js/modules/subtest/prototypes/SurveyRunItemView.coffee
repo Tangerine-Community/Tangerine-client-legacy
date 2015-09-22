@@ -343,6 +343,9 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
 
     name   = model.escape("name").replace /[^A-Za-z0-9_]/g, "-"
     answer = previous[name] if previous
+    labels = {}
+    labels.text = @text
+    model.set('labels', labels)
     options =
       model         : model
       parent        : @
