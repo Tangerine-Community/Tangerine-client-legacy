@@ -59,6 +59,7 @@ jsFiles = [
   'modules/subtest/prototypes/ConsentRunView.js',
 
   'modules/subtest/prototypes/DatetimeRunView.js',
+  'modules/subtest/prototypes/DatetimeRunItemView.js',
 
   'modules/subtest/prototypes/LocationRunView.js',
 

@@ -12,6 +12,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         currentSubview = SurveyRunItemView
       else if  (prototypeName == 'GridRunItemView')
         currentSubview = GridRunItemView
+      else if  (prototypeName == 'DatetimeRunItemView')
+        currentSubview = DatetimeRunItemView
       else
         currentSubview =  null
         console.log(prototypeName + "  Subview is not defined.")

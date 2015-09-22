@@ -153,13 +153,16 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
   getName: =>
     @model.get("name")
 
-  onRender: ->
+  onBeforeRender: ->
     @$el.attr "id", "question-#{@name}"
-    if @type == "open"
-      @model.isOpen = true
-    if _.isString(@answer) && not _.isEmpty(@answer)
-      @model.answerValue = @answer
     if not @notAsked
+      if @type == "open"
+        @model.set('isOpen', true)
+        if _.isString(@answer) && not _.isEmpty(@answer)
+          answerValue = @answer
+          @model.set('answerValue', @answer)
+        if @model.get("multiline")
+          @model.set('isMultiline', true)
       if @type == "single" or @type == "multiple"
         @button.setElement(@$el.find(".button_container"))
         @button.on "rendered", => @trigger "rendered"

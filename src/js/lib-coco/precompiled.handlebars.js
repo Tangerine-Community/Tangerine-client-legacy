@@ -73,6 +73,20 @@ this["JST"]["src/templates/DashboardLayout.handlebars"] = Handlebars.template({"
     return "<div id=\"header-region\"></div>\n<div id=\"content-region\"></div>\n<div id=\"footer-region\"></div>\n\n";
 },"useData":true});
 
+this["JST"]["src/templates/Datetime.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var stack1, alias1=this.lambda, alias2=this.escapeExpression;
+
+  return "<div class='question'>\n    <table>\n        <tr>\n            <td><label for='year'>"
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.text : depth0)) != null ? stack1.year : stack1), depth0))
+    + "</label><input id='year' value='#{year}'></td>\n            <td>\n                <label for='month'>"
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.text : depth0)) != null ? stack1.month : stack1), depth0))
+    + "</label><br>\n                <select id='month' value='#{month}'>#{(\"<option value='#{m}' #{(\"selected='selected'\" if m is month) || ''}>#{m.titleize()} </option>\" for m in months).join('')}}</select>\n            </td>\n            <td><label for='day'>"
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.text : depth0)) != null ? stack1.day : stack1), depth0))
+    + "</label><input id='day' type='day' value='#{day}'></td>\n        </tr>\n        <tr>\n            <td><label for='time'>"
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.text : depth0)) != null ? stack1.time : stack1), depth0))
+    + "</label><br><input type='text' id='time' value='#{time}'></td>\n        </tr>\n    </table>\n</div>\n";
+},"useData":true});
+
 this["JST"]["src/templates/Grid.handlebars"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
     var stack1, helper, alias1=this.escapeExpression, alias2=helpers.helperMissing, alias3="function";
 
@@ -168,12 +182,12 @@ this["JST"]["src/templates/QuestionView.handlebars"] = Handlebars.template({"1":
     + "</div>\n"
     + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.isOpen : depth0),{"name":"if","hash":{},"fn":this.program(2, data, 0),"inverse":this.program(7, data, 0),"data":data})) != null ? stack1 : "")
     + "\n"
-    + ((stack1 = helpers['if'].call(depth0,(data && data.isObservation),{"name":"if","hash":{},"fn":this.program(9, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.isObservation : depth0),{"name":"if","hash":{},"fn":this.program(9, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + "\n";
 },"2":function(depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.multiline : depth0),{"name":"if","hash":{},"fn":this.program(3, data, 0),"inverse":this.program(5, data, 0),"data":data})) != null ? stack1 : "");
+  return ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.isMultiline : depth0),{"name":"if","hash":{},"fn":this.program(3, data, 0),"inverse":this.program(5, data, 0),"data":data})) != null ? stack1 : "");
 },"3":function(depth0,helpers,partials,data) {
     var helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;
 
@@ -209,7 +223,10 @@ this["JST"]["src/templates/QuestionView.handlebars"] = Handlebars.template({"1":
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = helpers.unless.call(depth0,(depth0 != null ? depth0.notAsked : depth0),{"name":"unless","hash":{},"fn":this.program(1, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "");
+  return this.escapeExpression(helpers.log.call(depth0,"Look at me!",depth0,{"name":"log","hash":{},"data":data}))
+    + "\n\n"
+    + ((stack1 = helpers.unless.call(depth0,(depth0 != null ? depth0.notAsked : depth0),{"name":"unless","hash":{},"fn":this.program(1, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + "\n\n";
 },"useData":true});
 
 this["JST"]["src/templates/SubtestRunItemView.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {

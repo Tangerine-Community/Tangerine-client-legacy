@@ -1,6 +1,7 @@
-class DatetimeRunView extends Backbone.View
+DatetimeRunItemView =  Backbone.Marionette.CompositeView.extend
 
-  className: "datetime"
+  template: JST["src/templates/Datetime.handlebars"]
+  className: "datetimeitem"
 
   i18n: ->
 
@@ -30,8 +31,7 @@ class DatetimeRunView extends Backbone.View
 
     unless @dataEntry
 
-
-      previous = @parent.parent.result.getByHash(@model.get('hash'))
+      previous =  @model.parent.result.getByHash(@model.get('hash'))
 
       if previous
         year  = previous.year
