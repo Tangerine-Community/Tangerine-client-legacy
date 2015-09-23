@@ -143,7 +143,8 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
     @$el.find(".error_message").html message
 
   setPrompt: (prompt) =>
-    @$el.find(".prompt").html prompt
+#    @$el.find(".prompt").html prompt
+    $(".prompt").html prompt
 
   setHint: (hint) =>
 #    @$el.find(".hint").html hint

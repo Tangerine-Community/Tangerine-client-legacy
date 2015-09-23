@@ -6,14 +6,8 @@
 
 ResultOfQuestion = (name) ->
   returnView = null
-  if typeof vm.currentView.result == 'undefined'
-    console.log("Using Tangerine.progress.currentSubview")
-    viewMaster = Tangerine.progress.currentSubview.parent
-  else
-    viewMaster = vm.currentView
-  index = viewMaster.orderMap[viewMaster.index]
-
-  viewMaster.subtestViews[index].prototypeView.questionViews.forEach (candidateView) ->
+#  viewMaster.subtestViews[index].prototypeView.questionViews.forEach (candidateView) ->
+  Tangerine.progress.currentSubview.questionViews.forEach (candidateView) ->
     if candidateView.model.get("name") == name
       returnView = candidateView
   throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
@@ -22,14 +16,8 @@ ResultOfQuestion = (name) ->
 
 ResultOfMultiple = (name) ->
   returnView = null
-  if typeof viewMaster.result == 'undefined'
-    console.log("Using Tangerine.progress.currentSubview")
-    viewMaster = Tangerine.progress.currentSubview.parent
-  else
-    viewMaster = vm.currentView
-  index = viewMaster.orderMap[viewMaster.index]
-
-  viewMaster.subtestViews[index].prototypeView.questionViews.forEach (candidateView) ->
+#  viewMaster.subtestViews[index].prototypeView.questionViews.forEach (candidateView) ->
+  Tangerine.progress.currentSubview.questionViews.forEach (candidateView) ->
     if candidateView.model.get("name") == name
       returnView = candidateView
   throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
