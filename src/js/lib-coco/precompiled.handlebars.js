@@ -1,51 +1,5 @@
 this["JST"] = this["JST"] || {};
 
-this["JST"]["src/templates/AssessmentControls.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-    var stack1, helper, alias1=this.escapeExpression, alias2=this.lambda;
-
-  return "<h2>"
-    + alias1(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"name","hash":{},"data":data}) : helper)))
-    + "</h2>\n<div id='progress'></div>\n"
-    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.enumeratorHelp : stack1), depth0))
-    + "\n"
-    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.studentDialog : stack1), depth0))
-    + "\n<div id='subtest_wrapper'></div>\n<div class='controlls clearfix'>\n    "
-    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.transitionComment : stack1), depth0))
-    + "\n    "
-    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.backButton : stack1), depth0))
-    + "\n    <button class='subtest-next navigation'>"
-    + alias1(alias2(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.next : stack1), depth0))
-    + "</button>\n    "
-    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.skipButton : stack1), depth0))
-    + "\n</div>\n\n\n";
-},"useData":true});
-
-this["JST"]["src/templates/AssessmentDashboardFooter.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-    var stack1, alias1=this.lambda, alias2=this.escapeExpression;
-
-  return "<div class='controlls clearfix'>\n    "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.transitionComment : stack1), depth0))
-    + "\n    "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.backButton : stack1), depth0))
-    + "\n    <button class='subtest-next navigation'>"
-    + alias2(alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.next : stack1), depth0))
-    + "</button>\n    "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.skipButton : stack1), depth0))
-    + "\n</div>\n";
-},"useData":true});
-
-this["JST"]["src/templates/AssessmentDashboardHeader.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-    var stack1, helper, alias1=this.escapeExpression, alias2=this.lambda;
-
-  return "<h2>"
-    + alias1(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"name","hash":{},"data":data}) : helper)))
-    + "</h2>\n<div id='progress'></div>\n"
-    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.enumeratorHelp : stack1), depth0))
-    + "\n"
-    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.studentDialog : stack1), depth0))
-    + "\n<div id='prototype_wrapper'></div>\n\n\n";
-},"useData":true});
-
 this["JST"]["src/templates/AssessmentView.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var stack1, helper, alias1=this.escapeExpression, alias2=this.lambda;
 
@@ -233,26 +187,6 @@ this["JST"]["src/templates/QuestionView.handlebars"] = Handlebars.template({"1":
     + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.focusMode : depth0),{"name":"if","hash":{},"fn":this.program(11, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "");
 },"useData":true});
 
-this["JST"]["src/templates/SubtestRunItemView.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-    var stack1, helper, alias1=this.escapeExpression, alias2=this.lambda;
-
-  return "<h2>"
-    + alias1(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"name","hash":{},"data":data}) : helper)))
-    + "</h2>\n"
-    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.enumeratorHelp : stack1), depth0))
-    + "\n"
-    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.studentDialog : stack1), depth0))
-    + "\n<div id='prototype_wrapper'></div>\n\n<div class='controlls clearfix'>\n    "
-    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.transitionComment : stack1), depth0))
-    + "\n    "
-    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.backButton : stack1), depth0))
-    + "\n    <button class='subtest-next navigation'>"
-    + alias1(alias2(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.next : stack1), depth0))
-    + "</button>\n    "
-    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.skipButton : stack1), depth0))
-    + "\n</div>\n";
-},"useData":true});
-
 this["JST"]["src/templates/Survey.handlebars"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
     var stack1, helper, alias1=this.escapeExpression, alias2=helpers.helperMissing, alias3="function";
 
@@ -279,4 +213,70 @@ this["JST"]["src/templates/Survey.handlebars"] = Handlebars.template({"1":functi
     + "<h3>"
     + this.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"name","hash":{},"data":data}) : helper)))
     + "</h3>\n";
+},"useData":true});
+
+this["JST"]["src/templates/unused/AssessmentControls.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var stack1, helper, alias1=this.escapeExpression, alias2=this.lambda;
+
+  return "<h2>"
+    + alias1(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</h2>\n<div id='progress'></div>\n"
+    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.enumeratorHelp : stack1), depth0))
+    + "\n"
+    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.studentDialog : stack1), depth0))
+    + "\n<div id='subtest_wrapper'></div>\n<div class='controlls clearfix'>\n    "
+    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.transitionComment : stack1), depth0))
+    + "\n    "
+    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.backButton : stack1), depth0))
+    + "\n    <button class='subtest-next navigation'>"
+    + alias1(alias2(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.next : stack1), depth0))
+    + "</button>\n    "
+    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.skipButton : stack1), depth0))
+    + "\n</div>\n\n\n";
+},"useData":true});
+
+this["JST"]["src/templates/unused/AssessmentDashboardFooter.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var stack1, alias1=this.lambda, alias2=this.escapeExpression;
+
+  return "<div class='controlls clearfix'>\n    "
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.transitionComment : stack1), depth0))
+    + "\n    "
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.backButton : stack1), depth0))
+    + "\n    <button class='subtest-next navigation'>"
+    + alias2(alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.next : stack1), depth0))
+    + "</button>\n    "
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.skipButton : stack1), depth0))
+    + "\n</div>\n";
+},"useData":true});
+
+this["JST"]["src/templates/unused/AssessmentDashboardHeader.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var stack1, helper, alias1=this.escapeExpression, alias2=this.lambda;
+
+  return "<h2>"
+    + alias1(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</h2>\n<div id='progress'></div>\n"
+    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.enumeratorHelp : stack1), depth0))
+    + "\n"
+    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.studentDialog : stack1), depth0))
+    + "\n<div id='prototype_wrapper'></div>\n\n\n";
+},"useData":true});
+
+this["JST"]["src/templates/unused/SubtestRunItemView.handlebars"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var stack1, helper, alias1=this.escapeExpression, alias2=this.lambda;
+
+  return "<h2>"
+    + alias1(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</h2>\n"
+    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.enumeratorHelp : stack1), depth0))
+    + "\n"
+    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.studentDialog : stack1), depth0))
+    + "\n<div id='prototype_wrapper'></div>\n\n<div class='controlls clearfix'>\n    "
+    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.transitionComment : stack1), depth0))
+    + "\n    "
+    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.backButton : stack1), depth0))
+    + "\n    <button class='subtest-next navigation'>"
+    + alias1(alias2(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.next : stack1), depth0))
+    + "</button>\n    "
+    + alias1(alias2(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.skipButton : stack1), depth0))
+    + "\n</div>\n";
 },"useData":true});

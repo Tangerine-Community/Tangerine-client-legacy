@@ -64,6 +64,7 @@ ResultItemView =  Backbone.Marionette.CompositeView.extend
       finishCheck : false
 
   render: ->
+    $(".subtest-next").hide()
     @$el.html "
       <h2>#{@text.assessmentComplete}</h2>
 

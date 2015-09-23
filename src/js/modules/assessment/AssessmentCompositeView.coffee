@@ -1,6 +1,8 @@
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
+
+  template: JST["src/templates/AssessmentView.handlebars"],
+
   getChildView: (model) ->
-#    console.log("@index: " + @index)
     model.parent = @
     if !model.questions
       model.questions     = new Questions()
@@ -38,7 +40,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       console.log("model added")
 
   childViewContainer: '#subtest_wrapper',
-  template: JST["src/templates/AssessmentView.handlebars"]
 
   events:
     'click .subtest-next' : 'next'
