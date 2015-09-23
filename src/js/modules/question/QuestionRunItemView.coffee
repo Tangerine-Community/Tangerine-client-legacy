@@ -68,7 +68,7 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
     catch error
       name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
       message = error.message
-      alert "Display code error\n\n#{name}\n\n#{message}"
+      alert "Display code error\n\n#{name}\n\n#{message}\n\n#{showCode}"
 
   update: (event) ->
     @updateResult()
@@ -146,7 +146,8 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
     @$el.find(".prompt").html prompt
 
   setHint: (hint) =>
-    @$el.find(".hint").html hint
+#    @$el.find(".hint").html hint
+    $(".hint").html hint
 
   setName: ( newName = @model.get('name') ) =>
     @model.set("name", newName)
