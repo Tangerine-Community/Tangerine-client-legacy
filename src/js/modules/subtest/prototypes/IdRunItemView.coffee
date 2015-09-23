@@ -54,7 +54,7 @@ IdRunItemView = Backbone.Marionette.ItemView.extend
     return { 'participant_id' : "skipped" }
 
   setValidator: ->
-    @validator.set @getResult()['participant_id']
+    @validator.set @getResult()['body']['participant_id']
 
   isValid: ->
     @setValidator()

@@ -21,7 +21,7 @@ SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
   initialize: (options) ->
 
     @model         = options.model
-#    @parent        = options.parent
+    @parent        = @model.parent
     @dataEntry     = options.dataEntry
     @isObservation = options.isObservation
     @focusMode     = @model.getBoolean("focusMode")

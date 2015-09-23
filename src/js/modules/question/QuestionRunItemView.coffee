@@ -109,7 +109,7 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
         try
           @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
         catch e
-          alert "Custom Validation error\n\n#{e}"
+          alert "Custom Validation error from customValidationCode: " + customValidationCode + "\n\n#{e}"
       else
         @isValid =
           switch @type

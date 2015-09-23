@@ -193,13 +193,12 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       return
 
     currentView = Tangerine.progress.currentSubview
-#    if currentView.isValid()
-    @saveResult( currentView, increment )
-#    else
-#      currentView.showErrors()
+    if currentView.isValid()
+      @saveResult( currentView, increment )
+    else
+      currentView.showErrors()
 
 #      from SubtestRunView
-
   next: ->
 #    console.log("next")
     #    @trigger "next"

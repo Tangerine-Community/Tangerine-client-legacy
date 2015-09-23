@@ -30,7 +30,11 @@ ResultOfMultiple = (name) ->
   return result
 
 ResultOfPrevious = (name) ->
-  return vm.currentView.result.getVariable(name)
+  if typeof vm.currentView.result == 'undefined'
+    console.log("Using Tangerine.progress.currentSubview")
+    return Tangerine.progress.currentSubview.model.parent.result.getVariable(name)
+  else
+    return vm.currentView.result.getVariable(name)
 
 ResultOfGrid = (name) ->
   return vm.currentView.result.getItemResultCountByVariableName(name, "correct")
