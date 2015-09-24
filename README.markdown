@@ -36,9 +36,10 @@ Then clone this repo.
 ## Init the source code
 
     npm install
+    bower install
     bundle install
 
-These two commands read the relevant node and ruby dependencies and installs all of the necessary libraries.
+These commands read the relevant node and ruby dependencies and installs all of the necessary libraries.
 
 There's a postinstall script that runs when npm install is done that will add the android platform and then run init.rb,
 which sets up all the js.
@@ -66,6 +67,7 @@ View package.json for other useful npm targets:
 
  - npm listen turns on the changes listener and compiles coffeescript files.
  - npm build:apk will generate a debug APK.
+ - npm test will run mocha-phantomjs tests and watch for changes to coffeescript files.
 
 # Tangerine API
 

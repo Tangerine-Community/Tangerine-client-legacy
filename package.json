@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "cordova platform add android && ./scripts/init.rb",
     "build:apk": "cordova build android",
-    "test": "mocha echo \"Error: no test specified\" && exit 1",
+    "test": "mocha-phantomjs test/index.html & grunt watch",
     "clean": "rm -rf platforms plugins node_modules",
     "listen": "./scripts/listen.rb",
     "start": "http-server -p 9000 src --silent & ./scripts/listen.rb  & grunt watch"
@@ -24,10 +24,11 @@
   "devDependencies": {
     "coffee-script": "^1.9.3",
     "cordova": "^5.2.0",
-    "http-server": "^0.8.0",
-    "shelljs": "^0.4.0",
     "grunt": "^0.4.5",
+    "grunt-contrib-coffee": "^0.13.0",
+    "grunt-contrib-handlebars": "^0.10.1",
     "grunt-contrib-watch": "~0.6.1",
-    "grunt-contrib-handlebars": "^0.10.1"
+    "http-server": "^0.8.0",
+    "shelljs": "^0.4.0"
   }
 }

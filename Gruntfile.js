@@ -14,6 +14,23 @@ module.exports = function (grunt) {
                 files: ['<%= handlebars.compile.src %>'],
                 tasks: ['handlebars:compile']
             },
+            coffee: {
+                files: ['test/**/*.coffee'],
+                tasks: ['coffee']
+            },
+        },
+        coffee: {
+            compile: {
+                options: {
+                    bare: true
+                },
+                expand: true,
+                flatten: false,
+                cwd: "test",
+                src: ["**/*.coffee"],
+                dest: 'test',
+                ext: ".js"
+            }
         },
 
         handlebars: {
@@ -31,5 +48,6 @@ module.exports = function (grunt) {
     // Requires the needed plugin
     grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-coffee');
 
 };
