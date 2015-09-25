@@ -1,8 +1,8 @@
 # Check for new database, initialize with packs if none exists
-checkDatabase = (pouchName,callback) ->
+checkDatabase = (pouchDb,callback, done) ->
 
 # Local tangerine database handle
-  db = pouchName
+  db = pouchDb
 
   db.get "initialized", (error, doc) ->
 
@@ -66,13 +66,25 @@ checkDatabase = (pouchName,callback) ->
         console.log("paddedPackNumber: " + paddedPackNumber)
         $.ajax
           dataType: "json"
-          url: "src/js/init/pack#{paddedPackNumber}.json"
+          url: "../src/js/init/pack#{paddedPackNumber}.json"
           error: (res) ->
-            console.log("loading init files. Received: " + res)
-            if res.status is 404
-              db.put({"_id":"initialized"}).then( -> callback())
+#            console.log("loading init files. Received: " + JSON.stringify res)
+            console.log("We're done. No more files to process. res.status: " + res.status)
+#            if res.status is 404 || res.status is 0
+#              console.log("res.status 404 or 0 - put init doc")
+#              db.put(
+#                _id:"initialized"
+#              ).then( ->
+#                console.log("initialized. We can party.")
+#                callback()
+#                done()
+#              ).catch((err) ->
+#                console.log("error: " + err)
+#                done()
+#              )
           success: (res) ->
             packNumber++
+            console.log("yes! uploaded paddedPackNumber: " + paddedPackNumber)
 
             db.bulkDocs res.docs, (error, doc) ->
               if error
@@ -80,3 +92,4 @@ checkDatabase = (pouchName,callback) ->
               doOne()
 
       doOne() # kick it off
+

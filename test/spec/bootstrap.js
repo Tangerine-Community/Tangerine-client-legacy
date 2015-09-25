@@ -1,8 +1,8 @@
 var checkDatabase;
 
-checkDatabase = function(pouchName, callback) {
+checkDatabase = function(pouchDb, callback, done) {
   var db;
-  db = pouchName;
+  db = pouchDb;
   return db.get("initialized", function(error, doc) {
     if (!error) {
       return callback();
@@ -66,19 +66,13 @@ checkDatabase = function(pouchName, callback) {
         console.log("paddedPackNumber: " + paddedPackNumber);
         return $.ajax({
           dataType: "json",
-          url: "src/js/init/pack" + paddedPackNumber + ".json",
+          url: "../src/js/init/pack" + paddedPackNumber + ".json",
           error: function(res) {
-            console.log("loading init files. Received: " + res);
-            if (res.status === 404) {
-              return db.put({
-                "_id": "initialized"
-              }).then(function() {
-                return callback();
-              });
-            }
+            return console.log("We're done. No more files to process. res.status: " + res.status);
           },
           success: function(res) {
             packNumber++;
+            console.log("yes! uploaded paddedPackNumber: " + paddedPackNumber);
             return db.bulkDocs(res.docs, function(error, doc) {
               if (error) {
                 return alert("could not save initialization document: " + error);

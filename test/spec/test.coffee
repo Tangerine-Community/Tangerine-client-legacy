@@ -44,7 +44,7 @@
           return new PouchDB(db).destroy()
         )).then(() ->
           console.log("PouchDB.resetAllDbs");
-          return PouchDB.resetAllDbs()
+#          return PouchDB.resetAllDbs()
         )
       )
 
@@ -55,22 +55,25 @@
         after = (err) ->
           new PouchDB(pouchName).destroy((er) ->
             if (er)
+              console.log("i got an error: " + err)
               done(er)
             else
+              console.log("we can wrap this thing up: " + err)
               done(err)
           )
 
     #    // create db
-        new PouchDB(pouchName, (err) ->
+        myPouch = new PouchDB(pouchName, (err) ->
           console.log("Created Pouch: " + pouchName)
           if (err)
+            console.log("i got an error: " + err)
             return after(err)
 
-#          checkDatabase(pouchName)
-          it('init pouch db', (done)->
-            result = checkDatabase(pouchName)
-            console.log("checkDatabase: " + result)
-          )
+#          it('init pouch db', (done)->
+#            this.timeout(15000);
+          result = checkDatabase(myPouch, done)
+#          console.log("checkDatabase: " + JSON.stringify  result)
+#          )
 
           PouchDB.allDbs( (err, dbs) ->
             if (err)
@@ -86,12 +89,12 @@
         )
       )
 
-      describe('Give it some context',  ()->
-        describe('maybe a bit more context here', () ->
-          it('should run here few assertions',  () ->
-          )
-        )
-      )
+#      describe('Give it some context',  ()->
+#        describe('maybe a bit more context here', () ->
+#          it('should run here few assertions',  () ->
+#          )
+#        )
+#      )
 
   dbs.split(',').forEach((db) ->
 #    dbType = /^http/.test(db) ? 'http' : 'local'
@@ -99,3 +102,4 @@
   )
 
 )()
+

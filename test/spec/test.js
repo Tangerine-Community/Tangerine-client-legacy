@@ -34,34 +34,33 @@
           console.log("gonna destroy db:" + db);
           return new PouchDB(db).destroy();
         })).then(function() {
-          console.log("PouchDB.resetAllDbs");
-          return PouchDB.resetAllDbs();
+          return console.log("PouchDB.resetAllDbs");
         });
       });
-      it('new Pouch registered in allDbs', function(done) {
-        var after, pouchName;
+      return it('new Pouch registered in allDbs', function(done) {
+        var after, myPouch, pouchName;
         this.timeout(15000);
         pouchName = dbName;
         dbs = [dbName];
         after = function(err) {
           return new PouchDB(pouchName).destroy(function(er) {
             if (er) {
+              console.log("i got an error: " + err);
               return done(er);
             } else {
+              console.log("we can wrap this thing up: " + err);
               return done(err);
             }
           });
         };
-        return new PouchDB(pouchName, function(err) {
+        return myPouch = new PouchDB(pouchName, function(err) {
+          var result;
           console.log("Created Pouch: " + pouchName);
           if (err) {
+            console.log("i got an error: " + err);
             return after(err);
           }
-          it('init pouch db', function(done) {
-            var result;
-            result = checkDatabase(pouchName);
-            return console.log("checkDatabase: " + result);
-          });
+          result = checkDatabase(myPouch, done);
           return PouchDB.allDbs(function(err, dbs) {
             if (err) {
               return after(err);
@@ -72,11 +71,6 @@
             }).should.equal(true, 'pouch exists in allDbs database, dbs are ' + JSON.stringify(dbs) + ', tested against ' + pouchName);
             return after();
           });
-        });
-      });
-      return describe('Give it some context', function() {
-        return describe('maybe a bit more context here', function() {
-          return it('should run here few assertions', function() {});
         });
       });
     });
