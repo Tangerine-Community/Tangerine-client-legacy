@@ -8,6 +8,8 @@
   else
     dbs = Mocha.process.env.TEST_DB
 
+  Tangerine = {}
+
   tests = (dbName)->
 #    // async method takes an array of s of signature:
 #    // `function (cb) {}`
@@ -38,10 +40,33 @@
       dbs = [];
 
       afterEach( () ->
+#        Backbone.history.start()
+        Backbone.sync = BackbonePouch.sync
+        db: Tangerine.db
+        fetch: 'view'
+        view: 'tangerine/byCollection'
+        viewOptions:
+          include_docs : true
+
+        Backbone.Model.prototype.idAttribute = '_id'
+
+        id = "70f8af3b-e1da-3a75-d84e-a7da4be99116"
+        assessment = new Assessment "_id" : id
+        assessment.deepFetch
+          success : ->
+            console.log("assessment: " + JSON.stringify assessment)
+#            Tangerine.assessment = assessment
+#            viewOptions =
+#              model: Tangerine.assessment
+#            dashboardLayout = new DashboardLayout();
+#            Tangerine.mainRegion.show dashboardLayout
+#            dashboardLayout.contentRegion.show(new AssessmentCompositeView viewOptions)
+          error: (model, err, cb) ->
+            console.log JSON.stringify err
   #    // Remove old allDbs to prevent DOM exception
-        return Promise.all(dbs.map( (db)->
+        Promise.all(dbs.map( (db)->
           console.log("gonna destroy db:" + db)
-          return new PouchDB(db).destroy()
+          new PouchDB(db).destroy()
         )).then(() ->
           console.log("PouchDB.resetAllDbs");
 #          return PouchDB.resetAllDbs()
@@ -63,7 +88,7 @@
           )
 
     #    // create db
-        myPouch = new PouchDB(pouchName, (err) ->
+        Tangerine.db = new PouchDB(pouchName, (err) ->
           console.log("Created Pouch: " + pouchName)
           if (err)
             console.log("i got an error: " + err)
@@ -71,7 +96,7 @@
 
 #          it('init pouch db', (done)->
 #            this.timeout(15000);
-          result = checkDatabase(myPouch, done)
+          result = checkDatabase(Tangerine.db, done)
 #          console.log("checkDatabase: " + JSON.stringify  result)
 #          )
 
@@ -89,12 +114,12 @@
         )
       )
 
-#      describe('Give it some context',  ()->
-#        describe('maybe a bit more context here', () ->
-#          it('should run here few assertions',  () ->
-#          )
-#        )
-#      )
+      describe('Give it some context',  ()->
+        describe('maybe a bit more context here', () ->
+          it('should run here few assertions',  () ->
+          )
+        )
+      )
 
   dbs.split(',').forEach((db) ->
 #    dbType = /^http/.test(db) ? 'http' : 'local'

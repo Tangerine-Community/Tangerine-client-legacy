@@ -70,18 +70,6 @@ checkDatabase = (pouchDb,callback, done) ->
           error: (res) ->
 #            console.log("loading init files. Received: " + JSON.stringify res)
             console.log("We're done. No more files to process. res.status: " + res.status)
-#            if res.status is 404 || res.status is 0
-#              console.log("res.status 404 or 0 - put init doc")
-#              db.put(
-#                _id:"initialized"
-#              ).then( ->
-#                console.log("initialized. We can party.")
-#                callback()
-#                done()
-#              ).catch((err) ->
-#                console.log("error: " + err)
-#                done()
-#              )
           success: (res) ->
             packNumber++
             console.log("yes! uploaded paddedPackNumber: " + paddedPackNumber)
