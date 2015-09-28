@@ -68,6 +68,13 @@ View package.json for other useful npm targets:
  - npm listen turns on the changes listener and compiles coffeescript files.
  - npm build:apk will generate a debug APK.
  - npm test will run mocha-phantomjs tests and watch for changes to coffeescript files.
+ 
+# Testing
+
+The tests run in mocha/phantomjs. The pouch runs in a websql container. At the moment, the old db's are not getting destroyed. 
+You must occasionally clear out the PhantomJS directory here:
+
+    /Users/-name-/Library/Application Support/Ofi Labs/PhantomJS
 
 # Tangerine API
 

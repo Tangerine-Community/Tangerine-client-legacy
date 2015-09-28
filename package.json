@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "cordova platform add android && ./scripts/init.rb",
     "build:apk": "cordova build android",
-    "test": "mocha-phantomjs test/index.html & grunt watch",
+    "test": "grunt test",
     "clean": "rm -rf platforms plugins node_modules",
     "listen": "./scripts/listen.rb",
     "start": "http-server -p 9000 src --silent & ./scripts/listen.rb  & grunt watch"
@@ -28,6 +28,7 @@
     "grunt-contrib-coffee": "^0.13.0",
     "grunt-contrib-handlebars": "^0.10.1",
     "grunt-contrib-watch": "~0.6.1",
+    "grunt-mocha-phantomjs": "^2.0.0",
     "http-server": "^0.8.0",
     "shelljs": "^0.4.0"
   }

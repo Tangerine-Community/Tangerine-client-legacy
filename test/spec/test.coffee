@@ -1,8 +1,6 @@
 (() ->
   'use strict'
-#  envVars = require('system').env
-#  PouchDB = require('pouchdb');
-#  require('pouchdb-all-dbs')(PouchDB);
+
   if Mocha.process.browser
     dbs = 'testdb' + Math.random()
   else
@@ -34,7 +32,7 @@
         )
       series(functions)
 
-    describe  'Should get the assessment', ()->
+    describe 'Should get the assessment', ()->
       this.timeout(10000);
 
       dbs = [];
@@ -44,70 +42,58 @@
         pouchName = dbName;
         dbs = [dbName];
         #    // create db
-        console.log("creating Tangerine.db")
         Tangerine.db = new PouchDB(pouchName, (err) ->
-          console.log("Created Pouch: " + pouchName)
+          console.log("Before: Created Pouch: " + pouchName)
           if (err)
-            console.log("i got an error: " + err)
+            console.log("Before: I got an error: " + err)
             return done(err)
           else
             return done()
-
-          #          it('init pouch db', (done)->
-          #            this.timeout(15000);
-#          result = checkDatabase(Tangerine.db, done)
-          #          console.log("checkDatabase: " + JSON.stringify  result)
-          #          )
         )
       )
+
 
       after('Teardown Pouch', (done) ->
 
         this.timeout(15000);
         pouchName = dbName;
         dbs = [dbName];
-        after = (err) ->
-          new PouchDB(pouchName).destroy((er) ->
-            if (er)
-              console.log("i got an error: " + er)
-              done(er)
-            else
-              console.log("we can wrap this thing up: " + err)
-              done(err)
-            )
 
-        PouchDB.allDbs( (err, dbs) ->
-          if (err)
-            return after(err)
-          #      // check if pouchName exists in _all_db
-          dbs.some( (dbname)->
-            if (dbname != pouchName)
-              console.log("pouchName: " + pouchName + " dbname: " + dbname)
-              new PouchDB(dbname).destroy((er) ->
-                if (er)
-                  console.log("while deleting i got an error: " + er)
-#                  done(er)
-                else
-                  console.log("good: " + er)
-#                  done(err)
-              )
-            else
-              return dbname == pouchName
-          ).should.equal(true, 'pouch exists in allDbs database, dbs are ' + JSON.stringify(dbs) + ', tested against ' + pouchName)
-          after()
-        )
+        result = Tangerine.db.destroy((er) ->
+          ).then( (er) ->
+            console.log("After: Destroyed db: " + JSON.stringify(result) + " er: " + JSON.stringify er)
+            done()
+          ).catch( (er) ->
+            console.log("After: Problem destroying db: " + er)
+            done(er)
+          )
+
+#        console.log("delete dbName" + dbName)
+#        indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.oIndexedDB || window.msIndexedDB;
+#        console.log("indexedDB: " + indexedDB);
+#        req = indexedDB.deleteDatabase(dbName)
+#        .then( (er) ->
+#          console.log("After2: Destroyed db: " + JSON.stringify(result) + " er: " + JSON.stringify er)
+#          done()
+#        ).catch( (er) ->
+#        console.log("After2: Problem destroying db: " + er)
+#        done(er)
+#        )
+#        Mocha.executeScript('window.localStorage.clear();');
+
+#        page.evaluate(() ->
+        console.log("clear locastorage" + dbName)
+        localStorage.clear();
+#        )
       )
 
-      it('Populate pouch with Assessments', (done)->
-#        result = checkDatabase(Tangerine.db, done)
 
-# Local tangerine database handle
+      it('Populate pouch with Assessments', (done)->
+
         db = Tangerine.db
         db.get "initialized", (error, doc) ->
 
-          return done() unless error
-
-          console.log "initializing database"
+#          return done() unless error
 
           # Save views
           db.put(
@@ -162,16 +148,18 @@
             doOne = ->
 
               paddedPackNumber = ("0000" + packNumber).slice(-4)
-              console.log("paddedPackNumber: " + paddedPackNumber)
+#              console.log("paddedPackNumber: " + paddedPackNumber)
               $.ajax
                 dataType: "json"
                 url: "../src/js/init/pack#{paddedPackNumber}.json"
                 error: (res) ->
-                  console.log("We're done. No more files to process. res.status: " + res.status)
+#                  console.log("We're done. No more files to process. res.status: " + res.status)
+                  console.log("If you get an error starting with 'Error loading resource file', it's probably ok." )
+                  console.log("We're done. No more files to process." )
                   done()
                 success: (res) ->
                   packNumber++
-                  console.log("yes! uploaded paddedPackNumber: " + paddedPackNumber)
+#                  console.log("yes! uploaded paddedPackNumber: " + paddedPackNumber)
 
                   db.bulkDocs res.docs, (error, doc) ->
                     if error
@@ -182,7 +170,7 @@
 
       )
 
-      it('Query an Assessment', (done)->
+      it('Should return the expected assessment', (done)->
 #        Backbone.history.start()
         console.log("Setting up Backbone sync ")
         Backbone.sync = BackbonePouch.sync
@@ -196,63 +184,25 @@
 
         id = "70f8af3b-e1da-3a75-d84e-a7da4be99116"
         assessment = new Assessment "_id" : id
-        console.log("querying id: " + id)
-        assessment.deepFetch
-          success : ->
-            console.log("assessment: " + JSON.stringify assessment)
-            done()
-          error: (model, err, cb) ->
-            console.log "Error: " + JSON.stringify err
-            done(err)
-      )
-
-#      it('new Pouch registered in allDbs', (done)->
-#        this.timeout(15000);
-#        pouchName = dbName;
-#        dbs = [dbName];
-#        after = (err) ->
-#          new PouchDB(pouchName).destroy((er) ->
-#            if (er)
-#              console.log("i got an error: " + err)
-#              done(er)
-#            else
-#              console.log("we can wrap this thing up: " + err)
-#              done(err)
-#          )
-#
-#    #    // create db
-#        Tangerine.db = new PouchDB(pouchName, (err) ->
-#          console.log("Created Pouch: " + pouchName)
-#          if (err)
-#            console.log("i got an error: " + err)
-#            return after(err)
-#
-##          it('init pouch db', (done)->
-##            this.timeout(15000);
-#          result = checkDatabase(Tangerine.db, done)
-##          console.log("checkDatabase: " + JSON.stringify  result)
-##          )
-#
-#          PouchDB.allDbs( (err, dbs) ->
-#            if (err)
-#              return after(err)
-#
-#    #      // check if pouchName exists in _all_db
-#            dbs.some( (dbname)->
-#              console.log("pouchName: " + pouchName + " dbname: " + dbname)
-#              return dbname == pouchName
-#            ).should.equal(true, 'pouch exists in allDbs database, dbs are ' + JSON.stringify(dbs) + ', tested against ' + pouchName)
-#            after()
-#          )
-#        )
-#      )
-
-      describe('Give it some context',  ()->
-        describe('maybe a bit more context here', () ->
-          it('should run here few assertions',  () ->
-          )
+#        console.log("querying id: " + id)
+        assessment.deepFetch().then( (assessment) ->
+          expect(assessment.name).to.equal('setHint');
+          done()
+        ).catch( (err) ->
+          console.log "Catch Error: " + JSON.stringify err
+          done(err)
         )
       )
+
+
+#          success : ->
+#            console.log("assessment: " + JSON.stringify assessment)
+#            expect(assessment.get('name')).to.equal('setHint');
+#            done()
+#          error: (model, err, cb) ->
+#            console.log "Error: " + JSON.stringify err
+#            done(err)
+#      )
 
   dbs.split(',').forEach((db) ->
 #    dbType = /^http/.test(db) ? 'http' : 'local'

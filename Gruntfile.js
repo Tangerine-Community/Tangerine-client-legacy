@@ -16,7 +16,7 @@ module.exports = function (grunt) {
             },
             coffee: {
                 files: ['test/**/*.coffee'],
-                tasks: ['coffee']
+                tasks: ['coffee', 'mocha_phantomjs']
             },
         },
         coffee: {
@@ -41,13 +41,23 @@ module.exports = function (grunt) {
                 src: ["src/templates/**/*.handlebars"],
                 dest: "src/js/lib-coco/precompiled.handlebars.js"
             }
-        }
+        },
 
+        mocha_phantomjs: {
+            all: ['test/**/*.html']
+        },
     });
+
+    grunt.registerTask('test', [
+      'mocha_phantomjs',
+      'watch'
+  ]);
+
 
     // Requires the needed plugin
     grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-coffee');
+    grunt.loadNpmTasks('grunt-mocha-phantomjs');
 
 };

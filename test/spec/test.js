@@ -35,11 +35,10 @@
         this.timeout(5000);
         pouchName = dbName;
         dbs = [dbName];
-        console.log("creating Tangerine.db");
         return Tangerine.db = new PouchDB(pouchName, function(err) {
-          console.log("Created Pouch: " + pouchName);
+          console.log("Before: Created Pouch: " + pouchName);
           if (err) {
-            console.log("i got an error: " + err);
+            console.log("Before: I got an error: " + err);
             return done(err);
           } else {
             return done();
@@ -47,50 +46,24 @@
         });
       });
       after('Teardown Pouch', function(done) {
-        var after, pouchName;
+        var pouchName, result;
         this.timeout(15000);
         pouchName = dbName;
         dbs = [dbName];
-        after = function(err) {
-          return new PouchDB(pouchName).destroy(function(er) {
-            if (er) {
-              console.log("i got an error: " + er);
-              return done(er);
-            } else {
-              console.log("we can wrap this thing up: " + err);
-              return done(err);
-            }
-          });
-        };
-        return PouchDB.allDbs(function(err, dbs) {
-          if (err) {
-            return after(err);
-          }
-          dbs.some(function(dbname) {
-            if (dbname !== pouchName) {
-              console.log("pouchName: " + pouchName + " dbname: " + dbname);
-              return new PouchDB(dbname).destroy(function(er) {
-                if (er) {
-                  return console.log("while deleting i got an error: " + er);
-                } else {
-                  return console.log("good: " + er);
-                }
-              });
-            } else {
-              return dbname === pouchName;
-            }
-          }).should.equal(true, 'pouch exists in allDbs database, dbs are ' + JSON.stringify(dbs) + ', tested against ' + pouchName);
-          return after();
+        result = Tangerine.db.destroy(function(er) {}).then(function(er) {
+          console.log("After: Destroyed db: " + JSON.stringify(result) + " er: " + JSON.stringify(er));
+          return done();
+        })["catch"](function(er) {
+          console.log("After: Problem destroying db: " + er);
+          return done(er);
         });
+        console.log("clear locastorage" + dbName);
+        return localStorage.clear();
       });
       it('Populate pouch with Assessments', function(done) {
         var db;
         db = Tangerine.db;
         return db.get("initialized", function(error, doc) {
-          if (!error) {
-            return done();
-          }
-          console.log("initializing database");
           return db.put({
             _id: "_design/tangerine",
             views: {
@@ -146,17 +119,16 @@
             doOne = function() {
               var paddedPackNumber;
               paddedPackNumber = ("0000" + packNumber).slice(-4);
-              console.log("paddedPackNumber: " + paddedPackNumber);
               return $.ajax({
                 dataType: "json",
                 url: "../src/js/init/pack" + paddedPackNumber + ".json",
                 error: function(res) {
-                  console.log("We're done. No more files to process. res.status: " + res.status);
+                  console.log("If you get an error starting with 'Error loading resource file', it's probably ok.");
+                  console.log("We're done. No more files to process.");
                   return done();
                 },
                 success: function(res) {
                   packNumber++;
-                  console.log("yes! uploaded paddedPackNumber: " + paddedPackNumber);
                   return db.bulkDocs(res.docs, function(error, doc) {
                     if (error) {
                       return alert("could not save initialization document: " + error);
@@ -170,7 +142,7 @@
           });
         });
       });
-      it('Query an Assessment', function(done) {
+      return it('Should return the expected assessment', function(done) {
         var assessment, id;
         console.log("Setting up Backbone sync ");
         Backbone.sync = BackbonePouch.sync({
@@ -186,21 +158,12 @@
         assessment = new Assessment({
           "_id": id
         });
-        console.log("querying id: " + id);
-        return assessment.deepFetch({
-          success: function() {
-            console.log("assessment: " + JSON.stringify(assessment));
-            return done();
-          },
-          error: function(model, err, cb) {
-            console.log("Error: " + JSON.stringify(err));
-            return done(err);
-          }
-        });
-      });
-      return describe('Give it some context', function() {
-        return describe('maybe a bit more context here', function() {
-          return it('should run here few assertions', function() {});
+        return assessment.deepFetch().then(function(assessment) {
+          expect(assessment.name).to.equal('setHint');
+          return done();
+        })["catch"](function(err) {
+          console.log("Catch Error: " + JSON.stringify(err));
+          return done(err);
         });
       });
     });
