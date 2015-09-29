@@ -5,14 +5,28 @@
   <title>Mocha Spec Runner</title>
   <link rel="stylesheet" href="../bower_components/mocha/mocha.css">
 </head>
-<body>
+<body class='mobile'>
   <div id="mocha"></div>
+
+  <div id='navigation' class="clearfix"></div>
+  <div id="content_wrapper">
+    <div id='content'></div>
+  </div>
+  <div id='footer'>
+    <div id="watermark"><img src="../src/images/tangerine_logo_89.png"></div>
+  </div>
+
+
+
   <script src="../bower_components/mocha/mocha.js"></script>
   <script>mocha.setup('bdd');</script>
   <script src="../bower_components/jquery/dist/jquery.js"></script>
   <script src="../bower_components/underscore/underscore.js"></script>
   <script src="../bower_components/backbone/backbone.js"></script>
   <script src="../bower_components/marionette/lib/backbone.marionette.js"></script>
+  <script src='../src/js/lib-coco/handlebars.js'></script>
+  <script src='../src/js/lib/jquery.i18next.js'></script>
+
   <script src='../src/js/lib/backbone-pouchdb.js'></script>
   <script src="../bower_components/chai/chai.js"></script>
   <script src="../bower_components/pouchdb/dist/pouchdb.js"></script>
@@ -21,11 +35,14 @@
   <script src="../bower_components/chai-as-promised/lib/chai-as-promised.js"></script>
   <script src="../bower_components/bluebird/js/browser/bluebird.js"></script>
   <script src="../bower_components/requirejs/require.js"></script>
-
   <!--<script src="spec/bootstrap.js"></script>-->
+  <script src='../src/js/lib-coco/precompiled.handlebars.js'></script>
   <script src='../src/js/modules/subtest/Subtest.js'></script>
   <script src='../src/js/modules/subtest/Subtests.js'></script>
+  <script src='../src/js/modules/layouts/DashboardLayout.js'></script>
   <script src='../src/js/modules/assessment/Assessment.js'></script>
+  <script src='../src/js/modules/assessment/AssessmentCompositeView.js'></script>
+
   <script>
     var assert = chai.assert;
     var expect = chai.expect;
@@ -40,10 +57,5 @@
   <!-- include source files here... -->
   <!-- include spec files here... -->
   <script src="spec/test.js"></script>
-  <!--<script>-->
-    <!--if (navigator.userAgent.indexOf('PhantomJS') === -1) {-->
-      <!--mocha.run();-->
-    <!--}-->
-  <!--</script>-->
 </body>
 </html>

@@ -6,7 +6,26 @@
   } else {
     dbs = Mocha.process.env.TEST_DB;
   }
-  Tangerine = {};
+  Tangerine = new Marionette.Application();
+  window.Tangerine = Tangerine;
+  Backbone.history.start();
+  Tangerine.addRegions({
+    siteNav: "#siteNav"
+  });
+  Tangerine.addRegions({
+    mainRegion: "#content"
+  });
+  Tangerine.addRegions({
+    dashboardRegion: "#dashboard"
+  });
+  Backbone.Model.prototype.idAttribute = '_id';
+  $.i18n.init({
+    "fallbackLng": false,
+    "lng": "en",
+    "resGetPath": "../src/locales/__lng__/translation.json"
+  }, function(t) {
+    return window.t = t;
+  });
   tests = function(dbName) {
     var async;
     async = function(functions, callback) {
@@ -30,12 +49,12 @@
     return describe('Should get the assessment', function() {
       this.timeout(10000);
       dbs = [];
-      before('Setup Pouch', function(done) {
+      before('Setup Tangerine and Pouch', function(done) {
         var pouchName;
         this.timeout(5000);
         pouchName = dbName;
         dbs = [dbName];
-        return Tangerine.db = new PouchDB(pouchName, {
+        Tangerine.db = new PouchDB(pouchName, {
           adapter: 'memory'
         }, function(err) {
           console.log("Before: Created Pouch: " + pouchName);
@@ -46,21 +65,28 @@
             return done();
           }
         });
+        console.log("Setting up Backbone sync ");
+        return Backbone.sync = BackbonePouch.sync({
+          db: Tangerine.db,
+          fetch: 'view',
+          view: 'tangerine/byCollection',
+          viewOptions: {
+            include_docs: true
+          }
+        });
       });
       after('Teardown Pouch', function(done) {
         var pouchName, result;
         this.timeout(15000);
         pouchName = dbName;
         dbs = [dbName];
-        result = Tangerine.db.destroy(function(er) {}).then(function(er) {
+        return result = Tangerine.db.destroy(function(er) {}).then(function(er) {
           console.log("After: Destroyed db: " + JSON.stringify(result) + " er: " + JSON.stringify(er));
           return done();
         })["catch"](function(er) {
           console.log("After: Problem destroying db: " + er);
           return done(er);
         });
-        console.log("clear locastorage" + dbName);
-        return localStorage.clear();
       });
       it('Populate pouch with Assessments', function(done) {
         var db;
@@ -144,24 +170,38 @@
           });
         });
       });
-      return it('Should return the expected assessment', function(done) {
+      it('Should return the expected assessment', function(done) {
         var assessment, id;
-        console.log("Setting up Backbone sync ");
-        Backbone.sync = BackbonePouch.sync({
-          db: Tangerine.db,
-          fetch: 'view',
-          view: 'tangerine/byCollection',
-          viewOptions: {
-            include_docs: true
-          }
-        });
-        Backbone.Model.prototype.idAttribute = '_id';
         id = "70f8af3b-e1da-3a75-d84e-a7da4be99116";
         assessment = new Assessment({
           "_id": id
         });
-        return assessment.deepFetch().then(function(assessment) {
+        return assessment.deepFetchPromises().then(function(assessment) {
+          Tangerine.assessment = assessment;
           expect(assessment.name).to.equal('setHint');
+          return done();
+        })["catch"](function(err) {
+          console.log("Catch Error: " + JSON.stringify(err));
+          return done(err);
+        });
+      });
+      return it('Should make the view', function(done) {
+        var assessment, id;
+        id = "70f8af3b-e1da-3a75-d84e-a7da4be99116";
+        assessment = new Assessment({
+          "_id": id
+        });
+        return assessment.deepFetchPromises().then(function(assessment) {
+          var serializedData, view, viewOptions;
+          expect(assessment.name).to.equal('setHint');
+          Tangerine.assessment = assessment;
+          console.log("assessment subtests: " + JSON.stringify(assessment.subtests));
+          viewOptions = {
+            model: assessment
+          };
+          view = new AssessmentCompositeView(viewOptions);
+          serializedData = view.serializeData();
+          console.log("serializedData:" + serializedData);
           return done();
         })["catch"](function(err) {
           console.log("Catch Error: " + JSON.stringify(err));

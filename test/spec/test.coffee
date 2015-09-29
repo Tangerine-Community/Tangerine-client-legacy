@@ -6,7 +6,23 @@
   else
     dbs = Mocha.process.env.TEST_DB
 
-  Tangerine = {}
+  Tangerine = new Marionette.Application()
+  window.Tangerine = Tangerine
+  Backbone.history.start()
+  Tangerine.addRegions siteNav: "#siteNav"
+  Tangerine.addRegions mainRegion: "#content"
+  Tangerine.addRegions dashboardRegion: "#dashboard"
+
+
+  Backbone.Model.prototype.idAttribute = '_id'
+  $.i18n.init
+    "fallbackLng" : false
+    "lng"         : "en"
+    "resGetPath"  : "../src/locales/__lng__/translation.json"
+  ,
+    (t) ->
+      window.t = t
+
 
   tests = (dbName)->
 #    // async method takes an array of s of signature:
@@ -37,8 +53,9 @@
 
       dbs = [];
 
-      before( 'Setup Pouch',(done) ->
+      before( 'Setup Tangerine and Pouch',(done) ->
         this.timeout(5000);
+
         pouchName = dbName;
         dbs = [dbName];
         #    // create db
@@ -50,6 +67,13 @@
           else
             return done()
         )
+        console.log("Setting up Backbone sync ")
+        Backbone.sync = BackbonePouch.sync
+          db: Tangerine.db
+          fetch: 'view'
+          view: 'tangerine/byCollection'
+          viewOptions:
+            include_docs : true
       )
 
 
@@ -67,26 +91,7 @@
             console.log("After: Problem destroying db: " + er)
             done(er)
           )
-
-#        console.log("delete dbName" + dbName)
-#        indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.oIndexedDB || window.msIndexedDB;
-#        console.log("indexedDB: " + indexedDB);
-#        req = indexedDB.deleteDatabase(dbName)
-#        .then( (er) ->
-#          console.log("After2: Destroyed db: " + JSON.stringify(result) + " er: " + JSON.stringify er)
-#          done()
-#        ).catch( (er) ->
-#        console.log("After2: Problem destroying db: " + er)
-#        done(er)
-#        )
-#        Mocha.executeScript('window.localStorage.clear();');
-
-#        page.evaluate(() ->
-        console.log("clear locastorage" + dbName)
-        localStorage.clear();
-#        )
       )
-
 
       it('Populate pouch with Assessments', (done)->
 
@@ -171,21 +176,11 @@
       )
 
       it('Should return the expected assessment', (done)->
-#        Backbone.history.start()
-        console.log("Setting up Backbone sync ")
-        Backbone.sync = BackbonePouch.sync
-          db: Tangerine.db
-          fetch: 'view'
-          view: 'tangerine/byCollection'
-          viewOptions:
-            include_docs : true
-
-        Backbone.Model.prototype.idAttribute = '_id'
-
         id = "70f8af3b-e1da-3a75-d84e-a7da4be99116"
         assessment = new Assessment "_id" : id
 #        console.log("querying id: " + id)
-        assessment.deepFetch().then( (assessment) ->
+        assessment.deepFetchPromises().then( (assessment) ->
+          Tangerine.assessment = assessment
           expect(assessment.name).to.equal('setHint');
           done()
         ).catch( (err) ->
@@ -194,15 +189,25 @@
         )
       )
 
+      it('Should make the view', (done)->
+        id = "70f8af3b-e1da-3a75-d84e-a7da4be99116"
+        assessment = new Assessment "_id" : id
+        assessment.deepFetchPromises().then( (assessment) ->
+          expect(assessment.name).to.equal('setHint');
+          Tangerine.assessment = assessment
+          console.log("assessment subtests: " + JSON.stringify assessment.subtests)
+          viewOptions =
+            model: assessment
+          view = new AssessmentCompositeView viewOptions
+          serializedData = view.serializeData();
+          console.log("serializedData:" + serializedData)
+          done()
+        ).catch( (err) ->
+          console.log "Catch Error: " + JSON.stringify err
+          done(err)
+        )
+      )
 
-#          success : ->
-#            console.log("assessment: " + JSON.stringify assessment)
-#            expect(assessment.get('name')).to.equal('setHint');
-#            done()
-#          error: (model, err, cb) ->
-#            console.log "Error: " + JSON.stringify err
-#            done(err)
-#      )
 
   dbs.split(',').forEach((db) ->
 #    dbType = /^http/.test(db) ? 'http' : 'local'

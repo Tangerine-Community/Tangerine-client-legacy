@@ -42,3 +42,17 @@ Assessment = Backbone.Model.extend
             subtests.ensureOrder()
             opts.success.apply subtests.assessment, arguments
 
+  deepFetchPromises: ( opts = {} ) ->
+    @fetch().then( () ->
+      @subtests = new Subtests
+      @subtests.assessment = @
+      @subtests.fetch
+        viewOptions:
+          key: "subtest-#{@id}"
+      .then( () ->
+#        console.log "@subtests this: " + JSON.stringify @
+        subtests.ensureOrder()
+#        opts.success.apply subtests.assessment, arguments
+#        return @
+      )
+    )
