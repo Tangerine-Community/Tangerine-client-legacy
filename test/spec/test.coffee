@@ -42,7 +42,7 @@
         pouchName = dbName;
         dbs = [dbName];
         #    // create db
-        Tangerine.db = new PouchDB(pouchName, (err) ->
+        Tangerine.db = new PouchDB(pouchName, {adapter: 'memory'}, (err) ->
           console.log("Before: Created Pouch: " + pouchName)
           if (err)
             console.log("Before: I got an error: " + err)

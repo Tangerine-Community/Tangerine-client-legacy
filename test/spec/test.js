@@ -35,7 +35,9 @@
         this.timeout(5000);
         pouchName = dbName;
         dbs = [dbName];
-        return Tangerine.db = new PouchDB(pouchName, function(err) {
+        return Tangerine.db = new PouchDB(pouchName, {
+          adapter: 'memory'
+        }, function(err) {
           console.log("Before: Created Pouch: " + pouchName);
           if (err) {
             console.log("Before: I got an error: " + err);
