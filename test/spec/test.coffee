@@ -179,35 +179,59 @@
         id = "70f8af3b-e1da-3a75-d84e-a7da4be99116"
         assessment = new Assessment "_id" : id
 #        console.log("querying id: " + id)
-        assessment.deepFetchPromises().then( (assessment) ->
-          Tangerine.assessment = assessment
-          expect(assessment.name).to.equal('setHint');
-          done()
-        ).catch( (err) ->
-          console.log "Catch Error: " + JSON.stringify err
-          done(err)
-        )
+        assessment.deepFetch({
+          error: ->
+            console.log "Catch Error: " + JSON.stringify err
+            done(err)
+          success: (assessment) ->
+            console.log("assessment: " + JSON.stringify assessment[0])
+            Tangerine.assessment = assessment
+            expect(assessment.name).to.equal('set hint');
+            done()
+        })
+#        }).then( (assessment) ->
+#          Tangerine.assessment = assessment
+#          expect(assessment.name).to.equal('setHint');
+#          done()
+#        ).catch( (err) ->
+#          console.log "Catch Error: " + JSON.stringify err
+#          done(err)
+#        )
       )
 
       it('Should make the view', (done)->
         id = "70f8af3b-e1da-3a75-d84e-a7da4be99116"
         assessment = new Assessment "_id" : id
-        assessment.deepFetchPromises().then( (assessment) ->
-          expect(assessment.name).to.equal('setHint');
-          Tangerine.assessment = assessment
-          console.log("assessment subtests: " + JSON.stringify assessment.subtests)
-          viewOptions =
-            model: assessment
-          view = new AssessmentCompositeView viewOptions
-          serializedData = view.serializeData();
-          console.log("serializedData:" + serializedData)
-          done()
-        ).catch( (err) ->
-          console.log "Catch Error: " + JSON.stringify err
-          done(err)
-        )
+        assessment.deepFetch({
+          error: ->
+            console.log "Catch Error: " + JSON.stringify err
+            done(err)
+          success: (assessment) ->
+            expect(assessment.name).to.equal('set hint');
+            Tangerine.assessment = assessment
+            console.log("assessment: " + JSON.stringify assessment.doc)
+            viewOptions =
+              model: assessment
+            view = new AssessmentCompositeView viewOptions
+            serializedData = view.serializeData();
+            console.log("serializedData:" + serializedData)
+            done()
+        })
+#        .then( (assessment) ->
+#          expect(assessment.name).to.equal('setHint');
+#          Tangerine.assessment = assessment
+#          console.log("assessment: " + JSON.stringify assessment)
+#          viewOptions =
+#            model: assessment
+#          view = new AssessmentCompositeView viewOptions
+#          serializedData = view.serializeData();
+#          console.log("serializedData:" + serializedData)
+#          done()
+#        ).catch( (err) ->
+#          console.log "Catch Error: " + JSON.stringify err
+#          done(err)
+#        )
       )
-
 
   dbs.split(',').forEach((db) ->
 #    dbType = /^http/.test(db) ? 'http' : 'local'

@@ -15,7 +15,7 @@ module.exports = function (grunt) {
                 tasks: ['handlebars:compile']
             },
             coffee: {
-                files: ['test/**/*.coffee'],
+                files: ['test/**/*.coffee', 'src/**/*.coffee'],
                 tasks: ['coffee', 'mocha_phantomjs']
             },
         },
@@ -32,7 +32,6 @@ module.exports = function (grunt) {
                 ext: ".js"
             }
         },
-
         handlebars: {
             compile: {
                 options: {
@@ -51,6 +50,10 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
       'coffee',
       'mocha_phantomjs',
+      'watch'
+  ]);
+    grunt.registerTask('coffeeW', [
+      'coffee',
       'watch'
   ]);
 

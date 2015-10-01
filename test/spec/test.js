@@ -176,13 +176,17 @@
         assessment = new Assessment({
           "_id": id
         });
-        return assessment.deepFetchPromises().then(function(assessment) {
-          Tangerine.assessment = assessment;
-          expect(assessment.name).to.equal('setHint');
-          return done();
-        })["catch"](function(err) {
-          console.log("Catch Error: " + JSON.stringify(err));
-          return done(err);
+        return assessment.deepFetch({
+          error: function() {
+            console.log("Catch Error: " + JSON.stringify(err));
+            return done(err);
+          },
+          success: function(assessment) {
+            console.log("assessment: " + JSON.stringify(assessment[0]));
+            Tangerine.assessment = assessment;
+            expect(assessment.name).to.equal('set hint');
+            return done();
+          }
         });
       });
       return it('Should make the view', function(done) {
@@ -191,21 +195,24 @@
         assessment = new Assessment({
           "_id": id
         });
-        return assessment.deepFetchPromises().then(function(assessment) {
-          var serializedData, view, viewOptions;
-          expect(assessment.name).to.equal('setHint');
-          Tangerine.assessment = assessment;
-          console.log("assessment subtests: " + JSON.stringify(assessment.subtests));
-          viewOptions = {
-            model: assessment
-          };
-          view = new AssessmentCompositeView(viewOptions);
-          serializedData = view.serializeData();
-          console.log("serializedData:" + serializedData);
-          return done();
-        })["catch"](function(err) {
-          console.log("Catch Error: " + JSON.stringify(err));
-          return done(err);
+        return assessment.deepFetch({
+          error: function() {
+            console.log("Catch Error: " + JSON.stringify(err));
+            return done(err);
+          },
+          success: function(assessment) {
+            var serializedData, view, viewOptions;
+            expect(assessment.name).to.equal('set hint');
+            Tangerine.assessment = assessment;
+            console.log("assessment: " + JSON.stringify(assessment.doc));
+            viewOptions = {
+              model: assessment
+            };
+            view = new AssessmentCompositeView(viewOptions);
+            serializedData = view.serializeData();
+            console.log("serializedData:" + serializedData);
+            return done();
+          }
         });
       });
     });
