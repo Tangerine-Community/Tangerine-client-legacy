@@ -6,13 +6,10 @@
   else
     dbs = Mocha.process.env.TEST_DB
 
-  Tangerine = new Marionette.Application()
-  window.Tangerine = Tangerine
   Backbone.history.start()
   Tangerine.addRegions siteNav: "#siteNav"
   Tangerine.addRegions mainRegion: "#content"
   Tangerine.addRegions dashboardRegion: "#dashboard"
-
 
   Backbone.Model.prototype.idAttribute = '_id'
   $.i18n.init
@@ -22,7 +19,6 @@
   ,
     (t) ->
       window.t = t
-
 
   tests = (dbName)->
 #    // async method takes an array of s of signature:
@@ -60,14 +56,13 @@
         dbs = [dbName];
         #    // create db
         Tangerine.db = new PouchDB(pouchName, {adapter: 'memory'}, (err) ->
-          console.log("Before: Created Pouch: " + pouchName)
+#          console.log("Before: Created Pouch: " + pouchName)
           if (err)
             console.log("Before: I got an error: " + err)
             return done(err)
           else
             return done()
         )
-        console.log("Setting up Backbone sync ")
         Backbone.sync = BackbonePouch.sync
           db: Tangerine.db
           fetch: 'view'
@@ -75,7 +70,6 @@
           viewOptions:
             include_docs : true
       )
-
 
       after('Teardown Pouch', (done) ->
 
@@ -85,7 +79,7 @@
 
         result = Tangerine.db.destroy((er) ->
           ).then( (er) ->
-            console.log("After: Destroyed db: " + JSON.stringify(result) + " er: " + JSON.stringify er)
+#            console.log("After: Destroyed db: " + JSON.stringify(result) + " er: " + JSON.stringify er)
             done()
           ).catch( (er) ->
             console.log("After: Problem destroying db: " + er)
@@ -172,21 +166,19 @@
                     doOne()
 
             doOne() # kick it off
-
       )
 
       it('Should return the expected assessment', (done)->
         id = "70f8af3b-e1da-3a75-d84e-a7da4be99116"
         assessment = new Assessment "_id" : id
-#        console.log("querying id: " + id)
         assessment.deepFetch({
           error: ->
             console.log "Catch Error: " + JSON.stringify err
             done(err)
-          success: (assessment) ->
-            console.log("assessment: " + JSON.stringify assessment[0])
+          success: (record) ->
+#            console.log("assessment: " + JSON.stringify assessment)
             Tangerine.assessment = assessment
-            expect(assessment.name).to.equal('set hint');
+            expect(assessment.get("name")).to.equal('setHint');
             done()
         })
 #        }).then( (assessment) ->
@@ -206,15 +198,15 @@
           error: ->
             console.log "Catch Error: " + JSON.stringify err
             done(err)
-          success: (assessment) ->
-            expect(assessment.name).to.equal('set hint');
+          success: (record) ->
+            expect(assessment.get("name")).to.equal('setHint');
             Tangerine.assessment = assessment
-            console.log("assessment: " + JSON.stringify assessment.doc)
+#            console.log("assessment: " + JSON.stringify assessment.doc)
             viewOptions =
               model: assessment
             view = new AssessmentCompositeView viewOptions
             serializedData = view.serializeData();
-            console.log("serializedData:" + serializedData)
+            console.log("serializedData:" + JSON.stringify(serializedData))
             done()
         })
 #        .then( (assessment) ->

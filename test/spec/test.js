@@ -1,13 +1,11 @@
 (function() {
   'use strict';
-  var Tangerine, dbs, tests;
+  var dbs, tests;
   if (Mocha.process.browser) {
     dbs = 'testdb' + Math.random();
   } else {
     dbs = Mocha.process.env.TEST_DB;
   }
-  Tangerine = new Marionette.Application();
-  window.Tangerine = Tangerine;
   Backbone.history.start();
   Tangerine.addRegions({
     siteNav: "#siteNav"
@@ -57,7 +55,6 @@
         Tangerine.db = new PouchDB(pouchName, {
           adapter: 'memory'
         }, function(err) {
-          console.log("Before: Created Pouch: " + pouchName);
           if (err) {
             console.log("Before: I got an error: " + err);
             return done(err);
@@ -65,7 +62,6 @@
             return done();
           }
         });
-        console.log("Setting up Backbone sync ");
         return Backbone.sync = BackbonePouch.sync({
           db: Tangerine.db,
           fetch: 'view',
@@ -81,7 +77,6 @@
         pouchName = dbName;
         dbs = [dbName];
         return result = Tangerine.db.destroy(function(er) {}).then(function(er) {
-          console.log("After: Destroyed db: " + JSON.stringify(result) + " er: " + JSON.stringify(er));
           return done();
         })["catch"](function(er) {
           console.log("After: Problem destroying db: " + er);
@@ -181,10 +176,9 @@
             console.log("Catch Error: " + JSON.stringify(err));
             return done(err);
           },
-          success: function(assessment) {
-            console.log("assessment: " + JSON.stringify(assessment[0]));
+          success: function(record) {
             Tangerine.assessment = assessment;
-            expect(assessment.name).to.equal('set hint');
+            expect(assessment.get("name")).to.equal('setHint');
             return done();
           }
         });
@@ -200,17 +194,16 @@
             console.log("Catch Error: " + JSON.stringify(err));
             return done(err);
           },
-          success: function(assessment) {
+          success: function(record) {
             var serializedData, view, viewOptions;
-            expect(assessment.name).to.equal('set hint');
+            expect(assessment.get("name")).to.equal('setHint');
             Tangerine.assessment = assessment;
-            console.log("assessment: " + JSON.stringify(assessment.doc));
             viewOptions = {
               model: assessment
             };
             view = new AssessmentCompositeView(viewOptions);
             serializedData = view.serializeData();
-            console.log("serializedData:" + serializedData);
+            console.log("serializedData:" + JSON.stringify(serializedData));
             return done();
           }
         });

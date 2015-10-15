@@ -15,7 +15,7 @@ module.exports = function (grunt) {
                 tasks: ['handlebars:compile']
             },
             coffee: {
-                files: ['test/**/*.coffee', 'src/**/*.coffee'],
+                files: ['test/**/*.coffee','test/**/*.html', 'src/**/*.coffee'],
                 tasks: ['coffee', 'mocha_phantomjs']
             },
         },
