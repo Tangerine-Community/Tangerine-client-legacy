@@ -6,3 +6,5 @@ install: npm install
 before_script:
   - npm install -g bower
   - bower install
+notifications:
+  slack: rti:nB1KzpwxAQ5qi6EC2uydltSx
