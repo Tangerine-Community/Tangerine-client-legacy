@@ -50,6 +50,8 @@
       dbs = [];
 
       before( 'Setup Tangerine and Pouch',(done) ->
+        this.$container = $("#view-test-container");
+        this.$fixture = $("<div>", { id: "fixture" });
         this.timeout(5000);
 
         pouchName = dbName;
@@ -72,6 +74,8 @@
       )
 
       after('Teardown Pouch', (done) ->
+        this.$container.empty();
+        delete this.$fixture;
 
         this.timeout(15000);
         pouchName = dbName;
@@ -192,6 +196,7 @@
       )
 
       it('Should make the view', (done)->
+        this.$fixture.empty().appendTo(this.$container);
         id = "70f8af3b-e1da-3a75-d84e-a7da4be99116"
         assessment = new Assessment "_id" : id
         assessment.deepFetch({
@@ -204,9 +209,16 @@
 #            console.log("assessment: " + JSON.stringify assessment.doc)
             viewOptions =
               model: assessment
+              el: this.$fixture
             view = new AssessmentCompositeView viewOptions
             serializedData = view.serializeData();
-            console.log("serializedData:" + JSON.stringify(serializedData))
+#            console.log("serializedData:" + JSON.stringify(serializedData))
+            view.once("render", () ->
+#              console.log("view.$el.text():" + view.$el.text())
+#              console.log("view.$el.html():" + view.$el.html())
+              expect(view.$el.text()).to.contain("Check Sum");
+            )
+            view.render();
             done()
         })
 #        .then( (assessment) ->
@@ -224,6 +236,7 @@
 #          done(err)
 #        )
       )
+
 
   dbs.split(',').forEach((db) ->
 #    dbType = /^http/.test(db) ? 'http' : 'local'

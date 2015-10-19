@@ -30,7 +30,7 @@ Assessment = Backbone.Model.extend
     @fetch
       error: opts.error
       success: =>
-        console.log @subtests
+#        console.log @subtests
         @subtests = new Subtests
         @subtests.assessment = @
         @subtests.fetch

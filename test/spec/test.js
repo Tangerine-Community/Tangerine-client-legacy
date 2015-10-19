@@ -49,6 +49,10 @@
       dbs = [];
       before('Setup Tangerine and Pouch', function(done) {
         var pouchName;
+        this.$container = $("#view-test-container");
+        this.$fixture = $("<div>", {
+          id: "fixture"
+        });
         this.timeout(5000);
         pouchName = dbName;
         dbs = [dbName];
@@ -73,6 +77,8 @@
       });
       after('Teardown Pouch', function(done) {
         var pouchName, result;
+        this.$container.empty();
+        delete this.$fixture;
         this.timeout(15000);
         pouchName = dbName;
         dbs = [dbName];
@@ -185,6 +191,7 @@
       });
       return it('Should make the view', function(done) {
         var assessment, id;
+        this.$fixture.empty().appendTo(this.$container);
         id = "70f8af3b-e1da-3a75-d84e-a7da4be99116";
         assessment = new Assessment({
           "_id": id
@@ -199,11 +206,15 @@
             expect(assessment.get("name")).to.equal('setHint');
             Tangerine.assessment = assessment;
             viewOptions = {
-              model: assessment
+              model: assessment,
+              el: this.$fixture
             };
             view = new AssessmentCompositeView(viewOptions);
             serializedData = view.serializeData();
-            console.log("serializedData:" + JSON.stringify(serializedData));
+            view.once("render", function() {
+              return expect(view.$el.text()).to.contain("Check Sum");
+            });
+            view.render();
             return done();
           }
         });
