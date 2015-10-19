@@ -1,5 +1,7 @@
 ![Tangerine](http://www.tangerinecentral.org/sites/default/files/tangerine-logo-150.png)
 
+[![Build Status](https://travis-ci.org/chrisekelley/Tangerine-client.svg?branch=marionette)](https://travis-ci.org/chrisekelley/Tangerine-client)
+
 # Assess students with tablets or your phone
 
 Tangerine is an application for assessing students on any scale, country-level, district-level or classroom-level.
@@ -69,7 +71,7 @@ View package.json for other useful npm targets:
  - npm build:apk will generate a debug APK.
  - npm test will run mocha-phantomjs tests and watch for changes to coffeescript files.
  - npm run-script testW will run mocha-phantomjs tests and watch for changes to coffeescript files.
- 
+
 # Testing
 
 The tests run in mocha/phantomjs. The pouch runs in a in-memory container.
