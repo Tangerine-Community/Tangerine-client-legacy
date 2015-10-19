@@ -50,8 +50,12 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
       'coffee',
       'mocha_phantomjs',
-      'watch'
   ]);
+    grunt.registerTask('testW', [
+      'coffee',
+      'mocha_phantomjs',
+      'watch'
+    ]);
     grunt.registerTask('coffeeW', [
       'coffee',
       'watch'
