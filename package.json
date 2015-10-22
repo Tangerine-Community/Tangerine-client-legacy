@@ -10,7 +10,8 @@
     "clean": "rm -rf platforms plugins node_modules",
     "listen": "./scripts/listen.rb",
     "start": "http-server -p 9000 src --silent & ./scripts/listen.rb  & grunt watch",
-    "testW": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt coffeeW"
+    "testW": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt coffeeW",
+    "testWatch": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt testWatch"
   },
   "repository": {
     "type": "git",

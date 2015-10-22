@@ -8,6 +8,4 @@ Tangerine.settings = new Settings({
   "_id": "settings"
 });
 
-console.log("Tangerine settings: " + JSON.stringify(Tangerine.settings));
-
 window.Tangerine = Tangerine;
