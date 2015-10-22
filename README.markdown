@@ -76,6 +76,10 @@ View package.json for other useful npm targets:
 
 The tests run in mocha/phantomjs. The pouch runs in a in-memory container.
 
+# Dependencies
+
+Using http://greenkeeper.io/ to manage dependencies.
+
 # Tangerine API
 
 Tangerine.progress is an object that contains status of the application: index, currentView, etc.

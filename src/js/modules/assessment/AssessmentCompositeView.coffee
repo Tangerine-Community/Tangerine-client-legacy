@@ -21,19 +21,26 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       else
         currentSubview =  null
         console.log(prototypeName + "  Subview is not defined.")
-    model.questions.fetch
-      viewOptions:
-        key: "question-#{model.id}"
-      success: (collection) =>
-        model.questions.sort()
-        model.collection = model.questions
-        @collection.models = collection.models
+
     @ready = true
     return currentSubview
 
     next: ->
       console.log("childEvents next")
       @step 1
+
+  childViewOptions: (model, index) ->
+    console.log("fetching model.questions -  " + JSON.stringify(model))
+    model.questions.fetch
+      viewOptions:
+        key: "question-#{model.id}"
+      success: (collection) =>
+        console.log "collection: " + JSON.stringify(collection)
+        model.questions.sort()
+        model.collection = model.questions
+        @collection.models = collection.models
+      error: (model, err, cb) ->
+        console.log("childViewOptions error: " + JSON.stringify(err))
 
   collectionEvents:->
     "add": ->

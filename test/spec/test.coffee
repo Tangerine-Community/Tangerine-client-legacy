@@ -74,6 +74,7 @@
       )
 
       after('Teardown Pouch', (done) ->
+        console.log("after")
         this.$container.empty();
         delete this.$fixture;
 
@@ -204,39 +205,25 @@
             console.log "Catch Error: " + JSON.stringify err
             done(err)
           success: (record) ->
-            expect(assessment.get("name")).to.equal('setHint');
+#            console.log "assessment subtests: " + JSON.stringify(assessment.subtests)
+#            expect(assessment.get("name")).to.equal('setHint');
             Tangerine.assessment = assessment
 #            console.log("assessment: " + JSON.stringify assessment.doc)
             viewOptions =
               model: assessment
               el: this.$fixture
             view = new AssessmentCompositeView viewOptions
-            serializedData = view.serializeData();
+#            serializedData = view.serializeData();
 #            console.log("serializedData:" + JSON.stringify(serializedData))
             view.once("render", () ->
 #              console.log("view.$el.text():" + view.$el.text())
-#              console.log("view.$el.html():" + view.$el.html())
+              console.log("view.$el.html():" + view.$el.html())
               expect(view.$el.text()).to.contain("Check Sum");
             )
             view.render();
             done()
         })
-#        .then( (assessment) ->
-#          expect(assessment.name).to.equal('setHint');
-#          Tangerine.assessment = assessment
-#          console.log("assessment: " + JSON.stringify assessment)
-#          viewOptions =
-#            model: assessment
-#          view = new AssessmentCompositeView viewOptions
-#          serializedData = view.serializeData();
-#          console.log("serializedData:" + serializedData)
-#          done()
-#        ).catch( (err) ->
-#          console.log "Catch Error: " + JSON.stringify err
-#          done(err)
-#        )
       )
-
 
   dbs.split(',').forEach((db) ->
 #    dbType = /^http/.test(db) ? 'http' : 'local'
@@ -244,4 +231,3 @@
   )
 
 )()
-

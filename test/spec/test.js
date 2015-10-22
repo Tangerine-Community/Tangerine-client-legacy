@@ -77,6 +77,7 @@
       });
       after('Teardown Pouch', function(done) {
         var pouchName, result;
+        console.log("after");
         this.$container.empty();
         delete this.$fixture;
         this.timeout(15000);
@@ -202,16 +203,15 @@
             return done(err);
           },
           success: function(record) {
-            var serializedData, view, viewOptions;
-            expect(assessment.get("name")).to.equal('setHint');
+            var view, viewOptions;
             Tangerine.assessment = assessment;
             viewOptions = {
               model: assessment,
               el: this.$fixture
             };
             view = new AssessmentCompositeView(viewOptions);
-            serializedData = view.serializeData();
             view.once("render", function() {
+              console.log("view.$el.html():" + view.$el.html());
               return expect(view.$el.text()).to.contain("Check Sum");
             });
             view.render();

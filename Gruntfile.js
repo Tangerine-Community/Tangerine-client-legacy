@@ -51,7 +51,7 @@ module.exports = function (grunt) {
       'coffee',
       'mocha_phantomjs',
   ]);
-    grunt.registerTask('testW', [
+    grunt.registerTask('testWatch', [
       'coffee',
       'mocha_phantomjs',
       'watch'
