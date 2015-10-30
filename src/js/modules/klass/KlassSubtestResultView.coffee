@@ -16,7 +16,7 @@ class KlassSubtestResultView extends Backbone.View
     @student = options.student
 
   gotoRun: ->
-    Tangerine.router.navigate "class/run/#{@options.student.id}/#{@options.subtest.id}", true
+    Tangerine.router.navigate "class/run/#{@student.id}/#{@subtest.id}", true
 
   checkRun: ->
     hasGridLink = @subtest.has("gridLinkId") && @subtest.get("gridLinkId") != ""
@@ -41,7 +41,7 @@ class KlassSubtestResultView extends Backbone.View
 
   showItemized: -> @$el.find(".itemized").fadeToggle()
 
-  back: -> Tangerine.router.navigate "class/#{@options.student.get("klassId")}/#{@options.subtest.get("part")}", true
+  back: -> Tangerine.router.navigate "class/#{@student.get("klassId")}/#{@subtest.get("part")}", true
 
   render: ->
 
