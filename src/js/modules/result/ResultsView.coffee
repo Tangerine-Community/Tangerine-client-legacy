@@ -26,80 +26,82 @@ class ResultsView extends Backbone.View
         $details.html "<div class='info_box'>" + $(view.el).html() + "</div>"
         view.close()
 
+  oldCloud: ->
+    if @available.cloud.ok
+      PouchDB.replicate(Tangerine.conf.db_name, Tangerine.settings.urlDB("group"), { doc_ids: @docList }
+      ).on( 'error', (err) ->
+        @$el.find(".status").find(".info_box").html "<div>Sync error</div><div>#{err}</div>"
+      ).on( 'complete', (info) ->
+        if info.docs.doc_write_failures is 0
+          @$el.find(".status").find(".info_box").html "Results synced to cloud successfully"
+        else
+          @$el.find(".status").find(".info_box").html "<div>Sync error</div><div>#{err}</div>"
+      )
+    else
+      Utils.midAlert "Cannot detect cloud"
+    return false
 
 
   cloud: ->
 
-    allDocs = Tangerine.settings.urlDB("group",true) + "/_all_docs"
-    console.log allDocs
-    $.ajax
-      url: allDocs
-      type: "POST"
-      data: JSON.stringify keys: @docList
-      beforeSend: (xhr) ->
-        console.log "setting to"
-        console.log 'Basic ' + btoa("tangerine:tangytangerine") #Tangerine.settings.get("upUser") + ":" + Tangerine.settings.get("upPass"))
-        xhr.setRequestHeader 'Authorization',
-          'Basic ' + btoa(Tangerine.settings.get("upUser") + ":" + Tangerine.settings.get("upPass"))
+    a = document.createElement("a")
+    a.href = Tangerine.settings.get("groupHost")
+    allDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
 
-      error: (err) =>
-        console.log err
+
+    return $.ajax
+      url: allDocsUrl
+      type: "POST"
+      dataType: "json"
+      data: 
+        keys: JSON.stringify(@docList)
+        user: Tangerine.settings.upUser
+        pass: Tangerine.settings.upPass
+      error: ->
+        console.log "There was an error."
       success: (response) =>
 
+
+        console.log "all docs response"
+        console.log response
         rows = response.rows
         leftToUpload = []
         for row in rows
-          leftToUpload.push(row.key) unless row.id?
+          leftToUpload.push(row.key) if row.error?
 
         # if it's already fully uploaded
         # make sure it's in the log
 
         Tangerine.db.allDocs(include_docs:true,keys:leftToUpload
-        ).then( ->
-          console.log arguments
+        ).then( (response) ->
+          docs = {"docs":response.rows.map((el)->el.doc)}
+          compressedData = LZString.compressToBase64(JSON.stringify(docs))
+          a = document.createElement("a")
+          a.href = Tangerine.settings.get("groupHost")
+          bulkDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
+
+          $.ajax
+            type : "POST"
+            url : bulkDocsUrl
+            data : compressedData
+            error: =>
+              alert "Server bulk docs error"
+            success: =>
+              console.log("uploaded to bulk docs")
+              console.log(arguments)
+              return
+
+              @sunc.push currentTrip
+              @sunc = _.uniq(@sunc)
+              @log.setTrips @sunc
+              @log.save null,
+                error: => @uploadingNow = false
+                success: =>
+                  @update =>
+                    @render()
+                    doTrip()
+
         )
-        return
-
-        docs = {"docs":response.rows.map((el)->el.doc)}
-        compressedData = LZString.compressToBase64(JSON.stringify(docs))
-        a = document.createElement("a")
-        a.href = Tangerine.settings.get("groupHost")
-        bulkDocsUrl = "#{a.protocol}//#{a.host}/_corsBulkDocs/#{Tangerine.settings.groupDB}"
-
-        $.ajax
-          type : "post"
-          url : bulkDocsUrl
-          data : compressedData
-          error: =>
-            @uploadingNow = false
-            alert "Server bulk docs error"
-          success: =>
-            @sunc.push currentTrip
-            @sunc = _.uniq(@sunc)
-            @log.setTrips @sunc
-            @log.save null,
-              error: => @uploadingNow = false
-              success: =>
-                @update =>
-                  @render()
-                  doTrip()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -336,7 +338,7 @@ class ResultsView extends Backbone.View
 
       htmlRows = ""
       console.log previews
-      previews.models.forEach (preview) =>
+      previews.each (preview) =>
 
         console.log "doing thisone"
         id      = preview.getString 'participantId', "No ID"

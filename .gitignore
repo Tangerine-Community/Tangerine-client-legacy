@@ -14,3 +14,7 @@ bower_components/
 npm-debug.log
 
 .idea
+bundler
+bundle/
+bundle/
+.bundle/

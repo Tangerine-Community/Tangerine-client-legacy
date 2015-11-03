@@ -6,3 +6,4 @@ version.js
 helpers.js
 *.map
 min/*
+init/*
