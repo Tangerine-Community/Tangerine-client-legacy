@@ -9,3 +9,8 @@ plugins/
 
 # npm
 node_modules/
+
+bundler
+bundle/
+bundle/
+.bundle/

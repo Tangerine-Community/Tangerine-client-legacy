@@ -4,12 +4,12 @@
   "description": "data collection system.",
   "main": "index.js",
   "scripts": {
-    "postinstall": "../scripts/postinstall.sh",
-    "build:apk": "cordova build android",
+    "postinstall": "cd scripts && ./postinstall.sh",
+    "build:apk": "cordova build android 2>&1",
     "test": "mocha echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf platforms plugins node_modules",
-    "listen": "./scripts/listen.rb",
-    "start": "http-server -p 9000 src --silent & ./scripts/listen.rb"
+    "listen": "cd scripts ./listen.rb",
+    "start": "http-server -p 9000 src --silent & cd ./scripts && ./listen.rb"
   },
   "repository": {
     "type": "git",

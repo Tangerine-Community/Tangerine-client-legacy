@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'bundler/setup'
 require 'uglifier'
 require 'pathname'
 
@@ -174,6 +175,7 @@ libFiles = [
   'lib/table2CSV.js',
   'lib/base64.js',
   'lib/jstz.js',
+  'lib/lz-string.js',
   'lib/ckeditor.js',
   'lib/coffee-script.js' # This file tends to like to be last
 ]
@@ -214,7 +216,7 @@ if $options[:compile]
     oldFile = File.read file
     File.open( File.join(jsDir, "min", Pathname.new(file).basename.to_s.gsub(".js",".min.js")), "w" ) { |f|
       puts "\nUglifying\t\t#{file}"
-      f.write Uglifier.new.compile(oldFile)
+      f.write Uglifier.compile(oldFile)
     }
   end
 end

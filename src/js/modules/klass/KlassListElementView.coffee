@@ -15,6 +15,9 @@ class KlassListElementView extends Backbone.View
     'click .klass_delete_delete' : 'delete'
 
   initialize: (options) ->
+
+    @klass = options.klass
+
     @availableReports = Tangerine.config.get("reports")
     if options.klass.has "curriculumId"
       @curriculum = new Curriculum 
@@ -25,7 +28,7 @@ class KlassListElementView extends Backbone.View
       @curriculum = new Curriculum 
 
   edit: ->
-    Tangerine.router.navigate "class/edit/" + @options.klass.id, true
+    Tangerine.router.navigate "class/edit/" + @klass.id, true
 
   getReportMenu: (event) ->
     @subMenuView?.close()
@@ -47,15 +50,15 @@ class KlassListElementView extends Backbone.View
     @subMenuView?.close()
 
   run: ->
-    Tangerine.router.navigate "class/" + @options.klass.id, true
+    Tangerine.router.navigate "class/" + @klass.id, true
 
   toggleDelete: -> @$el.find(".klass_delete_confirm").toggle()
 
   delete: ->
-    @options.klass.collection.get(@options.klass).destroy()
+    @klass.collection.get(@klass).destroy()
 
   render: =>
-    klass = @options.klass
+    klass = @klass
 
     if klass.get("teacherId") == "admin"
       teacherName = "admin"
