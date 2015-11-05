@@ -107,7 +107,6 @@ Tangerine.bootSequence =
       ).then ->
 
 
-
         packNumber = 0
 
         doOne = ->

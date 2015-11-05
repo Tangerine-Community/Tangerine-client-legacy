@@ -4,14 +4,14 @@
   "description": "data collection system.",
   "main": "index.js",
   "scripts": {
-  "postinstall": "cd scripts && ./postinstall.sh"
-  "build:apk": "cordova build android 2>&1",
-  "test": "grunt test",
-  "clean": "rm -rf platforms plugins node_modules",
-  "listen": "cd scripts ./listen.rb",
-  "start": "http-server -p 9000 src --silent & cd ./scripts && ./listen.rb & grunt watch",
-  "testW": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt coffeeW",
-  "testWatch": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt testWatch"
+    "postinstall": "cd scripts && ./postinstall.sh",
+    "build:apk": "cordova build android 2>&1",
+    "test": "grunt test",
+    "clean": "rm -rf platforms plugins node_modules",
+    "listen": "cd scripts ./listen.rb",
+    "start": "http-server -p 9000 src --silent & cd ./scripts && ./listen.rb & grunt watch",
+    "testW": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt coffeeW",
+    "testWatch": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt testWatch"
   },
   "repository": {
     "type": "git",

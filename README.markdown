@@ -37,9 +37,10 @@ Then clone this repo.
 
 ## Init the source code
 
+    cd scripts &  bundle install
+
     npm install
     bower install
-    bundle install
 
 These commands read the relevant node and ruby dependencies and installs all of the necessary libraries.
 

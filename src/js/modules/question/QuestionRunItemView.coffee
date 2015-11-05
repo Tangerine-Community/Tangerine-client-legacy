@@ -105,7 +105,7 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
 
       @answer = "" unless @answer
 
-      if not _.isEmptyString(customValidationCode)
+      if customValidationCode? && not _.isEmptyString(customValidationCode)
         try
           @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
         catch e

@@ -1,7 +1,7 @@
 {{#unless notAsked}}
 <div class='error_message'></div>
-<div class='prompt' {{fontStyle}}>{{prompt}}</div>
-<div class='hint' {{fontStyle}}>{{hint}}</div>
+<div class='prompt' {{fontStyle}}>{{{prompt}}}</div>
+<div class='hint' {{fontStyle}}>{{{hint}}}</div>
 {{#if isOpen}}
     {{#if isMultiline}}
         <div><textarea id='{{cid}}_{{name}}' data-cid='{{cid}}' value='{{answerValue}}'></textarea></div>

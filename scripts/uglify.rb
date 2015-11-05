@@ -58,11 +58,13 @@ jsFiles = [
   'modules/subtest/prototypes/SurveyRunItemView.js',
 
   'modules/subtest/prototypes/ConsentRunView.js',
+  'modules/subtest/prototypes/ConsentRunItemView.js',
 
   'modules/subtest/prototypes/DatetimeRunView.js',
   'modules/subtest/prototypes/DatetimeRunItemView.js',
 
   'modules/subtest/prototypes/LocationRunView.js',
+  'modules/subtest/prototypes/LocationRunItemView.js',
 
   'modules/subtest/prototypes/SurveyRunView.js',
 
@@ -196,6 +198,7 @@ libFiles = [
   #'lib/backbone-couchdb.js',
   'lib/pouchdb.js',
   'lib/backbone-pouchdb.js',
+  'lib/pouchdb.load.min.js',
   'lib/transcriptionCheckdigit.js',
   'lib/table2CSV.js',
   'lib/base64.js',
