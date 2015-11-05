@@ -11,7 +11,8 @@
     "listen": "cd scripts ./listen.rb",
     "start": "http-server -p 9000 src --silent & cd ./scripts && ./listen.rb & grunt watch",
     "testW": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt coffeeW",
-    "testWatch": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt testWatch"
+    "testWatch": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt testWatch",
+    "testInBrowser":"http-server ./ -p 9000 --silent"
   },
   "repository": {
     "type": "git",
