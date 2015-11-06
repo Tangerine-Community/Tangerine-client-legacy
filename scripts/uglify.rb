@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'bundler/setup'
 require 'uglifier'
 require 'pathname'
 
@@ -57,11 +58,13 @@ jsFiles = [
   'modules/subtest/prototypes/SurveyRunItemView.js',
 
   'modules/subtest/prototypes/ConsentRunView.js',
+  'modules/subtest/prototypes/ConsentRunItemView.js',
 
   'modules/subtest/prototypes/DatetimeRunView.js',
   'modules/subtest/prototypes/DatetimeRunItemView.js',
 
   'modules/subtest/prototypes/LocationRunView.js',
+  'modules/subtest/prototypes/LocationRunItemView.js',
 
   'modules/subtest/prototypes/SurveyRunView.js',
 
@@ -199,6 +202,7 @@ libFiles = [
   'lib/table2CSV.js',
   'lib/base64.js',
   'lib/jstz.js',
+  'lib/lz-string.js',
   'lib/ckeditor.js',
   'lib/coffee-script.js' # This file tends to like to be last
 ]
@@ -239,7 +243,7 @@ if $options[:compile]
     oldFile = File.read file
     File.open( File.join(jsDir, "min", Pathname.new(file).basename.to_s.gsub(".js",".min.js")), "w" ) { |f|
       puts "\nUglifying\t\t#{file}"
-      f.write Uglifier.new.compile(oldFile)
+      f.write Uglifier.compile(oldFile)
     }
   end
 end

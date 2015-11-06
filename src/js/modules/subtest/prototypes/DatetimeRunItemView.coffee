@@ -12,7 +12,7 @@ DatetimeRunItemView =  Backbone.Marionette.CompositeView.extend
       time : t("DatetimeRunView.label.time")
 
   initialize: (options) ->
-
+    Tangerine.progress.currentSubview = @
     @i18n()
 
     @model  = options.model
@@ -60,12 +60,16 @@ DatetimeRunItemView =  Backbone.Marionette.CompositeView.extend
     @trigger "ready"
 
   getResult: ->
-    return {
+    result =
       "year"  : @$el.find("#year").val()
       "month" : @$el.find("#month").val()
       "day"   : @$el.find("#day").val()
       "time"  : @$el.find("#time").val()
-    }
+    hash = @model.get("hash") if @model.has("hash")
+    subtestResult =
+      'body' : result
+      'meta' :
+        'hash' : hash
 
   getSkipped: ->
     return {

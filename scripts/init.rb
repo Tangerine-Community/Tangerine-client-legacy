@@ -8,6 +8,8 @@ print "building from coffeescript..."
 
 # directories and files
 thisDir = File.expand_path File.dirname(__FILE__)
+puts thisDir
+
 jsDir = File.join thisDir.split("/")[0..-2], "src", "js"
 minDir = File.join jsDir, "min"
 coffee = File.join thisDir.split("/")[0..-2], "node_modules", ".bin", "coffee"

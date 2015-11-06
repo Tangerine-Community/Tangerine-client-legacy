@@ -37,9 +37,10 @@ Then clone this repo.
 
 ## Init the source code
 
+    cd scripts &  bundle install
+
     npm install
     bower install
-    bundle install
 
 These commands read the relevant node and ruby dependencies and installs all of the necessary libraries.
 
@@ -70,7 +71,8 @@ View package.json for other useful npm targets:
  - npm listen turns on the changes listener and compiles coffeescript files.
  - npm build:apk will generate a debug APK.
  - npm test will run mocha-phantomjs tests and watch for changes to coffeescript files.
- - npm run-script testW will run mocha-phantomjs tests and watch for changes to coffeescript files.
+ - npm run-script testW will run tests using mocha-phantomjs, displaying output on command line and watch for changes to coffeescript files.
+ - npm run-script testInBrowser will run mocha tests in the browser at http://localhost:9000/test/
 
 # Testing
 

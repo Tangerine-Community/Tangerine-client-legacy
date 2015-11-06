@@ -1,4 +1,4 @@
-class ConsentRunView extends Backbone.View
+class ConsentRunItemView extends Backbone.View
 
   className : "ConsentRunView"
 
@@ -21,7 +21,7 @@ class ConsentRunView extends Backbone.View
       select            : t("ConsentRunView.message.select")
 
   initialize: (options) ->
-
+    Tangerine.progress.currentSubview = @
     @i18n()
 
     @confirmedNonConsent = false
@@ -46,7 +46,7 @@ class ConsentRunView extends Backbone.View
 
     unless @dataEntry
 
-      previous = @parent.parent.result.getByHash(@model.get('hash'))
+      previous =  @model.parent.result.getByHash(@model.get('hash'))
       answer = previous.consent if previous
 
     @consentButton = new ButtonView
@@ -98,7 +98,13 @@ class ConsentRunView extends Backbone.View
       $(".messages").html @text.select
 
   getResult: ->
-    return "consent" : @consentButton.answer
+    result =
+      "consent" : @consentButton.answer
+    hash = @model.get("hash") if @model.has("hash")
+    subtestResult =
+      'body' : result
+      'meta' :
+        'hash' : hash
 
   onClose: ->
     @consentButton?.close?()

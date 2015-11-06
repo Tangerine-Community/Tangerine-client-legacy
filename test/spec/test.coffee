@@ -174,21 +174,21 @@
       )
 
       it('Should return the expected assessment', (done)->
-        id = "70f8af3b-e1da-3a75-d84e-a7da4be99116"
+        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
         assessment = new Assessment "_id" : id
         assessment.deepFetch({
-          error: ->
+          error:(err) ->
             console.log "Catch Error: " + JSON.stringify err
             done(err)
           success: (record) ->
 #            console.log("assessment: " + JSON.stringify assessment)
             Tangerine.assessment = assessment
-            expect(assessment.get("name")).to.equal('setHint');
+            expect(assessment.get("name")).to.equal('01. LTTP2 2015 - Student');
             done()
         })
 #        }).then( (assessment) ->
 #          Tangerine.assessment = assessment
-#          expect(assessment.name).to.equal('setHint');
+#          expect(assessment.name).to.equal('01. LTTP2 2015 - Student');
 #          done()
 #        ).catch( (err) ->
 #          console.log "Catch Error: " + JSON.stringify err
@@ -198,15 +198,15 @@
 
       it('Should make the view', (done)->
         this.$fixture.empty().appendTo(this.$container);
-        id = "70f8af3b-e1da-3a75-d84e-a7da4be99116"
+        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
         assessment = new Assessment "_id" : id
         assessment.deepFetch({
-          error: ->
+          error: (err)->
             console.log "Catch Error: " + JSON.stringify err
             done(err)
           success: (record) ->
 #            console.log "assessment subtests: " + JSON.stringify(assessment.subtests)
-#            expect(assessment.get("name")).to.equal('setHint');
+#            expect(assessment.get("name")).to.equal('01. LTTP2 2015 - Student');
             Tangerine.assessment = assessment
 #            console.log("assessment: " + JSON.stringify assessment.doc)
             viewOptions =
@@ -218,7 +218,7 @@
             view.once("render", () ->
 #              console.log("view.$el.text():" + view.$el.text())
               console.log("view.$el.html():" + view.$el.html())
-              expect(view.$el.text()).to.contain("Check Sum");
+              expect(view.$el.text()).to.contain("01. LTTP2 2015 - Student");
             )
             view.render();
             done()

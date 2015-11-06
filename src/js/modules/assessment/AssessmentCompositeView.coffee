@@ -18,6 +18,10 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         currentSubview = DatetimeRunItemView
       else if  (prototypeName == 'IdRunItemView')
         currentSubview = IdRunItemView
+      else if  (prototypeName == 'LocationRunItemView')
+        currentSubview = LocationRunItemView
+      else if  (prototypeName == 'ConsentRunItemView')
+        currentSubview = ConsentRunItemView
       else
         currentSubview =  null
         console.log(prototypeName + "  Subview is not defined.")
@@ -30,12 +34,12 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       @step 1
 
   childViewOptions: (model, index) ->
-    console.log("fetching model.questions -  " + JSON.stringify(model))
+#    console.log("fetching model.questions -  " + JSON.stringify(model))
     model.questions.fetch
       viewOptions:
         key: "question-#{model.id}"
       success: (collection) =>
-        console.log "collection: " + JSON.stringify(collection)
+#        console.log "collection: " + JSON.stringify(collection)
         model.questions.sort()
         model.collection = model.questions
         @collection.models = collection.models
@@ -211,8 +215,17 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 #    console.log("next")
     #    @trigger "next"
     @step 1
-  back: -> @trigger "back"
+#  back: -> @trigger "back"
+  back: ->
+    @step -1
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
+
+  getGridScore: ->
+    link = @model.get("gridLinkId") || ""
+    if link == "" then return
+    grid = @parent.model.subtests.get @model.get("gridLinkId")
+    gridScore = @parent.result.getGridScore grid.id
+    gridScore
 
   gridWasAutostopped: ->
     link = @model.get("gridLinkId") || ""
@@ -246,6 +259,9 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         subtestReplace = i
 
     if subtestReplace != null
+      if typeof currentView.getSum != 'function'
+        getSum = {correct:0,incorrect:0,missing:0,total:0}
+
 # Don't update the gps subtest.
       if prototype != 'gps'
         @result.insert
@@ -254,7 +270,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
           subtestHash : subtestResult.meta.hash
           subtestId   : currentView.model.id
           prototype   : currentView.model.get "prototype"
-          sum         : currentView.getSum()
+          sum         : getSum
       @reset increment
 
     else
@@ -264,7 +280,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         subtestHash : subtestResult.meta.hash
         subtestId   : currentView.model.id
         prototype   : currentView.model.get "prototype"
-        sum         : currentView.getSum()
+        sum         : getSum
       ,
         success : =>
           @reset increment
