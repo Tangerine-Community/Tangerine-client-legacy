@@ -198,7 +198,6 @@ libFiles = [
   #'lib/backbone-couchdb.js',
   'lib/pouchdb.js',
   'lib/backbone-pouchdb.js',
-  'lib/pouchdb.load.min.js',
   'lib/transcriptionCheckdigit.js',
   'lib/table2CSV.js',
   'lib/base64.js',
