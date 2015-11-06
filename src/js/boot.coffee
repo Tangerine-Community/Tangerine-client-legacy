@@ -172,11 +172,11 @@ Tangerine.bootSequence =
   loadI18n: ( callback ) ->
 
     $.i18n.init
-      "fallbackLng" : false
-      "lng"         : Tangerine.settings.get "language"
-      "resGetPath"  : "locales/__lng__/translation.json"
+      fallbackLng : false
+      lng         : Tangerine.settings.get "language"
+      resStore    : Tangerine.locales,
     ,
-      (t) ->
+      (err, t) ->
         window.t = t
         callback()
 
