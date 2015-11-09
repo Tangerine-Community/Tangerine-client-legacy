@@ -10,7 +10,7 @@
     "listen": "cd scripts ./listen.rb",
     "testW": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt coffeeW",
     "testWatch": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt testWatch",
-    "testInBrowser":"http-server ./ -p 9000 --silent"
+    "testInBrowser":"http-server ./ -p 9000 --silent",
     "start": "gulp"
   },
   "repository": {
