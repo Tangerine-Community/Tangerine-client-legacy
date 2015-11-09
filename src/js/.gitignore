@@ -4,5 +4,7 @@ boot.js
 router.js
 version.js
 helpers.js
+configuration.js
 *.map
 min/*
+init/*
