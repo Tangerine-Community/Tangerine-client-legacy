@@ -58,7 +58,7 @@ and runs ./scripts/listen.rb to compile changed coffeescript files and other use
 
 To view the app with minimised javascript, open http://localhost:9000
 
-To debug javascript, view http://localhost:9000/index-dev.html
+Sourcemaps are now available; therefore, you should be able to debug with them.
 
 ## Generate an APK
 
