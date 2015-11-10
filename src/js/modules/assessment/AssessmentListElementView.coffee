@@ -155,7 +155,7 @@ class AssessmentListElementView extends Backbone.View
         links : ["runMar", "results","update","delete"]
         other : deleteConfirm
     else
-      console.log "got here"
+#      console.log "got here"
 #      @$el.html "
 #        <div class='non_admin'>
 #          #{@spriteListLink("span",'run')}#{name} #{@spriteListLink("span",'runMar')}#{name} #{@spriteListLink("span",'results')}

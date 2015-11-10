@@ -18,3 +18,7 @@ bundler
 bundle/
 bundle/
 .bundle/
+
+# gulp build artifacts
+tmp/js/*
+tmp/min/*

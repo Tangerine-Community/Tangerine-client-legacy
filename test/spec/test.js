@@ -18,10 +18,10 @@
   });
   Backbone.Model.prototype.idAttribute = '_id';
   $.i18n.init({
-    "fallbackLng": false,
-    "lng": "en",
-    "resGetPath": "../src/locales/__lng__/translation.json"
-  }, function(t) {
+    fallbackLng: false,
+    lng: Tangerine.settings.get("language"),
+    resStore: Tangerine.locales
+  }, function(err, t) {
     return window.t = t;
   });
   tests = function(dbName) {

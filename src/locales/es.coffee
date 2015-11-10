@@ -1,5 +1,5 @@
-{
-
+Tangerine.locales["es"] =
+  translation:
     "login"      : "Iniciar sesión",
     "logout"     : "Cerrar sesión",
     "username"   : "Nombre de usuario",
@@ -47,9 +47,6 @@
     "class editor" : "Editor de clases",
     "register new student" : "Registrar un $t(student)",
     "remove student" : "¿Quita el $t(student)?",
-    
+
     "basic threshold" : "Basic threshold",
     "class to date" : "Class to date"
-    
-
-}

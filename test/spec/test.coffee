@@ -12,12 +12,20 @@
   Tangerine.addRegions dashboardRegion: "#dashboard"
 
   Backbone.Model.prototype.idAttribute = '_id'
+#  $.i18n.init
+#    "fallbackLng" : false
+#    "lng"         : "en"
+#    "resGetPath"  : "../src/locales/__lng__/translation.json"
+#  ,
+#    (t) ->
+#      window.t = t
+
   $.i18n.init
-    "fallbackLng" : false
-    "lng"         : "en"
-    "resGetPath"  : "../src/locales/__lng__/translation.json"
+    fallbackLng : false
+    lng         : Tangerine.settings.get "language"
+    resStore    : Tangerine.locales,
   ,
-    (t) ->
+    (err, t) ->
       window.t = t
 
   tests = (dbName)->
