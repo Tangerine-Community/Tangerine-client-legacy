@@ -34,12 +34,17 @@ been thoroughly tested, and in some cases, not tested at all.
 Then clone this repo.
 
     git clone https://github.com/Tangerine-Community/Tangerine-client.git
+	
+Switch to the correct branch
+
+	git checkout marionette
 
 ## Init the source code
 
     cd scripts &  bundle install
 
     npm install
+	cd ..
     bower install
 
 These commands read the relevant node and ruby dependencies and installs all of the necessary libraries.
