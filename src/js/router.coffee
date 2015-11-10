@@ -462,7 +462,7 @@ class Router extends Backbone.Router
               options:
                 key: "result-#{assessmentId}"
               success: ->
-                console.log allResults
+#                console.log "allResults.models: " + JSON.stringify(allResults.models)
                 view = new ResultsView
                   "assessment" : assessment
                   "results"    : allResults.models
