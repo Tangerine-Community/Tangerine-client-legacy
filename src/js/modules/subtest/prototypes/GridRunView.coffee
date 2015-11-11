@@ -133,6 +133,7 @@ class GridRunView extends Backbone.View
           position: "initial"
           top: "initial"
           left: "initial"
+
   floatOff: ->
     $(window).off 'scroll'
     timer1= $('.timer').first()
@@ -140,6 +141,7 @@ class GridRunView extends Backbone.View
       position: "initial"
       top: "initial"
       left: "initial"
+
   startTimer: ->
     if @timerStopped == false && @timeRunning == false
 
