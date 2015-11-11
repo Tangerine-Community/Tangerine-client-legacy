@@ -30,7 +30,6 @@ class AssessmentsView extends Backbone.View
 
 
   render: (event) =>
-    console.log "assessments view render"
 
     @closeViews()
 
@@ -40,9 +39,6 @@ class AssessmentsView extends Backbone.View
 
     @subviews  = []
     htmlList = ""
-
-    console.log @assessments.length
-    console.log @assessments
 
     @assessments.each (assessment) =>
 

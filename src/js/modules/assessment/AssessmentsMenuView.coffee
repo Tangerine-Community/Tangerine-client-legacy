@@ -62,7 +62,6 @@ class AssessmentsMenuView extends Backbone.View
 
 
   render: =>
-    console.log "assessments menuview render"
     isAdmin = Tangerine.user.isAdmin()
     
     newButton     = "<button class='new command'>#{@text.new}</button>"
