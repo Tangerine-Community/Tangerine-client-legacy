@@ -118,14 +118,38 @@ class GridRunView extends Backbone.View
       $target.addClass "element_last"
       @lastAttempted = index
 
+  floatOn: ->
+    timer1= $('.timer').first()
+    timer1Pos = timer1.offset()
+    $(window).on 'scroll', ->
+      scrollPos = $(window).scrollTop()
+      if scrollPos >= timer1Pos.top
+        timer1.css
+          position: "fixed"
+          top: "10%"
+          left: "80%"
+      else
+        timer1.css
+          position: "initial"
+          top: "initial"
+          left: "initial"
+  floatOff: ->
+    $(window).off 'scroll'
+    timer1= $('.timer').first()
+    timer1.css
+      position: "initial"
+      top: "initial"
+      left: "initial"
   startTimer: ->
     if @timerStopped == false && @timeRunning == false
+
       @interval = setInterval( @updateCountdown, 1000 ) # magic number
       @startTime = @getTime()
       @timeRunning = true
       @updateMode "mark"
       @enableGrid()
       @updateCountdown()
+      @floatOn()
 
   enableGrid: ->
     @$el.find("table.disabled, div.disabled").removeClass("disabled")
@@ -142,7 +166,7 @@ class GridRunView extends Backbone.View
     @stopTime = @getTime()
     @timeRunning = false
     @timerStopped = true
-
+    @floatOff()
     @updateCountdown()
 
     # do these if it's not a simple stop
@@ -407,7 +431,7 @@ class GridRunView extends Backbone.View
           "i"     : i+1
       gridHTML += "</div>"
     html += gridHTML
-    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>#{@text.stop}</button><div class='timer'>#{@timer}</div></div>"
+    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>#{@text.stop}</button></div>"
 
     resetButton = "
       <div>
