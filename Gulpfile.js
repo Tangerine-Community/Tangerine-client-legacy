@@ -144,6 +144,7 @@ gulp.task("build:app.js", ["minify:js"], function() {
 gulp.task("build:lib.js", function() {
   return gulp.src(conf.libFiles)
     .pipe(sourcemaps.init())        // start sourcemapping
+    .pipe(cache("lib"))             // cache files
     .pipe(concat(conf.libFile))     // concat libraries
     .pipe(uglify())                 // make'em small
     .pipe(sourcemaps.write())       // append sourcemaps
@@ -197,14 +198,11 @@ gulp.task('version', function(cb) {
 // Compile translations
 gulp.task("build:locales", function(){
 
-
   var c = coffee({bare: true}); // get a coffeescript stream
   c.on("error", function(err) { // on error
     log(err);                   // log
     c.end();                    // end stream so we don't freeze the program
   });
-
-
 
   gulp.src("./src/locales/*.coffee")  // handle translation documents
     .pipe(c)                          // compile coffeescript
@@ -348,7 +346,6 @@ conf.minFileOrder = conf.fileOrder.map(function(el) {
 });
 
 conf.libFiles = [
-  './src/js/lib/phonegap.js',
   './src/js/lib/modernizr.js',
   './src/js/lib/jquery.js',
   './src/js/lib/underscore.js',
