@@ -9,6 +9,7 @@
     "install:apk": "cd scripts && ./install.sh",
     "test": "mocha echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf platforms plugins node_modules",
+    "update:tree" : "git pull && chown -R www-data:www-data .",
     "preload": "scripts/preload.js",
     "start": "gulp"
   },
