@@ -6,7 +6,7 @@ class Result extends Backbone.Model
 
     # could use defaults but it messes things up
     if options.blank == true
-      device = device || Device || {}
+      device = window.Device || {}
       deviceInfo =
         'name'      : device.name
         'platform'  : device.platform
