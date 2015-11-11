@@ -4,7 +4,9 @@
   "description": "data collection system.",
   "main": "index.js",
   "scripts": {
+    "postinstall": " cd scripts && ./postinstall.sh",
     "build:apk": "cordova build android 2>&1",
+    "install:apk": "cd scripts && ./install.sh",
     "test": "mocha echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf platforms plugins node_modules",
     "preload": "scripts/preload.js",
