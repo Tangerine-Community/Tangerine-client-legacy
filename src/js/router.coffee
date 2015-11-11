@@ -50,12 +50,12 @@ class Router extends Backbone.Router
     'dataEntry/:id' : 'dataEntry'
 
     'resume/:assessmentId/:resultId'    : 'resume'
-    
+
     'restart/:id'   : 'restart'
     'edit/:id'      : 'edit'
     'results/:id'   : 'results'
     'import'        : 'import'
-    
+
     'subtest/:id'       : 'editSubtest'
 
     'question/:id' : 'editQuestion'
@@ -65,7 +65,7 @@ class Router extends Backbone.Router
 
     'sync/:id'      : 'sync'
 
-    
+
   admin: (options) ->
     Tangerine.user.verify
       isAdmin: ->
@@ -75,7 +75,7 @@ class Router extends Backbone.Router
             view = new AdminView
               groups : groups
             vm.show view
-    
+
   dashboard: (options) ->
     options = options?.split(/\//)
     #default view options
@@ -399,15 +399,13 @@ class Router extends Backbone.Router
   resume: (assessmentId, resultId) ->
     Tangerine.user.verify
       isAuthenticated: ->
-        assessment = new Assessment
-          "_id" : assessmentId
-        assessment.fetch
-          success : ( assessment ) ->
-            result = new Result
-              "_id" : resultId
+        assessment = new Assessment "_id" : assessmentId
+        assessment.deepFetch
+          success : ->
+            result = new Result "_id" : resultId
             result.fetch
-              success: (result) ->
-                view = new AssessmentRunView 
+              success: ->
+                view = new AssessmentRunView
                   model: assessment
 
                 if result.has("order_map")
@@ -423,7 +421,7 @@ class Router extends Backbone.Router
                 # replace the view's result with our old one
                 view.result = result
 
-                # Hijack the normal Result and ResultView, use one from the db 
+                # Hijack the normal Result and ResultView, use one from the db
                 view.subtestViews.pop()
                 view.subtestViews.push new ResultView
                   model          : result
@@ -446,10 +444,9 @@ class Router extends Backbone.Router
               options:
                 key: "result-#{assessmentId}"
               success: ->
-                console.log allResults
                 view = new ResultsView
                   "assessment" : assessment
-                  "results"    : allResults.models
+                  "results"    : allResults
                 vm.show view
 
 
@@ -469,7 +466,7 @@ class Router extends Backbone.Router
           success :  ->
             filename = assessment.get("name") + "-" + moment().format("YYYY-MMM-DD HH:mm")
             document.location = "/" + Tangerine.dbName + "/_design/" + Tangerine.designDoc + "/_list/csv/csvRowByResult?key=\"#{id}\"&filename=#{filename}"
-        
+
       isUser: ->
         errView = new ErrorView
           message : "You're not an admin user"
@@ -552,7 +549,7 @@ class Router extends Backbone.Router
               allSubtests = new Subtests
               allSubtests.fetch
                 success: ( allSubtests ) ->
-                  subtests = new Subtests allSubtests.where 
+                  subtests = new Subtests allSubtests.where
                     "curriculumId" : klass.get("curriculumId")
                     "reportType"   : "progress"
                   allResults = new KlassResults
@@ -713,7 +710,7 @@ class Router extends Backbone.Router
     Tangerine.user.verify
       isAuthenticated: ->
         showView = (teacher) ->
-          view = new AccountView 
+          view = new AccountView
             user : Tangerine.user
             teacher: teacher
           vm.show view
@@ -756,7 +753,7 @@ class Router extends Backbone.Router
       isAuthenticated: ->
         users = new TabletUsers
         users.fetch
-          success: -> 
+          success: ->
             teachers = new Teachers
             teachers.fetch
               success: =>
@@ -786,7 +783,7 @@ class Router extends Backbone.Router
             , name,
             success: ->
               user = new User
-              user.save 
+              user.save
                 "name"  : name
                 "id"    : "tangerine.user:"+name
                 "roles" : []
