@@ -11,7 +11,7 @@ class SubtestRunView extends Backbone.View
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
   i18n: ->
-    @text = 
+    @text =
       "next" : t("SubtestRunView.button.next")
       "back" : t("SubtestRunView.button.back")
       "skip" : t("SubtestRunView.button.skip")
@@ -24,14 +24,14 @@ class SubtestRunView extends Backbone.View
 
     @model       = options.model
     @parent      = options.parent
-    @fontStyle = "style=\"font-family: #{@model.get('fontFamily')} !important;\"" if @model.get("fontFamily") != "" 
-    
+    @fontStyle = "style=\"font-family: #{@model.get('fontFamily')} !important;\"" if @model.get("fontFamily") != ""
+
     @prototypeRendered = false
 
   render: ->
 
     _render = =>
-  
+
       @delegateEvents()
 
       enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
@@ -50,7 +50,7 @@ class SubtestRunView extends Backbone.View
         #{enumeratorHelp}
         #{studentDialog}
         <div id='prototype_wrapper'></div>
-        
+
         <div class='controlls clearfix'>
           #{transitionComment}
           #{backButton or ''}
@@ -58,9 +58,9 @@ class SubtestRunView extends Backbone.View
           #{skipButton or ''}
         </div>
       "
-    
+
       # Prototype specific views follow this capitalization convention: GpsRunView
-      console.log @model
+
       @prototypeView = new window["#{@model.get('prototype').titleize()}RunView"]
         model  : @model
         parent : @
@@ -74,14 +74,18 @@ class SubtestRunView extends Backbone.View
 
       @flagRender "subtest"
 
-    languageCode = @model.get("language") 
-    if languageCode
-      i18n.setLng languageCode, (t) =>
-        window.t = t
-        _render()
-    else
-      i18n.setLng Tangerine.settings.get("language"), (t) =>
-        _render()
+
+
+    code = if @model.has("language") and @model.get("language") != ""
+        @model.get("language")
+      else
+        Tangerine.settings.get("language")
+
+    code = Tangerine.settings.get("language") if typeof Tangerine.locales[code] == "undefined"
+
+    Utils.changeLanguage code, (err, t) ->
+      window.t = t
+      _render()
 
   flagRender: ( flag ) =>
     @renderFlags = {} if not @renderFlags
@@ -94,7 +98,7 @@ class SubtestRunView extends Backbone.View
     @prototypeView?.afterRender?()
     @onShow()
 
-  showNext: => @$el.find(".controlls").show() 
+  showNext: => @$el.find(".controlls").show()
   hideNext: => @$el.find(".controlls").hide()
 
   onShow: ->
@@ -123,7 +127,7 @@ class SubtestRunView extends Backbone.View
     link = @model.get("gridLinkId") || ""
     if link == "" then return
     grid = @parent.model.subtests.get @model.get("gridLinkId")
-    gridWasAutostopped = @parent.result.gridWasAutostopped grid.id    
+    gridWasAutostopped = @parent.result.gridWasAutostopped grid.id
 
   onClose: ->
     @prototypeView?.close?()
@@ -152,9 +156,9 @@ class SubtestRunView extends Backbone.View
   getResult: ->
     result = @prototypeView.getResult()
     hash = @model.get("hash") if @model.has("hash")
-    return { 
+    return {
       'body' : result
-      'meta' : 
+      'meta' :
         'hash' : hash
     }
 

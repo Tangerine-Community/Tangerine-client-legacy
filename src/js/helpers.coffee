@@ -198,24 +198,62 @@ class Utils
       nextFunction?(step)
     step()
 
+  @changeLanguage : (code, callback) ->
+    i18n.setLng code, callback
+
+
+  @uploadCompressed: (docList) ->
+
+    a = document.createElement("a")
+    a.href = Tangerine.settings.get("groupHost")
+    allDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
+
+    return $.ajax
+      url: allDocsUrl
+      type: "POST"
+      dataType: "json"
+      data:
+        keys: JSON.stringify(docList)
+        user: Tangerine.settings.upUser
+        pass: Tangerine.settings.upPass
+      error: (a) ->
+        alert "Error connecting"
+      success: (response) =>
+
+        rows = response.rows
+        leftToUpload = []
+        for row in rows
+          leftToUpload.push(row.key) if row.error?
+
+        # if it's already fully uploaded
+        # make sure it's in the log
+
+        Tangerine.db.allDocs(include_docs:true,keys:leftToUpload
+        ).then( (response) ->
+          docs = {"docs":response.rows.map((el)->el.doc)}
+          compressedData = LZString.compressToBase64(JSON.stringify(docs))
+          a = document.createElement("a")
+          a.href = Tangerine.settings.get("groupHost")
+          bulkDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
+
+          $.ajax
+            type : "POST"
+            url : bulkDocsUrl
+            data : compressedData
+            error: =>
+              alert "Server bulk docs error"
+            success: =>
+              Utils.sticky "Results uploaded"
+              return
+        )
+
+
   @universalUpload: ->
     results = new Results
     results.fetch
       success: ->
         docList = results.pluck("_id")
-        groupHost = Tangerine.settings.get("groupHost") + "/_session"
-        options =
-          success: ()->
-            PouchDB.replicate(
-              "tangerine",
-              Tangerine.settings.urlDB("group"),
-              doc_ids: docList
-              ).on("complete", (info) ->
-                Utils.sticky "Results synced to cloud successfully."
-              ).on("error", (err) ->
-                Utils.sticky "Upload error<br>#{code} #{message}"
-              )
-        Utils.checkSession(groupHost, options)
+        Utils.uploadCompressed(docList)
 
   @checkSession: (url, options) ->
     options = options || {};

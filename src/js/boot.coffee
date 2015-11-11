@@ -1,3 +1,4 @@
+
 # This file loads the most basic settings related to Tangerine and kicks off Backbone's router.
 #   * The doc `configuration` holds the majority of settings.
 #   * The Settings object contains many convenience functions that use configuration's data.
@@ -169,15 +170,13 @@ Tangerine.bootSequence =
     callback()
 
   loadI18n: ( callback ) ->
-
-    $.i18n.init
+    i18n.init
       fallbackLng : false
-      lng         : Tangerine.settings.get "language"
-      resStore    : Tangerine.locales,
-    ,
-      (err, t) ->
-        window.t = t
-        callback()
+      lng         : Tangerine.settings.get("language")
+      resStore    : Tangerine.locales
+    , (err, t) ->
+      window.t = t
+      callback()
 
   handleCordovaEvents: ( callback ) ->
 
@@ -247,4 +246,3 @@ Tangerine.boot = ->
   Utils.execute sequence
 
 Tangerine.boot()
-

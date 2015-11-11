@@ -415,14 +415,12 @@ class Router extends Backbone.Router
   resume: (assessmentId, resultId) ->
     Tangerine.user.verify
       isAuthenticated: ->
-        assessment = new Assessment
-          "_id" : assessmentId
-        assessment.fetch
-          success : ( assessment ) ->
-            result = new Result
-              "_id" : resultId
+        assessment = new Assessment "_id" : assessmentId
+        assessment.deepFetch
+          success : ->
+            result = new Result "_id" : resultId
             result.fetch
-              success: (result) ->
+              success: ->
                 view = new AssessmentRunView
                   model: assessment
 
@@ -462,10 +460,9 @@ class Router extends Backbone.Router
               options:
                 key: "result-#{assessmentId}"
               success: ->
-#                console.log "allResults.models: " + JSON.stringify(allResults.models)
                 view = new ResultsView
                   "assessment" : assessment
-                  "results"    : allResults.models
+                  "results"    : allResults
                 vm.show view
 
 

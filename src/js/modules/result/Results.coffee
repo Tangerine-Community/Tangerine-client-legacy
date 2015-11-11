@@ -29,12 +29,10 @@ class ResultPreviews extends Backbone.Collection
       key : 'result'
 
   parse: (response) ->
-    console.log response
     models = _.pluck response.rows, 'value'
     return models
 
-  comparator: (model) ->
-    model.get('start_time') || 0
+  comparator: 'startTime'
 
   # By default include the docs
   fetch: (options) ->
