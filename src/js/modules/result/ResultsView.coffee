@@ -43,95 +43,7 @@ class ResultsView extends Backbone.View
 
 
   cloud: ->
-
-    a = document.createElement("a")
-    a.href = Tangerine.settings.get("groupHost")
-    allDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
-
-
-    return $.ajax
-      url: allDocsUrl
-      type: "POST"
-      dataType: "json"
-      data: 
-        keys: JSON.stringify(@docList)
-        user: Tangerine.settings.upUser
-        pass: Tangerine.settings.upPass
-      error: ->
-        console.log "There was an error."
-      success: (response) =>
-
-
-        console.log "all docs response"
-        console.log response
-        rows = response.rows
-        leftToUpload = []
-        for row in rows
-          leftToUpload.push(row.key) if row.error?
-
-        # if it's already fully uploaded
-        # make sure it's in the log
-
-        Tangerine.db.allDocs(include_docs:true,keys:leftToUpload
-        ).then( (response) ->
-          docs = {"docs":response.rows.map((el)->el.doc)}
-          compressedData = LZString.compressToBase64(JSON.stringify(docs))
-          a = document.createElement("a")
-          a.href = Tangerine.settings.get("groupHost")
-          bulkDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
-
-          $.ajax
-            type : "POST"
-            url : bulkDocsUrl
-            data : compressedData
-            error: =>
-              alert "Server bulk docs error"
-            success: =>
-              console.log("uploaded to bulk docs")
-              console.log(arguments)
-              return
-
-              @sunc.push currentTrip
-              @sunc = _.uniq(@sunc)
-              @log.setTrips @sunc
-              @log.save null,
-                error: => @uploadingNow = false
-                success: =>
-                  @update =>
-                    @render()
-                    doTrip()
-
-        )
-
-
-
-
-    if @available.cloud.ok
-      console.log "going here #{Tangerine.settings.urlDB("group", true)}"
-      $.ajax(
-        url: Tangerine.settings.urlDB("group", true) + "/_all_docs",
-        ajax:
-          cache: false,
-          timeout: 30000,
-          data: keys: @docList
-        auth:
-          username: Tangerine.settings.get("upUser")
-          password: Tangerine.settings.get("upPass")
-      ).then( ->
-        console.log arguments
-      )
-      return
-      Tangerine.db.replicate.to(
-        Tangerine.settings.urlDB("group", true),
-        doc_ids: @docList
-      ).on("error", (err) =>
-        @$el.find(".status").find(".info_box").html "<div>Sync error</div><div>#{err}</div>"
-      ).on("complete", (info) =>
-        @$el.find(".status").find(".info_box").html "Results synced to cloud successfully"
-      )
-    else
-      Utils.midAlert "Cannot detect cloud"
-    return false
+    Utils.uploadCompressed @docList
 
 
   tablets: ->
@@ -247,18 +159,15 @@ class ResultsView extends Backbone.View
     @resultOffset = 0
 
     @subViews = []
-    @results = options.results
+    @results    = options.results
     @assessment = options.assessment
-    @docList = []
-    for result in @results
-      @docList.push result.get "_id"
+    @docList = @results.pluck("_id")
     @initDetectOptions()
     @detectCloud()
 
   render: ->
 
     @clearSubViews()
-
 
     html = "
       <h1>#{@assessment.getEscapedString('name')} #{@text.results}</h1>
@@ -312,60 +221,58 @@ class ResultsView extends Backbone.View
       return
 
     previews = new ResultPreviews
-    previews.fetch(
+    previews.fetch
       viewOptions:
         key: "result-#{@assessment.id}"
-    ).then =>
+      success: =>
 
-      console.log "testing"
-      console.log @
-      console.log arguments
-      count = previews.labelngth
+        previews.sort()
 
-      maxResults  = 100
-      currentPage = Math.floor( @resultOffset / @resultLimit ) + 1
+        count = previews.labelngth
 
-      if @results.length > maxResults
-        @$el.find("#controls").removeClass("confirmation")
-        @$el.find("#page").val(currentPage)
-        @$el.find("#limit").val(@resultLimit)
+        maxResults  = 100
+        currentPage = Math.floor( @resultOffset / @resultLimit ) + 1
 
-      start = @resultOffset + 1
-      end   = Math.min @resultOffset + @resultLimit, @results.length
-      total = @results.length
+        if @results.length > maxResults
+          @$el.find("#controls").removeClass("confirmation")
+          @$el.find("#page").val(currentPage)
+          @$el.find("#limit").val(@resultLimit)
 
-      @$el.find('#result_position').html t("ResultsView.label.pagination", {start:start, end:end, total:total} )
+        start = @resultOffset + 1
+        end   = Math.min @resultOffset + @resultLimit, @results.length
+        total = @results.length
 
-      htmlRows = ""
-      console.log previews
-      previews.each (preview) =>
+        @$el.find('#result_position').html t("ResultsView.label.pagination", {start:start, end:end, total:total} )
 
-        console.log "doing thisone"
-        id      = preview.getString 'participantId', "No ID"
-        endTime = preview.get "endTime"
-        if endTime?
-          long    = moment(endTime).format('YYYY-MMM-DD HH:mm')
-          fromNow = moment(endTime).fromNow()
-        else
-          startTime = preview.get "startTime"
-          long    = "<b>#{@text.started}</b> " + moment(startTime).format('YYYY-MMM-DD HH:mm')
-          fromNow = moment(startTime).fromNow()
+        htmlRows = ""
 
-        time    = "#{long} (#{fromNow})"
-        htmlRows += "
-          <div>
-            #{ id } -
-            #{ time }
-            <button data-result-id='#{preview.id}' class='details command'>#{@text.details}</button>
-            <div id='details_#{preview.id}'></div>
-          </div>
-        "
+        previews.sort((a,b)->)
 
-      console.log "got here"
-      console.log htmlRows
-      @$el.find("#results_container").html htmlRows
+        previews.each (preview) =>
 
-      @$el.find(focus).focus()
+          id      = preview.getString("participantId", "No ID")
+          endTime = preview.get("endTime")
+          if endTime?
+            long    = moment(endTime).format('YYYY-MMM-DD HH:mm')
+            fromNow = moment(endTime).fromNow()
+          else
+            startTime = preview.get("startTime")
+            long    = "<b>#{@text.started}</b> " + moment(startTime).format('YYYY-MMM-DD HH:mm')
+            fromNow = moment(startTime).fromNow()
+
+          time    = "#{long} (#{fromNow})"
+          htmlRows += "
+            <div>
+              #{ id } -
+              #{ time }
+              <button data-result-id='#{preview.id}' class='details command'>#{@text.details}</button>
+              <div id='details_#{preview.id}'></div>
+            </div>
+          "
+
+        @$el.find("#results_container").html htmlRows
+
+        @$el.find(focus).focus()
 
   afterRender: =>
     for view in @subViews
