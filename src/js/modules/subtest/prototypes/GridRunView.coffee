@@ -119,7 +119,7 @@ class GridRunView extends Backbone.View
       @lastAttempted = index
 
   floatOn: ->
-    timer1= $('.timer').first()
+    timer1= $('.timer')
     timer1Pos = timer1.offset()
     $(window).on 'scroll', ->
       scrollPos = $(window).scrollTop()
@@ -136,7 +136,7 @@ class GridRunView extends Backbone.View
 
   floatOff: ->
     $(window).off 'scroll'
-    timer1= $('.timer').first()
+    timer1= $('.timer')
     timer1.css
       position: "initial"
       top: "initial"
