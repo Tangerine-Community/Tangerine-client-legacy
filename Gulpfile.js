@@ -93,7 +93,7 @@ gulp.task("webserver", function() {
 });
 
 // compile coffeescript into js files
-gulp.task("build:js", function() {
+gulp.task("build:js", ["version"], function() {
 
   var c = coffee({bare: true}); // get a coffeescript stream
   c.on("error", function(err) { // on error
