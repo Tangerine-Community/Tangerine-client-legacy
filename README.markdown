@@ -57,12 +57,6 @@ To launch the app, run the npm start target, which uses the [http-server](https:
 and runs ./scripts/listen.rb to compile changed coffeescript files and other useful tasks.
 
     npm start
-	
-## First run note
-
-An important variable, window.TangerineVersion, is not properly initialised the first time the app is run. 
-
-Stop the app, and run npm start again. It will work now.
 
 ## View the app
 
