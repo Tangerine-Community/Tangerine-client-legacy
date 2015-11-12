@@ -9,11 +9,7 @@ plugins/
 
 # npm
 node_modules/
-
-bundler
-bundle/
-bundle/
-.bundle/
+npm-debug.log
 
 # gulp build artifacts
 tmp/js/*
