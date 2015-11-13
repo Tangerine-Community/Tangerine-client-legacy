@@ -37,9 +37,6 @@ ResultOfPrevious = (name) ->
 ResultOfGrid = (name) ->
   return vm.currentView.result.getItemResultCountByVariableName(name, "correct")
 
-#  init  Tangerine as a Marionette app
-Tangerine = if Tangerine? then Tangerine else new Marionette.Application()
-
 #
 # Tangerine backbutton handler
 #

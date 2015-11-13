@@ -1,6 +1,6 @@
 class GridRunItemView extends Backbone.Marionette.ItemView
   className: "gridItem"
-  template: JST["src/templates/Grid.handlebars"],
+  template: JST["Grid"],
 #  childView: QuestionRunItemView,
 
   events: if Modernizr.touch then {

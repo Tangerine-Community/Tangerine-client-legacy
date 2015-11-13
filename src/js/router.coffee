@@ -407,7 +407,7 @@ class Router extends Backbone.Router
             viewOptions =
               model: Tangerine.assessment
             dashboardLayout = new DashboardLayout();
-            Tangerine.mainRegion.show dashboardLayout
+            Tangerine.app.mainRegion.show dashboardLayout
             dashboardLayout.contentRegion.show(new AssessmentCompositeView viewOptions)
           error: (model, err, cb) ->
             console.log JSON.stringify err

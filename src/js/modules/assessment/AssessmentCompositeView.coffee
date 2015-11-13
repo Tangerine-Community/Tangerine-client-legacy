@@ -1,6 +1,6 @@
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
-  template: JST["src/templates/AssessmentView.handlebars"],
+  template: JST["AssessmentView"],
 
   getChildView: (model) ->
     model.parent = @

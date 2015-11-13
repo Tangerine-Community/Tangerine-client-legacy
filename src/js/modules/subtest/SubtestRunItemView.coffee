@@ -1,7 +1,7 @@
  SubtestRunItemView = Backbone.Marionette.ItemView.extend
 
   tagName: 'p'
-  template: JST["src/templates/SubtestRunItemView.handlebars"]
+  template: JST["SubtestRunItemView"]
 
   className : "SubtestRunView"
 

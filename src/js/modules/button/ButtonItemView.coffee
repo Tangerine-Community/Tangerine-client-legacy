@@ -1,7 +1,7 @@
 class ButtonItemView extends Backbone.Marionette.ItemView
 
   className : "ButtonItemView"
-  template: JST["src/templates/Button.handlebars"],
+  template: JST["Button"],
 
   events :
     if Modernizr.touch
