@@ -10,15 +10,15 @@ plugins/
 # npm
 node_modules/
 bower_components/
-
 npm-debug.log
-
-.idea
-bundler
-bundle/
-bundle/
-.bundle/
 
 # gulp build artifacts
 tmp/js/*
 tmp/min/*
+lib.js
+app.js
+
+# tangerine's packs
+pack*.json
+
+.idea

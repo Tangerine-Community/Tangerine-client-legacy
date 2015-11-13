@@ -2,7 +2,7 @@ HomeRecordItemView = Backbone.Marionette.ItemView.extend
 #  el: '#content table tbody'
 #  el: ''
   tagName: 'tr'
-  template: JST["src/templates/SubtestRunItemView.handlebars"]
+  template: JST["SubtestRunItemView"]
 
 #  initialize : ->
 #    this.listenTo this.collection, 'all', this.update

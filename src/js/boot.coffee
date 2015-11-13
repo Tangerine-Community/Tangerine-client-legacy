@@ -171,7 +171,7 @@ Tangerine.bootSequence =
 
   loadI18n: ( callback ) ->
     i18n.init
-      fallbackLng : false
+      fallbackLng : "en-US"
       lng         : Tangerine.settings.get("language")
       resStore    : Tangerine.locales
     , (err, t) ->
@@ -211,9 +211,13 @@ Tangerine.bootSequence =
       router : Tangerine.router
     Tangerine.log    = new Log()
     Tangerine.session = new Session()
-    Tangerine.addRegions siteNav: "#siteNav"
-    Tangerine.addRegions mainRegion: "#content"
-    Tangerine.addRegions dashboardRegion: "#dashboard"
+
+    #  init  Tangerine as a Marionette app
+    Tangerine.app = new Marionette.Application()
+
+    Tangerine.app.addRegions siteNav: "#siteNav"
+    Tangerine.app.addRegions mainRegion: "#content"
+    Tangerine.app.addRegions dashboardRegion: "#dashboard"
     callback()
 
   reloadUserSession: ( callback ) ->

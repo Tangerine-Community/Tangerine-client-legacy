@@ -1,5 +1,5 @@
 IdRunItemView = Backbone.Marionette.ItemView.extend
-  template: JST["src/templates/ItemView.handlebars"],
+  template: JST["ItemView"],
 
   className: "idItem"
 

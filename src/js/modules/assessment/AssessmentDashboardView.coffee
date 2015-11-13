@@ -1,6 +1,6 @@
  AssessmentDashboardView = Backbone.Marionette.CompositeView.extend
 
-  template: JST["src/templates/AssessmentDashboardHeader.handlebars"],
+  template: JST["AssessmentDashboardHeader"],
   tagName: 'div',
 
 #  i18n: ->

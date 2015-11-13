@@ -1,7 +1,6 @@
 class GridRunItemView extends Backbone.Marionette.ItemView
   className: "gridItem"
-  template: JST["src/templates/Grid.handlebars"],
-#  childView: QuestionRunItemView,
+  template: JST["Grid"],
 
   events: if Modernizr.touch then {
     'click .grid_element'     : 'gridClick' #click
@@ -118,17 +117,41 @@ class GridRunItemView extends Backbone.Marionette.ItemView
       $target.addClass "element_last"
       @lastAttempted = index
 
+
+  floatOn: ->
+    timer = @$el.find('.timer')
+    timerPos = timer.offset()
+    $(window).on 'scroll', ->
+      scrollPos = $(window).scrollTop()
+      if scrollPos >= timerPos.top
+        timer.css
+          position: "fixed"
+          top: "10%"
+          left: "80%"
+      else
+        timer.css
+          position: "initial"
+          top: "initial"
+          left: "initial"
+
+  floatOff: ->
+    $(window).off 'scroll'
+    timer = @$el.find('.timer')
+    timer.css
+      position: "initial"
+      top: "initial"
+      left: "initial"
+
+
   startTimer: ->
     if @timerStopped == false && @timeRunning == false
-      @interval = setInterval(
-        =>
-          @updateCountdown()
-        , 1000 ) # magic number
+      @interval = setInterval( @updateCountdown, 1000 ) # magic number
       @startTime = @getTime()
       @timeRunning = true
       @updateMode "mark"
       @enableGrid()
       @updateCountdown()
+      @floatOn()
 
   enableGrid: ->
     @$el.find("table.disabled, div.disabled").removeClass("disabled")
@@ -145,6 +168,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
     @stopTime = @getTime()
     @timeRunning = false
     @timerStopped = true
+    @floatOff()
 
     @updateCountdown()
 
@@ -171,7 +195,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
     clearTimeout(@timeout)
 
   unAutostopTest: ->
-    @interval = setInterval(@updateCountdown,1000 ) # magic number
+    @interval = setInterval(@updateCountdown, 1000 ) # magic number
     @updateCountdown()
     @autostopped = false
     @lastAttempted = 0
@@ -210,12 +234,12 @@ class GridRunItemView extends Backbone.Marionette.ItemView
   updateMode: ( mode = null ) =>
     # dont' change the mode if the time has never been started
     if (mode==null && @timeElapsed == 0 && not @dataEntry) || mode == "disabled"
-      @modeButton.setValue null
+      @modeButton?.setValue null
     else if mode? # manually change the mode
       @mode = mode
-      @modeButton.setValue @mode
+      @modeButton?.setValue @mode
     else # handle a click event
-      @mode = @modeButton.getValue()
+      @mode = @modeButton?.getValue()
 
   getTime: ->
     Math.round((new Date()).getTime() / 1000)
@@ -414,9 +438,9 @@ class GridRunItemView extends Backbone.Marionette.ItemView
           "i"     : i+1
       gridHTML += "</div>"
     html += gridHTML
-    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>#{@text.stop}</button><div class='timer'>#{@timer}</div></div>"
+    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>#{@text.stop}</button></div>"
 
-    resetButton = "
+    restartButton = "
       <div>
         <button class='restart command'>#{@text.restart}</button>
         <br>
@@ -432,7 +456,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
 
       @modeButton?.close()
 
-      model = new Button({foo: "bar"})
+      model = new Button()
 
       buttonConfig =
         options : []
@@ -455,7 +479,8 @@ class GridRunItemView extends Backbone.Marionette.ItemView
       } if @captureLastAttempted
 
       @modeButton = new ButtonItemView buttonConfig
-      @listenTo @modeButton, "change click", -> @updateMode()
+
+      @listenTo @modeButton, "change click", @updateMode
       modeSelector = "
         <div class='grid_mode_wrapper question clearfix'>
           <label>#{@text.inputMode}</label><br>
@@ -478,8 +503,8 @@ class GridRunItemView extends Backbone.Marionette.ItemView
 
     html += "
       #{if not @untimed then stopTimerHTML else ""}
-      #{if not @untimed then resetButton else ""}
-      #{modeSelector}
+      #{if not @untimed then restartButton else ""}
+      #{modeSelector || ''}
       #{(dataEntry if @dataEntry) || ''}
     "
     @model.set('grid', html)
@@ -491,9 +516,10 @@ class GridRunItemView extends Backbone.Marionette.ItemView
 
 
 
-  onRender: ->
-    @modeButton.setElement @$el.find ".mode-button"
-    @modeButton.render()
+  onRender: =>
+
+    @modeButton?.setElement @$el.find ".mode-button"
+    @modeButton?.render()
 
     @trigger "rendered"
     @trigger "ready"
