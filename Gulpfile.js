@@ -168,6 +168,16 @@ gulp.task('version', function(cb) {
 });
 
 
+// Handle less files
+gulp.task('build:less', function () {
+  return gulp.src(conf.lessFile)
+    .pipe(less())                      // compile less
+    .pipe(gulp.dest(conf.cssDir))      // output directory
+    .pipe(connect.reload());           // reload anyone watching
+
+});
+
+
 // Compile translations
 gulp.task('build:locales', function(){
 
@@ -188,6 +198,7 @@ gulp.task('build:locales', function(){
 
 // Pre compile handlebars template
 gulp.task('handlebars', function(){
+
   gulp.src(conf.handlebarsGlob)
     .pipe(handlebars({
       handlebars: require('handlebars') // Do this to specify out version 4.0.4
@@ -198,8 +209,13 @@ gulp.task('handlebars', function(){
       noRedeclare: true, // Avoid duplicate declarations
     }))
     .pipe(concat('templates.js'))
-    .pipe(gulp.dest(conf.tmpMinDir))
-    .pipe(connect.reload());          // reload anyone watching
+    .pipe(gulp.dest(conf.tmpMinDir));
+
+    // automatically refreshing is commented out
+    // because with our dependencies it's causing
+    // the reload to happen twice, once here and then
+    // once when the build:app.js is done
+    //.pipe(connect.reload());          // reload anyone watching
 
 });
 
