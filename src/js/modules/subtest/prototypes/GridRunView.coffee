@@ -119,25 +119,25 @@ class GridRunView extends Backbone.View
       @lastAttempted = index
 
   floatOn: ->
-    timer1= $('.timer')
-    timer1Pos = timer1.offset()
+    timer = @$el.find('.timer')
+    timerPos = timer.offset()
     $(window).on 'scroll', ->
       scrollPos = $(window).scrollTop()
-      if scrollPos >= timer1Pos.top
-        timer1.css
+      if scrollPos >= timerPos.top
+        timer.css
           position: "fixed"
           top: "10%"
           left: "80%"
       else
-        timer1.css
+        timer.css
           position: "initial"
           top: "initial"
           left: "initial"
 
   floatOff: ->
     $(window).off 'scroll'
-    timer1= $('.timer')
-    timer1.css
+    timer = @$el.find('.timer')
+    timer.css
       position: "initial"
       top: "initial"
       left: "initial"
@@ -471,7 +471,7 @@ class GridRunView extends Backbone.View
       } if @captureLastAttempted
 
       @modeButton = new ButtonView buttonConfig
-      @listenTo @modeButton, "change click", => @updateMode()
+      @listenTo @modeButton, "change click", @updateMode
       modeSelector = "
         <div class='grid_mode_wrapper question clearfix'>
           <label>#{@text.inputMode}</label><br>

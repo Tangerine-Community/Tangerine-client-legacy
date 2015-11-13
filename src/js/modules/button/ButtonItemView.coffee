@@ -26,7 +26,7 @@ class ButtonItemView extends Backbone.Marionette.ItemView
   onChange: (event) ->
 
     value = _.map($(event.target).find("option:selected"), (x) -> $(x).attr('data-answer'))
-    @trigger "change", @el
+    @trigger "change", value
 
   hybridClick: (opts) ->
     @$el.find(".button").removeClass "selected"
@@ -65,7 +65,7 @@ class ButtonItemView extends Backbone.Marionette.ItemView
       checkedBefore : $(event.target).hasClass("selected")
 
     @["#{@mode}Click"](options)
-    @trigger "change", @el
+    @trigger "change", options.value
 
   initialize : ( options ) ->
     @mode    = options.mode
