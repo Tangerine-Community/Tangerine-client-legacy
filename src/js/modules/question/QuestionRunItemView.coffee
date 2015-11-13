@@ -1,5 +1,5 @@
 QuestionRunItemView = Backbone.Marionette.ItemView.extend
-  template: JST["src/templates/QuestionView.handlebars"],
+  template: JST["QuestionView"],
   className: "question"
 
   events:

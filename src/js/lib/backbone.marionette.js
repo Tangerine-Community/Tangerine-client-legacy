@@ -16,7 +16,6 @@
  * https://github.com/marionettejs/backbone.wreqr/
  */
 
-
 (function(root, factory) {
 
   /* istanbul ignore next */

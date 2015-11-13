@@ -1,7 +1,10 @@
 AssessmentControlsView = Backbone.Marionette.CompositeView.extend
- template: JST["src/templates/AssessmentControls.handlebars"],
+
+ template: JST["AssessmentControls"],
+
  childView: AssessmentCompositeView,
 # childViewContainer: '#subtest_wrapper',
+
  attachHtml: (collectionView, childView, index) ->
   childView.model = @model
   collectionView.$("#subtest_wrapper").append(itemView.el);

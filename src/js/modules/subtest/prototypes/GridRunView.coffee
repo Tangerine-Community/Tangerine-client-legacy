@@ -118,14 +118,40 @@ class GridRunView extends Backbone.View
       $target.addClass "element_last"
       @lastAttempted = index
 
+  floatOn: ->
+    timer = @$el.find('.timer')
+    timerPos = timer.offset()
+    $(window).on 'scroll', ->
+      scrollPos = $(window).scrollTop()
+      if scrollPos >= timerPos.top
+        timer.css
+          position: "fixed"
+          top: "10%"
+          left: "80%"
+      else
+        timer.css
+          position: "initial"
+          top: "initial"
+          left: "initial"
+
+  floatOff: ->
+    $(window).off 'scroll'
+    timer = @$el.find('.timer')
+    timer.css
+      position: "initial"
+      top: "initial"
+      left: "initial"
+
   startTimer: ->
     if @timerStopped == false && @timeRunning == false
+
       @interval = setInterval( @updateCountdown, 1000 ) # magic number
       @startTime = @getTime()
       @timeRunning = true
       @updateMode "mark"
       @enableGrid()
       @updateCountdown()
+      @floatOn()
 
   enableGrid: ->
     @$el.find("table.disabled, div.disabled").removeClass("disabled")
@@ -142,7 +168,7 @@ class GridRunView extends Backbone.View
     @stopTime = @getTime()
     @timeRunning = false
     @timerStopped = true
-
+    @floatOff()
     @updateCountdown()
 
     # do these if it's not a simple stop
@@ -407,7 +433,7 @@ class GridRunView extends Backbone.View
           "i"     : i+1
       gridHTML += "</div>"
     html += gridHTML
-    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>#{@text.stop}</button><div class='timer'>#{@timer}</div></div>"
+    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>#{@text.stop}</button></div>"
 
     resetButton = "
       <div>
@@ -445,7 +471,7 @@ class GridRunView extends Backbone.View
       } if @captureLastAttempted
 
       @modeButton = new ButtonView buttonConfig
-      @listenTo @modeButton, "change click", => @updateMode()
+      @listenTo @modeButton, "change click", @updateMode
       modeSelector = "
         <div class='grid_mode_wrapper question clearfix'>
           <label>#{@text.inputMode}</label><br>

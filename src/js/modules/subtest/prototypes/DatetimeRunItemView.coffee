@@ -1,6 +1,6 @@
 DatetimeRunItemView =  Backbone.Marionette.CompositeView.extend
 
-  template: JST["src/templates/Datetime.handlebars"]
+  template: JST["Datetime"]
   className: "datetimeitem"
 
   i18n: ->

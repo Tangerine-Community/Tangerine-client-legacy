@@ -1,13 +1,18 @@
-class Results extends Backbone.Collection
+class ResultPreviews extends Backbone.Collection
+
   url : 'result'
-  model : Result
+  model : ResultPreview
 
   pouch:
     viewOptions:
+      include_docs: false
       key : 'result'
 
-  comparator: (model) ->
-    model.get('start_time') || 0
+  parse: (response) ->
+    models = _.pluck response.rows, 'value'
+    return models
+
+  comparator: 'startTime'
 
   # By default include the docs
   fetch: (options) ->

@@ -13,6 +13,40 @@ var unirest = require('unirest'); // a REST client
 var del = require('del'); // 
 
 
+/*
+ * parse arguments...kinda
+ * arguments    argv
+ * --g=9.2      { g : "9.2" }
+ * -g this      { g : "this" }
+ * -s           { s : true }
+ * --s --thing  { s : true, thing : true }
+ */
+var rawrgv = JSON.parse(process.env.npm_config_argv).original;
+
+var argv = {};
+
+rawrgv.forEach(function(el, i){
+  if (~el.indexOf("--") && ~el.indexOf("=")) {
+    var clean = el.substr(2);
+    var split = clean.split("=");
+    argv[split[0]] = split[1];
+  } else if (~el.indexOf("-")) {
+    var key = el.replace(/\-/g, "");
+    var nextArgIsAnotherKey = ~(rawrgv[i+1] || "").indexOf("-");
+    var noMoreKeys = typeof rawrgv[i+1] === "undefined";
+    if (nextArgIsAnotherKey || noMoreKeys) {
+      argv[key] = true;
+    } else {
+      argv[key] = rawrgv[i+1];
+    }
+  }
+});
+
+// override default group with cli argument group
+if ( typeof argv.group !== "undefined" ) {
+  group_name = argv.group;
+}
+
 // how many documents will be put into a pack at most.
 var PACK_DOC_SIZE = 50;
 
@@ -48,19 +82,32 @@ function get(opts) {
 }
 
 
+// delete any old packs if they're there
 del([ PACK_PATH + '/pack*.json' ]).then( function (paths) {
+
     if ( paths.length !== 0 ) {
       console.log(
         'Old json packs deleted\n' +
          paths.map(function(el){return "  " + el;}).join('\n')
       );
-    } else {
-      main();
     }
+
+    main();
+
 });
 
-
 function main() {
+
+  get({url: SOURCE_GROUP}).end(function(res){
+
+    if ( res.code !== 200 ) {
+      console.log(res.code)
+      console.log(res.rawbody)
+      process.exit();
+    }
+
+  });
+
 
   // Get a list of _ids for the assessments not archived
   post({

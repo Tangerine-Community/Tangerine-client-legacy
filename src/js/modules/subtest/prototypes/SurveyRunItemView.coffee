@@ -1,5 +1,5 @@
 SurveyRunItemView =  Backbone.Marionette.CompositeView.extend
-  template: JST["src/templates/Survey.handlebars"],
+  template: JST["Survey"],
   childView: QuestionRunItemView,
   tagName: "p",
 #  collectionEvents: {

@@ -1,5 +1,5 @@
 DashboardLayout = Backbone.Marionette.LayoutView.extend
-    template: JST["src/templates/DashboardLayout.handlebars"],
+    template: JST["DashboardLayout"],
     regions:
         headerRegion: "#header-region",
         contentRegion: "#content-region"
