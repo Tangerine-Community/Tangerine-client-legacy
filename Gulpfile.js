@@ -279,6 +279,8 @@ conf.fileOrder = [
   'TabletManagerView',
   'ResultSumView',
   'DashboardView',
+  'ResultPreview',
+  'ResultPreviews',
 
   'AdminView',
 
