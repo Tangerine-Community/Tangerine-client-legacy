@@ -15,3 +15,8 @@ npm-debug.log
 # gulp build artifacts
 tmp/js/*
 tmp/min/*
+lib.js
+app.js
+
+# tangerine's packs
+pack*.json
