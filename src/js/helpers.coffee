@@ -35,8 +35,11 @@ ResultOfPrevious = (name) ->
     return vm.currentView.result.getVariable(name)
 
 ResultOfGrid = (name) ->
-  return vm.currentView.result.getItemResultCountByVariableName(name, "correct")
-
+  if typeof vm.currentView.result == 'undefined'
+    console.log("Using Tangerine.progress.currentSubview")
+    return Tangerine.progress.currentSubview.model.parent.result.getItemResultCountByVariableName(name, "correct")
+  else
+    return vm.currentView.result.getVariable(name)
 #
 # Tangerine backbutton handler
 #
