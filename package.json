@@ -6,10 +6,14 @@
   "scripts": {
     "postinstall": " cd scripts && ./postinstall.sh",
     "build:apk": "cordova build android 2>&1",
-    "install:apk": "cd scripts && ./install.sh",
-    "test": "mocha echo \"Error: no test specified\" && exit 1",
+    "test": "grunt test",
     "clean": "rm -rf platforms plugins node_modules",
     "update:tree" : "git pull && chown -R www-data:www-data .",
+    "listen": "cd scripts ./listen.rb",
+    "testW": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt coffeeW",
+    "testWatch": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt testWatch",
+    "testInBrowser":"http-server ./ -p 9000 --silent",
+    "install:apk": "cd scripts && ./install.sh",
     "preload": "scripts/preload.js",
     "start": "gulp"
   },
@@ -26,6 +30,11 @@
   "devDependencies": {
     "coffee-script": "^1.10.0",
     "cordova": "^5.2.0",
+    "grunt": "^0.4.5",
+    "grunt-contrib-coffee": "^0.13.0",
+    "grunt-contrib-handlebars": "^0.10.1",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-mocha-phantomjs": "^2.0.0",
     "del": "^2.0.2",
     "fs-extra": "^0.26.2",
     "gulp": "^3.9.0",

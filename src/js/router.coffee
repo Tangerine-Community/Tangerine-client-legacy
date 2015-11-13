@@ -46,6 +46,7 @@ class Router extends Backbone.Router
     'assessments'        : 'assessments'
 
     'run/:id'       : 'run'
+    'runMar/:id'       : 'runMar'
     'print/:id/:format'       : 'print'
     'dataEntry/:id' : 'dataEntry'
 
@@ -395,6 +396,21 @@ class Router extends Backbone.Router
         assessment.deepFetch
           success : ->
             vm.show new AssessmentRunView model: assessment
+
+  runMar: (id) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        assessment = new Assessment "_id" : id
+        assessment.deepFetch
+          success : ->
+            Tangerine.assessment = assessment
+            viewOptions =
+              model: Tangerine.assessment
+            dashboardLayout = new DashboardLayout();
+            Tangerine.mainRegion.show dashboardLayout
+            dashboardLayout.contentRegion.show(new AssessmentCompositeView viewOptions)
+          error: (model, err, cb) ->
+            console.log JSON.stringify err
 
   resume: (assessmentId, resultId) ->
     Tangerine.user.verify

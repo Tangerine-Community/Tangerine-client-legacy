@@ -1,5 +1,7 @@
 ![Tangerine](http://www.tangerinecentral.org/sites/default/files/tangerine-logo-150.png)
 
+[![Build Status](https://travis-ci.org/chrisekelley/Tangerine-client.svg?branch=marionette)](https://travis-ci.org/chrisekelley/Tangerine-client)
+
 # Assess students with tablets or your phone
 
 Tangerine is an application for assessing students on any scale, country-level, district-level or classroom-level.
@@ -32,13 +34,19 @@ been thoroughly tested, and in some cases, not tested at all.
 Then clone this repo.
 
     git clone https://github.com/Tangerine-Community/Tangerine-client.git
+	
+Switch to the correct branch
+
+	git checkout marionette
 
 ## Init the source code
 
+    cd scripts &  bundle install
+	cd ..
     npm install
-    bundle install
+    bower install
 
-These two commands read the relevant node and ruby dependencies and installs all of the necessary libraries.
+These commands read the relevant node and ruby dependencies and installs all of the necessary libraries.
 
 There's a postinstall script that runs when npm install is done that will add the android platform and then run init.rb,
 which sets up all the js.
@@ -50,6 +58,12 @@ and runs ./scripts/listen.rb to compile changed coffeescript files and other use
 
     npm start
 
+## View the app
+
+To view the app with minimised javascript, open http://localhost:9000
+
+Sourcemaps are now available; therefore, you should be able to debug with them.
+
 ## Generate an APK
 
     npm build:apk
@@ -60,6 +74,21 @@ View package.json for other useful npm targets:
 
  - npm listen turns on the changes listener and compiles coffeescript files.
  - npm build:apk will generate a debug APK.
+ - npm test will run mocha-phantomjs tests and watch for changes to coffeescript files.
+ - npm run-script testW will run tests using mocha-phantomjs, displaying output on command line and watch for changes to coffeescript files.
+ - npm run-script testInBrowser will run mocha tests in the browser at http://localhost:9000/test/
+
+# Testing
+
+The tests run in mocha/phantomjs. The pouch runs in a in-memory container.
+
+# Dependencies
+
+Using http://greenkeeper.io/ to manage dependencies.
+
+# Tangerine API
+
+Tangerine.progress is an object that contains status of the application: index, currentView, etc.
 
 ----
 

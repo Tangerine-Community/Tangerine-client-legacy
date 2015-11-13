@@ -30,15 +30,16 @@ Assessment = Backbone.Model.extend
     @fetch
       error: opts.error
       success: =>
-        console.log @subtests
+#        console.log "@subtests: " + @subtests
         @subtests = new Subtests
         @subtests.assessment = @
         @subtests.fetch
           viewOptions:
             key: "subtest-#{@id}"
           error: ->
-            console.log "that failed"
+            console.log "deepFetch of Assessment failed"
           success: (subtests) ->
+#            console.log "subtests: " + JSON.stringify(subtests)
             subtests.ensureOrder()
             opts.success.apply subtests.assessment, arguments
 

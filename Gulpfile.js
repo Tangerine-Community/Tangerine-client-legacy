@@ -93,7 +93,7 @@ gulp.task("webserver", function() {
 });
 
 // compile coffeescript into js files
-gulp.task("build:js", function() {
+gulp.task("build:js", ["version"], function() {
 
   var c = coffee({bare: true}); // get a coffeescript stream
   c.on("error", function(err) { // on error
@@ -179,7 +179,7 @@ gulp.task('version', function(cb) {
     version = version.replace(/\n/, '');
     git.exec({ args: 'rev-parse --short HEAD' }, function(err, build) {
       build = build.replace(/\n/, '');
-      var body = 'window.Tangerine = ' + JSON.stringify({
+      var body = 'window.TangerineVersion = ' + JSON.stringify({
         buildVersion : build,
         version      : version
       });
@@ -225,7 +225,9 @@ conf.fileOrder = [
 
   'helpers',
 
+  'Button',
   'ButtonView',
+  'ButtonItemView',
 
   'Assessment',
   'Assessments',
@@ -236,22 +238,34 @@ conf.fileOrder = [
   'AssessmentSyncView',
   'AssessmentDataEntryView',
 
-
   'Subtest',
   'Subtests',
   'SubtestRunView',
+  'SubtestRunItemView',
+
+  'Question',
+  'Questions',
+  'QuestionRunView',
+  'QuestionRunItemView',
+
+  'SurveyRunItemView',
 
   'ConsentRunView',
+  'ConsentRunItemView',
 
   'DatetimeRunView',
+  'DatetimeRunItemView',
 
   'LocationRunView',
+  'LocationRunItemView',
 
   'SurveyRunView',
 
   'IdRunView',
+  'IdRunItemView',
 
   'GridRunView',
+  'GridRunItemView',
 
   'ObservationRunView',
 
@@ -261,15 +275,12 @@ conf.fileOrder = [
   'Results',
   'ResultView',
   'ResultsView',
+  'ResultItemView',
   'TabletManagerView',
   'ResultSumView',
   'DashboardView',
 
   'AdminView',
-
-  'Question',
-  'Questions',
-  'QuestionRunView',
 
   'Klass',
   'KlassView',
@@ -320,6 +331,12 @@ conf.fileOrder = [
   'GroupsView',
   'UsersMenuView',
 
+  "AssessmentDashboardView",
+  "HomeRecordItemView",
+  "AssessmentCompositeView",
+  'AssessmentControlsView',
+  "DashboardLayout",
+
   'Config',
 
   'Log',
@@ -337,7 +354,7 @@ conf.fileOrder = [
 
   'locales',
 
-  'boot',
+  'boot'
 
 ];
 
@@ -367,7 +384,10 @@ conf.libFiles = [
   './src/js/lib/jquery.ui.button.js',
   './src/js/lib/jquery.ui.progressbar.js',
   './src/js/lib/inflection.js',
-  './src/js/lib/backbone.js',
+  './src/js/lib-coco/backbone.js',
+  './src/js/lib-coco/backbone.marionette.js',
+  './src/js/lib-coco/handlebars.js',
+  './src/js/lib-coco/precompiled.handlebars.js',
   './src/js/lib/moment.js',
   './src/js/lib/pouchdb.js',
   './src/js/lib/backbone-pouchdb.js',
