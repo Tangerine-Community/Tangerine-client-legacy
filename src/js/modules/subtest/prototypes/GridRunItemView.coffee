@@ -234,12 +234,12 @@ class GridRunItemView extends Backbone.Marionette.ItemView
   updateMode: ( mode = null ) =>
     # dont' change the mode if the time has never been started
     if (mode==null && @timeElapsed == 0 && not @dataEntry) || mode == "disabled"
-      @modeButton.setValue null
+      @modeButton?.setValue null
     else if mode? # manually change the mode
       @mode = mode
-      @modeButton.setValue @mode
+      @modeButton?.setValue @mode
     else # handle a click event
-      @mode = @modeButton.getValue()
+      @mode = @modeButton?.getValue()
 
   getTime: ->
     Math.round((new Date()).getTime() / 1000)
@@ -440,7 +440,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
     html += gridHTML
     stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>#{@text.stop}</button></div>"
 
-    resetButton = "
+    restartButton = "
       <div>
         <button class='restart command'>#{@text.restart}</button>
         <br>
@@ -456,7 +456,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
 
       @modeButton?.close()
 
-      model = new Button({foo: "bar"})
+      model = new Button()
 
       buttonConfig =
         options : []
@@ -479,6 +479,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
       } if @captureLastAttempted
 
       @modeButton = new ButtonItemView buttonConfig
+
       @listenTo @modeButton, "change click", @updateMode
       modeSelector = "
         <div class='grid_mode_wrapper question clearfix'>
@@ -502,8 +503,8 @@ class GridRunItemView extends Backbone.Marionette.ItemView
 
     html += "
       #{if not @untimed then stopTimerHTML else ""}
-      #{if not @untimed then resetButton else ""}
-      #{modeSelector}
+      #{if not @untimed then restartButton else ""}
+      #{modeSelector || ''}
       #{(dataEntry if @dataEntry) || ''}
     "
     @model.set('grid', html)
@@ -515,9 +516,10 @@ class GridRunItemView extends Backbone.Marionette.ItemView
 
 
 
-  onRender: ->
-    @modeButton.setElement @$el.find ".mode-button"
-    @modeButton.render()
+  onRender: =>
+
+    @modeButton?.setElement @$el.find ".mode-button"
+    @modeButton?.render()
 
     @trigger "rendered"
     @trigger "ready"
