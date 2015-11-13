@@ -35,21 +35,16 @@ Then clone this repo.
 
     git clone https://github.com/Tangerine-Community/Tangerine-client.git
 	
-Switch to the correct branch
-
-	git checkout marionette
+Use the correct branch - for stable development, stick to master. For recent development, use develop
 
 ## Init the source code
 
-    cd scripts &  bundle install
-	cd ..
     npm install
     bower install
 
 These commands read the relevant node and ruby dependencies and installs all of the necessary libraries.
 
-There's a postinstall script that runs when npm install is done that will add the android platform and then run init.rb,
-which sets up all the js.
+There's a postinstall script that runs when npm install is done that will add the android platform and then run gulp init.
 
 ## Start the app
 
@@ -60,7 +55,7 @@ and runs ./scripts/listen.rb to compile changed coffeescript files and other use
 
 ## View the app
 
-To view the app with minimised javascript, open http://localhost:9000
+To view the app with minimised javascript, open http://localhost:8080
 
 Sourcemaps are now available; therefore, you should be able to debug with them.
 
