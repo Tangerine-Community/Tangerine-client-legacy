@@ -219,7 +219,6 @@ gulp.task('handlebars', function(){
 
 });
 
-
 /*
  * Basic helper tasks
  */
@@ -230,7 +229,7 @@ gulp.task('watch', function() {
   gulp.watch(conf.libGlob,      ['build:lib.js']);    // for libraries/vendor stuff
   gulp.watch(conf.lessFile,     ['build:less']);      // for less
   gulp.watch(conf.localeGlob,   ['build:locales']);   // for i18n
-  gulp.watch(conf.templateGlob, ['build:templates']); // for handlebars templates
+  gulp.watch(conf.handlebarsGlob, ['build:app.js']); // for handlebars templates
 });
 
 

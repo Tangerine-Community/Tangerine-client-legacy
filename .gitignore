@@ -20,3 +20,5 @@ app.js
 
 # tangerine's packs
 pack*.json
+
+.idea
