@@ -14,7 +14,8 @@
     "testInBrowser":"http-server ./ -p 9000 --silent",
     "install:apk": "cd scripts && ./install.sh",
     "preload": "scripts/preload.js",
-    "start": "gulp"
+    "start": "gulp",
+    "gulp": "gulp"
   },
   "repository": {
     "type": "git",
