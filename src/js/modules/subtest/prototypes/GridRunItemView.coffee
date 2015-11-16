@@ -221,7 +221,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
             Utils.background ""
         , 1e3) # magic number
 
-        @updateMode event, "last"
+        @updateMode "last"
 
 
     if @captureItemAtTime && !@gotIntermediate && !@minuteMessage && @timeElapsed >= @captureAfterSeconds
