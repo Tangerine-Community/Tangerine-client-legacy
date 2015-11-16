@@ -70,7 +70,7 @@ IdRunItemView = Backbone.Marionette.ItemView.extend
     false
 
   updateNavigation: ->
-    Tangerine.nav.setStudent @getResult().body['participant_id']
+    Tangerine.nav.setStudent @getResult()['body']['participant_id']
 
   getSum: ->
 #    if @prototypeView.getSum?
