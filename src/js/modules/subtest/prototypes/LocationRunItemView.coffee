@@ -199,12 +199,12 @@ class LocationRunItemView extends Backbone.View
 
     promptOption  = "<option #{selectPrompt or ''} disabled='disabled'>Please select a #{@levels[index]}</option>"
 
-    if doneOptions.length is 1
-      return levelOptions
-    else
-      return "
-        #{promptOption}
-        #{levelOptions}
+#    if doneOptions.length is 1
+#      return levelOptions
+#    else
+    return "
+      #{promptOption}
+      #{levelOptions}
       "
 
   getResult: ->
