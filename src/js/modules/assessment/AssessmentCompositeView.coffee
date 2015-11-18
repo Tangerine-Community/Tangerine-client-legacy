@@ -155,6 +155,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @model.set('ui', ui)
 
   onRender:->
+#    Tangerine.progress.currentSubview?.updateExecuteReady?(true)
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
 
     Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
@@ -165,6 +166,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       @step 1
     Tangerine.progress.currentSubview.on "back",    => @step -1
     @flagRender "assessment"
+
 
   flagRender: (object) ->
     @rendered[object] = true
@@ -205,9 +207,18 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       return
 
     currentView = Tangerine.progress.currentSubview
-    if currentView.isValid()
-      @saveResult( currentView, increment )
+
+    if currentView.testValid?
+      valid = currentView.testValid()
+#      console.log("valid: " + valid)
+      if valid
+#        console.log("ok to saveResult")
+        @saveResult( currentView, increment )
+      else
+#        console.log("not valid")
+        currentView.showErrors()
     else
+#      console.log("no testValid")
       currentView.showErrors()
 
 #      from SubtestRunView

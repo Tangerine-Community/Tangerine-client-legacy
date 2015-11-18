@@ -82,6 +82,17 @@ DatetimeRunItemView =  Backbone.Marionette.CompositeView.extend
   isValid: ->
     true
 
+  testValid: ->
+#    console.log("DatetimerunITem testValid.")
+    true
+#    if not @prototypeRendered then return false
+#    currentView = Tangerine.progress.currentSubview
+#    if isValid?
+#      return isValid()
+#    else
+#      return false
+#    true
+
   showErrors: ->
     true
 

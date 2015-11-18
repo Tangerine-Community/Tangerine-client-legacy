@@ -74,6 +74,16 @@ class ConsentRunItemView extends Backbone.View
     else
       true
 
+  testValid: ->
+#    console.log("ConsentRunItemView testValid.")
+#    if not @prototypeRendered then return false
+#    currentView = Tangerine.progress.currentSubview
+    if @isValid?
+      return @isValid()
+    else
+      return false
+    true
+
   showNonConsent: ->
     @$el.find(".non_consent_form").show(250)
 
