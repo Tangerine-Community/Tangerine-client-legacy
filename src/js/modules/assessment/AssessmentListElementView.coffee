@@ -36,7 +36,7 @@ class AssessmentListElementView extends Backbone.View
   blankResultCount: "-"
 
   initialize: (options) ->
-    console.log "list element view render"
+#    console.log "list element view render"
 
     # arguments
     @model    = options.model

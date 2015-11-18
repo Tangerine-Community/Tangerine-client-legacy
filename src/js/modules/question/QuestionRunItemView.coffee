@@ -17,7 +17,6 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
     @dataEntry = options.dataEntry
     @fontFamily = @parent.model.get('fontFamily')
     @fontStyle = "style=\"font-family: #{@parent.model.get('fontFamily')} !important;\"" if @parent.model.get("fontFamily") != ""
-
     unless @dataEntry
       @answer = options.answer
     else
@@ -85,6 +84,11 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
     else
       if @type == "open"
         @answer = @$el.find("##{@cid}_#{@name}").val()
+
+        id = "#_#{@name}"
+        console.log("@answer: " + @answer + " id: " + id)
+        @answer = $(id).val()
+        console.log("@answer: " + @answer)
       else
         @answer = @button.answer
 
@@ -102,11 +106,10 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
     else
       # NO, some kind of validation must occur now
       customValidationCode = @model.get("customValidationCode")
-
       @answer = "" unless @answer
-
       if customValidationCode? && not _.isEmptyString(customValidationCode)
         try
+          console.log("customValidationCode: " + customValidationCode)
           @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
         catch e
           alert "Custom Validation error from customValidationCode: " + customValidationCode + "\n\n#{e}"
@@ -114,12 +117,13 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
         @isValid =
           switch @type
             when "open"
+              console.log(" prompt: " + @model.get("prompt") + " @name: " + @name + " @answer: " + @answer)
               if _.isEmptyString(@answer) || (_.isEmpty(@answer) && _.isObject(@answer)) then false else true # don't use isEmpty here
             when "multiple"
               if ~_.values(@answer).indexOf("checked") then true  else false
             when "single"
+#              console.log("@answer: " + @answer + " _.isEmptyString(@answer)" + _.isEmptyString(@answer) + " _.isEmpty(@answer): " + " _.isObject(@answer):" + _.isObject(@answer))
               if _.isEmptyString(@answer) || (_.isEmpty(@answer) && _.isObject(@answer)) then false else true
-
 
   setOptions: (options) =>
     @button.options = options
@@ -139,8 +143,10 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
     @updateValidity()
     @button.render()
 
+
   setMessage: (message) =>
-    @$el.find(".error_message").html message
+#    @$el.find(".error_message").html message
+    $(".error_message").html message
 
   setPrompt: (prompt) =>
 #    @$el.find(".prompt").html prompt
@@ -171,13 +177,14 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
 #        @button.setElement(@$el.find(".button_container"))
 #        @button.on "rendered", => @trigger "rendered"
 #        @button.render()
-      else
-        @trigger "rendered"
+#      else
+#        @trigger "rendered"
     else
       @$el.hide()
-      @trigger "rendered"
+#      @trigger "rendered"
 
   onRender: ->
+#    console.log("onRender name:" + @model.get("name") + " answer: " + @model.get("prompt"))
     if @type == "single" or @type == "multiple"
       @button.setElement @$el.find ".button_container"
       @button.on "rendered", => @trigger "rendered"

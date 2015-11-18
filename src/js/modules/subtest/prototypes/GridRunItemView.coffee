@@ -562,6 +562,16 @@ class GridRunItemView extends Backbone.Marionette.ItemView
     return false if @timer != 0 && @timeRemaining == @timer
     true
 
+  testValid: ->
+#    console.log("GridRunItemView testValid.")
+    #    if not @prototypeRendered then return false
+    #    currentView = Tangerine.progress.currentSubview
+    if @isValid?
+      return @isValid()
+    else
+      return false
+    true
+
   showErrors: ->
     messages = @messages || []
     @messages = []

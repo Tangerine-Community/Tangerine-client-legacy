@@ -224,12 +224,26 @@ class LocationRunItemView extends Backbone.View
     }
 
   isValid: ->
+#    console.log("Checking Location isValid: ")
     @$el.find(".message").remove()
     inputs = @$el.find("input")
     selects = @$el.find("select")
     elements = if selects.length > 0 then selects else inputs
     for input, i in elements
-      return false unless $(input).val()
+#      return false unless $(input).val()
+      value = $(input).val()
+#      if value
+      return false unless value
+    true
+
+  testValid: ->
+#    console.log("LocationRunItemView testValid.")
+  #    if not @prototypeRendered then return false
+#    currentView = Tangerine.progress.currentSubview
+    if @isValid?
+      return @isValid()
+    else
+      return false
     true
 
   showErrors: ->

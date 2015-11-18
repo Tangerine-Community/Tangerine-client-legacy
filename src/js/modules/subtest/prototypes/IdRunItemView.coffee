@@ -14,7 +14,7 @@ IdRunItemView = Backbone.Marionette.ItemView.extend
 
   initialize: (options) ->
 
-    console.log options
+#    console.log options
 
     @i18n()
 
@@ -60,6 +60,16 @@ IdRunItemView = Backbone.Marionette.ItemView.extend
     @setValidator()
     return false if not @validator.isValid()
     @updateNavigation()
+
+  testValid: ->
+#    console.log("IdRinItemView testValid.")
+#    if not @prototypeRendered then return false
+#    currentView = Tangerine.progress.currentSubview
+    if @isValid?
+      return @isValid()
+    else
+      return false
+    true
 
   showErrors: ->
     @$el.find(".messages").html @validator.getErrors().join(", ")
