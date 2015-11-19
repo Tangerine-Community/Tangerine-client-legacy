@@ -10,6 +10,7 @@ DatetimeRunItemView =  Backbone.Marionette.CompositeView.extend
       month : t("DatetimeRunView.label.month")
       day : t("DatetimeRunView.label.day")
       time : t("DatetimeRunView.label.time")
+      "help" : t("SubtestRunView.button.help")
 
   initialize: (options) ->
     Tangerine.progress.currentSubview = @
@@ -18,44 +19,33 @@ DatetimeRunItemView =  Backbone.Marionette.CompositeView.extend
     @model  = options.model
     @parent = options.parent
     @dataEntry = options.dataEntry
+    labels = {}
+    labels.text = @text
+    @model.set('labels', labels)
 
-  render: ->
+  onBeforeRender: ->
     dateTime = new Date()
-    year     = dateTime.getFullYear()
-    months   = [t("jan"),t("feb"),t("mar"),t("apr"),t("may"),t("jun"),t("jul"),t("aug"),t("sep"),t("oct"),t("nov"),t("dec")]
-    month    = months[dateTime.getMonth()]
-    day      = dateTime.getDate()
-    minutes  = dateTime.getMinutes()
-    minutes  = "0" + minutes if minutes < 10
-    time     = dateTime.getHours() + ":" + minutes
+    formElements = {}
+    formElements.year     = dateTime.getFullYear()
+    formElements.months   = [t("jan"),t("feb"),t("mar"),t("apr"),t("may"),t("jun"),t("jul"),t("aug"),t("sep"),t("oct"),t("nov"),t("dec")]
+    formElements.month    = formElements.months[dateTime.getMonth()]
+    formElements.day      = dateTime.getDate()
+    minutes                      = dateTime.getMinutes()
+    formElements.minutes  = minutes
+    formElements.minutes  = "0" + minutes if minutes < 10
+    formElements.time     = dateTime.getHours() + ":" + minutes
 
     unless @dataEntry
 
       previous =  @model.parent.result.getByHash(@model.get('hash'))
 
       if previous
-        year  = previous.year
-        month = previous.month
-        day   = previous.day
-        time  = previous.time
+        formElements.year  = previous.year
+        formElements.month = previous.month
+        formElements.day   = previous.day
+        formElements.time  = previous.time
 
-    @$el.html "
-      <div class='question'>
-        <table>
-          <tr>
-            <td><label for='year'>#{@text.year}</label><input id='year' value='#{year}'></td>
-            <td>
-              <label for='month'>#{@text.month}</label><br>
-              <select id='month' value='#{month}'>#{("<option value='#{m}' #{("selected='selected'" if m is month) || ''}>#{m.titleize()} </option>" for m in months).join('')}</select>
-            </td>
-            <td><label for='day'>#{@text.day}</label><input id='day' type='day' value='#{day}'></td>
-          </tr>
-          <tr>
-            <td><label for='time'>#{@text.time}</label><br><input type='text' id='time' value='#{time}'></td>
-          </tr>
-        </table>
-      </div>
-      "
+    @model.set('formElements', formElements)
     @trigger "rendered"
     @trigger "ready"
 
@@ -103,3 +93,5 @@ DatetimeRunItemView =  Backbone.Marionette.CompositeView.extend
       this.next()
     @parent.next()
   back: -> @parent.back()
+
+

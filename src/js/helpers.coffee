@@ -666,3 +666,13 @@ Handlebars.registerHelper("debug", (optionalValue)->
     console.log("====================")
     console.log(optionalValue)
 )
+
+Handlebars.registerHelper('monthDropdown', (months, currentMonth)->
+  renderOption = (month, currentMonth)->
+    out = "<option value='" + month + "'"
+    if month == currentMonth
+      out = out + "selected='selected'"
+    out = out +  ">" + month.titleize() + "</option>"
+    return out
+  renderOption(month, currentMonth) for month in months
+)

@@ -1,15 +1,23 @@
+<h2>{{name}}</h2>
+{{#if enumeratorHelp}}
+    <button class='subtest_help command'>{{labels.text.help}}</button>
+    <div class='enumerator_help' {{fontStyle}}>{{{enumeratorHelp}}}</div>
+{{/if}}
+{{#if studentDialog}}
+    <div class='student_dialog' {{fontStyle}}>{{{studentDialog}}}</div>
+{{/if}}
 <div class='question'>
     <table>
         <tr>
-            <td><label for='year'>{{text.year}}</label><input id='year' value='#{year}'></td>
+            <td><label for='year'>{{labels.text.year}}</label><input id='year' value='{{formElements.year}}'></td>
             <td>
-                <label for='month'>{{text.month}}</label><br>
-                <select id='month' value='#{month}'>#{("<option value='#{m}' #{("selected='selected'" if m is month) || ''}>#{m.titleize()} </option>" for m in months).join('')}}</select>
+                <label for='month'>{{labels.text.month}}</label><br>
+                <select id='month' value='{{formElements.month}}'>{{#monthDropdown formElements.months formElements.month}}{{/monthDropdown}}</select>
             </td>
-            <td><label for='day'>{{text.day}}</label><input id='day' type='day' value='#{day}'></td>
+            <td><label for='day'>{{labels.text.day}}</label><input id='day' type='day' value='{{formElements.day}}'></td>
         </tr>
         <tr>
-            <td><label for='time'>{{text.time}}</label><br><input type='text' id='time' value='#{time}'></td>
+            <td><label for='time'>{{labels.text.time}}</label><br><input type='text' id='time' value='{{formElements.time}}'></td>
         </tr>
     </table>
 </div>
