@@ -86,9 +86,9 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
         @answer = @$el.find("##{@cid}_#{@name}").val()
 
         id = "#_#{@name}"
-        console.log("@answer: " + @answer + " id: " + id)
+#        console.log("@answer: " + @answer + " id: " + id)
         @answer = $(id).val()
-        console.log("@answer: " + @answer)
+#        console.log("@answer: " + @answer)
       else
         @answer = @button.answer
 
@@ -109,7 +109,6 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
       @answer = "" unless @answer
       if customValidationCode? && not _.isEmptyString(customValidationCode)
         try
-          console.log("customValidationCode: " + customValidationCode)
           @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
         catch e
           alert "Custom Validation error from customValidationCode: " + customValidationCode + "\n\n#{e}"
@@ -117,7 +116,7 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
         @isValid =
           switch @type
             when "open"
-              console.log(" prompt: " + @model.get("prompt") + " @name: " + @name + " @answer: " + @answer)
+#              console.log(" prompt: " + @model.get("prompt") + " @name: " + @name + " @answer: " + @answer)
               if _.isEmptyString(@answer) || (_.isEmpty(@answer) && _.isObject(@answer)) then false else true # don't use isEmpty here
             when "multiple"
               if ~_.values(@answer).indexOf("checked") then true  else false

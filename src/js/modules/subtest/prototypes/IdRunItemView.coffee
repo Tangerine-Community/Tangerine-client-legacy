@@ -11,6 +11,7 @@ IdRunItemView = Backbone.Marionette.ItemView.extend
     @text =
       identifier : t("IdRunView.label.identifier")
       generate   : t("IdRunView.button.generate")
+      "help" : t("SubtestRunView.button.help")
 
   initialize: (options) ->
 
@@ -24,6 +25,9 @@ IdRunItemView = Backbone.Marionette.ItemView.extend
 
     @validator = new CheckDigit
     Tangerine.progress.currentSubview = @
+    labels = {}
+    labels.text = @text
+    @model.set('labels', labels)
 
   render: ->
 

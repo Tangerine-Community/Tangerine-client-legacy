@@ -19,6 +19,7 @@ class ConsentRunItemView extends Backbone.View
       yes               : t("ConsentRunView.button.yes_continue")
       no                : t("ConsentRunView.button.no_stop")
       select            : t("ConsentRunView.message.select")
+      "help" : t("SubtestRunView.button.help")
 
   initialize: (options) ->
     Tangerine.progress.currentSubview = @
@@ -28,21 +29,30 @@ class ConsentRunItemView extends Backbone.View
     @model  = options.model
     @parent = options.parent
     @dataEntry = options.dataEntry
+    labels = {}
+    labels.text = @text
+    @model.set('labels', labels)
 
   
   render: ->
 
+    enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
+    studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
+
     @$el.html "
-      <div class='question'>
-        <label>#{@model.get('prompt') || @text.defaultConsent}</label>
-        <div class='messages'></div>
-        <div class='non_consent_form confirmation'>
-          <div>#{@text.confirmNonconsent}</div>
-          <button id='non_consent_confirm' class='command'>#{@text.confirm}</button>
+        <h2>#{@model.get 'name'}</h2>
+          #{enumeratorHelp}
+          #{studentDialog}
+        <div class='question'>
+          <label>#{@model.get('prompt') || @text.defaultConsent}</label>
+          <div class='messages'></div>
+          <div class='non_consent_form confirmation'>
+            <div>#{@text.confirmNonconsent}</div>
+            <button id='non_consent_confirm' class='command'>#{@text.confirm}</button>
+          </div>
+          <div class='consent-button'></div>
         </div>
-        <div class='consent-button'></div>
-      </div>
-    "
+      "
 
     unless @dataEntry
 

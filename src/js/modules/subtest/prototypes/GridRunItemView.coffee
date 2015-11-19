@@ -346,6 +346,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
       stop          : t("GridRunView.button.stop")
       restart       : t("GridRunView.button.restart")
       lastAttempted : t("GridRunView.button.last_attempted")
+      "help" : t("SubtestRunView.button.help")
 
 
   initialize: (options) ->
@@ -393,6 +394,10 @@ class GridRunItemView extends Backbone.Marionette.ItemView
       @endOfGridLine = _.template "<td><button data-index='{{i}}' class='end_of_grid_line'>*</button></td>"
     else
       @endOfGridLine = _.template ""
+
+    labels = {}
+    labels.text = @text
+    @model.set('labels', labels)
 
   ui:
     modeButton: ".mode-button"

@@ -40,6 +40,9 @@ class SurveyRunItemView extends  Backbone.Marionette.CompositeView
 #        @render()
 
     Tangerine.progress.currentSubview = @
+    labels = {}
+    labels.text = @text
+    @model.set('labels', labels)
 
 #  filter: (child, index, collection) ->
 #    return child.get('value') % 2 == 0
@@ -172,6 +175,10 @@ class SurveyRunItemView extends  Backbone.Marionette.CompositeView
 
       previousQuestion : t("SurveyRunView.button.previous_question")
       nextQuestion : t("SurveyRunView.button.next_question")
+      "next" : t("SubtestRunView.button.next")
+      "back" : t("SubtestRunView.button.back")
+      "skip" : t("SubtestRunView.button.skip")
+      "help" : t("SubtestRunView.button.help")
 
   # when a question is answered
   onQuestionAnswer: (element) ->
@@ -246,13 +253,13 @@ class SurveyRunItemView extends  Backbone.Marionette.CompositeView
         # is it valid
         if not qv.isValid
           # red alert!!
-          console.log("pop up an error")
+#          console.log("pop up an error")
           return false
 #    , @
     return true
 
   testValid: ->
-    console.log("SurveyRinItem testValid.")
+#    console.log("SurveyRinItem testValid.")
 #    if not @prototypeRendered then return false
 #    currentView = Tangerine.progress.currentSubview
 #    if @isValid?
