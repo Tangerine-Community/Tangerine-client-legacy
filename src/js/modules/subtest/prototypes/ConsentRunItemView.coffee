@@ -27,7 +27,7 @@ class ConsentRunItemView extends Backbone.View
 
     @confirmedNonConsent = false
     @model  = options.model
-    @parent = options.parent
+    @parent = @model.parent
     @dataEntry = options.dataEntry
     labels = {}
     labels.text = @text
