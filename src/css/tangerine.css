@@ -542,7 +542,9 @@ div.timer {
   color: black;
 }
 .timer_wrapper {
-  margin: 15px 0 20px;
+  display: inline-block;
+  width: 100%;
+  margin: 15px 0 0;
 }
 /*
  * AccountView
