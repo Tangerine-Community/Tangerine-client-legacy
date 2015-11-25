@@ -33,7 +33,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
 
     indexIsntBelowLastAttempted = parseInt(index) > parseInt(@lastAttempted)
     lastAttemptedIsntZero       = parseInt(@lastAttempted) != 0
-    correctionsDisabled         = @dataEntry is false and @parent?.parent?.enableCorrections is false
+    correctionsDisabled         = @dataEntry is false and @parent?.enableCorrections is false
 
     return if correctionsDisabled && lastAttemptedIsntZero && indexIsntBelowLastAttempted
 
@@ -63,7 +63,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
   markElement: (index, value = null, mode) ->
     # if last attempted has been set, and the click is above it, then cancel
 
-    correctionsDisabled         = @dataEntry is false and @parent?.parent?.enableCorrections? and @parent?.parent?.enableCorrections is false
+    correctionsDisabled         = @dataEntry is false and @parent?.enableCorrections? and @parent?.enableCorrections is false
     lastAttemptedIsntZero       = parseInt(@lastAttempted) != 0
     indexIsntBelowLastAttempted = parseInt(index) > parseInt(@lastAttempted)
 
@@ -116,7 +116,6 @@ class GridRunItemView extends Backbone.Marionette.ItemView
       @$el.find(".element_last").removeClass "element_last"
       $target.addClass "element_last"
       @lastAttempted = index
-
 
   floatOn: ->
     timer = @$el.find('.timer')
@@ -380,10 +379,10 @@ class GridRunItemView extends Backbone.Marionette.ItemView
       "minuteItem" : @intermediateItemHandler
       disabled     : $.noop
 
-    @dataEntry = options.dataEntry
+    @dataEntry = false unless options.dataEntry
 
     @model  = options.model
-    @parent = options.parent
+    @parent = @model.parent
 
     @resetVariables()
 
@@ -601,6 +600,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
     completeResults = []
     itemResults = []
     @lastAttempted = @items.length if not @captureLastAttempted
+#    console.log("@lastAttempted: " + @lastAttempted)
 
     for item, i in @items
 
@@ -669,6 +669,6 @@ class GridRunItemView extends Backbone.Marionette.ItemView
 #      return @prototypeView.getSum()
 #    else
 # maybe a better fallback
-    console.log("This view does not return a sum, correct?")
+#    console.log("This view does not return a sum, correct?")
     return {correct:0,incorrect:0,missing:0,total:0}
 
