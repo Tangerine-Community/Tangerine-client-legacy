@@ -16,7 +16,8 @@
     "install:apk": "cd scripts && ./install.sh",
     "preload": "scripts/preload.js",
     "start": "gulp",
-    "gulp": "gulp"
+    "gulp": "gulp",
+    "debug": "gulp debug"
   },
   "repository": {
     "type": "git",
@@ -49,6 +50,7 @@
     "gulp-flatten": "^0.2.0",
     "gulp-git": "^1.6.0",
     "gulp-handlebars": "^4.0.0",
+    "gulp-inject": "^3.0.0",
     "gulp-less": "^3.0.3",
     "gulp-notify": "^2.2.0",
     "gulp-rename": "^1.2.2",

@@ -21,6 +21,7 @@ var flatten = require('gulp-flatten');  // For removing directory strcuture
 var cache   = require('gulp-cached');   // For speedy redos
 
 var sourcemaps = require('gulp-sourcemaps'); // for debugging
+var inject = require('gulp-inject');  // to create index-dev.html
 
 var less = require('gulp-less'); // for compiling less files
 
@@ -244,11 +245,28 @@ gulp.task('clean', function(done){
 
 });
 
+gulp.task('index-dev', function () {
+  gulp.src([conf.tmpJsDir + '/*.js'], {base: './tmp/js'}).pipe(gulp.dest('./www/compiled'));
+  gulp.src([conf.tmpMinDir + '/templates.js'], {base: './tmp/min'}).pipe(gulp.dest('./www/compiled'));
+  gulp.src([conf.tmpMinDir + '/version.js'], {base: './tmp/min'}).pipe(gulp.dest('./www/compiled'));
+  gulp.src([conf.tmpMinDir + '/locales.js'], {base: './tmp/min'}).pipe(gulp.dest('./www/compiled'));
+  var target = gulp.src('./www/index-dev.html');
+  // It's not necessary to read the files (will speed up things), we're only after their paths:
+  var sources = gulp.src(conf.jsFileOrder, {read: false});
+  return target.pipe(inject(sources , {transform: function (filepath, file, i, length) {
+    var filename = filepath.replace("/tmp/js","compiled")
+    return "<script src='" + filename + "'></script>"
+  }
+  }))
+      .pipe(gulp.dest('./www'));
+});
+
 
 
 gulp.task('init', ['clean', 'handlebars', 'version', 'build:locales', 'build:app.js', 'build:lib.js']);
 
 gulp.task('default', ['webserver', 'init', 'watch']);
+gulp.task('debug', ['webserver', 'init', 'watch', 'index-dev']);
 
 
 conf.fileOrder = [
@@ -398,6 +416,10 @@ conf.fileOrder = [
 
 conf.minFileOrder = conf.fileOrder.map(function(el) {
   return conf.tmpMinDir + '/' + el + '.js';
+});
+
+conf.jsFileOrder = conf.fileOrder.map(function(el) {
+  return conf.tmpJsDir + '/' + el + '.js';
 });
 
 conf.libFiles = [
