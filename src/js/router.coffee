@@ -383,8 +383,11 @@ class Router extends Backbone.Router
         assessments = new Assessments
         assessments.fetch
           success: ->
-            vm.show new AssessmentsMenuView
+#            vm.show new AssessmentsMenuView
+#              assessments : assessments
+            assessmentsView = new AssessmentsMenuView
               assessments : assessments
+            Tangerine.app.rm.get('mainRegion').show assessmentsView
 
   restart: (name) ->
     Tangerine.router.navigate "run/#{name}", true
@@ -407,7 +410,8 @@ class Router extends Backbone.Router
             viewOptions =
               model: Tangerine.assessment
             dashboardLayout = new DashboardLayout();
-            Tangerine.app.mainRegion.show dashboardLayout
+            Tangerine.app.rm.get('mainRegion').show dashboardLayout
+            dashboardLayout.contentRegion.reset()
             dashboardLayout.contentRegion.show(new AssessmentCompositeView viewOptions)
           error: (model, err, cb) ->
             console.log JSON.stringify err
@@ -444,7 +448,8 @@ class Router extends Backbone.Router
                   assessment     : assessment
                   assessmentView : view
                 view.index = result.get("subtestData").length
-                vm.show view
+#                vm.show view
+                Tangerine.app.rm.get('mainRegion').show view
 
 
 
@@ -463,7 +468,8 @@ class Router extends Backbone.Router
                 view = new ResultsView
                   "assessment" : assessment
                   "results"    : allResults
-                vm.show view
+#                vm.show view
+                Tangerine.app.rm.get('mainRegion').show view
 
 
   csv: (id) ->
@@ -713,11 +719,13 @@ class Router extends Backbone.Router
         users = new TabletUsers
         users.fetch
           success: ->
-            vm.show new LoginView
+#            vm.show new LoginView
+#              users: users
+            loginView = new LoginView
               users: users
-
-
-
+#            dashboardLayout = new DashboardLayout();
+            Tangerine.app.rm.get('mainRegion').show loginView
+#            dashboardLayout.contentRegion.show(loginView)
 
   logout: ->
     Tangerine.user.logout()

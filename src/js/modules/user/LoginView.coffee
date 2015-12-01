@@ -1,4 +1,4 @@
-class LoginView extends Backbone.View
+class LoginView extends Backbone.Marionette.View
 
   className: 'LoginView'
 

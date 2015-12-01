@@ -214,10 +214,11 @@ Tangerine.bootSequence =
 
     #  init  Tangerine as a Marionette app
     Tangerine.app = new Marionette.Application()
+    Tangerine.app.rm = new Marionette.RegionManager();
 
-    Tangerine.app.addRegions siteNav: "#siteNav"
-    Tangerine.app.addRegions mainRegion: "#content"
-    Tangerine.app.addRegions dashboardRegion: "#dashboard"
+    Tangerine.app.rm.addRegions siteNav: "#siteNav"
+    Tangerine.app.rm.addRegions mainRegion: "#content"
+    Tangerine.app.rm.addRegions dashboardRegion: "#dashboard"
     callback()
 
   reloadUserSession: ( callback ) ->
