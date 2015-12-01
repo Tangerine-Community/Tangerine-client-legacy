@@ -142,10 +142,10 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
     @updateValidity()
     @button.render()
 
-
-  setMessage: (message) =>
-#    @$el.find(".error_message").html message
-    $(".error_message").html message
+  setMessage: (message) ->
+    @$el.find(".error_message").html message
+#    $(".error_message").html message
+#    $("#" + @el.id + " .error_message").html  message
 
   setPrompt: (prompt) =>
 #    @$el.find(".prompt").html prompt
