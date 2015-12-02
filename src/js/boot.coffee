@@ -231,6 +231,10 @@ Tangerine.bootSequence =
     Backbone.history.start()
     callback() # for testing
 
+  monitorBrowserBack: ( callback ) ->
+    window.addEventListener('popstate', (e) ->
+      Tangerine.router.navigate(Backbone.history.getFragment(), { trigger: true, replace: true })
+    )
 
 Tangerine.boot = ->
 
@@ -246,6 +250,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.loadSingletons
     Tangerine.bootSequence.reloadUserSession
     Tangerine.bootSequence.startBackbone
+    Tangerine.bootSequence.monitorBrowserBack
   ]
 
   Utils.execute sequence
