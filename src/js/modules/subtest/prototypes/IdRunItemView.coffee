@@ -1,4 +1,4 @@
-IdRunItemView = Backbone.Marionette.ItemView.extend
+class IdRunItemView extends Backbone.Marionette.ItemView
   template: JST["ItemView"],
 
   className: "idItem"
@@ -20,7 +20,7 @@ IdRunItemView = Backbone.Marionette.ItemView.extend
     @i18n()
 
     @model  = options.model
-    @parent = options.parent
+    @parent = @model.parent
     @dataEntry = options.dataEntry
 
     @validator = new CheckDigit
@@ -28,6 +28,11 @@ IdRunItemView = Backbone.Marionette.ItemView.extend
     labels = {}
     labels.text = @text
     @model.set('labels', labels)
+
+    @skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+    @backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
+    @parent.displaySkip(@skippable)
+    @parent.displayBack(@backable)
 
   render: ->
 

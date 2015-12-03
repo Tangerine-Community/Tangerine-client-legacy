@@ -3,7 +3,7 @@
   tagName: 'p'
   template: JST["SubtestRunItemView"]
 
-  className : "SubtestRunView"
+  className : "SubtestRunItemView"
 
   events:
     'click .subtest-next' : 'next'

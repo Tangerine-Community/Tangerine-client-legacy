@@ -16,319 +16,6 @@ class GridRunItemView extends Backbone.Marionette.ItemView
     'click .restart'          : 'restartTimer'
   }
 
-  restartTimer: ->
-    @stopTimer(simpleStop:true) if @timeRunning
-
-    @resetVariables()
-
-    @$el.find(".element_wrong").removeClass "element_wrong"
-
-  gridClick: (event) =>
-    event.preventDefault()
-    @modeHandlers[@mode]?(event)
-
-  markHandler: (event) =>
-    $target = $(event.target)
-    index = $target.attr('data-index')
-
-    indexIsntBelowLastAttempted = parseInt(index) > parseInt(@lastAttempted)
-    lastAttemptedIsntZero       = parseInt(@lastAttempted) != 0
-    correctionsDisabled         = @dataEntry is false and @parent?.enableCorrections is false
-
-    return if correctionsDisabled && lastAttemptedIsntZero && indexIsntBelowLastAttempted
-
-    @markElement(index)
-    @checkAutostop() if @autostop != 0
-
-
-  intermediateItemHandler: (event) =>
-    @timeIntermediateCaptured = @getTime() - @startTime
-    $target = $(event.target)
-    index = $target.attr('data-index')
-    @itemAtTime = index
-    $target.addClass "element_minute"
-    @updateMode "mark"
-
-  checkAutostop: ->
-    if @timeRunning
-      autoCount = 0
-      for i in [0..@autostop-1]
-        if @gridOutput[i] == "correct" then break
-        autoCount++
-      if @autostopped == false
-        if autoCount == @autostop then @autostopTest()
-      if @autostopped == true && autoCount < @autostop && @undoable == true then @unAutostopTest()
-
-        # mode is used for operations like pre-populating the grid when doing corrections.
-  markElement: (index, value = null, mode) ->
-    # if last attempted has been set, and the click is above it, then cancel
-
-    correctionsDisabled         = @dataEntry is false and @parent?.enableCorrections? and @parent?.enableCorrections is false
-    lastAttemptedIsntZero       = parseInt(@lastAttempted) != 0
-    indexIsntBelowLastAttempted = parseInt(index) > parseInt(@lastAttempted)
-
-    return if correctionsDisabled and lastAttemptedIsntZero and indexIsntBelowLastAttempted
-
-    $target = @$el.find(".grid_element[data-index=#{index}]")
-    if mode != 'populate'
-      @markRecord.push index
-
-    if not @autostopped
-      if value == null # not specifying the value, just toggle
-        @gridOutput[index-1] = if (@gridOutput[index-1] == "correct") then "incorrect" else "correct"
-        $target.toggleClass "element_wrong"
-      else # value specified
-        @gridOutput[index-1] = value
-        if value == "incorrect"
-          $target.addClass "element_wrong"
-        else if value == "correct"
-          $target.removeClass "element_wrong"
-
-  endOfGridLineClick: (event) ->
-    event.preventDefault()
-    if @mode == "mark"
-      $target = $(event.target)
-
-      # if what we clicked is already marked wrong
-      if $target.hasClass("element_wrong")
-        # YES, mark it right
-        $target.removeClass "element_wrong"
-        index = $target.attr('data-index')
-        for i in [index..(index-(@columns-1))]
-          @markElement i, "correct"
-      else if !$target.hasClass("element_wrong") && !@autostopped
-        # NO, mark it wrong
-        $target.addClass "element_wrong"
-        index = $target.attr('data-index')
-        for i in [index..(index-(@columns-1))]
-          @markElement i, "incorrect"
-
-      @checkAutostop() if @autostop != 0
-
-  lastHandler: (event, index) =>
-    if index?
-      $target = @$el.find(".grid_element[data-index=#{index}]")
-    else
-      $target = $(event.target)
-      index   = $target.attr('data-index')
-
-    if index - 1 >= @gridOutput.lastIndexOf("incorrect")
-      @$el.find(".element_last").removeClass "element_last"
-      $target.addClass "element_last"
-      @lastAttempted = index
-
-  floatOn: ->
-    timer = @$el.find('.timer')
-    timerPos = timer.offset()
-    $(window).on 'scroll', ->
-      scrollPos = $(window).scrollTop()
-      if scrollPos >= timerPos.top
-        timer.css
-          position: "fixed"
-          top: "10%"
-          left: "80%"
-      else
-        timer.css
-          position: "initial"
-          top: "initial"
-          left: "initial"
-
-  floatOff: ->
-    $(window).off 'scroll'
-    timer = @$el.find('.timer')
-    timer.css
-      position: "initial"
-      top: "initial"
-      left: "initial"
-
-
-  startTimer: ->
-    if @timerStopped == false && @timeRunning == false
-      @interval = setInterval( @updateCountdown, 1000 ) # magic number
-      @startTime = @getTime()
-      @timeRunning = true
-      @updateMode "mark"
-      @enableGrid()
-      @updateCountdown()
-      @floatOn()
-
-  enableGrid: ->
-    @$el.find("table.disabled, div.disabled").removeClass("disabled")
-
-  stopTimer: (event, message = false) ->
-
-    return if @timeRunning != true # stop only if needed
-
-    if event?.target
-      @lastHandler(null, @items.length)
-
-    # do these always
-    clearInterval @interval
-    @stopTime = @getTime()
-    @timeRunning = false
-    @timerStopped = true
-    @floatOff()
-
-    @updateCountdown()
-
-    # do these if it's not a simple stop
-    #if not event?.simpleStop
-      #Utils.flash()
-
-
-  autostopTest: ->
-    Utils.flash()
-    clearInterval @interval
-    @stopTime = @getTime()
-    @autostopped = true
-    @timerStopped = true
-    @timeRunning = false
-    @$el.find(".grid_element").slice(@autostop-1,@autostop).addClass "element_last" #jquery is weird sometimes
-    @lastAttempted = @autostop
-    @timeout = setTimeout(@removeUndo, 3000) # give them 3 seconds to undo. magic number
-    Utils.topAlert @text.autostop
-
-  removeUndo: =>
-    @undoable = false
-    @updateMode "disabled"
-    clearTimeout(@timeout)
-
-  unAutostopTest: ->
-    @interval = setInterval(@updateCountdown, 1000 ) # magic number
-    @updateCountdown()
-    @autostopped = false
-    @lastAttempted = 0
-    @$el.find(".grid_element").slice(@autostop-1,@autostop).removeClass "element_last"
-    @timeRunning = true
-    @updateMode "mark"
-    Utils.topAlert t("GridRunView.message.autostop_cancel")
-
-  updateCountdown: =>
-    # sometimes the "tick" doesn't happen within a second
-    @timeElapsed = Math.min(@getTime() - @startTime, @timer)
-
-    @timeRemaining = @timer - @timeElapsed
-
-    @$el.find(".timer").html @timeRemaining
-
-    if @timeRunning is true and @captureLastAttempted and @timeRemaining <= 0
-        @stopTimer(simpleStop:true)
-        Utils.background "red"
-        _.delay(
-          =>
-            alert @text.touchLastItem
-            Utils.background ""
-        , 1e3) # magic number
-
-        @updateMode "last"
-
-
-    if @captureItemAtTime && !@gotIntermediate && !@minuteMessage && @timeElapsed >= @captureAfterSeconds
-      Utils.flash "yellow"
-      Utils.midAlert t("please select the item the child is currently attempting")
-      @minuteMessage = true
-      @mode = "minuteItem"
-
-
-  updateMode: ( mode = null ) =>
-    # dont' change the mode if the time has never been started
-    if (mode==null && @timeElapsed == 0 && not @dataEntry) || mode == "disabled"
-      @modeButton?.setValue null
-    else if mode? # manually change the mode
-      @mode = mode
-      @modeButton?.setValue @mode
-    else # handle a click event
-      @mode = @modeButton?.getValue()
-
-  getTime: ->
-    Math.round((new Date()).getTime() / 1000)
-
-  resetVariables: ->
-
-    @timer    = parseInt(@model.get("timer")) || 0
-    @untimed  = @timer == 0 || @dataEntry # Do not show the timer if it's disasbled or data entry mode
-
-    @gotMinuteItem = false
-    @minuteMessage = false
-    @itemAtTime = null
-
-    @timeIntermediateCaptured = null
-
-    @markRecord = []
-
-    @timerStopped = false
-
-    @startTime = 0
-    @stopTime  = 0
-    @timeElapsed = 0
-    @timeRemaining = @timer
-    @lastAttempted = 0
-
-    @interval = null
-
-    @undoable = true
-
-    @timeRunning = false
-
-
-    @items    = _.compact(@model.get("items")) # mild sanitization, happens at save too
-
-    @itemMap = []
-    @mapItem = []
-
-    if @model.has("randomize") && @model.get("randomize")
-      @itemMap = @items.map (value, i) -> i
-
-      @items.forEach (item, i) ->
-        temp = Math.floor(Math.random() * @items.length)
-        tempValue = @itemMap[temp]
-        @itemMap[temp] = @itemMap[i]
-        @itemMap[i] = tempValue
-      , @
-
-      @itemMap.forEach (item, i) ->
-        @mapItem[@itemMap[i]] = i
-      , @
-    else
-      @items.forEach (item, i) ->
-        @itemMap[i] = i
-        @mapItem[i] = i
-      , @
-
-    if !@captureLastAttempted && !@captureItemAtTime
-      @mode = "mark"
-    else
-      @mode = "disabled"
-
-    @mode = "mark" if @dataEntry
-
-    @gridOutput = @items.map -> 'correct'
-    @columns  = parseInt(@model.get("columns")) || 3
-
-    @autostop = if @untimed then 0 else (parseInt(@model.get("autostop")) || 0)
-    @autostopped = false
-
-    @$el.find(".grid_element").removeClass("element_wrong").removeClass("element_last").addClass("disabled")
-    @$el.find("table").addClass("disabled")
-
-    @$el.find(".timer").html @timer
-
-    unless @dataEntry
-
-      previous = @model.parent.result.getByHash(@model.get('hash'))
-      if previous
-
-        @captureLastAttempted     = previous.capture_last_attempted
-        @itemAtTime               = previous.item_at_time
-        @timeIntermediateCaptured = previous.time_intermediate_captured
-        @captureItemAtTime        = previous.capture_item_at_time
-        @autostop                 = previous.auto_stop
-        @lastAttempted            = previous.attempted
-        @timeRemaining            = previous.time_remain
-        @markRecord               = previous.mark_record
-
-    @updateMode @mode if @modeButton?
-
   i18n: ->
 
     @text =
@@ -397,6 +84,26 @@ class GridRunItemView extends Backbone.Marionette.ItemView
     labels = {}
     labels.text = @text
     @model.set('labels', labels)
+
+    @skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+    @backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
+
+#    if @skippable == true
+#    console.log("change:skippable")
+#      @trigger 'skippable:changed'
+    @parent.displaySkip(@skippable)
+
+
+#    if @backable == true
+#    console.log("change:backable")
+#      @trigger 'backable:changed'
+    @parent.displayBack(@backable)
+
+#    ui = {}
+#    ui.skipButton = "<button class='skip navigation'>#{@text.skip}</button>" if skippable
+#    ui.backButton = "<button class='subtest-back navigation'>#{@text.back}</button>" if backable
+#    ui.text = @text
+#    @model.set('ui', ui)
 
   ui:
     modeButton: ".mode-button"
@@ -544,6 +251,320 @@ class GridRunItemView extends Backbone.Marionette.ItemView
         @lastAttempted = previous.attempted
         $target = @$el.find(".grid_element[data-index=#{@lastAttempted}]")
         $target.addClass "element_last"
+
+
+  restartTimer: ->
+    @stopTimer(simpleStop:true) if @timeRunning
+
+    @resetVariables()
+
+    @$el.find(".element_wrong").removeClass "element_wrong"
+
+  gridClick: (event) =>
+    event.preventDefault()
+    @modeHandlers[@mode]?(event)
+
+  markHandler: (event) =>
+    $target = $(event.target)
+    index = $target.attr('data-index')
+
+    indexIsntBelowLastAttempted = parseInt(index) > parseInt(@lastAttempted)
+    lastAttemptedIsntZero       = parseInt(@lastAttempted) != 0
+    correctionsDisabled         = @dataEntry is false and @parent?.enableCorrections is false
+
+    return if correctionsDisabled && lastAttemptedIsntZero && indexIsntBelowLastAttempted
+
+    @markElement(index)
+    @checkAutostop() if @autostop != 0
+
+
+  intermediateItemHandler: (event) =>
+    @timeIntermediateCaptured = @getTime() - @startTime
+    $target = $(event.target)
+    index = $target.attr('data-index')
+    @itemAtTime = index
+    $target.addClass "element_minute"
+    @updateMode "mark"
+
+  checkAutostop: ->
+    if @timeRunning
+      autoCount = 0
+      for i in [0..@autostop-1]
+        if @gridOutput[i] == "correct" then break
+        autoCount++
+      if @autostopped == false
+        if autoCount == @autostop then @autostopTest()
+      if @autostopped == true && autoCount < @autostop && @undoable == true then @unAutostopTest()
+
+# mode is used for operations like pre-populating the grid when doing corrections.
+  markElement: (index, value = null, mode) ->
+# if last attempted has been set, and the click is above it, then cancel
+
+    correctionsDisabled         = @dataEntry is false and @parent?.enableCorrections? and @parent?.enableCorrections is false
+    lastAttemptedIsntZero       = parseInt(@lastAttempted) != 0
+    indexIsntBelowLastAttempted = parseInt(index) > parseInt(@lastAttempted)
+
+    return if correctionsDisabled and lastAttemptedIsntZero and indexIsntBelowLastAttempted
+
+    $target = @$el.find(".grid_element[data-index=#{index}]")
+    if mode != 'populate'
+      @markRecord.push index
+
+    if not @autostopped
+      if value == null # not specifying the value, just toggle
+        @gridOutput[index-1] = if (@gridOutput[index-1] == "correct") then "incorrect" else "correct"
+        $target.toggleClass "element_wrong"
+      else # value specified
+        @gridOutput[index-1] = value
+        if value == "incorrect"
+          $target.addClass "element_wrong"
+        else if value == "correct"
+          $target.removeClass "element_wrong"
+
+  endOfGridLineClick: (event) ->
+    event.preventDefault()
+    if @mode == "mark"
+      $target = $(event.target)
+
+      # if what we clicked is already marked wrong
+      if $target.hasClass("element_wrong")
+# YES, mark it right
+        $target.removeClass "element_wrong"
+        index = $target.attr('data-index')
+        for i in [index..(index-(@columns-1))]
+          @markElement i, "correct"
+      else if !$target.hasClass("element_wrong") && !@autostopped
+# NO, mark it wrong
+        $target.addClass "element_wrong"
+        index = $target.attr('data-index')
+        for i in [index..(index-(@columns-1))]
+          @markElement i, "incorrect"
+
+      @checkAutostop() if @autostop != 0
+
+  lastHandler: (event, index) =>
+    if index?
+      $target = @$el.find(".grid_element[data-index=#{index}]")
+    else
+      $target = $(event.target)
+      index   = $target.attr('data-index')
+
+    if index - 1 >= @gridOutput.lastIndexOf("incorrect")
+      @$el.find(".element_last").removeClass "element_last"
+      $target.addClass "element_last"
+      @lastAttempted = index
+
+  floatOn: ->
+    timer = @$el.find('.timer')
+    timerPos = timer.offset()
+    $(window).on 'scroll', ->
+      scrollPos = $(window).scrollTop()
+      if scrollPos >= timerPos.top
+        timer.css
+          position: "fixed"
+          top: "10%"
+          left: "80%"
+      else
+        timer.css
+          position: "initial"
+          top: "initial"
+          left: "initial"
+
+  floatOff: ->
+    $(window).off 'scroll'
+    timer = @$el.find('.timer')
+    timer.css
+      position: "initial"
+      top: "initial"
+      left: "initial"
+
+
+  startTimer: ->
+    if @timerStopped == false && @timeRunning == false
+      @interval = setInterval( @updateCountdown, 1000 ) # magic number
+      @startTime = @getTime()
+      @timeRunning = true
+      @updateMode "mark"
+      @enableGrid()
+      @updateCountdown()
+      @floatOn()
+
+  enableGrid: ->
+    @$el.find("table.disabled, div.disabled").removeClass("disabled")
+
+  stopTimer: (event, message = false) ->
+
+    return if @timeRunning != true # stop only if needed
+
+    if event?.target
+      @lastHandler(null, @items.length)
+
+    # do these always
+    clearInterval @interval
+    @stopTime = @getTime()
+    @timeRunning = false
+    @timerStopped = true
+    @floatOff()
+
+    @updateCountdown()
+
+# do these if it's not a simple stop
+#if not event?.simpleStop
+#Utils.flash()
+
+
+  autostopTest: ->
+    Utils.flash()
+    clearInterval @interval
+    @stopTime = @getTime()
+    @autostopped = true
+    @timerStopped = true
+    @timeRunning = false
+    @$el.find(".grid_element").slice(@autostop-1,@autostop).addClass "element_last" #jquery is weird sometimes
+    @lastAttempted = @autostop
+    @timeout = setTimeout(@removeUndo, 3000) # give them 3 seconds to undo. magic number
+    Utils.topAlert @text.autostop
+
+  removeUndo: =>
+    @undoable = false
+    @updateMode "disabled"
+    clearTimeout(@timeout)
+
+  unAutostopTest: ->
+    @interval = setInterval(@updateCountdown, 1000 ) # magic number
+    @updateCountdown()
+    @autostopped = false
+    @lastAttempted = 0
+    @$el.find(".grid_element").slice(@autostop-1,@autostop).removeClass "element_last"
+    @timeRunning = true
+    @updateMode "mark"
+    Utils.topAlert t("GridRunView.message.autostop_cancel")
+
+  updateCountdown: =>
+# sometimes the "tick" doesn't happen within a second
+    @timeElapsed = Math.min(@getTime() - @startTime, @timer)
+
+    @timeRemaining = @timer - @timeElapsed
+
+    @$el.find(".timer").html @timeRemaining
+
+    if @timeRunning is true and @captureLastAttempted and @timeRemaining <= 0
+      @stopTimer(simpleStop:true)
+      Utils.background "red"
+      _.delay(
+        =>
+          alert @text.touchLastItem
+          Utils.background ""
+      , 1e3) # magic number
+
+      @updateMode "last"
+
+
+    if @captureItemAtTime && !@gotIntermediate && !@minuteMessage && @timeElapsed >= @captureAfterSeconds
+      Utils.flash "yellow"
+      Utils.midAlert t("please select the item the child is currently attempting")
+      @minuteMessage = true
+      @mode = "minuteItem"
+
+
+  updateMode: ( mode = null ) =>
+# dont' change the mode if the time has never been started
+    if (mode==null && @timeElapsed == 0 && not @dataEntry) || mode == "disabled"
+      @modeButton?.setValue null
+    else if mode? # manually change the mode
+      @mode = mode
+      @modeButton?.setValue @mode
+    else # handle a click event
+      @mode = @modeButton?.getValue()
+
+  getTime: ->
+    Math.round((new Date()).getTime() / 1000)
+
+  resetVariables: ->
+
+    @timer    = parseInt(@model.get("timer")) || 0
+    @untimed  = @timer == 0 || @dataEntry # Do not show the timer if it's disasbled or data entry mode
+
+    @gotMinuteItem = false
+    @minuteMessage = false
+    @itemAtTime = null
+
+    @timeIntermediateCaptured = null
+
+    @markRecord = []
+
+    @timerStopped = false
+
+    @startTime = 0
+    @stopTime  = 0
+    @timeElapsed = 0
+    @timeRemaining = @timer
+    @lastAttempted = 0
+
+    @interval = null
+
+    @undoable = true
+
+    @timeRunning = false
+
+
+    @items    = _.compact(@model.get("items")) # mild sanitization, happens at save too
+
+    @itemMap = []
+    @mapItem = []
+
+    if @model.has("randomize") && @model.get("randomize")
+      @itemMap = @items.map (value, i) -> i
+
+      @items.forEach (item, i) ->
+        temp = Math.floor(Math.random() * @items.length)
+        tempValue = @itemMap[temp]
+        @itemMap[temp] = @itemMap[i]
+        @itemMap[i] = tempValue
+      , @
+
+      @itemMap.forEach (item, i) ->
+        @mapItem[@itemMap[i]] = i
+      , @
+    else
+      @items.forEach (item, i) ->
+        @itemMap[i] = i
+        @mapItem[i] = i
+      , @
+
+    if !@captureLastAttempted && !@captureItemAtTime
+      @mode = "mark"
+    else
+      @mode = "disabled"
+
+    @mode = "mark" if @dataEntry
+
+    @gridOutput = @items.map -> 'correct'
+    @columns  = parseInt(@model.get("columns")) || 3
+
+    @autostop = if @untimed then 0 else (parseInt(@model.get("autostop")) || 0)
+    @autostopped = false
+
+    @$el.find(".grid_element").removeClass("element_wrong").removeClass("element_last").addClass("disabled")
+    @$el.find("table").addClass("disabled")
+
+    @$el.find(".timer").html @timer
+
+    unless @dataEntry
+
+      previous = @model.parent.result.getByHash(@model.get('hash'))
+      if previous
+
+        @captureLastAttempted     = previous.capture_last_attempted
+        @itemAtTime               = previous.item_at_time
+        @timeIntermediateCaptured = previous.time_intermediate_captured
+        @captureItemAtTime        = previous.capture_item_at_time
+        @autostop                 = previous.auto_stop
+        @lastAttempted            = previous.attempted
+        @timeRemaining            = previous.time_remain
+        @markRecord               = previous.mark_record
+
+    @updateMode @mode if @modeButton?
 
   isValid: ->
     # Stop timer if still running. Issue #240

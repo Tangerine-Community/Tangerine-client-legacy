@@ -1,4 +1,4 @@
-class SurveyRunItemView extends  Backbone.Marionette.CompositeView
+class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
   template: JST["Survey"],
   childView: QuestionRunItemView,
@@ -43,6 +43,11 @@ class SurveyRunItemView extends  Backbone.Marionette.CompositeView
     labels = {}
     labels.text = @text
     @model.set('labels', labels)
+
+    @skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+    @backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
+    @parent.displaySkip(@skippable)
+    @parent.displayBack(@backable)
 
 #  filter: (child, index, collection) ->
 #    return child.get('value') % 2 == 0

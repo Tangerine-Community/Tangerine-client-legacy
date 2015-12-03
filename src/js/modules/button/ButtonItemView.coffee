@@ -9,6 +9,30 @@ class ButtonItemView extends Backbone.Marionette.ItemView
     else
       "click .button"      : "onClick"
 
+
+  initialize : ( options ) ->
+    @mode    = options.mode
+    @options = options.options
+
+    previous = options.answer
+
+    if @mode == "single" or @mode == "open"
+      if !previous?
+        answer = ""
+      else
+        answer = previous
+    else if @mode == "multiple"
+      answer = {}
+      i=0
+      @options.forEach (option) ->
+        if !previous?
+          answer[option.value] = "unchecked"
+        else
+          answer[option.value] = previous[option.value]
+      i++
+
+    @answer = answer
+
   getValue: -> @answer
 
   setValue: (values = []) ->
@@ -67,18 +91,6 @@ class ButtonItemView extends Backbone.Marionette.ItemView
     @["#{@mode}Click"](options)
     @trigger "change", options.value
 
-  initialize : ( options ) ->
-    @mode    = options.mode
-    @options = options.options
-
-    if @mode == "single" or @mode == "open"
-      answer = ""
-    else if @mode == "multiple"
-      answer = {}
-      @options.forEach (option) ->
-        answer[option.value] = "unchecked"
-
-    @answer = answer
 
 
   onBeforeRender : ->

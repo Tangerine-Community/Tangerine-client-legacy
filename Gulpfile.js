@@ -209,9 +209,11 @@ gulp.task('handlebars', function(){
       noRedeclare: true, // Avoid duplicate declarations
     }))
     .pipe(concat('templates.js'))
-    .pipe(gulp.dest(conf.tmpMinDir));
+    .pipe(gulp.dest(conf.tmpMinDir))
+    .pipe(gulp.dest('./www/compiled')); // also put result in this location
 
-    // automatically refreshing is commented out
+
+  // automatically refreshing is commented out
     // because with our dependencies it's causing
     // the reload to happen twice, once here and then
     // once when the build:app.js is done
@@ -251,13 +253,20 @@ gulp.task('index-dev', function () {
   gulp.src([conf.tmpMinDir + '/locales.js'], {base: './tmp/min'}).pipe(gulp.dest('./www/compiled'));
   var target = gulp.src('./www/index-dev.html');
   // It's not necessary to read the files (will speed up things), we're only after their paths:
-  var sources = gulp.src(conf.jsFileOrder, {read: false});
-  return target.pipe(inject(sources , {transform: function (filepath, file, i, length) {
+  var JsSources = gulp.src(conf.jsFileOrder, {read: false});
+  var libSources = gulp.src(conf.libFiles, {read: false});
+  target.pipe(inject(JsSources , {transform: function (filepath, file, i, length) {
     var filename = filepath.replace("/tmp/js","compiled")
     return "<script src='" + filename + "'></script>"
   }
   }))
-      .pipe(gulp.dest('./www'));
+  // Now create the list of lib files
+  .pipe(inject(libSources , {name: 'lib', transform: function (filepath, file, i, length) {
+    var filename = filepath.replace("/src/","")
+    return "<script src='" + filename + "'></script>"
+  }
+  }))
+  .pipe(gulp.dest('./www'));
 });
 
 
