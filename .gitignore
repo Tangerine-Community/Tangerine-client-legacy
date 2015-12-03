@@ -17,8 +17,11 @@ tmp/js/*
 tmp/min/*
 lib.js
 app.js
+src/compiled/*
 
 # tangerine's packs
 pack*.json
 
 .idea
+
+

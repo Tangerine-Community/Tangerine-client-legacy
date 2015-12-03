@@ -1,4 +1,4 @@
-class ResultView extends Backbone.View
+class ResultView extends Backbone.Marionette.ItemView
 
   className: "result_view"
 

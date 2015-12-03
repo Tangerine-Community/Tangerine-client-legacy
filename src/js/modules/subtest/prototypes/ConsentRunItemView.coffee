@@ -1,4 +1,4 @@
-class ConsentRunItemView extends Backbone.View
+ class ConsentRunItemView extends Backbone.Marionette.ItemView
 
   className : "ConsentRunView"
 
@@ -32,6 +32,11 @@ class ConsentRunItemView extends Backbone.View
     labels = {}
     labels.text = @text
     @model.set('labels', labels)
+
+    @skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+    @backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
+    @parent.displaySkip(@skippable)
+    @parent.displayBack(@backable)
 
   
   render: ->

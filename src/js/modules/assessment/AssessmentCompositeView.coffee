@@ -3,6 +3,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   template: JST["AssessmentView"],
 
   getChildView: (model) ->
+
     model.parent = @
     if !model.questions
       model.questions     = new Questions()
@@ -26,12 +27,11 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         currentSubview =  null
         console.log(prototypeName + "  Subview is not defined.")
 
+#    @listenTo(currentSubview, 'skipable:changed', displaySkip());
+#    @listenTo(currentSubview, 'backable:changed', displayBack());
+
     @ready = true
     return currentSubview
-
-    next: ->
-      console.log("childEvents next")
-      @step 1
 
   childViewOptions: (model, index) ->
 #    console.log("fetching model.questions -  " + JSON.stringify(model))
@@ -46,11 +46,12 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       error: (model, err, cb) ->
         console.log("childViewOptions error: " + JSON.stringify(err))
 
-  collectionEvents:->
-    "add": ->
-      console.log("model added")
-
   childViewContainer: '#subtest_wrapper',
+
+#  collectionEvents:->
+#    "backable:changed": ->
+#      console.log("backable:changed")
+#      @displayBack
 
   events:
     'click .subtest-next' : 'next'
@@ -92,10 +93,9 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @model.subtests.sort()
     @model.subtests.each (model) =>
       model.parent = @
-      @subtestViews.push new SubtestRunView
+      @subtestViews.push new SubtestRunItemView
         model  : model
         parent : @
-
 
     hasSequences = @model.has("sequences") && not _.isEmpty(_.compact(_.flatten(@model.get("sequences"))))
 
@@ -146,11 +146,9 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     ui.studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
     ui.transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
 
-    skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
-    backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
+#    skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+#    backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
 
-    ui.skipButton = "<button class='skip navigation'>#{@text.skip}</button>" if skippable
-    ui.backButton = "<button class='subtest-back navigation'>#{@text.back}</button>" if backable
     ui.text = @text
     @model.set('ui', ui)
 
@@ -166,7 +164,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       @step 1
     Tangerine.progress.currentSubview.on "back",    => @step -1
     @flagRender "assessment"
-
 
   flagRender: (object) ->
     @rendered[object] = true
@@ -302,3 +299,15 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     else
 # maybe a better fallback
       return {correct:0,incorrect:0,missing:0,total:0}
+
+  displaySkip: (skippable)->
+    if skippable
+      $( ".skip" ).show();
+    else
+      $( ".skip" ).hide();
+
+  displayBack: (backable)->
+    if backable
+      $( ".subtest-back" ).removeClass("hidden");
+    else
+      $( ".subtest-back" ).addClass("hidden");

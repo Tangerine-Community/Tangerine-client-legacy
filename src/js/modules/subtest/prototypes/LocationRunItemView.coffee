@@ -1,4 +1,4 @@
-class LocationRunItemView extends Backbone.View
+class LocationRunItemView extends Backbone.Marionette.ItemView
 
   className: "LocationRunView"
 
@@ -18,7 +18,7 @@ class LocationRunItemView extends Backbone.View
     @i18n()
 
     @model  = options.model
-    @parent = options.parent
+    @parent = @model.parent
     @dataEntry = options.dataEntry
 
     labels = {}
@@ -46,6 +46,11 @@ class LocationRunItemView extends Backbone.View
       template += "{{level_#{i}}}"
       template += " - " unless i is @levels.length-1
     template += "</li>"
+
+    @skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+    @backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
+    @parent.displaySkip(@skippable)
+    @parent.displayBack(@backable)
 
     @li = _.template(template)
 

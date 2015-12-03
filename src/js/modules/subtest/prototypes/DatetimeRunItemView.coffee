@@ -1,4 +1,4 @@
-DatetimeRunItemView =  Backbone.Marionette.CompositeView.extend
+class DatetimeRunItemView extends Backbone.Marionette.ItemView
 
   template: JST["Datetime"]
   className: "datetimeitem"
@@ -17,11 +17,23 @@ DatetimeRunItemView =  Backbone.Marionette.CompositeView.extend
     @i18n()
 
     @model  = options.model
-    @parent = options.parent
+#    @parent = options.parent
+    @parent = @model.parent
     @dataEntry = options.dataEntry
     labels = {}
     labels.text = @text
     @model.set('labels', labels)
+
+    ui = {}
+#    ui.skipButton = "<button class='skip navigation'>#{@text.skip}</button>" if skippable
+#    ui.backButton = "<button class='subtest-back navigation'>#{@text.back}</button>" if backable
+    ui.text = @text
+    @model.set('ui', ui)
+
+    @skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
+    @backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
+    @parent.displaySkip(@skippable)
+    @parent.displayBack(@backable)
 
   onBeforeRender: ->
     dateTime = new Date()
