@@ -74,6 +74,12 @@ View package.json for other useful npm targets:
  - npm run-script testInBrowser will run mocha tests in the browser at http://localhost:9000/test/
  - npm run debug will copy files into www/compiled and build index-dev.html. Use this when using chrome debugger until gulp 
    handles sourcemaps better (https://github.com/terinjokes/gulp-uglify/issues/105)
+   
+# Bootstrapping
+
+Preload.js in the scripts dir will download assessments. Enter the username and password on the commandline:
+
+    preload.js T_ADMIN=user T_PASS=pass
 
 # Testing
 
