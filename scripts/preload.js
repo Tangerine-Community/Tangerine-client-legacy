@@ -5,7 +5,7 @@
  * Change group_name to the group your Tangerine will connect to and download from.
  */
 
-var group_name = "sweetgroup";
+var group_name = "sweet_tree";
 
 var fs = require('fs'); // for writeFile
 var fse = require('fs-extra'); // for mkdirp
@@ -21,9 +21,25 @@ var del = require('del'); //
  * -s           { s : true }
  * --s --thing  { s : true, thing : true }
  */
-var rawrgv = JSON.parse(process.env.npm_config_argv).original;
+var rawrgv = [];
+argv = {};
 
-var argv = {};
+if (process.env.npm_config_argv) {
+  // when called by NPM
+  rawrgv = JSON.parse(process.env.npm_config_argv).original;
+} else {
+  // print process.argv
+  //rawrgv = process.argv
+  process.argv.forEach(function (val, index, array) {
+    console.log(index + ': ' + val);
+    var split = val.split("=");
+    var key = split[0];
+    var value = split[1];
+    argv[key] = value;
+  });
+  //rawrgv = JSON.parse(process.env);
+}
+
 
 rawrgv.forEach(function(el, i){
   if (~el.indexOf("--") && ~el.indexOf("=")) {
@@ -42,6 +58,7 @@ rawrgv.forEach(function(el, i){
   }
 });
 
+console.log(JSON.stringify(argv));
 // override default group with cli argument group
 if ( typeof argv.group !== "undefined" ) {
   group_name = argv.group;
@@ -53,12 +70,13 @@ var PACK_DOC_SIZE = 50;
 // Path where the json files go.
 var PACK_PATH = __dirname + '/../src/js/init';
 
-if ( ! ( process.env.T_ADMIN && process.env.T_PASS ) ) {
+//if ( ! ( process.env.T_ADMIN && process.env.T_PASS ) ) {
+if ( ! ( argv.T_ADMIN && argv.T_PASS ) ) {
   console.log("T_ADMIN and T_PASS env variables need to be set.");
   process.exit(1);
 }
 
-var SOURCE_GROUP = "http://" + process.env.T_ADMIN + ":" + process.env.T_PASS + "@databases.tangerinecentral.org/group-" + group_name;
+var SOURCE_GROUP = "http://" + argv.T_ADMIN + ":" + argv.T_PASS + "@databases.tangerinecentral.org/group-" + group_name;
 
 // helper method for json post requests
 // needs opts.data and opts.url.
