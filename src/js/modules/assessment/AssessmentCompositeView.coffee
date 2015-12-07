@@ -163,6 +163,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       console.log("currentView next")
       @step 1
     Tangerine.progress.currentSubview.on "back",    => @step -1
+#    Tangerine.progress.currentSubview.on "render:collection",    ->
+#      console.log("collection rendered")
     @flagRender "assessment"
 
   flagRender: (object) ->

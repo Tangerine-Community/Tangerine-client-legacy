@@ -725,6 +725,7 @@ class Router extends Backbone.Router
               users: users
 #            dashboardLayout = new DashboardLayout();
             Tangerine.app.rm.get('mainRegion').show loginView
+            loginView.afterRender()
 #            dashboardLayout.contentRegion.show(loginView)
 
   logout: ->
