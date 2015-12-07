@@ -387,24 +387,37 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 #    @questions.sort()
 
   onRender: ->
+#    @onRenderCollection()
+    if @focusMode
+      @updateQuestionVisibility()
+      #      container.appendChild $ "
+      #          <div id='summary_container'></div>
+      #          <button class='navigation prev_question'>#{@text.previousQuestion}</button>
+      #          <button class='navigation next_question'>#{@text.nextQuestion}</button>
+      #        "
+      @updateProgressButtons()
 #    @updateSkipLogic()
     @trigger "ready"
-    @trigger "subRendered"
+#    @trigger "subRendered"
 #    @listenTo oneView, "answer scroll", @onQuestionAnswer
 
   onRenderCollection:->
     @updateExecuteReady(true)
 #    @trigger "ready"
-#    @trigger "subRendered"
+    @trigger "subRendered"
 
-  onQuestionRendered: ->
+  onQuestionRendered:->
 #    console.log("onQuestionRendered @renderCount: " + @renderCount)
     @renderCount++
 #    console.log("onQuestionRendered @renderCount incremented: " + @renderCount)
     if @renderCount == @questions.length
       @trigger "ready"
       @updateSkipLogic()
-    @trigger "subRendered"
+#    @trigger "subRendered"
+
+#  onShow:->
+#    console.log("iShown!")
+#    @onRenderCollection()
 
   onClose:->
     for qv in @questionViews

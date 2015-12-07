@@ -1,6 +1,11 @@
 <h1>{{name}}</h1>
 <div id='progress'></div>
 <div id='subtest_wrapper'></div>
+{{#if focusMode}}
+    <div id='summary_container'></div>
+    <button class='navigation prev_question'>{{labels.text.previousQuestion}}</button>
+    <button class='navigation next_question'>{{labels.text.nextQuestion}}</button>
+{{/if}}
 <div class='controlls clearfix'>
     {{{ui.transitionComment}}}
     <button class='subtest-back navigation hidden'>{{ui.text.back}}</button>
