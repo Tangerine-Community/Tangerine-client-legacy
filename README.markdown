@@ -80,6 +80,17 @@ View package.json for other useful npm targets:
 Preload.js in the scripts dir will download assessments. Enter the username and password on the commandline:
 
     preload.js T_ADMIN=user T_PASS=pass
+    
+# Clearing your pouch instance
+
+Sometimes you need to start with a fresh pouch. Paste this to your javascript console and it will delete your tangerine pouch.
+
+    var db = new PouchDB('tangerine');
+      db.destroy().then(function () {
+        // success
+      }).catch(function (error) {
+        console.log(error);
+      });
 
 # Testing
 
