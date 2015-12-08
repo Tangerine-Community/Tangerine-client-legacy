@@ -15,21 +15,12 @@ Alternatively put, Tangerine is a [CouchApp](http://couchapp.org/page/index) tha
 
 # Getting Started
 
-_The following is a list of tools required to start developing for Tangerine. Related: See the guide for setting up a
-[Tangerine server](https://github.com/Tangerine-Community/Tangerine/wiki/Tangerine-Server)._
-
-The overwhelming majority of our developers have prefered Mac or Linux. Windows alternatives are available but have not
-been thoroughly tested, and in some cases, not tested at all.
-
-[Apache CouchDB](http://couchdb.apache.org/#download)
-
-[CoffeeScript](http://coffeescript.org/#installation)
-
-[Ruby](https://www.ruby-lang.org/en/downloads/)
-
-[LessCSS](http://lesscss.org/#using-less-installation)
+_The following is a list of tools useful for Tangerine. Related: See the guide for setting up a
+[Tangerine server](https://github.com/Tangerine-Community/Tangerine/wiki/Tangerine-Server).
 
 [Node.js](https://nodejs.org/en/)
+
+[Bower](http://bower.io)
 
 Then clone this repo.
 
