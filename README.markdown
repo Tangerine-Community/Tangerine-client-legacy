@@ -15,21 +15,12 @@ Alternatively put, Tangerine is a [CouchApp](http://couchapp.org/page/index) tha
 
 # Getting Started
 
-_The following is a list of tools required to start developing for Tangerine. Related: See the guide for setting up a
-[Tangerine server](https://github.com/Tangerine-Community/Tangerine/wiki/Tangerine-Server)._
-
-The overwhelming majority of our developers have prefered Mac or Linux. Windows alternatives are available but have not
-been thoroughly tested, and in some cases, not tested at all.
-
-[Apache CouchDB](http://couchdb.apache.org/#download)
-
-[CoffeeScript](http://coffeescript.org/#installation)
-
-[Ruby](https://www.ruby-lang.org/en/downloads/)
-
-[LessCSS](http://lesscss.org/#using-less-installation)
+_The following is a list of tools useful for Tangerine. Related: See the guide for setting up a
+[Tangerine server](https://github.com/Tangerine-Community/Tangerine/wiki/Tangerine-Server).
 
 [Node.js](https://nodejs.org/en/)
+
+[Bower](http://bower.io)
 
 Then clone this repo.
 
@@ -73,13 +64,38 @@ View package.json for other useful npm targets:
  - npm run-script testW will run tests using mocha-phantomjs, displaying output on command line and watch for changes to coffeescript files.
  - npm run-script testInBrowser will run mocha tests in the browser at http://localhost:9000/test/
  - npm run debug will copy files into www/compiled and build index-dev.html. Use this when using chrome debugger until gulp 
-   handles sourcemaps better (https://github.com/terinjokes/gulp-uglify/issues/105)
+   handles sourcemaps better (https://github.com/terinjokes/gulp-uglify/issues/105). It's a little wonky; it may fail the first time it is run. Try again.
    
 # Bootstrapping
 
 Preload.js in the scripts dir will download assessments. Enter the username and password on the commandline:
 
     preload.js T_ADMIN=user T_PASS=pass
+    
+# Resolving issues
+
+Fork the repository and update your fork
+
+    git remote show Tangerine-Community
+    git checkout master
+    git pull Tangerine-Community master
+
+Get the id of the issue you’re fixing
+
+    git checkout -b iss85
+
+Fix the bug and commit the change. Submit a pull request.
+    
+# Clearing your pouch instance
+
+Sometimes you need to start with a fresh pouch. Paste this to your javascript console and it will delete your tangerine pouch.
+
+    var db = new PouchDB('tangerine');
+      db.destroy().then(function () {
+        // success
+      }).catch(function (error) {
+        console.log(error);
+      });
 
 # Testing
 
