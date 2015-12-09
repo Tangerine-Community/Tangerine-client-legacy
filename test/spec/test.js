@@ -728,7 +728,7 @@
               paddedPackNumber = ("0000" + packNumber).slice(-4);
               return $.ajax({
                 dataType: "json",
-                url: "../src/js/init/pack" + paddedPackNumber + ".json",
+                url: "init/pack" + paddedPackNumber + ".json",
                 error: function(res) {
                   console.log("If you get an error starting with 'Error loading resource file', it's probably ok.");
                   console.log("We're done. No more files to process.");

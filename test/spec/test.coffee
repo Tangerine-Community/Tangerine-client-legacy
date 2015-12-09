@@ -167,7 +167,7 @@
 #              console.log("paddedPackNumber: " + paddedPackNumber)
               $.ajax
                 dataType: "json"
-                url: "../src/js/init/pack#{paddedPackNumber}.json"
+                url: "init/pack#{paddedPackNumber}.json"
                 error: (res) ->
 #                  console.log("We're done. No more files to process. res.status: " + res.status)
                   console.log("If you get an error starting with 'Error loading resource file', it's probably ok." )

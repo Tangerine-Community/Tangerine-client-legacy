@@ -20,7 +20,7 @@ app.js
 src/compiled/*
 
 # tangerine's packs
-pack*.json
+src/js/init/pack*.json
 
 .idea
 
