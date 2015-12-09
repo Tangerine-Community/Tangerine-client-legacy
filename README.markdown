@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/Tangerine-Community/Tangerine-client.png?label=ready&title=Ready)](https://waffle.io/Tangerine-Community/Tangerine-client)
 ![Tangerine](http://www.tangerinecentral.org/sites/default/files/tangerine-logo-150.png)
 
 [![Build Status](https://travis-ci.org/chrisekelley/Tangerine-client.svg?branch=marionette)](https://travis-ci.org/chrisekelley/Tangerine-client)
