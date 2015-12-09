@@ -147,13 +147,13 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     return unless @model.get("focusMode")
 
     if @questionIndex == @questionViews.length
-      @$el.find("#summary_container").html "
-        last page here
-      "
-      @$el.find("#next_question").hide()
+#      $("#summary_container").html "
+#        last page here
+#      "
+      $(".next_question").hide()
     else
-      @$el.find("#summary_container").empty()
-      @$el.find("#next_question").show()
+      $("#summary_container").empty()
+      $(".next_question").show()
 
     $questions = @$el.find(".question")
     $questions.hide()
@@ -388,13 +388,14 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
   onRender: ->
 #    @onRenderCollection()
+    console.log("@focusMode:" + @focusMode)
     if @focusMode
+      $('#subtest_wrapper').after $ "
+          <div id='summary_container'></div>
+          <button class='navigation prev_question'>#{@text.previousQuestion}</button>
+          <button class='navigation next_question'>#{@text.nextQuestion}</button>
+        "
       @updateQuestionVisibility()
-      #      container.appendChild $ "
-      #          <div id='summary_container'></div>
-      #          <button class='navigation prev_question'>#{@text.previousQuestion}</button>
-      #          <button class='navigation next_question'>#{@text.nextQuestion}</button>
-      #        "
       @updateProgressButtons()
 #    @updateSkipLogic()
     @trigger "ready"
@@ -402,6 +403,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 #    @listenTo oneView, "answer scroll", @onQuestionAnswer
 
   onRenderCollection:->
+    console.log("onRenderCollection")
     @updateExecuteReady(true)
 #    @trigger "ready"
     @trigger "subRendered"
