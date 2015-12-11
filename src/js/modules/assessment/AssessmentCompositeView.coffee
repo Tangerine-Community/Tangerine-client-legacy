@@ -1,3 +1,12 @@
+#
+# AssessmentCompositeView
+#
+# AssessmentCompositeView renders every time a new subtest is shown. When next
+# or back is clicked, the reset(incrementTomoveToSubtestViewIndex) method is
+# eventually called which calls render. `reset` method seems familiar because
+# there is `reset` on Backbone.Collection, but this reset on a View is it's own
+# thing.
+
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   template: JST["AssessmentView"],
