@@ -54,6 +54,7 @@ To view the app with minimised javascript, open http://localhost:8080
 Sourcemaps are now available; therefore, you should be able to debug with them.
 
 ## Generate an APK
+This requires [installing the Android SDK Tools](http://developer.android.com/sdk/installing/index.html?pkg=tools). 
 
     npm build:apk
 
