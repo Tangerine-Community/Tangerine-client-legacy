@@ -425,7 +425,7 @@ class Router extends Backbone.Router
             result = new Result "_id" : resultId
             result.fetch
               success: ->
-                view = new AssessmentRunView
+                view = new AssessmentCompositeView
                   model: assessment
 
                 if result.has("order_map")
