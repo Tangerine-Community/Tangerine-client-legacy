@@ -79,6 +79,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     @i18n()
 
+    @on "before:render", @setChromeData
+
     Tangerine.progress = {}
     Tangerine.progress.index = 0
     @index = Tangerine.progress.index
@@ -162,16 +164,13 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @model.set('ui', ui)
 
   setChromeData:->
-    @model.set('transitionComment', Tangerine.progress.currentSubview.model.get 'transitionComment')
-    # @todo We should not be getting this data from a Global object. It should be something like...
-    # @model.set('transitionComment', @progress.currentSubview.model.get 'transitionComment')
+    @model.set('transitionComment', @subtestViews[@index].model.get 'transitionComment')
 
   onRender:->
 #    Tangerine.progress.currentSubview?.updateExecuteReady?(true)
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
     Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
     Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
-    @setChromeData()
 
     Tangerine.progress.currentSubview.on "next",    =>
       console.log("currentView next")
