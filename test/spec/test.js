@@ -767,7 +767,7 @@
           }
         });
       });
-      return it('Should make the view', function(done) {
+      it('Should make the view', function(done) {
         var assessment, id;
         this.$fixture.empty().appendTo(this.$container);
         id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6";
@@ -790,6 +790,34 @@
             view.once("render", function() {
               console.log("view.$el.html():" + view.$el.html());
               return expect(view.$el.text()).to.contain("01. LTTP2 2015 - Student");
+            });
+            view.render();
+            return done();
+          }
+        });
+      });
+      return it('Should contain a test transition comment', function(done) {
+        var assessment, id;
+        this.$fixture.empty().appendTo(this.$container);
+        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6";
+        assessment = new Assessment({
+          "_id": id
+        });
+        return assessment.deepFetch({
+          error: function(err) {
+            console.log("Catch Error: " + JSON.stringify(err));
+            return done(err);
+          },
+          success: function(record) {
+            var view, viewOptions;
+            Tangerine.assessment = assessment;
+            viewOptions = {
+              model: assessment,
+              el: this.$fixture
+            };
+            view = new AssessmentCompositeView(viewOptions);
+            view.once("render", function() {
+              return expect(view.$el.text()).to.contain("Test transition comment");
             });
             view.render();
             return done();
