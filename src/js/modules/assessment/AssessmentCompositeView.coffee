@@ -1,3 +1,12 @@
+#
+# AssessmentCompositeView
+#
+# AssessmentCompositeView renders every time a new subtest is shown. When next
+# or back is clicked, the reset(incrementTomoveToSubtestViewIndex) method is
+# eventually called which calls render. `reset` method seems familiar because
+# there is `reset` on Backbone.Collection, but this reset on a View is it's own
+# thing.
+
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   template: JST["AssessmentView"],
@@ -69,6 +78,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   initialize: (options) ->
 
     @i18n()
+
+    @on "before:render", @setChromeData
 
     Tangerine.progress = {}
     Tangerine.progress.index = 0
@@ -152,10 +163,12 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     ui.text = @text
     @model.set('ui', ui)
 
+  setChromeData:->
+    @model.set('transitionComment', @subtestViews[@index].model.get 'transitionComment')
+
   onRender:->
 #    Tangerine.progress.currentSubview?.updateExecuteReady?(true)
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
-
     Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
     Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
 

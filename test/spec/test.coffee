@@ -237,6 +237,52 @@
         })
       )
 
+      it('Should contain a test transition comment', (done)->
+        this.$fixture.empty().appendTo(this.$container);
+        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
+        assessment = new Assessment "_id" : id
+        assessment.deepFetch({
+          error: (err)->
+            console.log "Catch Error: " + JSON.stringify err
+            done(err)
+          success: (record) ->
+            Tangerine.assessment = assessment
+            viewOptions =
+              model: assessment
+              el: this.$fixture
+            view = new AssessmentCompositeView viewOptions
+            view.once("render", () ->
+              expect(view.$el.text()).to.contain("Test transition comment");
+            )
+            view.render();
+            done()
+        })
+      )
+
+
+      it('Should contain a test transition comment, the subtest should complete and then there should be another test transition comment', (done)->
+        this.$fixture.empty().appendTo(this.$container);
+        id = "11322a8a-0807-68b6-c469-37ecc571cbf0"
+        assessment = new Assessment "_id" : id
+        assessment.deepFetch({
+          error: (err)->
+            console.log "Catch Error: " + JSON.stringify err
+            done(err)
+          success: (record) ->
+            Tangerine.assessment = assessment
+            viewOptions =
+              model: assessment
+              el: this.$fixture
+            view = new AssessmentCompositeView viewOptions
+            view.once("render", () ->
+              expect(view.$el.text()).to.contain("Test transition comment");
+            )
+            view.render();
+            done()
+        })
+      )
+
+
   dbs.split(',').forEach((db) ->
 #    dbType = /^http/.test(db) ? 'http' : 'local'
     tests db
