@@ -169,7 +169,8 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
     if levelChanged isnt @levels.length
       @$el.find("#level_#{nextLevel}").removeAttr("disabled")
       $html = @$el.find("#level_#{nextLevel}").html @getOptions(nextLevel)
-      if (options = $html.find("option")).length is 1
+      if (options = $html.find("option")).length is 2
+        $(options.parent("select")).val($(options[1]).val()).change
         options.parent("select").trigger "change"
 
   getOptions: ( index, previousLevel ) ->
