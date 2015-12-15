@@ -298,19 +298,16 @@
             view.once("render", () ->
               # This test will continue on the next render of a subtest.
               view.once("render", () ->
+                # Change level Zero.
                 levelZero = view.$el.find('#level_0')
-                # @todo This event never fires resulting in this test always failing.
-                $(levelZero[0]).on('change', () ->
-                  console.log "It changed!"
-                )
                 $(levelZero[0]).val('Bong').change
+                $(levelZero[0]).trigger "change"
+                # Change level One.
                 levelOne = view.$el.find('#level_1')
                 $(levelOne[0]).val('Zota').change
-                # @todo Manually set level 2 so this test always passes, but
-                # not in the future when we figure out how to get this test
-                # actually working.
+                $(levelOne[0]).trigger "change"
+                # Test level Two.
                 levelTwo = view.$el.find('#level_2')
-                $(levelTwo[0]).val('Gorpu Dolo Boi Elem.& Jr. High').change
                 expect($(levelTwo[0]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
                 done()
               )
