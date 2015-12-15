@@ -46,12 +46,18 @@ To launch the app, run the npm start target, which uses the [http-server](https:
 and runs ./scripts/listen.rb to compile changed coffeescript files and other useful tasks.
 
     npm start
+    
+If you're doing application development, you'll want to run the debug gulp target
+
+    npm run debug
+    
+When in debug, the app generates index-dev.html. View the app at http://localhost:8080/index-dev.html
 
 ## View the app
 
 To view the app with minimised javascript, open http://localhost:8080
 
-Sourcemaps are now available; therefore, you should be able to debug with them.
+Sourcemaps are now available; therefore, you should be able to debug with them, although it is better to use the debug target (described above).
 
 ## Generate an APK
 
