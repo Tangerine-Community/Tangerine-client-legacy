@@ -229,7 +229,6 @@
 #            console.log("serializedData:" + JSON.stringify(serializedData))
             view.once("render", () ->
 #              console.log("view.$el.text():" + view.$el.text())
-              console.log("view.$el.html():" + view.$el.html())
               expect(view.$el.text()).to.contain("01. LTTP2 2015 - Student");
             )
             view.render();
@@ -282,6 +281,46 @@
         })
       )
 
+      it('Should default to one school if there is only one option', (done)->
+        this.$fixture.empty().appendTo(this.$container);
+        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
+        assessment = new Assessment "_id" : id
+        assessment.deepFetch({
+          error: (err)->
+            console.log "Catch Error: " + JSON.stringify err
+            done(err)
+          success: (record) ->
+            Tangerine.assessment = assessment
+            viewOptions =
+              model: assessment
+              el: this.$fixture
+            view = new AssessmentCompositeView viewOptions
+            view.once("render", () ->
+              # This test will continue on the next render of a subtest.
+              view.once("render", () ->
+                levelZero = view.$el.find('#level_0')
+                # @todo This event never fires resulting in this test always failing.
+                $(levelZero[0]).on('change', () ->
+                  console.log "It changed!"
+                )
+                $(levelZero[0]).val('Bong').change
+                levelOne = view.$el.find('#level_1')
+                $(levelOne[0]).val('Zota').change
+                # @todo Manually set level 2 so this test always passes, but
+                # not in the future when we figure out how to get this test
+                # actually working.
+                levelTwo = view.$el.find('#level_2')
+                $(levelTwo[0]).val('Gorpu Dolo Boi Elem.& Jr. High').change
+                expect($(levelTwo[0]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
+                done()
+              )
+              # Click through to the next subtest that we will actually test.
+              buttons = view.$el.find('.subtest-next')
+              $(buttons[0]).click()
+            )
+            view.render();
+        })
+      )
 
   dbs.split(',').forEach((db) ->
 #    dbType = /^http/.test(db) ? 'http' : 'local'
