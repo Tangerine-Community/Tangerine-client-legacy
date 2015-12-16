@@ -104,7 +104,20 @@ Sometimes you need to start with a fresh pouch. Paste this to your javascript co
 
 ## Testing
 
-The tests run in mocha/phantomjs. The pouch runs in a in-memory container.
+The tests run in mocha/phantomjs. The pouch runs in a in-memory container. 
+
+This requires that you have the Grunt CLI installed globally.
+
+```
+npm install -g grunt-cli
+```
+
+To run the tests, use the following command.
+
+```
+npm test
+```
+
 
 ## Dependencies
 
