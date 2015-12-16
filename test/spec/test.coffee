@@ -300,11 +300,11 @@
               view.once("render", () ->
                 # Change level Zero.
                 levelZero = view.$el.find('#level_0')
-                $(levelZero[0]).val('Bong').change
+                $(levelZero[0]).val('Bong')
                 $(levelZero[0]).trigger "change"
                 # Change level One.
                 levelOne = view.$el.find('#level_1')
-                $(levelOne[0]).val('Zota').change
+                $(levelOne[0]).val('Zota')
                 $(levelOne[0]).trigger "change"
                 # Test level Two.
                 levelTwo = view.$el.find('#level_2')
