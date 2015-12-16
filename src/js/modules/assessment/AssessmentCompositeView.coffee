@@ -75,63 +75,9 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     'add:child': 'addChildPostRender'
 
   addChildPostRender: ->
-
-    @updateQuestionVisibility()
-    @updateProgressButtons()
-#    console.log("addChildPostRender")
-
-  updateQuestionVisibility: ->
-
-#    currentSubtest = @subtestViews[@index]
     currentSubtest = @children.findByIndex(0)
-
-    return unless currentSubtest.model.get("focusMode")
-
-    if currentSubtest.questionIndex == currentSubtest.questionViews.length
-#      $("#summary_container").html "
-#        last page here
-#      "
-      $(".next_question").hide()
-    else
-      $("#summary_container").empty()
-      $(".next_question").show()
-
-    $questions = @$el.find(".question")
-    $questions.hide()
-    $questions.eq(currentSubtest.questionIndex).show()
-
-    # trigger the question to run it's display code if the subtest's displaycode has already ran
-    # if not, add it to a list to run later.
-    if currentSubtest.executeReady
-      currentSubtest.questionViews[currentSubtest.questionIndex].trigger "show"
-    else
-      currentSubtest.triggerShowList = [] if not currentSubtest.triggerShowList
-      currentSubtest.triggerShowList.push currentSubtest.questionIndex
-
-  updateProgressButtons: ->
-
-    currentSubtest = @children.findByIndex(0)
-
-    isAvailable = []
-    for qv, i in currentSubtest.questionViews
-      isAvailable.push i if not (qv.isAutostopped or qv.isSkipped)
-    isAvailable.push currentSubtest.questionIndex
-
-    $prev = @$el.find(".prev_question")
-    $next = @$el.find(".next_question")
-
-    minimum = Math.min.apply( minimum, isAvailable )
-    maximum = Math.max.apply( maximum, isAvailable )
-
-    if currentSubtest.questionIndex == minimum
-      $prev.hide()
-    else
-      $prev.show()
-
-    if currentSubtest.questionIndex == maximum
-      $next.hide()
-    else
-      $next.show()
+    currentSubtest.updateQuestionVisibility()
+    currentSubtest.updateProgressButtons()
 
   nextQuestion: ->
 #    console.log("nextQuestion")
@@ -157,8 +103,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     if currentSubtest.questionIndex != plannedIndex
       currentSubtest.questionIndex = plannedIndex
-      @updateQuestionVisibility()
-      @updateProgressButtons()
+      currentSubtest.updateQuestionVisibility()
+      currentSubtest.updateProgressButtons()
 
   prevQuestion: ->
 
@@ -183,8 +129,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     if currentSubtest.questionIndex != plannedIndex
       currentSubtest.questionIndex = plannedIndex
-      @updateQuestionVisibility()
-      @updateProgressButtons()
+      currentSubtest.updateQuestionVisibility()
+      currentSubtest.updateProgressButtons()
 
   i18n: ->
     @text =
