@@ -8,20 +8,20 @@ this["JST"]["AssessmentView"] = Handlebars.template({"1":function(container,dept
     + alias2(alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.nextQuestion : stack1), depth0))
     + "</button>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=container.escapeExpression, alias3=container.lambda;
+    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
 
   return "<h1>"
-    + alias2(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
     + "</h1>\n<div id='progress'></div>\n<div id='subtest_wrapper'></div>\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.focusMode : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "<div class='controlls clearfix'>\n    "
-    + ((stack1 = alias3(((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.transitionComment : stack1), depth0)) != null ? stack1 : "")
-    + "\n    <button class='subtest-back navigation hidden'>"
-    + alias2(alias3(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.back : stack1), depth0))
+    + "<div class='controlls clearfix'>\n    <div>\n      "
+    + alias4(((helper = (helper = helpers.transitionComment || (depth0 != null ? depth0.transitionComment : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"transitionComment","hash":{},"data":data}) : helper)))
+    + "\n    </div>\n    <button class='subtest-back navigation hidden'>"
+    + alias4(alias5(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.back : stack1), depth0))
     + "</button>\n    <button class='subtest-next navigation'>"
-    + alias2(alias3(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.next : stack1), depth0))
+    + alias4(alias5(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.next : stack1), depth0))
     + "</button>\n    <button class='skip navigation hidden'>"
-    + alias2(alias3(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.skip : stack1), depth0))
+    + alias4(alias5(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.skip : stack1), depth0))
     + "</button>\n</div>\n";
 },"useData":true});
 this["JST"]["Button"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {

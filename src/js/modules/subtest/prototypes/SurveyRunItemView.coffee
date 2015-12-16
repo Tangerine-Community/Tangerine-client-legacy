@@ -344,7 +344,12 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     'answer scroll': 'onQuestionAnswer'
     'answer': 'onQuestionAnswer'
     'rendered': 'onQuestionRendered'
+    'add:child': 'foo'
 
+  foo: ->
+    console.log("test 123 SV child add")
+
+  # populates @questionViews for this view.
   buildChildView: (child, ChildViewClass, childViewOptions) ->
     options = _.extend({model: child}, childViewOptions);
     view = new ChildViewClass(options)
@@ -415,6 +420,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     if @renderCount == @questions.length
       @trigger "ready"
       @updateSkipLogic()
+      @updateQuestionVisibility()
+      @updateProgressButtons()
 #    @trigger "subRendered"
 
 #  onShow:->
