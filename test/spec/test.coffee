@@ -258,7 +258,6 @@
         })
       )
 
-
       it('Should contain a test transition comment, the subtest should complete and then there should be another test transition comment', (done)->
         this.$fixture.empty().appendTo(this.$container);
         id = "11322a8a-0807-68b6-c469-37ecc571cbf0"
@@ -274,10 +273,28 @@
               el: this.$fixture
             view = new AssessmentCompositeView viewOptions
             view.once("render", () ->
-              expect(view.$el.text()).to.contain("Test transition comment");
+              expect(view.$el.text()).to.contain("1. Test transition comment");
+              view.once("render", () ->
+                expect(view.$el.text()).to.contain("2. Test transition comment");
+                done()
+              )
+              # Click through to the next subtest that we will actually test.
+              startTimeButton = (view.$el.find('.start_time'))[0]
+              $(startTimeButton).click()
+              grid = (view.$el.find('button'))[0]
+              gridButton = ($(grid).find('button'))[0]
+              $(gridButton).click()
+              setTimeout(() ->
+                stopTimeButton = (view.$el.find('.stop_time'))[0]
+                $(stopTimeButton).click()
+                subTestNextButton = (view.$el.find('.subtest-next'))[0]
+                $(subTestNextButton).click()
+              , 1000)
+              # @todo Not nice ^ that we have to wait in our test. I think there is
+              # something in the code that does not allow start and stop in the
+              # same second.
             )
             view.render();
-            done()
         })
       )
 
