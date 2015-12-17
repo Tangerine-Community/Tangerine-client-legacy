@@ -336,12 +336,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
   onRender: ->
 #    @onRenderCollection()
-    if @focusMode
-      $('#subtest_wrapper').after $ "
-          <div id='summary_container'></div>
-          <button class='navigation prev_question'>#{@text.previousQuestion}</button>
-          <button class='navigation next_question'>#{@text.nextQuestion}</button>
-        "
 #      @updateQuestionVisibility()
 #      @updateProgressButtons()
 #    @updateSkipLogic()
@@ -350,7 +344,12 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 #    @listenTo oneView, "answer scroll", @onQuestionAnswer
 
   onRenderCollection:->
-    console.log("onRenderCollection")
+    if @focusMode
+      $('#subtest_wrapper').after $ "
+            <div id='summary_container'></div>
+            <button class='navigation prev_question'>#{@text.previousQuestion}</button>
+            <button class='navigation next_question'>#{@text.nextQuestion}</button>
+          "
     @updateExecuteReady(true)
     @updateQuestionVisibility()
     @updateProgressButtons()
