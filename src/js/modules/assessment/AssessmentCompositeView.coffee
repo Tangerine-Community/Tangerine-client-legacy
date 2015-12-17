@@ -53,7 +53,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         model.collection = model.questions
         @collection.models = collection.models
       error: (model, err, cb) ->
-        console.log("childViewOptions error: " + JSON.stringify(err))
+        console.log("childViewOptions id: " +  model.id + " err:" + JSON.stringify(err))
 
   childViewContainer: '#subtest_wrapper',
 
@@ -67,6 +67,70 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     'click .subtest-back' : 'back'
     'click .subtest_help' : 'toggleHelp'
     'click .skip'         : 'skip'
+    'click .next_question' : 'nextQuestion'
+    'click .prev_question' : 'prevQuestion'
+
+
+  childEvents:
+    'add:child': 'addChildPostRender'
+
+  addChildPostRender: ->
+#    currentSubtest = @children.findByIndex(0)
+#    currentSubtest.updateQuestionVisibility()
+#    currentSubtest.updateProgressButtons()
+
+  nextQuestion: ->
+#    console.log("nextQuestion")
+
+    currentSubtest = @children.findByIndex(0)
+
+    currentQuestionView = currentSubtest.questionViews[currentSubtest.questionIndex]
+
+    # show errors before doing anything if there are any
+    return currentSubtest.showErrors(currentQuestionView) unless currentSubtest.isValid(currentQuestionView)
+
+    # find the non-skipped questions
+    isAvailable = []
+    for qv, i in currentSubtest.questionViews
+      isAvailable.push i if not (qv.isAutostopped or qv.isSkipped)
+    isAvailable  = _.filter isAvailable, (e) => e > currentSubtest.questionIndex
+
+    # don't go anywhere unless we have somewhere to go
+    if isAvailable.length == 0
+      plannedIndex = currentSubtest.questionIndex
+    else
+      plannedIndex = Math.min.apply(plannedIndex, isAvailable)
+
+    if currentSubtest.questionIndex != plannedIndex
+      currentSubtest.questionIndex = plannedIndex
+      currentSubtest.updateQuestionVisibility()
+      currentSubtest.updateProgressButtons()
+
+  prevQuestion: ->
+
+    currentSubtest = @children.findByIndex(0)
+
+    currentQuestionView = currentSubtest.questionViews[currentSubtest.questionIndex]
+
+    # show errors before doing anything if there are any
+    return currentSubtest.showErrors(currentQuestionView) unless currentSubtest.isValid(currentQuestionView)
+
+    # find the non-skipped questions
+    isAvailable = []
+    for qv, i in currentSubtest.questionViews
+      isAvailable.push i if not (qv.isAutostopped or qv.isSkipped)
+    isAvailable  = _.filter isAvailable, (e) => e < currentSubtest.questionIndex
+
+    # don't go anywhere unless we have somewhere to go
+    if isAvailable.length == 0
+      plannedIndex = currentSubtest.questionIndex
+    else
+      plannedIndex = Math.max.apply(plannedIndex, isAvailable)
+
+    if currentSubtest.questionIndex != plannedIndex
+      currentSubtest.questionIndex = plannedIndex
+      currentSubtest.updateQuestionVisibility()
+      currentSubtest.updateProgressButtons()
 
   i18n: ->
     @text =

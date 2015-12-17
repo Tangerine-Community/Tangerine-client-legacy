@@ -46,12 +46,18 @@ To launch the app, run the npm start target, which uses the [http-server](https:
 and runs ./scripts/listen.rb to compile changed coffeescript files and other useful tasks.
 
     npm start
+    
+If you're doing application development, you'll want to run the debug gulp target
+
+    npm run debug
+    
+When in debug, the app generates index-dev.html. View the app at http://localhost:8080/index-dev.html
 
 ## View the app
 
 To view the app with minimised javascript, open http://localhost:8080
 
-Sourcemaps are now available; therefore, you should be able to debug with them.
+Sourcemaps are now available; therefore, you should be able to debug with them, although it is better to use the debug target (described above).
 
 ## Generate an APK
 
@@ -64,8 +70,8 @@ View package.json for other useful npm targets:
  - npm listen turns on the changes listener and compiles coffeescript files.
  - npm run build:apk will generate a debug APK.
  - npm test will run mocha-phantomjs tests and watch for changes to coffeescript files.
- - npm run-script testW will run tests using mocha-phantomjs, displaying output on command line and watch for changes to coffeescript files.
- - npm run-script testInBrowser will run mocha tests in the browser at http://localhost:9000/test/
+ - npm run testW will run tests using mocha-phantomjs, displaying output on command line and watch for changes to coffeescript files.
+ - npm run testInBrowser will run mocha tests in the browser at http://localhost:9000/test/
  - npm run debug will copy files into www/compiled and build index-dev.html. Use this when using chrome debugger until gulp 
    handles sourcemaps better (https://github.com/terinjokes/gulp-uglify/issues/105). It's a little wonky; it may fail the first time it is run. Try again.
    
@@ -73,7 +79,7 @@ View package.json for other useful npm targets:
 
 Preload.js in the scripts dir will download assessments. Enter the username and password on the commandline:
 
-    preload.js T_ADMIN=user T_PASS=pass
+    node preload.js T_ADMIN=user T_PASS=pass
     
 # Resolving issues
 

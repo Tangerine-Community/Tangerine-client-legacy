@@ -68,7 +68,7 @@ if ( typeof argv.group !== "undefined" ) {
 var PACK_DOC_SIZE = 50;
 
 // Path where the json files go.
-var PACK_PATH = __dirname + '/../src/js/init';
+var PACK_PATH = __dirname + '/../test/init';
 
 //if ( ! ( process.env.T_ADMIN && process.env.T_PASS ) ) {
 if ( ! ( argv.T_ADMIN && argv.T_PASS ) ) {

@@ -49,61 +49,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     @parent.displaySkip(@skippable)
     @parent.displayBack(@backable)
 
-#  filter: (child, index, collection) ->
-#    return child.get('value') % 2 == 0
-
-#  modelAdded:->
-#    console.log("model added")
-
-  nextQuestion: ->
-#    console.log("nextQuestion")
-
-    currentQuestionView = @questionViews[@questionIndex]
-
-    # show errors before doing anything if there are any
-    return @showErrors(currentQuestionView) unless @isValid(currentQuestionView)
-
-    # find the non-skipped questions
-    isAvailable = []
-    for qv, i in @questionViews
-      isAvailable.push i if not (qv.isAutostopped or qv.isSkipped)
-    isAvailable  = _.filter isAvailable, (e) => e > @questionIndex
-
-    # don't go anywhere unless we have somewhere to go
-    if isAvailable.length == 0
-      plannedIndex = @questionIndex
-    else
-      plannedIndex = Math.min.apply(plannedIndex, isAvailable)
-
-    if @questionIndex != plannedIndex
-      @questionIndex = plannedIndex
-      @updateQuestionVisibility()
-      @updateProgressButtons()
-
-  prevQuestion: ->
-
-    currentQuestionView = @questionViews[@questionIndex]
-
-    # show errors before doing anything if there are any
-    return @showErrors(currentQuestionView) unless @isValid(currentQuestionView)
-
-    # find the non-skipped questions
-    isAvailable = []
-    for qv, i in @questionViews
-      isAvailable.push i if not (qv.isAutostopped or qv.isSkipped)
-    isAvailable  = _.filter isAvailable, (e) => e < @questionIndex
-
-    # don't go anywhere unless we have somewhere to go
-    if isAvailable.length == 0
-      plannedIndex = @questionIndex
-    else
-      plannedIndex = Math.max.apply(plannedIndex, isAvailable)
-
-    if @questionIndex != plannedIndex
-      @questionIndex = plannedIndex
-      @updateQuestionVisibility()
-      @updateProgressButtons()
-
   updateProgressButtons: ->
 
     isAvailable = []
@@ -111,8 +56,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
       isAvailable.push i if not (qv.isAutostopped or qv.isSkipped)
     isAvailable.push @questionIndex
 
-    $prev = @$el.find(".prev_question")
-    $next = @$el.find(".next_question")
+    $prev = @parent.$el.find(".prev_question")
+    $next = @parent.$el.find(".next_question")
 
     minimum = Math.min.apply( minimum, isAvailable )
     maximum = Math.max.apply( maximum, isAvailable )
@@ -126,21 +71,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
       $next.hide()
     else
       $next.show()
-
-  updateExecuteReady: (ready) ->
-
-#    console.log("updateExecuteReady: " + ready + " @triggerShowList? " + @triggerShowList?)
-    @executeReady = ready
-
-    return if not @triggerShowList?
-
-    if @triggerShowList.length > 0
-      for index in @triggerShowList
-        @questionViews[index]?.trigger "show"
-      @triggerShowList = []
-
-    @updateSkipLogic() if @executeReady
-
 
   updateQuestionVisibility: ->
 
@@ -170,7 +100,19 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
   showQuestion: (index) ->
     @questionIndex = index if _.isNumber(index) && index < @questionViews.length && index > 0
     @updateQuestionVisibility()
-    @updateProgressButtons()
+#    @updateProgressButtons()
+
+  updateExecuteReady: (ready) ->
+    @executeReady = ready
+
+    return if not @triggerShowList?
+
+    if @triggerShowList.length > 0
+      for index in @triggerShowList
+        @questionViews[index]?.trigger "show"
+      @triggerShowList = []
+
+    @updateSkipLogic() if @executeReady
 
   i18n: ->
     @text =
@@ -344,21 +286,27 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     'answer scroll': 'onQuestionAnswer'
     'answer': 'onQuestionAnswer'
     'rendered': 'onQuestionRendered'
+    'add:child': 'foo'
 
+  foo: ->
+    console.log("test 123 SV child add")
+
+  # populates @questionViews for this view.
   buildChildView: (child, ChildViewClass, childViewOptions) ->
     options = _.extend({model: child}, childViewOptions);
-    view = new ChildViewClass(options)
-
-#    @listenTo view, "rendered",      @onQuestionRendered
-#    @listenTo child, "answer scroll", @onQuestionAnswer
-
-    @questionViews[childViewOptions.index] = view
-
-    return view
+    childView = new ChildViewClass(options)
+    Marionette.MonitorDOMRefresh(childView);
+    @questionViews[childViewOptions.index] = childView
+#    console.log("this.questionIndex:" + this.questionIndex)
+#    @questionViews[@questionIndex] = childView
+#    @questionViews.push childView
+#    console.log("childViewOptions.index: " + childViewOptions.index + " @questionViews len: " + @questionViews.length)
+    return childView
   ,
 
 #  Passes options to each childView instance
   childViewOptions: (model, index)->
+#    console.log("index: " + index)
     unless @dataEntry
       previous = @model.parent.result.getByHash(@model.get('hash'))
     notAskedCount = 0
@@ -388,23 +336,23 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
   onRender: ->
 #    @onRenderCollection()
-    console.log("@focusMode:" + @focusMode)
-    if @focusMode
-      $('#subtest_wrapper').after $ "
-          <div id='summary_container'></div>
-          <button class='navigation prev_question'>#{@text.previousQuestion}</button>
-          <button class='navigation next_question'>#{@text.nextQuestion}</button>
-        "
-      @updateQuestionVisibility()
-      @updateProgressButtons()
+#      @updateQuestionVisibility()
+#      @updateProgressButtons()
 #    @updateSkipLogic()
     @trigger "ready"
 #    @trigger "subRendered"
 #    @listenTo oneView, "answer scroll", @onQuestionAnswer
 
   onRenderCollection:->
-    console.log("onRenderCollection")
+    if @focusMode
+      $('#subtest_wrapper').after $ "
+            <div id='summary_container'></div>
+            <button class='navigation prev_question'>#{@text.previousQuestion}</button>
+            <button class='navigation next_question'>#{@text.nextQuestion}</button>
+          "
     @updateExecuteReady(true)
+    @updateQuestionVisibility()
+    @updateProgressButtons()
 #    @trigger "ready"
     @trigger "subRendered"
 
@@ -415,6 +363,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     if @renderCount == @questions.length
       @trigger "ready"
       @updateSkipLogic()
+#      @updateQuestionVisibility()
+#      @updateProgressButtons()
 #    @trigger "subRendered"
 
 #  onShow:->
@@ -427,7 +377,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     @questionViews = []
 
   reset: (increment) ->
-#    console.log("reset")
+    console.log("reset")
     @rendered.subtest = false
     @rendered.assessment = false
     #    currentView = @subtestViews[@orderMap[@index]]
