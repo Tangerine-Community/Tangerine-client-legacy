@@ -118,6 +118,14 @@ To run the tests, use the following command.
 npm test
 ```
 
+To run the tests in a browser, compile the src code, compile the test, start the test server, and then navigate to http://127.0.0.1:9000/test/index.html
+
+```
+npm start
+npm test
+npm run testInBrowser 
+```
+
 
 ## Dependencies
 
