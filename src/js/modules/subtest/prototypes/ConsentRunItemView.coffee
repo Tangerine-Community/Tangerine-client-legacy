@@ -38,16 +38,10 @@
     @parent.displaySkip(@skippable)
     @parent.displayBack(@backable)
 
-  
+
   render: ->
 
-    enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
-    studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
-
     @$el.html "
-        <h2>#{@model.get 'name'}</h2>
-          #{enumeratorHelp}
-          #{studentDialog}
         <div class='question'>
           <label>#{@model.get('prompt') || @text.defaultConsent}</label>
           <div class='messages'></div>

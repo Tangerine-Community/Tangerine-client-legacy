@@ -228,7 +228,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @model.set('ui', ui)
 
   setChromeData:->
-    @model.set('transitionComment', @subtestViews[@index].model.get 'transitionComment')
+    @model.set('subtest', @subtestViews[@index].model.toJSON())
 
   onRender:->
 #    Tangerine.progress.currentSubview?.updateExecuteReady?(true)

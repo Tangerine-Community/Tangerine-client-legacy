@@ -236,9 +236,9 @@
         })
       )
 
-      it('Should contain a test transition comment', (done)->
+      it('Should contain a test transition comment, help text, and dialog', (done)->
         this.$fixture.empty().appendTo(this.$container);
-        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
+        id = "5a6de214-b578-07c2-9349-41804d85bf2b"
         assessment = new Assessment "_id" : id
         assessment.deepFetch({
           error: (err)->
@@ -251,13 +251,21 @@
               el: this.$fixture
             view = new AssessmentCompositeView viewOptions
             view.once("render", () ->
-              expect(view.$el.text()).to.contain("Test transition comment");
+              view.once("render", () ->
+                subtestHelpButton = (view.$el.find('button.subtest_help'))[0]
+                $(subtestHelpButton).click()
+                studentDialog = (view.$el.find('.student_dialog'))[0]
+                enumeratorHelp = (view.$el.find('.enumerator_help'))[0]
+                expect($(studentDialog).text()).to.contain("Here are some subtraction (take away) problems.")
+                expect($(enumeratorHelp).text()).to.contain("Show the child the sheet in the student stimulus booklet as you read the instructions.")
+                expect(view.$el.text()).to.contain("Test transition comment");
+                done()
+              )
+              $((view.$el.find('.subtest-next'))[0]).click()
             )
             view.render();
-            done()
         })
       )
-
 
       it('Should contain a test transition comment, the subtest should complete and then there should be another test transition comment', (done)->
         this.$fixture.empty().appendTo(this.$container);
@@ -274,10 +282,28 @@
               el: this.$fixture
             view = new AssessmentCompositeView viewOptions
             view.once("render", () ->
-              expect(view.$el.text()).to.contain("Test transition comment");
+              expect(view.$el.text()).to.contain("1. Test transition comment");
+              view.once("render", () ->
+                expect(view.$el.text()).to.contain("2. Test transition comment");
+                done()
+              )
+              # Click through to the next subtest that we will actually test.
+              startTimeButton = (view.$el.find('.start_time'))[0]
+              $(startTimeButton).click()
+              grid = (view.$el.find('button'))[0]
+              gridButton = ($(grid).find('button'))[0]
+              $(gridButton).click()
+              setTimeout(() ->
+                stopTimeButton = (view.$el.find('.stop_time'))[0]
+                $(stopTimeButton).click()
+                subTestNextButton = (view.$el.find('.subtest-next'))[0]
+                $(subTestNextButton).click()
+              , 1000)
+              # @todo Not nice ^ that we have to wait in our test. I think there is
+              # something in the code that does not allow start and stop in the
+              # same second.
             )
             view.render();
-            done()
         })
       )
 
