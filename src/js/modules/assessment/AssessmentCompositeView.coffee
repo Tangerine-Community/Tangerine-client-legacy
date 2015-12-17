@@ -53,7 +53,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         model.collection = model.questions
         @collection.models = collection.models
       error: (model, err, cb) ->
-        console.log("childViewOptions error: " + JSON.stringify(err))
+        console.log("childViewOptions id: " +  model.id + " err:" + JSON.stringify(err))
 
   childViewContainer: '#subtest_wrapper',
 
@@ -75,9 +75,9 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     'add:child': 'addChildPostRender'
 
   addChildPostRender: ->
-    currentSubtest = @children.findByIndex(0)
-    currentSubtest.updateQuestionVisibility()
-    currentSubtest.updateProgressButtons()
+#    currentSubtest = @children.findByIndex(0)
+#    currentSubtest.updateQuestionVisibility()
+#    currentSubtest.updateProgressButtons()
 
   nextQuestion: ->
 #    console.log("nextQuestion")
