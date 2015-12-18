@@ -9,8 +9,10 @@
 
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
+  # for Backbone.Marionette.CompositeView Composite Model
   template: JST["AssessmentView"],
 
+  # for Backbone.Marionette.CompositeView
   getChildView: (model) ->
 
     model.parent = @
@@ -40,6 +42,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @ready = true
     return currentSubview
 
+  # for Backbone.Marionette.CompositeView
   childViewOptions: (model, index) ->
     model.questions.fetch
       viewOptions:
@@ -51,8 +54,10 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       error: (model, err, cb) ->
         console.log("childViewOptions id: " +  model.id + " err:" + JSON.stringify(err))
 
+  # for Backbone.Marionette.CompositeView
   childViewContainer: '#subtest_wrapper',
 
+  # for Backbone.View
   events:
     'click .subtest-next' : 'next'
     'click .subtest-back' : 'back'
@@ -61,12 +66,14 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     'click .next_question' : 'nextQuestion'
     'click .prev_question' : 'prevQuestion'
 
-
+  # for Backbone.Marionette.CollectionView
   childEvents:
     'add:child': 'addChildPostRender'
 
+  # Triggered by `add:child` of this.childEvents
   addChildPostRender: ->
 
+  # @todo
   nextQuestion: ->
 
     currentSubtest = @children.findByIndex(0)
@@ -93,6 +100,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       currentSubtest.updateQuestionVisibility()
       currentSubtest.updateProgressButtons()
 
+  # @todo
   prevQuestion: ->
 
     currentSubtest = @children.findByIndex(0)
@@ -119,6 +127,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       currentSubtest.updateQuestionVisibility()
       currentSubtest.updateProgressButtons()
 
+  # @todo Documentation
   i18n: ->
     @text =
       "next" : t("SubtestRunView.button.next")
@@ -126,6 +135,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       "skip" : t("SubtestRunView.button.skip")
       "help" : t("SubtestRunView.button.help")
 
+  # @todo Documentation
   initialize: (options) ->
 
     @i18n()
@@ -210,9 +220,11 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     ui.text = @text
     @model.set('ui', ui)
 
+  # @todo Documentation
   setChromeData:->
     @model.set('subtest', @subtestViews[@index].model.toJSON())
 
+  # @todo Documentation
   onRender:->
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
     Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
@@ -224,25 +236,30 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     Tangerine.progress.currentSubview.on "back",    => @step -1
     @flagRender "assessment"
 
+  # @todo Documentation
   flagRender: (object) ->
     @rendered[object] = true
 
     if @rendered.assessment && @rendered.subtest
       @trigger "rendered"
 
+  # @todo Documentation
   afterRender: ->
     @subtestViews[@orderMap[@index]]?.afterRender?()
 
+  # @todo Documentation
   onClose: ->
     for view in @subtestViews
       view.close()
     @result.clear()
     Tangerine.nav.setStudent ""
 
+  # @todo Documentation
   abort: ->
     @abortAssessment = true
     @step 1
 
+  # @todo Documentation
   skip: =>
     currentView = Tangerine.progress.currentSubview
     @result.add
@@ -255,6 +272,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       success: =>
         @reset 1
 
+  # @todo Documentation
   step: (increment) ->
 
     if @abortAssessment
@@ -273,14 +291,18 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     else
       currentView.showErrors()
 
+  # @todo Documentation
   next: ->
     @step 1
 
+  # @todo Documentation
   back: ->
     @step -1
-    
+
+  # @todo Documentation
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
+  # @todo Documentation
   getGridScore: ->
     link = @model.get("gridLinkId") || ""
     if link == "" then return
@@ -288,12 +310,14 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     gridScore = @parent.result.getGridScore grid.id
     gridScore
 
+  # @todo Documentation
   gridWasAutostopped: ->
     link = @model.get("gridLinkId") || ""
     if link == "" then return
     grid = @parent.model.subtests.get @model.get("gridLinkId")
     gridWasAutostopped = @parent.result.gridWasAutostopped grid.id
 
+  # @todo Documentation
   reset: (increment) ->
     @rendered.subtest = false
     @rendered.assessment = false
@@ -308,6 +332,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @render()
     window.scrollTo 0, 0
 
+  # @todo Documentation
   saveResult: ( currentView, increment ) ->
 
     subtestResult = currentView.getResult()
@@ -346,6 +371,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         success : =>
           @reset increment
 
+  # @todo Documentation
   getSum: ->
     if Tangerine.progress.currentSubview.getSum?
       return Tangerine.progress.currentSubview.getSum()
@@ -353,12 +379,14 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       # maybe a better fallback
       return {correct:0,incorrect:0,missing:0,total:0}
 
+  # @todo Documentation
   displaySkip: (skippable)->
     if skippable
       $( ".skip" ).show();
     else
       $( ".skip" ).hide();
 
+  # @todo Documentation
   displayBack: (backable)->
     if backable
       $( ".subtest-back" ).removeClass("hidden");
