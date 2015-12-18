@@ -20,6 +20,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     @questionViews = []
     @answered      = []
     @renderCount   = 0
+    @notAskedCount = 0
 #    @childViewOptions =
 #        parent: this
 
@@ -30,6 +31,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 #      console.log("No questions.")
     @collection = @model.questions
     @questions = @collection
+
 #    @model.questions.fetch
 #      viewOptions:
 #        key: "question-#{@model.id}"
@@ -48,6 +50,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     @backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
     @parent.displaySkip(@skippable)
     @parent.displayBack(@backable)
+
+    @listenTo
 
   updateProgressButtons: ->
 
@@ -275,11 +279,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
 
   getSum: ->
-#    if @prototypeView.getSum?
-#      return @prototypeView.getSum()
-#    else
-# maybe a better fallback
-#    console.log("This view does not return a sum, correct?")
     return {correct:0,incorrect:0,missing:0,total:0}
 
   childEvents:
@@ -288,6 +287,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     'rendered': 'onQuestionRendered'
     'add:child': 'foo'
 
+  # This tests if add:child is triggered on the subtest instead of on AssessmentCompositeView.
   foo: ->
     console.log("test 123 SV child add")
 
@@ -295,26 +295,20 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
   buildChildView: (child, ChildViewClass, childViewOptions) ->
     options = _.extend({model: child}, childViewOptions);
     childView = new ChildViewClass(options)
+    required = child.getNumber "linkedGridScore"
+    isNotAsked = ( ( required != 0 && @parent.getGridScore() < required ) || @parent.gridWasAutostopped() ) && @parent.getGridScore() != false
+    child.set  "notAsked", isNotAsked
+    if isNotAsked then @notAskedCount++
     Marionette.MonitorDOMRefresh(childView);
     @questionViews[childViewOptions.index] = childView
-#    console.log("this.questionIndex:" + this.questionIndex)
-#    @questionViews[@questionIndex] = childView
-#    @questionViews.push childView
-#    console.log("childViewOptions.index: " + childViewOptions.index + " @questionViews len: " + @questionViews.length)
+
     return childView
   ,
 
 #  Passes options to each childView instance
   childViewOptions: (model, index)->
-#    console.log("index: " + index)
     unless @dataEntry
       previous = @model.parent.result.getByHash(@model.get('hash'))
-    notAskedCount = 0
-    required = model.getNumber "linkedGridScore"
-
-    isNotAsked = ( ( required != 0 && @model.parent.getGridScore() < required ) || @model.parent.gridWasAutostopped() ) && @model.parent.getGridScore() != false
-
-    if isNotAsked then notAskedCount++
 
     name   = model.escape("name").replace /[^A-Za-z0-9_]/g, "-"
     answer = previous[name] if previous
@@ -325,7 +319,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
       model         : model
       parent        : @
       dataEntry     : @dataEntry
-      notAsked      : isNotAsked
+      notAsked      : model.get "notAsked"
       isObservation : @isObservation
       answer        : answer
       index  : index
@@ -335,13 +329,16 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 #    @questions.sort()
 
   onRender: ->
-#    @onRenderCollection()
-#      @updateQuestionVisibility()
-#      @updateProgressButtons()
-#    @updateSkipLogic()
+
+    notAskedCount = 0
+    if @model.questions?
+      @model.questions.models.forEach (question, i) =>
+# skip the rest if score not high enough
+        required = question.getNumber "linkedGridScore"
+        isNotAsked = ( ( required != 0 && @parent.getGridScore() < required ) || @parent.gridWasAutostopped() ) && @parent.getGridScore() != false
+        question.set  "notAsked", isNotAsked
+        if isNotAsked then @notAskedCount++
     @trigger "ready"
-#    @trigger "subRendered"
-#    @listenTo oneView, "answer scroll", @onQuestionAnswer
 
   onRenderCollection:->
     if @focusMode
@@ -353,6 +350,14 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     @updateExecuteReady(true)
     @updateQuestionVisibility()
     @updateProgressButtons()
+
+    if @questions.length == @notAskedCount
+      if Tangerine.settings.get("context") != "class"
+        @parent.next?()
+      else
+#        container.appendChild $ "<p class='grey'>#{@text.notEnough}</p>"
+        alert @text.notEnough
+
 #    @trigger "ready"
     @trigger "subRendered"
 
