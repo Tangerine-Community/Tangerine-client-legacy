@@ -275,8 +275,10 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   next: ->
     @step 1
+
   back: ->
     @step -1
+    
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
   getGridScore: ->
