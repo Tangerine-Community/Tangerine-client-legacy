@@ -42,6 +42,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @ready = true
     return currentSubview
 
+#  Populate the questions in the model of the subtest.
   childViewOptions: (model, index) ->
 #    console.log("fetching model.questions -  " + JSON.stringify(model))
     model.questions.fetch
@@ -308,17 +309,17 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
   getGridScore: ->
-    link = @model.get("gridLinkId") || ""
+    link = @model.get("subtest").gridLinkId || ""
     if link == "" then return
-    grid = @parent.model.subtests.get @model.get("gridLinkId")
-    gridScore = @parent.result.getGridScore grid.id
+    grid = @model.subtests.get @model.get("subtest").gridLinkId
+    gridScore = @result.getGridScore grid.id
     gridScore
 
   gridWasAutostopped: ->
-    link = @model.get("gridLinkId") || ""
+    link = @model.get("subtest").gridLinkId || ""
     if link == "" then return
-    grid = @parent.model.subtests.get @model.get("gridLinkId")
-    gridWasAutostopped = @parent.result.gridWasAutostopped grid.id
+    grid = @model.subtests.get @model.get("subtest").gridLinkId
+    gridWasAutostopped = @result.gridWasAutostopped grid.id
 
   reset: (increment) ->
     @rendered.subtest = false
