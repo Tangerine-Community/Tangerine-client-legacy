@@ -427,6 +427,7 @@ class Router extends Backbone.Router
               success: ->
                 view = new AssessmentCompositeView
                   model: assessment
+                  index: result.get("subtestData").length
 
                 if result.has("order_map")
                   # save the order map of previous randomization
@@ -450,8 +451,6 @@ class Router extends Backbone.Router
                 view.index = result.get("subtestData").length
 #                vm.show view
                 Tangerine.app.rm.get('mainRegion').show view
-                view.reset(1)
-                view.reset(-1)
 
 
 

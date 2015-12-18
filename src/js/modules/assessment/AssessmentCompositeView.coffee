@@ -134,8 +134,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @on "before:render", @setChromeData
 
     Tangerine.progress = {}
-    Tangerine.progress.index = 0
-    @index = Tangerine.progress.index
+    Tangerine.progress.index = if options.index then options.index else 0
+    @index = if options.index then options.index else 0
 
     @abortAssessment = false
     @model = options.model
@@ -196,6 +196,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       assessmentView : @
     @subtestViews.push resultView
 
+    # Given this.index, get ONE MODEL to place as the SINGLE MODEL IN THE COLLECTION
+    # for the Composite View to render.
     col = {}
     col.models = []
     #    model = @model.subtests.models[@index]
@@ -279,7 +281,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   back: ->
     @step -1
-    
+
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
   getGridScore: ->
@@ -305,6 +307,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       else
         @index + increment
     model = @subtestViews[@orderMap[@index]].model
+    # Now that we have our model we want to render, assign that model to the
+    # Composite View's Collection as the ONLY model to render.
     @collection.models = [model]
     @render()
     window.scrollTo 0, 0
