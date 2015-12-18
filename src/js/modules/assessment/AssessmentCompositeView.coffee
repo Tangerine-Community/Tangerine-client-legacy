@@ -36,19 +36,15 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         currentSubview =  null
         console.log(prototypeName + "  Subview is not defined.")
 
-#    @listenTo(currentSubview, 'skipable:changed', displaySkip());
-#    @listenTo(currentSubview, 'backable:changed', displayBack());
 
     @ready = true
     return currentSubview
 
   childViewOptions: (model, index) ->
-#    console.log("fetching model.questions -  " + JSON.stringify(model))
     model.questions.fetch
       viewOptions:
         key: "question-#{model.id}"
       success: (collection) =>
-#        console.log "collection: " + JSON.stringify(collection)
         model.questions.sort()
         model.collection = model.questions
         @collection.models = collection.models
@@ -56,11 +52,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         console.log("childViewOptions id: " +  model.id + " err:" + JSON.stringify(err))
 
   childViewContainer: '#subtest_wrapper',
-
-#  collectionEvents:->
-#    "backable:changed": ->
-#      console.log("backable:changed")
-#      @displayBack
 
   events:
     'click .subtest-next' : 'next'
@@ -75,12 +66,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     'add:child': 'addChildPostRender'
 
   addChildPostRender: ->
-#    currentSubtest = @children.findByIndex(0)
-#    currentSubtest.updateQuestionVisibility()
-#    currentSubtest.updateProgressButtons()
 
   nextQuestion: ->
-#    console.log("nextQuestion")
 
     currentSubtest = @children.findByIndex(0)
 
@@ -212,7 +199,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     col.models = []
     #    model = @model.subtests.models[@index]
     model = @subtestViews[@orderMap[@index]].model
-#    @collection.models = [model]
     col.models.push model
     @collection = col
 
@@ -221,9 +207,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     ui.studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
     ui.transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
 
-#    skippable = @model.get("skippable") == true || @model.get("skippable") == "true"
-#    backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
-
     ui.text = @text
     @model.set('ui', ui)
 
@@ -231,7 +214,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @model.set('subtest', @subtestViews[@index].model.toJSON())
 
   onRender:->
-#    Tangerine.progress.currentSubview?.updateExecuteReady?(true)
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
     Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
     Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
@@ -240,8 +222,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       console.log("currentView next")
       @step 1
     Tangerine.progress.currentSubview.on "back",    => @step -1
-#    Tangerine.progress.currentSubview.on "render:collection",    ->
-#      console.log("collection rendered")
     @flagRender "assessment"
 
   flagRender: (object) ->
@@ -286,23 +266,15 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     if currentView.testValid?
       valid = currentView.testValid()
-#      console.log("valid: " + valid)
       if valid
-#        console.log("ok to saveResult")
         @saveResult( currentView, increment )
       else
-#        console.log("not valid")
         currentView.showErrors()
     else
-#      console.log("no testValid")
       currentView.showErrors()
 
-#      from SubtestRunView
   next: ->
-#    console.log("next")
-    #    @trigger "next"
     @step 1
-#  back: -> @trigger "back"
   back: ->
     @step -1
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
@@ -349,7 +321,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       if typeof currentView.getSum != 'function'
         getSum = {correct:0,incorrect:0,missing:0,total:0}
 
-# Don't update the gps subtest.
+      # Don't update the gps subtest.
       if prototype != 'gps'
         @result.insert
           name        : currentView.model.get "name"
@@ -376,7 +348,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     if Tangerine.progress.currentSubview.getSum?
       return Tangerine.progress.currentSubview.getSum()
     else
-# maybe a better fallback
+      # maybe a better fallback
       return {correct:0,incorrect:0,missing:0,total:0}
 
   displaySkip: (skippable)->
