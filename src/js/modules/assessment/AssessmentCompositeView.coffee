@@ -5,7 +5,11 @@
 # or back is clicked, the reset(incrementTomoveToSubtestViewIndex) method is
 # eventually called which calls render. `reset` method seems familiar because
 # there is `reset` on Backbone.Collection, but this reset on a View is it's own
-# thing.
+# thing. `AssessmentCompositeView.reset` and `AssessmentCompositeView.initialize`
+# ensure that there is only one model in `AssessmentCompositeView.collection` for
+# `AssessmentCompositeView.render` to render. Which Model should be in that
+# `AssessmentCompositeView.collection` is determined by `AssessmentCompositeView.index`.
+
 
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
@@ -127,6 +131,16 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       "skip" : t("SubtestRunView.button.skip")
       "help" : t("SubtestRunView.button.help")
 
+  #
+  # AssessmentCompositeView.initialize overrides Backbone.View.initialize
+  #
+  # @params
+  #
+  # options = {
+  #   model: An Assessment Model.
+  #   index: The subtest of the Assessment to begin at.
+  # }
+  #
   initialize: (options) ->
 
     @i18n()
