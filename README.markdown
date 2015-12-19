@@ -1,3 +1,4 @@
+# Tangerine
 
 ![Tangerine](http://www.tangerinecentral.org/sites/default/files/tangerine-logo-150.png)
 
@@ -5,7 +6,7 @@
 
 [![Stories in Ready](https://badge.waffle.io/Tangerine-Community/Tangerine-client.png?label=ready&title=Ready)](https://waffle.io/Tangerine-Community/Tangerine-client)
 
-# Assess students with tablets or your phone
+## Assess students with tablets or your phone
 
 Tangerine is an application for assessing students on any scale, country-level, district-level or classroom-level.
 Tangerine is designed for [Early Grade Reading Assessments](https://www.eddataglobal.org/reading/) but flexible and powerful enough to handle any survey's requirements.
@@ -16,7 +17,7 @@ and references and [Tangerine Central](http://www.tanerinecentral.org) for much 
 Alternatively put, Tangerine is a [CouchApp](http://couchapp.org/page/index) that uses
 [Apache CouchDB](http://couchdb.apache.org/) built with [Backbone.js](http://backbonejs.org/), [LessCSS](http://lesscss.org/) written in [CoffeeScript](http://coffeescript.org/) augmented with [Sinatra](http://www.sinatrarb.com/) and PHP.
 
-# Getting Started
+## Getting Started
 
 _The following is a list of tools useful for Tangerine. Related: See the guide for setting up a
 [Tangerine server](https://github.com/Tangerine-Community/Tangerine/wiki/Tangerine-Server).
@@ -31,7 +32,7 @@ Then clone this repo.
 	
 Use the correct branch - for stable development, stick to master. For recent development, use develop
 
-## Init the source code
+### Init the source code
 
     npm install
     bower install
@@ -40,7 +41,7 @@ These commands read the relevant node and ruby dependencies and installs all of 
 
 There's a postinstall script that runs when npm install is done that will add the android platform and then run gulp init.
 
-## Start the app
+### Start the app
 
 To launch the app, run the npm start target, which uses the [http-server](https://www.npmjs.com/package/http-server)
 and runs ./scripts/listen.rb to compile changed coffeescript files and other useful tasks.
@@ -53,17 +54,18 @@ If you're doing application development, you'll want to run the debug gulp targe
     
 When in debug, the app generates index-dev.html. View the app at http://localhost:8080/index-dev.html
 
-## View the app
+### View the app
 
 To view the app with minimised javascript, open http://localhost:8080
 
 Sourcemaps are now available; therefore, you should be able to debug with them, although it is better to use the debug target (described above).
 
-## Generate an APK
+### Generate an APK
+This requires [installing the Android SDK Tools](http://developer.android.com/sdk/installing/index.html?pkg=tools). 
 
     npm build:apk
 
-## Other useful targets
+### Other useful targets
 
 View package.json for other useful npm targets:
 
@@ -75,13 +77,13 @@ View package.json for other useful npm targets:
  - npm run debug will copy files into www/compiled and build index-dev.html. Use this when using chrome debugger until gulp 
    handles sourcemaps better (https://github.com/terinjokes/gulp-uglify/issues/105). It's a little wonky; it may fail the first time it is run. Try again.
    
-# Bootstrapping
+## Bootstrapping
 
 Preload.js in the scripts dir will download assessments. Enter the username and password on the commandline:
 
     node preload.js T_ADMIN=user T_PASS=pass
     
-# Resolving issues
+## Resolving issues
 
 Fork the repository and update your fork
 
@@ -95,7 +97,7 @@ Get the id of the issue you’re fixing
 
 Fix the bug and commit the change. Submit a pull request.
     
-# Clearing your pouch instance
+## Clearing your pouch instance
 
 Sometimes you need to start with a fresh pouch. Paste this to your javascript console and it will delete your tangerine pouch.
 
@@ -106,15 +108,36 @@ Sometimes you need to start with a fresh pouch. Paste this to your javascript co
         console.log(error);
       });
 
-# Testing
+## Testing
 
-The tests run in mocha/phantomjs. The pouch runs in a in-memory container.
+The tests run in mocha/phantomjs. The pouch runs in a in-memory container. 
 
-# Dependencies
+This requires that you have the Grunt CLI installed globally.
+
+```
+npm install -g grunt-cli
+```
+
+To run the tests, use the following command.
+
+```
+npm test
+```
+
+To run the tests in a browser, compile the src code, compile the test, start the test server, and then navigate to http://127.0.0.1:9000/test/index.html
+
+```
+npm start
+npm test
+npm run testInBrowser 
+```
+
+
+## Dependencies
 
 Using http://greenkeeper.io/ to manage dependencies.
 
-# Tangerine API
+## Tangerine API
 
 Tangerine.progress is an object that contains status of the application: index, currentView, etc.
 
