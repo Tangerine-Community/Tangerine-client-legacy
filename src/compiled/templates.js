@@ -1,17 +1,44 @@
 this["JST"] = this["JST"] || {};
-this["JST"]["AssessmentView"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
+this["JST"]["AssessmentView"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+
+  return "    <button class='subtest_help command'>"
+    + alias2(alias1(((stack1 = ((stack1 = ((stack1 = (depth0 != null ? depth0.subtest : depth0)) != null ? stack1.ui : stack1)) != null ? stack1.text : stack1)) != null ? stack1.help : stack1), depth0))
+    + "</button>\n    <div class='enumerator_help' "
+    + alias2(alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.subtest : depth0)) != null ? stack1.ui : stack1)) != null ? stack1.fontStyle : stack1), depth0))
+    + ">"
+    + ((stack1 = alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.subtest : depth0)) != null ? stack1.ui : stack1)) != null ? stack1.enumeratorHelp : stack1), depth0)) != null ? stack1 : "")
+    + "</div>\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=container.lambda;
+
+  return "    <div class='student_dialog' "
+    + container.escapeExpression(alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.subtest : depth0)) != null ? stack1.ui : stack1)) != null ? stack1.fontStyle : stack1), depth0))
+    + ">"
+    + ((stack1 = alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.subtest : depth0)) != null ? stack1.ui : stack1)) != null ? stack1.studentDialog : stack1), depth0)) != null ? stack1 : "")
+    + "</div>\n";
+},"5":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return "      <div class=\"controlls--transition-comment\">\n        "
+    + ((stack1 = container.lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.subtest : depth0)) != null ? stack1.ui : stack1)) != null ? stack1.transitionComment : stack1), depth0)) != null ? stack1 : "")
+    + "\n      </div>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=container.escapeExpression, alias3=container.lambda;
 
   return "<h1>"
-    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
-    + "</h1>\n<div id='progress'></div>\n<div id='subtest_wrapper'></div>\n<div class='controlls clearfix'>\n    <div>\n        "
-    + ((stack1 = ((helper = (helper = helpers.transitionComment || (depth0 != null ? depth0.transitionComment : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"transitionComment","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "\n    </div>\n    <button class='subtest-back navigation hidden'>"
-    + alias4(alias5(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.back : stack1), depth0))
+    + alias2(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</h1>\n"
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = ((stack1 = (depth0 != null ? depth0.subtest : depth0)) != null ? stack1.ui : stack1)) != null ? stack1.enumeratorHelp : stack1),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = ((stack1 = (depth0 != null ? depth0.subtest : depth0)) != null ? stack1.ui : stack1)) != null ? stack1.studentDialog : stack1),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "<div id='progress'></div>\n<div id='subtest_wrapper'></div>\n<div class='controlls clearfix'>\n"
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = ((stack1 = (depth0 != null ? depth0.subtest : depth0)) != null ? stack1.ui : stack1)) != null ? stack1.transitionComment : stack1),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "    <button class='subtest-back navigation hidden'>"
+    + alias2(alias3(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.back : stack1), depth0))
     + "</button>\n    <button class='subtest-next navigation'>"
-    + alias4(alias5(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.next : stack1), depth0))
+    + alias2(alias3(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.next : stack1), depth0))
     + "</button>\n    <button class='skip navigation hidden'>"
-    + alias4(alias5(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.skip : stack1), depth0))
+    + alias2(alias3(((stack1 = ((stack1 = (depth0 != null ? depth0.ui : depth0)) != null ? stack1.text : stack1)) != null ? stack1.skip : stack1), depth0))
     + "</button>\n</div>\n";
 },"useData":true});
 this["JST"]["Button"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -24,80 +51,34 @@ this["JST"]["DashboardLayout"] = Handlebars.template({"compiler":[7,">= 4.0.0"],
     return "<div id=\"header-region\"></div>\n<div id=\"content-region\"></div>\n<div id=\"footer-region\"></div>\n\n";
 },"useData":true});
 this["JST"]["Datetime"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=container.escapeExpression, alias2=depth0 != null ? depth0 : {}, alias3=helpers.helperMissing, alias4="function";
-
-  return "    <button class='subtest_help command'>"
-    + alias1(container.lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.help : stack1), depth0))
-    + "</button>\n    <div class='enumerator_help' "
-    + alias1(((helper = (helper = helpers.fontStyle || (depth0 != null ? depth0.fontStyle : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"fontStyle","hash":{},"data":data}) : helper)))
-    + ">"
-    + ((stack1 = ((helper = (helper = helpers.enumeratorHelp || (depth0 != null ? depth0.enumeratorHelp : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"enumeratorHelp","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "</div>\n";
-},"3":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function";
-
-  return "    <div class='student_dialog' "
-    + container.escapeExpression(((helper = (helper = helpers.fontStyle || (depth0 != null ? depth0.fontStyle : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"fontStyle","hash":{},"data":data}) : helper)))
-    + ">"
-    + ((stack1 = ((helper = (helper = helpers.studentDialog || (depth0 != null ? depth0.studentDialog : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"studentDialog","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "</div>\n";
-},"5":function(container,depth0,helpers,partials,data) {
     return "";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression, alias4=container.lambda;
+    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
 
-  return "<h2>"
-    + alias3(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === "function" ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
-    + "</h2>\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.enumeratorHelp : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.studentDialog : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "<div class='question'>\n    <table>\n        <tr>\n            <td><label for='year'>"
-    + alias3(alias4(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.year : stack1), depth0))
+  return "<div class='question'>\n    <table>\n        <tr>\n            <td><label for='year'>"
+    + alias2(alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.year : stack1), depth0))
     + "</label><input id='year' value='"
-    + alias3(alias4(((stack1 = (depth0 != null ? depth0.formElements : depth0)) != null ? stack1.year : stack1), depth0))
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.formElements : depth0)) != null ? stack1.year : stack1), depth0))
     + "'></td>\n            <td>\n                <label for='month'>"
-    + alias3(alias4(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.month : stack1), depth0))
+    + alias2(alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.month : stack1), depth0))
     + "</label><br>\n                <select id='month' value='"
-    + alias3(alias4(((stack1 = (depth0 != null ? depth0.formElements : depth0)) != null ? stack1.month : stack1), depth0))
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.formElements : depth0)) != null ? stack1.month : stack1), depth0))
     + "'>"
-    + ((stack1 = (helpers.monthDropdown || (depth0 && depth0.monthDropdown) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.formElements : depth0)) != null ? stack1.months : stack1),((stack1 = (depth0 != null ? depth0.formElements : depth0)) != null ? stack1.month : stack1),{"name":"monthDropdown","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.monthDropdown || (depth0 && depth0.monthDropdown) || helpers.helperMissing).call(depth0 != null ? depth0 : {},((stack1 = (depth0 != null ? depth0.formElements : depth0)) != null ? stack1.months : stack1),((stack1 = (depth0 != null ? depth0.formElements : depth0)) != null ? stack1.month : stack1),{"name":"monthDropdown","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "</select>\n            </td>\n            <td><label for='day'>"
-    + alias3(alias4(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.day : stack1), depth0))
+    + alias2(alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.day : stack1), depth0))
     + "</label><input id='day' type='day' value='"
-    + alias3(alias4(((stack1 = (depth0 != null ? depth0.formElements : depth0)) != null ? stack1.day : stack1), depth0))
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.formElements : depth0)) != null ? stack1.day : stack1), depth0))
     + "'></td>\n        </tr>\n        <tr>\n            <td><label for='time'>"
-    + alias3(alias4(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.time : stack1), depth0))
+    + alias2(alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.time : stack1), depth0))
     + "</label><br><input type='text' id='time' value='"
-    + alias3(alias4(((stack1 = (depth0 != null ? depth0.formElements : depth0)) != null ? stack1.time : stack1), depth0))
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.formElements : depth0)) != null ? stack1.time : stack1), depth0))
     + "'></td>\n        </tr>\n    </table>\n</div>\n";
 },"useData":true});
-this["JST"]["Grid"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=container.escapeExpression, alias2=depth0 != null ? depth0 : {}, alias3=helpers.helperMissing, alias4="function";
+this["JST"]["Grid"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper;
 
-  return "    <button class='subtest_help command'>"
-    + alias1(container.lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.help : stack1), depth0))
-    + "</button>\n    <div class='enumerator_help' "
-    + alias1(((helper = (helper = helpers.fontStyle || (depth0 != null ? depth0.fontStyle : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"fontStyle","hash":{},"data":data}) : helper)))
-    + ">"
-    + ((stack1 = ((helper = (helper = helpers.enumeratorHelp || (depth0 != null ? depth0.enumeratorHelp : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"enumeratorHelp","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "</div>\n";
-},"3":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function";
-
-  return "    <div class='student_dialog' "
-    + container.escapeExpression(((helper = (helper = helpers.fontStyle || (depth0 != null ? depth0.fontStyle : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"fontStyle","hash":{},"data":data}) : helper)))
-    + ">"
-    + ((stack1 = ((helper = (helper = helpers.studentDialog || (depth0 != null ? depth0.studentDialog : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"studentDialog","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "</div>\n";
-},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function";
-
-  return "<h2>"
-    + container.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
-    + "</h2>\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.enumeratorHelp : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.studentDialog : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = ((helper = (helper = helpers.grid || (depth0 != null ? depth0.grid : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"grid","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+  return ((stack1 = ((helper = (helper = helpers.grid || (depth0 != null ? depth0.grid : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"grid","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\n";
 },"useData":true});
 this["JST"]["GridExample"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
@@ -204,30 +185,10 @@ this["JST"]["QuestionView"] = Handlebars.template({"1":function(container,depth0
 
   return ((stack1 = helpers.unless.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.notAsked : depth0),{"name":"unless","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"useData":true});
-this["JST"]["Survey"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=container.escapeExpression, alias2=depth0 != null ? depth0 : {}, alias3=helpers.helperMissing, alias4="function";
+this["JST"]["Survey"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper;
 
-  return "    <button class='subtest_help command'>"
-    + alias1(container.lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.labels : depth0)) != null ? stack1.text : stack1)) != null ? stack1.help : stack1), depth0))
-    + "</button>\n    <div class='enumerator_help' "
-    + alias1(((helper = (helper = helpers.fontStyle || (depth0 != null ? depth0.fontStyle : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"fontStyle","hash":{},"data":data}) : helper)))
-    + ">"
-    + ((stack1 = ((helper = (helper = helpers.enumeratorHelp || (depth0 != null ? depth0.enumeratorHelp : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"enumeratorHelp","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "</div>\n";
-},"3":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function";
-
-  return "    <div class='student_dialog' "
-    + container.escapeExpression(((helper = (helper = helpers.fontStyle || (depth0 != null ? depth0.fontStyle : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"fontStyle","hash":{},"data":data}) : helper)))
-    + ">"
-    + ((stack1 = ((helper = (helper = helpers.studentDialog || (depth0 != null ? depth0.studentDialog : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"studentDialog","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "</div>\n";
-},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : {};
-
-  return ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.enumeratorHelp : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.studentDialog : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "<h2>"
-    + container.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+  return "<h2>"
+    + container.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"name","hash":{},"data":data}) : helper)))
     + "</h2>\n";
 },"useData":true});
