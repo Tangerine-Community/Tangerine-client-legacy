@@ -28,9 +28,7 @@ this["JST"]["AssessmentView"] = Handlebars.template({"1":function(container,dept
 
   return "<h1>"
     + alias2(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
-    + "</h1>\n<h2> "
-    + alias2(alias3(((stack1 = (depth0 != null ? depth0.subtest : depth0)) != null ? stack1.name : stack1), depth0))
-    + "\n"
+    + "</h1>\n"
     + ((stack1 = helpers["if"].call(alias1,((stack1 = ((stack1 = (depth0 != null ? depth0.subtest : depth0)) != null ? stack1.ui : stack1)) != null ? stack1.enumeratorHelp : stack1),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers["if"].call(alias1,((stack1 = ((stack1 = (depth0 != null ? depth0.subtest : depth0)) != null ? stack1.ui : stack1)) != null ? stack1.studentDialog : stack1),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "<div id='progress'></div>\n<div id='subtest_wrapper'></div>\n<div class='controlls clearfix'>\n"
