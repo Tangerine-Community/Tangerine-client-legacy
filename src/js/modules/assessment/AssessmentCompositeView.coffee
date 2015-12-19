@@ -71,14 +71,26 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     'click .next_question' : 'nextQuestion'
     'click .prev_question' : 'prevQuestion'
 
-
   childEvents:
     'add:child': 'addChildPostRender'
+#    'collection:rendered': 'addChildPostRender'
+    'render:collection': 'addChildPostRender'
+
+  foo: ->
+    console.log("foo")
 
   addChildPostRender: ->
-#    currentSubtest = @children.findByIndex(0)
-#    currentSubtest.updateQuestionVisibility()
-#    currentSubtest.updateProgressButtons()
+    currentSubtest = @children.findByIndex(0)
+    focusMode = currentSubtest.model.getBoolean("focusMode")
+    if focusMode
+      if !$( "#summary_container" ).length
+        $('#subtest_wrapper').after $ "
+              <div id='summary_container'></div>
+              <button class='navigation prev_question'>#{@text.previousQuestion}</button>
+              <button class='navigation next_question'>#{@text.nextQuestion}</button>
+            "
+      currentSubtest.updateQuestionVisibility()
+      currentSubtest.updateProgressButtons()
 
   nextQuestion: ->
 #    console.log("nextQuestion")
@@ -139,6 +151,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       "back" : t("SubtestRunView.button.back")
       "skip" : t("SubtestRunView.button.skip")
       "help" : t("SubtestRunView.button.help")
+      "previousQuestion" : t("SurveyRunView.button.previous_question")
+      "nextQuestion" : t("SurveyRunView.button.next_question")
 
   initialize: (options) ->
 
@@ -196,10 +210,13 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       for i in [0..@subtestViews.length]
         @orderMap[i] = i
 
-    @result = new Result
-      assessmentId   : @model.id
-      assessmentName : @model.get "name"
-      blank          : true
+    if typeof options.result == 'undefined'
+      @result = new Result
+        assessmentId   : @model.id
+        assessmentName : @model.get "name"
+        blank          : true
+    else
+      @result = options.result
 
     if hasSequences then @result.set("order_map" : @orderMap)
 
@@ -241,9 +258,18 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       console.log("currentView next")
       @step 1
     Tangerine.progress.currentSubview.on "back",    => @step -1
-#    Tangerine.progress.currentSubview.on "render:collection",    ->
+#    Tangerine.progress.currentSubview.on "collection:rendered",    => subTestRenderCollection
+#    Tangerine.progress.currentSubview.on "render:collection",    -> subTestRenderCollection
 #      console.log("collection rendered")
     @flagRender "assessment"
+
+  subTestRenderCollection:->
+    console.log("onRenderCollection")
+    currentSubtest = @children.findByIndex(0)
+    focusMode = currentSubtest.model.getBoolean("focusMode")
+    if focusMode
+      currentSubtest.updateQuestionVisibility()
+      currentSubtest.updateProgressButtons()
 
   flagRender: (object) ->
     @rendered[object] = true

@@ -412,7 +412,11 @@ class Router extends Backbone.Router
             dashboardLayout = new DashboardLayout();
             Tangerine.app.rm.get('mainRegion').show dashboardLayout
             dashboardLayout.contentRegion.reset()
-            dashboardLayout.contentRegion.show(new AssessmentCompositeView viewOptions)
+            view = new AssessmentCompositeView viewOptions
+            view.on("collection:rendered", () ->
+              console.log("the collection view was rendered!")
+            )
+            dashboardLayout.contentRegion.show(view)
           error: (model, err, cb) ->
             console.log JSON.stringify err
 
@@ -427,6 +431,8 @@ class Router extends Backbone.Router
               success: ->
                 view = new AssessmentCompositeView
                   model: assessment
+                  result: result
+                result.parent = view
 
                 if result.has("order_map")
                   # save the order map of previous randomization
@@ -443,7 +449,7 @@ class Router extends Backbone.Router
 
                 # Hijack the normal Result and ResultView, use one from the db
                 view.subtestViews.pop()
-                view.subtestViews.push new ResultView
+                view.subtestViews.push new ResultItemView
                   model          : result
                   assessment     : assessment
                   assessmentView : view
