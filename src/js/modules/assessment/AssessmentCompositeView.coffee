@@ -233,7 +233,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @model.set('ui', ui)
 
   setChromeData:->
-    @model.set('subtest', @subtestViews[@index].model.toJSON())
+    @model.set('subtest', @subtestViews[@orderMap[@index]].model.toJSON())
 
   onRender:->
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
