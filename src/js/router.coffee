@@ -432,6 +432,8 @@ class Router extends Backbone.Router
                 view = new AssessmentCompositeView
                   model: assessment
                   result: result
+                  index: result.get("subtestData").length
+
                 result.parent = view
 
                 if result.has("order_map")
