@@ -7,8 +7,7 @@ ResultItemView =  Backbone.Marionette.CompositeView.extend
     'click .another' : 'another'
 
   another: ->
-    window.location.reload()
-    #Tangerine.router.navigate "restart/#{@assessment.id}", true
+    Tangerine.router.navigate "runMar/" + this.model.get('assessmentId'), trigger: true
 
   save: ->
     @model.add
