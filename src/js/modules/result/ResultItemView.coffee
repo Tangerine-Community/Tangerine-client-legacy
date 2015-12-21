@@ -55,6 +55,7 @@ ResultItemView =  Backbone.Marionette.CompositeView.extend
 
   initialize: ( options ) ->
 
+    Tangerine.progress.currentSubview = @
     @i18n()
 
     @model = options.model
