@@ -1,4 +1,8 @@
 <h1>{{name}}</h1>
+<div id='progress'></div>
+{{#if subtest}}
+    <h2>{{subtest.name}}</h2>
+{{/if}}
 {{#if subtest.ui.enumeratorHelp}}
     <button class='subtest_help command'>{{subtest.ui.text.help}}</button>
     <div class='enumerator_help' {{subtest.ui.fontStyle}}>{{{subtest.ui.enumeratorHelp}}}</div>
@@ -6,7 +10,6 @@
 {{#if subtest.ui.studentDialog}}
     <div class='student_dialog' {{subtest.ui.fontStyle}}>{{{subtest.ui.studentDialog}}}</div>
 {{/if}}
-<div id='progress'></div>
 <div id='subtest_wrapper'></div>
 <div class='controlls clearfix'>
     {{#if subtest.ui.transitionComment}}
