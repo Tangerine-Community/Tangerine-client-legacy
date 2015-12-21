@@ -5,7 +5,11 @@
 # or back is clicked, the reset(incrementTomoveToSubtestViewIndex) method is
 # eventually called which calls render. `reset` method seems familiar because
 # there is `reset` on Backbone.Collection, but this reset on a View is it's own
-# thing.
+# thing. `AssessmentCompositeView.reset` and `AssessmentCompositeView.initialize`
+# ensure that there is only one model in `AssessmentCompositeView.collection` for
+# `AssessmentCompositeView.render` to render. Which Model should be in that
+# `AssessmentCompositeView.collection` is determined by `AssessmentCompositeView.index`.
+
 
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
@@ -145,6 +149,16 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       "previousQuestion" : t("SurveyRunView.button.previous_question")
       "nextQuestion" : t("SurveyRunView.button.next_question")
 
+  #
+  # AssessmentCompositeView.initialize overrides Backbone.View.initialize
+  #
+  # @params
+  #
+  # options = {
+  #   model: An Assessment Model.
+  #   index: The subtest of the Assessment to begin at.
+  # }
+  #
   initialize: (options) ->
 
     @i18n()
@@ -152,8 +166,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @on "before:render", @setChromeData
 
     Tangerine.progress = {}
-    Tangerine.progress.index = 0
-    @index = Tangerine.progress.index
+    Tangerine.progress.index = if options.index then options.index else 0
+    @index = if options.index then options.index else 0
 
     @abortAssessment = false
     @model = options.model
@@ -217,6 +231,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       assessmentView : @
     @subtestViews.push resultView
 
+    # Given this.index, get ONE MODEL to place as the SINGLE MODEL IN THE COLLECTION
+    # for the Composite View to render.
     col = {}
     col.models = []
     #    model = @model.subtests.models[@index]
@@ -309,7 +325,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   back: ->
     @step -1
-    
+
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
   getGridScore: ->
@@ -335,6 +351,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       else
         @index + increment
     model = @subtestViews[@orderMap[@index]].model
+    # Now that we have our model we want to render, assign that model to the
+    # Composite View's Collection as the ONLY model to render.
     @collection.models = [model]
     @render()
     window.scrollTo 0, 0
