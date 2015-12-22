@@ -155,8 +155,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   # @params
   #
   # options = {
-  #   model: An Assessment Model.
-  #   index: The subtest of the Assessment to begin at.
+  #   assessment: An Assessment Model.
+  #   result: (optional) A Result model to pick up where you left off.
   # }
   #
   initialize: (options) ->
@@ -186,7 +186,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @index = (@result.get('subtestData')).length
     Tangerine.progress = {}
     Tangerine.progress.index = @index
-    
+
     @abortAssessment = false
     @enableCorrections = false  # toggled if user hits the back button.
 
