@@ -71,9 +71,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 #    'collection:rendered': 'addChildPostRender'
     'render:collection': 'addChildPostRender'
 
-  foo: ->
-    console.log("foo")
-
   addChildPostRender: ->
 
     currentSubtest = @children.findByIndex(0)
@@ -155,16 +152,27 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   # @params
   #
   # options = {
-  #   model: An Assessment Model.
-  #   index: The subtest of the Assessment to begin at.
+  #   assessment: An Assessment Model which is used for @model.
+  #   result: (optional) Previous results object to resume where last left off.
   # }
   #
   initialize: (options) ->
 
+    @on "before:render", @setChromeData
     @i18n()
 
-    @on "before:render", @setChromeData
+    # Set @assessment and @model
+    #
+    # Assessment should come from options.assessment, but in case it was assigned
+    # to @model, also place it in @assessment.
+    if options.assessment
+      @model = options.assessment
+      @assessment = options.assessment
+    else
+      @assessment = @model
 
+    # Set @result
+    #
     if typeof options.result == 'undefined'
       @result = new Result
         assessmentId   : @model.id
@@ -173,31 +181,12 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     else
       @result = options.result
 
-    Tangerine.progress = {}
-    Tangerine.progress.index = if options.index then options.index else 0
-    @index = if options.index then options.index else 0
+    # Set @index
+    #
+    @index = @result.get("subtestData").length
 
-    @abortAssessment = false
-    @model = options.model
-    @enableCorrections = false  # toggled if user hits the back button.
-
-    Tangerine.tempData = {}
-
-    @rendered = {
-      "assessment" : false
-      "subtest" : false
-    }
-
-    Tangerine.activity = "assessment run"
-    @subtestViews = []
-    @model.parent = @
-    @model.subtests.sort()
-    @model.subtests.each (model) =>
-      model.parent = @
-      @subtestViews.push new SubtestRunItemView
-        model  : model
-        parent : @
-
+    # Set @orderMap
+    #
     # Figure out the @orderMap which is either derived from the assessment, the
     # result with a prior orderMap, or lastly no specified order map in which case
     # we create a linear orderMap.
@@ -215,14 +204,42 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         places[@model.id] = 0
       Tangerine.settings.save("sequencePlaces", places)
       @orderMap = sequences[places[@model.id]]
-      @orderMap[@orderMap.length] = @subtestViews.length
+      @orderMap[@orderMap.length] = @assessment.subtests.models.length
       @result.set("order_map" : @orderMap)
     else if hasSequences and options.result
       @orderMap = options.result.get('order_map')
     else
-      for i in [0..@subtestViews.length]
+      for i in [0..@assessment.subtests.models.length]
         @orderMap[i] = i
       @result.set("order_map" : @orderMap)
+
+    # Given this.index, get ONE MODEL to place as the SINGLE MODEL IN THE COLLECTION
+    # for the Composite View to render.
+    @collection = new Backbone.Collection()
+    @collection.add(@assessment.subtests.models[@orderMap[@index]])
+
+    @abortAssessment = false
+    @enableCorrections = false  # toggled if user hits the back button.
+
+    Tangerine.tempData = {}
+    Tangerine.progress = {}
+    Tangerine.progress.index = @index
+    Tangerine.activity = "assessment run"
+
+    @rendered = {
+      "assessment" : false
+      "subtest" : false
+    }
+
+    @subtestViews = []
+    @model.parent = @
+    @model.subtests.sort()
+    @model.subtests.each (model) =>
+      model.parent = @
+      @subtestViews.push new SubtestRunItemView
+        model  : model
+        parent : @
+
 
     resultView = new ResultView
       model          : @result
@@ -230,14 +247,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       assessmentView : @
     @subtestViews.push resultView
 
-    # Given this.index, get ONE MODEL to place as the SINGLE MODEL IN THE COLLECTION
-    # for the Composite View to render.
-    col = {}
-    col.models = []
-    #    model = @model.subtests.models[@index]
-    model = @subtestViews[@orderMap[@index]].model
-    col.models.push model
-    @collection = col
+
 
     ui = {}
     ui.enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
@@ -262,14 +272,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     @flagRender "assessment"
 
-  subTestRenderCollection:->
-    console.log("onRenderCollection")
-    currentSubtest = @children.findByIndex(0)
-    focusMode = currentSubtest.model.getBoolean("focusMode")
-    if focusMode
-      currentSubtest.updateQuestionVisibility()
-      currentSubtest.updateProgressButtons()
-
   flagRender: (object) ->
     @rendered[object] = true
 
@@ -278,16 +280,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   afterRender: ->
     @subtestViews[@orderMap[@index]]?.afterRender?()
-
-  onClose: ->
-    for view in @subtestViews
-      view.close()
-    @result.clear()
-    Tangerine.nav.setStudent ""
-
-  abort: ->
-    @abortAssessment = true
-    @step 1
 
   skip: =>
     currentView = Tangerine.progress.currentSubview
