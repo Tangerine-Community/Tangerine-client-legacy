@@ -409,7 +409,7 @@ class Router extends Backbone.Router
             Tangerine.assessment = assessment
             viewOptions =
               assessment: Tangerine.assessment
-              result: new Result()
+              result: new Result({blank: true})
             dashboardLayout = new DashboardLayout();
             Tangerine.app.rm.get('mainRegion').show dashboardLayout
             dashboardLayout.contentRegion.reset()

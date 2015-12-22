@@ -44,6 +44,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     # Figure out the order map of the frames and our current index, which may exist if there are already
     # results, but if not then we look for a sequence to use on the assessment.
+    @orderMap = []
+    @index = 0
     if @result.has("order_map")
       # save the order map of previous randomization
       @orderMap = @result.get("order_map").slice() # clone array
@@ -52,9 +54,15 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     else if this.assessment.get("sequence")
       @orderMap = @model.get("sequence")[0]
       @index = 0
+    else
+      limit = @frames.length
+      i = 0
+      while i <= limit
+        @orderMap.push(i)
+        i++
 
     # Set the current frame
-    @collection.models = [@frames.models[@orderMap[@index]]]
+    @collection.add(@frames.models[@orderMap[@index]])
 
     @on('render', =>
       @currentChildView = @children.findByModel(@collection.models[0])
@@ -84,7 +92,19 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     'click .next_question' : 'nextQuestion'
     'click .prev_question' : 'prevQuestion'
 
-  template: JST["AssessmentView"],
+  template: JST["AssessmentView"]
+
+  # Populate the questions in the model of the subtest.
+  childViewOptions: (model, index) ->
+    model.questions.fetch
+      viewOptions:
+        key: "question-#{model.id}"
+      success: (collection) =>
+        model.questions.sort()
+        model.collection = model.questions
+        @collection.models = collection.models
+      error: (model, err, cb) ->
+        console.log("childViewOptions id: " +  model.id + " err:" + JSON.stringify(err))
 
   getChildView: (model) ->
     model.parent = @
@@ -112,33 +132,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @ready = true
     return currentSubview
 
-  # Populate the questions in the model of the subtest.
-  childViewOptions: (model, index) ->
-    model.questions.fetch
-      viewOptions:
-        key: "question-#{model.id}"
-      success: (collection) =>
-        model.questions.sort()
-        model.collection = model.questions
-        @collection.models = collection.models
-      error: (model, err, cb) ->
-        console.log("childViewOptions id: " +  model.id + " err:" + JSON.stringify(err))
 
   childViewContainer: '#subtest_wrapper',
-
-
-  addChildPostRender: ->
-    currentSubtest = @children.findByIndex(0)
-    focusMode = currentSubtest.model.getBoolean("focusMode")
-    if focusMode
-      if !$( "#summary_container" ).length
-        $('#subtest_wrapper').after $ "
-              <div id='summary_container'></div>
-              <button class='navigation prev_question'>#{@text.previousQuestion}</button>
-              <button class='navigation next_question'>#{@text.nextQuestion}</button>
-            "
-      currentSubtest.updateQuestionVisibility()
-      currentSubtest.updateProgressButtons()
 
   nextQuestion: ->
     currentSubtest = @children.findByIndex(0)
@@ -227,8 +222,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       @saveResult( @currentChildView )
       return
 
-    if currentView.testValid?
-      valid = currentView.testValid()
+    if @currentChildView.testValid?
+      valid = @currentChildView.testValid()
       if valid
         @saveResult( @currentChildView, increment )
       else
@@ -268,7 +263,9 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         @index + increment
     # Reassign this view's collection.model array to contain just the current
     # subtest model.
-    @collection.models = [@subtests[@orderMap[@index]].model]
+    if (@collection.models.length > 0)
+      @collection.remove(@collection.models[0].id)
+    @collection.add(@frames.models[@orderMap[@index]])
     @render()
     window.scrollTo 0, 0
 
