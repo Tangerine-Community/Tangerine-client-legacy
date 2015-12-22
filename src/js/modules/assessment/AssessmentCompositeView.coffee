@@ -165,6 +165,16 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     @on "before:render", @setChromeData
 
+    # Set @assessment and @model
+    #
+    # Assessment should come from options.assessment, but in case it was assigned
+    # to @model, also place it in @assessment.
+    if options.assessment
+      @model = options.assessment
+      @assessment = options.assessment
+    else
+      @assessment = @model
+
     if typeof options.result == 'undefined'
       @result = new Result
         assessmentId   : @model.id
