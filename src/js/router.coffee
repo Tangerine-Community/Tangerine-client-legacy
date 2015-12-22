@@ -408,7 +408,8 @@ class Router extends Backbone.Router
           success : ->
             Tangerine.assessment = assessment
             viewOptions =
-              model: Tangerine.assessment
+              assessment: Tangerine.assessment
+              result: new Result()
             dashboardLayout = new DashboardLayout();
             Tangerine.app.rm.get('mainRegion').show dashboardLayout
             dashboardLayout.contentRegion.reset()
@@ -429,34 +430,16 @@ class Router extends Backbone.Router
             result = new Result "_id" : resultId
             result.fetch
               success: ->
-                view = new AssessmentCompositeView
-                  model: assessment
+                view = new AssessmentCompositeView({
+                  assessment: assessment
                   result: result
-                  index: result.get("subtestData").length
+                })
 
                 result.parent = view
-
-                if result.has("order_map")
-                  # save the order map of previous randomization
-                  orderMap = result.get("order_map").slice() # clone array
-                  # restore the previous ordermap
-                  view.orderMap = orderMap
-
                 for subtest in result.get("subtestData")
                   if subtest.data? && subtest.data.participant_id?
                     Tangerine.nav.setStudent subtest.data.participant_id
 
-                # replace the view's result with our old one
-                view.result = result
-
-                # Hijack the normal Result and ResultView, use one from the db
-                view.subtestViews.pop()
-                view.subtestViews.push new ResultItemView
-                  model          : result
-                  assessment     : assessment
-                  assessmentView : view
-                view.index = result.get("subtestData").length
-#                vm.show view
                 Tangerine.app.rm.get('mainRegion').show view
 
 

@@ -13,10 +13,80 @@
 
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
+  #
+  # AssessmentCompositeView.initialize overrides Backbone.View.initialize
+  #
+  # @param options = {
+  #   assessment: An Assessment Model.
+  #   result: A Result Model.
+  # }
+  #
+  initialize: (options) ->
+
+    @i18n()
+
+    @assessment = options.assessment
+    @result = options.result
+
+    # Set up models and collection for display in this Composite View.
+    # The Assessment is our branch, AKA the model in the Composite View.
+    @model = @assessment
+    # Only one model in the collection at a time for performance reasons, the
+    # rest of the models store off to the side in @frames.
+    @collection = new Backbone.Collection()
+    @frames = new Backbone.Collection()
+
+    # Load up the @frames and set our first model in the @collection for rendering.
+    # Start with the subtests as frames.
+    @frames.add(@assessment.subtests.models)
+    # Now push results on the last frame.
+    @frames.add(@result)
+
+    # Figure out the order map of the frames and our current index, which may exist if there are already
+    # results, but if not then we look for a sequence to use on the assessment.
+    if @result.has("order_map")
+      # save the order map of previous randomization
+      @orderMap = @result.get("order_map").slice() # clone array
+      # restore the previous ordermap
+      @index = @orderMap[@result.get("subtestData").length]
+    else if this.assessment.get("sequence")
+      @orderMap = @model.get("sequence")[0]
+      @index = 0
+
+    # Set the current frame
+    @collection.models = [@frames.models[@orderMap[@index]]]
+
+    @on('render', =>
+      @currentChildView = @children.findByModel(@collection.models[0])
+    )
+
+    # Set some states.
+    @abortAssessment = false
+    @enableCorrections = false  # toggled if user hits the back button.
+    @rendered = {
+      "assessment" : false
+      "subtest" : false
+    }
+
+    # @todo Do we need globals here?
+    # Set global variables
+    Tangerine.progress = {}
+    Tangerine.progress.index = @index
+    Tangerine.tempData = {}
+    Tangerine.activity = "assessment run"
+    Tangerine.assessmentView = @
+
+  events:
+    'click .subtest-next' : 'next'
+    'click .subtest-back' : 'back'
+    'click .subtest_help' : 'toggleHelp'
+    'click .skip'         : 'skip'
+    'click .next_question' : 'nextQuestion'
+    'click .prev_question' : 'prevQuestion'
+
   template: JST["AssessmentView"],
 
   getChildView: (model) ->
-
     model.parent = @
     if !model.questions
       model.questions     = new Questions()
@@ -39,12 +109,10 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       else
         currentSubview =  null
         console.log(prototypeName + "  Subview is not defined.")
-
-
     @ready = true
     return currentSubview
 
-#  Populate the questions in the model of the subtest.
+  # Populate the questions in the model of the subtest.
   childViewOptions: (model, index) ->
     model.questions.fetch
       viewOptions:
@@ -58,24 +126,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   childViewContainer: '#subtest_wrapper',
 
-  events:
-    'click .subtest-next' : 'next'
-    'click .subtest-back' : 'back'
-    'click .subtest_help' : 'toggleHelp'
-    'click .skip'         : 'skip'
-    'click .next_question' : 'nextQuestion'
-    'click .prev_question' : 'prevQuestion'
-
-  childEvents:
-    'add:child': 'addChildPostRender'
-#    'collection:rendered': 'addChildPostRender'
-    'render:collection': 'addChildPostRender'
-
-  foo: ->
-    console.log("foo")
 
   addChildPostRender: ->
-
     currentSubtest = @children.findByIndex(0)
     focusMode = currentSubtest.model.getBoolean("focusMode")
     if focusMode
@@ -89,7 +141,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       currentSubtest.updateProgressButtons()
 
   nextQuestion: ->
-
     currentSubtest = @children.findByIndex(0)
 
     currentQuestionView = currentSubtest.questionViews[currentSubtest.questionIndex]
@@ -140,151 +191,19 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       currentSubtest.updateQuestionVisibility()
       currentSubtest.updateProgressButtons()
 
-  i18n: ->
-    @text =
-      "next" : t("SubtestRunView.button.next")
-      "back" : t("SubtestRunView.button.back")
-      "skip" : t("SubtestRunView.button.skip")
-      "help" : t("SubtestRunView.button.help")
-      "previousQuestion" : t("SurveyRunView.button.previous_question")
-      "nextQuestion" : t("SurveyRunView.button.next_question")
 
-  #
-  # AssessmentCompositeView.initialize overrides Backbone.View.initialize
-  #
-  # @params
-  #
-  # options = {
-  #   model: An Assessment Model.
-  #   index: The subtest of the Assessment to begin at.
-  # }
-  #
-  initialize: (options) ->
-
-    @i18n()
-
-    @on "before:render", @setChromeData
-
-    Tangerine.progress = {}
-    Tangerine.progress.index = if options.index then options.index else 0
-    @index = if options.index then options.index else 0
-
-    @abortAssessment = false
-    @model = options.model
-
-    @orderMap = []
-    @enableCorrections = false  # toggled if user hits the back button.
-
-    Tangerine.tempData = {}
-
-    @rendered = {
-      "assessment" : false
-      "subtest" : false
-    }
-
-    Tangerine.activity = "assessment run"
-    @subtestViews = []
-    @model.parent = @
-    @model.subtests.sort()
-    @model.subtests.each (model) =>
-      model.parent = @
-      @subtestViews.push new SubtestRunItemView
-        model  : model
-        parent : @
-
-    hasSequences = @model.has("sequences") && not _.isEmpty(_.compact(_.flatten(@model.get("sequences"))))
-
-    if hasSequences
-      sequences = @model.get("sequences")
-
-      # get or initialize sequence places
-      places = Tangerine.settings.get("sequencePlaces")
-      places = {} unless places?
-      places[@model.id] = 0 unless places[@model.id]?
-
-      if places[@model.id] < sequences.length - 1
-        places[@model.id]++
-      else
-        places[@model.id] = 0
-
-      Tangerine.settings.save("sequencePlaces", places)
-
-      @orderMap = sequences[places[@model.id]]
-      @orderMap[@orderMap.length] = @subtestViews.length
-    else
-      for i in [0..@subtestViews.length]
-        @orderMap[i] = i
-
-    if typeof options.result == 'undefined'
-      @result = new Result
-        assessmentId   : @model.id
-        assessmentName : @model.get "name"
-        blank          : true
-    else
-      @result = options.result
-
-    if hasSequences then @result.set("order_map" : @orderMap)
-
-    resultView = new ResultView
-      model          : @result
-      assessment     : @model
-      assessmentView : @
-    @subtestViews.push resultView
-
-    # Given this.index, get ONE MODEL to place as the SINGLE MODEL IN THE COLLECTION
-    # for the Composite View to render.
-    col = {}
-    col.models = []
-    #    model = @model.subtests.models[@index]
-    model = @subtestViews[@orderMap[@index]].model
-    col.models.push model
-    @collection = col
-
-    ui = {}
-    ui.enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
-    ui.studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
-    ui.transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
-
-    ui.text = @text
-    @model.set('ui', ui)
-
-  setChromeData:->
-    @model.set('subtest', @subtestViews[@orderMap[@index]].model.toJSON())
+  onBeforeRender:->
+    @model.set('subtest', @frames.models[@orderMap[@index]].toJSON())
 
   onRender:->
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
-    Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
-    Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
 
-    Tangerine.progress.currentSubview.on "next",    =>
-      console.log("currentView next")
-      @step 1
-    Tangerine.progress.currentSubview.on "back",    => @step -1
-
-    @flagRender "assessment"
-
-  subTestRenderCollection:->
-    console.log("onRenderCollection")
-    currentSubtest = @children.findByIndex(0)
-    focusMode = currentSubtest.model.getBoolean("focusMode")
-    if focusMode
-      currentSubtest.updateQuestionVisibility()
-      currentSubtest.updateProgressButtons()
 
   flagRender: (object) ->
     @rendered[object] = true
 
     if @rendered.assessment && @rendered.subtest
       @trigger "rendered"
-
-  afterRender: ->
-    @subtestViews[@orderMap[@index]]?.afterRender?()
-
-  onClose: ->
-    for view in @subtestViews
-      view.close()
-    @result.clear()
-    Tangerine.nav.setStudent ""
 
   abort: ->
     @abortAssessment = true
@@ -293,11 +212,11 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   skip: =>
     currentView = Tangerine.progress.currentSubview
     @result.add
-      name      : currentView.model.get "name"
-      data      : currentView.getSkipped()
-      subtestId : currentView.model.id
+      name      : @currentChildView.model.get "name"
+      data      : @currentChildView.getSkipped()
+      subtestId : @currentChildView.model.id
       skipped   : true
-      prototype : currentView.model.get "prototype"
+      prototype : @currentChildView.model.get "prototype"
     ,
       success: =>
         @reset 1
@@ -305,20 +224,17 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   step: (increment) ->
 
     if @abortAssessment
-      currentView = Tangerine.progress.currentSubview
-      @saveResult( currentView )
+      @saveResult( @currentChildView )
       return
-
-    currentView = Tangerine.progress.currentSubview
 
     if currentView.testValid?
       valid = currentView.testValid()
       if valid
-        @saveResult( currentView, increment )
+        @saveResult( @currentChildView, increment )
       else
-        currentView.showErrors()
+        @currentChildView.showErrors()
     else
-      currentView.showErrors()
+      @currentChildView.showErrors()
 
   next: ->
     @step 1
@@ -344,21 +260,19 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   reset: (increment) ->
     @rendered.subtest = false
     @rendered.assessment = false
-    Tangerine.progress.currentSubview.close();
+    @currentChildView.close();
     @index =
       if @abortAssessment == true
         @subtestViews.length-1
       else
         @index + increment
-    model = @subtestViews[@orderMap[@index]].model
-    # Now that we have our model we want to render, assign that model to the
-    # Composite View's Collection as the ONLY model to render.
-    @collection.models = [model]
+    # Reassign this view's collection.model array to contain just the current
+    # subtest model.
+    @collection.models = [@subtests[@orderMap[@index]].model]
     @render()
     window.scrollTo 0, 0
 
   saveResult: ( currentView, increment ) ->
-
     subtestResult = currentView.getResult()
     subtestId = currentView.model.id
     prototype = currentView.model.get "prototype"
@@ -396,8 +310,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
           @reset increment
 
   getSum: ->
-    if Tangerine.progress.currentSubview.getSum?
-      return Tangerine.progress.currentSubview.getSum()
+    if @currentChildView.getSum?
+      return @currentChildView.getSum()
     else
       # maybe a better fallback
       return {correct:0,incorrect:0,missing:0,total:0}
@@ -413,3 +327,12 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       $( ".subtest-back" ).removeClass("hidden");
     else
       $( ".subtest-back" ).addClass("hidden");
+
+  i18n: ->
+    @text =
+      "next" : t("SubtestRunView.button.next")
+      "back" : t("SubtestRunView.button.back")
+      "skip" : t("SubtestRunView.button.skip")
+      "help" : t("SubtestRunView.button.help")
+      "previousQuestion" : t("SurveyRunView.button.previous_question")
+      "nextQuestion" : t("SurveyRunView.button.next_question")
