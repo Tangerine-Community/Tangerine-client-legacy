@@ -165,14 +165,29 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     @on "before:render", @setChromeData
 
+    # Set @assessment and @model
+    #
+    # Assessment should come from options.assessment, but in case it was assigned
+    # to @model, also place it in @assessment.
+    if options.assessment
+      @model = options.assessment
+      @assessment = options.assessment
+    else
+      @assessment = @model
+
+    if typeof options.result == 'undefined'
+      @result = new Result
+        assessmentId   : @model.id
+        assessmentName : @model.get "name"
+        blank          : true
+    else
+      @result = options.result
+
+    @index = (@result.get('subtestData')).length
     Tangerine.progress = {}
-    Tangerine.progress.index = if options.index then options.index else 0
-    @index = if options.index then options.index else 0
-
+    Tangerine.progress.index = @index
+    
     @abortAssessment = false
-    @model = options.model
-
-    @orderMap = []
     @enableCorrections = false  # toggled if user hits the back button.
 
     Tangerine.tempData = {}
@@ -192,38 +207,31 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         model  : model
         parent : @
 
+    # Figure out the @orderMap which is either derived from the assessment, the
+    # result with a prior orderMap, or lastly no specified order map in which case
+    # we create a linear orderMap.
+    @orderMap = []
     hasSequences = @model.has("sequences") && not _.isEmpty(_.compact(_.flatten(@model.get("sequences"))))
-
-    if hasSequences
+    if hasSequences and !options.result
       sequences = @model.get("sequences")
-
       # get or initialize sequence places
       places = Tangerine.settings.get("sequencePlaces")
       places = {} unless places?
       places[@model.id] = 0 unless places[@model.id]?
-
       if places[@model.id] < sequences.length - 1
         places[@model.id]++
       else
         places[@model.id] = 0
-
       Tangerine.settings.save("sequencePlaces", places)
-
       @orderMap = sequences[places[@model.id]]
       @orderMap[@orderMap.length] = @subtestViews.length
+      @result.set("order_map" : @orderMap)
+    else if hasSequences and options.result
+      @orderMap = options.result.get('order_map')
     else
       for i in [0..@subtestViews.length]
         @orderMap[i] = i
-
-    if typeof options.result == 'undefined'
-      @result = new Result
-        assessmentId   : @model.id
-        assessmentName : @model.get "name"
-        blank          : true
-    else
-      @result = options.result
-
-    if hasSequences then @result.set("order_map" : @orderMap)
+      @result.set("order_map" : @orderMap)
 
     resultView = new ResultView
       model          : @result
