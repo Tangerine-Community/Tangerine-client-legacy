@@ -201,6 +201,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     # Figure out the @orderMap which is either derived from the assessment, the
     # result with a prior orderMap, or lastly no specified order map in which case
     # we create a linear orderMap.
+    @orderMap = []
     hasSequences = @model.has("sequences") && not _.isEmpty(_.compact(_.flatten(@model.get("sequences"))))
     if hasSequences and !options.result
       sequences = @model.get("sequences")
