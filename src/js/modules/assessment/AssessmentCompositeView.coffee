@@ -183,12 +183,11 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     else
       @result = options.result
 
+    @index = (@result.get('subtestData')).length
     Tangerine.progress = {}
-    Tangerine.progress.index = if options.index then options.index else 0
-    @index = if options.index then options.index else 0
-
+    Tangerine.progress.index = @index
+    
     @abortAssessment = false
-    @model = options.model
     @enableCorrections = false  # toggled if user hits the back button.
 
     Tangerine.tempData = {}
