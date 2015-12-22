@@ -408,7 +408,7 @@ class Router extends Backbone.Router
           success : ->
             Tangerine.assessment = assessment
             viewOptions =
-              model: Tangerine.assessment
+              assessment: Tangerine.assessment
             dashboardLayout = new DashboardLayout();
             Tangerine.app.rm.get('mainRegion').show dashboardLayout
             dashboardLayout.contentRegion.reset()
@@ -430,9 +430,8 @@ class Router extends Backbone.Router
             result.fetch
               success: ->
                 view = new AssessmentCompositeView
-                  model: assessment
+                  assessment: assessment
                   result: result
-                  index: result.get("subtestData").length
 
                 result.parent = view
 
