@@ -96,6 +96,26 @@ Get the id of the issue you’re fixing
     git checkout -b iss85
 
 Fix the bug and commit the change. Submit a pull request.
+
+## Resolving merge conflicts
+
+Sometimes you will get a conflict when attempting to merge your update with master. Here's a solution:
+
+ - Update your fork's master
+ 
+        git checkout master
+        git pull Tangerine-Community master
+        
+ - Merge your code into master
+ 
+        git merge name-of-your-bugfix-fork
+        
+ - Fix the errors. 
+ - Add them to git
+ 
+        git add .
+        
+ - Commit       
     
 ## Clearing your pouch instance
 

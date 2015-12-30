@@ -5,7 +5,11 @@
 # or back is clicked, the reset(incrementTomoveToSubtestViewIndex) method is
 # eventually called which calls render. `reset` method seems familiar because
 # there is `reset` on Backbone.Collection, but this reset on a View is it's own
-# thing.
+# thing. `AssessmentCompositeView.reset` and `AssessmentCompositeView.initialize`
+# ensure that there is only one model in `AssessmentCompositeView.collection` for
+# `AssessmentCompositeView.render` to render. Which Model should be in that
+# `AssessmentCompositeView.collection` is determined by `AssessmentCompositeView.index`.
+
 
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
@@ -43,6 +47,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     return currentSubview
 
   # for Backbone.Marionette.CompositeView
+  # Populate the questions in the model of the subtest.
   childViewOptions: (model, index) ->
     model.questions.fetch
       viewOptions:
@@ -69,11 +74,26 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   # for Backbone.Marionette.CollectionView
   childEvents:
     'add:child': 'addChildPostRender'
+#    'collection:rendered': 'addChildPostRender'
+    'render:collection': 'addChildPostRender'
+
+  foo: ->
+    console.log("foo")
 
   # Triggered by `add:child` of this.childEvents
   addChildPostRender: ->
+    currentSubtest = @children.findByIndex(0)
+    focusMode = currentSubtest.model.getBoolean("focusMode")
+    if focusMode
+      if !$( "#summary_container" ).length
+        $('#subtest_wrapper').after $ "
+              <div id='summary_container'></div>
+              <button class='navigation prev_question'>#{@text.previousQuestion}</button>
+              <button class='navigation next_question'>#{@text.nextQuestion}</button>
+            "
+      currentSubtest.updateQuestionVisibility()
+      currentSubtest.updateProgressButtons()
 
-  # @todo
   nextQuestion: ->
 
     currentSubtest = @children.findByIndex(0)
@@ -134,22 +154,48 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       "back" : t("SubtestRunView.button.back")
       "skip" : t("SubtestRunView.button.skip")
       "help" : t("SubtestRunView.button.help")
+      "previousQuestion" : t("SurveyRunView.button.previous_question")
+      "nextQuestion" : t("SurveyRunView.button.next_question")
 
-  # @todo Documentation
+  #
+  # AssessmentCompositeView.initialize overrides Backbone.View.initialize
+  #
+  # @params
+  #
+  # options = {
+  #   assessment: An Assessment Model.
+  #   result: (optional) A Result model to pick up where you left off.
+  # }
+  #
   initialize: (options) ->
 
     @i18n()
 
     @on "before:render", @setChromeData
 
+    # Set @assessment and @model
+    #
+    # Assessment should come from options.assessment, but in case it was assigned
+    # to @model, also place it in @assessment.
+    if options.assessment
+      @model = options.assessment
+      @assessment = options.assessment
+    else
+      @assessment = @model
+
+    if typeof options.result == 'undefined'
+      @result = new Result
+        assessmentId   : @model.id
+        assessmentName : @model.get "name"
+        blank          : true
+    else
+      @result = options.result
+
+    @index = (@result.get('subtestData')).length
     Tangerine.progress = {}
-    Tangerine.progress.index = 0
-    @index = Tangerine.progress.index
+    Tangerine.progress.index = @index
 
     @abortAssessment = false
-    @model = options.model
-
-    @orderMap = []
     @enableCorrections = false  # toggled if user hits the back button.
 
     Tangerine.tempData = {}
@@ -169,35 +215,31 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         model  : model
         parent : @
 
+    # Figure out the @orderMap which is either derived from the assessment, the
+    # result with a prior orderMap, or lastly no specified order map in which case
+    # we create a linear orderMap.
+    @orderMap = []
     hasSequences = @model.has("sequences") && not _.isEmpty(_.compact(_.flatten(@model.get("sequences"))))
-
-    if hasSequences
+    if hasSequences and !options.result
       sequences = @model.get("sequences")
-
       # get or initialize sequence places
       places = Tangerine.settings.get("sequencePlaces")
       places = {} unless places?
       places[@model.id] = 0 unless places[@model.id]?
-
       if places[@model.id] < sequences.length - 1
         places[@model.id]++
       else
         places[@model.id] = 0
-
       Tangerine.settings.save("sequencePlaces", places)
-
       @orderMap = sequences[places[@model.id]]
       @orderMap[@orderMap.length] = @subtestViews.length
+      @result.set("order_map" : @orderMap)
+    else if hasSequences and options.result
+      @orderMap = options.result.get('order_map')
     else
       for i in [0..@subtestViews.length]
         @orderMap[i] = i
-
-    @result = new Result
-      assessmentId   : @model.id
-      assessmentName : @model.get "name"
-      blank          : true
-
-    if hasSequences then @result.set("order_map" : @orderMap)
+      @result.set("order_map" : @orderMap)
 
     resultView = new ResultView
       model          : @result
@@ -205,6 +247,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       assessmentView : @
     @subtestViews.push resultView
 
+    # Given this.index, get ONE MODEL to place as the SINGLE MODEL IN THE COLLECTION
+    # for the Composite View to render.
     col = {}
     col.models = []
     #    model = @model.subtests.models[@index]
@@ -213,7 +257,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @collection = col
 
     ui = {}
-    ui.enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<button class='subtest_help command'>#{@text.help}</button><div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
+    ui.enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
     ui.studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
     ui.transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
 
@@ -222,7 +266,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   # @todo Documentation
   setChromeData:->
-    @model.set('subtest', @subtestViews[@index].model.toJSON())
+    @model.set('subtest', @subtestViews[@orderMap[@index]].model.toJSON())
 
   # @todo Documentation
   onRender:->
@@ -234,7 +278,17 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       console.log("currentView next")
       @step 1
     Tangerine.progress.currentSubview.on "back",    => @step -1
+
     @flagRender "assessment"
+
+  # @todo Documentation
+  subTestRenderCollection:->
+    console.log("onRenderCollection")
+    currentSubtest = @children.findByIndex(0)
+    focusMode = currentSubtest.model.getBoolean("focusMode")
+    if focusMode
+      currentSubtest.updateQuestionVisibility()
+      currentSubtest.updateProgressButtons()
 
   # @todo Documentation
   flagRender: (object) ->
@@ -304,18 +358,18 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   # @todo Documentation
   getGridScore: ->
-    link = @model.get("gridLinkId") || ""
+    link = @model.get("subtest").gridLinkId || ""
     if link == "" then return
-    grid = @parent.model.subtests.get @model.get("gridLinkId")
-    gridScore = @parent.result.getGridScore grid.id
+    grid = @model.subtests.get @model.get("subtest").gridLinkId
+    gridScore = @result.getGridScore grid.id
     gridScore
 
   # @todo Documentation
   gridWasAutostopped: ->
-    link = @model.get("gridLinkId") || ""
+    link = @model.get("subtest").gridLinkId || ""
     if link == "" then return
-    grid = @parent.model.subtests.get @model.get("gridLinkId")
-    gridWasAutostopped = @parent.result.gridWasAutostopped grid.id
+    grid = @model.subtests.get @model.get("subtest").gridLinkId
+    gridWasAutostopped = @result.gridWasAutostopped grid.id
 
   # @todo Documentation
   reset: (increment) ->
@@ -328,6 +382,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       else
         @index + increment
     model = @subtestViews[@orderMap[@index]].model
+    # Now that we have our model we want to render, assign that model to the
+    # Composite View's Collection as the ONLY model to render.
     @collection.models = [model]
     @render()
     window.scrollTo 0, 0

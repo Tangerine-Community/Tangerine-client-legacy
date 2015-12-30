@@ -7,8 +7,9 @@ ResultItemView =  Backbone.Marionette.CompositeView.extend
     'click .another' : 'another'
 
   another: ->
-    window.location.reload()
-    #Tangerine.router.navigate "restart/#{@assessment.id}", true
+    d = new Date();
+    timestamp = d.getTime();
+    Tangerine.router.navigate "runMar/" + this.model.get('assessmentId') + "?" + timestamp, trigger: true
 
   save: ->
     @model.add
@@ -54,6 +55,7 @@ ResultItemView =  Backbone.Marionette.CompositeView.extend
 
   initialize: ( options ) ->
 
+    Tangerine.progress.currentSubview = @
     @i18n()
 
     @model = options.model
