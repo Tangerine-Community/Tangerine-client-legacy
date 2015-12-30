@@ -282,6 +282,19 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   # @todo Documentation
   onRender:->
+
+    # Check to see if this subtest is related to another subtest via the gridLinkId
+    # property and if the related subtest was autostopped, skip this subtest.
+    currentSubtestModel = @collection.models[0]
+    parentSubtestId = currentSubtestModel.get('gridLinkId')
+    parentSubtestResult = false
+    this.result.attributes.subtestData.forEach( (subtestResult) ->
+      if subtestResult.subtestId == parentSubtestId
+        parentSubtestResult = subtestResult
+    )
+    if parentSubtestResult isnt false and parentSubtestResult.data.auto_stop is true
+      @reset(1)
+
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
     Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
     Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
