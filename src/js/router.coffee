@@ -417,6 +417,7 @@ class Router extends Backbone.Router
               console.log("the collection view was rendered!")
             )
             dashboardLayout.contentRegion.show(view)
+
           error: (model, err, cb) ->
             console.log JSON.stringify err
 

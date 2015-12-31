@@ -305,7 +305,9 @@
           }
         }
       }
-    },
+    }
+  };
+  ({
     "fr": {
       translation: {
         Tangerine: {
@@ -593,7 +595,7 @@
         }
       }
     }
-  };
+  });
   i18n.init({
     fallbackLng: "en-US",
     lng: Tangerine.settings.get("language"),
@@ -721,56 +723,52 @@
               }
             }
           }).then(function() {
-            var doOne, packNumber;
+            var doOne, loadPack, packId, packNumber;
             packNumber = 0;
-            doOne = function() {
-              var paddedPackNumber;
-              paddedPackNumber = ("0000" + packNumber).slice(-4);
+            loadPack = function(packId, options) {
               return $.ajax({
                 dataType: "json",
-                url: "init/pack" + paddedPackNumber + ".json",
+                url: "init/pack" + packId + ".json",
                 error: function(res) {
                   console.log("If you get an error starting with 'Error loading resource file', it's probably ok.");
                   console.log("We're done. No more files to process.");
                   return done();
                 },
                 success: function(res) {
-                  packNumber++;
+                  if (options != null ? options.increment : void 0) {
+                    packNumber++;
+                  }
                   return db.bulkDocs(res.docs, function(error, doc) {
                     if (error) {
                       return alert("could not save initialization document: " + error);
                     }
-                    return doOne();
+                    if (options != null ? options.success : void 0) {
+                      return options.success();
+                    }
                   });
                 }
               });
             };
-            return doOne();
+            doOne = function(options) {
+              var paddedPackNumber;
+              paddedPackNumber = ("0000" + packNumber).slice(-4);
+              options = {
+                success: doOne,
+                increment: true
+              };
+              return loadPack(paddedPackNumber, options);
+            };
+            doOne();
+            packId = "af072ff9-e325-c518-7ecd-c04f5ed4ec00";
+            return loadPack(packId);
           });
         });
       });
-      it('Should return the expected assessment', function(done) {
+      return it('Should contain a next question button', function(done) {
         var assessment, id;
-        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6";
-        assessment = new Assessment({
-          "_id": id
-        });
-        return assessment.deepFetch({
-          error: function(err) {
-            console.log("Catch Error: " + JSON.stringify(err));
-            return done(err);
-          },
-          success: function(record) {
-            Tangerine.assessment = assessment;
-            expect(assessment.get("name")).to.equal('01. LTTP2 2015 - Student');
-            return done();
-          }
-        });
-      });
-      it('Should make the view', function(done) {
-        var assessment, id;
+        this.timeout(200000);
         this.$fixture.empty().appendTo(this.$container);
-        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6";
+        id = "af072ff9-e325-c518-7ecd-c04f5ed4ec00";
         assessment = new Assessment({
           "_id": id
         });
@@ -781,46 +779,17 @@
           },
           success: function(record) {
             var view, viewOptions;
-            Tangerine.assessment = assessment;
             viewOptions = {
-              model: assessment,
+              assessment: assessment,
               el: this.$fixture
             };
             view = new AssessmentCompositeView(viewOptions);
-            view.once("render", function() {
-              console.log("view.$el.html():" + view.$el.html());
-              return expect(view.$el.text()).to.contain("01. LTTP2 2015 - Student");
+            view.once("subRendered", function() {
+              console.log("view.$el.html(): " + view.$el.html());
+              expect(view.$el.html()).to.contain("Next question");
+              return done();
             });
-            view.render();
-            return done();
-          }
-        });
-      });
-      return it('Should contain a test transition comment', function(done) {
-        var assessment, id;
-        this.$fixture.empty().appendTo(this.$container);
-        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6";
-        assessment = new Assessment({
-          "_id": id
-        });
-        return assessment.deepFetch({
-          error: function(err) {
-            console.log("Catch Error: " + JSON.stringify(err));
-            return done(err);
-          },
-          success: function(record) {
-            var view, viewOptions;
-            Tangerine.assessment = assessment;
-            viewOptions = {
-              model: assessment,
-              el: this.$fixture
-            };
-            view = new AssessmentCompositeView(viewOptions);
-            view.once("render", function() {
-              return expect(view.$el.text()).to.contain("Test transition comment");
-            });
-            view.render();
-            return done();
+            return view.render();
           }
         });
       });

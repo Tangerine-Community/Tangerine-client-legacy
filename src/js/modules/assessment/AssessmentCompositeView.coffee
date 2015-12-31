@@ -40,7 +40,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         currentSubview =  null
         console.log(prototypeName + "  Subview is not defined.")
 
-
     @ready = true
     return currentSubview
 
@@ -50,6 +49,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       viewOptions:
         key: "question-#{model.id}"
       success: (collection) =>
+        console.log("collection.size: " + collection.size())
         model.questions.sort()
         model.collection = model.questions
         @collection.models = collection.models
@@ -70,6 +70,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     'add:child': 'addChildPostRender'
 #    'collection:rendered': 'addChildPostRender'
     'render:collection': 'addChildPostRender'
+    'subRendered': 'foo'
 
   foo: ->
     console.log("foo")
@@ -260,6 +261,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @model.set('subtest', @subtestViews[@orderMap[@index]].model.toJSON())
 
   onRender:->
+    console.log("AssessmentCompositeView onRender")
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
     Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
     Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
