@@ -766,7 +766,6 @@
       });
       return it('Should contain a next question button', function(done) {
         var assessment, id;
-        this.timeout(200000);
         this.$fixture.empty().appendTo(this.$container);
         id = "af072ff9-e325-c518-7ecd-c04f5ed4ec00";
         assessment = new Assessment({
@@ -784,7 +783,7 @@
               el: this.$fixture
             };
             view = new AssessmentCompositeView(viewOptions);
-            view.once("subRendered", function() {
+            view.once("nextQuestionRendered", function() {
               console.log("view.$el.html(): " + view.$el.html());
               expect(view.$el.html()).to.contain("Next question");
               return done();

@@ -71,9 +71,13 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 #    'collection:rendered': 'addChildPostRender'
     'render:collection': 'addChildPostRender'
     'subRendered': 'foo'
+    'nextQuestionRendered': 'nextQuestionRenderedBoom'
 
   foo: ->
     console.log("foo")
+
+  nextQuestionRenderedBoom: ->
+    console.log("nextQuestionRenderedBoom")
 
   addChildPostRender: ->
 
@@ -88,6 +92,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
             "
       currentSubtest.updateQuestionVisibility()
       currentSubtest.updateProgressButtons()
+      @trigger "nextQuestionRendered"
 
   nextQuestion: ->
 
@@ -265,6 +270,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
     Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
     Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
+    Tangerine.progress.currentSubview.on "nextQuestionRendered", => @trigger "nextQuestionRendered"
 
     Tangerine.progress.currentSubview.on "next",    =>
       console.log("currentView next")

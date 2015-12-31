@@ -424,7 +424,7 @@
 #      )
 
       it('Should contain a next question button', (done)->
-        this.timeout(200000);
+#        this.timeout(200000);
         this.$fixture.empty().appendTo(this.$container);
         id = "af072ff9-e325-c518-7ecd-c04f5ed4ec00"
         assessment = new Assessment "_id" : id
@@ -437,7 +437,7 @@
               assessment: assessment
               el: this.$fixture
             view = new AssessmentCompositeView viewOptions
-            view.once("subRendered", () ->
+            view.once("nextQuestionRendered", () ->
               console.log("view.$el.html(): " + view.$el.html())
               expect(view.$el.html()).to.contain("Next question");
               done()
