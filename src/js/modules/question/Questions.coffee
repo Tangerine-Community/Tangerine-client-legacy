@@ -1,10 +1,5 @@
 class Questions extends Backbone.Collection
 
-  initialize: () ->
-    console.log("init Question.")
-#    Assign the Deferred issued by fetch() as a property
-#    @deferred = @fetch();
-
   model : Question
   url   : "question"
 

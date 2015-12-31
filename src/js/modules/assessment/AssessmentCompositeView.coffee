@@ -49,7 +49,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       viewOptions:
         key: "question-#{model.id}"
       success: (collection) =>
-        console.log("collection.size: " + collection.size())
+#        console.log("collection.size: " + collection.size())
         model.questions.sort()
         model.collection = model.questions
         @collection.models = collection.models
@@ -65,27 +65,32 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     'click .skip'         : 'skip'
     'click .next_question' : 'nextQuestion'
     'click .prev_question' : 'prevQuestion'
+    'nextQuestionRendered': 'nextQuestionRenderedBoom'
 
   childEvents:
     'add:child': 'addChildPostRender'
 #    'collection:rendered': 'addChildPostRender'
     'render:collection': 'addChildPostRender'
     'subRendered': 'foo'
-    'nextQuestionRendered': 'nextQuestionRenderedBoom'
 
   foo: ->
-    console.log("foo")
+#    console.log("foo")
+
+  renderCollection: ->
+#    console.log("renderCollection")
 
   nextQuestionRenderedBoom: ->
-    console.log("nextQuestionRenderedBoom")
+#    console.log("nextQuestionRenderedBoom")
 
   addChildPostRender: ->
 
     currentSubtest = @children.findByIndex(0)
     focusMode = currentSubtest.model.getBoolean("focusMode")
     if focusMode
-      if !$( "#summary_container" ).length
-        $('#subtest_wrapper').after $ "
+#      if !$( "#summary_container" ).length
+      if !@$el.find("#summary_container").length
+#        $('#subtest_wrapper').after $ "
+        @$el.find("#subtest_wrapper").after $ "
               <div id='summary_container'></div>
               <button class='navigation prev_question'>#{@text.previousQuestion}</button>
               <button class='navigation next_question'>#{@text.nextQuestion}</button>
@@ -261,16 +266,16 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     ui.text = @text
     @model.set('ui', ui)
+    @.on "nextQuestionRendered", => @nextQuestionRenderedBoom()
 
   setChromeData:->
     @model.set('subtest', @subtestViews[@orderMap[@index]].model.toJSON())
 
   onRender:->
-    console.log("AssessmentCompositeView onRender")
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
     Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
     Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
-    Tangerine.progress.currentSubview.on "nextQuestionRendered", => @trigger "nextQuestionRendered"
+#    Tangerine.progress.currentSubview.on "nextQuestionRendered", => @trigger "nextQuestionRendered"
 
     Tangerine.progress.currentSubview.on "next",    =>
       console.log("currentView next")
