@@ -159,30 +159,17 @@
                 ).toString()
           ).then ->
 
-            packNumber = 0
-
-            doOne = ->
-
-              paddedPackNumber = ("0000" + packNumber).slice(-4)
-#              console.log("paddedPackNumber: " + paddedPackNumber)
-              $.ajax
-                dataType: "json"
-                url: "init/pack#{paddedPackNumber}.json"
-                error: (res) ->
-#                  console.log("We're done. No more files to process. res.status: " + res.status)
-                  console.log("If you get an error starting with 'Error loading resource file', it's probably ok." )
-                  console.log("We're done. No more files to process." )
+            $.ajax
+              dataType: "json"
+              url: "packs.json"
+              error: (res) ->
+                console.log "::: NO ASSESSMENT PACKS LOADED :::"
+                console.log(res)
+              success: (res) ->
+                db.bulkDocs res, (error, doc) ->
+                  if error then console.log(error)
                   done()
-                success: (res) ->
-                  packNumber++
-#                  console.log("yes! uploaded paddedPackNumber: " + paddedPackNumber)
 
-                  db.bulkDocs res.docs, (error, doc) ->
-                    if error
-                      return alert "could not save initialization document: #{error}"
-                    doOne()
-
-            doOne() # kick it off
       )
 
       it('Should return the expected assessment', (done)->
@@ -266,7 +253,6 @@
             view.render();
         })
       )
-
       it('Should contain a test transition comment, the subtest should complete and then there should be another test transition comment', (done)->
         this.$fixture.empty().appendTo(this.$container);
         id = "11322a8a-0807-68b6-c469-37ecc571cbf0"
