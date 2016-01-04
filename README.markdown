@@ -2,7 +2,7 @@
 
 ![Tangerine](http://www.tangerinecentral.org/sites/default/files/tangerine-logo-150.png)
 
-[![Build Status](https://travis-ci.org/chrisekelley/Tangerine-client.svg?branch=marionette)](https://travis-ci.org/chrisekelley/Tangerine-client)
+[![Build Status](https://travis-ci.org/Tangerine-Community/Tangerine-client.svg)](https://travis-ci.org/Tangerine-Community/Tangerine-client)
 
 [![Stories in Ready](https://badge.waffle.io/Tangerine-Community/Tangerine-client.png?label=ready&title=Ready)](https://waffle.io/Tangerine-Community/Tangerine-client)
 
@@ -73,7 +73,7 @@ View package.json for other useful npm targets:
  - npm run build:apk will generate a debug APK.
  - npm test will run mocha-phantomjs tests and watch for changes to coffeescript files.
  - npm run testW will run tests using mocha-phantomjs, displaying output on command line and watch for changes to coffeescript files.
- - npm run testInBrowser will run mocha tests in the browser at http://localhost:9000/test/
+ - npm run testWatch will run mocha tests in the browser at http://localhost:9000/test/ and watch for changes to coffeescript files.
  - npm run debug will copy files into www/compiled and build index-dev.html. Use this when using chrome debugger until gulp 
    handles sourcemaps better (https://github.com/terinjokes/gulp-uglify/issues/105). It's a little wonky; it may fail the first time it is run. Try again.
    
