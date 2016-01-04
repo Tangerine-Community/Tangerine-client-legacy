@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var unirest = require('unirest') 
+var unirest = require('unirest')
 var program = require('commander')
 
 program
@@ -11,7 +11,7 @@ program
 program.on('--help', function(){
   console.log('  Examples:')
   console.log('')
-  console.log('    $ ./scripts/pack.js --id a8587919-0d0e-9155-b41d-7a71b41be749 --url http://username:password@databases.tangerinecentral.org/group-sweet_tree > test/init/be749-grid-with-autostop-and-subsequent-test-with-link-to-grid.json')
+  console.log('    $ ./scripts/pack.js --id a8587919-0d0e-9155-b41d-7a71b41be749 --url http://username:password@databases.tangerinecentral.org/group-sweet_tree > test/packs/be749-grid-with-autostop-and-subsequent-test-with-link-to-grid.json')
   console.log('')
 });
 
@@ -50,7 +50,11 @@ function main() {
       url: program.url + "/_all_docs?include_docs=true&keys=" + JSON.stringify(id_list)
     })
     .end(function(res) {
-      console.log(JSON.stringify(res.body.rows, null, 2))
+      var data = []
+      res.body.rows.forEach(function(row) {
+        data.push(row.doc)
+      })
+      console.log(JSON.stringify(data, null, 2))
     })
   })
 }
