@@ -159,16 +159,12 @@
                 ).toString()
           ).then ->
 
-            $.ajax
-              dataType: "json"
-              url: "packs.json"
-              error: (res) ->
-                console.log "::: NO ASSESSMENT PACKS LOADED :::"
-                console.log(res)
-              success: (res) ->
-                db.bulkDocs res, (error, doc) ->
-                  if error then console.log(error)
-                  done()
+            Utils.loadDevelopmentPacks( (err) ->
+              if (err)
+                throw err
+              else
+                done()
+            )
 
       )
 
