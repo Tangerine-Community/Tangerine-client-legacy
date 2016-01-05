@@ -31,6 +31,7 @@
   "homepage": "https://github.com/Tangerine-Community/Tangerine-client",
   "devDependencies": {
     "coffee-script": "^1.10.0",
+    "commander": "^2.9.0",
     "cordova": "^5.2.0",
     "del": "^2.0.2",
     "fs-extra": "^0.26.2",
@@ -38,6 +39,7 @@
     "grunt-contrib-coffee": "^0.13.0",
     "grunt-contrib-handlebars": "^0.11.0",
     "grunt-contrib-watch": "~0.6.1",
+    "grunt-exec": "^0.4.6",
     "grunt-mocha-phantomjs": "^2.0.0",
     "gulp": "^3.9.0",
     "gulp-cached": "^1.1.0",

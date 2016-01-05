@@ -41,14 +41,22 @@ module.exports = function (grunt) {
         mocha_phantomjs: {
             all: ['test/**/*.html']
         },
+
+      	exec: {
+      	    compile_packs: {
+      	        command: './scripts/compilepacks.js'
+      	    }
+      	}
     });
 
     grunt.registerTask('test', [
+      'exec',
       'coffee',
       'mocha_phantomjs',
     ]);
 
     grunt.registerTask('testWatch', [
+      'exec',
       'coffee',
       'mocha_phantomjs',
       'watch'
@@ -60,6 +68,7 @@ module.exports = function (grunt) {
     ]);
 
     // Requires the needed plugin
+    grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-coffee');
