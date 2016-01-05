@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-var unirest = require('unirest')
 var program = require('commander')
+var pack = require('./lib/pack.js')
 
 program
   .version('0.0.0')
@@ -17,46 +17,16 @@ program.on('--help', function(){
 
 program.parse(process.argv)
 
-// helper method for json post requests
-// needs opts.data and opts.url.
-// Chain handlers to .end(f)
-function post(opts) {
-  var data = opts.data || {};
-  return unirest.post(opts.url)
-    .header('Accept', 'application/json')
-    .header('Content-Type', 'application/json')
-    .send(data);
-}
-
-// helper method for json get requests
-// needs opts.url.
-// Chain handlers to .end(f)
-function get(opts) {
-  var data = opts.data || {};
-  return unirest.get(opts.url)
-    .header('Accept', 'application/json')
-    .header('Content-Type', 'application/json');
-}
-
-function main() {
-  get({
-    url: program.url + "/_design/ojai/_view/byDKey?keys=" + JSON.stringify([program.id.substr(program.id.length-5, 5)])
-  })
-  .end(function(res) {
-    var id_list = res.body.rows.map(function(row) {
-      return row.id;
-    })
-    get({
-      url: program.url + "/_all_docs?include_docs=true&keys=" + JSON.stringify(id_list)
-    })
-    .end(function(res) {
-      var data = []
-      res.body.rows.forEach(function(row) {
-        data.push(row.doc)
-      })
-      console.log(JSON.stringify(data, null, 2))
-    })
-  })
-}
-
-main()
+pack({
+  id: program.id,
+  url: program.url
+}, function(error, response) {
+  if (error) {
+    console.log(error)
+    process.exit(1)
+  }
+  else {
+    console.log(response)
+    process.exit(0)
+  }
+})
