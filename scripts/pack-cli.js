@@ -11,7 +11,7 @@ program
 program.on('--help', function(){
   console.log('  Examples:')
   console.log('')
-  console.log('    $ ./scripts/pack.js --id a8587919-0d0e-9155-b41d-7a71b41be749 --url http://username:password@databases.tangerinecentral.org/group-sweet_tree > test/packs/be749-grid-with-autostop-and-subsequent-test-with-link-to-grid.json')
+  console.log('    $ ./scripts/pack-cli.js --id a8587919-0d0e-9155-b41d-7a71b41be749 --url http://username:password@databases.tangerinecentral.org/group-sweet_tree > test/packs/be749-grid-with-autostop-and-subsequent-test-with-link-to-grid.json')
   console.log('')
 });
 
