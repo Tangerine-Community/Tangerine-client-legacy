@@ -11,7 +11,7 @@
     "update:tree": "git pull && chown -R www-data:www-data .",
     "listen": "cd scripts ./listen.rb",
     "testW": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt coffeeW",
-    "testWatch": "http-server -p 9000 --silent & ./scripts/listen.rb  & grunt testWatch",
+    "testWatch": "http-server -p 9000 --silent & grunt testWatch",
     "testInBrowser": "http-server ./ -p 9000 --silent",
     "install:apk": "cd scripts && ./install.sh",
     "preload": "scripts/preload.js",
@@ -37,7 +37,7 @@
     "fs-extra": "^0.26.2",
     "grunt": "^0.4.5",
     "grunt-contrib-coffee": "^0.13.0",
-    "grunt-contrib-handlebars": "^0.10.1",
+    "grunt-contrib-handlebars": "^0.11.0",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-exec": "^0.4.6",
     "grunt-mocha-phantomjs": "^2.0.0",
@@ -62,7 +62,7 @@
     "gulp-wrap": "^0.11.0",
     "handlebars": "^4.0.4",
     "http-server": "^0.8.0",
-    "shelljs": "^0.4.0",
+    "shelljs": "^0.5.3",
     "unirest": "^0.4.2"
   }
 }
