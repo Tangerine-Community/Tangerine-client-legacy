@@ -46,7 +46,6 @@ Tangerine.bootSequence =
       callback()
     ###
 
-
   # Check for new database, initialize with packs if none exists
   checkDatabase: (callback) ->
 
@@ -105,11 +104,13 @@ Tangerine.bootSequence =
                 emit "result-#{doc.assessmentId}", result
 
             ).toString()
-      ).then ->
 
+      ).then ->
 
         packNumber = 0
 
+        # Recursive function that will iterate through js/init/pack000[0-x] until
+        # there is no longer a returned pack.
         doOne = ->
 
           paddedPackNumber = ("0000" + packNumber).slice(-4)
@@ -128,15 +129,13 @@ Tangerine.bootSequence =
                   return alert "could not save initialization document: #{error}"
                 doOne()
 
-        doOne() # kick it off
-
+        # kick off recursive process
+        doOne()
 
   # Put this version's information in the footer
   versionTag: ( callback ) ->
     $("#footer").append("<div id='version'>#{Tangerine.version}-#{Tangerine.buildVersion}</div>")
     callback()
-
-
 
   # get our local Tangerine settings
   # these do tend to change depending on the particular install of the
@@ -150,7 +149,6 @@ Tangerine.bootSequence =
             console.error arguments
             alert "Could not save default settings"
           success: callback
-
 
   # for upgrades
   guaranteeInstanceId: ( callback ) ->

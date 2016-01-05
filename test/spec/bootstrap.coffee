@@ -1,7 +1,7 @@
 # Check for new database, initialize with packs if none exists
 checkDatabase = (pouchDb,callback, done) ->
 
-# Local tangerine database handle
+  # Local tangerine database handle
   db = pouchDb
 
   db.get "initialized", (error, doc) ->
@@ -14,10 +14,10 @@ checkDatabase = (pouchDb,callback, done) ->
     db.put(
       _id: "_design/tangerine"
       views:
-      ##
-#        Used for replication.
-#        Will give one key for all documents associated with an assessment or curriculum.
-      ##
+        ##
+        #        Used for replication.
+        #        Will give one key for all documents associated with an assessment or curriculum.
+        ##
         byDKey:
           map: ((doc) ->
             return if doc.collection is "result"
@@ -43,7 +43,7 @@ checkDatabase = (pouchDb,callback, done) ->
             if doc.collection is 'subtest'
               emit "subtest-#{doc.assessmentId}"
 
-# Belongs to relationship
+            # Belongs to relationship
             else if doc.collection is 'question'
               emit "question-#{doc.subtestId}"
 
@@ -68,7 +68,7 @@ checkDatabase = (pouchDb,callback, done) ->
           dataType: "json"
           url: "../src/js/init/pack#{paddedPackNumber}.json"
           error: (res) ->
-#            console.log("loading init files. Received: " + JSON.stringify res)
+            #            console.log("loading init files. Received: " + JSON.stringify res)
             console.log("We're done. No more files to process. res.status: " + res.status)
           success: (res) ->
             packNumber++
@@ -80,4 +80,3 @@ checkDatabase = (pouchDb,callback, done) ->
               doOne()
 
       doOne() # kick it off
-

@@ -33,14 +33,14 @@
     window.t = t
 
   tests = (dbName)->
-#    // async method takes an array of s of signature:
-#    // `function (cb) {}`
-#    // each function is called and `callback` is called when all
-#    // functions are done.
-#    // each function calls `cb` to signal completion
-#    // cb is called with error as the first arguments (if any)
-#    // Once all functions are completed (or upon err)
-#    // callback is called `callback(err)`
+    #    // async method takes an array of s of signature:
+    #    // `function (cb) {}`
+    #    // each function is called and `callback` is called when all
+    #    // functions are done.
+    #    // each function calls `cb` to signal completion
+    #    // cb is called with error as the first arguments (if any)
+    #    // Once all functions are completed (or upon err)
+    #    // callback is called `callback(err)`
     async = (functions, callback) ->
       series(functions) ->
         callback = callback || () ->
@@ -70,7 +70,7 @@
         dbs = [dbName];
         #    // create db
         Tangerine.db = new PouchDB(pouchName, {adapter: 'memory'}, (err) ->
-#          console.log("Before: Created Pouch: " + pouchName)
+          #          console.log("Before: Created Pouch: " + pouchName)
           if (err)
             console.log("Before: I got an error: " + err)
             return done(err)
@@ -95,13 +95,13 @@
         dbs = [dbName];
 
         result = Tangerine.db.destroy((er) ->
-        ).then( (er) ->
-#            console.log("After: Destroyed db: " + JSON.stringify(result) + " er: " + JSON.stringify er)
-          done()
-        ).catch( (er) ->
-          console.log("After: Problem destroying db: " + er)
-          done(er)
-        )
+          ).then( (er) ->
+            #            console.log("After: Destroyed db: " + JSON.stringify(result) + " er: " + JSON.stringify er)
+            done()
+          ).catch( (er) ->
+            console.log("After: Problem destroying db: " + er)
+            done(er)
+          )
       )
 
       it('Populate pouch with Assessments', (done)->
@@ -109,16 +109,16 @@
         db = Tangerine.db
         db.get "initialized", (error, doc) ->
 
-#          return done() unless error
+          #          return done() unless error
 
 # Save views
           db.put(
             _id: "_design/tangerine"
             views:
-##
-#        Used for replication.
-#        Will give one key for all documents associated with an assessment or curriculum.
-##
+              ##
+              #        Used for replication.
+              #        Will give one key for all documents associated with an assessment or curriculum.
+              ##
               byDKey:
                 map: ((doc) ->
                   return if doc.collection is "result"
@@ -144,7 +144,7 @@
                   if doc.collection is 'subtest'
                     emit "subtest-#{doc.assessmentId}"
 
-# Belongs to relationship
+                  # Belongs to relationship
                   else if doc.collection is 'question'
                     emit "question-#{doc.subtestId}"
 
@@ -179,14 +179,14 @@
                   db.bulkDocs res.docs, (error, doc) ->
                     if error
                       return alert "could not save initialization document: #{error}"
-                      #                    doOne()
+                    #                    doOne()
                     if options?.success
 #                      console.log("we do it again")
                       options.success()
 
             doOne = (options) ->
               paddedPackNumber = ("0000" + packNumber).slice(-4)
-#              console.log("paddedPackNumber: " + paddedPackNumber)
+              #              console.log("paddedPackNumber: " + paddedPackNumber)
               options =
                 success: doOne
                 increment: true
@@ -198,7 +198,6 @@
             loadPack(packId)
       )
 
-
       it('Should return the expected assessment', (done)->
         id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
         assessment = new Assessment "_id" : id
@@ -207,19 +206,19 @@
             console.log "Catch Error: " + JSON.stringify err
             done(err)
           success: (record) ->
-#            console.log("assessment: " + JSON.stringify assessment)
+          #            console.log("assessment: " + JSON.stringify assessment)
             Tangerine.assessment = assessment
             expect(assessment.get("name")).to.equal('01. LTTP2 2015 - Student');
             done()
         })
-#        }).then( (assessment) ->
-#          Tangerine.assessment = assessment
-#          expect(assessment.name).to.equal('01. LTTP2 2015 - Student');
-#          done()
-#        ).catch( (err) ->
-#          console.log "Catch Error: " + JSON.stringify err
-#          done(err)
-#        )
+        #        }).then( (assessment) ->
+        #          Tangerine.assessment = assessment
+        #          expect(assessment.name).to.equal('01. LTTP2 2015 - Student');
+        #          done()
+        #        ).catch( (err) ->
+        #          console.log "Catch Error: " + JSON.stringify err
+        #          done(err)
+        #        )
       )
 
       it('Should make the view', (done)->
@@ -231,8 +230,8 @@
             console.log "Catch Error: " + JSON.stringify err
             done(err)
           success: (record) ->
-#            console.log "assessment subtests: " + JSON.stringify(assessment.subtests)
-#            expect(assessment.get("name")).to.equal('01. LTTP2 2015 - Student');
+            #            console.log "assessment subtests: " + JSON.stringify(assessment.subtests)
+            #            expect(assessment.get("name")).to.equal('01. LTTP2 2015 - Student');
             Tangerine.assessment = assessment
             #            console.log("assessment: " + JSON.stringify assessment.doc)
             viewOptions =
@@ -242,7 +241,7 @@
             #            serializedData = view.serializeData();
             #            console.log("serializedData:" + JSON.stringify(serializedData))
             view.once("render", () ->
-#              console.log("view.$el.text():" + view.$el.text())
+              #              console.log("view.$el.text():" + view.$el.text())
               expect(view.$el.text()).to.contain("01. LTTP2 2015 - Student");
             )
             view.render();
@@ -448,7 +447,7 @@
       )
 
   dbs.split(',').forEach((db) ->
-#    dbType = /^http/.test(db) ? 'http' : 'local'
+    # dbType = /^http/.test(db) ? 'http' : 'local'
     tests db
   )
 

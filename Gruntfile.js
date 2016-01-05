@@ -2,14 +2,11 @@
 module.exports = function (grunt) {
 
     grunt.initConfig({
-
         dirs: {
             handlebars: 'src/templates'
         },
-
         // watch list
         watch: {
-
             handlebars: {
                 files: ['<%= handlebars.compile.src %>'],
                 tasks: ['handlebars:compile']
@@ -41,7 +38,6 @@ module.exports = function (grunt) {
                 dest: "src/js/lib-coco/precompiled.handlebars.js"
             }
         },
-
         mocha_phantomjs: {
             all: ['test/**/*.html']
         },
@@ -50,17 +46,18 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
       'coffee',
       'mocha_phantomjs',
-  ]);
+    ]);
+
     grunt.registerTask('testWatch', [
       'coffee',
       'mocha_phantomjs',
       'watch'
     ]);
+
     grunt.registerTask('coffeeW', [
       'coffee',
       'watch'
-  ]);
-
+    ]);
 
     // Requires the needed plugin
     grunt.loadNpmTasks('grunt-contrib-handlebars');
