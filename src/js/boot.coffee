@@ -128,7 +128,7 @@ Tangerine.bootSequence =
               if res.status is 404
                 # Mark this database as initialized so that this process does not
                 # run again on page refresh, then load Development Packs.
-                db.put({"_id":"initialized"}).then( -> callback()) )
+                db.put({"_id":"initialized"}).then( -> callback() )
             success: (res) ->
               packNumber++
 

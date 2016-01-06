@@ -22,6 +22,7 @@ src/compiled/*
 # tangerine's packs
 src/js/init/pack*.json
 test/packs.json
+src/packs.json
 
 
 .idea
