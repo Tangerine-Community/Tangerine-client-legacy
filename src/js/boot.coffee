@@ -107,6 +107,11 @@ Tangerine.bootSequence =
 
       ).then ->
 
+        #
+        # Load Packs that Tree creates for an APK, then load the Packs we use for
+        # development purposes.
+        #
+
         packNumber = 0
 
         # Recursive function that will iterate through js/init/pack000[0-x] until
@@ -119,8 +124,11 @@ Tangerine.bootSequence =
             dataType: "json"
             url: "js/init/pack#{paddedPackNumber}.json"
             error: (res) ->
+              # No more pack? We're all done here.
               if res.status is 404
-                db.put({"_id":"initialized"}).then( -> callback())
+                # Mark this database as initialized so that this process does not
+                # run again on page refresh, then load Development Packs.
+                db.put({"_id":"initialized"}).then( -> callback() )
             success: (res) ->
               packNumber++
 

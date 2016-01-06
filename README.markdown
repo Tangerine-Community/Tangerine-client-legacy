@@ -79,9 +79,11 @@ View package.json for other useful npm targets:
 
 ## Bootstrapping
 
-Preload.js in the scripts dir will download assessments. Enter the username and password on the commandline:
+Preload.js in the scripts dir will download assessments from an instance of Tangerine. Enter the username and password on the commandline:
 
     node preload.js T_ADMIN=user T_PASS=pass
+
+`./scripts/compilepacks.js` will compile development Assessment packs used for testing to `./test/packs.json`.  If you would like to use those Assessments in your sandbox, run the `./scripts/compilepacks.js`, copy `./test/packs.json` to `./src/packs.json` and then from your JS console run `Utils.loadDevelopmentPacks()`. 
 
 ## Resolving issues
 
