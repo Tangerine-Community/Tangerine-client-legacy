@@ -173,7 +173,7 @@ class LoginView extends Backbone.Marionette.View
   afterRender: =>
     @recenter()
 
-  onClose: =>
+  onBeforeDestroy: =>
     $("#footer").show()
     $("body").css("background", @oldBackground)
     $(window).off('orientationchange scroll resize', @recenter)

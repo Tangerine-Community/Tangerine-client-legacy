@@ -95,7 +95,7 @@ Fork the repository and update your fork
 
 Get the id of the issue you’re fixing
 
-    git checkout -b iss85
+    git checkout -b 189-footer-disappeared
 
 Fix the bug and commit the change. Submit a pull request.
 
