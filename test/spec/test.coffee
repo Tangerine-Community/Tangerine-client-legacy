@@ -405,7 +405,7 @@
               assessment: assessment
               el: this.$fixture
             view = new AssessmentCompositeView viewOptions
-            view.once("subRendered", () ->
+            view.once("nextQuestionRendered", () ->
 #            view.once("render:collection", () ->
 #              console.log("view.$el.html(): " + view.$el.html())
               expect(view.$el.html()).to.contain("Next question");

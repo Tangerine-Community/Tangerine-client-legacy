@@ -188,6 +188,8 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
       @button.setElement @$el.find ".button_container"
       @button.on "rendered", => @trigger "rendered"
       @button.render()
+    else if @type == "open"
+      @trigger "rendered"
 
   renderNOT: ->
     @$el.attr "id", "question-#{@name}"

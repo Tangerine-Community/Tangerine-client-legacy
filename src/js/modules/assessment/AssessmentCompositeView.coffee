@@ -74,17 +74,22 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   # for Backbone.Marionette.CollectionView
   childEvents:
-    'add:child': 'addChildPostRender'
+#    'add:child': 'addChildPostRender'
 #    'collection:rendered': 'addChildPostRender'
     'render:collection': 'addChildPostRender'
-    'subRendered': 'foo'
+    'subRendered': 'subRendered'
 
-  foo: ->
-#    console.log("foo")
+#    TODO: This is a work-around: it may be fixed by doing something better. This code was added to resolve an issue
+#    where the SurveyRunItemView was rendering twice, and the second time it rendered, updateSkipLogic() was not getting executed.
+  subRendered: ->
+#    console.log("subRendered")
+    currentSubtest = @children.findByIndex(0)
+    currentSubtest.updateSkipLogic()
 
   renderCollection: ->
 #    console.log("renderCollection")
 
+#    This is simply used to alert the test it('Should contain a next question button') that the page has finished rendering.
   nextQuestionRenderedBoom: ->
 #    console.log("nextQuestionRenderedBoom")
 
