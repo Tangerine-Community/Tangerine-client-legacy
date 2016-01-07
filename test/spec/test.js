@@ -723,44 +723,13 @@
               }
             }
           }).then(function() {
-            var doOne, loadPack, packId, packNumber;
-            packNumber = 0;
-            loadPack = function(packId, options) {
-              return $.ajax({
-                dataType: "json",
-                url: "init/pack" + packId + ".json",
-                error: function(res) {
-                  console.log("If you get an error starting with 'Error loading resource file', it's probably ok.");
-                  console.log("We're done. No more files to process.");
-                  return done();
-                },
-                success: function(res) {
-                  if (options != null ? options.increment : void 0) {
-                    packNumber++;
-                  }
-                  return db.bulkDocs(res.docs, function(error, doc) {
-                    if (error) {
-                      return alert("could not save initialization document: " + error);
-                    }
-                    if (options != null ? options.success : void 0) {
-                      return options.success();
-                    }
-                  });
-                }
-              });
-            };
-            doOne = function(options) {
-              var paddedPackNumber;
-              paddedPackNumber = ("0000" + packNumber).slice(-4);
-              options = {
-                success: doOne,
-                increment: true
-              };
-              return loadPack(paddedPackNumber, options);
-            };
-            doOne();
-            packId = "af072ff9-e325-c518-7ecd-c04f5ed4ec00";
-            return loadPack(packId);
+            return Utils.loadDevelopmentPacks(function(err) {
+              if (err) {
+                throw err;
+              } else {
+                return done();
+              }
+            });
           });
         });
       });
@@ -1030,7 +999,7 @@
               el: this.$fixture
             };
             view = new AssessmentCompositeView(viewOptions);
-            view.once("subRendered", function() {
+            view.once("nextQuestionRendered", function() {
               expect(view.$el.html()).to.contain("Next question");
               return done();
             });

@@ -89,8 +89,9 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   renderCollection: ->
 #    console.log("renderCollection")
 
+#    This is simply used to alert the test it('Should contain a next question button') that the page has finished rendering.
   nextQuestionRenderedBoom: ->
-    console.log("nextQuestionRenderedBoom")
+#    console.log("nextQuestionRenderedBoom")
 
   # Triggered by `add:child` of this.childEvents
   addChildPostRender: ->
