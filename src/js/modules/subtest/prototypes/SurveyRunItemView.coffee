@@ -8,7 +8,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
   events:
     'click .next_question' : 'nextQuestion'
     'click .prev_question' : 'prevQuestion'
-    'render:collection': 'foo'
 
   initialize: (options) ->
 
@@ -287,10 +286,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     'answer scroll': 'onQuestionAnswer'
     'answer': 'onQuestionAnswer'
     'rendered': 'onQuestionRendered'
-    'add:child': 'foo'
-    'collection:rendered': 'foo'
-    'render:collection': 'foo'
-
 
   # This tests if add:child is triggered on the subtest instead of on AssessmentCompositeView.
   foo: ->

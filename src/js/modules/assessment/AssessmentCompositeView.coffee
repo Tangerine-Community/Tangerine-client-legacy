@@ -74,19 +74,23 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   # for Backbone.Marionette.CollectionView
   childEvents:
-    'add:child': 'addChildPostRender'
+#    'add:child': 'addChildPostRender'
 #    'collection:rendered': 'addChildPostRender'
     'render:collection': 'addChildPostRender'
-    'subRendered': 'foo'
+    'subRendered': 'subRendered'
 
-  foo: ->
-#    console.log("foo")
+#    TODO: This is a work-around: it may be fixed by doing something better. This code was added to resolve an issue
+#    where the SurveyRunItemView was rendering twice, and the second time it rendered, updateSkipLogic() was not getting executed.
+  subRendered: ->
+#    console.log("subRendered")
+    currentSubtest = @children.findByIndex(0)
+    currentSubtest.updateSkipLogic()
 
   renderCollection: ->
 #    console.log("renderCollection")
 
   nextQuestionRenderedBoom: ->
-#    console.log("nextQuestionRenderedBoom")
+    console.log("nextQuestionRenderedBoom")
 
   # Triggered by `add:child` of this.childEvents
   addChildPostRender: ->
