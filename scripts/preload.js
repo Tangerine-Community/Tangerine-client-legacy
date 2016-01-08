@@ -5,7 +5,7 @@
  * Change group_name to the group your Tangerine will connect to and download from.
  */
 
-var group_name = "sweet_tree";
+var group_name = "rti_tanzania_2016_test";
 
 var fs = require('fs'); // for writeFile
 var fse = require('fs-extra'); // for mkdirp

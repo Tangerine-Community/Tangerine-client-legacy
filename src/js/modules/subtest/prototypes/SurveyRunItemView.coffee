@@ -368,6 +368,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 #    @trigger "ready"
     @trigger "subRendered"
 
+
+
 #  onShow: ->
 #    console.log("onShow")
 #    if @focusMode
@@ -389,6 +391,34 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 #
 #    #    @trigger "ready"
 #    @trigger "subRendered"
+
+  onShow: ->
+    displayCode = @model.getString("displayCode")
+
+    if not _.isEmptyString(displayCode)
+
+      try
+        CoffeeScript.eval.apply(@, [displayCode])
+      catch error
+        name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
+        message = error.message
+        alert "#{name}\n\n#{message}"
+        console.log "displayCode Error: " + JSON.stringify(error)
+
+    @prototypeView?.updateExecuteReady?(true)
+
+# @todo Documentation
+  skip: =>
+    currentView = Tangerine.progress.currentSubview
+    @parent.result.add
+      name      : currentView.model.get "name"
+      data      : currentView.getSkipped()
+      subtestId : currentView.model.id
+      skipped   : true
+      prototype : currentView.model.get "prototype"
+    ,
+      success: =>
+        @parent.reset 1
 
   # Doubt this is happening after the question was rendered. TODO: find the right place.
   onQuestionRendered:->
