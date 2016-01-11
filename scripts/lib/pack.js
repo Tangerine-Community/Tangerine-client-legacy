@@ -32,8 +32,9 @@ module.exports = function(options, callback) {
     var id_list = res.body.rows.map(function(row) {
       return row.id;
     })
-    get({
-      url: options.url + "/_all_docs?include_docs=true&keys=" + JSON.stringify(id_list)
+    post({
+      url: options.url + "/_all_docs?include_docs=true",
+      data: {keys: id_list}
     })
     .end(function(res) {
       var data = []
