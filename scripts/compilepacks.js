@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 
 var fs = require('fs')
+var junk = require('junk');
 var packsFolder = __dirname + '/../test/packs'
 fs.readdir(packsFolder, function(err, files) {
   if (err) return;
   var data = []
-  files.forEach(function(f) {
+  files.filter(junk.not).forEach(function(f) {
+    console.log("file: " + f)
     var pack = JSON.parse(fs.readFileSync(packsFolder + '/' + f, 'utf8'))
     data = data.concat(pack)
   });
