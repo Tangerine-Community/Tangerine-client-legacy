@@ -196,6 +196,18 @@ Using http://greenkeeper.io/ to manage dependencies.
 
 Tangerine.progress is an object that contains status of the application: index, currentView, etc.
 
+## Backward Compatibility
+
+SurveyRunItemView contains some code to help Assessments created for earlier versions of Tangerine run in the new version.
+
+    vm = {
+      currentView: Tangerine.progress.currentSubview
+    };
+    
+Also, some of the old displayCode is checked to see if it contains some of the old vm namespace:
+
+      displaycodeFixed = displayCode.replace("vm.currentView.subtestViews[vm.currentView.index].prototypeView", "Tangerine.progress.currentSubview");
+
 ----
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
