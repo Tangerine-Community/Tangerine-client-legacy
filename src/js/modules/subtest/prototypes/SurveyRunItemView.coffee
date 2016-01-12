@@ -21,7 +21,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     @answered      = []
     @renderCount   = 0
     @notAskedCount = 0
-    vm.currentView = Tangerine.progress.currentSubview
+    vm =
+      currentView: Tangerine.progress.currentSubview
 #    @childViewOptions =
 #        parent: this
 
