@@ -21,6 +21,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     @answered      = []
     @renderCount   = 0
     @notAskedCount = 0
+    vm =
+      currentView: Tangerine.progress.currentSubview
 #    @childViewOptions =
 #        parent: this
 
@@ -396,14 +398,14 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     displayCode = @model.getString("displayCode")
 
     if not _.isEmptyString(displayCode)
-
+      displaycodeFixed = displayCode.replace("vm.currentView.subtestViews[vm.currentView.index].prototypeView","Tangerine.progress.currentSubview")
       try
-        CoffeeScript.eval.apply(@, [displayCode])
+        CoffeeScript.eval.apply(@, [displaycodeFixed])
       catch error
         name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
         message = error.message
         alert "#{name}\n\n#{message}"
-        console.log "displayCode Error: " + JSON.stringify(error)
+        console.log "displaycodeFixed Error: " + JSON.stringify(error)
 
     @prototypeView?.updateExecuteReady?(true)
 
@@ -455,3 +457,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
         @index + increment
     @render()
     window.scrollTo 0, 0
+
+  next: () ->
+    console.log("next")
+    @model.parent.next?()
