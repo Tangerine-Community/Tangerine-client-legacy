@@ -1,1 +1,1 @@
-window.TangerineVersion = {"buildVersion":"21d174e","version":"3a.0.9-170-g21d174e"}
+window.TangerineVersion = {"buildVersion":"76b67c2","version":"0.1.2"}
