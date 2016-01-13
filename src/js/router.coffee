@@ -1,4 +1,21 @@
 class Router extends Backbone.Router
+
+
+  # Set Router.navigateAwayMessage to a string to confirm when a user is navigating
+  # away from their current route. Set it to false to turn off the confirmation.
+  navigateAwayMessage: false
+
+  # Override Backbone.Router.execute
+  execute: (callback, args, name) ->
+    # Implement support for Router.navigateAwayMessage
+    if this.navigateAwayMessage isnt false
+      if !confirm this.navigateAwayMessage
+        return false
+      else
+        this.navigateAwayMessage = false
+    if (callback)
+      callback.apply(this, args);
+
   routes:
     'login'    : 'login'
     'register' : 'register'
@@ -401,8 +418,10 @@ class Router extends Backbone.Router
             vm.show new AssessmentRunView model: assessment
 
   runMar: (id) ->
+    router = this
     Tangerine.user.verify
       isAuthenticated: ->
+        router.navigateAwayMessage = "Are you sure you want to quit this Assessment?"
         assessment = new Assessment "_id" : id
         assessment.deepFetch
           success : ->
