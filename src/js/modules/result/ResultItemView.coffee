@@ -9,6 +9,7 @@ ResultItemView =  Backbone.Marionette.CompositeView.extend
   another: ->
     d = new Date();
     timestamp = d.getTime();
+    Tangerine.router.navigateAwayMessage = false
     Tangerine.router.navigate "runMar/" + this.model.get('assessmentId') + "?" + timestamp, trigger: true
 
   save: ->
