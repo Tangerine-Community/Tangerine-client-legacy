@@ -435,8 +435,10 @@ class Router extends Backbone.Router
             console.log JSON.stringify err
 
   resume: (assessmentId, resultId) ->
+    router = this
     Tangerine.user.verify
       isAuthenticated: ->
+        router.navigateAwayMessage = t("Router.message.quit_assessment")
         assessment = new Assessment "_id" : assessmentId
         assessment.deepFetch
           success : ->
