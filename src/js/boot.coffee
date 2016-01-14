@@ -239,7 +239,8 @@ Tangerine.bootSequence =
 
   monitorBrowserBack: ( callback ) ->
     window.addEventListener('popstate', (e) ->
-      Tangerine.router.navigate(Backbone.history.getFragment(), { trigger: true, replace: true })
+      sendTo = Backbone.history.getFragment()
+      Tangerine.router.navigate(sendTo, { trigger: true, replace: true })
     )
 
 Tangerine.boot = ->
