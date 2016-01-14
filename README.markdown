@@ -156,7 +156,6 @@ npm test
 npm run testInBrowser
 ```
 
-
 ## Write tests
 Currently tests are all written using the [Mocha framework](https://mochajs.org/) and placed in `./test/spec/test.coffee`. We have a giant `describe` with each test contained in an `it`. For example, here is the test that verifies that an assessment can be retrieved.
 
@@ -187,7 +186,6 @@ From the command line, the `./scripts/pack-cli.js` command can be used like this
 
 Notice the naming convention of the JSON file. It's the last 5 characters of the Assessment ID and then a descriptive human readable name.
 
-
 ## Dependencies
 
 Using http://greenkeeper.io/ to manage dependencies.
@@ -195,6 +193,27 @@ Using http://greenkeeper.io/ to manage dependencies.
 ## Tangerine API
 
 Tangerine.progress is an object that contains status of the application: index, currentView, etc.
+
+## i18n - Internationalisation
+
+Add translations to the appropriate language file in src/locales/. To access translations in javascript:
+
+    router.navigateAwayMessage = t("Router.message.quit_assessment")
+    
+Many Views place the translations into a property that can be used by a template. For example, in AssessmentCompositeView
+
+     i18n: ->
+        @text =
+          "next" : t("SubtestRunView.button.next")
+          "back" : t("SubtestRunView.button.back")
+          
+(snip)
+
+    ui.text = @text
+          
+This can be referenced in a handlebars template:
+
+    <button class='subtest-next navigation'>{{ui.text.next}}</button>
 
 ## Backward Compatibility
 
