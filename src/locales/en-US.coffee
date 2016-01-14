@@ -233,3 +233,6 @@ Tangerine.locales["en-US"] =
         "retrying" : "Retrying..."
         "searching" : "Searching..."
         "not_supported" : "Your system does not support geolocations."
+    "Router"  :
+      "message":
+        "quit_assessment" : "Are you sure you want to quit this Assessment?"
