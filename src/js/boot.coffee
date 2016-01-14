@@ -257,7 +257,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.loadSingletons
     Tangerine.bootSequence.reloadUserSession
     Tangerine.bootSequence.startBackbone
-    Tangerine.bootSequence.monitorBrowserBack
+#    Tangerine.bootSequence.monitorBrowserBack
   ]
 
   Utils.execute sequence

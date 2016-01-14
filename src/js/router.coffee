@@ -13,6 +13,7 @@ class Router extends Backbone.Router
         return false
       else
         this.navigateAwayMessage = false
+        Tangerine.router.landing(true)
     if (callback)
       callback.apply(this, args);
 
