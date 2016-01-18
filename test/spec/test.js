@@ -980,7 +980,7 @@
           }
         });
       });
-      return it('Should contain a next question button', function(done) {
+      it('Should contain a next question button', function(done) {
         var assessment, id;
         this.$fixture.empty().appendTo(this.$container);
         id = "af072ff9-e325-c518-7ecd-c04f5ed4ec00";
@@ -1002,6 +1002,55 @@
             view.once("nextQuestionRendered", function() {
               expect(view.$el.html()).to.contain("Next question");
               return done();
+            });
+            return view.render();
+          }
+        });
+      });
+      return it('Should pass to the Kiswahili page', function(done) {
+        var assessment, id;
+        this.timeout(10000);
+        this.$fixture.empty().appendTo(this.$container);
+        id = "122a745b-e619-d4c0-29cd-3e9e27645632";
+        assessment = new Assessment({
+          "_id": id
+        });
+        return assessment.deepFetch({
+          error: function(err) {
+            console.log("Catch Error: " + JSON.stringify(err));
+            return done(err);
+          },
+          success: function(record) {
+            var view, viewOptions;
+            Tangerine.assessment = assessment;
+            viewOptions = {
+              model: assessment,
+              el: this.$fixture
+            };
+            view = new AssessmentCompositeView(viewOptions);
+            view.once("render", function() {
+              var buttons;
+              view.once("childViewRendered", function() {
+                var buttons, levelOne, levelTwo, levelZero;
+                levelZero = view.$el.find('#level_0');
+                $(levelZero[0]).val('Arusha');
+                $(levelZero[0]).trigger("change");
+                levelOne = view.$el.find('#level_1');
+                $(levelOne[0]).val('ARUSHA');
+                $(levelOne[0]).trigger("change");
+                levelTwo = view.$el.find('#level_2');
+                $(levelTwo[0]).val('OLDONYOSAPUK PR. SCHOOL');
+                $(levelTwo[0]).trigger("change");
+                buttons = view.$el.find('.subtest-next');
+                $(buttons[0]).click();
+                return view.once("render", function() {
+                  console.log("Test Should pass to the Kiswahili page - view.$el.html(): " + view.$el.html());
+                  expect(view.$el.html()).to.contain("04. Classroom Observation (Kiswahili) (2016)");
+                  return done();
+                });
+              });
+              buttons = view.$el.find('.subtest-next');
+              return $(buttons[0]).click();
             });
             return view.render();
           }

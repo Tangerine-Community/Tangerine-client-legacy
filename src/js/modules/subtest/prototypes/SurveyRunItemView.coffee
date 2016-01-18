@@ -327,6 +327,10 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
       index  : index
     return options
 
+  onChildviewRender: () ->
+    console.log("childViewRendered.");
+    @trigger "childViewRendered"
+
   onBeforeRender: ->
 #    @questions.sort()
 
@@ -399,6 +403,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
     if not _.isEmptyString(displayCode)
       displaycodeFixed = displayCode.replace("vm.currentView.subtestViews[vm.currentView.index].prototypeView","Tangerine.progress.currentSubview")
+      displaycodeFixed = displaycodeFixed.replace("@prototypeView","Tangerine.progress.currentSubview")
       try
         CoffeeScript.eval.apply(@, [displaycodeFixed])
       catch error
