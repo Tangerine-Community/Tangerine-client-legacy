@@ -416,6 +416,8 @@ conf.fileOrder = [
 
   'configuration',
 
+  'displayCode_migrations',
+
   'locales',
 
   'boot'

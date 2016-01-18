@@ -328,7 +328,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     return options
 
   onChildviewRender: () ->
-    console.log("childViewRendered.");
+#    console.log("childViewRendered.");
     @trigger "childViewRendered"
 
   onBeforeRender: ->
@@ -402,8 +402,12 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     displayCode = @model.getString("displayCode")
 
     if not _.isEmptyString(displayCode)
-      displaycodeFixed = displayCode.replace("vm.currentView.subtestViews[vm.currentView.index].prototypeView","Tangerine.progress.currentSubview")
-      displaycodeFixed = displaycodeFixed.replace("@prototypeView","Tangerine.progress.currentSubview")
+#      displaycodeFixed = displayCode.replace("vm.currentView.subtestViews[vm.currentView.index].prototypeView","Tangerine.progress.currentSubview")
+#      displaycodeFixed = displaycodeFixed.replace("@prototypeView","Tangerine.progress.currentSubview")
+      displaycodeFixed = displayCode
+      if _.size(Tangerine.displayCode_migrations) > 0
+        for k,v of Tangerine.displayCode_migrations
+          displaycodeFixed = displaycodeFixed.replace(k,v)
       try
         CoffeeScript.eval.apply(@, [displaycodeFixed])
       catch error

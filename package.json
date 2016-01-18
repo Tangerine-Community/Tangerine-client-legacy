@@ -17,7 +17,8 @@
     "preload": "scripts/preload.js",
     "start": "gulp",
     "gulp": "gulp",
-    "debug": "gulp debug"
+    "debug": "gulp debug",
+    "debug-gulp": "iron-node node_modules/gulp/bin/gulp.js"
   },
   "repository": {
     "type": "git",

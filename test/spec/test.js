@@ -1028,9 +1028,9 @@
               el: this.$fixture
             };
             view = new AssessmentCompositeView(viewOptions);
-            view.once("render", function() {
+            view.once("render:collection", function() {
               var buttons;
-              view.once("childViewRendered", function() {
+              view.once("render", function() {
                 var buttons, levelOne, levelTwo, levelZero;
                 levelZero = view.$el.find('#level_0');
                 $(levelZero[0]).val('Arusha');

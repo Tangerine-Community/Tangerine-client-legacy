@@ -431,7 +431,7 @@
               model: assessment
               el: this.$fixture
             view = new AssessmentCompositeView viewOptions
-            view.once("render", () ->
+            view.once("render:collection", () ->
 # This test will continue on the next render of a subtest.
               view.once("render", () ->
 # Change level Zero.

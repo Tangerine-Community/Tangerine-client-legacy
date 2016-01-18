@@ -76,6 +76,7 @@ View package.json for other useful npm targets:
  - npm run testWatch will run mocha tests in the browser at http://localhost:9000/test/ and watch for changes to coffeescript files.
  - npm run debug will copy files into www/compiled and build index-dev.html. Use this when using chrome debugger until gulp
    handles sourcemaps better (https://github.com/terinjokes/gulp-uglify/issues/105). It's a little wonky; it may fail the first time it is run. Try again.
+ - npm run debug-gulp index-dev will debug the index-dev gulp targeet in iron-node. Place the "debugger" keyword where you need the debugger to pause.
 
 ## Bootstrapping
 
