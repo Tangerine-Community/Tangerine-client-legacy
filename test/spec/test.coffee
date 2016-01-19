@@ -415,6 +415,57 @@
         })
       )
 
+
+      it('Should pass to the Kiswahili page', (done)->
+        this.timeout(10000);
+        this.$fixture.empty().appendTo(this.$container);
+        id = "122a745b-e619-d4c0-29cd-3e9e27645632"
+        assessment = new Assessment "_id" : id
+        assessment.deepFetch({
+          error: (err)->
+            console.log "Catch Error: " + JSON.stringify err
+            done(err)
+          success: (record) ->
+            Tangerine.assessment = assessment
+            viewOptions =
+              model: assessment
+              el: this.$fixture
+            view = new AssessmentCompositeView viewOptions
+            view.once("render:collection", () ->
+# This test will continue on the next render of a subtest.
+              view.once("render", () ->
+# Change level Zero.
+                levelZero = view.$el.find('#level_0')
+                $(levelZero[0]).val('Arusha')
+                $(levelZero[0]).trigger "change"
+                # Change level One.
+                levelOne = view.$el.find('#level_1')
+                $(levelOne[0]).val('ARUSHA')
+                $(levelOne[0]).trigger "change"
+                # Test level Two.
+                levelTwo = view.$el.find('#level_2')
+                #                expect($(levelTwo[0]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
+                $(levelTwo[0]).val('OLDONYOSAPUK PR. SCHOOL')
+                $(levelTwo[0]).trigger "change"
+                #                done()
+                #                console.log("view.$el.html(): " + view.$el.html())
+                buttons = view.$el.find('.subtest-next')
+                $(buttons[0]).click()
+                view.once("render", () ->
+                  console.log("Test Should pass to the Kiswahili page - view.$el.html(): " + view.$el.html())
+                  #                  expect(view.$el.html()).to.contain("When you are ready to begin observing, press 'Kiswahili' below.");
+                  expect(view.$el.html()).to.contain("04. Classroom Observation (Kiswahili) (2016)");
+                  done()
+                )
+              )
+              # Click through to the next subtest that we will actually test.
+              buttons = view.$el.find('.subtest-next')
+              $(buttons[0]).click()
+            )
+            view.render();
+        })
+      )
+
   dbs.split(',').forEach((db) ->
     # dbType = /^http/.test(db) ? 'http' : 'local'
     tests db
