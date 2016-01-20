@@ -1009,7 +1009,6 @@
       });
       return it('Should pass to the Kiswahili page', function(done) {
         var assessment, id;
-        this.timeout(10000);
         this.$fixture.empty().appendTo(this.$container);
         id = "122a745b-e619-d4c0-29cd-3e9e27645632";
         assessment = new Assessment({
@@ -1030,7 +1029,7 @@
             view = new AssessmentCompositeView(viewOptions);
             view.once("render:collection", function() {
               var buttons;
-              view.once("render", function() {
+              view.once("render:collection", function() {
                 var buttons, levelOne, levelTwo, levelZero;
                 levelZero = view.$el.find('#level_0');
                 $(levelZero[0]).val('Arusha');
@@ -1041,13 +1040,26 @@
                 levelTwo = view.$el.find('#level_2');
                 $(levelTwo[0]).val('OLDONYOSAPUK PR. SCHOOL');
                 $(levelTwo[0]).trigger("change");
-                buttons = view.$el.find('.subtest-next');
-                $(buttons[0]).click();
-                return view.once("render", function() {
-                  console.log("Test Should pass to the Kiswahili page - view.$el.html(): " + view.$el.html());
-                  expect(view.$el.html()).to.contain("04. Classroom Observation (Kiswahili) (2016)");
-                  return done();
+                console.log("Test Should display the School Selection< page - view.$el.html(): " + view.$el.html());
+                view.once("render:collection", function() {
+                  var buttons, renderObservation;
+                  console.log("Test Should pass to Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html());
+                  renderObservation = function() {
+                    expect(view.$el.html()).to.contain("04. Classroom Observation (Kiswahili) (2016)");
+                    return view.once("render", function() {
+                      console.log("Test Should pass to Classroom Observation (Kiswahili) (2016) page - view.$el.html(): " + view.$el.html());
+                      expect(view.$el.html()).to.contain("Kiswahili");
+                      return done();
+                    });
+                  };
+                  buttons = view.$el.find('.button.left');
+                  $(buttons[0]).click();
+                  buttons = view.$el.find('.subtest-next');
+                  $(buttons[0]).click();
+                  return setTimeout(renderObservation, 1000);
                 });
+                buttons = view.$el.find('.subtest-next');
+                return $(buttons[0]).click();
               });
               buttons = view.$el.find('.subtest-next');
               return $(buttons[0]).click();

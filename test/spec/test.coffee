@@ -417,7 +417,7 @@
 
 
       it('Should pass to the Kiswahili page', (done)->
-        this.timeout(10000);
+#        this.timeout(15000);
         this.$fixture.empty().appendTo(this.$container);
         id = "122a745b-e619-d4c0-29cd-3e9e27645632"
         assessment = new Assessment "_id" : id
@@ -432,8 +432,11 @@
               el: this.$fixture
             view = new AssessmentCompositeView viewOptions
             view.once("render:collection", () ->
+#            view.once("render:collection", () ->
+#            view.once("dom:refresh", () ->
 # This test will continue on the next render of a subtest.
-              view.once("render", () ->
+#              view.once("render", () ->
+              view.once("render:collection", () ->
 # Change level Zero.
                 levelZero = view.$el.find('#level_0')
                 $(levelZero[0]).val('Arusha')
@@ -449,14 +452,28 @@
                 $(levelTwo[0]).trigger "change"
                 #                done()
                 #                console.log("view.$el.html(): " + view.$el.html())
+                console.log("Test Should display the School Selection< page - view.$el.html(): " + view.$el.html())
+                view.once("render:collection", () ->
+#                  console.log("Test display the Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html())
+#                  buttons = view.$el.find('.subtest-next')
+#                  $(buttons[0]).click()
+#                  expect(view.$el.html()).to.contain("When you are ready to begin observing, press 'Kiswahili' below.");
+                  console.log("Test Should pass to Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html())
+                  renderObservation = ->
+                    expect(view.$el.html()).to.contain("04. Classroom Observation (Kiswahili) (2016)");
+                    view.once("render", () ->
+                      console.log("Test Should pass to Classroom Observation (Kiswahili) (2016) page - view.$el.html(): " + view.$el.html())
+                      expect(view.$el.html()).to.contain("Kiswahili");
+                      done()
+                    )
+                  buttons = view.$el.find('.button.left')
+                  $(buttons[0]).click()
+                  buttons = view.$el.find('.subtest-next')
+                  $(buttons[0]).click()
+                  setTimeout(renderObservation, 1000)
+                )
                 buttons = view.$el.find('.subtest-next')
                 $(buttons[0]).click()
-                view.once("render", () ->
-                  console.log("Test Should pass to the Kiswahili page - view.$el.html(): " + view.$el.html())
-                  #                  expect(view.$el.html()).to.contain("When you are ready to begin observing, press 'Kiswahili' below.");
-                  expect(view.$el.html()).to.contain("04. Classroom Observation (Kiswahili) (2016)");
-                  done()
-                )
               )
               # Click through to the next subtest that we will actually test.
               buttons = view.$el.find('.subtest-next')
@@ -472,3 +489,4 @@
   )
 
 )()
+

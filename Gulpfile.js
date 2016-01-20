@@ -49,7 +49,9 @@ var conf = {
   libGlob        : './src/js/lib/**/*.js',
   lessFile       : './src/css/tangerine.less',
   cssDir         : './src/css',
-  handlebarsGlob : './src/templates/*.handlebars'
+  handlebarsGlob : './src/templates/*.handlebars',
+  testGlob : './test/spec/*.coffee',
+  testDir : './test/spec/'
 };
 
 // Helper function helps display logs
@@ -196,6 +198,20 @@ gulp.task('build:locales', function(){
 
 });
 
+// Compile translations
+gulp.task('coffee:test', function(){
+
+  var c = coffee({bare: true}); // get a coffeescript stream
+  c.on('error', function(err) { // on error
+    log(err);                   // log
+    c.end();                    // end stream so we don't freeze the program
+  });
+
+  gulp.src('./test/spec/*.coffee')  // handle translation documents
+    .pipe(c)                          // compile coffeescript
+    .pipe(gulp.dest(conf.testDir))  // send it here
+});
+
 // Pre compile handlebars template
 gulp.task('handlebars', function(){
 
@@ -232,6 +248,7 @@ gulp.task('watch', function() {
   gulp.watch(conf.lessFile,     ['build:less']);      // for less
   gulp.watch(conf.localeGlob,   ['build:locales']);   // for i18n
   gulp.watch(conf.handlebarsGlob, ['build:app.js']); // for handlebars templates
+  gulp.watch(conf.testGlob, ['coffee:test']); // for test scripts
 });
 
 
@@ -247,10 +264,10 @@ gulp.task('clean', function(done){
 });
 
 gulp.task('index-dev', function () {
-  gulp.src([conf.tmpJsDir + '/*.js'], {base: './tmp/js'}).pipe(gulp.dest('./www/compiled'));
-  gulp.src([conf.tmpMinDir + '/templates.js'], {base: './tmp/min'}).pipe(gulp.dest('./www/compiled'));
-  gulp.src([conf.tmpMinDir + '/version.js'], {base: './tmp/min'}).pipe(gulp.dest('./www/compiled'));
-  gulp.src([conf.tmpMinDir + '/locales.js'], {base: './tmp/min'}).pipe(gulp.dest('./www/compiled'));
+  gulp.src(['*.js'], {base: conf.tmpJsDir}).pipe(gulp.dest('./www/compiled'));
+  gulp.src(['templates.js'], {base: conf.tmpMinDir}).pipe(gulp.dest('./www/compiled'));
+  gulp.src(['version.js'], {base: conf.tmpMinDir}).pipe(gulp.dest('./www/compiled'));
+  gulp.src(['locales.js'], {base: conf.tmpMinDir}).pipe(gulp.dest('./www/compiled'));
   var target = gulp.src('./www/index-dev.html');
   // It's not necessary to read the files (will speed up things), we're only after their paths:
   var JsSources = gulp.src(conf.jsFileOrder, {read: false});
@@ -266,7 +283,10 @@ gulp.task('index-dev', function () {
     return "<script src='" + filename + "'></script>"
   }
   }))
-  .pipe(gulp.dest('./www'));
+  .pipe(gulp.dest('./www')).on('error', function(err) { // on error
+        log(err);                   // log
+        //target.end();                    // end stream so we don't freeze the program
+      });
 });
 
 
