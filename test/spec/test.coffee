@@ -416,7 +416,7 @@
       )
 
 
-      it('Should pass to the Kiswahili page', (done)->
+      it('Should pass to the Kiswahili page and display only the first question (focusmode)', (done)->
 #        this.timeout(15000);
         this.$fixture.empty().appendTo(this.$container);
         id = "122a745b-e619-d4c0-29cd-3e9e27645632"
@@ -458,18 +458,20 @@
 #                  buttons = view.$el.find('.subtest-next')
 #                  $(buttons[0]).click()
 #                  expect(view.$el.html()).to.contain("When you are ready to begin observing, press 'Kiswahili' below.");
-                  console.log("Test Should pass to Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html())
                   renderObservation = ->
-                    expect(view.$el.html()).to.contain("04. Classroom Observation (Kiswahili) (2016)");
-                    view.once("render", () ->
+                    console.log("Test Should pass to Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html())
+                    expect(view.$el.html()).to.contain("Kiswahili");
+                    renderKiswahili = ->
                       console.log("Test Should pass to Classroom Observation (Kiswahili) (2016) page - view.$el.html(): " + view.$el.html())
-                      expect(view.$el.html()).to.contain("Kiswahili");
+#                      expect(view.$el.html()).to.contain("Kiswahili");
+                      expect(view.$el.find('#question-lesson_content_first').css('display')).to.eq('block');
+                      expect(view.$el.find('#question-reading').css('display')).to.eq('none');
                       done()
-                    )
-                  buttons = view.$el.find('.button.left')
-                  $(buttons[0]).click()
-                  buttons = view.$el.find('.subtest-next')
-                  $(buttons[0]).click()
+                    buttons = view.$el.find('.button.left')
+                    $(buttons[0]).click()
+                    buttons = view.$el.find('.subtest-next')
+                    $(buttons[0]).click()
+                    setTimeout(renderKiswahili, 1000)
                   setTimeout(renderObservation, 1000)
                 )
                 buttons = view.$el.find('.subtest-next')

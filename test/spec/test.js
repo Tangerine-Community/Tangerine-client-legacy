@@ -1007,7 +1007,7 @@
           }
         });
       });
-      return it('Should pass to the Kiswahili page', function(done) {
+      return it('Should pass to the Kiswahili page and display only the first question (focusmode)', function(done) {
         var assessment, id;
         this.$fixture.empty().appendTo(this.$container);
         id = "122a745b-e619-d4c0-29cd-3e9e27645632";
@@ -1042,20 +1042,23 @@
                 $(levelTwo[0]).trigger("change");
                 console.log("Test Should display the School Selection< page - view.$el.html(): " + view.$el.html());
                 view.once("render:collection", function() {
-                  var buttons, renderObservation;
-                  console.log("Test Should pass to Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html());
+                  var renderObservation;
                   renderObservation = function() {
-                    expect(view.$el.html()).to.contain("04. Classroom Observation (Kiswahili) (2016)");
-                    return view.once("render", function() {
+                    var buttons, renderKiswahili;
+                    console.log("Test Should pass to Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html());
+                    expect(view.$el.html()).to.contain("Kiswahili");
+                    renderKiswahili = function() {
                       console.log("Test Should pass to Classroom Observation (Kiswahili) (2016) page - view.$el.html(): " + view.$el.html());
-                      expect(view.$el.html()).to.contain("Kiswahili");
+                      expect(view.$el.find('#question-lesson_content_first').css('display')).to.eq('block');
+                      expect(view.$el.find('#question-reading').css('display')).to.eq('none');
                       return done();
-                    });
+                    };
+                    buttons = view.$el.find('.button.left');
+                    $(buttons[0]).click();
+                    buttons = view.$el.find('.subtest-next');
+                    $(buttons[0]).click();
+                    return setTimeout(renderKiswahili, 1000);
                   };
-                  buttons = view.$el.find('.button.left');
-                  $(buttons[0]).click();
-                  buttons = view.$el.find('.subtest-next');
-                  $(buttons[0]).click();
                   return setTimeout(renderObservation, 1000);
                 });
                 buttons = view.$el.find('.subtest-next');

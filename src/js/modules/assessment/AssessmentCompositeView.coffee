@@ -94,8 +94,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   onDomRefresh: ->
     console.log("ACV: I get too attached to people.")
 
-  renderCollection: ->
-#    console.log("renderCollection")
+#  renderCollection: ->
+##    console.log("renderCollection")
 
   childAttach: ->
     console.log("child attached.")
