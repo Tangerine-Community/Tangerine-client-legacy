@@ -8,10 +8,10 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
   events:
     'click .next_question' : 'nextQuestion'
     'click .prev_question' : 'prevQuestion'
-    'collectionPopulated': 'collectionPopulated'
-
-  collectionPopulated: ->
-    console.log("collectionPopulated.")
+#    'collectionPopulated': 'collectionPopulated'
+#
+#  collectionPopulated: ->
+#    console.log("collectionPopulated.")
 
   initialize: (options) ->
 
@@ -292,19 +292,19 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     'answer scroll': 'onQuestionAnswer'
     'answer': 'onQuestionAnswer'
     'rendered': 'onQuestionRendered'
-    'render:collection': 'renderCol'
-    'attach': 'attachChild'
+#    'render:collection': 'renderCol'
+#    'attach': 'attachChild'
 
   # This tests if add:child is triggered on the subtest instead of on AssessmentCompositeView.
   foo: ->
     console.log("test 123 SV child foo")
 
-  renderCol: ->
-    console.log("onRenderCol")
-
-  attachChild: ->
-    console.log("attachChild")
-    @trigger "childAttached"
+#  renderCol: ->
+#    console.log("onRenderCol")
+#
+#  attachChild: ->
+#    console.log("attachChild")
+#    @trigger "childAttached"
 
   # populates @questionViews for this view.
   buildChildView: (child, ChildViewClass, childViewOptions) ->
@@ -431,8 +431,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
     @prototypeView?.updateExecuteReady?(true)
 
-  onDomRefresh: ->
-    console.log("I get too attached to people.")
+#  onDomRefresh: ->
+#    console.log("I get too attached to people.")
 
 # @todo Documentation
   skip: =>

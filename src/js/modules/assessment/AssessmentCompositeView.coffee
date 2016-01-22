@@ -57,7 +57,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         model.collection = model.questions
         @collection.models = collection.models
 #        The trigger collectionPopulated is use for unit tests
-        @trigger "collectionPopulated"
+#        @trigger "collectionPopulated"
       error: (model, err, cb) ->
         console.log("childViewOptions id: " +  model.id + " err:" + JSON.stringify(err))
 
@@ -80,9 +80,9 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 #    'collection:rendered': 'addChildPostRender'
     'render:collection': 'addChildPostRender'
     'subRendered': 'subRendered'
-    'attach': 'childAttach'
-    'childAttached': 'childChildAttach'
-    'collectionPopulated': 'collectionPopulated'
+#    'attach': 'childAttach'
+#    'childAttached': 'childChildAttach'
+#    'collectionPopulated': 'collectionPopulated'
 
 #    TODO: This is a work-around: it may be fixed by doing something better. This code was added to resolve an issue
 #    where the SurveyRunItemView was rendering twice, and the second time it rendered, updateSkipLogic() was not getting executed.
@@ -91,18 +91,18 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     currentSubtest = @children.findByIndex(0)
     currentSubtest.updateSkipLogic()
 
-  onDomRefresh: ->
-    console.log("ACV: I get too attached to people.")
+#  onDomRefresh: ->
+#    console.log("ACV: I get too attached to people.")
 
 #  renderCollection: ->
 ##    console.log("renderCollection")
 
-  childAttach: ->
-    console.log("child attached.")
-  childChildAttach: ->
-    console.log("childChildAttach attached.")
-  collectionPopulated: ->
-    console.log("collectionPopulated.")
+#  childAttach: ->
+#    console.log("child attached.")
+#  childChildAttach: ->
+#    console.log("childChildAttach attached.")
+#  collectionPopulated: ->
+#    console.log("collectionPopulated.")
 
 #    This is simply used to alert the test it('Should contain a next question button') that the page has finished rendering.
   nextQuestionRenderedBoom: ->
