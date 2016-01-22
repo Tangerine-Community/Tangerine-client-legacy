@@ -18,6 +18,7 @@
     "start": "gulp",
     "gulp": "gulp",
     "debug": "gulp debug",
+    "debug-test": "gulp debug & http-server ./ -p 9000 --silent",
     "debug-gulp": "iron-node node_modules/gulp/bin/gulp.js"
   },
   "repository": {
