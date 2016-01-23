@@ -250,7 +250,7 @@ Tangerine.bootSequence =
         )
 
       catch error
-        console.log("Unable to fetch script.")
+        console.log("Unable to fetch script. Error: " + error)
     callback()
 
   loadSingletons: ( callback ) ->
