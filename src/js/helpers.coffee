@@ -255,6 +255,13 @@ class Utils
         docList = results.pluck("_id")
         Utils.uploadCompressed(docList)
 
+  @saveDocListToFile: ->
+    results = new Results
+    results.fetch
+      success: ->
+        docList = results.pluck("_id")
+        Utils.saveRecordsToFile = (docList)
+
   @checkSession: (url, options) ->
     options = options || {};
     $.ajax
