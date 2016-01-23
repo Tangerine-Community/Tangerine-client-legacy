@@ -185,26 +185,73 @@ Tangerine.bootSequence =
       callback()
 
   handleCordovaEvents: ( callback ) ->
+#    console.log("trying to load cordova")
+    # Load cordova.js if we are in a cordova context
+    if(navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
+      console.log("loading cordova methods")
+#      xhrObj =  new XMLHttpRequest()
+      try
+#        xhrObj.open('GET', 'cordova.js', false)
+#        xhrObj.send('')
+#        se = document.createElement('script')
+#        se.text = xhrObj.responseText
+#        document.getElementsByTagName('head')[0].appendChild(se)
 
-    document.addEventListener "deviceready"
-      ,
-        ->
-          document.addEventListener "online",  -> Tangerine.online = true
-          document.addEventListener "offline", -> Tangerine.online = false
+        #  /*
+        # * Attach a writeTextToFile method to cordova.file API.
+        # *
+        # * params = {
+        # *  text: 'Text to go into the file.',
+        # *  path: 'file://path/to/directory',
+        #*  fileName: 'name-of-the-file.txt',
+        #*  append: false
+        #* }
+        #*
+        #* callback = {
+        #*   success: function(file) {},
+        #*   error: function(error) {}
+        #* }
+        #*
+        #*/
+        cordova.file.writeTextToFile = (params, callback) ->
+          window.resolveLocalFileSystemURL(params.path, (dir) ->
+            dir.getFile(params.fileName, {create:true}, (file) ->
+              if (!file)
+                return callback.error('dir.getFile failed')
+              file.createWriter(
+                (fileWriter) ->
+                  if params.append == true
+                    fileWriter.seek(fileWriter.length)
+                  blob = new Blob([params.text], {type:'text/plain'})
+                  fileWriter.write(blob)
+                  callback.success(file)
+              ,(error) ->
+                callback.error(error)
+              )
+            )
+          )
 
-          ###
-          # Responding to this event turns on the menu button
-          document.addEventListener "menubutton", (event) ->
-            console.log "menu button"
-          , false
-          ###
+        #/*
+        # * Use the writeTextToFile method.
+        # */
+        Utils.saveRecordsToFile = (text) ->
+          cordova.file.writeTextToFile({
+            text:  text,
+            path: cordova.file.externalDataDirectory,
+            fileName: 'backup.txt',
+            append: false
+            },
+            {
+              success: (file) ->
+                alert("Success! Look for the file at " + file.nativeURL)
+                console.log(file)
+              , error: (error) ->
+                  console.log(error)
+            }
+          )
 
-          # prevents default
-          document.addEventListener "backbutton", Tangerine.onBackButton, false
-
-      , false
-
-    # add the event listeners, but don't depend on them calling back
+      catch error
+        console.log("Unable to fetch script. Error: " + error)
     callback()
 
   loadSingletons: ( callback ) ->
@@ -246,6 +293,7 @@ Tangerine.bootSequence =
 Tangerine.boot = ->
 
   sequence = [
+    Tangerine.bootSequence.handleCordovaEvents
     Tangerine.bootSequence.basicConfig
     Tangerine.bootSequence.checkDatabase
     Tangerine.bootSequence.versionTag
@@ -253,7 +301,6 @@ Tangerine.boot = ->
     Tangerine.bootSequence.guaranteeInstanceId
     Tangerine.bootSequence.documentReady
     Tangerine.bootSequence.loadI18n
-    Tangerine.bootSequence.handleCordovaEvents
     Tangerine.bootSequence.loadSingletons
     Tangerine.bootSequence.reloadUserSession
     Tangerine.bootSequence.startBackbone

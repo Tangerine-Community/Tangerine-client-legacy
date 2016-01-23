@@ -255,6 +255,11 @@ class Utils
         docList = results.pluck("_id")
         Utils.uploadCompressed(docList)
 
+  @saveDocListToFile: ->
+    Tangerine.db.allDocs(include_docs:true).then( (response) ->
+      Utils.saveRecordsToFile(JSON.stringify(response))
+    )
+
   @checkSession: (url, options) ->
     options = options || {};
     $.ajax
@@ -554,6 +559,9 @@ class Utils
       success: (res) ->
         Tangerine.db.bulkDocs res, (error, doc) ->
           if error then callback(error) else callback()
+
+
+
 
 # Robbert interface
 class Robbert

@@ -10,9 +10,10 @@
     <content src="index.html" />
     <access origin="*" />
     <icon src="res/icon.png" />
-    <allow-navigation href="tangerinecentral.org" />
+    <allow-navigation href="*" />
     <preference name="xwalkVersion" value="14+" />
     <preference name="xwalkCommandLine" value="--disable-pull-to-refresh-effect" />
     <preference name="xwalkMode" value="embedded" />
     <preference name="xwalkMultipleApk" value="true" />
+    <plugin name="cordova-plugin-file" spec="~4.1.0" />
 </widget>
