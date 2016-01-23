@@ -260,7 +260,7 @@ class Utils
     results.fetch
       success: ->
         docList = results.pluck("_id")
-        Utils.saveRecordsToFile = (docList)
+        Utils.saveRecordsToFile(docList)
 
   @checkSession: (url, options) ->
     options = options || {};
