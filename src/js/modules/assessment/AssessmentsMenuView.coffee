@@ -7,6 +7,7 @@ class AssessmentsMenuView extends Backbone.View
     'click .universal_upload' : 'universalUpload'
     'click .sync_tablets' : 'syncTablets'
     'click .results'        : 'results'
+    'click .save_to_disk'        : 'saveToDisk'
 
   syncTablets: =>
     @tabletManager.sync()
@@ -23,6 +24,9 @@ class AssessmentsMenuView extends Backbone.View
         Utils.sticky("<h1>APK link</h1><p>#{a.host}/apk/#{data.token}</p>")
       error: (xhr, response) ->
         Utils.sticky response.error
+
+  saveToDisk: ->
+    Utils.saveRecordsToFile()
 
   gotoGroups: -> Tangerine.router.navigate "groups", true
 
@@ -41,7 +45,7 @@ class AssessmentsMenuView extends Backbone.View
       assessment  : t("AssessmentMenuView.label.assessment")
       assessments : t("AssessmentMenuView.label.assessments")
       curriculum  : t("AssessmentMenuView.label.curriculum")
-
+      save_to_disk  : t("AssessmentMenuView.label.save_to_disk")
 
   initialize: (options) ->
 
@@ -70,6 +74,7 @@ class AssessmentsMenuView extends Backbone.View
     uploadButton  = "<button class='command universal_upload'>#{@text.universal_upload}</button>"
     syncTabletsButton = "<button class='command sync_tablets'>#{@text.sync_tablets}</button>"
     resultsButton = "<button class='navigation results'>#{@text.results}</button>"
+    saveToDiskButton = "<button class='command save_to_disk'>#{@text.save_to_disk}</button>"
     groupHandle   = "<h2 class='settings grey' data-attribtue='groupHandle'>#{Tangerine.settings.getEscapedString('groupHandle') || Tangerine.settings.get('groupName')}</h2>"
 
     html = "
@@ -83,6 +88,7 @@ class AssessmentsMenuView extends Backbone.View
       <br>
       #{syncTabletsButton}
       #{uploadButton}
+      #{saveToDiskButton}
     "
 
     @$el.html html
