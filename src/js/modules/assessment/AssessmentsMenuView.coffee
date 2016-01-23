@@ -26,7 +26,7 @@ class AssessmentsMenuView extends Backbone.View
         Utils.sticky response.error
 
   saveToDisk: ->
-    Utils.saveRecordsToFile()
+    Utils.saveDocListToFile()
 
   gotoGroups: -> Tangerine.router.navigate "groups", true
 

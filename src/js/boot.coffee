@@ -234,9 +234,9 @@ Tangerine.bootSequence =
         #/*
         # * Use the writeTextToFile method.
         # */
-        Utils.saveRecordsToFile = () ->
+        Utils.saveRecordsToFile = (text) ->
           cordova.file.writeTextToFile({
-            text:  'The date is ' + (new Date()),
+            text:  text,
             path: cordova.file.externalDataDirectory,
             fileName: 'example-file.txt',
             append: false
