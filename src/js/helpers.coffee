@@ -256,11 +256,9 @@ class Utils
         Utils.uploadCompressed(docList)
 
   @saveDocListToFile: ->
-    results = new Results
-    results.fetch
-      success: ->
-        docList = results.pluck("_id")
-        Utils.saveRecordsToFile(docList)
+    Tangerine.db.allDocs(include_docs:true).then( (response) ->
+      Utils.saveRecordsToFile(JSON.stringify(response))
+    )
 
   @checkSession: (url, options) ->
     options = options || {};

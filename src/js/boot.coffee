@@ -238,12 +238,12 @@ Tangerine.bootSequence =
           cordova.file.writeTextToFile({
             text:  text,
             path: cordova.file.externalDataDirectory,
-            fileName: 'example-file.txt',
+            fileName: 'backup.txt',
             append: false
             },
             {
               success: (file) ->
-                console.log("Success! Look for the file at " + file.nativeURL)
+                alert("Success! Look for the file at " + file.nativeURL)
                 console.log(file)
               , error: (error) ->
                   console.log(error)
