@@ -185,17 +185,17 @@ Tangerine.bootSequence =
       callback()
 
   handleCordovaEvents: ( callback ) ->
-    console.log("trying to load cordova")
+#    console.log("trying to load cordova")
     # Load cordova.js if we are in a cordova context
     if(navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
-      console.log("loading cordova")
-      xhrObj =  new XMLHttpRequest()
+      console.log("loading cordova methods")
+#      xhrObj =  new XMLHttpRequest()
       try
-        xhrObj.open('GET', 'cordova.js', false)
-        xhrObj.send('')
-        se = document.createElement('script')
-        se.text = xhrObj.responseText
-        document.getElementsByTagName('head')[0].appendChild(se)
+#        xhrObj.open('GET', 'cordova.js', false)
+#        xhrObj.send('')
+#        se = document.createElement('script')
+#        se.text = xhrObj.responseText
+#        document.getElementsByTagName('head')[0].appendChild(se)
 
         #  /*
         # * Attach a writeTextToFile method to cordova.file API.
@@ -250,7 +250,7 @@ Tangerine.bootSequence =
         )
 
       catch error
-        console.log("Unable to fetch script.")
+        console.log("Unable to fetch script. Error: " + error)
     callback()
 
   loadSingletons: ( callback ) ->
