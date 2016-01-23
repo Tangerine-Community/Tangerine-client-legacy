@@ -234,20 +234,21 @@ Tangerine.bootSequence =
         #/*
         # * Use the writeTextToFile method.
         # */
-        Utils.saveRecordsToFile = cordova.file.writeTextToFile({
+        Utils.saveRecordsToFile = () ->
+          cordova.file.writeTextToFile({
             text:  'The date is ' + (new Date()),
             path: cordova.file.externalDataDirectory,
             fileName: 'example-file.txt',
             append: false
-          },
-          {
-            success: (file) ->
-              console.log("Success! Look for the file at " + file.nativeURL)
-              console.log(file)
-            , error: (error) ->
-                console.log(error)
-          }
-        )
+            },
+            {
+              success: (file) ->
+                console.log("Success! Look for the file at " + file.nativeURL)
+                console.log(file)
+              , error: (error) ->
+                  console.log(error)
+            }
+          )
 
       catch error
         console.log("Unable to fetch script. Error: " + error)

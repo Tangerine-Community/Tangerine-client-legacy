@@ -42,10 +42,10 @@ class AssessmentsMenuView extends Backbone.View
       results          : t("AssessmentMenuView.button.results")
       save             : t("AssessmentMenuView.button.save")
       cancel           : t("AssessmentMenuView.button.cancel")
+      save_to_disk  : t("AssessmentMenuView.button.save_to_disk")
       assessment  : t("AssessmentMenuView.label.assessment")
       assessments : t("AssessmentMenuView.label.assessments")
       curriculum  : t("AssessmentMenuView.label.curriculum")
-      save_to_disk  : t("AssessmentMenuView.label.save_to_disk")
 
   initialize: (options) ->
 
