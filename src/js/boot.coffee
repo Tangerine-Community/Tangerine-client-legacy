@@ -185,19 +185,72 @@ Tangerine.bootSequence =
       callback()
 
   handleCordovaEvents: ( callback ) ->
+    console.log("trying to load cordova")
     # Load cordova.js if we are in a cordova context
     if(navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
+      console.log("loading cordova")
       xhrObj =  new XMLHttpRequest()
-      try {
+      try
         xhrObj.open('GET', 'cordova.js', false)
         xhrObj.send('')
         se = document.createElement('script')
         se.text = xhrObj.responseText
         document.getElementsByTagName('head')[0].appendChild(se)
-      } catch (error) {
-        console.log("Unable to fetch script.")
-      }
 
+        #  /*
+        # * Attach a writeTextToFile method to cordova.file API.
+        # *
+        # * params = {
+        # *  text: 'Text to go into the file.',
+        # *  path: 'file://path/to/directory',
+        #*  fileName: 'name-of-the-file.txt',
+        #*  append: false
+        #* }
+        #*
+        #* callback = {
+        #*   success: function(file) {},
+        #*   error: function(error) {}
+        #* }
+        #*
+        #*/
+        cordova.file.writeTextToFile = (params, callback) ->
+          window.resolveLocalFileSystemURL(params.path, (dir) ->
+            dir.getFile(params.fileName, {create:true}, (file) ->
+              if (!file)
+                return callback.error('dir.getFile failed')
+              file.createWriter(
+                (fileWriter) ->
+                  if params.append == true
+                    fileWriter.seek(fileWriter.length)
+                  blob = new Blob([params.text], {type:'text/plain'})
+                  fileWriter.write(blob)
+                  callback.success(file)
+              ,(error) ->
+                callback.error(error)
+              )
+            )
+          )
+
+        #/*
+        # * Use the writeTextToFile method.
+        # */
+        Utils.saveRecordsToFile = cordova.file.writeTextToFile({
+            text:  'The date is ' + (new Date()),
+            path: cordova.file.externalDataDirectory,
+            fileName: 'example-file.txt',
+            append: false
+          },
+          {
+            success: (file) ->
+              console.log("Success! Look for the file at " + file.nativeURL)
+              console.log(file)
+            , error: (error) ->
+                console.log(error)
+          }
+        )
+
+      catch error
+        console.log("Unable to fetch script.")
     callback()
 
   loadSingletons: ( callback ) ->
@@ -239,6 +292,7 @@ Tangerine.bootSequence =
 Tangerine.boot = ->
 
   sequence = [
+    Tangerine.bootSequence.handleCordovaEvents
     Tangerine.bootSequence.basicConfig
     Tangerine.bootSequence.checkDatabase
     Tangerine.bootSequence.versionTag
@@ -246,7 +300,6 @@ Tangerine.boot = ->
     Tangerine.bootSequence.guaranteeInstanceId
     Tangerine.bootSequence.documentReady
     Tangerine.bootSequence.loadI18n
-    Tangerine.bootSequence.handleCordovaEvents
     Tangerine.bootSequence.loadSingletons
     Tangerine.bootSequence.reloadUserSession
     Tangerine.bootSequence.startBackbone

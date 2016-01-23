@@ -555,6 +555,9 @@ class Utils
         Tangerine.db.bulkDocs res, (error, doc) ->
           if error then callback(error) else callback()
 
+
+
+
 # Robbert interface
 class Robbert
 
