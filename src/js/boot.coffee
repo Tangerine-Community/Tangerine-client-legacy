@@ -185,26 +185,19 @@ Tangerine.bootSequence =
       callback()
 
   handleCordovaEvents: ( callback ) ->
+    # Load cordova.js if we are in a cordova context
+    if(navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
+      xhrObj =  new XMLHttpRequest()
+      try {
+        xhrObj.open('GET', 'cordova.js', false)
+        xhrObj.send('')
+        se = document.createElement('script')
+        se.text = xhrObj.responseText
+        document.getElementsByTagName('head')[0].appendChild(se)
+      } catch (error) {
+        console.log("Unable to fetch script.")
+      }
 
-    document.addEventListener "deviceready"
-      ,
-        ->
-          document.addEventListener "online",  -> Tangerine.online = true
-          document.addEventListener "offline", -> Tangerine.online = false
-
-          ###
-          # Responding to this event turns on the menu button
-          document.addEventListener "menubutton", (event) ->
-            console.log "menu button"
-          , false
-          ###
-
-          # prevents default
-          document.addEventListener "backbutton", Tangerine.onBackButton, false
-
-      , false
-
-    # add the event listeners, but don't depend on them calling back
     callback()
 
   loadSingletons: ( callback ) ->
