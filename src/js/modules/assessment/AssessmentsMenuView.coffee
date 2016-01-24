@@ -8,6 +8,7 @@ class AssessmentsMenuView extends Backbone.View
     'click .sync_tablets' : 'syncTablets'
     'click .results'        : 'results'
     'click .emergency_sync'        : 'emergencySync'
+    'click .save_to_disk'        : 'saveToDisk'
 
   syncTablets: =>
     @tabletManager.sync()
@@ -27,6 +28,9 @@ class AssessmentsMenuView extends Backbone.View
       error: (xhr, response) ->
         Utils.sticky response.error
 
+  saveToDisk: ->
+    Utils.saveDocListToFile()
+
   gotoGroups: -> Tangerine.router.navigate "groups", true
 
   import:     -> Tangerine.router.navigate "import", true
@@ -42,10 +46,10 @@ class AssessmentsMenuView extends Backbone.View
       results          : t("AssessmentMenuView.button.results")
       save             : t("AssessmentMenuView.button.save")
       cancel           : t("AssessmentMenuView.button.cancel")
+      save_to_disk  : t("AssessmentMenuView.button.save_to_disk")
       assessment  : t("AssessmentMenuView.label.assessment")
       assessments : t("AssessmentMenuView.label.assessments")
       curriculum  : t("AssessmentMenuView.label.curriculum")
-
 
   initialize: (options) ->
 
@@ -75,6 +79,7 @@ class AssessmentsMenuView extends Backbone.View
     emergencySyncButton  = "<button class='command emergency_sync'>#{@text.emergency_sync}</button>"
     syncTabletsButton = "<button class='command sync_tablets'>#{@text.sync_tablets}</button>"
     resultsButton = "<button class='navigation results'>#{@text.results}</button>"
+    saveToDiskButton = "<button class='command save_to_disk'>#{@text.save_to_disk}</button>"
     groupHandle   = "<h2 class='settings grey' data-attribtue='groupHandle'>#{Tangerine.settings.getEscapedString('groupHandle') || Tangerine.settings.get('groupName')}</h2>"
 
     html = "
@@ -88,7 +93,7 @@ class AssessmentsMenuView extends Backbone.View
       <br>
       #{syncTabletsButton}
       #{uploadButton}
-      #{emergencySyncButton}
+      #{saveToDiskButton}
     "
 
     @$el.html html

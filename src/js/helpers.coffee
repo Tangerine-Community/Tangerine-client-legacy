@@ -217,7 +217,7 @@ class Utils
         user: Tangerine.settings.upUser
         pass: Tangerine.settings.upPass
       error: (a) ->
-        alert "Error connecting"
+        alert "Error connecting: " + JSON.stringify(a)
       success: (response) =>
 
         rows = response.rows
@@ -254,6 +254,11 @@ class Utils
       success: ->
         docList = results.pluck("_id")
         Utils.uploadCompressed(docList)
+
+  @saveDocListToFile: ->
+    Tangerine.db.allDocs(include_docs:true).then( (response) ->
+      Utils.saveRecordsToFile(JSON.stringify(response))
+    )
 
   @checkSession: (url, options) ->
     options = options || {};
@@ -627,6 +632,9 @@ class Utils
       success: (res) ->
         Tangerine.db.bulkDocs res, (error, doc) ->
           if error then callback(error) else callback()
+
+
+
 
 # Robbert interface
 class Robbert

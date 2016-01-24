@@ -93,6 +93,7 @@ Tangerine.locales["en-US"] =
         "results" : "Results"
         "save" : "Save"
         "cancel" : "Cancel"
+        "save_to_disk" : "Save as file"
       "label" :
         "assessment" : "Assessment"
         "assessments" : "Assessments"
