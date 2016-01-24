@@ -7,6 +7,7 @@ class AssessmentsMenuView extends Backbone.View
     'click .universal_upload' : 'universalUpload'
     'click .sync_tablets' : 'syncTablets'
     'click .results'        : 'results'
+    'click .emergency_sync'        : 'emergencySync'
     'click .save_to_disk'        : 'saveToDisk'
 
   syncTablets: =>
@@ -15,6 +16,8 @@ class AssessmentsMenuView extends Backbone.View
   results: -> Tangerine.router.navigate "dashboard", true
 
   universalUpload: -> Utils.universalUpload()
+
+  emergencySync: -> Utils.replicateToServer(null,null)
 
   apk: ->
     TangerineTree.make
@@ -38,6 +41,7 @@ class AssessmentsMenuView extends Backbone.View
       apk              : t("AssessmentMenuView.button.apk")
       groups           : t("AssessmentMenuView.button.groups")
       universal_upload : t("AssessmentMenuView.button.universal_upload")
+      emergency_sync : t("AssessmentMenuView.button.emergency_sync")
       sync_tablets     : t("AssessmentMenuView.button.sync_tablets")
       results          : t("AssessmentMenuView.button.results")
       save             : t("AssessmentMenuView.button.save")
@@ -72,6 +76,7 @@ class AssessmentsMenuView extends Backbone.View
     apkButton     = "<button class='apk navigation'>#{@text.apk}</button>"
     groupsButton  = "<button class='navigation groups'>#{@text.groups}</button>"
     uploadButton  = "<button class='command universal_upload'>#{@text.universal_upload}</button>"
+    emergencySyncButton  = "<button class='command emergency_sync'>#{@text.emergency_sync}</button>"
     syncTabletsButton = "<button class='command sync_tablets'>#{@text.sync_tablets}</button>"
     resultsButton = "<button class='navigation results'>#{@text.results}</button>"
     saveToDiskButton = "<button class='command save_to_disk'>#{@text.save_to_disk}</button>"

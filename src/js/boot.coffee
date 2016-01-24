@@ -185,7 +185,27 @@ Tangerine.bootSequence =
       callback()
 
   handleCordovaEvents: ( callback ) ->
-#    console.log("trying to load cordova")
+
+    document.addEventListener "deviceready"
+      ,
+        ->
+          document.addEventListener "online",  -> Tangerine.online = true
+          document.addEventListener "offline", -> Tangerine.online = false
+
+          ###
+          # Responding to this event turns on the menu button
+          document.addEventListener "menubutton", (event) ->
+            console.log "menu button"
+          , false
+          ###
+
+          # prevents default
+          document.addEventListener "backbutton", Tangerine.onBackButton, false
+
+      , false
+
+# add the event listeners, but don't depend on them calling back
+
     # Load cordova.js if we are in a cordova context
     if(navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
       console.log("loading cordova methods")
@@ -244,7 +264,7 @@ Tangerine.bootSequence =
             {
               success: (file) ->
                 alert("Success! Look for the file at " + file.nativeURL)
-                console.log(file)
+                console.log("File saved at " + file.nativeURL)
               , error: (error) ->
                   console.log(error)
             }
