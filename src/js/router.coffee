@@ -28,7 +28,7 @@ class Router extends Backbone.Router
     'settings' : 'settings'
     'update' : 'update'
 
-    '' : 'landing'
+    '' : 'loadAssessment'
 
     'logs' : 'logs'
 
@@ -84,6 +84,28 @@ class Router extends Backbone.Router
 
     'sync/:id'      : 'sync'
 
+  loadAssessment: ->
+    assessmentDocs = JSON.parse(window.frameElement.getAttribute('data-assessment'))
+    assessmentId = ''
+    resultId = ''
+    i = 0
+    insertRecord = ->
+      Tangerine.db
+        .put(assessmentDocs[i])
+        .then( (response) ->
+          i++
+          if assessmentDocs[i]
+            # Catch the Assessment ID that will be passing by here.
+            if assessmentDocs[i].collection == 'assessment'
+              assessmentId = assessmentDocs[i]._id
+            insertRecord()
+          else
+            Backbone.history.navigate('#runMar/' + assessmentId, {trigger: true})
+        )
+        .catch( (error) ->
+          alert("Oops. Something went wrong \n\n" + error)
+        )
+    insertRecord()
 
   admin: (options) ->
     Tangerine.user.verify
@@ -420,20 +442,24 @@ class Router extends Backbone.Router
 
   runMar: (id) ->
     router = this
-    Tangerine.user.verify
-      isAuthenticated: ->
-        router.navigateAwayMessage = t("Router.message.quit_assessment")
-        assessment = new Assessment "_id" : id
-        assessment.deepFetch
-          success : ->
-            dashboardLayout = new DashboardLayout();
-            Tangerine.app.rm.get('mainRegion').show dashboardLayout
-            dashboardLayout.contentRegion.reset()
-            assessmentCompositeView = new AssessmentCompositeView
-              assessment: assessment
-            dashboardLayout.contentRegion.show(assessmentCompositeView)
-          error: (model, err, cb) ->
-            console.log JSON.stringify err
+    router.navigateAwayMessage = t("Router.message.quit_assessment")
+    assessment = new Assessment "_id" : id
+    assessment.deepFetch
+      success : ->
+        dashboardLayout = new DashboardLayout();
+        Tangerine.app.rm.get('mainRegion').show dashboardLayout
+        dashboardLayout.contentRegion.reset()
+        assessmentCompositeView = new AssessmentCompositeView
+          assessment: assessment
+        assessmentCompositeView.on('render', () =>
+          window.frameElement.setAttribute('data-result', JSON.stringify(assessmentCompositeView.result.toJSON()))
+          evt = document.createEvent("Event");
+          evt.initEvent("result-save", true, false);
+          window.frameElement.dispatchEvent(evt)
+        )
+        dashboardLayout.contentRegion.show(assessmentCompositeView)
+      error: (model, err, cb) ->
+        console.log JSON.stringify err
 
   resume: (assessmentId, resultId) ->
     router = this

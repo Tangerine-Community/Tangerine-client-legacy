@@ -19,7 +19,8 @@ Tangerine.bootSequence =
     Pouch configuration
     ###
 
-    Tangerine.db = new PouchDB(Tangerine.conf.db_name)
+    # Create a temporary database to mount the assessment into.
+    Tangerine.db = new PouchDB("tangerine-" + Date.now() + Math.random(), {storage: 'temporary'})
     Backbone.sync = BackbonePouch.sync
       db: Tangerine.db
       fetch: 'view'
