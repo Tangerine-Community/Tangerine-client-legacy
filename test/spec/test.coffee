@@ -452,17 +452,17 @@
                 $(levelTwo[0]).trigger "change"
                 #                done()
                 #                console.log("view.$el.html(): " + view.$el.html())
-                console.log("Test Should display the School Selection< page - view.$el.html(): " + view.$el.html())
+#                console.log("Test Should display the School Selection< page - view.$el.html(): " + view.$el.html())
                 view.once("render:collection", () ->
 #                  console.log("Test display the Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html())
 #                  buttons = view.$el.find('.subtest-next')
 #                  $(buttons[0]).click()
 #                  expect(view.$el.html()).to.contain("When you are ready to begin observing, press 'Kiswahili' below.");
                   renderObservation = ->
-                    console.log("Test Should pass to Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html())
+#                    console.log("Test Should pass to Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html())
                     expect(view.$el.html()).to.contain("Kiswahili");
                     renderKiswahili = ->
-                      console.log("Test Should pass to Classroom Observation (Kiswahili) (2016) page - view.$el.html(): " + view.$el.html())
+#                      console.log("Test Should pass to Classroom Observation (Kiswahili) (2016) page - view.$el.html(): " + view.$el.html())
 #                      expect(view.$el.html()).to.contain("Kiswahili");
 #                      expect(view.$el.find('#question-lesson_content_first').css('display')).to.eq('block');
                       lessoncContentFirst = view.$el.find('#question-lesson_content_first')
