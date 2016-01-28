@@ -225,6 +225,9 @@ class Utils
         for row in rows
           leftToUpload.push(row.key) if row.error?
 
+        # @todo Alert user of leftToUpload.length
+        alert('Going to upload ' + leftToUpload.length + ' results.')
+
         # if it's already fully uploaded
         # make sure it's in the log
 
