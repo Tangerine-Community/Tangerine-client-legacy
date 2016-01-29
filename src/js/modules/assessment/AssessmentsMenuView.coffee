@@ -89,6 +89,7 @@ class AssessmentsMenuView extends Backbone.View
       #{syncTabletsButton}
       #{uploadButton}
       #{saveToDiskButton}
+      <div id='upload_results'></div>
     "
 
     @$el.html html

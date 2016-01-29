@@ -263,11 +263,11 @@ gulp.task('clean', function(done){
 
 });
 
-gulp.task('index-dev', function () {
+gulp.task('index-dev', ['clean'], function () {
   gulp.src(['*.js'], {base: conf.tmpJsDir}).pipe(gulp.dest('./www/compiled'));
-  gulp.src(['templates.js'], {base: conf.tmpMinDir}).pipe(gulp.dest('./www/compiled'));
-  gulp.src(['version.js'], {base: conf.tmpMinDir}).pipe(gulp.dest('./www/compiled'));
-  gulp.src(['locales.js'], {base: conf.tmpMinDir}).pipe(gulp.dest('./www/compiled'));
+  gulp.src(['./tmp/min/templates.js']).pipe(gulp.dest('./www/compiled'));
+  gulp.src(['./tmp/min/version.js']).pipe(gulp.dest('./www/compiled/'));
+  gulp.src(['./tmp/min/locales.js']).pipe(gulp.dest('./www/compiled'));
   var target = gulp.src('./www/index-dev.html');
   // It's not necessary to read the files (will speed up things), we're only after their paths:
   var JsSources = gulp.src(conf.jsFileOrder, {read: false});

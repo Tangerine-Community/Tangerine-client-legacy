@@ -206,7 +206,12 @@ class Utils
 
     a = document.createElement("a")
     a.href = Tangerine.settings.get("groupHost")
-    allDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
+    if Tangerine.settings.get("groupHost") == "localhost"
+      allDocsUrl = "http://#{Tangerine.settings.get("groupHost")}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
+    else
+      allDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
+
+    $("#upload_results").append('Count of results to check if available on server: ' + docList.length + '<br/>')
 
     return $.ajax
       url: allDocsUrl
@@ -216,17 +221,18 @@ class Utils
         keys: JSON.stringify(docList)
         user: Tangerine.settings.upUser
         pass: Tangerine.settings.upPass
-      error: (a) ->
-        alert "Error connecting"
+      error: (e) ->
+        errorMessage = JSON.stringify e
+        alert "Error connecting" + errorMessage
+        $("#upload_results").append('Error connecting to : ' + allDocsUrl + ' - Error: ' + errorMessage + '<br/>')
       success: (response) =>
-
+        $("#upload_results").append('Received response from server.')
         rows = response.rows
         leftToUpload = []
         for row in rows
           leftToUpload.push(row.key) if row.error?
 
-        # @todo Alert user of leftToUpload.length
-        alert('Going to upload ' + leftToUpload.length + ' results.')
+        $("#upload_results").append('Count of results to upload: ' + leftToUpload.length + '<br/>')
 
         # if it's already fully uploaded
         # make sure it's in the log
@@ -237,14 +243,19 @@ class Utils
           compressedData = LZString.compressToBase64(JSON.stringify(docs))
           a = document.createElement("a")
           a.href = Tangerine.settings.get("groupHost")
-          bulkDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
+          if Tangerine.settings.get("groupHost") == "localhost"
+            bulkDocsUrl = "http://#{Tangerine.settings.get("groupHost")}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
+          else
+            bulkDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
 
           $.ajax
             type : "POST"
             url : bulkDocsUrl
             data : compressedData
-            error: =>
-              alert "Server bulk docs error"
+            error: (e) =>
+              errorMessage = JSON.stringify e
+              alert "Server bulk docs error" + errorMessage
+              $("#upload_results").append('Server bulk docs error : ' + bulkDocsUrl + ' - Error: ' + errorMessage + '<br/>')
             success: =>
               Utils.sticky "Results uploaded"
               return
