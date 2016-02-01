@@ -32,6 +32,14 @@ var handlebars = require('gulp-handlebars');
 var wrap = require('gulp-wrap');
 var declare = require('gulp-declare');
 
+// debugging gulp
+var debug = require('gulp-debug');
+
+// cause i don't like mondays
+var wait = require('gulp-wait')
+var mapStream = require('map-stream');
+
+
 /*
  * configuration
  */
@@ -263,30 +271,49 @@ gulp.task('clean', function(done){
 
 });
 
-gulp.task('index-dev', ['clean'], function () {
-  gulp.src(['*.js'], {base: conf.tmpJsDir}).pipe(gulp.dest('./www/compiled'));
-  gulp.src(['./tmp/min/templates.js']).pipe(gulp.dest('./www/compiled'));
-  gulp.src(['./tmp/min/version.js']).pipe(gulp.dest('./www/compiled/'));
-  gulp.src(['./tmp/min/locales.js']).pipe(gulp.dest('./www/compiled'));
-  var target = gulp.src('./www/index-dev.html');
-  // It's not necessary to read the files (will speed up things), we're only after their paths:
-  var JsSources = gulp.src(conf.jsFileOrder, {read: false});
-  var libSources = gulp.src(conf.libFiles, {read: false});
-  target.pipe(inject(JsSources , {transform: function (filepath, file, i, length) {
-    var filename = filepath.replace("/tmp/js","compiled")
-    return "<script src='" + filename + "'></script>"
+gulp.task('prepare-index-dev', function () {
+
+  var prepFiles = function () {
+
+    return mapStream(function (file, cb) {
+      console.log("running prepFiles")
+      //console.log(file);
+      gulp.src(['*.js'], {base: conf.tmpJsDir}).pipe(gulp.dest('./www/compiled'));
+      gulp.src(['./tmp/min/templates.js']).pipe(gulp.dest('./www/compiled'));
+      gulp.src([conf.tmpMinDir + '/version.js']).pipe(debug({title: 'unicorn:', minimal: false})).pipe(gulp.dest('./www/compiled'));
+      gulp.src([conf.tmpMinDir + '/locales.js']).pipe(debug({minimal: false})).pipe(gulp.dest('./www/compiled'));
+      var target = gulp.src('./www/index-dev.html');
+      // It's not necessary to read the files (will speed up things), we're only after their paths:
+      var JsSources = gulp.src(conf.jsFileOrder, {read: false});
+      var libSources = gulp.src(conf.libFiles, {read: false});
+      target.pipe(inject(JsSources , {transform: function (filepath, file, i, length) {
+        var filename = filepath.replace("/tmp/js","compiled")
+        return "<script src='" + filename + "'></script>"
+      }
+      }))
+        // Now create the list of lib files
+          .pipe(inject(libSources , {name: 'lib', transform: function (filepath, file, i, length) {
+            var filename = filepath.replace("/src/","")
+            return "<script src='" + filename + "'></script>"
+          }
+          }))
+          .pipe(gulp.dest('./www')).on('error', function(err) { // on error
+            log(err);                   // log
+            //target.end();                    // end stream so we don't freeze the program
+          });
+      return cb(null, file)
+    })
   }
-  }))
-  // Now create the list of lib files
-  .pipe(inject(libSources , {name: 'lib', transform: function (filepath, file, i, length) {
-    var filename = filepath.replace("/src/","")
-    return "<script src='" + filename + "'></script>"
-  }
-  }))
-  .pipe(gulp.dest('./www')).on('error', function(err) { // on error
-        log(err);                   // log
-        //target.end();                    // end stream so we don't freeze the program
-      });
+
+  //var stat = function () {
+    fs.stat(conf.tmpMinDir + '/version.js', function(err, stat) {
+      gulp.src(conf.tmpMinDir + '/version.js')
+          .pipe(wait(5000))
+          .pipe(prepFiles());
+    });
+
+
+
 });
 
 
@@ -294,7 +321,7 @@ gulp.task('index-dev', ['clean'], function () {
 gulp.task('init', ['clean', 'handlebars', 'version', 'build:locales', 'build:app.js', 'build:lib.js']);
 
 gulp.task('default', ['webserver', 'init', 'watch']);
-gulp.task('debug', ['webserver', 'init', 'watch', 'index-dev']);
+gulp.task('index-dev', ['prepare-index-dev']);
 
 
 conf.fileOrder = [

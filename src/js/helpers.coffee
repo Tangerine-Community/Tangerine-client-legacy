@@ -211,7 +211,7 @@ class Utils
     else
       allDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
 
-    $("#upload_results").append('Count of results to check if available on server: ' + docList.length + '<br/>')
+    $("#upload_results").append(t("Utils.message.checkingServer") + '&nbsp' + docList.length + '<br/>')
 
     return $.ajax
       url: allDocsUrl
@@ -226,13 +226,16 @@ class Utils
         alert "Error connecting" + errorMessage
         $("#upload_results").append('Error connecting to : ' + allDocsUrl + ' - Error: ' + errorMessage + '<br/>')
       success: (response) =>
-        $("#upload_results").append('Received response from server.')
+        $("#upload_results").append('Received response from server.<br/>')
         rows = response.rows
         leftToUpload = []
         for row in rows
           leftToUpload.push(row.key) if row.error?
 
-        $("#upload_results").append('Count of results to upload: ' + leftToUpload.length + '<br/>')
+        if leftToUpload.length > 0
+          $("#upload_results").append(t("Utils.message.countTabletResults") + '&nbsp' + leftToUpload.length + '<br/>')
+        else
+          $("#upload_results").append(t("Utils.message.noUpload") + '<br/>')
 
         # if it's already fully uploaded
         # make sure it's in the log
@@ -255,9 +258,10 @@ class Utils
             error: (e) =>
               errorMessage = JSON.stringify e
               alert "Server bulk docs error" + errorMessage
-              $("#upload_results").append('Server bulk docs error : ' + bulkDocsUrl + ' - Error: ' + errorMessage + '<br/>')
+              $("#upload_results").append(t("Utils.message.bulkDocsError") + bulkDocsUrl + ' - ' + t("Utils.message.error") + ': ' + errorMessage + '<br/>')
             success: =>
-              Utils.sticky "Results uploaded"
+              Utils.sticky t("Utils.message.resultsUploaded")
+              $("#upload_results").append(t("Utils.message.resultsUploaded")+ '<br/>')
               return
         )
 
@@ -270,9 +274,14 @@ class Utils
         Utils.uploadCompressed(docList)
 
   @saveDocListToFile: ->
-    Tangerine.db.allDocs(include_docs:true).then( (response) ->
-      Utils.saveRecordsToFile(JSON.stringify(response))
-    )
+#    Tangerine.db.allDocs(include_docs:true).then( (response) ->
+#      Utils.saveRecordsToFile(JSON.stringify(response))
+#    )
+    results = new Results
+    results.fetch
+      success: ->
+        console.log("results: " + JSON.stringify(results))
+        Utils.saveRecordsToFile(JSON.stringify(results))
 
   @checkSession: (url, options) ->
     options = options || {};
