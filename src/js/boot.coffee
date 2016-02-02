@@ -255,10 +255,18 @@ Tangerine.bootSequence =
         # * Use the writeTextToFile method.
         # */
         Utils.saveRecordsToFile = (text) ->
+          username = Tangerine.user.name()
+          timestamp = (new Date).toISOString();
+          timestamp = timestamp.replace(/:/g, "-")
+          if username == null
+            fileName = "backup-" + timestamp + ".json"
+          else
+            fileName = username + "-backup-" + timestamp + ".json"
+          console.log("fileName: " + fileName)
           cordova.file.writeTextToFile({
             text:  text,
             path: cordova.file.externalDataDirectory,
-            fileName: 'backup.txt',
+            fileName: fileName,
             append: false
             },
             {

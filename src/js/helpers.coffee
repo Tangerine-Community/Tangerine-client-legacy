@@ -206,7 +206,12 @@ class Utils
 
     a = document.createElement("a")
     a.href = Tangerine.settings.get("groupHost")
-    allDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
+    if Tangerine.settings.get("groupHost") == "localhost"
+      allDocsUrl = "http://#{Tangerine.settings.get("groupHost")}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
+    else
+      allDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
+
+    $("#upload_results").append(t("Utils.message.checkingServer") + '&nbsp' + docList.length + '<br/>')
 
     return $.ajax
       url: allDocsUrl
@@ -216,14 +221,21 @@ class Utils
         keys: JSON.stringify(docList)
         user: Tangerine.settings.upUser
         pass: Tangerine.settings.upPass
-      error: (a) ->
-        alert "Error connecting: " + JSON.stringify(a)
+      error: (e) ->
+        errorMessage = JSON.stringify e
+        alert "Error connecting" + errorMessage
+        $("#upload_results").append('Error connecting to : ' + allDocsUrl + ' - Error: ' + errorMessage + '<br/>')
       success: (response) =>
-
+        $("#upload_results").append('Received response from server.<br/>')
         rows = response.rows
         leftToUpload = []
         for row in rows
           leftToUpload.push(row.key) if row.error?
+
+        if leftToUpload.length > 0
+          $("#upload_results").append(t("Utils.message.countTabletResults") + '&nbsp' + leftToUpload.length + '<br/>')
+        else
+          $("#upload_results").append(t("Utils.message.noUpload") + '<br/>')
 
         # if it's already fully uploaded
         # make sure it's in the log
@@ -234,16 +246,22 @@ class Utils
           compressedData = LZString.compressToBase64(JSON.stringify(docs))
           a = document.createElement("a")
           a.href = Tangerine.settings.get("groupHost")
-          bulkDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
+          if Tangerine.settings.get("groupHost") == "localhost"
+            bulkDocsUrl = "http://#{Tangerine.settings.get("groupHost")}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
+          else
+            bulkDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
 
           $.ajax
             type : "POST"
             url : bulkDocsUrl
             data : compressedData
-            error: =>
-              alert "Server bulk docs error"
+            error: (e) =>
+              errorMessage = JSON.stringify e
+              alert "Server bulk docs error" + errorMessage
+              $("#upload_results").append(t("Utils.message.bulkDocsError") + bulkDocsUrl + ' - ' + t("Utils.message.error") + ': ' + errorMessage + '<br/>')
             success: =>
-              Utils.sticky "Results uploaded"
+              Utils.sticky t("Utils.message.resultsUploaded")
+              $("#upload_results").append(t("Utils.message.universalUploadComplete")+ '<br/>')
               return
         )
 
@@ -256,9 +274,14 @@ class Utils
         Utils.uploadCompressed(docList)
 
   @saveDocListToFile: ->
-    Tangerine.db.allDocs(include_docs:true).then( (response) ->
-      Utils.saveRecordsToFile(JSON.stringify(response))
-    )
+#    Tangerine.db.allDocs(include_docs:true).then( (response) ->
+#      Utils.saveRecordsToFile(JSON.stringify(response))
+#    )
+    results = new Results
+    results.fetch
+      success: ->
+#        console.log("results: " + JSON.stringify(results))
+        Utils.saveRecordsToFile(JSON.stringify(results))
 
   @checkSession: (url, options) ->
     options = options || {};
@@ -300,7 +323,7 @@ class Utils
 #    Backbone.sync.defaults.db.replicate.to(remoteCouch, opts, CoconutUtils.ReplicationErrorLog);
 
   @cloud_url_with_credentials: (cloud_url)->
-    cloud_credentials = "tangerine:tangytangerine"
+    cloud_credentials = "username:password"
     cloud_url.replace(/http:\/\//,"http://#{cloud_credentials}@")
 
   @replicateToServer: (options, divId) ->

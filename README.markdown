@@ -239,6 +239,16 @@ SurveyRunItemView contains some code to help Assessments created for earlier ver
 Also, some of the old displayCode is checked to see if it contains some of the old vm namespace:
 
       displaycodeFixed = displayCode.replace("vm.currentView.subtestViews[vm.currentView.index].prototypeView", "Tangerine.progress.currentSubview");
+      
+## Cordova Implementation notes
+
+When you debug the apk you will see the following message:
+
+    No Content-Security-Policy meta tag found. Please add one when using the cordova-plugin-whitelist plugin.
+    
+The Cordova version 4.1.1 runs an early version of the whitelist plugin, which is difficult to configure. We have not yet found a 
+configuration of the Content-Security-Policy meta tag that will work with this version of Cordova, the whitelist plugin, and AJAX events. 
+Ignore this error.
 
 ----
 
