@@ -245,3 +245,4 @@ Tangerine.locales["en-US"] =
         "bulkDocsError"  : "Error uploading results to bulk docs server at :"
         "error"  : "Error"
         "resultsUploaded"  : "Results uploaded"
+        "universalUploadComplete"  : "Universal Upload Complete"

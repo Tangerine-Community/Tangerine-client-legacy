@@ -261,7 +261,7 @@ class Utils
               $("#upload_results").append(t("Utils.message.bulkDocsError") + bulkDocsUrl + ' - ' + t("Utils.message.error") + ': ' + errorMessage + '<br/>')
             success: =>
               Utils.sticky t("Utils.message.resultsUploaded")
-              $("#upload_results").append(t("Utils.message.resultsUploaded")+ '<br/>')
+              $("#upload_results").append(t("Utils.message.universalUploadComplete")+ '<br/>')
               return
         )
 
@@ -280,7 +280,7 @@ class Utils
     results = new Results
     results.fetch
       success: ->
-        console.log("results: " + JSON.stringify(results))
+#        console.log("results: " + JSON.stringify(results))
         Utils.saveRecordsToFile(JSON.stringify(results))
 
   @checkSession: (url, options) ->
