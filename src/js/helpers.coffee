@@ -305,6 +305,79 @@ class Utils
         else
           alert("An error occurred getting session info: " + resp.reason)
 
+#  @startReplication =  () ->
+#    credentials = account.username + ":" + account.password;
+#    couchdb =  "troubletickets_" +  account.site;
+#    subdomain =  "ug" +  account.site;
+#    remoteCouch = "http://" + credentials + "@localhost:5984/" + couchdb + "/";
+#    a = document.createElement("a")
+#    a.href = Tangerine.settings.get("groupHost")
+#    bulkDocsUrl = "#{a.protocol}//#{a.host}/#{Tangerine.settings.groupDB}"
+#    console.log("start replication with " + remoteCouch)
+#    opts = {continuous: false,
+#      withCredentials:true,
+#    #//cookieAuth: {username:account.username, password:account.password},
+#    auth: {username:account.username, password:account.password},
+#    complete: CoconutUtils.onComplete,
+#    timeout: 60000};
+#    Backbone.sync.defaults.db.replicate.to(remoteCouch, opts, CoconutUtils.ReplicationErrorLog);
+
+  @cloud_url_with_credentials: (cloud_url)->
+    cloud_credentials = "username:password"
+    cloud_url.replace(/http:\/\//,"http://#{cloud_credentials}@")
+
+  @replicateToServer: (options, divId) ->
+    options = {} if !options
+    opts =
+#      live:true
+      continuous: false
+#      batch_size:5
+#      filter: filter
+#      batches_limit:1
+      withCredentials:true
+#      auth:
+#        username:account.username
+#        password:account.password
+      complete: (result) ->
+        if typeof result != 'undefined' && result != null && result.ok
+          console.log "replicateToServer - onComplete: Replication is fine. "
+        else
+          console.log "replicateToServer - onComplete: Replication message: " + result
+      error: (result) ->
+        console.log "error: Replication error: " + JSON.stringify result
+      timeout: 60000
+    _.extend options, opts
+
+    a = document.createElement("a")
+    a.href = Tangerine.settings.get("groupHost")
+    replicationURL = "#{a.protocol}//#{a.host}/#{Tangerine.settings.groupDB}"
+    credRepliUrl = @cloud_url_with_credentials(replicationURL)
+    console.log("credRepliUrl: " + credRepliUrl)
+    Backbone.sync.defaults.db.replicate.to(credRepliUrl, options).on('uptodate', (result) ->
+      if typeof result != 'undefined' && result.ok
+        console.log "uptodate: Replication is fine. "
+        options.complete()
+        if typeof options.success != 'undefined'
+          options.success()
+      else
+        console.log "uptodate: Replication error: " + JSON.stringify result).on('change', (info)->
+      console.log "Change: " + JSON.stringify info
+      doc_count = options.status?.doc_count
+      doc_del_count = options.status?.doc_del_count
+      total_docs = doc_count? + doc_del_count?
+      doc_written = info.docs_written
+      percentDone = Math.floor((doc_written/total_docs) * 100)
+      if !isNaN  percentDone
+        msg = "Change: docs_written: " + doc_written + " of " +  total_docs + ". Percent Done: " + percentDone + "%<br/>"
+      else
+        msg = "Change: docs_written: " + doc_written + "<br/>"
+      console.log("msg: " + msg)
+      $(divId).append msg
+    ).on('complete', (info)->
+      console.log "Complete: " + JSON.stringify info
+    )
+#    Coconut.menuView.checkReplicationStatus();
+
   @restartTangerine: (message, callback) ->
     Utils.midAlert "#{message || 'Restarting Tangerine'}"
     _.delay( ->
