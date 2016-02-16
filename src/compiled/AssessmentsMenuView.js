@@ -124,7 +124,7 @@ AssessmentsMenuView = (function(superClass) {
     saveToDiskButton = "<button class='command save_to_disk'>" + this.text.save_to_disk + "</button>";
     groupHandle = "<h2 class='settings grey' data-attribtue='groupHandle'>" + (Tangerine.settings.getEscapedString('groupHandle') || Tangerine.settings.get('groupName')) + "</h2>";
     html = "<section> <h1>" + this.text.assessments + "</h1>";
-    html += "<div id='assessments_container'></div> </section> <br> " + syncTabletsButton + " " + uploadButton + " " + saveToDiskButton + " <div id='upload_results'></div>";
+    html += "<div id='assessments_container'></div> </section> <br> " + uploadButton + " " + saveToDiskButton + " <div id='upload_results'></div>";
     this.$el.html(html);
     this.assessmentsView.setElement(this.$el.find("#assessments_container"));
     return this.assessmentsView.render();

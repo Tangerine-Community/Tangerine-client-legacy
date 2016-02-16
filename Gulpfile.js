@@ -282,10 +282,14 @@ gulp.task('prepare-index-dev', function () {
       //console.log(file);
       gulp.src(['*.js'], {base: conf.tmpJsDir}).pipe(gulp.dest('./www/compiled'));
       gulp.src(['./tmp/min/templates.js']).pipe(gulp.dest('./www/compiled'));
-      gulp.src([conf.tmpMinDir + '/version.js']).pipe(debug({title: 'unicorn:', minimal: false})).pipe(gulp.dest('./www/compiled'));
-      gulp.src([conf.tmpMinDir + '/locales.js']).pipe(debug({minimal: false})).pipe(gulp.dest('./www/compiled'));
+      gulp.src([conf.tmpMinDir + '/version.js'])
+          //.pipe(debug({title: 'unicorn:', minimal: false}))
+          .pipe(gulp.dest('./www/compiled'));
+      gulp.src([conf.tmpMinDir + '/locales.js'])
+          //.pipe(debug({minimal: false}))
+          .pipe(gulp.dest('./www/compiled'));
       var template = gulp.src('./www/index-dev-template.html');
-      var target = gulp.src('./www/index-dev.html');
+      //var target = gulp.src('./www/index-dev.html');
       // It's not necessary to read the files (will speed up things), we're only after their paths:
       //var JsSources = gulp.src(conf.fileOrder, {read: false});
       var JsSources = conf.fileOrder;
@@ -296,7 +300,7 @@ gulp.task('prepare-index-dev', function () {
       for (var i = 0; i < arrayLength; i++) {
         var prop = JsSources[i];
           // modify the string
-          var filename = "compiled/" + prop;
+          var filename = "compiled/" + prop + ".js";
           var scriptString = "<script src='" + filename + "'></script>\n";
           JsSourcesString += scriptString
       }
@@ -306,30 +310,15 @@ gulp.task('prepare-index-dev', function () {
       for (var i = 0; i < arrayLength; i++) {
         var prop = libSources[i];
           // modify the string
-          var filename = prop.replace("/src/", "")
+          var filename = prop.replace("./src/", "")
           var scriptString = "<script src='" + filename + "'></script>\n";
           libSourcesString += scriptString
       }
 
-      target.pipe(inject.after("<!-- inject:js -->\n", JsSourcesString))
-          .pipe(debug({title: 'unicorny:', minimal: false}))
+      template.pipe(inject.after("<!-- inject:js -->\n", JsSourcesString))
+          .pipe(inject.after("<!-- lib:js -->\n", libSourcesString))
+          //.pipe(debug({title: 'unicorny:', minimal: false}))
           .pipe(rename('index-dev.html'))
-
-      //target.pipe(inject.after("<!-- lib:js -->\n", libSourcesString))
-      //    .pipe(rename('index-dev.html'))
-      //    .pipe(gulp.dest('./www/'));
-
-      //target.pipe(inject(JsSources , {transform: function (filepath, file, i, length) {
-      //  var filename = filepath.replace("/tmp/js","compiled")
-      //  return "<script src='" + filename + "'></script>"
-      //}
-      //}))
-      //  // Now create the list of lib files
-      //    .pipe(inject(libSources , {name: 'lib', transform: function (filepath, file, i, length) {
-      //      var filename = filepath.replace("/src/","")
-      //      return "<script src='" + filename + "'></script>"
-      //    }
-      //    }))
           .pipe(gulp.dest('./www')).on('error', function(err) { // on error
             log(err);                   // log
             //target.end();                    // end stream so we don't freeze the program
@@ -341,12 +330,9 @@ gulp.task('prepare-index-dev', function () {
   //var stat = function () {
     fs.stat(conf.tmpMinDir + '/version.js', function(err, stat) {
       gulp.src(conf.tmpMinDir + '/version.js')
-          .pipe(wait(5000))
+          .pipe(wait(2000))
           .pipe(prepFiles());
     });
-
-
-
 });
 
 
