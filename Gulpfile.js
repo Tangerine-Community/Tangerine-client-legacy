@@ -21,7 +21,9 @@ var flatten = require('gulp-flatten');  // For removing directory strcuture
 var cache   = require('gulp-cached');   // For speedy redos
 
 var sourcemaps = require('gulp-sourcemaps'); // for debugging
-var inject = require('gulp-inject');  // to create index-dev.html
+//var inject = require('gulp-inject');  // to create index-dev.html
+var inject = require('gulp-inject-string');  // to create index-dev.html
+var rename = require('gulp-rename');  // to create index-dev.html
 
 var less = require('gulp-less'); // for compiling less files
 
@@ -280,23 +282,43 @@ gulp.task('prepare-index-dev', function () {
       //console.log(file);
       gulp.src(['*.js'], {base: conf.tmpJsDir}).pipe(gulp.dest('./www/compiled'));
       gulp.src(['./tmp/min/templates.js']).pipe(gulp.dest('./www/compiled'));
-      gulp.src([conf.tmpMinDir + '/version.js']).pipe(debug({title: 'unicorn:', minimal: false})).pipe(gulp.dest('./www/compiled'));
-      gulp.src([conf.tmpMinDir + '/locales.js']).pipe(debug({minimal: false})).pipe(gulp.dest('./www/compiled'));
-      var target = gulp.src('./www/index-dev.html');
+      gulp.src([conf.tmpMinDir + '/version.js'])
+          //.pipe(debug({title: 'unicorn:', minimal: false}))
+          .pipe(gulp.dest('./www/compiled'));
+      gulp.src([conf.tmpMinDir + '/locales.js'])
+          //.pipe(debug({minimal: false}))
+          .pipe(gulp.dest('./www/compiled'));
+      var template = gulp.src('./www/index-dev-template.html');
+      //var target = gulp.src('./www/index-dev.html');
       // It's not necessary to read the files (will speed up things), we're only after their paths:
-      var JsSources = gulp.src(conf.jsFileOrder, {read: false});
-      var libSources = gulp.src(conf.libFiles, {read: false});
-      target.pipe(inject(JsSources , {transform: function (filepath, file, i, length) {
-        var filename = filepath.replace("/tmp/js","compiled")
-        return "<script src='" + filename + "'></script>"
+      //var JsSources = gulp.src(conf.fileOrder, {read: false});
+      var JsSources = conf.fileOrder;
+      //var libSources = gulp.src(conf.libFiles, {read: false});
+      var libSources = conf.libFiles;
+      var JsSourcesString = ""
+      var arrayLength = JsSources.length;
+      for (var i = 0; i < arrayLength; i++) {
+        var prop = JsSources[i];
+          // modify the string
+          var filename = "compiled/" + prop + ".js";
+          var scriptString = "<script src='" + filename + "'></script>\n";
+          JsSourcesString += scriptString
       }
-      }))
-        // Now create the list of lib files
-          .pipe(inject(libSources , {name: 'lib', transform: function (filepath, file, i, length) {
-            var filename = filepath.replace("/src/","")
-            return "<script src='" + filename + "'></script>"
-          }
-          }))
+      //console.log("JsSourcesString: " + JsSourcesString)
+      var libSourcesString = ""
+      var arrayLength = libSources.length;
+      for (var i = 0; i < arrayLength; i++) {
+        var prop = libSources[i];
+          // modify the string
+          var filename = prop.replace("./src/", "")
+          var scriptString = "<script src='" + filename + "'></script>\n";
+          libSourcesString += scriptString
+      }
+
+      template.pipe(inject.after("<!-- inject:js -->\n", JsSourcesString))
+          .pipe(inject.after("<!-- lib:js -->\n", libSourcesString))
+          //.pipe(debug({title: 'unicorny:', minimal: false}))
+          .pipe(rename('index-dev.html'))
           .pipe(gulp.dest('./www')).on('error', function(err) { // on error
             log(err);                   // log
             //target.end();                    // end stream so we don't freeze the program
@@ -308,12 +330,9 @@ gulp.task('prepare-index-dev', function () {
   //var stat = function () {
     fs.stat(conf.tmpMinDir + '/version.js', function(err, stat) {
       gulp.src(conf.tmpMinDir + '/version.js')
-          .pipe(wait(5000))
+          .pipe(wait(2000))
           .pipe(prepFiles());
     });
-
-
-
 });
 
 
