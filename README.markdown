@@ -17,6 +17,11 @@ and references and [Tangerine Central](http://www.tanerinecentral.org) for much 
 Alternatively put, Tangerine is a [CouchApp](http://couchapp.org/page/index) that uses
 [Apache CouchDB](http://couchdb.apache.org/) built with [Backbone.js](http://backbonejs.org/), [LessCSS](http://lesscss.org/) written in [CoffeeScript](http://coffeescript.org/) augmented with [Sinatra](http://www.sinatrarb.com/) and PHP.
 
+## Following this project
+
+The project website is at [tangerinecentral.org](http://tangerinecentral.org) and the software development roadmap is tracked 
+in [Roadmap.md](https://github.com/Tangerine-Community/Tangerine-client/blob/master/Roadmap.md)
+
 ## Getting Started
 
 _The following is a list of tools useful for Tangerine. Related: See the guide for setting up a
@@ -241,6 +246,16 @@ Also, some of the old displayCode is checked to see if it contains some of the o
       displaycodeFixed = displayCode.replace("vm.currentView.subtestViews[vm.currentView.index].prototypeView", "Tangerine.progress.currentSubview");
       
 ## Cordova Implementation notes
+
+### Cordova version
+
+The app current uses Cordova 4.1.1. This will soon be upgraded to Cordova 6.
+
+### Crosswalk
+
+The Crosswalk plugin is used to provide a modern version of the Chromium browser for all Tangerine instances. This is configured in config.xml.
+
+### Whitelist issues
 
 When you debug the apk you will see the following message:
 
