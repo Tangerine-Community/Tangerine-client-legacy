@@ -251,11 +251,15 @@ Also, some of the old displayCode is checked to see if it contains some of the o
 
 The app current uses Cordova 4.1.1. This will soon be upgraded to Cordova 6.
 
-### Crosswalk
+### Plugin Management
+
+Use [cordova-check-plugins](https://github.com/dpa99c/cordova-check-plugins) to check/update plugins
+
+#### Crosswalk
 
 The Crosswalk plugin is used to provide a modern version of the Chromium browser for all Tangerine instances. This is configured in config.xml.
 
-### Whitelist issues
+#### Whitelist issues
 
 When you debug the apk you will see the following message:
 
