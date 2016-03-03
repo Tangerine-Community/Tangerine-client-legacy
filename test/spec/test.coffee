@@ -533,7 +533,7 @@
 #                            result: result
 #                          view.once("render", () ->
 #                            if (elHtml == view.$el.html())
-#                              done()
+                              done()
 #                            else
 #                              throw "HTML of AssessmentCompositeView does not match up resume"
 #                          )
