@@ -493,6 +493,63 @@
         })
       )
 
+
+      it('Should skip to Subtask 3', (done)->
+        this.timeout(30000)
+        this.$fixture.empty().appendTo(this.$container);
+        id = "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9"
+        assessment = new Assessment "_id" : id
+        assessment.deepFetch({
+          error: (err)->
+            console.log "Catch Error: " + JSON.stringify err
+            done(err)
+          success: (record) ->
+            Tangerine.assessment = assessment
+            viewOptions =
+              model: assessment
+              el: this.$fixture
+            view = new AssessmentCompositeView viewOptions
+            view.once("render", () ->
+# This test will continue on the next render of a subtest.
+              view.once("render", () ->
+# Change level Zero.
+                levelZero = view.$el.find('#level_0')
+#                $(levelZero[0]).val('Bong')
+#                expect($(levelTwo[0]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
+                view.once("render", ->
+#                  buttons = view.$el.find('.subtest-next')
+#                  $(buttons[0]).click()
+#                  resultId = view.result.id
+#                  assessmentId = view.assessment.id
+#                  elHtml = view.$el.html()
+#                  assessmentTwo = new Assessment "_id" : assessmentId
+#                  assessmentTwo.deepFetch({
+#                    success : ->
+#                      result = new Result "_id" : resultId
+#                      result.fetch
+#                        success: ->
+#                          view = new AssessmentCompositeView
+#                            assessment: assessmentTwo
+#                            result: result
+#                          view.once("render", () ->
+#                            if (elHtml == view.$el.html())
+                              done()
+#                            else
+#                              throw "HTML of AssessmentCompositeView does not match up resume"
+#                          )
+#                          view.render()
+#                  })
+                )
+                buttons = view.$el.find('.subtest-next')
+                $(buttons[0]).click()
+              )
+              buttons = view.$el.find('.subtest-next')
+              $(buttons[0]).click()
+            )
+            view.render();
+        })
+      )
+
   dbs.split(',').forEach((db) ->
     # dbType = /^http/.test(db) ? 'http' : 'local'
     tests db

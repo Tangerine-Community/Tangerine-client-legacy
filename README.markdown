@@ -249,21 +249,27 @@ Also, some of the old displayCode is checked to see if it contains some of the o
 
 ### Cordova version
 
-The app current uses Cordova 4.1.1. This will soon be upgraded to Cordova 6.
+The app current uses Cordova 6.
 
-### Crosswalk
+### Plugin Management
+
+Use [cordova-check-plugins](https://github.com/dpa99c/cordova-check-plugins) to check/update plugins
+
+#### Crosswalk
 
 The Crosswalk plugin is used to provide a modern version of the Chromium browser for all Tangerine instances. This is configured in config.xml.
 
-### Whitelist issues
+#### Whitelist issues
 
-When you debug the apk you will see the following message:
+If you run into issue uploading data, be sure to check the Content-Security-Policy whitelist in index.html. It may be 
+necessary to change or add a url.
 
-    No Content-Security-Policy meta tag found. Please add one when using the cordova-plugin-whitelist plugin.
-    
-The Cordova version 4.1.1 runs an early version of the whitelist plugin, which is difficult to configure. We have not yet found a 
-configuration of the Content-Security-Policy meta tag that will work with this version of Cordova, the whitelist plugin, and AJAX events. 
-Ignore this error.
+        <meta http-equiv="Content-Security-Policy"
+              content="default-src *;
+                      style-src 'self' 'unsafe-inline';
+                      script-src 'self' http://databases.tangerinecentral.org 'unsafe-inline' 'unsafe-eval' ;
+                      img-src 'self' data:;
+                      connect-src 'self' http://databases.tangerinecentral.org data: blob: filesystem:">
 
 ----
 

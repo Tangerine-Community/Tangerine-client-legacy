@@ -252,6 +252,38 @@ class GridRunItemView extends Backbone.Marionette.ItemView
         $target = @$el.find(".grid_element[data-index=#{@lastAttempted}]")
         $target.addClass "element_last"
 
+  onShow: ->
+    displayCode = @model.getString("displayCode")
+
+    if not _.isEmptyString(displayCode)
+#      displaycodeFixed = displayCode.replace("vm.currentView.subtestViews[vm.currentView.index].prototypeView","Tangerine.progress.currentSubview")
+#      displaycodeFixed = displaycodeFixed.replace("@prototypeView","Tangerine.progress.currentSubview")
+      displaycodeFixed = displayCode
+      if _.size(Tangerine.displayCode_migrations) > 0
+        for k,v of Tangerine.displayCode_migrations
+          displaycodeFixed = displaycodeFixed.replace(k,v)
+      try
+        CoffeeScript.eval.apply(@, [displaycodeFixed])
+      catch error
+        name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
+        message = error.message
+        alert "#{name}\n\n#{message}"
+        console.log "displaycodeFixed Error: " + message
+
+    @prototypeView?.updateExecuteReady?(true)
+
+# @todo Documentation
+  skip: =>
+    currentView = Tangerine.progress.currentSubview
+    @parent.result.add
+      name      : currentView.model.get "name"
+      data      : currentView.getSkipped()
+      subtestId : currentView.model.id
+      skipped   : true
+      prototype : currentView.model.get "prototype"
+    ,
+      success: =>
+        @parent.reset 1
 
   restartTimer: ->
     @stopTimer(simpleStop:true) if @timeRunning
