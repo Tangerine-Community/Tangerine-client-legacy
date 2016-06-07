@@ -10,6 +10,8 @@ var profilesDB = nano.db.use('profiles');
 var _ = require('underscore');
 var nodemailer = require('nodemailer');
 var path = require('path')
+var httpProxy = require('http-proxy')
+var proxy = httpProxy.createProxy();
 
 var config = {
   dbServer: {
@@ -49,6 +51,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(methodOverride());
 app.use('/', express.static(path.join(__dirname, '../app/src')));
 app.use('/auth', superlogin.router);
+app.all('/db', superlogin.requireAuth, function (req, res) {
+  // Proxy this request to the configured URL.
+  return proxy.web(req, res, {
+    target: 'http://admin:password@127.0.0.1:5984' 
+  });
+});
 http.createServer(app).listen(app.get('port'));
 console.log('hello world');
 
