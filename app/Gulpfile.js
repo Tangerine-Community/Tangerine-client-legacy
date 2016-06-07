@@ -19,6 +19,7 @@ var uglify  = require('gulp-uglify');   // For minification of Javascript
 var concat  = require('gulp-concat');   // Concating files
 var flatten = require('gulp-flatten');  // For removing directory strcuture
 var cache   = require('gulp-cached');   // For speedy redos
+var manifest = require('gulp-appcache');
 
 var sourcemaps = require('gulp-sourcemaps'); // for debugging
 //var inject = require('gulp-inject');  // to create index-dev.html
@@ -335,9 +336,20 @@ gulp.task('prepare-index-dev', function () {
     });
 });
 
+gulp.task('manifest', function(){
+  gulp.src(['./src/**/*'])
+    .pipe(manifest({
+      relativePath: '',
+      hash: true,
+      preferOnline: true,
+      network: ['http://*', 'https://*', '*'],
+      filename: 'app.manifest',
+      exclude: 'app.manifest'
+     }))
+    .pipe(gulp.dest('src'));
+});
 
-
-gulp.task('init', ['clean', 'handlebars', 'version', 'build:locales', 'build:app.js', 'build:lib.js']);
+gulp.task('init', ['clean', 'handlebars', 'version', 'build:locales', 'build:app.js', 'build:lib.js', 'manifest']);
 
 gulp.task('default', ['webserver', 'init', 'watch']);
 gulp.task('index-dev', ['prepare-index-dev']);
