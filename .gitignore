@@ -13,17 +13,17 @@ bower_components/
 npm-debug.log
 
 # gulp build artifacts
-tmp/js/*
-tmp/min/*
-lib.js
-app.js
-src/compiled/*
+app/tmp/js/*
+app/tmp/min/*
+app/src/js/lib.js
+app/src/js/app.js
+app/src/compiled
 
 # tangerine's packs
-src/js/init/pack*.json
-test/packs.json
-src/packs.json
+app/src/js/init/pack*.json
+app/test/packs.json
+app/src/packs.json
 
 
-.idea
+app/.idea
 
