@@ -1,6 +1,8 @@
-# Tangerine
+# Tangerine - This repository is deprecated
 
-![Tangerine](http://www.tangerinecentral.org/sites/default/files/tangerine-logo-150.png)
+NOTE: This repoository is no longer in-use. Its code has been copied to the client directory of the main [Tangerine repository](https://github.com/Tangerine-Community/Tangerine) .
+
+----
 
 [![Build Status](https://travis-ci.org/Tangerine-Community/Tangerine-client.svg)](https://travis-ci.org/Tangerine-Community/Tangerine-client)
 
