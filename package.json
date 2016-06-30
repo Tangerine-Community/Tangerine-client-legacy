@@ -54,7 +54,7 @@
     "gulp-declare": "^0.3.0",
     "gulp-duration": "0.0.0",
     "gulp-flatten": "^0.2.0",
-    "gulp-git": "^1.6.0",
+    "gulp-git": "^1.7.0",
     "gulp-handlebars": "^4.0.0",
     "gulp-inject": "^3.0.0",
     "gulp-inject-string": "^1.1.0",
