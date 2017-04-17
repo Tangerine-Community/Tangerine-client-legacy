@@ -1040,16 +1040,13 @@
                 levelTwo = view.$el.find('#level_2');
                 $(levelTwo[0]).val('OLDONYOSAPUK PR. SCHOOL');
                 $(levelTwo[0]).trigger("change");
-                console.log("Test Should display the School Selection< page - view.$el.html(): " + view.$el.html());
                 view.once("render:collection", function() {
                   var renderObservation;
                   renderObservation = function() {
                     var buttons, renderKiswahili;
-                    console.log("Test Should pass to Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html());
                     expect(view.$el.html()).to.contain("Kiswahili");
                     renderKiswahili = function() {
                       var lessoncContentFirst, reading;
-                      console.log("Test Should pass to Classroom Observation (Kiswahili) (2016) page - view.$el.html(): " + view.$el.html());
                       lessoncContentFirst = view.$el.find('#question-lesson_content_first');
                       if (typeof lessoncContentFirst !== 'undefined' && lessoncContentFirst !== null) {
                         if (typeof lessoncContentFirst.css('display') !== 'undefined' && lessoncContentFirst.css('display') !== null) {
